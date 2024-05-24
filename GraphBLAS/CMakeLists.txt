@@ -143,16 +143,31 @@ message ( STATUS "CMAKE have OpenMP:          ${OpenMP_C_FOUND}" )
 
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-if ( GRAPHBLAS_COMPACT )
-    # do not compile the FactoryKernels
-    include_directories ( ../Source/Template ../Source ../Include rename
-        ../Source/Shared Config ../Source/JitKernels ../JITpackage
-        ../lz4 ../zstd ../zstd/zstd_subset ../xxHash ../Source/Factories )
-else ( )
-    include_directories ( ../Source/Template ../Source ../Include rename
-        ../Source/Shared Config ../Source/JitKernels ../JITpackage
-        ../Source/FactoryKernels
-        ../lz4 ../zstd ../zstd/zstd_subset ../xxHash ../Source/Factories )
+include_directories ( ../Source/Template ../Source ../Include rename
+    ../Source/Shared Config ../Source/JitKernels ../JITpackage
+    ../lz4 ../zstd ../zstd/zstd_subset ../xxHash ../Source/Factories
+    ../Source/Jitifyer
+    ../Source/assign
+    ../Source/build
+    ../Source/mask
+    ../Source/element
+    ../Source/memory
+    ../Source/serialize
+    ../Source/get_set
+    ../Source/semiring
+    ../Source/extractTuples
+    ../Source/convert
+    ../Source/ewise
+    ../Source/reduce
+    ../Source/import_export
+    ../Source/transpose
+    ../Source/select
+    ../Source/mxm
+    )
+
+if ( NOT GRAPHBLAS_COMPACT )
+    # compile the FactoryKernels
+    include_directories ( ../Source/FactoryKernels )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -165,28 +180,41 @@ include ( GraphBLAS_compiler_options )
 # dynamic graphblas_matlab library properties
 #-------------------------------------------------------------------------------
 
+file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c"
+    "../PreJIT/*.c"
+    "../Config/*.c"
+    "../Source/Jitifyer/*.c"
+    "../Source/JitWrappers/*.c"
+    "../Source/assign/*.c"
+    "../Source/build/*.c"
+    "../Source/mask/*.c"
+    "../Source/element/*.c"
+    "../Source/memory/*.c"
+    "../Source/serialize/*.c"
+    "../Source/get_set/*.c"
+    "../Source/iterator/*.c"
+    "../Source/semiring/*.c"
+    "../Source/extractTuples/*.c"
+    "../Source/convert/*.c"
+    "../Source/ewise/*.c"
+    "../Source/reduce/*.c"
+    "../Source/import_export/*.c"
+    "../Source/pack_unpack/*.c"
+    "../Source/transpose/*.c"
+    "../Source/select/*.c"
+    "../Source/mxm/*.c"
+    )
+
+if ( NOT GRAPHBLAS_COMPACT )
+    # compile the FactoryKernels
+    file ( GLOB GRAPHBLAS_FACTORYKERNELS "../Source/FactoryKernels/*.c" )
+    list ( APPEND GRAPHBLAS_SOURCES ${GRAPHBLAS_FACTORYKERNELS} )
+endif ( )
+
 if ( GRAPHBLAS_USE_JIT )
-    if ( GRAPHBLAS_COMPACT )
-        # with the JIT; but do not compile the FactoryKernels
-        file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" 
-            "../PreJIT/*.c" "../Config/GB_prejit.c" "../JITpackage/*.c" )
-    else ( )
-        # with the JIT and the FactoryKernels
-        file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" 
-            "../PreJIT/*.c" "../Config/GB_prejit.c" "../JITpackage/*.c"
-            "../Source/FactoryKernels/*.c" )
-    endif ( )
-else ( )
-    if ( GRAPHBLAS_COMPACT )
-        # no JIT, do not compile the FactoryKernels
-        file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c"
-            "../PreJIT/*.c" "../Config/GB_prejit.c" )
-    else ( )
-        # no JIT, but do compile the FactoryKernels
-        file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" 
-            "../PreJIT/*.c" "../Config/GB_prejit.c"
-            "../Source/FactoryKernels/*.c" )
-    endif ( )
+    # add the JITpackage source
+    file ( GLOB GRAPHBLAS_JITPACKAGE_SOURCE "../JITpackage/*.c" )
+    list ( PREAPPEND GRAPHBLAS_SOURCES ${GRAPHBLAS_JITPACKAGE_SOURCE} )
 endif ( )
 
 add_library ( graphblas_matlab SHARED ${GRAPHBLAS_SOURCES} )

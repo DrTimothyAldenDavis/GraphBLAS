@@ -49,6 +49,23 @@ set ( GRAPHBLAS_CUDA_INCLUDES
         ../Source/Shared
         ../Source/Template
         ../Source/Factories
+        ../Source/Jitifyer
+        ../Source/assign
+        ../Source/build
+        ../Source/mask
+        ../Source/element
+        ../Source/memory
+        ../Source/serialize
+        ../Source/get_set
+        ../Source/semiring
+        ../Source/extractTuples
+        ../Source/convert
+        ../Source/ewise
+        ../Source/reduce
+        ../Source/import_export
+        ../Source/transpose
+        ../Source/select
+        ../Source/mxm
         Template
         ../Include
         ../CUDA )

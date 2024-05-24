@@ -140,7 +140,25 @@ else
     object_suffix = '.o' ;
 end
 
-inc = '-Iutil -I../../../Include -I../../../Source -I../../../Source/Shared -I../../../Source/Template -I../../../Source/Factories ' ;
+inc = '-Iutil -I../../../Include -I../../../Source -I../../../Source/Shared ' ;
+inc = [inc '-I../../../Source/Template -I../../../Source/Factories '] ;
+inc = [inc '-I../../../Source/Jitifyer ' ] ;
+inc = [inc '-I../../../Source/assign ' ] ;
+inc = [inc '-I../../../Source/build ' ] ;
+inc = [inc '-I../../../Source/mask ' ] ;
+inc = [inc '-I../../../Source/element ' ] ;
+inc = [inc '-I../../../Source/memory ' ] ;
+inc = [inc '-I../../../Source/serialize ' ] ;
+inc = [inc '-I../../../Source/get_set ' ] ;
+inc = [inc '-I../../../Source/semiring ' ] ;
+inc = [inc '-I../../../Source/extractTuples ' ] ;
+inc = [inc '-I../../../Source/convert ' ] ;
+inc = [inc '-I../../../Source/ewise ' ] ;
+inc = [inc '-I../../../Source/reduce ' ] ;
+inc = [inc '-I../../../Source/import_export ' ] ;
+inc = [inc '-I../../../Source/transpose ' ] ;
+inc = [inc '-I../../../Source/select ' ] ;
+inc = [inc '-I../../../Source/mxm ' ] ;
 
 if (need_rename)
     % use the renamed library for MATLAB

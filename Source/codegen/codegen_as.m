@@ -9,7 +9,7 @@ function codegen_as
 
 fprintf ('\nsubassign/assign with no accum:\n') ;
 
-fh = fopen ('FactoryKernels/GB_as__include.h', 'w') ;
+fh = fopen ('../FactoryKernels/GB_as__include.h', 'w') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;
 fprintf (fh, '// GB_as__include.h: definitions for GB_as__*.c\n') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;

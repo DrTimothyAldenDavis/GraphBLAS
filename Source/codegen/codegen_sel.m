@@ -8,9 +8,9 @@ function codegen_sel
 % SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\nselection operators:\n') ;
-addpath ('../Test') ;
+% addpath ('../../Test') ;
 
-fh = fopen ('FactoryKernels/GB_sel__include.h', 'w') ;
+fh = fopen ('../FactoryKernels/GB_sel__include.h', 'w') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;
 fprintf (fh, '// GB_sel__include.h: definitions for GB_sel__*.c\n') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;

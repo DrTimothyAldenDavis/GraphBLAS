@@ -860,12 +860,12 @@ fprintf (f, 'm4_divert(0)\n') ;
 fclose (f) ;
 
 if (is_any_pair)
-    % the ANY_PAIR_ISO semiring goes in Source
-    s = '.' ;
+    % the ANY_PAIR_ISO semiring goes in Source/mxm
+    s = '../mxm' ;
     k = 1 ;
 else
-    % all other semirings go in FactoryKernels
-    s = 'FactoryKernels' ;
+    % all other semirings go in Source/FactoryKernels
+    s = '../FactoryKernels' ;
     k = 2 ;
 end
 

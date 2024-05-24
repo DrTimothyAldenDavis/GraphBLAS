@@ -28,45 +28,13 @@
 #error "kernel undefined for C or A iso"
 #endif
 
-// FIXME: put these definitions in GB_cuda_kernel.h:
+// tile_sz can vary per algorithm.  It must a power of 2, and because we
+// use tile.shfl_down(), it must also be <= 32.
 #define tile_sz 32
 #define log2_tile_sz 5
 
 #include "GB_cuda_shfl_down.cuh"
-
-//------------------------------------------------------------------------------
-// GB_block_Reduce: reduce across all warps into a single scalar
-//------------------------------------------------------------------------------
-
-__inline__ __device__ GB_Z_TYPE GB_block_Reduce
-(
-    thread_block g,
-    GB_Z_TYPE val
-)
-{
-    static __shared__ GB_Z_TYPE shared [tile_sz] ;
-    int lane = threadIdx.x & (tile_sz-1) ;
-    int wid  = threadIdx.x >> log2_tile_sz ;
-    thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( g ) ;
-
-    // Each warp performs partial reduction
-    val = GB_cuda_warp_reduce_ztype (tile, val) ;
-
-    // Wait for all partial reductions
-    if (lane == 0)
-    {
-        shared [wid] = val ; // Write reduced value to shared memory
-    }
-    this_thread_block().sync() ;        // Wait for all partial reductions
-
-    GB_DECLARE_IDENTITY_CONST (zid) ;   // const GB_Z_TYPE zid = identity ;
-
-    val = (threadIdx.x < (blockDim.x >> LOG2_WARPSIZE)) ?  shared [lane] : zid ;
-
-    // Final reduce within first warp
-    val = GB_cuda_warp_reduce_ztype (tile, val) ;
-    return (val) ;
-}
+#include "GB_cuda_threadblock_reduce_ztype.cuh"
 
 //------------------------------------------------------------------------------
 // GB_cuda_reduce_kernel: reduce all entries in a matrix to a single scalar
@@ -172,8 +140,7 @@ __global__ void GB_cuda_reduce_kernel
     // phase 2: each threadblock reduces all threads into a scalar
     //--------------------------------------------------------------------------
 
-    zmine = GB_block_Reduce( this_thread_block(), zmine) ;
-    this_thread_block().sync() ;
+    zmine = GB_cuda_threadblock_reduce_ztype (zmine) ;
 
     //--------------------------------------------------------------------------
     // phase 3: reduce across threadblocks
@@ -217,8 +184,8 @@ extern "C"
 
 GB_JIT_CUDA_KERNEL_REDUCE_PROTO (GB_jit_kernel)
 {
-    dim3 grid (gridsz) ;
-    dim3 block (blocksz) ;
+    dim3 grid (gridsz) ;    // gridsz: # of threadblocks
+    dim3 block (blocksz) ;  // blocksz: # of threads in each threadblock
     GB_A_NHELD (anz) ;      // anz = # of entries held in A
     GB_cuda_reduce_kernel <<<grid, block, 0, stream>>> (zscalar, V, A, anz) ;
     return (GrB_SUCCESS) ;

@@ -185,7 +185,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
 
         #if !GB_C_ISO
         // FIXME: the ANY monoid needs the cij_exists for each thread
-        cij = GB_cuda_warp_reduce_ztype (tile, cij) ;
+        cij = GB_cuda_tile_reduce_ztype (tile, cij) ;
         #endif
 
         // FIXME: if A and B are full, and GB_MASK_STRUCT is true, cij_exists

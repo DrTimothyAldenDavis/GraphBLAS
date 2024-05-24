@@ -30,10 +30,10 @@
 //          dest = (the value of src on thread tid+offset)
 //      }
 //
-// Where tid ranges from 0 to the tile_size-1, which is the warp size of 32 (the
-// size of the tile, given by tile.num_threads() and also the #define'd value
-// tile_sz), minus one.  If tid+offset >= tile_sz for the ith thread, then nothing
-// happens for that thread, and the thread is inactive.
+// Where tid ranges from 0 to the tile_sz-1, which is the warp size of 32
+// (the size of the tile, given by tile.num_threads() and also the #define'd
+// value tile_sz), minus one.  If tid+offset >= tile_sz for the ith thread,
+// then nothing happens for that thread, and the thread is inactive.
 //
 // Restrictions:  tile_sz must be a power of 2, and it must be 32 or less for
 // tile.shfl_down().  The type T must be trivially-copyable (that is
@@ -43,13 +43,13 @@
 // tile.shfl_down on 32-byte chunks.
 
 //------------------------------------------------------------------------------
-// GB_cuda_warp_sum_uint64: reduce a uint64_t value across a single warp
+// GB_cuda_tile_sum_uint64: reduce a uint64_t value across a single warp
 //------------------------------------------------------------------------------
 
 // On input, each thread in the tile holds a single uint64_t value.  On output,
 // thread zero holds the sum of values from all the warps.
 
-__device__ __inline__ uint64_t GB_cuda_warp_sum_uint64
+__device__ __inline__ uint64_t GB_cuda_tile_sum_uint64
 (
     thread_block_tile<tile_sz> tile,
     uint64_t value
@@ -71,6 +71,7 @@ __device__ __inline__ uint64_t GB_cuda_warp_sum_uint64
     }
     #else
     {
+        // tile_sz is less than 32 (either 1, 2, 4, 8, or 16)
         #pragma unroll
         for (int offset = tile_sz >> 1 ; offset > 0 ; offset >>= 1)
         {
@@ -146,10 +147,10 @@ __device__ __inline__ uint64_t GB_cuda_warp_sum_uint64
 #endif
 
 //------------------------------------------------------------------------------
-// GB_cuda_warp_reduce_ztype: reduce a ztype to a scalar, on a single warp
+// GB_cuda_tile_reduce_ztype: reduce a ztype to a scalar, on a single warp
 //------------------------------------------------------------------------------
 
-__device__ __inline__ GB_Z_TYPE GB_cuda_warp_reduce_ztype
+__device__ __inline__ GB_Z_TYPE GB_cuda_tile_reduce_ztype
 (
     thread_block_tile<tile_sz> tile,
     GB_Z_TYPE value

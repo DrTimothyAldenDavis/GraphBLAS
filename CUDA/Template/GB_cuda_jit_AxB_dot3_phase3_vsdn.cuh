@@ -269,7 +269,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
         // sum up the zombie count:
         thread_block_tile<tile_sz> tile =
             tiled_partition<tile_sz> (this_thread_block ()) ;
-        zc += GB_cuda_warp_sum_uint64 (tile, my_nzombies) ;
+        zc += GB_cuda_tile_sum_uint64 (tile, my_nzombies) ;
     }
 
     if (threadIdx.x == 0 && zc > 0)

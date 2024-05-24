@@ -95,7 +95,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
     #endif
 
     // zombie count
-    int64_t zc = 0;
+    uint64_t zc = 0;
 
     // set thread ID
 //  int tid_global = threadIdx.x+ blockDim.x* blockIdx.x;
@@ -329,7 +329,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
         if (cij_exists)
         {
             // FIXME: the ANY monoid needs the cij_exists for each thread
-            cij = GB_cuda_warp_reduce_ztype (tile, cij) ;
+            cij = GB_cuda_tile_reduce_ztype (tile, cij) ;
         }
         #endif
 
@@ -358,7 +358,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
 
     if( tid ==0 && zc > 0)
     {
-        GB_cuda_atomic_add <uint64_t>( &(C->nzombies), (uint64_t) zc) ;
+        GB_cuda_atomic_add <uint64_t>( &(C->nzombies), zc) ;
     }
 }
 

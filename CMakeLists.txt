@@ -41,8 +41,8 @@ if ( NOT BUILD_SHARED_LIBS )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-  set ( GRAPHBLAS_USE_CUDA OFF )
-# set ( GRAPHBLAS_USE_CUDA ON )     # FIXME: use this for CUDA development
+# set ( GRAPHBLAS_USE_CUDA OFF )
+  set ( GRAPHBLAS_USE_CUDA ON )     # FIXME: use this for CUDA development
 
 include ( SuiteSparsePolicy )
 
@@ -60,7 +60,7 @@ endif ( )
 
 if ( SUITESPARSE_HAS_CUDA AND GRAPHBLAS_USE_CUDA )
     # FOR NOW: do not compile FactoryKernels when developing the CUDA kernels
-    set ( GRAPHBLAS_COMPACT ON )
+#   set ( GRAPHBLAS_COMPACT ON )    # FIXME
     message ( STATUS "GraphBLAS CUDA JIT: enabled")
     enable_language ( CUDA )
     set ( GRAPHBLAS_HAS_CUDA ON )
@@ -207,16 +207,31 @@ configure_file ( "Config/README.md.in"
 # include directories for both graphblas and the demos
 #-------------------------------------------------------------------------------
 
-if ( GRAPHBLAS_COMPACT )
-    # do not compile the FactoryKernels
-    include_directories ( Source/Template Source Include Source/Shared
-        Config xxHash Config lz4 zstd zstd/zstd_subset JITpackage
-        Source/Factories Demo/Include rmm_wrap Source/JitKernels )
-else ( )
-    include_directories ( Source/Template Source Include Source/Shared
-        Config xxHash Config lz4 zstd zstd/zstd_subset JITpackage
-        Source/FactoryKernels
-        Source/Factories Demo/Include rmm_wrap Source/JitKernels )
+include_directories ( Source/Template Source Include Source/Shared
+    Config xxHash lz4 zstd zstd/zstd_subset JITpackage
+    Source/Factories Demo/Include rmm_wrap Source/JitKernels
+    Source/Jitifyer
+    Source/assign
+    Source/build
+    Source/mask
+    Source/element
+    Source/memory
+    Source/serialize
+    Source/get_set
+    Source/semiring
+    Source/extractTuples
+    Source/convert
+    Source/ewise
+    Source/reduce
+    Source/import_export
+    Source/transpose
+    Source/select
+    Source/mxm
+    )
+
+if ( NOT GRAPHBLAS_COMPACT )
+    # compile the FactoryKernels
+    include_directories ( Source/FactoryKernels )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -229,50 +244,44 @@ include ( GraphBLAS_compiler_options )
 # dynamic graphblas library properties
 #-------------------------------------------------------------------------------
 
-# Notes from Sebastien Villemot (sebastien@debian.org):
-# SOVERSION policy: if a binary compiled against the old version of the shared
-# library needs recompiling in order to work with the new version, then a
-# SO_VERSION increase # is needed. Otherwise not.  Examples of the changes that
-# require a SO_VERSION increase:
-#
-#   - a public function or static variable is removed
-#   - the prototype of a public function changes
-#   - the integer value attached to a public #define or enum changes
-#   - the fields of a public structure are modified
-#
-# Examples of changes that do not require a SO_VERSION increase:
-#
-#   - a new public function or static variable is added
-#   - a private function or static variable is removed or modified
-#   - changes in the internals of a structure that is opaque to the calling
-#       program (i.e. is only a pointer manipulated through public functions of
-#       the library)
-#   - a public enum is extended (by adding a new item at the end, but without
-#       changing the already existing items)
+file ( GLOB GRAPHBLAS_SOURCES "Source/*.c"
+    "PreJIT/*.c"
+    "Config/*.c"
+    "Source/Jitifyer/*.c"
+    "Source/JitWrappers/*.c"
+    "Source/assign/*.c"
+    "Source/build/*.c"
+    "Source/mask/*.c"
+    "Source/element/*.c"
+    "Source/memory/*.c"
+    "Source/serialize/*.c"
+    "Source/get_set/*.c"
+    "Source/iterator/*.c"
+    "Source/semiring/*.c"
+    "Source/extractTuples/*.c"
+    "Source/convert/*.c"
+    "Source/ewise/*.c"
+    "Source/reduce/*.c"
+    "Source/import_export/*.c"
+    "Source/pack_unpack/*.c"
+    "Source/transpose/*.c"
+    "Source/select/*.c"
+    "Source/mxm/*.c"
+    )
+
+if ( NOT GRAPHBLAS_COMPACT )
+    # compile the FactoryKernels
+    file ( GLOB GRAPHBLAS_FACTORYKERNELS "Source/FactoryKernels/*.c" )
+    list ( APPEND GRAPHBLAS_SOURCES ${GRAPHBLAS_FACTORYKERNELS} )
+endif ( )
 
 if ( GRAPHBLAS_USE_JIT )
     # generate compressed JIT sources
     add_subdirectory ( JITpackage )
-    if ( GRAPHBLAS_COMPACT )
-        # with the JIT; but do not compile the FactoryKernels
-        file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Config/*.c" "PreJIT/*.c" )
-    else ( )
-        # with the JIT and the FactoryKernels
-        file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Config/*.c" "PreJIT/*.c"
-            "Source/FactoryKernels/*.c" )
-    endif ( )
     # GLOB does not include files that do not yet exist, so prepend
     # the GB_JITpackage.c file here:
-    list ( PREPEND GRAPHBLAS_SOURCES $<TARGET_PROPERTY:GB_JITpackage,GENERATED_FILE> )
-else ( )
-    if ( GRAPHBLAS_COMPACT )
-        # no JIT, do not compile the FactoryKernels
-        file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Config/*.c" "PreJIT/*.c" )
-    else ( )
-        # no JIT, but do compile the FactoryKernels
-        file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Config/*.c" "PreJIT/*.c"
-            "Source/FactoryKernels/*.c" )
-    endif ( )
+    list ( PREPEND GRAPHBLAS_SOURCES
+        $<TARGET_PROPERTY:GB_JITpackage,GENERATED_FILE> )
 endif ( )
 
 if ( BUILD_SHARED_LIBS )

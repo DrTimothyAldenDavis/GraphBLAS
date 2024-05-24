@@ -37,13 +37,6 @@ using namespace cooperative_groups ;
 #define ASSERT(x)
 
 //------------------------------------------------------------------------------
-// NVIDIA warp size
-//------------------------------------------------------------------------------
-
-#define WARPSIZE 32
-#define LOG2_WARPSIZE 5
-
-//------------------------------------------------------------------------------
 
 // for internal static inline functions
 #undef  GB_STATIC_INLINE

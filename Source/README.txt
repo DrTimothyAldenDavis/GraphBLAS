@@ -2,7 +2,7 @@ SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 
 This folder, GraphBLAS/Source, contains all the primary source files for
-GraphBLAS, an internal include files that are meant for internal
+GraphBLAS, and internal include files that are meant for internal
 inclusion in GraphBLAS itself.  They should not be included in end-user
 applications.
 
