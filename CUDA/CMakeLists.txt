@@ -42,35 +42,21 @@ set_target_properties ( GraphBLAS_CUDA PROPERTIES
 # memory manager
 set ( RMM_WRAP_INCLUDES "../rmm_wrap" )
 
-message ( STATUS "RMM_WRAP_INCLUDES: ${RMM_WRAP_INCLUDES}" )
+# message ( STATUS "RMM_WRAP_INCLUDES: ${RMM_WRAP_INCLUDES}" )
+
 set ( GRAPHBLAS_CUDA_INCLUDES
         ${RMM_WRAP_INCLUDES}
         ../Source
         ../Source/Shared
         ../Source/Template
         ../Source/Factories
-        ../Source/Jitifyer
-        ../Source/assign
-        ../Source/build
-        ../Source/mask
-        ../Source/element
-        ../Source/memory
-        ../Source/serialize
-        ../Source/get_set
-        ../Source/semiring
-        ../Source/extractTuples
-        ../Source/convert
-        ../Source/ewise
-        ../Source/reduce
-        ../Source/import_export
-        ../Source/transpose
-        ../Source/select
-        ../Source/mxm
         Template
         ../Include
-        ../CUDA )
-
-message ( STATUS "GraphBLAS CUDA includes: ${GRAPHBLAS_CUDA_INCLUDES}" )
+        ../CUDA
+        ../Source/jitifyer
+        ../Source/cpu
+        ../Source/binaryop
+        )
 
 #-------------------------------------------------------------------------------
 # GraphBLAS_CUDA properties

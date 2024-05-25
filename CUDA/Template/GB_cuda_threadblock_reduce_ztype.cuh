@@ -46,6 +46,10 @@ __inline__ __device__ GB_Z_TYPE GB_cuda_threadblock_reduce_ztype
     }
     g.sync() ;                      // Wait for all partial reductions
 
+    // FIXME: doesn't this assume that the # of threads in the threadblock
+    // is <= tile_sz squared?  For tile_sz = 32, the # of threads in the 
+    // threadblock must be <= 1024.
+
     // Final reduce within first tile
     if (tile_id == 0)
     {

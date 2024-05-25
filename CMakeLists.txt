@@ -210,9 +210,59 @@ configure_file ( "Config/README.md.in"
 include_directories ( Source/Template Source Include Source/Shared
     Config xxHash lz4 zstd zstd/zstd_subset JITpackage
     Source/Factories Demo/Include rmm_wrap Source/JitKernels
-    Source/Jitifyer
+    Source/jitifyer
     Source/assign
-    Source/build
+    Source/gateway
+    Source/generic
+    Source/cumsum
+    Source/ok
+    Source/omp
+    Source/aliased
+    Source/op
+    Source/init
+    Source/descriptor
+    Source/matrix
+    Source/vector
+    Source/helper
+    Source/werk
+    Source/transplant
+    Source/callback
+    Source/hyper
+    Source/clear
+    Source/type
+    Source/sort
+    Source/scalar
+    Source/ij
+    Source/diag
+    Source/monoid
+    Source/slice
+    Source/wait
+    Source/reshape
+    Source/resize
+    Source/print
+    Source/compatible
+    Source/nvals
+    Source/cpu
+    Source/cast
+    Source/dup
+    Source/kronecker
+    Source/positional
+    Source/iso
+    Source/unaryop
+    Source/split
+    Source/concat
+    Source/global
+    Source/lz4_wrapper
+    Source/zstd_wrapper
+    Source/builtin
+    Source/extract
+    Source/pending
+    Source/indexunaryop
+    Source/math
+    Source/apply
+    Source/context
+    Source/binaryop
+    Source/builder
     Source/mask
     Source/element
     Source/memory
@@ -247,10 +297,57 @@ include ( GraphBLAS_compiler_options )
 file ( GLOB GRAPHBLAS_SOURCES "Source/*.c"
     "PreJIT/*.c"
     "Config/*.c"
-    "Source/Jitifyer/*.c"
-    "Source/JitWrappers/*.c"
+    "Source/jitifyer/*.c"
+    "Source/jit_wrappers/*.c"
     "Source/assign/*.c"
-    "Source/build/*.c"
+    "Source/cumsum/*.c"
+    "Source/omp/*.c"
+    "Source/aliased/*.c"
+    "Source/op/*.c"
+    "Source/init/*.c"
+    "Source/descriptor/*.c"
+    "Source/matrix/*.c"
+    "Source/vector/*.c"
+    "Source/helper/*.c"
+    "Source/werk/*.c"
+    "Source/transplant/*.c"
+    "Source/callback/*.c"
+    "Source/hyper/*.c"
+    "Source/clear/*.c"
+    "Source/type/*.c"
+    "Source/sort/*.c"
+    "Source/scalar/*.c"
+    "Source/ij/*.c"
+    "Source/diag/*.c"
+    "Source/monoid/*.c"
+    "Source/slice/*.c"
+    "Source/wait/*.c"
+    "Source/reshape/*.c"
+    "Source/resize/*.c"
+    "Source/print/*.c"
+    "Source/compatible/*.c"
+    "Source/nvals/*.c"
+    "Source/cpu/*.c"
+    "Source/cast/*.c"
+    "Source/dup/*.c"
+    "Source/kronecker/*.c"
+    "Source/positional/*.c"
+    "Source/iso/*.c"
+    "Source/unaryop/*.c"
+    "Source/split/*.c"
+    "Source/concat/*.c"
+    "Source/global/*.c"
+    "Source/lz4_wrapper/*.c"
+    "Source/zstd_wrapper/*.c"
+    "Source/builtin/*.c"
+    "Source/extract/*.c"
+    "Source/pending/*.c"
+    "Source/indexunaryop/*.c"
+    "Source/math/*.c"
+    "Source/apply/*.c"
+    "Source/context/*.c"
+    "Source/binaryop/*.c"
+    "Source/builder/*.c"
     "Source/mask/*.c"
     "Source/element/*.c"
     "Source/memory/*.c"

@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
+#include "GB_resize.h"
 
 GrB_Info GrB_Matrix_resize      // change the size of a matrix
 (

@@ -11,6 +11,7 @@
 
 #include "GB_select.h"
 #include "GB_scalar_wrap.h"
+#include "GB_resize.h"
 
 #define GB_FREE_ALL                     \
 {                                       \
