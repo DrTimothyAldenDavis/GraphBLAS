@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/JitKernels/GB_jit_kernel_cuda_AxB_dot3.cu
+// GraphBLAS/CUDA/jit_kernels/GB_jit_kernel_cuda_AxB_dot3.cu
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.

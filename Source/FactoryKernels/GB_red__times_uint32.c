@@ -64,11 +64,11 @@ GrB_Info GB (_red__times_uint32)
     GB_Z_TYPE *restrict W = (GB_Z_TYPE *) W_space ;
     if (A->nzombies > 0 || GB_IS_BITMAP (A))
     {
-        #include "GB_reduce_to_scalar_template.c"
+        #include "template/GB_reduce_to_scalar_template.c"
     }
     else
     {
-        #include "GB_reduce_panel.c"
+        #include "template/GB_reduce_panel.c"
     }
     (*result) = z ;
     return (GrB_SUCCESS) ;

@@ -97,7 +97,7 @@ GrB_Info GB_subassign_06d
 
         ASSERT (Mask_struct) ;
         #define GB_ISO_ASSIGN
-        #include "GB_subassign_06d_template.c"
+        #include "template/GB_subassign_06d_template.c"
         info = GrB_SUCCESS ;
 
     }
@@ -189,7 +189,7 @@ GrB_Info GB_subassign_06d
             #undef  GB_AX_MASK
             #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, asize)
 
-            #include "GB_subassign_06d_template.c"
+            #include "template/GB_subassign_06d_template.c"
             info = GrB_SUCCESS ;
         }
     }

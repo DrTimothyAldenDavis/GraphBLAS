@@ -16,12 +16,12 @@
         {
             // A is bitmap
             int8_t *Ab = A->b ;
-            #include "GB_select_bitmap_bitmap_template.c"
+            #include "template/GB_select_bitmap_bitmap_template.c"
         }
         #else
         {
             // A is full
-            #include "GB_select_bitmap_full_template.c"
+            #include "template/GB_select_bitmap_full_template.c"
         }
         #endif
     }
@@ -31,12 +31,12 @@
         if (Ab != NULL)
         { 
             // A is bitmap
-            #include "GB_select_bitmap_bitmap_template.c"
+            #include "template/GB_select_bitmap_bitmap_template.c"
         }
         else
         { 
             // A is full
-            #include "GB_select_bitmap_full_template.c"
+            #include "template/GB_select_bitmap_full_template.c"
         }
     }
     #endif

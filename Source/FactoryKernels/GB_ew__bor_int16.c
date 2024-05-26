@@ -326,7 +326,7 @@ GrB_Info GB (_bind1st_tran__bor_int16)
     return (GrB_NO_VALUE) ;
     #else
     GB_X_TYPE x = (*((const GB_X_TYPE *) x_input)) ;
-    #include "GB_transpose_template.c"
+    #include "template/GB_transpose_template.c"
     return (GrB_SUCCESS) ;
     #endif
     #undef GB_BIND_1ST
@@ -360,7 +360,7 @@ GrB_Info GB (_bind2nd_tran__bor_int16)
     return (GrB_NO_VALUE) ;
     #else
     GB_Y_TYPE y = (*((const GB_Y_TYPE *) y_input)) ;
-    #include "GB_transpose_template.c"
+    #include "template/GB_transpose_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

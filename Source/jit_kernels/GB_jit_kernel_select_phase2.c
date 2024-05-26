@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_trans_unop.c: C = op (A') for unary op
+// GB_jit_kernel_select_phase2:  select phase 2 JIT kernel
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,15 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// TODO: C=op(A') is used only for unary ops; extend it to index unary ops
-
-// cij = op (aij)
-#define GB_APPLY_OP(pC,pA) GB_UNOP (Cx, pC, Ax, pA, A_iso, i, j, y)
-
-GB_JIT_GLOBAL GB_JIT_KERNEL_TRANS_UNOP_PROTO (GB_jit_kernel) ;
-GB_JIT_GLOBAL GB_JIT_KERNEL_TRANS_UNOP_PROTO (GB_jit_kernel)
+GB_JIT_GLOBAL GB_JIT_KERNEL_SELECT_PHASE2_PROTO (GB_jit_kernel) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_SELECT_PHASE2_PROTO (GB_jit_kernel)
 {
-    #include "GB_transpose_template.c"
+    GB_A_TYPE *restrict Cx = (GB_A_TYPE *) Cx_out ;
+    #if GB_DEPENDS_ON_Y
+    GB_Y_TYPE y = *((GB_Y_TYPE *) ythunk) ;
+    #endif
+    #include "template/GB_select_phase2.c"
     return (GrB_SUCCESS) ;
 }
 

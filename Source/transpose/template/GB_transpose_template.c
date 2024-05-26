@@ -46,17 +46,17 @@
         #if GB_C_IS_FULL
         {
             // A and C are both full
-            #include "GB_transpose_full.c"
+            #include "template/GB_transpose_full.c"
         }
         #elif GB_C_IS_BITMAP
         {
             // A and C are both bitmap
-            #include "GB_transpose_bitmap.c"
+            #include "template/GB_transpose_bitmap.c"
         }
         #else
         {
             // A is sparse or hypersparse; C is sparse
-            #include "GB_transpose_sparse.c"
+            #include "template/GB_transpose_sparse.c"
         }
         #endif
     }
@@ -68,18 +68,18 @@
             if (A->b == NULL)
             { 
                 // A and C are both full
-                #include "GB_transpose_full.c"
+                #include "template/GB_transpose_full.c"
             }
             else
             { 
                 // A and C are both bitmap
-                #include "GB_transpose_bitmap.c"
+                #include "template/GB_transpose_bitmap.c"
             }
         }
         else
         { 
             // A is sparse or hypersparse; C is sparse
-            #include "GB_transpose_sparse.c"
+            #include "template/GB_transpose_sparse.c"
         }
     }
     #endif

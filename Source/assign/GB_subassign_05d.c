@@ -171,7 +171,7 @@ GrB_Info GB_subassign_05d
         #define GB_COPY_scalar_to_C(Cx,pC,cwork) \
             memcpy (Cx + ((pC)*csize), cwork, csize)
 
-        #include "GB_subassign_05d_template.c"
+        #include "template/GB_subassign_05d_template.c"
         info = GrB_SUCCESS ;
     }
 

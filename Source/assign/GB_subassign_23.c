@@ -197,7 +197,7 @@ GrB_Info GB_subassign_23      // C += A; C is full
             }                                                           \
         }
 
-        #include "GB_subassign_23_template.c"
+        #include "template/GB_subassign_23_template.c"
         info = GrB_SUCCESS ;
     }
 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_trans_bind1st.c: Cx = op (x,A')
+// GB_jit_kernel_trans_bind2nd.c: Cx = op (A',x)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,20 +7,20 @@
 
 //------------------------------------------------------------------------------
 
-// cij = op (x, aij)
+// cij = op (aij, y)
+#undef  GB_APPLY_OP
 #define GB_APPLY_OP(pC,pA)                      \
 {                                               \
-    GB_DECLAREB (aij) ;                         \
-    GB_GETB (aij, Ax, pA, false) ;              \
-    GB_EWISEOP (Cx, pC, x, aij, 0, 0) ;         \
+    GB_DECLAREA (aij) ;                         \
+    GB_GETA (aij, Ax, pA, false) ;              \
+    GB_EWISEOP (Cx, pC, aij, y, 0, 0) ;         \
 }
 
-GB_JIT_GLOBAL GB_JIT_KERNEL_TRANS_BIND1ST_PROTO (GB_jit_kernel) ;
-GB_JIT_GLOBAL GB_JIT_KERNEL_TRANS_BIND1ST_PROTO (GB_jit_kernel)
+GB_JIT_GLOBAL GB_JIT_KERNEL_TRANS_BIND2ND_PROTO (GB_jit_kernel) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_TRANS_BIND2ND_PROTO (GB_jit_kernel)
 {
-    #define GB_BIND_1ST
-    GB_X_TYPE x = (*((const GB_X_TYPE *) x_input)) ;
-    #include "GB_transpose_template.c"
+    GB_Y_TYPE y = (*((const GB_Y_TYPE *) y_input)) ;
+    #include "template/GB_transpose_template.c"
     return (GrB_SUCCESS) ;
 }
 

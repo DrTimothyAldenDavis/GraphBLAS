@@ -38,7 +38,7 @@ GrB_Info GB (_sel_phase2__nonzombie_int32)
 { 
     GB_A_TYPE *restrict Cx = (GB_A_TYPE *) Cx_out ;
     GB_Y_TYPE y = *((GB_Y_TYPE *) ythunk) ;
-    #include "GB_select_phase2.c"
+    #include "template/GB_select_phase2.c"
     return (GrB_SUCCESS) ;
 }
 

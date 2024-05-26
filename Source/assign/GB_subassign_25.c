@@ -119,7 +119,7 @@ GrB_Info GB_subassign_25
 
         #define GB_ISO_ASSIGN
         GB_cast_scalar (C->x, ccode, A->x, acode, asize) ;
-        #include "GB_subassign_25_template.c"
+        #include "template/GB_subassign_25_template.c"
         info = GrB_SUCCESS ;
 
     }
@@ -208,7 +208,7 @@ GrB_Info GB_subassign_25
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
             #define C_iso false
-            #include "GB_subassign_25_template.c"
+            #include "template/GB_subassign_25_template.c"
             info = GrB_SUCCESS ;
         }
     }

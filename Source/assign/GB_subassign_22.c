@@ -170,7 +170,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
         #define GB_ACCUMULATE_scalar(Cx,pC,ywork)           \
             faccum (Cx +((pC)*csize), Cx +((pC)*csize), ywork)
 
-        #include "GB_subassign_22_template.c"
+        #include "template/GB_subassign_22_template.c"
         info = GrB_SUCCESS ;
     }
 

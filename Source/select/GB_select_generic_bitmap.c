@@ -77,7 +77,7 @@ GrB_Info GB_select_generic_bitmap
                 bool keep ;                                                 \
                 fkeep (&keep, x, flipij ? j : i, flipij ? i : j, ythunk) ;
 
-            #include "GB_select_bitmap_template.c"
+            #include "template/GB_select_bitmap_template.c"
 
         }
         else
@@ -96,7 +96,7 @@ GrB_Info GB_select_generic_bitmap
                 fkeep (z, x, flipij ? j : i, flipij ? i : j, ythunk) ;      \
                 cast_Z_to_bool (&keep, z, zsize) ;
 
-            #include "GB_select_bitmap_template.c"
+            #include "template/GB_select_bitmap_template.c"
         }
 
     }
@@ -116,7 +116,7 @@ GrB_Info GB_select_generic_bitmap
                 fkeep (&keep, Ax +(p)*asize,                                \
                     flipij ? j : i, flipij ? i : j, ythunk) ;
 
-            #include "GB_select_bitmap_template.c"
+            #include "template/GB_select_bitmap_template.c"
 
         }
         else
@@ -138,7 +138,7 @@ GrB_Info GB_select_generic_bitmap
                 fkeep (z, x, flipij ? j : i, flipij ? i : j, ythunk) ;      \
                 cast_Z_to_bool (&keep, z, zsize) ;
 
-            #include "GB_select_bitmap_template.c"
+            #include "template/GB_select_bitmap_template.c"
 
         }
 

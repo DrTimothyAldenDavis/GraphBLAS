@@ -20,7 +20,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_CONCAT_BITMAP_PROTO (GB_jit_kernel)
     GB_werk_push_f GB_werk_push = my_callback->GB_werk_push_func ;
     #endif
 
-    #include "GB_concat_bitmap_template.c"
+    #include "template/GB_concat_bitmap_template.c"
     return (GrB_SUCCESS) ;
 }
 

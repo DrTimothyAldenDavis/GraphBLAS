@@ -18,7 +18,7 @@
 
 // This method is only used for built-in semirings with no typecasting, in
 // the FactoryKernels.  It is not used for JIT kernels, but the JIT kernel
-// (Source/JitKernels/GB_jit_kernel_AxB_saxpy5.c) has nearly identical logic.
+// (Source/jit_kernels/GB_jit_kernel_AxB_saxpy5.c) has nearly identical logic.
 
 #ifdef GB_GENERIC
 #error "saxpy5 generic kernel undefined"

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_subassign_25.c: C(:,:)<M,s> = A ; M struct, A bitmap/full
+// GB_jit_kernel_subassign_05d.c:  C<M> = scalar, when C is dense
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,25 +7,20 @@
 
 //------------------------------------------------------------------------------
 
-// Method 25: C(:,:)<M,s> = A ; C is empty, M structural, A bitmap/as-if-full
+// Method 05d: C(:,:)<M> = scalar ; no S, C is dense
 
 // M:           present
 // Mask_comp:   false
-// Mask_struct: true
-// C_replace:   effectively false (not relevant since C is empty)
+// Mask_struct: true or false
+// C_replace:   false
 // accum:       NULL
-// A:           matrix
+// A:           scalar, already cast to C->type
 // S:           none
 // I:           NULL
 // J:           NULL
 
-// C and M are sparse or hypersparse.  A can have any sparsity structure, even
-// bitmap, but it must either be bitmap, or as-if-full.  M may be jumbled.  If
-// so, C is constructed as jumbled.  C is reconstructed with the same structure
-// as M and can have any sparsity structure on input.  The only constraint on C
-// is nnz(C) is zero on input.
-
-// C is iso if A is iso
+// C can have any sparsity structure, but it must be entirely dense with
+// all entries present.
 
 GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
@@ -39,7 +34,8 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
     GB_werk_push_f GB_werk_push = my_callback->GB_werk_push_func ;
     #endif
 
-    #include "GB_subassign_25_template.c"
+    GB_C_TYPE cwork = (*((GB_C_TYPE *) scalar)) ;
+    #include "template/GB_subassign_05d_template.c"
     return (GrB_SUCCESS) ;
 }
 

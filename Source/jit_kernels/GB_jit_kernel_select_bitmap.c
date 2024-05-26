@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_split_bitmap: split bitmap A into a bitmap tile C
+// GB_jit_kernel_select_bitmap:  select bitmap JIT kernel
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,13 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// cij = op (aij)
-#define GB_COPY(pC,pA) GB_UNOP (Cx, pC, Ax, pA, false, i, j, y)
-
-GB_JIT_GLOBAL GB_JIT_KERNEL_SPLIT_BITMAP_PROTO (GB_jit_kernel) ;
-GB_JIT_GLOBAL GB_JIT_KERNEL_SPLIT_BITMAP_PROTO (GB_jit_kernel)
+GB_JIT_GLOBAL GB_JIT_KERNEL_SELECT_BITMAP_PROTO (GB_jit_kernel) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_SELECT_BITMAP_PROTO (GB_jit_kernel)
 {
-    #include "GB_split_bitmap_template.c"
+    #if GB_DEPENDS_ON_Y
+    GB_Y_TYPE y = *((GB_Y_TYPE *) ythunk) ;
+    #endif
+    #include "template/GB_select_bitmap_template.c"
     return (GrB_SUCCESS) ;
 }
 

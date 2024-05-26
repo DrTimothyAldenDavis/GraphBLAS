@@ -37,11 +37,11 @@
     #ifdef GB_JIT_KERNEL
     {
         #if GB_A_IS_FULL
-            #include "GB_concat_bitmap_full.c"
+            #include "template/GB_concat_bitmap_full.c"
         #elif GB_A_IS_BITMAP
-            #include "GB_concat_bitmap_bitmap.c"
+            #include "template/GB_concat_bitmap_bitmap.c"
         #else
-            #include "GB_concat_bitmap_sparse.c"
+            #include "template/GB_concat_bitmap_sparse.c"
         #endif
     }
     #else
@@ -51,19 +51,19 @@
 
             case GxB_FULL : // A is full
             {
-                #include "GB_concat_bitmap_full.c"
+                #include "template/GB_concat_bitmap_full.c"
             }
             break ;
 
             case GxB_BITMAP : // A is bitmap
             {
-                #include "GB_concat_bitmap_bitmap.c"
+                #include "template/GB_concat_bitmap_bitmap.c"
             }
             break ;
 
             default : // A is sparse or hypersparse
             {
-                #include "GB_concat_bitmap_sparse.c"
+                #include "template/GB_concat_bitmap_sparse.c"
             }
             break ;
         }

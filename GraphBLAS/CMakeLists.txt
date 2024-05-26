@@ -144,7 +144,7 @@ message ( STATUS "CMAKE have OpenMP:          ${OpenMP_C_FOUND}" )
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 include_directories ( ../Source/Template ../Source ../Include rename
-    ../Source/Shared Config ../Source/JitKernels ../JITpackage
+    ../Source/Shared Config ../Source/jit_kernels ../JITpackage
     ../lz4 ../zstd ../zstd/zstd_subset ../xxHash ../Source/Factories
     ../Source/jitifyer
     ../Source/assign
@@ -229,7 +229,7 @@ include ( GraphBLAS_compiler_options )
 # dynamic graphblas_matlab library properties
 #-------------------------------------------------------------------------------
 
-file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c"
+file ( GLOB GRAPHBLAS_SOURCES
     "../PreJIT/*.c"
     "../Config/*.c"
     "../Source/jitifyer/*.c"

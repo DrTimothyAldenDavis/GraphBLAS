@@ -79,7 +79,7 @@ GrB_Info GB (_unop_tran)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_transpose_template.c"
+    #include "template/GB_transpose_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

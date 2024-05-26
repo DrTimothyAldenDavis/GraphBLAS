@@ -82,11 +82,11 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_REDUCE_PROTO (GB_jit_kernel)
     GB_Z_TYPE *W = (GB_Z_TYPE *) Workspace ;
     #if GB_A_HAS_ZOMBIES || GB_A_IS_BITMAP || (GB_PANEL == 1)
     {
-        #include "GB_reduce_to_scalar_template.c"
+        #include "template/GB_reduce_to_scalar_template.c"
     }
     #else
     {
-        #include "GB_reduce_panel.c"
+        #include "template/GB_reduce_panel.c"
     }
     #endif
     // (*result) = z ;

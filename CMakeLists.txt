@@ -209,7 +209,8 @@ configure_file ( "Config/README.md.in"
 
 include_directories ( Source/Template Source Include Source/Shared
     Config xxHash lz4 zstd zstd/zstd_subset JITpackage
-    Source/Factories Demo/Include rmm_wrap Source/JitKernels
+    Source/Factories Demo/Include rmm_wrap
+    Source/jit_kernels
     Source/jitifyer
     Source/assign
     Source/gateway

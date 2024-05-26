@@ -10,7 +10,7 @@
 // This template is #include'd in 3 ways to construct:
 //  * a generic method: Template/GB_AxB_dot_generic.c)
 //  * a Factory method: FactoryKernels/GB_AxB_*, the Adot3B method
-//  * a JIT kernel: JitKernels/GB_jit_kernel_AxB_dot3.c
+//  * a JIT kernel: jit_kernels/GB_jit_kernel_AxB_dot3.c
 
 #define GB_DOT3
 #define GB_DOT3_PHASE2

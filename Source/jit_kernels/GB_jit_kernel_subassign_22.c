@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_subassign_23.c: C += A where C is dense, A is sparse or dense
+// GB_jit_kernel_subassign_22.c: C += y where C is dense, y is a scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,19 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// Method 23: C += A, where C is dense
+// Method 22: C += scalar, where C is dense
 
-// M:           NULL
+// M:           not present
 // Mask_comp:   false
 // Mask_struct: ignored
 // C_replace:   false
 // accum:       present
-// A:           matrix
+// A:           scalar, already cast to accum->ytype
 // S:           none
 // I:           NULL
 // J:           NULL
-
-// C and A can have any sparsity structure, but C must be as-if-full.
 
 GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
@@ -33,7 +31,8 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
     GB_werk_push_f GB_werk_push = my_callback->GB_werk_push_func ;
     #endif
 
-    #include "GB_subassign_23_template.c"
+    GB_Y_TYPE ywork = (*((GB_Y_TYPE *) scalar)) ;
+    #include "template/GB_subassign_22_template.c"
     return (GrB_SUCCESS) ;
 }
 

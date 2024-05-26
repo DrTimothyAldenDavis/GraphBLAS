@@ -38,7 +38,7 @@ GrB_Info GB (_sel_phase1)
 )
 { 
     GB_Y_TYPE y = *((GB_Y_TYPE *) ythunk) ;
-    #include "GB_select_entry_phase1_template.c"
+    #include "template/GB_select_entry_phase1_template.c"
     return (GrB_SUCCESS) ;
 }
 
@@ -62,7 +62,7 @@ GrB_Info GB (_sel_phase2)
 { 
     GB_A_TYPE *restrict Cx = (GB_A_TYPE *) Cx_out ;
     GB_Y_TYPE y = *((GB_Y_TYPE *) ythunk) ;
-    #include "GB_select_phase2.c"
+    #include "template/GB_select_phase2.c"
     return (GrB_SUCCESS) ;
 }
 
@@ -81,7 +81,7 @@ GrB_Info GB (_sel_bitmap)
 )
 { 
     GB_Y_TYPE y = *((GB_Y_TYPE *) ythunk) ;
-    #include "GB_select_bitmap_template.c"
+    #include "template/GB_select_bitmap_template.c"
     return (GrB_SUCCESS) ;
 }
 

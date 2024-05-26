@@ -161,21 +161,21 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
                         case GB_1BYTE : // uint8, int8, bool, or 1-byte user
                             #define GB_C_TYPE uint8_t
                             #define GB_A_TYPE uint8_t
-                            #include "GB_concat_full_template.c"
+                            #include "template/GB_concat_full_template.c"
                             info = GrB_SUCCESS ;
                             break ;
 
                         case GB_2BYTE : // uint16, int16, or 2-byte user
                             #define GB_C_TYPE uint16_t
                             #define GB_A_TYPE uint16_t
-                            #include "GB_concat_full_template.c"
+                            #include "template/GB_concat_full_template.c"
                             info = GrB_SUCCESS ;
                             break ;
 
                         case GB_4BYTE : // uint32, int32, float, or 4-byte user
                             #define GB_C_TYPE uint32_t
                             #define GB_A_TYPE uint32_t
-                            #include "GB_concat_full_template.c"
+                            #include "template/GB_concat_full_template.c"
                             info = GrB_SUCCESS ;
                             break ;
 
@@ -183,14 +183,14 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
                                         // or 8-byte user defined
                             #define GB_C_TYPE uint64_t
                             #define GB_A_TYPE uint64_t
-                            #include "GB_concat_full_template.c"
+                            #include "template/GB_concat_full_template.c"
                             info = GrB_SUCCESS ;
                             break ;
 
                         case GB_16BYTE : // double complex or 16-byte user
                             #define GB_C_TYPE GB_blob16
                             #define GB_A_TYPE GB_blob16
-                            #include "GB_concat_full_template.c"
+                            #include "template/GB_concat_full_template.c"
                             info = GrB_SUCCESS ;
                             break ;
 
@@ -228,7 +228,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
                 #define GB_COPY(pC,pA,A_iso)                    \
                     cast_A_to_C (Cx + (pC)*csize,               \
                         Ax + (A_iso ? 0:(pA)*asize), asize) ;
-                #include "GB_concat_full_template.c"
+                #include "template/GB_concat_full_template.c"
                 info = GrB_SUCCESS ;
             }
 

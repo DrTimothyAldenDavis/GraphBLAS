@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_dot3_phase3_spdn.cuh
+// GraphBLAS/CUDA/Template/GB_cuda_jit_AxB_dot3_phase3_spdn.cuh
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.

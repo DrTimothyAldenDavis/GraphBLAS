@@ -14,7 +14,7 @@ fprintf (f, 'm4_divert(-1)\n') ;
 
 name = sprintf ('%s_%s', opname, aname) ;
 
-if (test_contains (opname, 'col'))
+if (codegen_contains (opname, 'col'))
     % only bitmap selector is used
     enable_phase1 = false ;
     enable_phase2 = false ;
