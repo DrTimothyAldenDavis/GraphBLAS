@@ -104,7 +104,7 @@ GrB_Info GB_ewise_fulla        // C += A+B, all matrices full
             op, false, &opcode, &xcode, &ycode, &zcode))
         { 
             #define GB_BINOP_SUBSET
-            #include "GB_binop_factory.c"
+            #include "binaryop/factory/GB_binop_factory.c"
         }
     }
     #endif

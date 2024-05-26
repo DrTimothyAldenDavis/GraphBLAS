@@ -1246,7 +1246,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     { 
                         opcode = GB_boolean_rename (opcode) ;
                     }
-                    #include "GB_bld_factory.c"
+                    #include "builder/factory/GB_bld_factory.c"
                 }
                 #endif
             }

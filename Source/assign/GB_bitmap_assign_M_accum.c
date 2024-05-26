@@ -115,7 +115,7 @@ GrB_Info GB_bitmap_assign_M_accum
                 GB_ACCUMULATE_scalar (Cx, pC, ywork) ;  \
             }                                           \
         }
-        #include "GB_bitmap_assign_M_sub_template.c"
+        #include "assign/factory/GB_bitmap_assign_M_sub_template.c"
 
         if (C_replace)
         { 
@@ -127,7 +127,7 @@ GrB_Info GB_bitmap_assign_M_accum
                 Cb [pC] = (cb == 3) ;           \
                 task_cnvals -= (cb == 1) ;      \
             }
-            #include "GB_bitmap_assign_IxJ_template.c"
+            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
         }
 
     }
@@ -174,7 +174,7 @@ GrB_Info GB_bitmap_assign_M_accum
                     GB_ACCUMULATE_scalar (Cx, pC, ywork) ;  \
                 }                                           \
             }
-            #include "GB_bitmap_assign_IxJ_template.c"
+            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
 
         }
         else
@@ -211,7 +211,7 @@ GrB_Info GB_bitmap_assign_M_accum
                     GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork) ;  \
                 }                                                       \
             }
-            #include "GB_bitmap_assign_A_template.c"
+            #include "assign/factory/GB_bitmap_assign_A_template.c"
         }
 
         //----------------------------------------------------------------------
@@ -235,7 +235,7 @@ GrB_Info GB_bitmap_assign_M_accum
                 Cb [pC] = (cb == 3) ;               \
                 task_cnvals -= (cb == 1) ;          \
             }
-            #include "GB_bitmap_assign_C_template.c"
+            #include "assign/factory/GB_bitmap_assign_C_template.c"
         }
         else
         { 

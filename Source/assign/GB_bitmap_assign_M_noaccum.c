@@ -140,7 +140,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                     task_cnvals-- ;                         \
                 }                                           \
             }
-            #include "GB_bitmap_assign_IxJ_template.c"
+            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
 
         }
         else // assign_kind == GB_ASSIGN
@@ -165,7 +165,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                     task_cnvals += (cb == 2) ;              \
                 }                                           \
             }
-            #include "GB_bitmap_assign_IxJ_template.c"
+            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
 
             if (C_replace)
             { 
@@ -177,7 +177,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                     Cb [pC] = (cb == 4 || cb == 3) ;    \
                     task_cnvals -= (cb == 1) ;          \
                 }
-                #include "GB_bitmap_assign_C_template.c"
+                #include "assign/factory/GB_bitmap_assign_C_template.c"
             }
             else
             { 
@@ -219,7 +219,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                 task_cnvals += (cb == 2) ;                          \
             }                                                       \
         }
-        #include "GB_bitmap_assign_A_template.c"
+        #include "assign/factory/GB_bitmap_assign_A_template.c"
 
         //----------------------------------------------------------------------
         // clear M from C and handle C_replace for row/col/assign
@@ -242,7 +242,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                     Cb [pC] = (cb == 4) ;                   \
                     task_cnvals -= (cb == 1 || cb == 3) ;   \
                 }
-                #include "GB_bitmap_assign_IxJ_template.c"
+                #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
 
             }
             else
@@ -255,7 +255,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                     Cb [pC] = (cb == 4 || cb == 1) ;        \
                     task_cnvals -= (cb == 3) ;              \
                 }
-                #include "GB_bitmap_assign_IxJ_template.c"
+                #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
             }
 
         }
@@ -279,7 +279,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                     Cb [pC] = (cb == 4) ? 3 : 0 ;           \
                     task_cnvals -= (cb == 1 || cb == 3) ;   \
                 }
-                #include "GB_bitmap_assign_IxJ_template.c"
+                #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
 
                 // for all of C
                 #undef  GB_CIJ_WORK
@@ -290,7 +290,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                     Cb [pC] = (cb == 3) ;                   \
                     task_cnvals -= (cb == 1) ;              \
                 }
-                #include "GB_bitmap_assign_C_template.c"
+                #include "assign/factory/GB_bitmap_assign_C_template.c"
             }
             else
             { 
@@ -303,7 +303,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                     Cb [pC] = (cb == 4 || cb == 1) ;        \
                     task_cnvals -= (cb == 3) ;              \
                 }
-                #include "GB_bitmap_assign_IxJ_template.c"
+                #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
 
                 // clear M from C 
                 // Cb [pC] %= 2 for each entry M(i,j) in the mask

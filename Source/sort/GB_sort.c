@@ -47,47 +47,47 @@
 
 #define GB_TYPE             bool
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_BOOL)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             int8_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_INT8)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             int16_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_INT16)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             int32_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_INT32)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             int64_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_INT64)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             uint8_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_UINT8)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             uint16_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_UINT16)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             uint32_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_UINT32)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             uint64_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_UINT64)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             float
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_FP32)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             double
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_FP64)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 //------------------------------------------------------------------------------
 // descending sort for built-in types
@@ -99,47 +99,47 @@
 
 #define GB_TYPE             bool
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_BOOL)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             int8_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_INT8)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             int16_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_INT16)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             int32_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_INT32)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             int64_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_INT64)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             uint8_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_UINT8)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             uint16_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_UINT16)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             uint32_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_UINT32)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             uint64_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_UINT64)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             float
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_FP32)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 #define GB_TYPE             double
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_FP64)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 //------------------------------------------------------------------------------
 // macros for user-defined types and when typecasting is performed 
@@ -182,7 +182,7 @@
 #undef  GB_SORT_UDT
 #define GB_SORT_UDT 1
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _UDT)
-#include "GB_sort_template.c"
+#include "sort/factory/GB_sort_template.c"
 
 //------------------------------------------------------------------------------
 // GB_sort

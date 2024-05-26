@@ -24,5 +24,5 @@
 #define GB_B_IS_BITMAP 1
 #define GB_B_IS_FULL   0
 
-#include "GB_AxB_saxpy3_symbolic_template.c"
+#include "mxm/factory/GB_AxB_saxpy3_symbolic_template.c"
 

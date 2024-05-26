@@ -303,7 +303,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
                 semiring, flipxy, &mult_binop_code, &add_binop_code, &xcode,
                 &ycode, &zcode))
             { 
-                #include "GB_AxB_factory.c"
+                #include "mxm/factory/GB_AxB_factory.c"
             }
 
             if (info == GrB_SUCCESS)
@@ -331,7 +331,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         { 
             #define GB_DOT3_GENERIC
             GB_BURBLE_MATRIX (C, "(generic C<M>=A'*B) ") ;
-            #include "GB_AxB_dot_generic.c"
+            #include "mxm/factory/GB_AxB_dot_generic.c"
             info = GrB_SUCCESS ;
         }
     }

@@ -52,7 +52,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             // 6: (plus,times,any) for 2 complex
             #define GB_MNAME _first
             #define GB_COMPLEX
-            #include "GB_AxB_type_factory.c"
+            #include "mxm/factory/GB_AxB_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -65,7 +65,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             // 6: (plus,times,any) for 2 complex
             #define GB_MNAME _second
             #define GB_COMPLEX
-            #include "GB_AxB_type_factory.c"
+            #include "mxm/factory/GB_AxB_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -76,7 +76,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             // MIN == TIMES == AND for boolean
             #define GB_NO_BOOLEAN
             #define GB_MNAME _min
-            #include "GB_AxB_type_factory.c"
+            #include "mxm/factory/GB_AxB_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -87,7 +87,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             // MAX == PLUS == OR for boolean
             #define GB_NO_BOOLEAN
             #define GB_MNAME _max
-            #include "GB_AxB_type_factory.c"
+            #include "mxm/factory/GB_AxB_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -101,7 +101,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             #define GB_NO_BOOLEAN
             #define GB_MNAME _plus
             #define GB_COMPLEX
-            #include "GB_AxB_type_factory.c"
+            #include "mxm/factory/GB_AxB_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -115,7 +115,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             #define GB_NO_BOOLEAN
             #define GB_MNAME _minus
             #define GB_COMPLEX
-            #include "GB_AxB_type_factory.c"
+            #include "mxm/factory/GB_AxB_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -128,7 +128,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             #define GB_NO_BOOLEAN
             #define GB_MNAME _rminus
             #define GB_COMPLEX
-            #include "GB_AxB_type_factory.c"
+            #include "mxm/factory/GB_AxB_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -141,7 +141,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             #define GB_NO_BOOLEAN
             #define GB_MNAME _times
             #define GB_COMPLEX
-            #include "GB_AxB_type_factory.c"
+            #include "mxm/factory/GB_AxB_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -155,7 +155,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             #define GB_NO_BOOLEAN
             #define GB_MNAME _div
             #define GB_COMPLEX
-            #include "GB_AxB_type_factory.c"
+            #include "mxm/factory/GB_AxB_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -169,7 +169,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             #define GB_NO_BOOLEAN
             #define GB_MNAME _rdiv
             #define GB_COMPLEX
-            #include "GB_AxB_type_factory.c"
+            #include "mxm/factory/GB_AxB_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -178,7 +178,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
 
             // 55 semirings: (and,or,xor,eq,any) * 11 types (all but complex)
             #define GB_MNAME _eq
-            #include "GB_AxB_compare_factory.c"
+            #include "mxm/factory/GB_AxB_compare_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -189,7 +189,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             // MINUS == RMINUS == NE == ISNE == XOR for boolean
             #define GB_NO_BOOLEAN
             #define GB_MNAME _ne
-            #include "GB_AxB_compare_factory.c"
+            #include "mxm/factory/GB_AxB_compare_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -198,7 +198,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
 
             // 55 semirings: (and,or,xor,eq,any) * 11 types (all but complex)
             #define GB_MNAME _gt
-            #include "GB_AxB_compare_factory.c"
+            #include "mxm/factory/GB_AxB_compare_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -207,7 +207,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
 
             // 55 semirings: (and,or,xor,eq,any) * 11 types (all but complex)
             #define GB_MNAME _lt
-            #include "GB_AxB_compare_factory.c"
+            #include "mxm/factory/GB_AxB_compare_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -216,7 +216,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
 
             // 55 semirings: (and,or,xor,eq,any) * 11 types (all but complex)
             #define GB_MNAME _ge
-            #include "GB_AxB_compare_factory.c"
+            #include "mxm/factory/GB_AxB_compare_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -225,7 +225,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
 
             // 55 semirings: (and,or,xor,eq,any) * 11 types (all but complex)
             #define GB_MNAME _le
-            #include "GB_AxB_compare_factory.c"
+            #include "mxm/factory/GB_AxB_compare_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -239,7 +239,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             #define GB_MULT_IS_PAIR_OPERATOR
             #define GB_MNAME _pair
             #define GB_COMPLEX
-            #include "GB_AxB_type_factory.c"
+            #include "mxm/factory/GB_AxB_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -251,7 +251,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             // 5 semirings: (lor,land,eq,lxor,any) for boolean
             #define GB_NO_MIN_MAX_ANY_TIMES_MONOIDS
             #define GB_MNAME _lor
-            #include "GB_AxB_type_factory.c"
+            #include "mxm/factory/GB_AxB_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -261,7 +261,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             // 15 semirings: same as LOR
             #define GB_NO_MIN_MAX_ANY_TIMES_MONOIDS
             #define GB_MNAME _land
-            #include "GB_AxB_type_factory.c"
+            #include "mxm/factory/GB_AxB_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -271,7 +271,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             // 15 semirings: same as LOR
             #define GB_NO_MIN_MAX_ANY_TIMES_MONOIDS
             #define GB_MNAME _lxor
-            #include "GB_AxB_type_factory.c"
+            #include "mxm/factory/GB_AxB_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -280,7 +280,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
 
             // 16 semirings: (bor,band,bxor,bxnor) * (uint8,16,32,64)
             #define GB_MNAME _bor
-            #include "GB_AxB_bitwise_factory.c"
+            #include "mxm/factory/GB_AxB_bitwise_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -289,7 +289,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
 
             // 16 semirings: (bor,band,bxor,bxnor) * (uint8,16,32,64)
             #define GB_MNAME _band
-            #include "GB_AxB_bitwise_factory.c"
+            #include "mxm/factory/GB_AxB_bitwise_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -298,7 +298,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
 
             // 16 semirings: (bor,band,bxor,bxnor) * (uint8,16,32,64)
             #define GB_MNAME _bxor
-            #include "GB_AxB_bitwise_factory.c"
+            #include "mxm/factory/GB_AxB_bitwise_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -307,7 +307,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
 
             // 16 semirings: (bor,band,bxor,bxnor) * (uint8,16,32,64)
             #define GB_MNAME _bxnor
-            #include "GB_AxB_bitwise_factory.c"
+            #include "mxm/factory/GB_AxB_bitwise_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -316,7 +316,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
 
             // 10 semirings: (min,max,times,plus,any) * (int32,int64)
             #define GB_MNAME _firsti
-            #include "GB_AxB_positional_factory.c"
+            #include "mxm/factory/GB_AxB_positional_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -325,7 +325,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
 
             // 10 semirings: (min,max,times,plus,any) * (int32,int64)
             #define GB_MNAME _firsti1
-            #include "GB_AxB_positional_factory.c"
+            #include "mxm/factory/GB_AxB_positional_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -336,7 +336,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             // 10 semirings: (min,max,times,plus,any) * (int32,int64)
             // FIRSTJ and SECONDI are identical when used in a semiring
             #define GB_MNAME _firstj
-            #include "GB_AxB_positional_factory.c"
+            #include "mxm/factory/GB_AxB_positional_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -347,7 +347,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
             // 10 semirings: (min,max,times,plus,any) * (int32,int64)
             // FIRSTJ1 and SECONDI1 are identical when used in a semiring
             #define GB_MNAME _firstj1
-            #include "GB_AxB_positional_factory.c"
+            #include "mxm/factory/GB_AxB_positional_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -356,7 +356,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
 
             // 10 semirings: (min,max,times,plus,any) * (int32,int64)
             #define GB_MNAME _secondj
-            #include "GB_AxB_positional_factory.c"
+            #include "mxm/factory/GB_AxB_positional_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -365,7 +365,7 @@ ASSERT (mult_binop_code != GB_ANY_binop_code) ;
 
             // 10 semirings: (min,max,times,plus,any) * (int32,int64)
             #define GB_MNAME _secondj1
-            #include "GB_AxB_positional_factory.c"
+            #include "mxm/factory/GB_AxB_positional_factory.c"
             break ;
 
         default: ;

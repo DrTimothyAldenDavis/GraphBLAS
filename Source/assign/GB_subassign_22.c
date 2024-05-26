@@ -128,7 +128,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
             accum, false, &opcode, &xcode, &ycode, &zcode))
         { 
             // accumulate sparse matrix into full matrix with built-in operator
-            #include "GB_binop_factory.c"
+            #include "binaryop/factory/GB_binop_factory.c"
         }
     }
     #endif

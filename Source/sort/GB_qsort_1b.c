@@ -46,7 +46,7 @@
 #define GB_partition GB_partition_1b
 #define GB_quicksort GB_quicksort_1b
 
-#include "GB_qsort_template.c"
+#include "sort/factory/GB_qsort_template.c"
 
 void GB_qsort_1b    // sort array A of size 2-by-n, using 1 key (A [0][])
 (
@@ -97,7 +97,7 @@ void GB_qsort_1b    // sort array A of size 2-by-n, using 1 key (A [0][])
 #undef  GB_quicksort
 #define GB_quicksort GB_quicksort_1b_size1
 
-#include "GB_qsort_template.c"
+#include "sort/factory/GB_qsort_template.c"
 
 void GB_qsort_1b_size1  // GB_qsort_1b with A_1 with sizeof = 1
 (
@@ -123,7 +123,7 @@ void GB_qsort_1b_size1  // GB_qsort_1b with A_1 with sizeof = 1
 #undef  GB_quicksort
 #define GB_quicksort GB_quicksort_1b_size2
 
-#include "GB_qsort_template.c"
+#include "sort/factory/GB_qsort_template.c"
 
 void GB_qsort_1b_size2  // GB_qsort_1b with A_1 with sizeof = 2
 (
@@ -150,7 +150,7 @@ void GB_qsort_1b_size2  // GB_qsort_1b with A_1 with sizeof = 2
 #undef  GB_quicksort
 #define GB_quicksort GB_quicksort_1b_size4
 
-#include "GB_qsort_template.c"
+#include "sort/factory/GB_qsort_template.c"
 
 void GB_qsort_1b_size4  // GB_qsort_1b with A_1 with sizeof = 4
 (
@@ -177,7 +177,7 @@ void GB_qsort_1b_size4  // GB_qsort_1b with A_1 with sizeof = 4
 #undef  GB_quicksort
 #define GB_quicksort GB_quicksort_1b_size8
 
-#include "GB_qsort_template.c"
+#include "sort/factory/GB_qsort_template.c"
 
 void GB_qsort_1b_size8  // GB_qsort_1b with A_1 with sizeof = 8
 (
@@ -203,7 +203,7 @@ void GB_qsort_1b_size8  // GB_qsort_1b with A_1 with sizeof = 8
 #undef  GB_quicksort
 #define GB_quicksort GB_quicksort_1b_size16
 
-#include "GB_qsort_template.c"
+#include "sort/factory/GB_qsort_template.c"
 
 void GB_qsort_1b_size16 // GB_qsort_1b with A_1 with sizeof = 16
 (

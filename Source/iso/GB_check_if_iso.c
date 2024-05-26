@@ -89,23 +89,23 @@ bool GB_check_if_iso        // return true if A is iso, false otherwise
         {
             case GB_1BYTE : // uint8, int8, bool, or 1-byte user
                 #define GB_A_TYPE uint8_t
-                #include "GB_check_if_iso_template.c"
+                #include "iso/factory/GB_check_if_iso_template.c"
                 break ;
 
             case GB_2BYTE : // uint16, int16, or 2-byte user
                 #define GB_A_TYPE uint16_t
-                #include "GB_check_if_iso_template.c"
+                #include "iso/factory/GB_check_if_iso_template.c"
                 break ;
 
             case GB_4BYTE : // uint32, int32, float, or 4-byte user
                 #define GB_A_TYPE uint32_t
-                #include "GB_check_if_iso_template.c"
+                #include "iso/factory/GB_check_if_iso_template.c"
                 break ;
 
             case GB_8BYTE : // uint64, int64, double, float complex,
                             // or 8-byte user defined
                 #define GB_A_TYPE uint64_t
-                #include "GB_check_if_iso_template.c"
+                #include "iso/factory/GB_check_if_iso_template.c"
                 break ;
 
             case GB_16BYTE : // double complex or 16-byte user
@@ -118,7 +118,7 @@ bool GB_check_if_iso        // return true if A is iso, false otherwise
                 #define GB_COMPARE_WITH_FIRST_VALUE(my_iso, a, Ax, p)   \
                     my_iso = my_iso & (a ## 0 == Ax [2*p  ])            \
                                     & (a ## 1 == Ax [2*p+1])
-                #include "GB_check_if_iso_template.c"
+                #include "iso/factory/GB_check_if_iso_template.c"
                 break ;
 
             default:;
@@ -138,7 +138,7 @@ bool GB_check_if_iso        // return true if A is iso, false otherwise
         #undef  GB_COMPARE_WITH_FIRST_VALUE
         #define GB_COMPARE_WITH_FIRST_VALUE(my_iso, a, Ax, p)           \
             my_iso = my_iso & (memcmp (a, Ax + (p)*asize, asize) == 0)
-        #include "GB_check_if_iso_template.c"
+        #include "iso/factory/GB_check_if_iso_template.c"
     }
 
     return (iso) ;

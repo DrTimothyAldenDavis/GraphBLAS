@@ -251,7 +251,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
                 op, false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
             { 
                 #define GB_NO_PAIR
-                #include "GB_binop_factory.c"
+                #include "binaryop/factory/GB_binop_factory.c"
             }
         }
         #endif

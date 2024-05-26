@@ -240,7 +240,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 GB_Type_code typecode = A->type->code ;
                 ASSERT (typecode <= GB_UDT_code) ;
 
-                #include "GB_red_factory.c"
+                #include "reduce/factory/GB_red_factory.c"
             }
             #endif
         }

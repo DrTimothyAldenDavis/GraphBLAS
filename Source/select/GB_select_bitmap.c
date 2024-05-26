@@ -129,7 +129,7 @@ GrB_Info GB_select_bitmap
             }                                                           \
             break ;
 
-            #include "GB_select_entry_factory.c"
+            #include "select/factory/GB_select_entry_factory.c"
         }
         #endif
 

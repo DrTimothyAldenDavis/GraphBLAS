@@ -196,11 +196,11 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
             // C must be iso; copy its iso value into R
             memcpy (R->x, C->x, czsize) ;
         }
-        #include "GB_masker_template.c"
+        #include "mask/factory/GB_masker_template.c"
     }
     else
     { 
-        #include "GB_masker_template.c"
+        #include "mask/factory/GB_masker_template.c"
     }
 
     //--------------------------------------------------------------------------

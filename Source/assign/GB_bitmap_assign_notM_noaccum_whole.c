@@ -128,7 +128,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                     default: ;                                      \
                 }                                                   \
             }
-            #include "GB_bitmap_assign_C_whole_template.c"
+            #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
 
         }
         else
@@ -164,7 +164,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                     default: ;                                      \
                 }                                                   \
             }
-            #include "GB_bitmap_assign_C_whole_template.c"
+            #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
         }
 
     }
@@ -228,7 +228,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                         default: ;                                            \
                     }                                                         \
                 }
-                #include "GB_bitmap_assign_C_whole_template.c"
+                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
 
             }
             else
@@ -276,7 +276,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                         default: ;                                            \
                     }                                                         \
                 }
-                #include "GB_bitmap_assign_C_whole_template.c"
+                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
             }
 
         }
@@ -300,7 +300,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                     task_cnvals += (cb == 0) ;                          \
                 }                                                       \
             }
-            #include "GB_bitmap_assign_A_whole_template.c"
+            #include "assign/factory/GB_bitmap_assign_A_whole_template.c"
 
             // clear the mask and delete entries not assigned
             if (C_replace)
@@ -312,7 +312,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                     Cb [pC] = (cb == 4) ;                   \
                     task_cnvals -= (cb == 1 || cb == 3) ;   \
                 }
-                #include "GB_bitmap_assign_C_whole_template.c"
+                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
             }
             else
             { 
@@ -323,7 +323,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                     Cb [pC] = (cb == 4 || cb == 3) ;        \
                     task_cnvals -= (cb == 1) ;              \
                 }
-                #include "GB_bitmap_assign_C_whole_template.c"
+                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
             }
         }
     }

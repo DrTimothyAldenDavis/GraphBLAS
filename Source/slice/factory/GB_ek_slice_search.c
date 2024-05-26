@@ -9,7 +9,7 @@
 
 #ifndef GB_EK_SLICE_SEARCH_H
 #define GB_EK_SLICE_SEARCH_H
-#include "GB_search_for_vector_template.c"
+#include "slice/factory/GB_search_for_vector_template.c"
 
 static inline void GB_ek_slice_search
 (

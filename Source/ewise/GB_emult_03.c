@@ -290,7 +290,7 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
             { 
                 #define GB_NO_PAIR
                 #define GB_NO_COMMUTATIVE_BINARY_OPS
-                #include "GB_binop_factory.c"
+                #include "binaryop/factory/GB_binop_factory.c"
             }
         }
         #endif

@@ -242,7 +242,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
                 // C=D*B, rowscale with built-in operator
                 #define GB_BINOP_IS_SEMIRING_MULTIPLIER
                 #define GB_NO_PAIR
-                #include "GB_binop_factory.c"
+                #include "binaryop/factory/GB_binop_factory.c"
                 #undef  GB_BINOP_IS_SEMIRING_MULTIPLIER
             }
         }

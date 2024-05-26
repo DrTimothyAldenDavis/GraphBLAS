@@ -37,7 +37,7 @@
 #define GB_partition GB_partition_1
 #define GB_quicksort GB_quicksort_1
 
-#include "GB_qsort_template.c"
+#include "sort/factory/GB_qsort_template.c"
 
 GB_CALLBACK_QSORT_1_PROTO (GB_qsort_1)
 { 

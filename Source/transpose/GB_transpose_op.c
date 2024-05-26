@@ -284,7 +284,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
                     #define GB_NO_FIRST
                     #define GB_NO_SECOND
                     #define GB_NO_PAIR
-                    #include "GB_binop_factory.c"
+                    #include "binaryop/factory/GB_binop_factory.c"
                 }
             }
             #endif
@@ -335,7 +335,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
                     #define GB_NO_FIRST
                     #define GB_NO_SECOND
                     #define GB_NO_PAIR
-                    #include "GB_binop_factory.c"
+                    #include "binaryop/factory/GB_binop_factory.c"
                 }
             }
             #endif

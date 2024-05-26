@@ -20,5 +20,5 @@
 #define GB_GENERIC_OP_IS_FIRST                 0
 #define GB_GENERIC_OP_IS_SECOND                1
 
-#include "GB_AxB_saxpy_generic_method.c"
+#include "mxm/factory/GB_AxB_saxpy_generic_method.c"
 

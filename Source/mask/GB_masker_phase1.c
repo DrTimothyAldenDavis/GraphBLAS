@@ -97,7 +97,7 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     //--------------------------------------------------------------------------
 
     #define GB_PHASE_1_OF_2
-    #include "GB_masker_template.c"
+    #include "mask/factory/GB_masker_template.c"
 
     //--------------------------------------------------------------------------
     // cumulative sum of Rp and fine tasks in TaskList

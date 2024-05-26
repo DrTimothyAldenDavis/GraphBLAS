@@ -390,7 +390,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
                     // eWiseUnion is like emult: the pair results in C being iso
                     #define GB_NO_PAIR
-                    #include "GB_binop_factory.c"
+                    #include "binaryop/factory/GB_binop_factory.c"
 
                 }
                 else
@@ -415,7 +415,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                     // launch the switch factory
                     //----------------------------------------------------------
 
-                    #include "GB_binop_factory.c"
+                    #include "binaryop/factory/GB_binop_factory.c"
                 }
             }
         }

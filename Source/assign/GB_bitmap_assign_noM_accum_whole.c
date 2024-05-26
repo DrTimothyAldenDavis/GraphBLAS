@@ -110,7 +110,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
             }
             if (!C_iso)
             {
-                #include "GB_bitmap_assign_C_whole_template.c"
+                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
             }
 
             // free the bitmap or set it to all ones
@@ -149,7 +149,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                 }
                 if (!C_iso)
                 {
-                    #include "GB_bitmap_assign_C_whole_template.c"
+                    #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
                 }
 
                 // free the bitmap or set it to all ones
@@ -183,7 +183,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                         }                                                      \
                     }                                                          \
                 }
-                #include "GB_bitmap_assign_C_whole_template.c"
+                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
                 C->nvals = cnvals ;
 
             }
@@ -211,7 +211,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                         GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork) ;  \
                     }                                                       \
                 }
-                #include "GB_bitmap_assign_A_whole_template.c"
+                #include "assign/factory/GB_bitmap_assign_A_whole_template.c"
                 C->nvals = cnvals ;
             }
         }

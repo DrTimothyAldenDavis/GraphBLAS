@@ -108,7 +108,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
                 Cb [pC] = 0 ;                       \
                 task_cnvals -= (cb == 1) ;          \
             }
-            #include "GB_bitmap_assign_C_template.c"
+            #include "assign/factory/GB_bitmap_assign_C_template.c"
         }
     }
 
@@ -136,7 +136,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
                 Cb [pC] = 1 ;                           \
                 task_cnvals += (cb == 0) ;              \
             }
-            #include "GB_bitmap_assign_IxJ_template.c"
+            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
 
         }
         else
@@ -156,7 +156,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
                     Cb [pC] = 0 ;                       \
                     task_cnvals -= (cb == 1) ;          \
                 }
-                #include "GB_bitmap_assign_IxJ_template.c"
+                #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
             }
 
             // for all entries aij in A (A hyper, sparse, bitmap, or full)
@@ -170,7 +170,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
                 GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
                 Cb [pC] = 1 ;                                       \
             }
-            #include "GB_bitmap_assign_A_template.c"
+            #include "assign/factory/GB_bitmap_assign_A_template.c"
 
             cnvals += GB_nnz (A) ;
         }

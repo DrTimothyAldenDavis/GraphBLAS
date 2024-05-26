@@ -39,7 +39,7 @@
 #define GB_partition GB_partition_2
 #define GB_quicksort GB_quicksort_2
 
-#include "GB_qsort_template.c"
+#include "sort/factory/GB_qsort_template.c"
 
 void GB_qsort_2     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (

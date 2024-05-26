@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "GB.h"
-#include "GB_search_for_vector_template.c"
+#include "slice/factory/GB_search_for_vector_template.c"
 
 //------------------------------------------------------------------------------
 // GxB_Matrix_Iterator_attach: attach an entry iterator to a matrix

@@ -202,7 +202,7 @@ GrB_Info GB_select_sparse
             break ;
 
             // launch the switch factory
-            #include "GB_select_entry_factory.c"
+            #include "select/factory/GB_select_entry_factory.c"
             #undef  GB_SEL_WORKER
         }
         #endif
@@ -316,7 +316,7 @@ GrB_Info GB_select_sparse
             break ;
 
             // launch the switch factory
-            #include "GB_select_entry_factory.c"
+            #include "select/factory/GB_select_entry_factory.c"
         }
         #endif
 

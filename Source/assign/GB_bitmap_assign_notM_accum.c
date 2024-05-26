@@ -116,7 +116,7 @@ GrB_Info GB_bitmap_assign_notM_accum
                 GB_ACCUMULATE_scalar (Cx, pC, ywork) ;  \
             }                                           \
         }
-        #include "GB_bitmap_assign_IxJ_template.c"
+        #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
 
     }
     else
@@ -153,7 +153,7 @@ GrB_Info GB_bitmap_assign_notM_accum
                 GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork) ;  \
             }                                                       \
         }
-        #include "GB_bitmap_assign_A_template.c"
+        #include "assign/factory/GB_bitmap_assign_A_template.c"
     }
 
     //--------------------------------------------------------------------------
@@ -182,7 +182,7 @@ GrB_Info GB_bitmap_assign_notM_accum
             task_cnvals -= (cb == 3) ;          \
             Cb [pC] = 0 ;                       \
         }
-        #include "GB_bitmap_assign_M_template.c"
+        #include "assign/factory/GB_bitmap_assign_M_template.c"
     }
 
     //--------------------------------------------------------------------------

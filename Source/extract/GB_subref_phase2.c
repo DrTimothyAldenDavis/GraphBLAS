@@ -78,13 +78,13 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
         #define GB_SYMBOLIC
         // symbolic extraction must handle zombies
         const int64_t nzombies = A->nzombies ;
-        #include "GB_subref_template.c"
+        #include "extract/factory/GB_subref_template.c"
     }
     else
     { 
         // iso and non-iso numeric extraction do not see zombies
         ASSERT (!GB_ZOMBIES (A)) ;
-        #include "GB_subref_template.c"
+        #include "extract/factory/GB_subref_template.c"
     }
 
     //--------------------------------------------------------------------------

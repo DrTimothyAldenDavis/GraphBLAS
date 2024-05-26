@@ -455,7 +455,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
                 semiring, flipxy, &mult_binop_code, &add_binop_code, &xcode,
                 &ycode, &zcode))
             { 
-                #include "GB_AxB_factory.c"
+                #include "mxm/factory/GB_AxB_factory.c"
             }
             ASSERT (info == GrB_SUCCESS || info == GrB_NO_VALUE) ;
         }
@@ -494,7 +494,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
                 (M == NULL) ? "" : (Mask_comp ? "<!M>" : "<M>"),
                 A_not_transposed ? "" : "'",
                 (C_sparsity == GxB_BITMAP) ? "bitmap" : "full") ;
-            #include "GB_AxB_dot_generic.c"
+            #include "mxm/factory/GB_AxB_dot_generic.c"
             info = GrB_SUCCESS ;
         }
     }

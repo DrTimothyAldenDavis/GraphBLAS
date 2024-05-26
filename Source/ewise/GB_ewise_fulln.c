@@ -129,7 +129,7 @@ GrB_Info GB_ewise_fulln      // C = A+B
         if (GB_binop_builtin (A->type, false, B->type, false,
             op, false, &opcode, &xcode, &ycode, &zcode))
         { 
-            #include "GB_binop_factory.c"
+            #include "binaryop/factory/GB_binop_factory.c"
         }
     }
     #endif

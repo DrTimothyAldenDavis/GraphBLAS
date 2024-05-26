@@ -60,7 +60,7 @@
 #include "GB_ek_slice.h"
 #include "GB_binop.h"
 #include "GB_sort.h"
-#include "GB_ek_slice_search.c"
+#include "slice/factory/GB_ek_slice_search.c"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_mxm_shared_definitions.h"
 #include "GB_AxB_saxpy_generic.h"
@@ -252,7 +252,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
                 // GB_FIRSTI1_binop_code  :   // z = first_i1(A(i,k),y) == i+1
                 #undef  GB_MULT
                 #define GB_MULT(t, aik, bkj, i, k, j) t = i + offset
-                #include "GB_AxB_saxpy_generic_template.c"
+                #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
             }
             #elif GB_GENERIC_OP_IS_FIRSTJ
             { 
@@ -262,7 +262,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
                 // GB_SECONDI1_binop_code :   // z = second_i1(x,B(k,j))== k+1
                 #undef  GB_MULT
                 #define GB_MULT(t, aik, bkj, i, k, j) t = k + offset
-                #include "GB_AxB_saxpy_generic_template.c"
+                #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
             }
             #else
             { 
@@ -270,7 +270,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
                 // GB_SECONDJ1_binop_code :   // z = second_j1(x,B(k,j))== j+1
                 #undef  GB_MULT
                 #define GB_MULT(t, aik, bkj, i, k, j) t = j + offset
-                #include "GB_AxB_saxpy_generic_template.c"
+                #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
             }
             #endif
         }
@@ -290,7 +290,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
                 // GB_FIRSTI1_binop_code  :   // z = first_i1(A(i,k),y) == i+1
                 #undef  GB_MULT
                 #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (i + offset)
-                #include "GB_AxB_saxpy_generic_template.c"
+                #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
             }
             #elif GB_GENERIC_OP_IS_FIRSTJ
             { 
@@ -300,7 +300,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
                 // GB_SECONDI1_binop_code :   // z = second_i1(x,B(k,j))== k+1
                 #undef  GB_MULT
                 #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (k + offset)
-                #include "GB_AxB_saxpy_generic_template.c"
+                #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
             }
             #else
             { 
@@ -308,7 +308,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
                 // GB_SECONDJ1_binop_code :   // z = second_j1(x,B(k,j))== j+1
                 #undef  GB_MULT
                 #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (j + offset)
-                #include "GB_AxB_saxpy_generic_template.c"
+                #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
             }
             #endif
         }
@@ -405,7 +405,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
             ASSERT (B_is_pattern) ;
             #undef  GB_MULT
             #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, aik, csize)
-            #include "GB_AxB_saxpy_generic_template.c"
+            #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
         }
         #elif GB_GENERIC_OP_IS_SECOND
         { 
@@ -413,7 +413,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
             ASSERT (A_is_pattern) ;
             #undef  GB_MULT
             #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, bkj, csize)
-            #include "GB_AxB_saxpy_generic_template.c"
+            #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
         }
         #elif GB_GENERIC_FLIPXY
         { 
@@ -421,7 +421,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
             ASSERT (fmult != NULL) ;
             #undef  GB_MULT
             #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, bkj, aik)
-            #include "GB_AxB_saxpy_generic_template.c"
+            #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
         }
         #else
         { 
@@ -429,7 +429,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
             ASSERT (fmult != NULL) ;
             #undef  GB_MULT
             #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, aik, bkj)
-            #include "GB_AxB_saxpy_generic_template.c"
+            #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
         }
         #endif
     }

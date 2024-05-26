@@ -574,7 +574,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                         #define GB_NO_FIRST
                         #define GB_NO_SECOND
                         #define GB_NO_PAIR
-                        #include "GB_binop_factory.c"
+                        #include "binaryop/factory/GB_binop_factory.c"
                     }
                 }
             }
@@ -638,7 +638,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                         #define GB_NO_FIRST
                         #define GB_NO_SECOND
                         #define GB_NO_PAIR
-                        #include "GB_binop_factory.c"
+                        #include "binaryop/factory/GB_binop_factory.c"
                     }
                 }
             }

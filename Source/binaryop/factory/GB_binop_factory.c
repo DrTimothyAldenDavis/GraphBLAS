@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_binop_factory: switch factory for built-in methods for C=binop(A,B)
+// GB_binop_factory.c: switch factory for built-in methods for C=binop(A,B)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.

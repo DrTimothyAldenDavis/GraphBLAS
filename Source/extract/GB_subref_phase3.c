@@ -139,7 +139,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
         #define GB_CSIZE1 1
         #define GB_CSIZE2 (sizeof (int64_t))
         #define GB_SYMBOLIC
-        #include "GB_subref_template.c"
+        #include "extract/factory/GB_subref_template.c"
 
     }
     else if (C_iso)
@@ -154,7 +154,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
         #define GB_COPY_RANGE(pC,pA,len) ;
         #define GB_COPY_ENTRY(pC,pA) ;
         #define GB_ISO_SUBREF
-        #include "GB_subref_template.c"
+        #include "extract/factory/GB_subref_template.c"
 
     }
     else
@@ -178,7 +178,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
             memcpy (Cx + (pC)*asize, Ax + (pA)*asize, asize) ;
         #define GB_CSIZE1 asize
         #define GB_CSIZE2 asize
-        #include "GB_subref_template.c"
+        #include "extract/factory/GB_subref_template.c"
     }
 
     //--------------------------------------------------------------------------

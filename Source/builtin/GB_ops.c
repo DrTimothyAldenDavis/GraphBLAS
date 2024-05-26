@@ -411,76 +411,76 @@ GXB_SEL (LE_THUNK , "le_thunk") ;
 
 #define GB_TYPE             bool
 #define GB_XTYPE            BOOL
-#include "GB_ops_template.c"
+#include "builtin/factory/GB_ops_template.c"
 
 #define GB_TYPE             int8_t
 #define GB_XTYPE            INT8
 #define GB_SIGNED_INT
-#include "GB_ops_template.c"
+#include "builtin/factory/GB_ops_template.c"
 
 #define GB_TYPE             uint8_t
 #define GB_XTYPE            UINT8
 #define GB_UNSIGNED_INT
-#include "GB_ops_template.c"
+#include "builtin/factory/GB_ops_template.c"
 
 #define GB_TYPE             int16_t
 #define GB_XTYPE            INT16
 #define GB_SIGNED_INT
-#include "GB_ops_template.c"
+#include "builtin/factory/GB_ops_template.c"
 
 #define GB_TYPE             uint16_t
 #define GB_XTYPE            UINT16
 #define GB_UNSIGNED_INT
-#include "GB_ops_template.c"
+#include "builtin/factory/GB_ops_template.c"
 
 #define GB_TYPE             int32_t
 #define GB_XTYPE            INT32
 #define GB_SIGNED_INT
 #define GB_SIGNED_INDEX
-#include "GB_ops_template.c"
+#include "builtin/factory/GB_ops_template.c"
 
 #define GB_TYPE             uint32_t
 #define GB_XTYPE            UINT32
 #define GB_UNSIGNED_INT
-#include "GB_ops_template.c"
+#include "builtin/factory/GB_ops_template.c"
 
 #define GB_TYPE             int64_t
 #define GB_XTYPE            INT64
 #define GB_SIGNED_INT
 #define GB_SIGNED_INDEX
 #define GB_SIGNED_INDEX64
-#include "GB_ops_template.c"
+#include "builtin/factory/GB_ops_template.c"
 
 #define GB_TYPE             uint64_t
 #define GB_XTYPE            UINT64
 #define GB_UNSIGNED_INT
-#include "GB_ops_template.c"
+#include "builtin/factory/GB_ops_template.c"
 
 #define GB_TYPE             float
 #define GB_XTYPE            FP32
 #define GB_FLOAT
 #define GB_FLOATING_POINT
-#include "GB_ops_template.c"
+#include "builtin/factory/GB_ops_template.c"
 
 #define GB_TYPE             double
 #define GB_XTYPE            FP64
 #define GB_DOUBLE
 #define GB_FLOATING_POINT
-#include "GB_ops_template.c"
+#include "builtin/factory/GB_ops_template.c"
 
 #define GB_TYPE             GxB_FC32_t
 #define GB_XTYPE            FC32
 #define GB_FLOAT_COMPLEX
 #define GB_COMPLEX
 #define GB_FLOATING_POINT
-#include "GB_ops_template.c"
+#include "builtin/factory/GB_ops_template.c"
 
 #define GB_TYPE             GxB_FC64_t
 #define GB_XTYPE            FC64
 #define GB_DOUBLE_COMPLEX
 #define GB_COMPLEX
 #define GB_FLOATING_POINT
-#include "GB_ops_template.c"
+#include "builtin/factory/GB_ops_template.c"
 
 //------------------------------------------------------------------------------
 // special cases for functions and operators
@@ -802,51 +802,51 @@ GB_MONOID_DEF  ( BXNOR_UINT64 , uint64_t  , 0xFFFFFFFFFFFFFFFF )
 
 #define GB_XTYPE    BOOL
 #define GB_BOOLEAN
-#include "GB_semiring_template.c"
+#include "builtin/factory/GB_semiring_template.c"
 
 #define GB_XTYPE    INT8
-#include "GB_semiring_template.c"
+#include "builtin/factory/GB_semiring_template.c"
 
 #define GB_XTYPE    UINT8
 #define GB_UNSIGNED_INT
-#include "GB_semiring_template.c"
+#include "builtin/factory/GB_semiring_template.c"
 
 #define GB_XTYPE    INT16
-#include "GB_semiring_template.c"
+#include "builtin/factory/GB_semiring_template.c"
 
 #define GB_XTYPE    UINT16
 #define GB_UNSIGNED_INT
-#include "GB_semiring_template.c"
+#include "builtin/factory/GB_semiring_template.c"
 
 #define GB_XTYPE    INT32
 #define GB_POSITIONAL
-#include "GB_semiring_template.c"
+#include "builtin/factory/GB_semiring_template.c"
 
 #define GB_UNSIGNED_INT
 #define GB_XTYPE    UINT32
-#include "GB_semiring_template.c"
+#include "builtin/factory/GB_semiring_template.c"
 
 #define GB_POSITIONAL
 #define GB_XTYPE    INT64
-#include "GB_semiring_template.c"
+#include "builtin/factory/GB_semiring_template.c"
 
 #define GB_UNSIGNED_INT
 #define GB_XTYPE    UINT64
-#include "GB_semiring_template.c"
+#include "builtin/factory/GB_semiring_template.c"
 
 #define GB_XTYPE    FP32
-#include "GB_semiring_template.c"
+#include "builtin/factory/GB_semiring_template.c"
 
 #define GB_XTYPE    FP64
-#include "GB_semiring_template.c"
+#include "builtin/factory/GB_semiring_template.c"
 
 #define GB_COMPLEX
 #define GB_XTYPE    FC32
-#include "GB_semiring_template.c"
+#include "builtin/factory/GB_semiring_template.c"
 
 #define GB_COMPLEX
 #define GB_XTYPE    FC64
-#include "GB_semiring_template.c"
+#include "builtin/factory/GB_semiring_template.c"
 
 //------------------------------------------------------------------------------
 // 124 predefined built-in semirings in the v1.3 C API

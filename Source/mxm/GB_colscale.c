@@ -261,7 +261,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
                 // C=A*D, colscale with built-in operator
                 #define GB_BINOP_IS_SEMIRING_MULTIPLIER
                 #define GB_NO_PAIR
-                #include "GB_binop_factory.c"
+                #include "binaryop/factory/GB_binop_factory.c"
                 #undef  GB_BINOP_IS_SEMIRING_MULTIPLIER
             }
         }

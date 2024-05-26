@@ -648,7 +648,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
             if (builtin_semiring)
             { 
-                #include "GB_AxB_factory.c"
+                #include "mxm/factory/GB_AxB_factory.c"
             }
         }
         #endif

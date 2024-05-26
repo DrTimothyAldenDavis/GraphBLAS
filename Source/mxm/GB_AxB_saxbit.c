@@ -302,7 +302,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
                 semiring, flipxy, &mult_binop_code, &add_binop_code, &xcode,
                 &ycode, &zcode))
             { 
-                #include "GB_AxB_factory.c"
+                #include "mxm/factory/GB_AxB_factory.c"
             }
         }
         #endif

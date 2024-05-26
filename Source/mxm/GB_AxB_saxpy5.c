@@ -183,7 +183,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
         #define GB_NO_ANY_MONOID
         if (builtin_semiring)
         {
-            #include "GB_AxB_factory.c"
+            #include "mxm/factory/GB_AxB_factory.c"
         }
     }
     #endif

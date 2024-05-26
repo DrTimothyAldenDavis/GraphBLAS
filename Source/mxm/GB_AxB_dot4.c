@@ -250,7 +250,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
 
         // disabled the ANY monoid
         #define GB_NO_ANY_MONOID
-        #include "GB_AxB_factory.c"
+        #include "mxm/factory/GB_AxB_factory.c"
     }
     #endif
 

@@ -159,7 +159,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
                         GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
                         Cb [pC] = 1 ;                                       \
                     }
-                    #include "GB_bitmap_assign_A_whole_template.c"
+                    #include "assign/factory/GB_bitmap_assign_A_whole_template.c"
                     C->nvals = GB_nnz (A) ;
                 }
             }
