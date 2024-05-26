@@ -152,7 +152,7 @@
                     #endif
                     { 
                         // C(i,j) = A(:,i)'*B(:,j)
-                        #include "GB_AxB_dot_cij.c"
+                        #include "template/GB_AxB_dot_cij.c"
                     }
                 }
 

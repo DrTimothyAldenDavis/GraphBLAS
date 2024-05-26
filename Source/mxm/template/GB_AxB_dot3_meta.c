@@ -16,7 +16,7 @@
 #define GB_DOT3_PHASE2
 
 #include "GB_unused.h"
-#include "GB_AxB_dot_cij.h"
+#include "template/GB_AxB_dot_cij.h"
 
 // GB_DOT_ALWAYS_SAVE_CIJ: C(i,j) = cij
 #if GB_CIJ_CHECK
@@ -154,8 +154,8 @@
     {
         GB_DECLARE_TERMINAL_CONST (zterminal) ;
         #define GB_META16
-        #include "GB_meta16_definitions.h"
-        #include "GB_AxB_dot3_template.c"
+        #include "template/GB_meta16_definitions.h"
+        #include "template/GB_AxB_dot3_template.c"
     }
     #else
     {
@@ -174,14 +174,14 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-            #include "GB_AxB_dot3_template.c"
+            #include "template/GB_AxB_dot3_template.c"
             #undef  GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED
         }
         else
         { 
             // general case
             const size_t msize = M->type->size ;
-            #include "GB_meta16_factory.c"
+            #include "template/GB_meta16_factory.c"
         }
     }
     #endif

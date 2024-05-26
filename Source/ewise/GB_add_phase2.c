@@ -343,7 +343,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         // are used, and the operator is not used.
         #define GB_ISO_ADD
         #define GB_IS_EWISEUNION 0
-        #include "GB_add_template.c"
+        #include "template/GB_add_template.c"
         info = GrB_SUCCESS ;
 
     }
@@ -534,12 +534,12 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                 if (is_eWiseUnion)
                 { 
                     #define GB_IS_EWISEUNION 1
-                    #include "GB_add_template.c"
+                    #include "template/GB_add_template.c"
                 }
                 else
                 { 
                     #define GB_IS_EWISEUNION 0
-                    #include "GB_add_template.c"
+                    #include "template/GB_add_template.c"
                 }
             }
             else
@@ -558,12 +558,12 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                 if (is_eWiseUnion)
                 { 
                     #define GB_IS_EWISEUNION 1
-                    #include "GB_add_template.c"
+                    #include "template/GB_add_template.c"
                 }
                 else
                 { 
                     #define GB_IS_EWISEUNION 0
-                    #include "GB_add_template.c"
+                    #include "template/GB_add_template.c"
                 }
             }
 
@@ -599,12 +599,12 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             if (is_eWiseUnion)
             { 
                 #define GB_IS_EWISEUNION 1
-                #include "GB_add_template.c"
+                #include "template/GB_add_template.c"
             }
             else
             { 
                 #define GB_IS_EWISEUNION 0
-                #include "GB_add_template.c"
+                #include "template/GB_add_template.c"
             }
         }
         info = GrB_SUCCESS ;

@@ -61,17 +61,17 @@
         #if GB_NO_MASK
         {
             // C=A.*B; C bitmap, M not present, A and B are bitmap/full
-            #include "GB_emult_bitmap_5.c"
+            #include "template/GB_emult_bitmap_5.c"
         }
         #elif GB_M_IS_SPARSE || GB_M_IS_HYPER
         {
             // C<!M>=A.*B; C bitmap, M sparse/hyper, A and B are bitmap/full
-            #include "GB_emult_bitmap_6.c"
+            #include "template/GB_emult_bitmap_6.c"
         }
         #else
         {
             // C<#M>=A.*B; C bitmap; M, A, and B are all bitmap/full
-            #include "GB_emult_bitmap_7.c"
+            #include "template/GB_emult_bitmap_7.c"
         }
         #endif
     }
@@ -80,17 +80,17 @@
         if (M == NULL)
         { 
             // C=A.*B; C bitmap, M not present, A and B are bitmap/full
-            #include "GB_emult_bitmap_5.c"
+            #include "template/GB_emult_bitmap_5.c"
         }
         else if (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M))
         { 
             // C<!M>=A.*B; C bitmap, M sparse/hyper, A and B are bitmap/full
-            #include "GB_emult_bitmap_6.c"
+            #include "template/GB_emult_bitmap_6.c"
         }
         else
         { 
             // C<#M>=A.*B; C bitmap; M, A, and B are all bitmap/full
-            #include "GB_emult_bitmap_7.c"
+            #include "template/GB_emult_bitmap_7.c"
         }
     }
     #endif

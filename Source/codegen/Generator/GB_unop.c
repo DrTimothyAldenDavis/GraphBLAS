@@ -56,7 +56,7 @@ GrB_Info GB (_unop_apply)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_apply_unop_template.c"
+    #include "template/GB_apply_unop_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

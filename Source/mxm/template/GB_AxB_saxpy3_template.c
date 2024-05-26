@@ -172,17 +172,17 @@
             #if ( GB_NO_MASK )
             { 
                 // phase2: fine Gustavson task, C(:,j)=A*B(:,j)
-                #include "GB_AxB_saxpy3_fineGus_phase2.c"
+                #include "template/GB_AxB_saxpy3_fineGus_phase2.c"
             }
             #elif ( !GB_MASK_COMP )
             { 
                 // phase2: fine Gustavson task, C(:,j)<M(:,j)>=A*B(:,j)
-                #include "GB_AxB_saxpy3_fineGus_M_phase2.c"
+                #include "template/GB_AxB_saxpy3_fineGus_M_phase2.c"
             }
             #else
             { 
                 // phase2: fine Gustavson task, C(:,j)<!M(:,j)>=A*B(:,j)
-                #include "GB_AxB_saxpy3_fineGus_notM_phase2.c"
+                #include "template/GB_AxB_saxpy3_fineGus_notM_phase2.c"
             }
             #endif
 
@@ -230,7 +230,7 @@
 
                 // no mask present, or mask ignored
                 #undef GB_CHECK_MASK_ij
-                #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                #include "template/GB_AxB_saxpy3_fineHash_phase2.c"
 
             }
             #elif ( !GB_MASK_COMP )
@@ -251,7 +251,7 @@
                         #undef  GB_CHECK_MASK_ij
                         #define GB_CHECK_MASK_ij                        \
                             if (!Mjb [i]) continue ;
-                        #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                        #include "template/GB_AxB_saxpy3_fineHash_phase2.c"
                     }
                     else
                     { 
@@ -261,13 +261,13 @@
                             const int64_t pM = pM_start + i ;           \
                             GB_GET_M_ij (pM) ;                          \
                             if (!mij) continue ;
-                        #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                        #include "template/GB_AxB_saxpy3_fineHash_phase2.c"
                     }
                 }
                 else
                 { 
                     // M(:,j) is sparse and scattered into Hf
-                    #include "GB_AxB_saxpy3_fineHash_M_phase2.c"
+                    #include "template/GB_AxB_saxpy3_fineHash_M_phase2.c"
                 }
 
             }
@@ -289,7 +289,7 @@
                         #undef  GB_CHECK_MASK_ij
                         #define GB_CHECK_MASK_ij                        \
                             if (Mjb [i]) continue ;
-                        #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                        #include "template/GB_AxB_saxpy3_fineHash_phase2.c"
                     }
                     else
                     { 
@@ -299,13 +299,13 @@
                             const int64_t pM = pM_start + i ;           \
                             GB_GET_M_ij (pM) ;                          \
                             if (mij) continue ;
-                        #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                        #include "template/GB_AxB_saxpy3_fineHash_phase2.c"
                     }
                 }
                 else
                 {
                     // M(:,j) is sparse/hyper and scattered into Hf
-                    #include "GB_AxB_saxpy3_fineHash_notM_phase2.c"
+                    #include "template/GB_AxB_saxpy3_fineHash_notM_phase2.c"
                 }
             }
             #endif
@@ -472,17 +472,17 @@
                 #if ( GB_NO_MASK )
                 { 
                     // phase5: coarse Gustavson task, C=A*B
-                    #include "GB_AxB_saxpy3_coarseGus_noM_phase5.c"
+                    #include "template/GB_AxB_saxpy3_coarseGus_noM_phase5.c"
                 }
                 #elif ( !GB_MASK_COMP )
                 { 
                     // phase5: coarse Gustavson task, C<M>=A*B
-                    #include "GB_AxB_saxpy3_coarseGus_M_phase5.c"
+                    #include "template/GB_AxB_saxpy3_coarseGus_M_phase5.c"
                 }
                 #else
                 { 
                     // phase5: coarse Gustavson task, C<!M>=A*B
-                    #include "GB_AxB_saxpy3_coarseGus_notM_phase5.c"
+                    #include "template/GB_AxB_saxpy3_coarseGus_notM_phase5.c"
                 }
                 #endif
 
@@ -506,7 +506,7 @@
 
                     // no mask present, or mask ignored (see below)
                     #undef GB_CHECK_MASK_ij
-                    #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                    #include "template/GB_AxB_saxpy3_coarseHash_phase5.c"
 
                 }
                 #elif ( !GB_MASK_COMP )
@@ -526,7 +526,7 @@
                             #undef  GB_CHECK_MASK_ij
                             #define GB_CHECK_MASK_ij                        \
                                 if (!Mjb [i]) continue ;
-                            #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                            #include "template/GB_AxB_saxpy3_coarseHash_phase5.c"
                         }
                         else
                         { 
@@ -536,13 +536,13 @@
                                 const int64_t pM = pM_start + i ;           \
                                 GB_GET_M_ij (pM) ;                          \
                                 if (!mij) continue ;
-                            #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                            #include "template/GB_AxB_saxpy3_coarseHash_phase5.c"
                         }
                     }
                     else
                     { 
                         // M is sparse and scattered into Hf
-                        #include "GB_AxB_saxpy3_coarseHash_M_phase5.c"
+                        #include "template/GB_AxB_saxpy3_coarseHash_M_phase5.c"
                     }
 
                 }
@@ -563,7 +563,7 @@
                             #undef  GB_CHECK_MASK_ij
                             #define GB_CHECK_MASK_ij                        \
                                 if (Mjb [i]) continue ;
-                            #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                            #include "template/GB_AxB_saxpy3_coarseHash_phase5.c"
                         }
                         else
                         { 
@@ -573,13 +573,13 @@
                                 const int64_t pM = pM_start + i ;           \
                                 GB_GET_M_ij (pM) ;                          \
                                 if (mij) continue ;
-                            #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                            #include "template/GB_AxB_saxpy3_coarseHash_phase5.c"
                         }
                     }
                     else
                     { 
                         // M is sparse and scattered into Hf
-                        #include "GB_AxB_saxpy3_coarseHash_notM_phase5.c"
+                        #include "template/GB_AxB_saxpy3_coarseHash_notM_phase5.c"
                     }
                 }
                 #endif

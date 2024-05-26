@@ -9,7 +9,7 @@
 
 #define Mask_comp   GB_MASK_COMP
 #define Mask_struct GB_MASK_STRUCT
-#include "GB_AxB_saxpy3_template.h"
+#include "template/GB_AxB_saxpy3_template.h"
 
 GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY3_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY3_PROTO (GB_jit_kernel)
@@ -23,7 +23,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY3_PROTO (GB_jit_kernel)
     #endif
 
     ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;
-    #include "GB_AxB_saxpy3_template.c"
+    #include "template/GB_AxB_saxpy3_template.c"
     return (GrB_SUCCESS) ;
 }
 

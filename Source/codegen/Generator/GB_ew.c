@@ -59,7 +59,7 @@ GrB_Info GB (_Cewise_fulla)
 )
 { 
     bool A_is_B = GB_all_aliased (A, B) ;
-    #include "GB_ewise_fulla_template.c"
+    #include "template/GB_ewise_fulla_template.c"
     return (GrB_SUCCESS) ;
 }
 m4_divert(0)
@@ -76,7 +76,7 @@ GrB_Info GB (_Cewise_fulln)
     const int nthreads
 )
 { 
-    #include "GB_ewise_fulln_template.c"
+    #include "template/GB_ewise_fulln_template.c"
     return (GrB_SUCCESS) ;
 }
 
@@ -98,7 +98,7 @@ GrB_Info GB (_AxD)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_colscale_template.c"
+    #include "template/GB_colscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -118,7 +118,7 @@ GrB_Info GB (_DxB)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_rowscale_template.c"
+    #include "template/GB_rowscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -162,7 +162,7 @@ GrB_Info GB (_AaddB)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "GB_add_template.c"
+    #include "template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -210,7 +210,7 @@ GrB_Info GB (_AunionB)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "GB_add_template.c"
+    #include "template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -238,7 +238,7 @@ GrB_Info GB (_AemultB_08)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_08_meta.c"
+    #include "template/GB_emult_08_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -264,7 +264,7 @@ GrB_Info GB (_AemultB_02)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_02_template.c"
+    #include "template/GB_emult_02_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -291,7 +291,7 @@ GrB_Info GB (_AemultB_03)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_03_template.c"
+    #include "template/GB_emult_03_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -317,7 +317,7 @@ GrB_Info GB (_AemultB_04)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_04_template.c"
+    #include "template/GB_emult_04_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -343,7 +343,7 @@ GrB_Info GB (_AemultB_bitmap)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_bitmap_template.c"
+    #include "template/GB_emult_bitmap_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -366,7 +366,7 @@ GrB_Info GB (_bind1st)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_apply_bind1st_template.c"
+    #include "template/GB_apply_bind1st_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -388,7 +388,7 @@ GrB_Info GB (_bind2nd)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_apply_bind2nd_template.c"
+    #include "template/GB_apply_bind2nd_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

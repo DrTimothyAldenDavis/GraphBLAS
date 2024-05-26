@@ -42,11 +42,11 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_APPLY_UNOP_PROTO (GB_jit_kernel)
         const int64_t *restrict Ah = A->h ;
         const int64_t *restrict Ai = A->i ;
         int64_t avlen = A->vlen ;
-        #include "GB_apply_unop_ijp.c"
+        #include "template/GB_apply_unop_ijp.c"
     }
     #else
     {
-        #include "GB_apply_unop_ip.c"
+        #include "template/GB_apply_unop_ip.c"
     }
 
     #endif

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_08_template: C=A.*B, C<M or !M>=A.*B when C is sparse/hyper
+// GB_add_sparse_template:  C=A+B, C<M>=A+B when C is sparse/hypersparse
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,49 +7,56 @@
 
 //------------------------------------------------------------------------------
 
-// Computes C=A.*B, C<M>=A.*B, or C<!M>=A.*B when C is sparse or hypersparse:
-
-// phase1: does not compute C itself, but just counts the # of entries in each
-// vector of C.  Fine tasks compute the # of entries in their slice of a
-// single vector of C, and the results are cumsum'd.
-
-// phase2: computes C, using the counts computed by phase1.
-
-// No input matrix can be jumbled, and C is constructed as unjumbled.
-
-// The following cases are handled:
+// C is sparse or hypersparse:
 
         //      ------------------------------------------
-        //      C       =           A       .*      B
+        //      C       =           A       +       B
         //      ------------------------------------------
-        //      sparse  .           sparse          sparse  (method: 8bcd)
+        //      sparse  .           sparse          sparse
 
         //      ------------------------------------------
-        //      C       <M>=        A       .*      B
+        //      C      <M> =        A       +       B
         //      ------------------------------------------
-        //      sparse  sparse      sparse          sparse  (method: 8e)
-        //      sparse  bitmap      sparse          sparse  (method: 8fgh)
-        //      sparse  full        sparse          sparse  (method: 8fgh)
-        //      sparse  sparse      sparse          bitmap  (9  (8e) or 2)
-        //      sparse  sparse      sparse          full    (9  (8e) or 2)
-        //      sparse  sparse      bitmap          sparse  (10 (8e) or 3)
-        //      sparse  sparse      full            sparse  (10 (8e) or 3)
+        //      sparse  sparse      sparse          sparse
+        //      sparse  sparse      sparse          bitmap
+        //      sparse  sparse      sparse          full
+        //      sparse  sparse      bitmap          sparse
+        //      sparse  sparse      bitmap          bitmap
+        //      sparse  sparse      bitmap          full
+        //      sparse  sparse      full            sparse
+        //      sparse  sparse      full            bitmap
+        //      sparse  sparse      full            full
+
+        //      sparse  bitmap      sparse          sparse
+        //      sparse  full        sparse          sparse
 
         //      ------------------------------------------
-        //      C       <!M>=       A       .*      B
+        //      C     <!M> =        A       +       B
         //      ------------------------------------------
-        //      sparse  sparse      sparse          sparse  (8bcd: M later)
-        //      sparse  bitmap      sparse          sparse  (method: 8fgh)
-        //      sparse  full        sparse          sparse  (method: 8fgh)
+        //      sparse  bitmap      sparse          sparse
+        //      sparse  full        sparse          sparse
 
-// Methods 9 and 10 are not yet implemented, and are currently handled by this
-// Method 8 instead.  See GB_emult_sparsity for this decision.
-// "M later" means that C<!M>=A.*B is being computed, but the mask is not
-// handled here; insteadl T=A.*B is computed and C<!M>=T is done later.
+        // If all four matrices are sparse/hypersparse, and C<!M>=A+B is being
+        // computed, then M is passed in as NULL to GB_add_phase*.
+        // GB_add_sparsity returns apply_mask as false.  The methods below do
+        // not handle the case when C is sparse, M is sparse, and !M is used.
+        // All other uses of !M when M is sparse result in a bitmap structure
+        // for C, and this is handled by GB_add_bitmap_template.
+
+        // For this case: the mask is done later, so C=A+B is computed here:
+
+        //      ------------------------------------------
+        //      C     <!M> =        A       +       B
+        //      ------------------------------------------
+        //      sparse  sparse      sparse          sparse      (mask later)
 
 {
 
-    int taskid ;
+    //--------------------------------------------------------------------------
+    // phase1: count entries in each C(:,j)
+    // phase2: compute C
+    //--------------------------------------------------------------------------
+
     #pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < C_ntasks ; taskid++)
     {
@@ -87,7 +94,7 @@
 
             int64_t j = GBH_C (Ch, k) ;
 
-            #if ( GB_EMULT_08_PHASE == 1 )
+            #if ( GB_ADD_PHASE == 1 )
             int64_t cjnz = 0 ;
             #else
             int64_t pC, pC_end ;
@@ -101,7 +108,7 @@
             else
             { 
                 // The vectors of C are never sliced for a coarse task.
-                pC     = Cp [k] ;
+                pC     = Cp [k  ] ;
                 pC_end = Cp [k+1] ;
             }
             int64_t cjnz = pC_end - pC ;
@@ -123,8 +130,7 @@
             else
             {
                 // A coarse task operates on the entire vector A (:,j)
-                int64_t kA = (Ch == Ah) ? k :
-                            ((C_to_A == NULL) ? j : C_to_A [k]) ;
+                int64_t kA = (C_to_A == NULL) ? j : C_to_A [k] ;
                 if (kA >= 0)
                 { 
                     pA     = GBP_A (Ap, kA, vlen) ;
@@ -132,23 +138,17 @@
                 }
             }
 
-            int64_t ajnz = pA_end - pA ;        // nnz in A(:,j) for this slice
+            int64_t ajnz = pA_end - pA ;    // nnz in A(:,j) for this slice
             int64_t pA_start = pA ;
             bool adense = (ajnz == len) ;
 
             // get the first and last indices in A(:,j) for this vector
-            int64_t iA_first = -1 ;
+            int64_t iA_first = -1, iA_last = -1 ;
             if (ajnz > 0)
             { 
                 iA_first = GBI_A (Ai, pA, vlen) ;
-            }
-            #if ( GB_EMULT_08_PHASE == 1 ) || defined ( GB_DEBUG )
-            int64_t iA_last = -1 ;
-            if (ajnz > 0)
-            { 
                 iA_last  = GBI_A (Ai, pA_end-1, vlen) ;
             }
-            #endif
 
             //------------------------------------------------------------------
             // get B(:,j)
@@ -165,8 +165,7 @@
             else
             {
                 // A coarse task operates on the entire vector B (:,j)
-                int64_t kB = (Ch == Bh) ? k :
-                            ((C_to_B == NULL) ? j : C_to_B [k]) ;
+                int64_t kB = (C_to_B == NULL) ? j : C_to_B [k] ;
                 if (kB >= 0)
                 { 
                     pB     = GBP_B (Bp, kB, vlen) ;
@@ -174,81 +173,51 @@
                 }
             }
 
-            int64_t bjnz = pB_end - pB ;        // nnz in B(:,j) for this slice
+            int64_t bjnz = pB_end - pB ;    // nnz in B(:,j) for this slice
             int64_t pB_start = pB ;
             bool bdense = (bjnz == len) ;
 
             // get the first and last indices in B(:,j) for this vector
-            int64_t iB_first = -1 ;
+            int64_t iB_first = -1, iB_last = -1 ;
             if (bjnz > 0)
             { 
                 iB_first = GBI_B (Bi, pB, vlen) ;
-            }
-            #if ( GB_EMULT_08_PHASE == 1 ) || defined ( GB_DEBUG )
-            int64_t iB_last = -1 ;
-            if (bjnz > 0)
-            { 
                 iB_last  = GBI_B (Bi, pB_end-1, vlen) ;
             }
-            #endif
 
             //------------------------------------------------------------------
-            // C(:,j)<optional mask> = A (:,j) .* B (:,j) or subvector
+            // C(:,j)<optional mask> = A (:,j) + B (:,j) or subvector
             //------------------------------------------------------------------
-
-            #if ( GB_EMULT_08_PHASE == 1 )
-            if (ajnz == 0 || bjnz == 0)
-            { 
-                // Method8(a): A(:,j) and/or B(:,j) are empty
-                ;
-            }
-            else if (iA_last < iB_first || iB_last < iA_first)
-            { 
-                // Method8(a): intersection of A(:,j) and B(:,j) is empty
-                // the last entry of A(:,j) comes before the first entry
-                // of B(:,j), or visa versa
-                ;
-            }
-            else
-            #endif
 
             #ifdef GB_JIT_KERNEL
             {
                 #if GB_NO_MASK
                 {
-                    // C=A.*B, all matrices sparse/hyper
-                    #include "GB_emult_08bcd.c"
+                    #include "template/GB_add_sparse_noM.c"
                 }
                 #elif (GB_M_IS_SPARSE || GB_M_IS_HYPER)
                 {
-                    // C<M>=A.*B, C and M are sparse/hyper
-                    // either A or B are sparse/hyper
-                    #include "GB_emult_08e.c"
+                    #include "template/GB_add_sparse_M_sparse.c"
                 }
                 #else
                 {
-                    // C<#M>=A.*B; C, A and B are sparse/hyper; M is bitmap/full
-                    #include "GB_emult_08fgh.c"
+                    #include "template/GB_add_sparse_M_bitmap.c"
                 }
                 #endif
             }
             #else
             {
                 if (M == NULL)
-                {
-                    // C=A.*B, all matrices sparse/hyper
-                    #include "GB_emult_08bcd.c"
+                { 
+                    #include "template/GB_add_sparse_noM.c"
                 }
                 else if (M_is_sparse_or_hyper)
-                {
-                    // C<M>=A.*B, C and M are sparse/hyper
-                    // either A or B are sparse/hyper
-                    #include "GB_emult_08e.c"
+                { 
+                    #include "template/GB_add_sparse_M_sparse.c"
                 }
                 else
-                {
-                    // C<#M>=A.*B; C, A and B are sparse/hyper; M is bitmap/full
-                    #include "GB_emult_08fgh.c"
+                { 
+                    #include "template/GB_add_sparse_M_bitmap.c"
                 }
             }
             #endif
@@ -257,7 +226,7 @@
             // final count of nnz (C (:,j))
             //------------------------------------------------------------------
 
-            #if ( GB_EMULT_08_PHASE == 1 )
+            #if ( GB_ADD_PHASE == 1 )
             if (fine_task)
             { 
                 TaskList [taskid].pC = cjnz ;

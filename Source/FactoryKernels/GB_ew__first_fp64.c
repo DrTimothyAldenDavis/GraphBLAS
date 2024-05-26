@@ -54,7 +54,7 @@ GrB_Info GB (_Cewise_fulln__first_fp64)
     const int nthreads
 )
 { 
-    #include "GB_ewise_fulln_template.c"
+    #include "template/GB_ewise_fulln_template.c"
     return (GrB_SUCCESS) ;
 }
 
@@ -75,7 +75,7 @@ GrB_Info GB (_AxD__first_fp64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_colscale_template.c"
+    #include "template/GB_colscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -95,7 +95,7 @@ GrB_Info GB (_DxB__first_fp64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_rowscale_template.c"
+    #include "template/GB_rowscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -138,7 +138,7 @@ GrB_Info GB (_AaddB__first_fp64)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "GB_add_template.c"
+    #include "template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -185,7 +185,7 @@ GrB_Info GB (_AunionB__first_fp64)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "GB_add_template.c"
+    #include "template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -213,7 +213,7 @@ GrB_Info GB (_AemultB_08__first_fp64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_08_meta.c"
+    #include "template/GB_emult_08_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -239,7 +239,7 @@ GrB_Info GB (_AemultB_02__first_fp64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_02_template.c"
+    #include "template/GB_emult_02_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -265,7 +265,7 @@ GrB_Info GB (_AemultB_03__first_fp64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_03_template.c"
+    #include "template/GB_emult_03_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -290,7 +290,7 @@ GrB_Info GB (_AemultB_04__first_fp64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_04_template.c"
+    #include "template/GB_emult_04_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -316,7 +316,7 @@ GrB_Info GB (_AemultB_bitmap__first_fp64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_bitmap_template.c"
+    #include "template/GB_emult_bitmap_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

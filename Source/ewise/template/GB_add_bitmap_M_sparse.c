@@ -86,19 +86,19 @@
         #if (GB_A_IS_BITMAP || GB_A_IS_FULL) && (GB_B_IS_BITMAP || GB_B_IS_FULL)
         {
             // A and B are both bitmap/full
-            #include "GB_add_bitmap_M_sparse_24.c"
+            #include "template/GB_add_bitmap_M_sparse_24.c"
             #define M_cleared true
         }
         #elif (GB_A_IS_BITMAP || GB_A_IS_FULL)
         {
             // A is bitmap/full, B is sparse/hyper
-            #include "GB_add_bitmap_M_sparse_25.c"
+            #include "template/GB_add_bitmap_M_sparse_25.c"
             #define M_cleared false
         }
         #else
         {
             // A is sparse/hyper, B is bitmap/full
-            #include "GB_add_bitmap_M_sparse_26.c"
+            #include "template/GB_add_bitmap_M_sparse_26.c"
             #define M_cleared false
         }
         #endif
@@ -109,18 +109,18 @@
         if ((A_is_bitmap || A_is_full) && (B_is_bitmap || B_is_full))
         { 
             // A and B are both bitmap/full
-            #include "GB_add_bitmap_M_sparse_24.c"
+            #include "template/GB_add_bitmap_M_sparse_24.c"
             M_cleared = true ;      // M has also been cleared from C
         }
         else if (A_is_bitmap || A_is_full)
         { 
             // A is bitmap/full, B is sparse/hyper
-            #include "GB_add_bitmap_M_sparse_25.c"
+            #include "template/GB_add_bitmap_M_sparse_25.c"
         }
         else
         { 
             // A is sparse/hyper, B is bitmap/full
-            #include "GB_add_bitmap_M_sparse_26.c"
+            #include "template/GB_add_bitmap_M_sparse_26.c"
         }
 
     #endif

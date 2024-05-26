@@ -111,7 +111,7 @@ GrB_Info GB_cast_array              // typecast an array
         GB_cast_function cast_A_to_C = GB_cast_factory (code1, code2) ;
         #define GB_APPLY_OP(p) \
             cast_A_to_C (Cx +(p*csize), Ax +(p*asize), asize)
-        #include "GB_apply_unop_ip.c"
+        #include "template/GB_apply_unop_ip.c"
         info = GrB_SUCCESS ;
     }
 

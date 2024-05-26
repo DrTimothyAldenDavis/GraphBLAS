@@ -18,7 +18,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_DOT4_PROTO (GB_jit_kernel)
     GB_malloc_memory_f GB_malloc_memory = my_callback->GB_malloc_memory_func ;
     #endif
 
-    #include "GB_AxB_dot4_meta.c"
+    #include "template/GB_AxB_dot4_meta.c"
     return (GrB_SUCCESS) ;
 }
 

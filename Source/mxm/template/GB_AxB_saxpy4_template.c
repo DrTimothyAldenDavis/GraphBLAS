@@ -136,7 +136,7 @@
                     }
                 #endif
 
-                #include "GB_AxB_saxpy4_panel.c"
+                #include "template/GB_AxB_saxpy4_panel.c"
                 #undef GB_HX_COMPUTE
 
                 //--------------------------------------------------------------

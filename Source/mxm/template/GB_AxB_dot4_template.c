@@ -396,7 +396,7 @@
                     const int64_t pA_end = Ap [kA+1] ;
                     const int64_t ainz = pA_end - pA ;
                     // C(i) += A(:,i)'*B(:,0)
-                    #include "GB_AxB_dot4_cij.c"
+                    #include "template/GB_AxB_dot4_cij.c"
                 }
                 #undef pC_start
                 #undef pB
@@ -428,7 +428,7 @@
                         const int64_t pC_start = j * cvlen ;
                         const int64_t pB = j * vlen ;
                         // C(i,j) += A(:,i)'*B(:,j)
-                        #include "GB_AxB_dot4_cij.c"
+                        #include "template/GB_AxB_dot4_cij.c"
                     }
                 }
             }

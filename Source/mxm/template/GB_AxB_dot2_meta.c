@@ -10,7 +10,7 @@
 #define GB_DOT2
 
 #include "GB_unused.h"
-#include "GB_AxB_dot_cij.h"
+#include "template/GB_AxB_dot_cij.h"
 
 {
 
@@ -100,8 +100,8 @@
         GB_DECLARE_TERMINAL_CONST (zterminal) ;
 
         #define GB_META16
-        #include "GB_meta16_definitions.h"
-        #include "GB_AxB_dot2_template.c"
+        #include "template/GB_meta16_definitions.h"
+        #include "template/GB_AxB_dot2_template.c"
 
     #else
 
@@ -139,7 +139,7 @@
                 #define GB_B_IS_HYPER  0
                 #define GB_B_IS_BITMAP 0
                 #define GB_B_IS_FULL   0
-                #include "GB_AxB_dot2_template.c"
+                #include "template/GB_AxB_dot2_template.c"
             }
             else if (A_is_bitmap)
             { 
@@ -155,7 +155,7 @@
                 #define GB_B_IS_HYPER  0
                 #define GB_B_IS_BITMAP 0
                 #define GB_B_IS_FULL   0
-                #include "GB_AxB_dot2_template.c"
+                #include "template/GB_AxB_dot2_template.c"
             }
             else
             { 
@@ -171,7 +171,7 @@
                 #define GB_B_IS_HYPER  0
                 #define GB_B_IS_BITMAP 0
                 #define GB_B_IS_FULL   0
-                #include "GB_AxB_dot2_template.c"
+                #include "template/GB_AxB_dot2_template.c"
             } 
             #undef GB_A_NOT_TRANSPOSED
         }
@@ -192,7 +192,7 @@
                 #define GB_B_IS_HYPER  0
                 #define GB_B_IS_BITMAP 0
                 #define GB_B_IS_FULL   1
-                #include "GB_AxB_dot2_template.c"
+                #include "template/GB_AxB_dot2_template.c"
             }
             else if (A_is_full)
             { 
@@ -206,7 +206,7 @@
                 #define GB_B_IS_HYPER  0
                 #define GB_B_IS_BITMAP 0
                 #define GB_B_IS_FULL   0
-                #include "GB_AxB_dot2_template.c"
+                #include "template/GB_AxB_dot2_template.c"
             }
             else
             { 
@@ -221,7 +221,7 @@
                 #define GB_B_IS_HYPER  0
                 #define GB_B_IS_BITMAP 0
                 #define GB_B_IS_FULL   1
-                #include "GB_AxB_dot2_template.c"
+                #include "template/GB_AxB_dot2_template.c"
             }
             #undef  GB_C_IS_FULL
             #define GB_C_IS_FULL   0
@@ -230,7 +230,7 @@
         {
             // C = A'*B, via dot2 method, where A is implicitly transposed,
             // C is bitmap
-            #include "GB_meta16_factory.c"
+            #include "template/GB_meta16_factory.c"
         }
 
     }
@@ -287,7 +287,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 1
             #define GB_B_IS_FULL   0
-            #include "GB_AxB_dot2_template.c"
+            #include "template/GB_AxB_dot2_template.c"
             #undef  GB_ANY_SPECIALIZED
 
         }
@@ -320,7 +320,7 @@
                     #define GB_B_IS_HYPER  0
                     #define GB_B_IS_BITMAP 0
                     #define GB_B_IS_FULL   0
-                    #include "GB_AxB_dot2_template.c"
+                    #include "template/GB_AxB_dot2_template.c"
                 }
                 else
                 { 
@@ -333,14 +333,14 @@
                     #define GB_B_IS_HYPER  0
                     #define GB_B_IS_BITMAP 0
                     #define GB_B_IS_FULL   0
-                    #include "GB_AxB_dot2_template.c"
+                    #include "template/GB_AxB_dot2_template.c"
                 } 
                 #undef GB_A_NOT_TRANSPOSED
             }
             else
             { 
                 // C<#>M = A'*B, via dot2 method, A is implicitly transposed
-                #include "GB_meta16_factory.c"
+                #include "template/GB_meta16_factory.c"
             }
         }
     }

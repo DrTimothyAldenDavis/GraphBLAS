@@ -58,7 +58,7 @@ GrB_Info GB (_Cewise_fulln__cmplx_fp32)
     const int nthreads
 )
 { 
-    #include "GB_ewise_fulln_template.c"
+    #include "template/GB_ewise_fulln_template.c"
     return (GrB_SUCCESS) ;
 }
 
@@ -100,7 +100,7 @@ GrB_Info GB (_AaddB__cmplx_fp32)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "GB_add_template.c"
+    #include "template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -147,7 +147,7 @@ GrB_Info GB (_AunionB__cmplx_fp32)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "GB_add_template.c"
+    #include "template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -175,7 +175,7 @@ GrB_Info GB (_AemultB_08__cmplx_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_08_meta.c"
+    #include "template/GB_emult_08_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -201,7 +201,7 @@ GrB_Info GB (_AemultB_02__cmplx_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_02_template.c"
+    #include "template/GB_emult_02_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -227,7 +227,7 @@ GrB_Info GB (_AemultB_03__cmplx_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_03_template.c"
+    #include "template/GB_emult_03_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -252,7 +252,7 @@ GrB_Info GB (_AemultB_04__cmplx_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_04_template.c"
+    #include "template/GB_emult_04_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -278,7 +278,7 @@ GrB_Info GB (_AemultB_bitmap__cmplx_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_bitmap_template.c"
+    #include "template/GB_emult_bitmap_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -300,7 +300,7 @@ GrB_Info GB (_bind1st__cmplx_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_apply_bind1st_template.c"
+    #include "template/GB_apply_bind1st_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -322,7 +322,7 @@ GrB_Info GB (_bind2nd__cmplx_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_apply_bind2nd_template.c"
+    #include "template/GB_apply_bind2nd_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

@@ -16,7 +16,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_EMULT_BITMAP_PROTO (GB_jit_kernel)
         my_callback->GB_bitmap_M_scatter_whole_func ;
     #endif
 
-    #include "GB_emult_bitmap_template.c"
+    #include "template/GB_emult_bitmap_template.c"
     return (GrB_SUCCESS) ;
 }
 

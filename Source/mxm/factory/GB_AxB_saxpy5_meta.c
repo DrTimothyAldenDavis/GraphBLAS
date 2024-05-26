@@ -64,14 +64,14 @@
             // A is bitmap and pattern-only
             #undef  GB_A_IS_BITMAP
             #define GB_A_IS_BITMAP 1
-            #include "GB_AxB_saxpy5_A_iso_or_pattern.c"
+            #include "template/GB_AxB_saxpy5_A_iso_or_pattern.c"
         }
         else
         { 
             // A is full and pattern-only
             #undef  GB_A_IS_BITMAP
             #define GB_A_IS_BITMAP 0
-            #include "GB_AxB_saxpy5_A_iso_or_pattern.c"
+            #include "template/GB_AxB_saxpy5_A_iso_or_pattern.c"
         }
 
     }
@@ -94,14 +94,14 @@
                 // A is bitmap, iso-valued, B is sparse/hyper
                 #undef  GB_A_IS_BITMAP
                 #define GB_A_IS_BITMAP 1
-                #include "GB_AxB_saxpy5_A_iso_or_pattern.c"
+                #include "template/GB_AxB_saxpy5_A_iso_or_pattern.c"
             }
             else
             { 
                 // A is full, iso-valued, B is sparse/hyper
                 #undef  GB_A_IS_BITMAP
                 #define GB_A_IS_BITMAP 0
-                #include "GB_AxB_saxpy5_A_iso_or_pattern.c"
+                #include "template/GB_AxB_saxpy5_A_iso_or_pattern.c"
             }
 
         }
@@ -117,7 +117,7 @@
                 // A is bitmap, non-iso-valued, B is sparse/hyper
                 #undef  GB_A_IS_BITMAP
                 #define GB_A_IS_BITMAP 1
-                #include "GB_AxB_saxpy5_A_bitmap.c"
+                #include "template/GB_AxB_saxpy5_A_bitmap.c"
                 #undef  GB_A_IS_BITMAP
             }
             else

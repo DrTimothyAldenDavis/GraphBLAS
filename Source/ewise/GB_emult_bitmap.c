@@ -211,7 +211,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
         // pattern of C = set intersection of pattern of A and B
         #define GB_ISO_EMULT
-        #include "GB_emult_bitmap_template.c"
+        #include "template/GB_emult_bitmap_template.c"
         info = GrB_SUCCESS ;
 
     }

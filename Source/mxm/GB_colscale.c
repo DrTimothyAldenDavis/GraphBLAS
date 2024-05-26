@@ -355,13 +355,13 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
             { 
                 #undef  GB_EWISEOP
                 #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),y,x)
-                #include "GB_colscale_template.c"
+                #include "template/GB_colscale_template.c"
             }
             else
             { 
                 #undef  GB_EWISEOP
                 #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),x,y)
-                #include "GB_colscale_template.c"
+                #include "template/GB_colscale_template.c"
             }
             info = GrB_SUCCESS ;
         }

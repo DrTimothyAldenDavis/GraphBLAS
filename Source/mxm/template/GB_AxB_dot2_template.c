@@ -212,7 +212,7 @@
                         #if GB_IS_PLUS_PAIR_REAL_SEMIRING
                         cij = 0 ;
                         #endif
-                        #include "GB_AxB_dot_cij.c"
+                        #include "template/GB_AxB_dot_cij.c"
                     }
                 }
             }

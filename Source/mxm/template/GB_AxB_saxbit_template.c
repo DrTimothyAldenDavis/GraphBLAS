@@ -174,11 +174,11 @@
 
         #if ( GB_A_IS_SPARSE || GB_A_IS_HYPER )
         {
-            #include "GB_AxB_saxbit_A_sparse_B_bitmap_template.c"
+            #include "template/GB_AxB_saxbit_A_sparse_B_bitmap_template.c"
         }
         #else
         {
-            #include "GB_AxB_saxbit_A_bitmap_B_bitmap_template.c"
+            #include "template/GB_AxB_saxbit_A_bitmap_B_bitmap_template.c"
         }
         #endif
 
@@ -237,14 +237,14 @@
                     // A is sparse/hyper, B is bitmap, no mask
                     #undef  GB_B_IS_BITMAP
                     #define GB_B_IS_BITMAP 1
-                    #include "GB_AxB_saxbit_A_sparse_B_bitmap_template.c"
+                    #include "template/GB_AxB_saxbit_A_sparse_B_bitmap_template.c"
                 }
                 else
                 { 
                     // A is sparse/hyper, B is full, no mask
                     #undef  GB_B_IS_BITMAP
                     #define GB_B_IS_BITMAP 0
-                    #include "GB_AxB_saxbit_A_sparse_B_bitmap_template.c"
+                    #include "template/GB_AxB_saxbit_A_sparse_B_bitmap_template.c"
                 }
                 #undef GB_MASK_IS_SPARSE_OR_HYPER
                 #undef GB_MASK_IS_BITMAP_OR_FULL
@@ -268,14 +268,14 @@
                     // A is sparse/hyper, B is bitmap, M is sparse/hyper
                     #undef  GB_B_IS_BITMAP
                     #define GB_B_IS_BITMAP 1
-                    #include "GB_AxB_saxbit_A_sparse_B_bitmap_template.c"
+                    #include "template/GB_AxB_saxbit_A_sparse_B_bitmap_template.c"
                 }
                 else
                 { 
                     // A is sparse/hyper, B is full, M is sparse/hyper
                     #undef  GB_B_IS_BITMAP
                     #define GB_B_IS_BITMAP 0
-                    #include "GB_AxB_saxbit_A_sparse_B_bitmap_template.c"
+                    #include "template/GB_AxB_saxbit_A_sparse_B_bitmap_template.c"
                 }
                 #undef GB_MASK_IS_SPARSE_OR_HYPER
                 #undef GB_MASK_IS_BITMAP_OR_FULL
@@ -297,14 +297,14 @@
                     // A is sparse/hyper, B is bitmap, M is bitmap/full
                     #undef  GB_B_IS_BITMAP
                     #define GB_B_IS_BITMAP 1
-                    #include "GB_AxB_saxbit_A_sparse_B_bitmap_template.c"
+                    #include "template/GB_AxB_saxbit_A_sparse_B_bitmap_template.c"
                 }
                 else
                 { 
                     // A is sparse/hyper, B is full, M is bitmap/full
                     #undef  GB_B_IS_BITMAP
                     #define GB_B_IS_BITMAP 0
-                    #include "GB_AxB_saxbit_A_sparse_B_bitmap_template.c"
+                    #include "template/GB_AxB_saxbit_A_sparse_B_bitmap_template.c"
                 }
                 #undef GB_MASK_IS_SPARSE_OR_HYPER
                 #undef GB_MASK_IS_BITMAP_OR_FULL
@@ -355,7 +355,7 @@
                 #define GB_MASK_IS_BITMAP_OR_FULL  0
                 #undef  keep
                 #define keep 1
-                #include "GB_AxB_saxbit_A_bitmap_B_bitmap_template.c"
+                #include "template/GB_AxB_saxbit_A_bitmap_B_bitmap_template.c"
                 #undef GB_MASK_IS_SPARSE_OR_HYPER
                 #undef GB_MASK_IS_BITMAP_OR_FULL
 
@@ -371,7 +371,7 @@
                 #define GB_MASK_IS_BITMAP_OR_FULL  0
                 #undef  keep
                 const int8_t keep = (Mask_comp) ? 1 : 3 ;
-                #include "GB_AxB_saxbit_A_bitmap_B_bitmap_template.c"
+                #include "template/GB_AxB_saxbit_A_bitmap_B_bitmap_template.c"
                 #undef GB_MASK_IS_SPARSE_OR_HYPER
                 #undef GB_MASK_IS_BITMAP_OR_FULL
 
@@ -387,7 +387,7 @@
                 #define GB_MASK_IS_BITMAP_OR_FULL  1
                 #undef  keep
                 #define keep 1
-                #include "GB_AxB_saxbit_A_bitmap_B_bitmap_template.c"
+                #include "template/GB_AxB_saxbit_A_bitmap_B_bitmap_template.c"
                 #undef GB_MASK_IS_SPARSE_OR_HYPER
                 #undef GB_MASK_IS_BITMAP_OR_FULL
             }

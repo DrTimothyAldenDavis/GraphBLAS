@@ -89,14 +89,14 @@
         // A is sparse/hyper, B is bitmap, no mask
         #undef  GB_B_IS_BITMAP
         #define GB_B_IS_BITMAP 1
-        #include "GB_AxB_saxpy4_template.c"
+        #include "template/GB_AxB_saxpy4_template.c"
     }
     else
     { 
         // A is sparse/hyper, B is full, no mask
         #undef  GB_B_IS_BITMAP
         #define GB_B_IS_BITMAP 0
-        #include "GB_AxB_saxpy4_template.c"
+        #include "template/GB_AxB_saxpy4_template.c"
     }
     #undef GB_B_IS_BITMAP
 }

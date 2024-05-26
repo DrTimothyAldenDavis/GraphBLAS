@@ -10,7 +10,7 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_ROWSCALE_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_ROWSCALE_PROTO (GB_jit_kernel)
 {
-    #include "GB_rowscale_template.c"
+    #include "template/GB_rowscale_template.c"
     return (GrB_SUCCESS) ;
 }
 

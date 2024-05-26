@@ -250,7 +250,7 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
 
         // pattern of C = set intersection of pattern of A and B
         #define GB_ISO_EMULT
-        #include "GB_emult_03_template.c"
+        #include "template/GB_emult_03_template.c"
         info = GrB_SUCCESS ;
 
     }

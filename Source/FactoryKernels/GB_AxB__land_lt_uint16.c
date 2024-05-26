@@ -87,7 +87,7 @@ GrB_Info GB (_Adot2B__land_lt_uint16)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_AxB_dot2_meta.c"
+    #include "template/GB_AxB_dot2_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -110,7 +110,7 @@ GrB_Info GB (_Adot3B__land_lt_uint16)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_AxB_dot3_meta.c"
+    #include "template/GB_AxB_dot3_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -136,7 +136,7 @@ GrB_Info GB (_Adot4B__land_lt_uint16)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_AxB_dot4_meta.c"
+    #include "template/GB_AxB_dot4_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -145,7 +145,7 @@ GrB_Info GB (_Adot4B__land_lt_uint16)
 // GB_AsaxbitB: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method, C is bitmap only
 //------------------------------------------------------------------------------
 
-#include "GB_AxB_saxpy3_template.h"
+#include "template/GB_AxB_saxpy3_template.h"
 
 GrB_Info GB (_AsaxbitB__land_lt_uint16)
 (
@@ -174,7 +174,7 @@ GrB_Info GB (_AsaxbitB__land_lt_uint16)
     #else
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
-    #include "GB_AxB_saxbit_template.c"
+    #include "template/GB_AxB_saxbit_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -202,7 +202,7 @@ GrB_Info GB (_Asaxpy4B__land_lt_uint16)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_AxB_saxpy4_meta.c"
+    #include "template/GB_AxB_saxpy4_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -235,7 +235,7 @@ GrB_Info GB (_Asaxpy4B__land_lt_uint16)
             const int64_t *B_slice
         )
         {
-            #include "GB_AxB_saxpy5_unrolled.c"
+            #include "template/GB_AxB_saxpy5_unrolled.c"
         }
 
     #endif
@@ -253,7 +253,7 @@ GrB_Info GB (_Asaxpy4B__land_lt_uint16)
         #if GB_DISABLE
         return (GrB_NO_VALUE) ;
         #else
-        #include "GB_AxB_saxpy5_meta.c"
+        #include "mxm/factory/GB_AxB_saxpy5_meta.c"
         return (GrB_SUCCESS) ;
         #endif
     }
@@ -336,8 +336,8 @@ GrB_Info GB (_Asaxpy3B__land_lt_uint16)
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-            #include "GB_meta16_definitions.h"
-            #include "GB_AxB_saxpy3_template.c"
+            #include "template/GB_meta16_definitions.h"
+            #include "template/GB_AxB_saxpy3_template.c"
         }
         else
         {
@@ -345,8 +345,8 @@ GrB_Info GB (_Asaxpy3B__land_lt_uint16)
             #undef GB_META16
             #define GB_NO_MASK 0
             #define GB_MASK_COMP 0
-            #include "GB_meta16_definitions.h"
-            #include "GB_AxB_saxpy3_template.c"
+            #include "template/GB_meta16_definitions.h"
+            #include "template/GB_AxB_saxpy3_template.c"
         }
         return (GrB_SUCCESS) ;
     }
@@ -386,8 +386,8 @@ GrB_Info GB (_Asaxpy3B__land_lt_uint16)
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-            #include "GB_meta16_definitions.h"
-            #include "GB_AxB_saxpy3_template.c"
+            #include "template/GB_meta16_definitions.h"
+            #include "template/GB_AxB_saxpy3_template.c"
         }
         else
         {
@@ -395,8 +395,8 @@ GrB_Info GB (_Asaxpy3B__land_lt_uint16)
             #undef GB_META16
             #define GB_NO_MASK 1
             #define GB_MASK_COMP 0
-            #include "GB_meta16_definitions.h"
-            #include "GB_AxB_saxpy3_template.c"
+            #include "template/GB_meta16_definitions.h"
+            #include "template/GB_AxB_saxpy3_template.c"
         }
         return (GrB_SUCCESS) ;
     }
@@ -438,8 +438,8 @@ GrB_Info GB (_Asaxpy3B__land_lt_uint16)
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-            #include "GB_meta16_definitions.h"
-            #include "GB_AxB_saxpy3_template.c"
+            #include "template/GB_meta16_definitions.h"
+            #include "template/GB_AxB_saxpy3_template.c"
         }
         else
         {
@@ -447,8 +447,8 @@ GrB_Info GB (_Asaxpy3B__land_lt_uint16)
             #undef GB_META16
             #define GB_NO_MASK 0
             #define GB_MASK_COMP 1
-            #include "GB_meta16_definitions.h"
-            #include "GB_AxB_saxpy3_template.c"
+            #include "template/GB_meta16_definitions.h"
+            #include "template/GB_AxB_saxpy3_template.c"
         }
         return (GrB_SUCCESS) ;
     }

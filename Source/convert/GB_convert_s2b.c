@@ -162,7 +162,7 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
             // A is iso; numerical entries are not modified
             #undef  GB_COPY
             #define GB_COPY(Axnew,pnew,Ax,p) ;
-            #include "GB_convert_s2b_template.c"
+            #include "template/GB_convert_s2b_template.c"
             info = GrB_SUCCESS ;
         }
         else
@@ -179,32 +179,32 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
 
                     case GB_1BYTE : // uint8, int8, bool, or 1-byte user
                         #define GB_A_TYPE uint8_t
-                        #include "GB_convert_s2b_template.c"
+                        #include "template/GB_convert_s2b_template.c"
                         info = GrB_SUCCESS ;
                         break ;
 
                     case GB_2BYTE : // uint16, int16, or 2-byte user-defined
                         #define GB_A_TYPE uint16_t
-                        #include "GB_convert_s2b_template.c"
+                        #include "template/GB_convert_s2b_template.c"
                         info = GrB_SUCCESS ;
                         break ;
 
                     case GB_4BYTE : // uint32, int32, float, or 4-byte user
                         #define GB_A_TYPE uint32_t
-                        #include "GB_convert_s2b_template.c"
+                        #include "template/GB_convert_s2b_template.c"
                         info = GrB_SUCCESS ;
                         break ;
 
                     case GB_8BYTE : // uint64, int64, double, float complex,
                              // or 8-byte user defined
                         #define GB_A_TYPE uint64_t
-                        #include "GB_convert_s2b_template.c"
+                        #include "template/GB_convert_s2b_template.c"
                         info = GrB_SUCCESS ;
                         break ;
 
                     case GB_16BYTE : // double complex or 16-byte user-defined
                         #define GB_A_TYPE GB_blob16
-                        #include "GB_convert_s2b_template.c"
+                        #include "template/GB_convert_s2b_template.c"
                         info = GrB_SUCCESS ;
                         break ;
 
@@ -237,7 +237,7 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
                 #undef  GB_COPY
                 #define GB_COPY(Axnew,pnew,Ax,p)                         \
                     memcpy (Axnew +(pnew)*asize, Ax +(p)*asize, asize)
-                #include "GB_convert_s2b_template.c"
+                #include "template/GB_convert_s2b_template.c"
                 info = GrB_SUCCESS ;
             }
         }

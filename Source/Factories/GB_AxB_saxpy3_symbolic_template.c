@@ -21,11 +21,11 @@
 
 #include "GB_AxB_saxpy3.h"
 #include "GB_mxm_shared_definitions.h"
-#include "GB_AxB_saxpy3_template.h"
+#include "template/GB_AxB_saxpy3_template.h"
 #include "GB_unused.h"
 
 #define GB_META16
-#include "GB_meta16_definitions.h"
+#include "template/GB_meta16_definitions.h"
 
 void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
 (
@@ -245,17 +245,17 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                 #if ( GB_NO_MASK )
                 { 
                     // phase1: coarse Gustavson task, C=A*B
-                    #include "GB_AxB_saxpy3_coarseGus_noM_phase1.c"
+                    #include "template/GB_AxB_saxpy3_coarseGus_noM_phase1.c"
                 }
                 #elif ( !GB_MASK_COMP )
                 { 
                     // phase1: coarse Gustavson task, C<M>=A*B
-                    #include "GB_AxB_saxpy3_coarseGus_M_phase1.c"
+                    #include "template/GB_AxB_saxpy3_coarseGus_M_phase1.c"
                 }
                 #else
                 { 
                     // phase1: coarse Gustavson task, C<!M>=A*B
-                    #include "GB_AxB_saxpy3_coarseGus_notM_phase1.c"
+                    #include "template/GB_AxB_saxpy3_coarseGus_notM_phase1.c"
                 }
                 #endif
 
@@ -278,7 +278,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                     //----------------------------------------------------------
 
                     #undef GB_CHECK_MASK_ij
-                    #include "GB_AxB_saxpy3_coarseHash_phase1.c"
+                    #include "template/GB_AxB_saxpy3_coarseHash_phase1.c"
 
                 }
                 #elif ( !GB_MASK_COMP )
@@ -310,22 +310,22 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                                 #define M_TYPE uint8_t
                                 #undef  M_SIZE
                                 #define M_SIZE 1
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
+                                #include "template/GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
                             case GB_2BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint16_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
+                                #include "template/GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
                             case GB_4BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint32_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
+                                #include "template/GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
                             case GB_8BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint64_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
+                                #include "template/GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
                             case GB_16BYTE : 
                                 #undef  M_TYPE
@@ -340,7 +340,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                                             (Mjx [2*i] != 0) ||             \
                                             (Mjx [2*i+1] != 0)) ;           \
                                     if (!mij) continue ;
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
+                                #include "template/GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
                         }
 
@@ -352,7 +352,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                         // M is sparse and scattered into Hf
                         //------------------------------------------------------
                         
-                        #include "GB_AxB_saxpy3_coarseHash_M_phase1.c"
+                        #include "template/GB_AxB_saxpy3_coarseHash_M_phase1.c"
                     }
 
                 }
@@ -385,22 +385,22 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                                 #define M_TYPE uint8_t
                                 #undef  M_SIZE
                                 #define M_SIZE 1
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
+                                #include "template/GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
                             case GB_2BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint16_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
+                                #include "template/GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
                             case GB_4BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint32_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
+                                #include "template/GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
                             case GB_8BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint64_t
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
+                                #include "template/GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
                             case GB_16BYTE : 
                                 #undef  M_TYPE
@@ -415,7 +415,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                                             (Mjx [2*i] != 0) ||             \
                                             (Mjx [2*i+1] != 0)) ;           \
                                     if (mij) continue ;
-                                #include "GB_AxB_saxpy3_coarseHash_phase1.c"
+                                #include "template/GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
                         }
 
@@ -427,7 +427,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                         // M is sparse and scattered into Hf
                         //------------------------------------------------------
 
-                        #include "GB_AxB_saxpy3_coarseHash_notM_phase1.c"
+                        #include "template/GB_AxB_saxpy3_coarseHash_notM_phase1.c"
                     }
                 }
                 #endif

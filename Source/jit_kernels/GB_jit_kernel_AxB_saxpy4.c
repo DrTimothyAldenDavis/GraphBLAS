@@ -9,12 +9,12 @@
 
 // C+=A*B: C is full, saxpy4 method
 
-#include "GB_AxB_saxpy3_template.h"
+#include "template/GB_AxB_saxpy3_template.h"
 
 GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY4_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY4_PROTO (GB_jit_kernel)
 {
-    #include "GB_AxB_saxpy4_meta.c"
+    #include "template/GB_AxB_saxpy4_meta.c"
     return (GrB_SUCCESS) ;
 }
 

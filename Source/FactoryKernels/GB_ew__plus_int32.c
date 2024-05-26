@@ -57,7 +57,7 @@ GrB_Info GB (_Cewise_fulla__plus_int32)
 )
 { 
     bool A_is_B = GB_all_aliased (A, B) ;
-    #include "GB_ewise_fulla_template.c"
+    #include "template/GB_ewise_fulla_template.c"
     return (GrB_SUCCESS) ;
 }
 
@@ -73,7 +73,7 @@ GrB_Info GB (_Cewise_fulln__plus_int32)
     const int nthreads
 )
 { 
-    #include "GB_ewise_fulln_template.c"
+    #include "template/GB_ewise_fulln_template.c"
     return (GrB_SUCCESS) ;
 }
 
@@ -94,7 +94,7 @@ GrB_Info GB (_AxD__plus_int32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_colscale_template.c"
+    #include "template/GB_colscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -114,7 +114,7 @@ GrB_Info GB (_DxB__plus_int32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_rowscale_template.c"
+    #include "template/GB_rowscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -157,7 +157,7 @@ GrB_Info GB (_AaddB__plus_int32)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "GB_add_template.c"
+    #include "template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -204,7 +204,7 @@ GrB_Info GB (_AunionB__plus_int32)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "GB_add_template.c"
+    #include "template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -232,7 +232,7 @@ GrB_Info GB (_AemultB_08__plus_int32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_08_meta.c"
+    #include "template/GB_emult_08_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -258,7 +258,7 @@ GrB_Info GB (_AemultB_02__plus_int32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_02_template.c"
+    #include "template/GB_emult_02_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -283,7 +283,7 @@ GrB_Info GB (_AemultB_04__plus_int32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_04_template.c"
+    #include "template/GB_emult_04_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -309,7 +309,7 @@ GrB_Info GB (_AemultB_bitmap__plus_int32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_bitmap_template.c"
+    #include "template/GB_emult_bitmap_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -331,7 +331,7 @@ GrB_Info GB (_bind1st__plus_int32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_apply_bind1st_template.c"
+    #include "template/GB_apply_bind1st_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -353,7 +353,7 @@ GrB_Info GB (_bind2nd__plus_int32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_apply_bind2nd_template.c"
+    #include "template/GB_apply_bind2nd_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

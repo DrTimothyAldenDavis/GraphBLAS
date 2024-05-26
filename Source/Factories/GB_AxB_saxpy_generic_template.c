@@ -22,27 +22,27 @@
             // C = A*B, no mask
             #define GB_NO_MASK 1
             #define GB_MASK_COMP 0
-            #include "GB_AxB_saxpy3_template.c"
+            #include "template/GB_AxB_saxpy3_template.c"
         }
         else if (!Mask_comp)
         { 
             // C<M> = A*B
             #define GB_NO_MASK 0
             #define GB_MASK_COMP 0
-            #include "GB_AxB_saxpy3_template.c"
+            #include "template/GB_AxB_saxpy3_template.c"
         }
         else
         { 
             // C<!M> = A*B
             #define GB_NO_MASK 0
             #define GB_MASK_COMP 1
-            #include "GB_AxB_saxpy3_template.c"
+            #include "template/GB_AxB_saxpy3_template.c"
         }
     }
     #else
     { 
         // C is bitmap
-        #include "GB_AxB_saxbit_template.c"
+        #include "template/GB_AxB_saxbit_template.c"
     }
     #endif
 }

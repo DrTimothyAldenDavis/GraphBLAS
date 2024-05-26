@@ -54,7 +54,7 @@ GrB_Info GB (_bld__second_uint16)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_bld_template.c"
+    #include "template/GB_bld_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

@@ -30,7 +30,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
         else if (B_is_hyper)
@@ -48,7 +48,7 @@
             #define GB_B_IS_HYPER  1
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
         else if (B_is_bitmap)
@@ -66,7 +66,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 1
             #define GB_B_IS_FULL   0
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
         else
@@ -84,7 +84,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   1
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
     }
@@ -105,7 +105,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
         else if (B_is_hyper)
@@ -123,7 +123,7 @@
             #define GB_B_IS_HYPER  1
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
         else if (B_is_bitmap)
@@ -141,7 +141,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 1
             #define GB_B_IS_FULL   0
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
         else
@@ -159,7 +159,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   1
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
     }
@@ -180,7 +180,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
         else if (B_is_hyper)
@@ -198,7 +198,7 @@
             #define GB_B_IS_HYPER  1
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
         else if (B_is_bitmap)
@@ -216,7 +216,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 1
             #define GB_B_IS_FULL   0
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
         else
@@ -234,7 +234,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   1
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
     }
@@ -255,7 +255,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
         else if (B_is_hyper)
@@ -273,7 +273,7 @@
             #define GB_B_IS_HYPER  1
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
         else if (B_is_bitmap)
@@ -291,7 +291,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 1
             #define GB_B_IS_FULL   0
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
         else
@@ -309,7 +309,7 @@
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   1
-            #include "GB_meta16_methods.c"
+            #include "template/GB_meta16_methods.c"
 
         }
     }
@@ -320,5 +320,5 @@
 //------------------------------------------------------------------------------
 
 #undef GB_META16
-#include "GB_meta16_definitions.h"
+#include "template/GB_meta16_definitions.h"
 

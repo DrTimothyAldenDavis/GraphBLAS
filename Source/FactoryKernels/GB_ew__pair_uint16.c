@@ -54,7 +54,7 @@ GrB_Info GB (_Cewise_fulln__pair_uint16)
     const int nthreads
 )
 { 
-    #include "GB_ewise_fulln_template.c"
+    #include "template/GB_ewise_fulln_template.c"
     return (GrB_SUCCESS) ;
 }
 
@@ -96,7 +96,7 @@ GrB_Info GB (_AaddB__pair_uint16)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "GB_add_template.c"
+    #include "template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

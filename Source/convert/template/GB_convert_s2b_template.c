@@ -37,11 +37,11 @@
         const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
         #if GB_A_HAS_ZOMBIES
         {
-            #include "GB_convert_s2b_zombies.c"
+            #include "template/GB_convert_s2b_zombies.c"
         }
         #else
         {
-            #include "GB_convert_s2b_nozombies.c"
+            #include "template/GB_convert_s2b_nozombies.c"
         }
         #endif
     }
@@ -49,11 +49,11 @@
     {
         if (nzombies > 0)
         { 
-            #include "GB_convert_s2b_zombies.c"
+            #include "template/GB_convert_s2b_zombies.c"
         }
         else
         { 
-            #include "GB_convert_s2b_nozombies.c"
+            #include "template/GB_convert_s2b_nozombies.c"
         }
     }
     #endif

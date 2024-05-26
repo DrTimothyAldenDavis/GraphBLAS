@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_03_template: C = A.*B when A is bitmap/full and B is sparse/hyper
+// GB_emult_02_template: C = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// C is sparse, with the same sparsity structure as B.  No mask is present, or
-// M is bitmap/full.  A is bitmap/full, and B is sparse/hyper.
+// C is sparse, with the same sparsity structure as A.  No mask is present, or
+// M is bitmap/full.  A is sparse/hyper, and B is bitmap/full.
 
 {
 
@@ -16,16 +16,16 @@
     // get A, B, and C
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Bp = B->p ;
-    const int64_t *restrict Bh = B->h ;
-    const int64_t *restrict Bi = B->i ;
-    const int64_t vlen = B->vlen ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Ai = A->i ;
+    const int64_t vlen = A->vlen ;
 
-    const int8_t  *restrict Ab = A->b ;
+    const int8_t  *restrict Bb = B->b ;
 
-    const int64_t *restrict kfirst_Bslice = B_ek_slicing ;
-    const int64_t *restrict klast_Bslice  = B_ek_slicing + B_ntasks ;
-    const int64_t *restrict pstart_Bslice = B_ek_slicing + B_ntasks * 2 ;
+    const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
+    const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
+    const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
 
     #ifdef GB_JIT_KERNEL
     #define A_iso GB_A_ISO
@@ -61,22 +61,22 @@
 
         #if GB_NO_MASK
         {
-            #if GB_A_IS_BITMAP
+            #if GB_B_IS_BITMAP
             {
-                // C=A.*B, where A is bitmap and B is sparse/hyper
-                #include "GB_emult_03a.c"
+                // C=A.*B, where A is sparse/hyper and B is bitmap
+                #include "template/GB_emult_02a.c"
             }
             #else
             {
-                // C=A.*B, where A is full and B is sparse/hyper
-                #include "GB_emult_03b.c"
+                // C=A.*B, where A is sparse/hyper and B is full
+                #include "template/GB_emult_02b.c"
             }
             #endif
         }
         #else
         {
-            // C<#M>=A.*B, where M and A are bitmap/full and B is sparse/hyper
-            #include "GB_emult_03c.c"
+            // C<#M>=A.*B, where A is sparse/hyper; M and B are bitmap/full
+            #include "template/GB_emult_02c.c"
         }
         #endif
 
@@ -84,21 +84,21 @@
 
         if (M == NULL)
         {
-            if (GB_IS_BITMAP (A))
+            if (GB_IS_BITMAP (B))
             { 
-                // C=A.*B, where A is bitmap and B is sparse/hyper
-                #include "GB_emult_03a.c"
+                // C=A.*B, where A is sparse/hyper and B is bitmap
+                #include "template/GB_emult_02a.c"
             }
             else
             { 
-                // C=A.*B, where A is full and B is sparse/hyper
-                #include "GB_emult_03b.c"
+                // C=A.*B, where A is sparse/hyper and B is full
+                #include "template/GB_emult_02b.c"
             }
         }
         else
         { 
-            // C<#M>=A.*B, where M and A are bitmap/full and B is sparse/hyper
-            #include "GB_emult_03c.c"
+            // C<#M>=A.*B, where A is sparse/hyper; M and B are bitmap/full
+            #include "template/GB_emult_02c.c"
         }
 
     #endif

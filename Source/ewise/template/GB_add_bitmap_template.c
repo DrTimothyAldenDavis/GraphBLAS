@@ -24,19 +24,19 @@
         {
             // M is not present.
             // A or B is bitmap (or both).  Neither A nor B are full.
-            #include "GB_add_bitmap_noM.c"
+            #include "template/GB_add_bitmap_noM.c"
         }
         #elif (GB_M_IS_SPARSE || GB_M_IS_HYPER)
         {
             // M is sparse/hyper and complemented, value/structural.
             // A and B can have any format, except at least one is bitmap/full.
-            #include "GB_add_bitmap_M_sparse.c"
+            #include "template/GB_add_bitmap_M_sparse.c"
         }
         #else
         {
             // M is bitmap/full, complemented or not, and valued/structural.
             // A and B have any sparsity format but at least one is bitmap/full.
-            #include "GB_add_bitmap_M_bitmap.c"
+            #include "template/GB_add_bitmap_M_bitmap.c"
         }
         #endif
 
@@ -48,19 +48,19 @@
         { 
             // M is not present.
             // A or B is bitmap (or both).  Neither A nor B are full.
-            #include "GB_add_bitmap_noM.c"
+            #include "template/GB_add_bitmap_noM.c"
         }
         else if (M_is_sparse_or_hyper)
         { 
             // M is sparse/hyper and complemented, value/structural.
             // A and B can have any format, except at least one is bitmap/full.
-            #include "GB_add_bitmap_M_sparse.c"
+            #include "template/GB_add_bitmap_M_sparse.c"
         }
         else
         { 
             // M is bitmap/full, complemented or not, and valued/structural.
             // A and B have any sparsity format but at least one is bitmap/full.
-            #include "GB_add_bitmap_M_bitmap.c"
+            #include "template/GB_add_bitmap_M_bitmap.c"
         }
     }
     #endif

@@ -10,7 +10,7 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_APPLY_BIND2ND_PROTO(GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_APPLY_BIND2ND_PROTO(GB_jit_kernel)
 {
-    #include "GB_apply_bind2nd_template.c"
+    #include "template/GB_apply_bind2nd_template.c"
     return (GrB_SUCCESS) ;
 }
 

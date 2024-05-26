@@ -10,17 +10,17 @@
 {
 
     // declare macros that depend on the sparsity of A and B
-    #include "GB_meta16_definitions.h"
+    #include "template/GB_meta16_definitions.h"
 
     // dot product methods
     #if defined ( GB_DOT4 )
-    #include "GB_AxB_dot4_template.c"
+    #include "template/GB_AxB_dot4_template.c"
     #elif defined ( GB_DOT3_PHASE1 )
-    #include "GB_AxB_dot3_phase1_template.c"
+    #include "template/GB_AxB_dot3_phase1_template.c"
     #elif defined ( GB_DOT3_PHASE2 )
-    #include "GB_AxB_dot3_template.c"
+    #include "template/GB_AxB_dot3_template.c"
     #elif defined ( GB_DOT2 )
-    #include "GB_AxB_dot2_template.c"
+    #include "template/GB_AxB_dot2_template.c"
 
     #else
     #error "method undefined"

@@ -161,7 +161,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     #define GB_B_SIZE bsize
 
     // definitions for GB_AxB_saxpy_generic_template.c
-    #include "GB_AxB_saxpy3_template.h"
+    #include "template/GB_AxB_saxpy3_template.h"
 
     #if GB_GENERIC_OP_IS_POSITIONAL
     { 

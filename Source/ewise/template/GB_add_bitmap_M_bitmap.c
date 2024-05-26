@@ -81,17 +81,17 @@
         #if (GB_A_IS_BITMAP || GB_A_IS_FULL) && (GB_B_IS_BITMAP || GB_B_IS_FULL)
         {
             // A and B are both bitmap/full
-            #include "GB_add_bitmap_M_bitmap_27.c"
+            #include "template/GB_add_bitmap_M_bitmap_27.c"
         }
         #elif (GB_A_IS_BITMAP || GB_A_IS_FULL)
         {
             // A is bitmap/full, B is sparse/hyper
-            #include "GB_add_bitmap_M_bitmap_28.c"
+            #include "template/GB_add_bitmap_M_bitmap_28.c"
         }
         #else
         {
             // A is sparse/hyper, B is bitmap/full
-            #include "GB_add_bitmap_M_bitmap_29.c"
+            #include "template/GB_add_bitmap_M_bitmap_29.c"
         }
         #endif
     }
@@ -100,17 +100,17 @@
         if ((A_is_bitmap || A_is_full) && (B_is_bitmap || B_is_full))
         { 
             // A and B are both bitmap/full
-            #include "GB_add_bitmap_M_bitmap_27.c"
+            #include "template/GB_add_bitmap_M_bitmap_27.c"
         }
         else if (A_is_bitmap || A_is_full)
         { 
             // A is bitmap/full, B is sparse/hyper
-            #include "GB_add_bitmap_M_bitmap_28.c"
+            #include "template/GB_add_bitmap_M_bitmap_28.c"
         }
         else
         { 
             // A is sparse/hyper, B is bitmap/full
-            #include "GB_add_bitmap_M_bitmap_29.c"
+            #include "template/GB_add_bitmap_M_bitmap_29.c"
         }
     }
     #endif

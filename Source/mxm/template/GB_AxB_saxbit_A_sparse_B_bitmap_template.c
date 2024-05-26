@@ -148,7 +148,7 @@
                     }                                                   \
                 }
 
-                #include "GB_AxB_saxpy4_panel.c"
+                #include "template/GB_AxB_saxpy4_panel.c"
                 #undef GB_MULT_A_ik_G_kj
                 #undef GB_HX_COMPUTE
                 #undef GB_B_kj_PRESENT

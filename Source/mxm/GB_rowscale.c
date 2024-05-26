@@ -339,13 +339,13 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
             { 
                 #undef  GB_EWISEOP
                 #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),y,x)
-                #include "GB_rowscale_template.c"
+                #include "template/GB_rowscale_template.c"
             }
             else
             { 
                 #undef  GB_EWISEOP
                 #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),x,y)
-                #include "GB_rowscale_template.c"
+                #include "template/GB_rowscale_template.c"
             }
             info = GrB_SUCCESS ;
         }

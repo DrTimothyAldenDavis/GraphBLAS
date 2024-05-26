@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_AxB_saxpy3_template.h"
+#include "template/GB_AxB_saxpy3_template.h"
 
 GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel) ;
 
@@ -42,7 +42,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel) ;
                 const int64_t *B_slice
             )
             {
-                #include "GB_AxB_saxpy5_unrolled.c"
+                #include "template/GB_AxB_saxpy5_unrolled.c"
             }
 
         #endif
@@ -78,7 +78,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel) ;
                 const int64_t *B_slice
             )
             {
-                #include "GB_AxB_saxpy5_unrolled.c"
+                #include "template/GB_AxB_saxpy5_unrolled.c"
             }
 
         #endif
@@ -107,7 +107,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel) ;
         const int64_t *B_slice
     )
     {
-        #include "GB_AxB_saxpy5_unrolled.c"
+        #include "template/GB_AxB_saxpy5_unrolled.c"
     }
 
 #endif
@@ -126,7 +126,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel)
         // saxpy5: C+=A*B where A is bitmap/full and iso or pattern
         //----------------------------------------------------------------------
 
-        #include "GB_AxB_saxpy5_A_iso_or_pattern.c"
+        #include "template/GB_AxB_saxpy5_A_iso_or_pattern.c"
 
     }
     #elif GB_A_IS_BITMAP
@@ -136,7 +136,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel)
         // saxpy5: C+=A*B where A is bitmap (but not iso or pattern)
         //----------------------------------------------------------------------
 
-        #include "GB_AxB_saxpy5_A_bitmap.c"
+        #include "template/GB_AxB_saxpy5_A_bitmap.c"
 
     }
     #else

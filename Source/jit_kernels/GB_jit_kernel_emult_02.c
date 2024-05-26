@@ -10,7 +10,7 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_EMULT_02_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_EMULT_02_PROTO (GB_jit_kernel)
 {
-    #include "GB_emult_02_template.c"
+    #include "template/GB_emult_02_template.c"
     return (GrB_SUCCESS) ;
 }
 

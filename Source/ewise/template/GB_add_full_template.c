@@ -33,7 +33,7 @@
         #if (GB_A_IS_FULL && GB_B_IS_FULL)
         {
             // C, A, and B are all full
-            #include "GB_add_full_30.c"
+            #include "template/GB_add_full_30.c"
         }
         #elif (GB_A_IS_FULL)
         {
@@ -41,12 +41,12 @@
             #if (GB_B_IS_BITMAP)
             {
                 // C and A are full; B is bitmap
-                #include "GB_add_full_31.c"
+                #include "template/GB_add_full_31.c"
             }
             #else
             {
                 // C and A are full; B is sparse or hypersparse
-                #include "GB_add_full_32.c"
+                #include "template/GB_add_full_32.c"
             }
             #endif
         }
@@ -56,12 +56,12 @@
             #if (GB_A_IS_BITMAP)
             {
                 // C and B are full; A is bitmap
-                #include "GB_add_full_33.c"
+                #include "template/GB_add_full_33.c"
             }
             #else
             {
                 // C and B are full; A is hypersparse or sparse
-                #include "GB_add_full_34.c"
+                #include "template/GB_add_full_34.c"
             }
             #endif
         }
@@ -72,7 +72,7 @@
         if (A_is_full && B_is_full)
         { 
             // C, A, and B are all full
-            #include "GB_add_full_30.c"
+            #include "template/GB_add_full_30.c"
         }
         else if (A_is_full)
         {
@@ -80,12 +80,12 @@
             if (B_is_bitmap)
             { 
                 // C and A are full; B is bitmap
-                #include "GB_add_full_31.c"
+                #include "template/GB_add_full_31.c"
             }
             else
             { 
                 // C and A are full; B is sparse or hypersparse
-                #include "GB_add_full_32.c"
+                #include "template/GB_add_full_32.c"
             }
         }
         else
@@ -94,12 +94,12 @@
             if (A_is_bitmap)
             { 
                 // C and B are full; A is bitmap
-                #include "GB_add_full_33.c"
+                #include "template/GB_add_full_33.c"
             }
             else
             { 
                 // C and B are full; A is hypersparse or sparse
-                #include "GB_add_full_34.c"
+                #include "template/GB_add_full_34.c"
             }
         }
     }
