@@ -21,7 +21,7 @@
 #ifndef GBCOMPACT
 #include "GB_AxB__include2.h"
 #endif
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \
@@ -220,7 +220,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // as the pth entry in C.  This phase is purely symbolic and does not
     // depend on the data types or semiring.
 
-    #include "shared/GB_mxm_shared_definitions.h"
+    #include "mxm/include/GB_mxm_shared_definitions.h"
     #define GB_DOT3
     #define GB_DOT3_PHASE1
 

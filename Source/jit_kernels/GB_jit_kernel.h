@@ -16,7 +16,7 @@
 
 #ifndef GB_CUDA_KERNEL
     // for CPU JIT kernels:
-    #include "GB_Template.h"
+    #include "GB_include.h"
 #else
     // for CUDA JIT kernels:
     #include "GB_cuda_kernel.cuh"

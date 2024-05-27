@@ -10,7 +10,7 @@
 #ifndef GB_H
 #define GB_H
 
-#include "include/GB_Template.h"
+#include "include/GB_include.h"
 #include "global/GB_Global.h"
 #include "print/GB_printf.h"
 #include "ok/GB_assert.h"

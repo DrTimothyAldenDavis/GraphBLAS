@@ -12,7 +12,7 @@
 // this file.  This file is shared by generic, factory, and both CPU and
 // CUDA JIT kernels.
 
-#include "shared/GB_kernel_shared_definitions.h"
+#include "include/GB_kernel_shared_definitions.h"
 
 #ifndef GB_SELECT_SHARED_DEFINITIONS_H
 #define GB_SELECT_SHARED_DEFINITIONS_H

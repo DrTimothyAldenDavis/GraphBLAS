@@ -10,7 +10,7 @@
 #include "GB.h"
 #include "builtin/factory/GB_control.h"
 #include "mxm/GB_AxB_saxpy.h"
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 #include "assign/GB_bitmap_assign_methods.h"
 #include "GB_AxB__include1.h"
 
@@ -66,7 +66,7 @@
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE 0
 
-#include "shared/GB_mxm_shared_definitions.h"
+#include "mxm/include/GB_mxm_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // GB_Adot2B: C=A'*B, C<M>=A'*B, or C<!M>=A'*B: dot product method, C is bitmap

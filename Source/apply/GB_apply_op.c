@@ -20,7 +20,7 @@
 #include "GB_apply.h"
 #include "GB_binop.h"
 #include "GB_ek_slice.h"
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 #include "GB_stringify.h"
 #ifndef GBCOMPACT
 #include "GB_unop__include.h"

@@ -9,7 +9,7 @@
 
 #include "GB.h"
 #include "GB_unop.h"
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 
 GB_Operator GB_unop_identity    // return IDENTITY operator, or NULL on error
 (

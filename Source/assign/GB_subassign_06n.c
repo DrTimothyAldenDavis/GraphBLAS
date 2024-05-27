@@ -30,7 +30,7 @@
 // M and A are not bitmap: 06s is used instead, if M or A are bitmap.
 
 #include "GB_subassign_methods.h"
-#include "shared/GB_assign_shared_definitions.h"
+#include "assign/include/GB_assign_shared_definitions.h"
 
 GrB_Info GB_subassign_06n
 (

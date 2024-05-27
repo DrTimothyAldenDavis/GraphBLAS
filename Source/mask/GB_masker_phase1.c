@@ -22,7 +22,7 @@
 // Rp is either freed by phase2, or transplanted into R.
 
 #include "GB_mask.h"
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 
 GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
 (

@@ -30,7 +30,7 @@
 #include "GB_concat.h"
 #include "GB_stringify.h"
 #include "GB_apply.h"
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 
 GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
 (

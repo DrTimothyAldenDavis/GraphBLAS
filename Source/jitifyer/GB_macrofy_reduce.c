@@ -181,6 +181,6 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     // include the final default definitions
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n#include \"shared/GB_monoid_shared_definitions.h\"\n") ;
+    fprintf (fp, "\n#include \"include/GB_monoid_shared_definitions.h\"\n") ;
 }
 

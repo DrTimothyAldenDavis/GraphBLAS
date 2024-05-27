@@ -28,7 +28,7 @@
 //  Blocksize is 1024, uses tile and block reductions to count zombies produced.
 //******************************************************************************
 
-#include "GB_cuda_threadblock_sum_uint64.cuh"
+#include "template/GB_cuda_threadblock_sum_uint64.cuh"
 
 //------------------------------------------------------------------------------
 // GB_cuda_AxB_dot3_phase3_vsvs_kernel

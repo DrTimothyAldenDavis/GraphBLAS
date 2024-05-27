@@ -23,7 +23,7 @@
 // M, A: not bitmap; Method 08s is used instead if M or A are bitmap.
 
 #include "GB_subassign_methods.h"
-#include "shared/GB_assign_shared_definitions.h"
+#include "assign/include/GB_assign_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // GB_PHASE1_ACTION

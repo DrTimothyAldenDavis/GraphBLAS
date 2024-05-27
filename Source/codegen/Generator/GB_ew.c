@@ -43,7 +43,7 @@ GB_ctype_is_btype
 // disable this operator and use the generic case if these conditions hold
 GB_disable
 
-#include "shared/GB_ewise_shared_definitions.h"
+#include "ewise/include/GB_ewise_shared_definitions.h"
 
 m4_divert(if_is_binop_subset)
 //------------------------------------------------------------------------------

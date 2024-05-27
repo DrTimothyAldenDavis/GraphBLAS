@@ -617,9 +617,6 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
     snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/src/include",
         GB_jit_cache_path) ;
     ok = ok && GB_file_mkdir (GB_jit_temp) ;
-    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/src/shared",
-        GB_jit_cache_path) ;
-    ok = ok && GB_file_mkdir (GB_jit_temp) ;
 
     // construct the tmp path
     snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/tmp", GB_jit_cache_path) ;
@@ -2382,12 +2379,11 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
         "cmake_minimum_required ( VERSION 3.13 )\n" // end user needs cmake 3.13
         "project ( GBjit LANGUAGES C )\n"
         "include_directories ( \"%s/src\" \"%s/src/template\""
-        " \"%s/src/include\" \"%s/src/shared\" %s)\n"
+        " \"%s/src/include\" %s)\n"
         "add_compile_definitions ( GB_JIT_RUNTIME )\n",
         GB_jit_cache_path,          // include: cache/src
         GB_jit_cache_path,          // include: cache/src/template
         GB_jit_cache_path,          // include: cache/src/include
-        GB_jit_cache_path,          // include: cache/src/shared
         ((strlen (GB_OMP_INC_DIRS) == 0) ? " " : " \"" GB_OMP_INC_DIRS "\" ")) ;
     // print the C flags, but escape any double quote characters
     fprintf (fp, "set ( CMAKE_C_FLAGS \"") ;
@@ -2507,7 +2503,6 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     "-I'%s/src' "                       // include source directory
     "-I'%s/src/template' "
     "-I'%s/src/include' "
-    "-I'%s/src/shared' "
     "-o '%s/c/%02x/%s%s' "              // *.o output file
     "-c '%s/c/%02x/%s.cu' "             // *.cu input file
     "%s "                               // burble stdout
@@ -2529,7 +2524,6 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     GB_jit_cache_path,                  // include cache/src
     GB_jit_cache_path,                  // include cache/src/template
     GB_jit_cache_path,                  // include cache/src/include
-    GB_jit_cache_path,                  // include cache/src/shared
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o output file
     GB_jit_cache_path, bucket, kernel_name,                 // *.cu input file
     burble_stdout,                      // burble stdout
@@ -2587,7 +2581,6 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
     "-I'%s/src' "                       // include source directory
     "-I'%s/src/template' "
     "-I'%s/src/include' "
-    "-I'%s/src/shared' "
     "%s "                               // openmp include directories
     "-o '%s/c/%02x/%s%s' "              // *.o output file
     "-c '%s/c/%02x/%s.c' "              // *.c input file
@@ -2610,7 +2603,6 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
     GB_jit_cache_path,                  // include cache/src
     GB_jit_cache_path,                  // include cache/src/template
     GB_jit_cache_path,                  // include cache/src/include
-    GB_jit_cache_path,                  // include cache/src/sahred
     GB_OMP_INC,                         // openmp include
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o output file
     GB_jit_cache_path, bucket, kernel_name,                 // *.c input file

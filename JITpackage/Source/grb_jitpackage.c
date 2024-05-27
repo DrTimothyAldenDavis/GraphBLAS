@@ -235,8 +235,7 @@ int main (int argc, char **argv)
             {
                 filename = fullname + i + 1 ;
                 if (match_prefix (filename, "template") ||
-                    match_prefix (filename, "include")  ||
-                    match_prefix (filename, "shared"))
+                    match_prefix (filename, "include"))
                 {
                     break ;
                 }

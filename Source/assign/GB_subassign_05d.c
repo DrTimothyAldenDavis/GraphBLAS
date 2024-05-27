@@ -23,9 +23,9 @@
 // all entries present.
 
 #include "GB_subassign_methods.h"
-#include "shared/GB_assign_shared_definitions.h"
+#include "assign/include/GB_assign_shared_definitions.h"
 #include "GB_subassign_dense.h"
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 #include "GB_stringify.h"
 #ifndef GBCOMPACT
 #include "GB_as__include.h"

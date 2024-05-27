@@ -12,7 +12,7 @@
 #include "GB_subassign.h"
 #include "GB_bitmap_assign.h"
 #include "GB_assign_zombie.h"
-#include "shared/GB_assign_shared_definitions.h"
+#include "assign/include/GB_assign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 #include "GB_transpose.h"
 #include "GB_subref.h"

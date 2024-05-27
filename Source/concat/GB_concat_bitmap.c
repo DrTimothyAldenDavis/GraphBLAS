@@ -18,7 +18,7 @@
     GB_phybix_free (C) ;
 
 #include "GB_concat.h"
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 #include "GB_apply.h"
 #include "GB_stringify.h"
 

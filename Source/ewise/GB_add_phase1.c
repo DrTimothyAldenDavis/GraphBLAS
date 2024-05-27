@@ -20,7 +20,7 @@
 // Cp is constructed here, and either freed by phase2, or transplanted into C.
 
 #include "GB_add.h"
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 
 GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
 (

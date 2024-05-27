@@ -18,7 +18,7 @@ GB_test_value_of_entry
 GB_select_entry
 GB_iso_select
 
-#include "shared/GB_select_shared_definitions.h"
+#include "select/include/GB_select_shared_definitions.h"
 
 m4_divert(if_phase1)
 //------------------------------------------------------------------------------

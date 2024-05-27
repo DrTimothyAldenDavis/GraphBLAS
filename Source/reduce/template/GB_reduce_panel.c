@@ -16,7 +16,7 @@
 
 // The Panel and W arrays always have the same type as z, GB_Z_TYPE.
 
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 
 // default panel size
 #ifndef GB_PANEL

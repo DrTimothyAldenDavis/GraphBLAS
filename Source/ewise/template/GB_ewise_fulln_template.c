@@ -9,7 +9,7 @@
 
 //  This template is not used for any generic kernels.
 
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 
 {
 

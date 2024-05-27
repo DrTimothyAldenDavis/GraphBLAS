@@ -36,8 +36,6 @@ using namespace cooperative_groups ;
 #undef  ASSERT
 #define ASSERT(x)
 
-//------------------------------------------------------------------------------
-
 // for internal static inline functions
 #undef  GB_STATIC_INLINE
 #define GB_STATIC_INLINE static __device__ __inline__
@@ -46,29 +44,34 @@ using namespace cooperative_groups ;
 // subset of GraphBLAS.h
 //------------------------------------------------------------------------------
 
-#include "GraphBLAS_h_subset.cuh"
+#include "GraphBLAS_cuda.hpp"
 
 //------------------------------------------------------------------------------
-// subset of GB.h
+// internal #include files
 //------------------------------------------------------------------------------
-
-#include "GB_h_subset.cuh"
-
-//------------------------------------------------------------------------------
-// final #include files
-//------------------------------------------------------------------------------
-
-#include "GB_cuda_error.hpp"
-#include "GB_cuda_atomics.cuh"
-#include "include/GB_printf_kernels.h"
-#include "shared/GB_hash.h"
-#include "shared/GB_hyper_hash_lookup.h"
 
 extern "C"
 {
+    #include "include/GB_pun.h"
+    #include "include/GB_partition.h"
+    #include "include/GB_binary_search.h"
+    #include "include/GB_zombie.h"
+    #include "include/GB_int64_mult.h"
+    #include "include/GB_index.h"
+    #include "include/GB_hash.h"
+    #include "include/GB_complex.h"
+    #include "include/GB_iceil.h"
+    #include "include/GB_math_macros.h"
+    #include "include/GB_memory_macros.h"
+    #include "include/GB_printf_kernels.h"
+    #include "include/GB_opaque.h"
     #include "include/GB_werk.h"
     #include "include/GB_callback_proto.h"
     #include "include/GB_saxpy3task_struct.h"
     #include "include/GB_callback.h"
+    #include "include/GB_hyper_hash_lookup.h"
 }
+
+#include "GB_cuda_error.hpp"
+#include "GB_cuda_atomics.cuh"
 

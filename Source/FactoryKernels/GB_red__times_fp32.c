@@ -36,7 +36,7 @@
 #define GB_DISABLE 0
 #endif
 
-#include "shared/GB_monoid_shared_definitions.h"
+#include "monoid/include/GB_monoid_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // reduce to a non-iso matrix to scalar, for monoids only

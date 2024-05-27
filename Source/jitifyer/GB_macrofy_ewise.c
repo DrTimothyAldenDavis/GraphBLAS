@@ -208,6 +208,6 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // include the final default definitions
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n#include \"shared/GB_ewise_shared_definitions.h\"\n") ;
+    fprintf (fp, "\n#include \"include/GB_ewise_shared_definitions.h\"\n") ;
 }
 

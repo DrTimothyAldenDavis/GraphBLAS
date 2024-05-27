@@ -333,7 +333,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
 
             #define GB_C_TYPE GB_void
 
-            #include "shared/GB_ewise_shared_definitions.h"
+            #include "ewise/include/GB_ewise_shared_definitions.h"
 
             if (flipxy)
             { 

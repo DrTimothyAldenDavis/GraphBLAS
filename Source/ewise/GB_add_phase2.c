@@ -31,7 +31,7 @@
 
 #include "GB_add.h"
 #include "GB_binop.h"
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 #include "GB_ek_slice.h"
 #include "GB_stringify.h"
 #ifndef GBCOMPACT
@@ -322,7 +322,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // using a built-in binary operator (except for positional operators)
     //--------------------------------------------------------------------------
 
-    #include "shared/GB_ewise_shared_definitions.h"
+    #include "ewise/include/GB_ewise_shared_definitions.h"
     #define GB_ADD_PHASE 2
 
     info = GrB_NO_VALUE ;

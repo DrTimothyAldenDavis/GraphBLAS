@@ -65,7 +65,7 @@ GrB_Info GB_select_generic_phase2
     #define GB_GENERIC
     #define GB_ENTRY_SELECTOR
     #define GB_A_TYPE GB_void
-    #include "shared/GB_select_shared_definitions.h"
+    #include "select/include/GB_select_shared_definitions.h"
 
     // GB_ISO_SELECT is always #defined'd as 1 here, even though C can be iso.
     // The case when C is iso is handled by the GB_SELECT_ENTRY macro itself.

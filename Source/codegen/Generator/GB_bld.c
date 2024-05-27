@@ -27,7 +27,7 @@ GB_ytype
 // disable this operator and use the generic case if these conditions hold
 GB_disable
 
-#include "shared/GB_kernel_shared_definitions.h"
+#include "omp/include/GB_kernel_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // build a non-iso matrix

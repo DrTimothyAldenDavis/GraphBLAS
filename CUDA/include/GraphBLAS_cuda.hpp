@@ -7,6 +7,13 @@
 
 //------------------------------------------------------------------------------
 
+extern "C"
+{ 
+    #include "include/GB_dev.h"
+    #include "include/GB_compiler.h"
+    #include "include/GB_warnings.h"
+}
+
 #ifndef GXB_COMPLEX_H
 #define GXB_COMPLEX_H
 
@@ -24,4 +31,6 @@
 #define GB_CUDA_FOLDER
 #include "GraphBLAS.h"
 #undef I
+
+#define restrict GB_restrict
 

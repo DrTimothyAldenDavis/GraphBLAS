@@ -9,7 +9,7 @@
 
 #include "GB.h"
 #include "GB_binop.h"
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 
 GrB_BinaryOp GB_binop_second    // return SECOND operator, or NULL on error
 (

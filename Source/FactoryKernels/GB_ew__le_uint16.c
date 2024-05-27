@@ -45,7 +45,7 @@
 #define GB_DISABLE 0
 #endif
 
-#include "shared/GB_ewise_shared_definitions.h"
+#include "ewise/include/GB_ewise_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // C = A+B, all 3 matrices dense

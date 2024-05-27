@@ -45,7 +45,8 @@ set ( RMM_WRAP_INCLUDES "../rmm_wrap" )
 set ( GRAPHBLAS_CUDA_INCLUDES
         ${RMM_WRAP_INCLUDES}
         ../Source
-        Template
+        template
+        include
         ../Include
         ../CUDA
         )

@@ -10,8 +10,8 @@
 // This header is #include'd just before using any templates for any method:
 // pre-generated kernel, CPU or GPU JIT, or generic.
 
-#include "shared/GB_unused.h"
-#include "shared/GB_complex.h"
+#include "include/GB_unused.h"
+#include "include/GB_complex.h"
 
 #ifndef GB_KERNEL_SHARED_DEFINITIONS_H
 #define GB_KERNEL_SHARED_DEFINITIONS_H

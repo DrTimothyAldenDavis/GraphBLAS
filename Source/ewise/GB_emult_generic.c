@@ -17,7 +17,7 @@
 #include "GB_ewise.h"
 #include "GB_emult.h"
 #include "GB_binop.h"
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 #include "GB_ek_slice.h"
 #include "GB_generic.h"
 
@@ -126,7 +126,7 @@ GrB_Info GB_emult_generic       // generic emult
             cast_B_to_Y (bij, Bx +((B_iso) ? 0:(pB)*bsize), bsize) ;    \
         }
 
-    #include "shared/GB_ewise_shared_definitions.h"
+    #include "ewise/include/GB_ewise_shared_definitions.h"
 
     //--------------------------------------------------------------------------
     // do the ewise operation

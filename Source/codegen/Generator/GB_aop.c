@@ -52,7 +52,7 @@ GB_ax_mask
 // disable this operator and use the generic case if these conditions hold
 GB_disable
 
-#include "shared/GB_assign_shared_definitions.h"
+#include "assign/include/GB_assign_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // C += A, accumulate a sparse matrix into a dense matrix

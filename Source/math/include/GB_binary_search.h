@@ -18,27 +18,50 @@
 // The list X [pleft ... pright] is in ascending order.  It may have
 // duplicates.
 
-#define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                             \
-{                                                                           \
-    /* binary search of X [pleft ... pright] for integer i */               \
-    while (pleft < pright)                                                  \
+#ifdef GB_CUDA_KERNEL
+
+    // binary search on the GPU, with fewer branches
+    #define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                         \
     {                                                                       \
-        int64_t pmiddle = (pleft + pright) / 2 ;                            \
-        if (X [pmiddle] < i)                                                \
+        /* binary search of X [pleft ... pright] for integer i */           \
+        while (pleft < pright)                                              \
         {                                                                   \
-            /* if in the list, it appears in [pmiddle+1..pright] */         \
-            pleft = pmiddle + 1 ;                                           \
+            int64_t pmiddle = (pleft + pright) >> 1 ;                       \
+            bool less = (X [pmiddle] < i) ;                                 \
+            pleft  = less ? (pmiddle+1) : pleft ;                           \
+            pright = less ? pright : pmiddle ;                              \
         }                                                                   \
-        else                                                                \
+        /* binary search is narrowed down to a single item */               \
+        /* or it has found the list is empty */                             \
+        /* ASSERT (pleft == pright || pleft == pright + 1) ; */             \
+    }
+
+#else
+
+    // binary search on the CPU
+    #define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                         \
+    {                                                                       \
+        /* binary search of X [pleft ... pright] for integer i */           \
+        while (pleft < pright)                                              \
         {                                                                   \
-            /* if in the list, it appears in [pleft..pmiddle] */            \
-            pright = pmiddle ;                                              \
+            int64_t pmiddle = (pleft + pright) / 2 ;                        \
+            if (X [pmiddle] < i)                                            \
+            {                                                               \
+                /* if in the list, it appears in [pmiddle+1..pright] */     \
+                pleft = pmiddle + 1 ;                                       \
+            }                                                               \
+            else                                                            \
+            {                                                               \
+                /* if in the list, it appears in [pleft..pmiddle] */        \
+                pright = pmiddle ;                                          \
+            }                                                               \
         }                                                                   \
-    }                                                                       \
-    /* binary search is narrowed down to a single item */                   \
-    /* or it has found the list is empty */                                 \
-    ASSERT (pleft == pright || pleft == pright + 1) ;                       \
-}
+        /* binary search is narrowed down to a single item */               \
+        /* or it has found the list is empty */                             \
+        /* ASSERT (pleft == pright || pleft == pright + 1) ; */             \
+    }
+
+#endif
 
 //------------------------------------------------------------------------------
 // GB_BINARY_SEARCH: binary search and check if found
@@ -107,7 +130,7 @@
     }                                                                       \
     /* binary search is narrowed down to a single item */                   \
     /* or it has found the list is empty */                                 \
-    ASSERT (pleft == pright || pleft == pright + 1) ;                       \
+    /* ASSERT (pleft == pright || pleft == pright + 1) ; */                 \
 }
 
 //------------------------------------------------------------------------------

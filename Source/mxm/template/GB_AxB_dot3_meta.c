@@ -15,7 +15,7 @@
 #define GB_DOT3
 #define GB_DOT3_PHASE2
 
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 #include "include/GB_AxB_dot_cij.h"
 
 // GB_DOT_ALWAYS_SAVE_CIJ: C(i,j) = cij

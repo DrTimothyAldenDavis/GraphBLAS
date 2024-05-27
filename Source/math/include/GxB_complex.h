@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_complex.h: definitions for the GraphBLAS complex types
+// GxB_complex.h: definitions for the GraphBLAS complex types (no longer needed)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.

@@ -12,7 +12,7 @@
 
 #if !GB_HAS_CMPLX_MACROS
 // complex constructors when the C compiler does not provide CMPLX and CMPLXF
-// macros.  See Source/shared/GB_complex.h
+// macros.  See Source/math/include/GB_complex.h
 extern GxB_FC32_t GB_complexf (float  xreal, float  ximag) ;
 extern GxB_FC64_t GB_complex  (double xreal, double ximag) ;
 #endif

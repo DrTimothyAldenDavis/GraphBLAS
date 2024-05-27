@@ -15,8 +15,6 @@
 #ifndef GB_PUN_H
 #define GB_PUN_H
 
-#undef  GB_PUN
 #define GB_PUN(type,value) (*((type *) (&(value))))
 
 #endif
-

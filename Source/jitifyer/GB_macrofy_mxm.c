@@ -374,6 +374,6 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     // include the final default definitions
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n#include \"shared/GB_mxm_shared_definitions.h\"\n") ;
+    fprintf (fp, "\n#include \"include/GB_mxm_shared_definitions.h\"\n") ;
 }
 

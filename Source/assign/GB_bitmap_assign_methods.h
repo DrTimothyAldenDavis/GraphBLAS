@@ -15,7 +15,7 @@
 #include "slice/GB_ek_slice.h"
 #include "ij/GB_ij.h"
 #include "assign/GB_subassign_IxJ_slice.h"
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 #include "assign/include/GB_bitmap_scatter.h"
 
 //------------------------------------------------------------------------------

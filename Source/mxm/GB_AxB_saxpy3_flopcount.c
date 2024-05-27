@@ -70,7 +70,7 @@
 #include "GB_mxm.h"
 #include "GB_ek_slice.h"
 #include "GB_AxB_saxpy3.h"
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 
 #define GB_FREE_ALL                         \
 {                                           \

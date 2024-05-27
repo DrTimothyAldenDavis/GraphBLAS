@@ -96,7 +96,7 @@
 #ifndef GBCOMPACT
 #include "GB_AxB__include2.h"
 #endif
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 
 #define GB_FREE_WORKSPACE                           \
 {                                                   \

@@ -144,7 +144,7 @@ message ( STATUS "CMAKE have OpenMP:          ${OpenMP_C_FOUND}" )
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 include_directories ( ../Source/Template ../Source ../Include rename
-    ../Source/Shared Config ../Source/jit_kernels ../JITpackage
+    Config ../Source/jit_kernels ../JITpackage
     ../lz4 ../zstd ../zstd/zstd_subset ../xxHash
     ../Source/jitifyer
     ../Source/assign

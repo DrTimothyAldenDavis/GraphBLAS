@@ -10,7 +10,7 @@
 // JIT: not needed, but variants possible for each kind of mask matrix.
 
 #include "GB_bitmap_assign_methods.h"
-#include "shared/GB_assign_shared_definitions.h"
+#include "assign/include/GB_assign_shared_definitions.h"
 
 GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO (GB_bitmap_M_scatter_whole)
 {

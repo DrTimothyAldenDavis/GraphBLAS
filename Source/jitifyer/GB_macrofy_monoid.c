@@ -164,9 +164,9 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // determine the OpenMP #pragma omp reduction(redop:z) for this monoid
     //--------------------------------------------------------------------------
 
-    // If not #define'd, the default in shared/GB_monoid_shared_definitions.h
-    // is no #pragma.  The pragma is empty if the monoid is terminal, since the
-    // simd reduction does not work with a 'break' in the loop.
+    // If not #define'd, omp/include/GB_monoid_shared_definitions.h defaults
+    // to no #pragma.  The pragma is empty if the monoid is terminal, since
+    // the simd reduction does not work with a 'break' in the loop.
 
     bool is_complex = (zcode == GB_FC32_code || zcode == GB_FC64_code) ;
 
@@ -253,7 +253,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     if (ztype_ignore_overflow && !is_any_monoid)
     { 
         // if the monoid is ANY, this is set to 1 by
-        // shared/GB_monoid_shared_definitions.h, so skip it here
+        // monoid/include/GB_monoid_shared_definitions.h, so skip it here
         fprintf (fp, "#define GB_Z_IGNORE_OVERFLOW 1\n") ;
     }
 
@@ -303,7 +303,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 
     // atomic write for the ztype:  if GB_Z_ATOMIC_BITS is defined, then
     // GB_Z_HAS_ATOMIC_WRITE is #defined as 1 by
-    // shared/GB_kernel_shared_definitions.h
+    // omp/include/GB_kernel_shared_definitions.h
 
     if (has_atomic_write && (zcode == GB_FC32_code || zcode == GB_UDT_code))
     { 

@@ -37,7 +37,7 @@ GB_panel
 // disable this operator and use the generic case if these conditions hold
 GB_disable
 
-#include "shared/GB_monoid_shared_definitions.h"
+#include "monoid/include/GB_monoid_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // reduce to a non-iso matrix to scalar, for monoids only

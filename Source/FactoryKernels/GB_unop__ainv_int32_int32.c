@@ -41,7 +41,7 @@
 #define GB_DISABLE 0
 #endif
 
-#include "shared/GB_apply_shared_definitions.h"
+#include "apply/include/GB_apply_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator

@@ -53,7 +53,7 @@ GrB_Info GB_select_generic_phase1
 
     #define GB_GENERIC
     #define GB_A_TYPE GB_void
-    #include "shared/GB_select_shared_definitions.h"
+    #include "select/include/GB_select_shared_definitions.h"
 
     if (A->iso)
     {

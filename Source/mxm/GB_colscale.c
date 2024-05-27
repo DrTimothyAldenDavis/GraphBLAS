@@ -17,7 +17,7 @@
 #ifndef GBCOMPACT
 #include "GB_ew__include.h"
 #endif
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
@@ -349,7 +349,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
 
             #define GB_C_TYPE GB_void
 
-            #include "shared/GB_ewise_shared_definitions.h"
+            #include "ewise/include/GB_ewise_shared_definitions.h"
 
             if (flipxy)
             { 

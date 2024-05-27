@@ -11,13 +11,6 @@
 #ifndef GB_CUDA_HPP
 #define GB_CUDA_HPP
 
-extern "C"
-{ 
-    #include "include/GB_dev.h"
-    #include "include/GB_compiler.h"
-    #include "include/GB_warnings.h"
-}
-
 #include "GraphBLAS_cuda.hpp"
 
 extern "C"

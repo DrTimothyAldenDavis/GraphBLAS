@@ -61,7 +61,7 @@
 #include "GB_ewise.h"
 #include "GB_emult.h"
 #include "GB_binop.h"
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 #include "GB_ek_slice.h"
 #include "GB_stringify.h"
 #ifndef GBCOMPACT

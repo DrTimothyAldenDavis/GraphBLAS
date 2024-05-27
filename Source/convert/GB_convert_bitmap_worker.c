@@ -16,8 +16,8 @@
 // TODO allow this function to do typecasting.
 
 #include "GB.h"
-#include "GB_partition.h"
-#include "shared/GB_unused.h"
+#include "slice/include/GB_partition.h"
+#include "include/GB_unused.h"
 
 GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
 (

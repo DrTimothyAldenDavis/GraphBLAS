@@ -13,12 +13,13 @@
 
 // Sx and Tx are either both iso or both non-iso.  For the iso case,
 // GB_ISO_BUILD is defined, and K_work is NULL.  The iso case is not handled by
-// the FactoryKernels/GB_bld__* workers, since it doesn't access the values at all.
+// the FactoryKernels/GB_bld__* workers, since it doesn't access the values at
+// all.
 
 {
 
     // k unused for some uses of this template
-    #include "shared/GB_unused.h"
+    #include "include/GB_unused.h"
 
     if (ndupl == 0)
     {

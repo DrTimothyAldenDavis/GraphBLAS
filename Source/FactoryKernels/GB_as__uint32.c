@@ -30,7 +30,7 @@
 #define GB_DISABLE 0
 #endif
 
-#include "shared/GB_assign_shared_definitions.h"
+#include "assign/include/GB_assign_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // C<M> = scalar, when C is dense

@@ -18,7 +18,7 @@
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)
 #define GB_ISO_SELECT 1
 
-#include "shared/GB_select_shared_definitions.h"
+#include "select/include/GB_select_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // GB_sel_phase1

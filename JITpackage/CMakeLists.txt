@@ -77,9 +77,9 @@ if ( TARGET grb_jitpackage )
         RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         "../Include/GraphBLAS.h"
         "../Source/jit_kernels/*.[ch]"
-        "../CUDA/Template/*"
+        "../CUDA/template/*"
+        "../CUDA/include/*"
         "../CUDA/jit_kernels/*"
-        "../Source/shared/*"
         "../Source/*/template/*"
         "../Source/*/include/*"
         "../Source/include/*" )

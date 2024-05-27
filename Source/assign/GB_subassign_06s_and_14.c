@@ -23,7 +23,7 @@
 // M, A: any sparsity structure.
 
 #include "GB_subassign_methods.h"
-#include "shared/GB_assign_shared_definitions.h"
+#include "assign/include/GB_assign_shared_definitions.h"
 
 GrB_Info GB_subassign_06s_and_14
 (

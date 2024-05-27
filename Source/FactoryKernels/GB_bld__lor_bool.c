@@ -31,7 +31,7 @@
 #define GB_DISABLE 0
 #endif
 
-#include "shared/GB_kernel_shared_definitions.h"
+#include "omp/include/GB_kernel_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // build a non-iso matrix

@@ -9,7 +9,7 @@
 
 #define GB_DOT2
 
-#include "shared/GB_unused.h"
+#include "include/GB_unused.h"
 #include "include/GB_AxB_dot_cij.h"
 
 {

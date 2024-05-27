@@ -207,7 +207,7 @@ configure_file ( "Config/README.md.in"
 # include directories for both graphblas and the demos
 #-------------------------------------------------------------------------------
 
-include_directories ( Source Include Source/shared
+include_directories ( Source Include
     Config xxHash lz4 zstd zstd/zstd_subset JITpackage
     Demo/Include rmm_wrap
     Source/jit_kernels
@@ -295,7 +295,7 @@ include ( GraphBLAS_compiler_options )
 # dynamic graphblas library properties
 #-------------------------------------------------------------------------------
 
-file ( GLOB GRAPHBLAS_SOURCES "Source/*.c"
+file ( GLOB GRAPHBLAS_SOURCES
     "PreJIT/*.c"
     "Config/*.c"
     "Source/jitifyer/*.c"

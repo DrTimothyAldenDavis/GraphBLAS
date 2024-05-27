@@ -30,7 +30,7 @@
 #ifndef GBCOMPACT
 #include "GB_red__include.h"
 #endif
-#include "shared/GB_monoid_shared_definitions.h"
+#include "monoid/include/GB_monoid_shared_definitions.h"
 
 #define GB_FREE_ALL                 \
 {                                   \

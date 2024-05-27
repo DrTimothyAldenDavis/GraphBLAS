@@ -178,6 +178,6 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     // include the final default definitions
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n#include \"shared/GB_apply_shared_definitions.h\"\n") ;
+    fprintf (fp, "\n#include \"include/GB_apply_shared_definitions.h\"\n") ;
 }
 

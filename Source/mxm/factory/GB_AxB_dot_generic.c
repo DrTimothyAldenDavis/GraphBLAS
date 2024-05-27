@@ -14,7 +14,7 @@
 // This file does not use GB_DECLARE_TERMINAL_CONST (zterminal).  Instead, it
 // defines zterminal itself.
 
-#include "shared/GB_mxm_shared_definitions.h"
+#include "mxm/include/GB_mxm_shared_definitions.h"
 #include "GB_generic.h"
 
 {
