@@ -53,7 +53,7 @@ GrB_Info GB_select_generic_phase1
 
     #define GB_GENERIC
     #define GB_A_TYPE GB_void
-    #include "GB_select_shared_definitions.h"
+    #include "shared/GB_select_shared_definitions.h"
 
     if (A->iso)
     {
@@ -76,7 +76,7 @@ GrB_Info GB_select_generic_phase1
             #define GB_TEST_VALUE_OF_ENTRY(keep,p)                          \
                 bool keep ;                                                 \
                 fkeep (&keep, x, flipij ? j : i, flipij ? i : j, ythunk) ;
-            #include "template/GB_select_entry_phase1_template.c"
+            #include "select/template/GB_select_entry_phase1_template.c"
 
         }
         else
@@ -94,7 +94,7 @@ GrB_Info GB_select_generic_phase1
                 GB_void z [GB_VLA(zsize)] ;                                 \
                 fkeep (z, x, flipij ? j : i, flipij ? i : j, ythunk) ;      \
                 cast_Z_to_bool (&keep, z, zsize) ;
-            #include "template/GB_select_entry_phase1_template.c"
+            #include "select/template/GB_select_entry_phase1_template.c"
 
         }
 
@@ -114,7 +114,7 @@ GrB_Info GB_select_generic_phase1
                 bool keep ;                                                 \
                 fkeep (&keep, Ax +(p)*asize,                                \
                     flipij ? j : i, flipij ? i : j, ythunk) ;
-            #include "template/GB_select_entry_phase1_template.c"
+            #include "select/template/GB_select_entry_phase1_template.c"
 
         }
         else
@@ -135,7 +135,7 @@ GrB_Info GB_select_generic_phase1
                 cast_A_to_X (x, Ax +(p)*asize, asize) ;                     \
                 fkeep (z, x, flipij ? j : i, flipij ? i : j, ythunk) ;      \
                 cast_Z_to_bool (&keep, z, zsize) ;
-            #include "template/GB_select_entry_phase1_template.c"
+            #include "select/template/GB_select_entry_phase1_template.c"
 
         }
     }

@@ -12,7 +12,7 @@
 
 // no accumulator is used
 
-// This template is used by Template/GB_AxB_saxbit_template, for all cases:
+// This template is used by mxm/template/GB_AxB_saxbit_template, for all cases:
 // generic kernels, factory kernels (including the ANY_PAIR monoid), and JIT
 // kernels.
 

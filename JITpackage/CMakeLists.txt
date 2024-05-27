@@ -76,12 +76,13 @@ if ( TARGET grb_jitpackage )
     file ( GLOB GRB_SOURCE_FILES
         RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         "../Include/GraphBLAS.h"
-        "../Source/Template/*.[ch]"
         "../Source/jit_kernels/*.[ch]"
         "../CUDA/Template/*"
         "../CUDA/jit_kernels/*"
-        "../Source/Shared/*.h"
-        "../Source/*/template/*" )
+        "../Source/shared/*"
+        "../Source/*/template/*"
+        "../Source/*/include/*"
+        "../Source/include/*" )
 
     add_custom_command ( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/GB_JITpackage.c
         COMMAND $<TARGET_FILE:grb_jitpackage>

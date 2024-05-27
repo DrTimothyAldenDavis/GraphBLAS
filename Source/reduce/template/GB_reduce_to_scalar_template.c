@@ -11,7 +11,7 @@
 // No panel is used.  The workspace W always has the same type as the ztype
 // of the monoid, GB_Z_TYPE.
 
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 
 // z += W [i], no typecast
 #ifndef GB_ADD_ARRAY_TO_SCALAR

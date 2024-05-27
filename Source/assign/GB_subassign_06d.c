@@ -29,7 +29,7 @@
 // C and A can have any sparsity structure.
 
 #include "GB_subassign_methods.h"
-#include "GB_assign_shared_definitions.h"
+#include "shared/GB_assign_shared_definitions.h"
 #include "GB_subassign_dense.h"
 #include "GB_stringify.h"
 #ifndef GBCOMPACT
@@ -97,7 +97,7 @@ GrB_Info GB_subassign_06d
 
         ASSERT (Mask_struct) ;
         #define GB_ISO_ASSIGN
-        #include "template/GB_subassign_06d_template.c"
+        #include "assign/template/GB_subassign_06d_template.c"
         info = GrB_SUCCESS ;
 
     }
@@ -189,7 +189,7 @@ GrB_Info GB_subassign_06d
             #undef  GB_AX_MASK
             #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, asize)
 
-            #include "template/GB_subassign_06d_template.c"
+            #include "assign/template/GB_subassign_06d_template.c"
             info = GrB_SUCCESS ;
         }
     }

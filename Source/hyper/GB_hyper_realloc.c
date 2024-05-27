@@ -12,7 +12,7 @@
 // No change is made to A->Y.
 
 #include "GB.h"
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 
 GrB_Info GB_hyper_realloc
 (

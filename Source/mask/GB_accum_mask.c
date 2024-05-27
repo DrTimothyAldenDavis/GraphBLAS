@@ -57,7 +57,7 @@
 #include "GB_transpose.h"
 #include "GB_accum_mask.h"
 #include "GB_bitmap_assign.h"
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 
 /* -----------------------------------------------------------------------------
 

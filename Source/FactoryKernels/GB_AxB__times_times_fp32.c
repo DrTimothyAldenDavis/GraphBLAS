@@ -8,8 +8,10 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_control.h"
-#include "GB_AxB_kernels.h"
+#include "builtin/factory/GB_control.h"
+#include "mxm/GB_AxB_saxpy.h"
+#include "shared/GB_unused.h"
+#include "assign/GB_bitmap_assign_methods.h"
 #include "GB_AxB__include2.h"
 
 // semiring operators:
@@ -62,7 +64,7 @@
 #define GB_DISABLE 0
 #endif
 
-#include "GB_mxm_shared_definitions.h"
+#include "shared/GB_mxm_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // GB_Adot2B: C=A'*B, C<M>=A'*B, or C<!M>=A'*B: dot product method, C is bitmap
@@ -83,7 +85,7 @@ GrB_Info GB (_Adot2B__times_times_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_AxB_dot2_meta.c"
+    #include "mxm/template/GB_AxB_dot2_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -106,7 +108,7 @@ GrB_Info GB (_Adot3B__times_times_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_AxB_dot3_meta.c"
+    #include "mxm/template/GB_AxB_dot3_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -132,7 +134,7 @@ GrB_Info GB (_Adot4B__times_times_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_AxB_dot4_meta.c"
+    #include "mxm/template/GB_AxB_dot4_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -141,7 +143,7 @@ GrB_Info GB (_Adot4B__times_times_fp32)
 // GB_AsaxbitB: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method, C is bitmap only
 //------------------------------------------------------------------------------
 
-#include "template/GB_AxB_saxpy3_template.h"
+#include "mxm/include/GB_AxB_saxpy3_template.h"
 
 GrB_Info GB (_AsaxbitB__times_times_fp32)
 (
@@ -170,7 +172,7 @@ GrB_Info GB (_AsaxbitB__times_times_fp32)
     #else
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
-    #include "template/GB_AxB_saxbit_template.c"
+    #include "mxm/template/GB_AxB_saxbit_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -198,7 +200,7 @@ GrB_Info GB (_Asaxpy4B__times_times_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_AxB_saxpy4_meta.c"
+    #include "mxm/template/GB_AxB_saxpy4_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -231,7 +233,7 @@ GrB_Info GB (_Asaxpy4B__times_times_fp32)
             const int64_t *B_slice
         )
         {
-            #include "template/GB_AxB_saxpy5_unrolled.c"
+            #include "mxm/template/GB_AxB_saxpy5_unrolled.c"
         }
 
     #endif
@@ -332,8 +334,8 @@ GrB_Info GB (_Asaxpy3B__times_times_fp32)
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-            #include "template/GB_meta16_definitions.h"
-            #include "template/GB_AxB_saxpy3_template.c"
+            #include "mxm/include/GB_meta16_definitions.h"
+            #include "mxm/template/GB_AxB_saxpy3_template.c"
         }
         else
         {
@@ -341,8 +343,8 @@ GrB_Info GB (_Asaxpy3B__times_times_fp32)
             #undef GB_META16
             #define GB_NO_MASK 0
             #define GB_MASK_COMP 0
-            #include "template/GB_meta16_definitions.h"
-            #include "template/GB_AxB_saxpy3_template.c"
+            #include "mxm/include/GB_meta16_definitions.h"
+            #include "mxm/template/GB_AxB_saxpy3_template.c"
         }
         return (GrB_SUCCESS) ;
     }
@@ -382,8 +384,8 @@ GrB_Info GB (_Asaxpy3B__times_times_fp32)
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-            #include "template/GB_meta16_definitions.h"
-            #include "template/GB_AxB_saxpy3_template.c"
+            #include "mxm/include/GB_meta16_definitions.h"
+            #include "mxm/template/GB_AxB_saxpy3_template.c"
         }
         else
         {
@@ -391,8 +393,8 @@ GrB_Info GB (_Asaxpy3B__times_times_fp32)
             #undef GB_META16
             #define GB_NO_MASK 1
             #define GB_MASK_COMP 0
-            #include "template/GB_meta16_definitions.h"
-            #include "template/GB_AxB_saxpy3_template.c"
+            #include "mxm/include/GB_meta16_definitions.h"
+            #include "mxm/template/GB_AxB_saxpy3_template.c"
         }
         return (GrB_SUCCESS) ;
     }
@@ -434,8 +436,8 @@ GrB_Info GB (_Asaxpy3B__times_times_fp32)
             #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
-            #include "template/GB_meta16_definitions.h"
-            #include "template/GB_AxB_saxpy3_template.c"
+            #include "mxm/include/GB_meta16_definitions.h"
+            #include "mxm/template/GB_AxB_saxpy3_template.c"
         }
         else
         {
@@ -443,8 +445,8 @@ GrB_Info GB (_Asaxpy3B__times_times_fp32)
             #undef GB_META16
             #define GB_NO_MASK 0
             #define GB_MASK_COMP 1
-            #include "template/GB_meta16_definitions.h"
-            #include "template/GB_AxB_saxpy3_template.c"
+            #include "mxm/include/GB_meta16_definitions.h"
+            #include "mxm/template/GB_AxB_saxpy3_template.c"
         }
         return (GrB_SUCCESS) ;
     }

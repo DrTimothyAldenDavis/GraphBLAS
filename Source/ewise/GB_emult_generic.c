@@ -17,7 +17,7 @@
 #include "GB_ewise.h"
 #include "GB_emult.h"
 #include "GB_binop.h"
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 #include "GB_ek_slice.h"
 #include "GB_generic.h"
 
@@ -126,7 +126,7 @@ GrB_Info GB_emult_generic       // generic emult
             cast_B_to_Y (bij, Bx +((B_iso) ? 0:(pB)*bsize), bsize) ;    \
         }
 
-    #include "GB_ewise_shared_definitions.h"
+    #include "shared/GB_ewise_shared_definitions.h"
 
     //--------------------------------------------------------------------------
     // do the ewise operation
@@ -173,29 +173,29 @@ GrB_Info GB_emult_generic       // generic emult
             { 
                 // C=A.*B or C<#M>=A.*B; A sparse/hyper; M and B bitmap/full
                 // C is sparse
-                #include "template/GB_emult_02_template.c"
+                #include "ewise/template/GB_emult_02_template.c"
             }
             else if (ewise_method == GB_EMULT_METHOD3)
             { 
                 // C=A.*B or C<#M>=A.*B; B sparse/hyper; M and A bitmap/full
                 // C is sparse
-                #include "template/GB_emult_03_template.c"
+                #include "ewise/template/GB_emult_03_template.c"
             }
             else if (ewise_method == GB_EMULT_METHOD4)
             { 
                 // C<M>=A.*B; M sparse/hyper, A and B bitmap/full
                 // C is sparse
-                #include "template/GB_emult_04_template.c"
+                #include "ewise/template/GB_emult_04_template.c"
             }
             else if (C_sparsity == GxB_BITMAP)
             { 
                 // C is bitmap: emult methods 5, 6, or 7
-                #include "template/GB_emult_bitmap_template.c"
+                #include "ewise/template/GB_emult_bitmap_template.c"
             }
             else
             { 
                 // C is sparse: emult method 8 (abcdefgh)
-                #include "template/GB_emult_08_meta.c"
+                #include "ewise/template/GB_emult_08_meta.c"
             }
         }
         else
@@ -215,29 +215,29 @@ GrB_Info GB_emult_generic       // generic emult
             { 
                 // C=A.*B or C<#M>=A.*B; A sparse/hyper; M and B bitmap/full
                 // C is sparse
-                #include "template/GB_emult_02_template.c"
+                #include "ewise/template/GB_emult_02_template.c"
             }
             else if (ewise_method == GB_EMULT_METHOD3)
             { 
                 // C=A.*B or C<#M>=A.*B; B sparse/hyper; M and A bitmap/full
                 // C is sparse
-                #include "template/GB_emult_03_template.c"
+                #include "ewise/template/GB_emult_03_template.c"
             }
             else if (ewise_method == GB_EMULT_METHOD4)
             { 
                 // C<M>=A.*B; M sparse/hyper, A and B bitmap/full
                 // C is sparse
-                #include "template/GB_emult_04_template.c"
+                #include "ewise/template/GB_emult_04_template.c"
             }
             else if (C_sparsity == GxB_BITMAP)
             { 
                 // C is bitmap: emult methods 5, 6, or 7
-                #include "template/GB_emult_bitmap_template.c"
+                #include "ewise/template/GB_emult_bitmap_template.c"
             }
             else
             { 
                 // C is sparse: emult method 8 (abcdefgh)
-                #include "template/GB_emult_08_meta.c"
+                #include "ewise/template/GB_emult_08_meta.c"
             }
         }
 
@@ -270,30 +270,30 @@ GrB_Info GB_emult_generic       // generic emult
             // emult method 2 (abc)
             // C=A.*B or C<#M>=A.*B; A sparse/hyper; M and B bitmap/full
             // C is sparse
-            #include "template/GB_emult_02_template.c"
+            #include "ewise/template/GB_emult_02_template.c"
         }
         else if (ewise_method == GB_EMULT_METHOD3)
         { 
             // emult method 3 (abc)
             // C=A.*B or C<#M>=A.*B; B sparse/hyper; M and A bitmap/full
             // C is sparse
-            #include "template/GB_emult_03_template.c"
+            #include "ewise/template/GB_emult_03_template.c"
         }
         else if (ewise_method == GB_EMULT_METHOD4)
         { 
             // C<M>=A.*B; M sparse/hyper, A and B bitmap/full
             // C is sparse
-            #include "template/GB_emult_04_template.c"
+            #include "ewise/template/GB_emult_04_template.c"
         }
         else if (C_sparsity == GxB_BITMAP)
         { 
             // C is bitmap: emult methods 5, 6, or 7
-            #include "template/GB_emult_bitmap_template.c"
+            #include "ewise/template/GB_emult_bitmap_template.c"
         }
         else
         { 
             // C is sparse: emult method 8 (abcdefgh)
-            #include "template/GB_emult_08_meta.c"
+            #include "ewise/template/GB_emult_08_meta.c"
         }
     }
 

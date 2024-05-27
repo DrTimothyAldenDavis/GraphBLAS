@@ -10,7 +10,7 @@
 {
 
     // declare macros that depend on the sparsity of A and B
-    #include "template/GB_meta16_definitions.h"
+    #include "include/GB_meta16_definitions.h"
 
     // dot product methods
     #if defined ( GB_DOT4 )

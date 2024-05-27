@@ -65,7 +65,7 @@ GrB_Info GB_select_generic_phase2
     #define GB_GENERIC
     #define GB_ENTRY_SELECTOR
     #define GB_A_TYPE GB_void
-    #include "GB_select_shared_definitions.h"
+    #include "shared/GB_select_shared_definitions.h"
 
     // GB_ISO_SELECT is always #defined'd as 1 here, even though C can be iso.
     // The case when C is iso is handled by the GB_SELECT_ENTRY macro itself.
@@ -95,7 +95,7 @@ GrB_Info GB_select_generic_phase2
             #define GB_TEST_VALUE_OF_ENTRY(keep,p)                          \
                 bool keep ;                                                 \
                 fkeep (&keep, x, flipij ? j : i, flipij ? i : j, ythunk) ;
-            #include "template/GB_select_phase2.c"
+            #include "select/template/GB_select_phase2.c"
 
         }
         else
@@ -113,7 +113,7 @@ GrB_Info GB_select_generic_phase2
                 GB_void z [GB_VLA(zsize)] ;                                 \
                 fkeep (z, x, flipij ? j : i, flipij ? i : j, ythunk) ;      \
                 cast_Z_to_bool (&keep, z, zsize) ;
-            #include "template/GB_select_phase2.c"
+            #include "select/template/GB_select_phase2.c"
 
         }
 
@@ -143,7 +143,7 @@ GrB_Info GB_select_generic_phase2
 
             #undef  GB_TEST_VALUE_OF_ENTRY
             #define GB_TEST_VALUE_OF_ENTRY(keep,p) bool keep = (i >= 0)
-            #include "template/GB_select_phase2.c"
+            #include "select/template/GB_select_phase2.c"
 
         }
         else if (op->ztype == GrB_BOOL && op->xtype == A->type)
@@ -158,7 +158,7 @@ GrB_Info GB_select_generic_phase2
                 bool keep ;                                                 \
                 fkeep (&keep, Ax +(p)*asize,                                \
                     flipij ? j : i, flipij ? i : j, ythunk) ;
-            #include "template/GB_select_phase2.c"
+            #include "select/template/GB_select_phase2.c"
 
         }
         else
@@ -179,7 +179,7 @@ GrB_Info GB_select_generic_phase2
                 cast_A_to_X (x, Ax +(p)*asize, asize) ;                     \
                 fkeep (z, x, flipij ? j : i, flipij ? i : j, ythunk) ;      \
                 cast_Z_to_bool (&keep, z, zsize) ;
-            #include "template/GB_select_phase2.c"
+            #include "select/template/GB_select_phase2.c"
 
         }
     }

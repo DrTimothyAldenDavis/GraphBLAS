@@ -30,7 +30,7 @@
 #ifndef GBCOMPACT
 #include "GB_red__include.h"
 #endif
-#include "GB_monoid_shared_definitions.h"
+#include "shared/GB_monoid_shared_definitions.h"
 
 #define GB_FREE_ALL                 \
 {                                   \
@@ -323,7 +323,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     #define GB_TERMINAL_CONDITION(z,zterminal) 0
                     #undef  GB_IF_TERMINAL_BREAK
                     #define GB_IF_TERMINAL_BREAK(z,zterminal)
-                    #include "template/GB_reduce_to_scalar_template.c"
+                    #include "reduce/template/GB_reduce_to_scalar_template.c"
                 }
                 else
                 { 
@@ -336,7 +336,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     #undef  GB_IF_TERMINAL_BREAK
                     #define GB_IF_TERMINAL_BREAK(z,zterminal)   \
                             if (GB_TERMINAL_CONDITION (z, zterminal)) break
-                    #include "template/GB_reduce_to_scalar_template.c"
+                    #include "reduce/template/GB_reduce_to_scalar_template.c"
                 }
 
             }
@@ -369,7 +369,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     #define GB_TERMINAL_CONDITION(z,zterminal) 0
                     #undef  GB_IF_TERMINAL_BREAK
                     #define GB_IF_TERMINAL_BREAK
-                    #include "template/GB_reduce_to_scalar_template.c"
+                    #include "reduce/template/GB_reduce_to_scalar_template.c"
                 }
                 else
                 { 
@@ -382,7 +382,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     #undef  GB_IF_TERMINAL_BREAK
                     #define GB_IF_TERMINAL_BREAK(z,zterminal)   \
                             if (GB_TERMINAL_CONDITION (z, zterminal)) break
-                    #include "template/GB_reduce_to_scalar_template.c"
+                    #include "reduce/template/GB_reduce_to_scalar_template.c"
                 }
             }
             info = GrB_SUCCESS ;

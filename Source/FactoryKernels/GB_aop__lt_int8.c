@@ -10,9 +10,9 @@
 // C(I,J)<M> += A
 
 #include "GB.h"
-#include "GB_control.h"
-#include "GB_ek_slice.h"
-#include "GB_aop__include.h"
+#include "builtin/factory/GB_control.h"
+#include "slice/GB_ek_slice.h"
+#include "FactoryKernels/GB_aop__include.h"
 
 // accum operator
 #define GB_ACCUM_OP(z,x,y) z = ((x) < (y))
@@ -56,7 +56,7 @@
 #define GB_DISABLE 0
 #endif
 
-#include "GB_assign_shared_definitions.h"
+#include "shared/GB_assign_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // C += A, accumulate a sparse matrix into a dense matrix

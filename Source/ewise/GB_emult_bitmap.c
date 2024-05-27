@@ -61,7 +61,7 @@
 #include "GB_ewise.h"
 #include "GB_emult.h"
 #include "GB_binop.h"
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 #include "GB_ek_slice.h"
 #include "GB_stringify.h"
 #ifndef GBCOMPACT
@@ -211,7 +211,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
         // pattern of C = set intersection of pattern of A and B
         #define GB_ISO_EMULT
-        #include "template/GB_emult_bitmap_template.c"
+        #include "ewise/template/GB_emult_bitmap_template.c"
         info = GrB_SUCCESS ;
 
     }

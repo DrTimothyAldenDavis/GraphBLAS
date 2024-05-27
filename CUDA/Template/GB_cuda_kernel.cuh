@@ -59,14 +59,16 @@ using namespace cooperative_groups ;
 //------------------------------------------------------------------------------
 
 #include "GB_cuda_error.hpp"
-#include "GB_printf_kernels.h"
 #include "GB_cuda_atomics.cuh"
-#include "GB_hash.h"
-#include "GB_hyper_hash_lookup.h"
+#include "include/GB_printf_kernels.h"
+#include "shared/GB_hash.h"
+#include "shared/GB_hyper_hash_lookup.h"
 
 extern "C"
 {
-    #include "GB_werk.h"
-    #include "GB_callback.h"
+    #include "include/GB_werk.h"
+    #include "include/GB_callback_proto.h"
+    #include "include/GB_saxpy3task_struct.h"
+    #include "include/GB_callback.h"
 }
 

@@ -599,7 +599,7 @@
 #undef GB_META16
 #endif
 
-#include "template/GB_meta16_definitions.h"
+#include "include/GB_meta16_definitions.h"
 
 #endif
 

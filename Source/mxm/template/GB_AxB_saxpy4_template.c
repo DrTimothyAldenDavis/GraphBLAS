@@ -11,7 +11,7 @@
 
 // C += A*B is computed with the accumulator identical to the monoid.
 
-// This template is used by Template/GB_AxB_saxpy4_meta.  It is not used
+// This template is used by mxm/template/GB_AxB_saxpy4_meta.  It is not used
 // for the generic case, nor for the ANY_PAIR case.  It is only used for the
 // pre-generated kernels, and for the JIT.
 

@@ -8,8 +8,8 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_control.h" 
-#include "GB_red__include.h"
+#include "builtin/factory/GB_control.h"
+#include "FactoryKernels/GB_red__include.h"
 
 // reduction operator and type:
 #define GB_UPDATE(z,a)  if (a < z) { z = a ; }
@@ -41,7 +41,7 @@
 #define GB_DISABLE 0
 #endif
 
-#include "GB_monoid_shared_definitions.h"
+#include "shared/GB_monoid_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // reduce to a non-iso matrix to scalar, for monoids only
@@ -64,11 +64,11 @@ GrB_Info GB (_red__min_uint64)
     GB_Z_TYPE *restrict W = (GB_Z_TYPE *) W_space ;
     if (A->nzombies > 0 || GB_IS_BITMAP (A))
     {
-        #include "template/GB_reduce_to_scalar_template.c"
+        #include "reduce/template/GB_reduce_to_scalar_template.c"
     }
     else
     {
-        #include "template/GB_reduce_panel.c"
+        #include "reduce/template/GB_reduce_panel.c"
     }
     (*result) = z ;
     return (GrB_SUCCESS) ;

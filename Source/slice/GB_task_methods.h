@@ -29,7 +29,7 @@
 // The GB_subassign functions use the TaskList, in many different ways.
 
 // typedef GB_task_struct:
-#include "GB_task_struct.h"
+#include "include/GB_task_struct.h"
 
 // GB_REALLOC_TASK_WORK: Allocate or reallocate the TaskList so that it can
 // hold at least ntasks.  Double the size if it's too small.

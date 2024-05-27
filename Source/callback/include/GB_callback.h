@@ -10,9 +10,6 @@
 #ifndef GB_CALLBACK_H
 #define GB_CALLBACK_H
 
-#include "GB_callback_proto.h"
-#include "GB_saxpy3task_struct.h"
-
 //------------------------------------------------------------------------------
 // function pointers to callback methods
 //------------------------------------------------------------------------------

@@ -10,7 +10,7 @@
 #ifndef GB_JITIFYER_H
 #define GB_JITIFYER_H
 
-#include "GB_jit_kernel_proto.h"
+#include "jit_kernels/include/GB_jit_kernel_proto.h"
 
 //------------------------------------------------------------------------------
 // get list of PreJIT kernels: function pointers and names

@@ -23,7 +23,7 @@
 // C->iso is not affected.
 
 #include "GB_subassign_methods.h"
-#include "GB_assign_shared_definitions.h"
+#include "shared/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_Matrix_free (&S) ;

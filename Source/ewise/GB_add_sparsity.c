@@ -112,9 +112,9 @@ int GB_add_sparsity         // return the sparsity structure for C
 
             if (A_is_sparse_or_hyper || B_is_sparse_or_hyper)
             { 
-                // see Template/GB_add_sparse_M_sparse.c for a vector-by-vector
-                // test of the "easy mask" condition.  This test is global for
-                // all vectors of the matrices:
+                // see ewise/template/GB_add_sparse_M_sparse.c for a
+                // vector-by-vector test of the "easy mask" condition.  This
+                // test is global for all vectors of the matrices:
                 bool M_is_A = GB_all_aliased (M, A) ;
                 bool M_is_B = GB_all_aliased (M, B) ;
                 bool all_easy_mask = Mask_struct &&

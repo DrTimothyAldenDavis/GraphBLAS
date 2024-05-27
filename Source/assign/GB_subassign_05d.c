@@ -23,9 +23,9 @@
 // all entries present.
 
 #include "GB_subassign_methods.h"
-#include "GB_assign_shared_definitions.h"
+#include "shared/GB_assign_shared_definitions.h"
 #include "GB_subassign_dense.h"
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 #include "GB_stringify.h"
 #ifndef GBCOMPACT
 #include "GB_as__include.h"
@@ -171,7 +171,7 @@ GrB_Info GB_subassign_05d
         #define GB_COPY_scalar_to_C(Cx,pC,cwork) \
             memcpy (Cx + ((pC)*csize), cwork, csize)
 
-        #include "template/GB_subassign_05d_template.c"
+        #include "assign/template/GB_subassign_05d_template.c"
         info = GrB_SUCCESS ;
     }
 

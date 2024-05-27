@@ -59,10 +59,9 @@
 #include "GB_AxB_saxpy.h"
 #include "GB_ek_slice.h"
 #include "GB_binop.h"
-#include "GB_sort.h"
 #include "slice/factory/GB_ek_slice_search.c"
 #include "GB_bitmap_assign_methods.h"
-#include "GB_mxm_shared_definitions.h"
+#include "shared/GB_mxm_shared_definitions.h"
 #include "GB_AxB_saxpy_generic.h"
 #include "GB_generic.h"
 
@@ -161,7 +160,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     #define GB_B_SIZE bsize
 
     // definitions for GB_AxB_saxpy_generic_template.c
-    #include "template/GB_AxB_saxpy3_template.h"
+    #include "mxm/include/GB_AxB_saxpy3_template.h"
 
     #if GB_GENERIC_OP_IS_POSITIONAL
     { 

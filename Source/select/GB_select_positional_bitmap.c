@@ -38,60 +38,60 @@ GrB_Info GB_select_positional_bitmap
     //--------------------------------------------------------------------------
 
     #define GB_A_TYPE GB_void
-    #include "GB_select_shared_definitions.h"
+    #include "shared/GB_select_shared_definitions.h"
 
     switch (opcode)
     {
 
         case GB_TRIL_idxunop_code      : 
             #define GB_TRIL_SELECTOR
-            #include "template/GB_select_bitmap_template.c"
+            #include "select/template/GB_select_bitmap_template.c"
             break ;
 
         case GB_TRIU_idxunop_code      : 
             #define GB_TRIU_SELECTOR
-            #include "template/GB_select_bitmap_template.c"
+            #include "select/template/GB_select_bitmap_template.c"
             break ;
 
         case GB_DIAG_idxunop_code      : 
             #define GB_DIAG_SELECTOR
-            #include "template/GB_select_bitmap_template.c"
+            #include "select/template/GB_select_bitmap_template.c"
             break ;
 
         case GB_OFFDIAG_idxunop_code   : 
         case GB_DIAGINDEX_idxunop_code : 
             #define GB_OFFDIAG_SELECTOR
-            #include "template/GB_select_bitmap_template.c"
+            #include "select/template/GB_select_bitmap_template.c"
             break ;
 
         case GB_ROWINDEX_idxunop_code  : 
             #define GB_ROWINDEX_SELECTOR
-            #include "template/GB_select_bitmap_template.c"
+            #include "select/template/GB_select_bitmap_template.c"
             break ;
 
         case GB_ROWLE_idxunop_code     : 
             #define GB_ROWLE_SELECTOR
-            #include "template/GB_select_bitmap_template.c"
+            #include "select/template/GB_select_bitmap_template.c"
             break ;
 
         case GB_ROWGT_idxunop_code     : 
             #define GB_ROWGT_SELECTOR
-            #include "template/GB_select_bitmap_template.c"
+            #include "select/template/GB_select_bitmap_template.c"
             break ;
 
         case GB_COLINDEX_idxunop_code  : 
             #define GB_COLINDEX_SELECTOR
-            #include "template/GB_select_bitmap_template.c"
+            #include "select/template/GB_select_bitmap_template.c"
             break ;
 
         case GB_COLLE_idxunop_code     : 
             #define GB_COLLE_SELECTOR
-            #include "template/GB_select_bitmap_template.c"
+            #include "select/template/GB_select_bitmap_template.c"
             break ;
 
         case GB_COLGT_idxunop_code     : 
             #define GB_COLGT_SELECTOR
-            #include "template/GB_select_bitmap_template.c"
+            #include "select/template/GB_select_bitmap_template.c"
             break ;
 
         default: ;

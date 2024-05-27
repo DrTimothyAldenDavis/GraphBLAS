@@ -10,7 +10,7 @@
 // A and B matrices have any format: hypersparse, sparse, bitmap, or full.
 // C can be sparse, hypersparse, or bitmap, but not full.
 
-#include "GB_mxm_shared_definitions.h"
+#include "shared/GB_mxm_shared_definitions.h"
 
 {
     #if GB_GENERIC_C_IS_SPARSE_OR_HYPERSPARSE            
@@ -22,27 +22,27 @@
             // C = A*B, no mask
             #define GB_NO_MASK 1
             #define GB_MASK_COMP 0
-            #include "template/GB_AxB_saxpy3_template.c"
+            #include "mxm/template/GB_AxB_saxpy3_template.c"
         }
         else if (!Mask_comp)
         { 
             // C<M> = A*B
             #define GB_NO_MASK 0
             #define GB_MASK_COMP 0
-            #include "template/GB_AxB_saxpy3_template.c"
+            #include "mxm/template/GB_AxB_saxpy3_template.c"
         }
         else
         { 
             // C<!M> = A*B
             #define GB_NO_MASK 0
             #define GB_MASK_COMP 1
-            #include "template/GB_AxB_saxpy3_template.c"
+            #include "mxm/template/GB_AxB_saxpy3_template.c"
         }
     }
     #else
     { 
         // C is bitmap
-        #include "template/GB_AxB_saxbit_template.c"
+        #include "mxm/template/GB_AxB_saxbit_template.c"
     }
     #endif
 }

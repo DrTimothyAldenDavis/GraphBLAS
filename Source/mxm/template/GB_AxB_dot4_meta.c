@@ -111,7 +111,7 @@
 
     #ifdef GB_JIT_KERNEL
     #define  GB_META16
-    #include "template/GB_meta16_definitions.h"
+    #include "include/GB_meta16_definitions.h"
     #include "template/GB_AxB_dot4_template.c"
     #else
     #include "template/GB_meta16_factory.c"

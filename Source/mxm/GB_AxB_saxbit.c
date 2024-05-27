@@ -25,7 +25,7 @@
 }
 
 #include "GB_mxm.h"
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 #include "GB_stringify.h"
 #include "GB_AxB_saxpy.h"
 #include "GB_binop.h"

@@ -141,7 +141,7 @@ else
 end
 
 inc = '-Iutil -I../../../Include -I../../../Source -I../../../Source/Shared ' ;
-inc = [inc '-I../../../Source/Template -I../../../Source/Factories '] ;
+inc = [inc '-I../../../Source/Template '] ;
 
     inc = [inc '-I../../.. ' ] ;
     inc = [inc '-I../../../Source/ij ' ] ;
@@ -204,7 +204,6 @@ inc = [inc '-I../../../Source/Template -I../../../Source/Factories '] ;
     inc = [inc '-I../../../Source/select ' ] ;
     inc = [inc '-I../../../Source/mxm ' ] ;
     inc = [inc '-I../../../Source/resize ' ] ;
-
 %}
 
 if (need_rename)

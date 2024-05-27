@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \

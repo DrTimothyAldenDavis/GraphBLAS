@@ -14,7 +14,7 @@
 // global matrix options, and other settings.
 
 #include "GB.h"
-#include "GB_cpu_features.h"
+#include "cpu/GB_cpu_features.h"
 
 //------------------------------------------------------------------------------
 // Global storage: for all threads in a user application that uses GraphBLAS

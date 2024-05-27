@@ -84,7 +84,6 @@ inc = '-ITemplate -I../Include -I../Source -I../Source/Template -I../lz4 -I../rm
 inc = [inc ' -I../zstd -I../zstd/zstd_subset -I.'] ;
 inc = [inc ' -I../Source/Shared '] ;
 inc = [inc ' -I../Config '] ;
-inc = [inc ' -I../Source/Factories '] ;
 
 if (ismac)
     % Mac (do 'make install' for GraphBLAS first)

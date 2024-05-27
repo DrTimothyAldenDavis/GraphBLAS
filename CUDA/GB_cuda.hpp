@@ -13,10 +13,9 @@
 
 extern "C"
 { 
-    #include "GB_dev.h"
-    #include "GB_compiler.h"
-    #include "GB_cpu_features.h"
-    #include "GB_warnings.h"
+    #include "include/GB_dev.h"
+    #include "include/GB_compiler.h"
+    #include "include/GB_warnings.h"
 }
 
 #include "GraphBLAS_cuda.hpp"
@@ -26,8 +25,7 @@ extern "C"
     #include <cassert>
     #include <cmath>
     #include "GB.h"
-    #include "GB_stringify.h"
-    #include "GB_iceil.h"
+    #include "jitifyer/GB_stringify.h"
 }
 
 // Finally, include the CUDA definitions

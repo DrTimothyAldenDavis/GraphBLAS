@@ -333,19 +333,19 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
 
             #define GB_C_TYPE GB_void
 
-            #include "GB_ewise_shared_definitions.h"
+            #include "shared/GB_ewise_shared_definitions.h"
 
             if (flipxy)
             { 
                 #undef  GB_EWISEOP
                 #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),y,x)
-                #include "template/GB_rowscale_template.c"
+                #include "mxm/template/GB_rowscale_template.c"
             }
             else
             { 
                 #undef  GB_EWISEOP
                 #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),x,y)
-                #include "template/GB_rowscale_template.c"
+                #include "mxm/template/GB_rowscale_template.c"
             }
             info = GrB_SUCCESS ;
         }

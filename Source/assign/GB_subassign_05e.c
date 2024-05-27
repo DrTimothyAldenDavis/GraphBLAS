@@ -27,7 +27,7 @@
 // C is always iso, and its iso value has been assigned by GB_assign_prep.
 
 #include "GB_subassign_methods.h"
-#include "GB_assign_shared_definitions.h"
+#include "shared/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL

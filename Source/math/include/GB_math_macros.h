@@ -37,8 +37,5 @@
 #define GB_IMAX(x,y) (((x) > (y)) ? (x) : (y))
 #define GB_IMIN(x,y) (((x) < (y)) ? (x) : (y))
 
-// ceiling of a/b for two integers a and b
-#include "GB_iceil.h"
-
 #endif
 

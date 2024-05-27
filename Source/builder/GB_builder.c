@@ -1204,7 +1204,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 // T and Sx are iso; set iso value and delete duplicates
                 memcpy (Tx, Sx, tsize) ;
                 #define GB_ISO_BUILD
-                #include "template/GB_bld_template.c"
+                #include "builder/template/GB_bld_template.c"
                 info = GrB_SUCCESS ;
 
             }
@@ -1294,7 +1294,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     // Tx [p] += (ttype) Sx [k], but 2nd op and no typecasting
                     #undef  GB_BLD_DUP
                     #define GB_BLD_DUP(Tx,p,Sx,k) GB_BLD_COPY(Tx,p,Sx,k)
-                    #include "template/GB_bld_template.c"
+                    #include "builder/template/GB_bld_template.c"
 
                 }
                 else
@@ -1308,7 +1308,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     #undef  GB_BLD_DUP
                     #define GB_BLD_DUP(Tx,p,Sx,k)       \
                         fdup (Tx +((p)*tsize), Tx +((p)*tsize), Sx+((k)*tsize));
-                    #include "template/GB_bld_template.c"
+                    #include "builder/template/GB_bld_template.c"
                 }
 
                 info = GrB_SUCCESS ;
@@ -1383,7 +1383,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     // Tx [p] += (ttype) Sx [k], but 2nd op, with typecasting
                     #undef  GB_BLD_DUP
                     #define GB_BLD_DUP(Tx,p,Sx,k) GB_BLD_COPY(Tx,p,Sx,k)
-                    #include "template/GB_bld_template.c"
+                    #include "builder/template/GB_bld_template.c"
 
                 }
                 else
@@ -1410,7 +1410,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                         cast_Z_to_T (Tx +((p)*tsize), zwork, zsize) ;   \
                     }
 
-                    #include "template/GB_bld_template.c"
+                    #include "builder/template/GB_bld_template.c"
                 }
             }
 

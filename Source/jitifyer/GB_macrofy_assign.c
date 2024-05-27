@@ -375,6 +375,6 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     // include the final default definitions
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n#include \"GB_assign_shared_definitions.h\"\n") ;
+    fprintf (fp, "\n#include \"shared/GB_assign_shared_definitions.h\"\n") ;
 }
 

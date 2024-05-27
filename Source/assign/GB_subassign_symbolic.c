@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_subassign_methods.h"
-#include "GB_assign_shared_definitions.h"
+#include "shared/GB_assign_shared_definitions.h"
 #include "GB_subref.h"
 
 #undef  GB_FREE_ALL

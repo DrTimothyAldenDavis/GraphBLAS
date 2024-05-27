@@ -14,7 +14,7 @@
 // This file does not use GB_DECLARE_TERMINAL_CONST (zterminal).  Instead, it
 // defines zterminal itself.
 
-#include "GB_mxm_shared_definitions.h"
+#include "shared/GB_mxm_shared_definitions.h"
 #include "GB_generic.h"
 
 {
@@ -139,9 +139,9 @@
                     #undef  GB_MULT
                     #define GB_MULT(t, aki, bkj, i, k, j) t = i + offset
                     #if defined ( GB_DOT2_GENERIC )
-                    #include "template/GB_AxB_dot2_meta.c"
+                    #include "mxm/template/GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "template/GB_AxB_dot3_meta.c"
+                    #include "mxm/template/GB_AxB_dot3_meta.c"
                     #endif
                     break ;
                 case GB_FIRSTJ_binop_code   :   // first_j(A'(i,k),y) == k
@@ -151,9 +151,9 @@
                     #undef  GB_MULT
                     #define GB_MULT(t, aki, bkj, i, k, j) t = k + offset
                     #if defined ( GB_DOT2_GENERIC )
-                    #include "template/GB_AxB_dot2_meta.c"
+                    #include "mxm/template/GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "template/GB_AxB_dot3_meta.c"
+                    #include "mxm/template/GB_AxB_dot3_meta.c"
                     #endif
                     break ;
                 case GB_SECONDJ_binop_code  :   // second_j(x,B(k,j)) == j
@@ -161,9 +161,9 @@
                     #undef  GB_MULT
                     #define GB_MULT(t, aki, bkj, i, k, j) t = j + offset
                     #if defined ( GB_DOT2_GENERIC )
-                    #include "template/GB_AxB_dot2_meta.c"
+                    #include "mxm/template/GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "template/GB_AxB_dot3_meta.c"
+                    #include "mxm/template/GB_AxB_dot3_meta.c"
                     #endif
                     break ;
                 default: ;
@@ -188,9 +188,9 @@
                     #undef  GB_MULT
                     #define GB_MULT(t,aki,bkj,i,k,j) t = (int32_t) (i + offset)
                     #if defined ( GB_DOT2_GENERIC )
-                    #include "template/GB_AxB_dot2_meta.c"
+                    #include "mxm/template/GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "template/GB_AxB_dot3_meta.c"
+                    #include "mxm/template/GB_AxB_dot3_meta.c"
                     #endif
                     break ;
                 case GB_FIRSTJ_binop_code   :   // first_j(A'(i,k),y) == k
@@ -200,9 +200,9 @@
                     #undef  GB_MULT
                     #define GB_MULT(t,aki,bkj,i,k,j) t = (int32_t) (k + offset)
                     #if defined ( GB_DOT2_GENERIC )
-                    #include "template/GB_AxB_dot2_meta.c"
+                    #include "mxm/template/GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "template/GB_AxB_dot3_meta.c"
+                    #include "mxm/template/GB_AxB_dot3_meta.c"
                     #endif
                     break ;
                 case GB_SECONDJ_binop_code  :   // second_j(x,B(k,j)) == j
@@ -210,9 +210,9 @@
                     #undef  GB_MULT
                     #define GB_MULT(t,aki,bkj,i,k,j) t = (int32_t) (j + offset)
                     #if defined ( GB_DOT2_GENERIC )
-                    #include "template/GB_AxB_dot2_meta.c"
+                    #include "mxm/template/GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
-                    #include "template/GB_AxB_dot3_meta.c"
+                    #include "mxm/template/GB_AxB_dot3_meta.c"
                     #endif
                     break ;
                 default: ;
@@ -292,9 +292,9 @@
             #undef  GB_MULT
             #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, aik, csize)
             #if defined ( GB_DOT2_GENERIC )
-            #include "template/GB_AxB_dot2_meta.c"
+            #include "mxm/template/GB_AxB_dot2_meta.c"
             #elif defined ( GB_DOT3_GENERIC )
-            #include "template/GB_AxB_dot3_meta.c"
+            #include "mxm/template/GB_AxB_dot3_meta.c"
             #endif
         }
         else if (opcode == GB_SECOND_binop_code)
@@ -306,9 +306,9 @@
             #undef  GB_MULT
             #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, bkj, csize)
             #if defined ( GB_DOT2_GENERIC )
-            #include "template/GB_AxB_dot2_meta.c"
+            #include "mxm/template/GB_AxB_dot2_meta.c"
             #elif defined ( GB_DOT3_GENERIC )
-            #include "template/GB_AxB_dot3_meta.c"
+            #include "mxm/template/GB_AxB_dot3_meta.c"
             #endif
         }
         else if (flipxy)
@@ -317,9 +317,9 @@
             #undef  GB_MULT
             #define GB_MULT(t, aki, bkj, i, k, j) fmult (t, bkj, aki)
             #if defined ( GB_DOT2_GENERIC )
-            #include "template/GB_AxB_dot2_meta.c"
+            #include "mxm/template/GB_AxB_dot2_meta.c"
             #elif defined ( GB_DOT3_GENERIC )
-            #include "template/GB_AxB_dot3_meta.c"
+            #include "mxm/template/GB_AxB_dot3_meta.c"
             #endif
         }
         else
@@ -328,9 +328,9 @@
             #undef  GB_MULT
             #define GB_MULT(t, aki, bkj, i, k, j) fmult (t, aki, bkj)
             #if defined ( GB_DOT2_GENERIC )
-            #include "template/GB_AxB_dot2_meta.c"
+            #include "mxm/template/GB_AxB_dot2_meta.c"
             #elif defined ( GB_DOT3_GENERIC )
-            #include "template/GB_AxB_dot3_meta.c"
+            #include "mxm/template/GB_AxB_dot3_meta.c"
             #endif
         }
     }

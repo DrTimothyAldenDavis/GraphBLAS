@@ -96,7 +96,7 @@ GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     #define GB_EMULT_08_PHASE 1
-    #include "template/GB_emult_08_meta.c"
+    #include "ewise/template/GB_emult_08_meta.c"
 
     //--------------------------------------------------------------------------
     // cumulative sum of Cp and fine tasks in TaskList

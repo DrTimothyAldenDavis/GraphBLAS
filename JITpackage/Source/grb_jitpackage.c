@@ -234,7 +234,12 @@ int main (int argc, char **argv)
             if (fullname [i] == '/')
             {
                 filename = fullname + i + 1 ;
-                if (match_prefix (filename, "template")) break ;
+                if (match_prefix (filename, "template") ||
+                    match_prefix (filename, "include")  ||
+                    match_prefix (filename, "shared"))
+                {
+                    break ;
+                }
             }
         }
         // append this file to the index

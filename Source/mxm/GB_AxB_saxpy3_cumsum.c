@@ -13,7 +13,7 @@
 // phase4: cumulative sum of C->p
 
 #include "GB.h"
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 
 GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
 {

@@ -21,7 +21,7 @@
 #ifndef GBCOMPACT
 #include "GB_AxB__include2.h"
 #endif
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \
@@ -220,7 +220,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // as the pth entry in C.  This phase is purely symbolic and does not
     // depend on the data types or semiring.
 
-    #include "GB_mxm_shared_definitions.h"
+    #include "shared/GB_mxm_shared_definitions.h"
     #define GB_DOT3
     #define GB_DOT3_PHASE1
 
@@ -228,14 +228,14 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     { 
         // special case: M is present, sparse, structural, and not complemented
         #define GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED
-        #include "template/GB_meta16_factory.c"
+        #include "mxm/template/GB_meta16_factory.c"
         #undef  GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED
         // TODO: skip phase1 if A and B are both bitmap/full.
     }
     else
     { 
         // general case: M sparse/hyper, structural/valued
-        #include "template/GB_meta16_factory.c"
+        #include "mxm/template/GB_meta16_factory.c"
     }
 
     #undef GB_DOT3

@@ -9,7 +9,7 @@
 
 // macros for the construction of the GB_subassign kernels
 
-#include "GB_kernel_shared_definitions.h"
+#include "shared/GB_kernel_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // definitions redefined as needed

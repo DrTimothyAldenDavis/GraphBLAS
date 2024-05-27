@@ -83,7 +83,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
         case 0 : // iso matrices of any type; only sort the pattern
             #define GB_QSORT \
                 GB_qsort_1 (Ai+pA_start, aknz) ;
-            #include "GB_unjumbled_template.c"
+            #include "wait/factory/GB_unjumbled_template.c"
             break ;
 
         case GB_1BYTE : // bool, uint8, int8, and user defined types of size 1
@@ -91,7 +91,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
             uint8_t *Ax = (uint8_t *) A->x ;
             #define GB_QSORT \
                 GB_qsort_1b_size1 (Ai+pA_start, Ax+pA_start, aknz) ;
-            #include "GB_unjumbled_template.c"
+            #include "wait/factory/GB_unjumbled_template.c"
         }
         break ;
 
@@ -100,7 +100,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
             uint16_t *Ax = (uint16_t *) A->x ;
             #define GB_QSORT \
                 GB_qsort_1b_size2 (Ai+pA_start, Ax+pA_start, aknz) ;
-            #include "GB_unjumbled_template.c"
+            #include "wait/factory/GB_unjumbled_template.c"
         }
         break ;
 
@@ -109,7 +109,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
             uint32_t *Ax = (uint32_t *) A->x ;
             #define GB_QSORT \
                 GB_qsort_1b_size4 (Ai+pA_start, Ax+pA_start, aknz) ;
-            #include "GB_unjumbled_template.c"
+            #include "wait/factory/GB_unjumbled_template.c"
         }
         break ;
 
@@ -118,7 +118,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
             uint64_t *Ax = (uint64_t *) A->x ;
             #define GB_QSORT \
                 GB_qsort_1b_size8 (Ai+pA_start, Ax+pA_start, aknz) ;
-            #include "GB_unjumbled_template.c"
+            #include "wait/factory/GB_unjumbled_template.c"
         }
         break ;
 
@@ -127,7 +127,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
             GB_blob16 *Ax = (GB_blob16 *) A->x ;
             #define GB_QSORT \
                 GB_qsort_1b_size16 (Ai+pA_start, Ax+pA_start, aknz) ;
-            #include "GB_unjumbled_template.c"
+            #include "wait/factory/GB_unjumbled_template.c"
         }
         break ;
 
@@ -136,7 +136,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
             GB_void *Ax = (GB_void *) A->x ;
             #define GB_QSORT \
                 GB_qsort_1b (Ai+pA_start, Ax+pA_start*asize, asize, aknz) ;
-            #include "GB_unjumbled_template.c"
+            #include "wait/factory/GB_unjumbled_template.c"
         }
         break ;
     }

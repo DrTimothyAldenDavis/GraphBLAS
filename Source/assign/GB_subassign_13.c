@@ -22,7 +22,7 @@
 // M: not bitmap
 
 #include "GB_subassign_methods.h"
-#include "GB_assign_shared_definitions.h"
+#include "shared/GB_assign_shared_definitions.h"
 
 GrB_Info GB_subassign_13
 (

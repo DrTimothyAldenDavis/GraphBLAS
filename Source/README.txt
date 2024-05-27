@@ -6,8 +6,8 @@ GraphBLAS, and internal include files that are meant for internal
 inclusion in GraphBLAS itself.  They should not be included in end-user
 applications.
 
-The Template/ files are not compiled separately, but are #include'd into files
-in this folder instead.
+The */template/ files are not compiled separately, but are #include'd into
+files in this folder instead.
 
 The FactoryKernel/* files are created by the *.m scripts from the
 Generator/* files, and should not be editted.  If the Generator/ files are

@@ -8,8 +8,8 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_control.h"
-#include "GB_unop__include.h"
+#include "builtin/factory/GB_control.h"
+#include "FactoryKernels/GB_unop__include.h"
 
 // unary operator: z = f(x)
 GB_unaryop
@@ -37,7 +37,7 @@ GB_ctype
 // disable this operator and use the generic case if these conditions hold
 GB_disable
 
-#include "GB_apply_shared_definitions.h"
+#include "shared/GB_apply_shared_definitions.h"
 
 m4_divert(if_unop_apply_enabled)
 //------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ GrB_Info GB (_unop_apply)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_apply_unop_template.c"
+    #include "apply/template/GB_apply_unop_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -79,7 +79,7 @@ GrB_Info GB (_unop_tran)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_transpose_template.c"
+    #include "transpose/template/GB_transpose_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

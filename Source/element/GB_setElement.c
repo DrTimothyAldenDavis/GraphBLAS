@@ -349,7 +349,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
 
         // No typecasting can be done.  The new pending tuple must either be
         // the first pending tuple, or its type must match the prior pending
-        // tuples.  See GB_assign_shared_definitions.h for a complete
+        // tuples.  See shared/GB_assign_shared_definitions.h for a complete
         // description.
 
         //----------------------------------------------------------------------

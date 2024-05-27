@@ -229,6 +229,6 @@ void GB_macrofy_select          // construct all macros for GrB_select
     // include the final default definitions
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n#include \"GB_select_shared_definitions.h\"\n") ;
+    fprintf (fp, "\n#include \"shared/GB_select_shared_definitions.h\"\n") ;
 }
 

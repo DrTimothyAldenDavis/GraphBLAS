@@ -8,8 +8,8 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_control.h" 
-#include "GB_bld__include.h"
+#include "builtin/factory/GB_control.h"
+#include "FactoryKernels/GB_bld__include.h"
 
 // dup operator: Tx [k] += Sx [i], no typecast here
 GB_bld_dup
@@ -27,7 +27,7 @@ GB_ytype
 // disable this operator and use the generic case if these conditions hold
 GB_disable
 
-#include "GB_kernel_shared_definitions.h"
+#include "shared/GB_kernel_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // build a non-iso matrix
@@ -50,7 +50,7 @@ GrB_Info GB (_bld)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_bld_template.c"
+    #include "builder/template/GB_bld_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

@@ -28,7 +28,7 @@
 // C is iso if A is iso
 
 #include "GB_subassign_methods.h"
-#include "GB_assign_shared_definitions.h"
+#include "shared/GB_assign_shared_definitions.h"
 #include "GB_subassign_dense.h"
 #include "GB_stringify.h"
 #ifndef GBCOMPACT
@@ -119,7 +119,7 @@ GrB_Info GB_subassign_25
 
         #define GB_ISO_ASSIGN
         GB_cast_scalar (C->x, ccode, A->x, acode, asize) ;
-        #include "template/GB_subassign_25_template.c"
+        #include "assign/template/GB_subassign_25_template.c"
         info = GrB_SUCCESS ;
 
     }
@@ -208,7 +208,7 @@ GrB_Info GB_subassign_25
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
             #define C_iso false
-            #include "template/GB_subassign_25_template.c"
+            #include "assign/template/GB_subassign_25_template.c"
             info = GrB_SUCCESS ;
         }
     }

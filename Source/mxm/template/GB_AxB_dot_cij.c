@@ -31,7 +31,7 @@
 // entirely populated.
 
 // The #include'ing file must use GB_DECLARE_TERMINAL_CONST (zterminal),
-// or define zterminal another way (see Template/GB_AxB_dot_generic.c).
+// or define zterminal another way (see mxm/factory/GB_AxB_dot_generic.c).
 
 #ifndef GB_MXM_SHARED_DEFINITIONS_H
 #error "undefined"

@@ -8,9 +8,11 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_control.h"
-#include "GB_ewise_kernels.h"
-#include "GB_ew__include.h"
+#include "builtin/factory/GB_control.h"
+#include "ewise/GB_emult.h"
+#include "slice/GB_ek_slice.h"
+#include "assign/GB_bitmap_assign_methods.h"
+#include "FactoryKernels/GB_ew__include.h"
 
 // operator:
 #define GB_BINOP(z,x,y,i,j) z = ((x) > (y))
@@ -43,7 +45,7 @@
 #define GB_DISABLE 0
 #endif
 
-#include "GB_ewise_shared_definitions.h"
+#include "shared/GB_ewise_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // C = A+B, all 3 matrices dense
@@ -57,7 +59,7 @@ GrB_Info GB (_Cewise_fulln__gt_uint32)
     const int nthreads
 )
 { 
-    #include "template/GB_ewise_fulln_template.c"
+    #include "ewise/template/GB_ewise_fulln_template.c"
     return (GrB_SUCCESS) ;
 }
 
@@ -78,7 +80,7 @@ GrB_Info GB (_AxD__gt_uint32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_colscale_template.c"
+    #include "mxm/template/GB_colscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -98,7 +100,7 @@ GrB_Info GB (_DxB__gt_uint32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_rowscale_template.c"
+    #include "mxm/template/GB_rowscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -141,7 +143,7 @@ GrB_Info GB (_AaddB__gt_uint32)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "template/GB_add_template.c"
+    #include "ewise/template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -188,7 +190,7 @@ GrB_Info GB (_AunionB__gt_uint32)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "template/GB_add_template.c"
+    #include "ewise/template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -216,7 +218,7 @@ GrB_Info GB (_AemultB_08__gt_uint32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_emult_08_meta.c"
+    #include "ewise/template/GB_emult_08_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -242,7 +244,7 @@ GrB_Info GB (_AemultB_02__gt_uint32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_emult_02_template.c"
+    #include "ewise/template/GB_emult_02_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -268,7 +270,7 @@ GrB_Info GB (_AemultB_03__gt_uint32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_emult_03_template.c"
+    #include "ewise/template/GB_emult_03_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -293,7 +295,7 @@ GrB_Info GB (_AemultB_04__gt_uint32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_emult_04_template.c"
+    #include "ewise/template/GB_emult_04_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -319,7 +321,7 @@ GrB_Info GB (_AemultB_bitmap__gt_uint32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_emult_bitmap_template.c"
+    #include "ewise/template/GB_emult_bitmap_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -341,7 +343,7 @@ GrB_Info GB (_bind1st__gt_uint32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_apply_bind1st_template.c"
+    #include "apply/template/GB_apply_bind1st_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -363,7 +365,7 @@ GrB_Info GB (_bind2nd__gt_uint32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_apply_bind2nd_template.c"
+    #include "apply/template/GB_apply_bind2nd_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -397,7 +399,7 @@ GrB_Info GB (_bind1st_tran__gt_uint32)
     return (GrB_NO_VALUE) ;
     #else
     GB_X_TYPE x = (*((const GB_X_TYPE *) x_input)) ;
-    #include "template/GB_transpose_template.c"
+    #include "transpose/template/GB_transpose_template.c"
     return (GrB_SUCCESS) ;
     #endif
     #undef GB_BIND_1ST
@@ -431,7 +433,7 @@ GrB_Info GB (_bind2nd_tran__gt_uint32)
     return (GrB_NO_VALUE) ;
     #else
     GB_Y_TYPE y = (*((const GB_Y_TYPE *) y_input)) ;
-    #include "template/GB_transpose_template.c"
+    #include "transpose/template/GB_transpose_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

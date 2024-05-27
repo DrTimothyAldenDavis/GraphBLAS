@@ -15,12 +15,12 @@
 
 // C is sparse or hypersparse, as determined by GB_add_sparsity.  M, A, and B
 // can have any sparsity structure, but only a specific set of cases will be
-// used (see the list in Template/GB_add_sparse_template.c).
+// used (see the list in ewise/template/GB_add_sparse_template.c).
 
 // Cp is constructed here, and either freed by phase2, or transplanted into C.
 
 #include "GB_add.h"
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 
 GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
 (
@@ -95,7 +95,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     bool M_is_B = GB_all_aliased (M, B) ;
 
     #define GB_ADD_PHASE 1
-    #include "template/GB_add_template.c"
+    #include "ewise/template/GB_add_template.c"
 
     //--------------------------------------------------------------------------
     // cumulative sum of Cp and fine tasks in TaskList

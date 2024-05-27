@@ -8,9 +8,11 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_control.h"
-#include "GB_ewise_kernels.h"
-#include "GB_ew__include.h"
+#include "builtin/factory/GB_control.h"
+#include "ewise/GB_emult.h"
+#include "slice/GB_ek_slice.h"
+#include "assign/GB_bitmap_assign_methods.h"
+#include "FactoryKernels/GB_ew__include.h"
 
 // operator:
 #define GB_BINOP(z,x,y,i,j) z = 1
@@ -40,7 +42,7 @@
 #define GB_DISABLE 0
 #endif
 
-#include "GB_ewise_shared_definitions.h"
+#include "shared/GB_ewise_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // C = A+B, all 3 matrices dense
@@ -54,7 +56,7 @@ GrB_Info GB (_Cewise_fulln__pair_uint64)
     const int nthreads
 )
 { 
-    #include "template/GB_ewise_fulln_template.c"
+    #include "ewise/template/GB_ewise_fulln_template.c"
     return (GrB_SUCCESS) ;
 }
 
@@ -96,7 +98,7 @@ GrB_Info GB (_AaddB__pair_uint64)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "template/GB_add_template.c"
+    #include "ewise/template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

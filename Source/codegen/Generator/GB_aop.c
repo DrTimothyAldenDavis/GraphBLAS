@@ -10,9 +10,9 @@
 // C(I,J)<M> += A
 
 #include "GB.h"
-#include "GB_control.h"
-#include "GB_ek_slice.h"
-#include "GB_aop__include.h"
+#include "builtin/factory/GB_control.h"
+#include "slice/GB_ek_slice.h"
+#include "FactoryKernels/GB_aop__include.h"
 
 // accum operator
 GB_accumop
@@ -52,7 +52,7 @@ GB_ax_mask
 // disable this operator and use the generic case if these conditions hold
 GB_disable
 
-#include "GB_assign_shared_definitions.h"
+#include "shared/GB_assign_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // C += A, accumulate a sparse matrix into a dense matrix
@@ -72,7 +72,7 @@ GrB_Info GB (_subassign_23)
     { 
         int nthreads_max = GB_Context_nthreads_max ( ) ;
         double chunk = GB_Context_chunk ( ) ;
-        #include "template/GB_subassign_23_template.c"
+        #include "assign/template/GB_subassign_23_template.c"
     }
     m4_divert(0)
     return (GrB_SUCCESS) ;
@@ -98,7 +98,7 @@ GrB_Info GB (_subassign_22)
         GB_Y_TYPE ywork = (*((GB_Y_TYPE *) ywork_handle)) ;
         int nthreads_max = GB_Context_nthreads_max ( ) ;
         double chunk = GB_Context_chunk ( ) ;
-        #include "template/GB_subassign_22_template.c"
+        #include "assign/template/GB_subassign_22_template.c"
         return (GrB_SUCCESS) ;
     }
     m4_divert(0)

@@ -44,52 +44,52 @@ GrB_Info GB_select_positional_phase1
     // phase1: positional operators and nonzombie selector
     //--------------------------------------------------------------------------
 
-    #include "GB_select_shared_definitions.h"
+    #include "shared/GB_select_shared_definitions.h"
 
     switch (opcode)
     {
 
         case GB_TRIL_idxunop_code      : 
             #define GB_TRIL_SELECTOR
-            #include "template/GB_select_positional_phase1_template.c"
+            #include "select/template/GB_select_positional_phase1_template.c"
             break ;
 
         case GB_TRIU_idxunop_code      : 
             #define GB_TRIU_SELECTOR
-            #include "template/GB_select_positional_phase1_template.c"
+            #include "select/template/GB_select_positional_phase1_template.c"
             break ;
 
         case GB_DIAG_idxunop_code      : 
             #define GB_DIAG_SELECTOR
-            #include "template/GB_select_positional_phase1_template.c"
+            #include "select/template/GB_select_positional_phase1_template.c"
             break ;
 
         case GB_OFFDIAG_idxunop_code   : 
         case GB_DIAGINDEX_idxunop_code : 
             #define GB_OFFDIAG_SELECTOR
-            #include "template/GB_select_positional_phase1_template.c"
+            #include "select/template/GB_select_positional_phase1_template.c"
             break ;
 
         case GB_ROWINDEX_idxunop_code  : 
             #define GB_ROWINDEX_SELECTOR
-            #include "template/GB_select_positional_phase1_template.c"
+            #include "select/template/GB_select_positional_phase1_template.c"
             break ;
 
         case GB_ROWLE_idxunop_code     : 
             #define GB_ROWLE_SELECTOR
-            #include "template/GB_select_positional_phase1_template.c"
+            #include "select/template/GB_select_positional_phase1_template.c"
             break ;
 
         case GB_ROWGT_idxunop_code     : 
             #define GB_ROWGT_SELECTOR
-            #include "template/GB_select_positional_phase1_template.c"
+            #include "select/template/GB_select_positional_phase1_template.c"
             break ;
 
         case GB_NONZOMBIE_idxunop_code : 
             // keep A(i,j) if it's not a zombie
             #define GB_A_TYPE GB_void
             #define GB_TEST_VALUE_OF_ENTRY(keep,p) bool keep = (i >= 0)
-            #include "template/GB_select_entry_phase1_template.c"
+            #include "select/template/GB_select_entry_phase1_template.c"
             break ;
 
         default: ;

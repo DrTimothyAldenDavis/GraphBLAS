@@ -10,9 +10,9 @@
 // C(I,J)<M> = A
 
 #include "GB.h"
-#include "GB_control.h"
-#include "GB_ek_slice.h"
-#include "GB_as__include.h"
+#include "builtin/factory/GB_control.h"
+#include "slice/GB_ek_slice.h"
+#include "FactoryKernels/GB_as__include.h"
 
 // A and C matrices
 #define GB_A_TYPE uint16_t
@@ -30,7 +30,7 @@
 #define GB_DISABLE 0
 #endif
 
-#include "GB_assign_shared_definitions.h"
+#include "shared/GB_assign_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // C<M> = scalar, when C is dense
@@ -51,7 +51,7 @@ GrB_Info GB (_subassign_05d__uint16)
     GB_C_TYPE cwork = (*((GB_C_TYPE *) scalar)) ;
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
-    #include "template/GB_subassign_05d_template.c"
+    #include "assign/template/GB_subassign_05d_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -74,7 +74,7 @@ GrB_Info GB (_subassign_06d__uint16)
     ASSERT (C->type == A->type) ;
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
-    #include "template/GB_subassign_06d_template.c"
+    #include "assign/template/GB_subassign_06d_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -97,7 +97,7 @@ GrB_Info GB (_subassign_25__uint16)
     ASSERT (C->type == A->type) ;
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
-    #include "template/GB_subassign_25_template.c"
+    #include "assign/template/GB_subassign_25_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

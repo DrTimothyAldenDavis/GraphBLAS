@@ -28,8 +28,8 @@
 // one for each architecture (and multiple ones for x86).  The supporting
 // files for cpu_features are #include'd by GB_cpu_features_support.c.
 
-#include "GB_compiler.h"
-#include "GB_cpu_features.h"
+#include "include/GB_compiler.h"
+#include "cpu/GB_cpu_features.h"
 
 #if !defined ( GBNCPUFEAT )
 

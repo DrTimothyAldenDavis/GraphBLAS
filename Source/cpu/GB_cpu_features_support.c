@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_compiler.h"
-#include "GB_cpu_features.h"
+#include "include/GB_compiler.h"
+#include "cpu/GB_cpu_features.h"
 
 #if !defined ( GBNCPUFEAT )
 

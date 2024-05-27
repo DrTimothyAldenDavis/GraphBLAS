@@ -19,7 +19,7 @@
 
 #include "GB.h"
 #include "GB_binop.h"
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 
 bool GB_binop_builtin               // true if binary operator is builtin
 (

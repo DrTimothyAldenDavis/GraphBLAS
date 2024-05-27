@@ -77,7 +77,7 @@ GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
 
         // C = pattern of A transposed
         #define GB_ISO_TRANSPOSE
-        #include "template/GB_transpose_template.c"
+        #include "transpose/template/GB_transpose_template.c"
         info = GrB_SUCCESS ;
 
     }
@@ -110,7 +110,7 @@ GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
             // launch the switch factory
             //------------------------------------------------------------------
 
-            #include "GB_twotype_factory.c"
+            #include "apply/factory/GB_twotype_factory.c"
         }
         #endif
 
@@ -143,7 +143,7 @@ GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
                 cast_A_to_X (Cx +((pC)*csize), Ax +((pA)*asize), asize) ;
             #define GB_A_TYPE GB_void
             #define GB_C_TYPE GB_void
-            #include "template/GB_transpose_template.c"
+            #include "transpose/template/GB_transpose_template.c"
             info = GrB_SUCCESS ;
         }
     }

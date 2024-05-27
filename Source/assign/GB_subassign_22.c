@@ -22,9 +22,9 @@
 // C += scalar where C is full
 
 #include "GB_subassign_dense.h"
-#include "GB_assign_shared_definitions.h"
+#include "shared/GB_assign_shared_definitions.h"
 #include "GB_binop.h"
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 #include "GB_stringify.h"
 #ifndef GBCOMPACT
 #include "GB_aop__include.h"
@@ -170,7 +170,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
         #define GB_ACCUMULATE_scalar(Cx,pC,ywork)           \
             faccum (Cx +((pC)*csize), Cx +((pC)*csize), ywork)
 
-        #include "template/GB_subassign_22_template.c"
+        #include "assign/template/GB_subassign_22_template.c"
         info = GrB_SUCCESS ;
     }
 

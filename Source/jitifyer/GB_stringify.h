@@ -10,9 +10,9 @@
 #ifndef GB_STRINGIFY_H
 #define GB_STRINGIFY_H
 
-#include "GB_binop.h"
-#include "GB_jitifyer.h"
-#include "GB_callback.h"
+#include "binaryop/GB_binop.h"
+#include "jitifyer/GB_jitifyer.h"
+#include "callback/include/GB_callback.h"
 
 //------------------------------------------------------------------------------
 // print kernel preface

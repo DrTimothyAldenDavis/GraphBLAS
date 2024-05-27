@@ -14,7 +14,7 @@
 #define GB_AXB_SAXPY3_H
 
 #include "GB.h"
-#include "GB_math.h"
+#include "math/GB_math.h"
 
 GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 (
@@ -60,7 +60,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 // Hash method is not used, and Gustavson's method is used, with the hash size
 // is set to C->vlen.
 
-#include "GB_saxpy3task_struct.h"
+#include "mxm/include/GB_saxpy3task_struct.h"
 
 //------------------------------------------------------------------------------
 // GB_AxB_saxpy3_flopcount:  compute flops for GB_AxB_saxpy3

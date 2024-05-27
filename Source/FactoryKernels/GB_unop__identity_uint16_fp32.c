@@ -8,8 +8,8 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_control.h"
-#include "GB_unop__include.h"
+#include "builtin/factory/GB_control.h"
+#include "FactoryKernels/GB_unop__include.h"
 
 // unary operator: z = f(x)
 #define GB_UNARYOP(z,x) z = GB_cast_to_uint16_t ((double) (x))
@@ -41,7 +41,7 @@
 #define GB_DISABLE 0
 #endif
 
-#include "GB_apply_shared_definitions.h"
+#include "shared/GB_apply_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
@@ -59,7 +59,7 @@ GrB_Info GB (_unop_apply__identity_uint16_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_apply_unop_template.c"
+    #include "apply/template/GB_apply_unop_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -81,7 +81,7 @@ GrB_Info GB (_unop_tran__identity_uint16_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "template/GB_transpose_template.c"
+    #include "transpose/template/GB_transpose_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

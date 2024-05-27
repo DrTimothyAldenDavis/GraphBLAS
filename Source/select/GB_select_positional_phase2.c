@@ -46,7 +46,7 @@ GrB_Info GB_select_positional_phase2
     //--------------------------------------------------------------------------
 
     #define GB_A_TYPE GB_void
-    #include "GB_select_shared_definitions.h"
+    #include "shared/GB_select_shared_definitions.h"
 
     if (A->iso)
     {
@@ -63,38 +63,38 @@ GrB_Info GB_select_positional_phase2
 
             case GB_TRIL_idxunop_code      : 
                 #define GB_TRIL_SELECTOR
-                #include "template/GB_select_phase2.c"
+                #include "select/template/GB_select_phase2.c"
                 break ;
 
             case GB_TRIU_idxunop_code      : 
                 #define GB_TRIU_SELECTOR
-                #include "template/GB_select_phase2.c"
+                #include "select/template/GB_select_phase2.c"
                 break ;
 
             case GB_DIAG_idxunop_code      : 
                 #define GB_DIAG_SELECTOR
-                #include "template/GB_select_phase2.c"
+                #include "select/template/GB_select_phase2.c"
                 break ;
 
             case GB_OFFDIAG_idxunop_code   : 
             case GB_DIAGINDEX_idxunop_code : 
                 #define GB_OFFDIAG_SELECTOR
-                #include "template/GB_select_phase2.c"
+                #include "select/template/GB_select_phase2.c"
                 break ;
 
             case GB_ROWINDEX_idxunop_code  : 
                 #define GB_ROWINDEX_SELECTOR
-                #include "template/GB_select_phase2.c"
+                #include "select/template/GB_select_phase2.c"
                 break ;
 
             case GB_ROWLE_idxunop_code     : 
                 #define GB_ROWLE_SELECTOR
-                #include "template/GB_select_phase2.c"
+                #include "select/template/GB_select_phase2.c"
                 break ;
 
             case GB_ROWGT_idxunop_code     : 
                 #define GB_ROWGT_SELECTOR
-                #include "template/GB_select_phase2.c"
+                #include "select/template/GB_select_phase2.c"
                 break ;
 
             case GB_NONZOMBIE_idxunop_code : 
@@ -103,7 +103,7 @@ GrB_Info GB_select_positional_phase2
                 #define GB_TEST_VALUE_OF_ENTRY(keep,p) bool keep = (i >= 0)
                 // A is iso and thus so is C, so do not select the value
                 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)
-                #include "template/GB_select_phase2.c"
+                #include "select/template/GB_select_phase2.c"
                 #undef  GB_ENTRY_SELECTOR
                 break ;
 
@@ -126,38 +126,38 @@ GrB_Info GB_select_positional_phase2
 
             case GB_TRIL_idxunop_code      : 
                 #define GB_TRIL_SELECTOR
-                #include "template/GB_select_phase2.c"
+                #include "select/template/GB_select_phase2.c"
                 break ;
 
             case GB_TRIU_idxunop_code      : 
                 #define GB_TRIU_SELECTOR
-                #include "template/GB_select_phase2.c"
+                #include "select/template/GB_select_phase2.c"
                 break ;
 
             case GB_DIAG_idxunop_code      : 
                 #define GB_DIAG_SELECTOR
-                #include "template/GB_select_phase2.c"
+                #include "select/template/GB_select_phase2.c"
                 break ;
 
             case GB_OFFDIAG_idxunop_code   : 
             case GB_DIAGINDEX_idxunop_code : 
                 #define GB_OFFDIAG_SELECTOR
-                #include "template/GB_select_phase2.c"
+                #include "select/template/GB_select_phase2.c"
                 break ;
 
             case GB_ROWINDEX_idxunop_code  : 
                 #define GB_ROWINDEX_SELECTOR
-                #include "template/GB_select_phase2.c"
+                #include "select/template/GB_select_phase2.c"
                 break ;
 
             case GB_ROWLE_idxunop_code     : 
                 #define GB_ROWLE_SELECTOR
-                #include "template/GB_select_phase2.c"
+                #include "select/template/GB_select_phase2.c"
                 break ;
 
             case GB_ROWGT_idxunop_code     : 
                 #define GB_ROWGT_SELECTOR
-                #include "template/GB_select_phase2.c"
+                #include "select/template/GB_select_phase2.c"
                 break ;
 
             default: ;

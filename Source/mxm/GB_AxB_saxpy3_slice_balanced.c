@@ -13,7 +13,7 @@
 // GrB_NO_VALUE, to indicate that the analysis was terminated early.
 
 #include "GB_AxB_saxpy3.h"
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 
 // control parameters for generating parallel tasks
 #define GB_NTASKS_PER_THREAD 2

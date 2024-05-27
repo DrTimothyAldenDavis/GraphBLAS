@@ -21,7 +21,7 @@
 }
 
 #include "GB_diag.h"
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 
 GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
 (

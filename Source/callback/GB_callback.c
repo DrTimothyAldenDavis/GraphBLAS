@@ -7,12 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_Template.h"
-#include "GB_callback.h"
-#include "GB_AxB_saxpy3.h"
-#include "GB_bitmap_assign_methods.h"
-#include "GB_ek_slice.h"
-#include "GB_sort.h"
+#include "GB.h"
+#include "callback/include/GB_callback.h"
+#include "mxm/GB_AxB_saxpy3.h"
+#include "assign/GB_bitmap_assign_methods.h"
+#include "slice/GB_ek_slice.h"
+#include "sort/GB_sort.h"
 
 GB_callback_struct GB_callback =
 {

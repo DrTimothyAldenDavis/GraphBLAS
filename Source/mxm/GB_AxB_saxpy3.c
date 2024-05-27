@@ -92,12 +92,11 @@
 #include "GB_mxm.h"
 #include "GB_stringify.h"
 #include "GB_AxB_saxpy_generic.h"
-#include "GB_control.h"
 #include "GB_AxB__include1.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include2.h"
 #endif
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 
 #define GB_FREE_WORKSPACE                           \
 {                                                   \

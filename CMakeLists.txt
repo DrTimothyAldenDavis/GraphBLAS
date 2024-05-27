@@ -207,9 +207,9 @@ configure_file ( "Config/README.md.in"
 # include directories for both graphblas and the demos
 #-------------------------------------------------------------------------------
 
-include_directories ( Source/Template Source Include Source/Shared
+include_directories ( Source Include Source/shared
     Config xxHash lz4 zstd zstd/zstd_subset JITpackage
-    Source/Factories Demo/Include rmm_wrap
+    Demo/Include rmm_wrap
     Source/jit_kernels
     Source/jitifyer
     Source/assign

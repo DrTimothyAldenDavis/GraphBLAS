@@ -10,7 +10,7 @@
 {
 
     // Ax unused for some uses of this template
-    #include "GB_unused.h"
+    #include "shared/GB_unused.h"
 
     //--------------------------------------------------------------------------
     // get A and C

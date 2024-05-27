@@ -10,7 +10,7 @@
 #ifndef GB_H
 #define GB_H
 
-#include "Template/GB_Template.h"
+#include "include/GB_Template.h"
 #include "global/GB_Global.h"
 #include "print/GB_printf.h"
 #include "ok/GB_assert.h"
@@ -53,7 +53,6 @@
 #include "werk/GB_where.h"
 #include "context/GB_Context.h"
 #include "gateway/GB_cuda_gateway.h"
-#include "Template/GB_saxpy3task_struct.h"
 #include "callback/GB_callbacks.h"
 #include "helper/GB_factory.h"
 #endif

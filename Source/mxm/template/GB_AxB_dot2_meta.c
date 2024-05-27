@@ -9,8 +9,8 @@
 
 #define GB_DOT2
 
-#include "GB_unused.h"
-#include "template/GB_AxB_dot_cij.h"
+#include "shared/GB_unused.h"
+#include "include/GB_AxB_dot_cij.h"
 
 {
 
@@ -100,7 +100,7 @@
         GB_DECLARE_TERMINAL_CONST (zterminal) ;
 
         #define GB_META16
-        #include "template/GB_meta16_definitions.h"
+        #include "include/GB_meta16_definitions.h"
         #include "template/GB_AxB_dot2_template.c"
 
     #else

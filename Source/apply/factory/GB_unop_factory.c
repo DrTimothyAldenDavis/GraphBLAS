@@ -39,7 +39,7 @@
         ASSERT (code1 != code2)
         #define GB_OPNAME _identity
         #define GB_EXCLUDE_SAME_TYPES
-        #include "GB_twotype_factory.c"
+        #include "apply/factory/GB_twotype_factory.c"
 
     }
     else if ((code1 == GB_FP32_code && code2 == GB_FC32_code) ||

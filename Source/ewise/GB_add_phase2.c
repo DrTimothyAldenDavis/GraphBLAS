@@ -31,7 +31,7 @@
 
 #include "GB_add.h"
 #include "GB_binop.h"
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 #include "GB_ek_slice.h"
 #include "GB_stringify.h"
 #ifndef GBCOMPACT
@@ -322,7 +322,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // using a built-in binary operator (except for positional operators)
     //--------------------------------------------------------------------------
 
-    #include "GB_ewise_shared_definitions.h"
+    #include "shared/GB_ewise_shared_definitions.h"
     #define GB_ADD_PHASE 2
 
     info = GrB_NO_VALUE ;
@@ -343,7 +343,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         // are used, and the operator is not used.
         #define GB_ISO_ADD
         #define GB_IS_EWISEUNION 0
-        #include "template/GB_add_template.c"
+        #include "ewise/template/GB_add_template.c"
         info = GrB_SUCCESS ;
 
     }
@@ -534,12 +534,12 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                 if (is_eWiseUnion)
                 { 
                     #define GB_IS_EWISEUNION 1
-                    #include "template/GB_add_template.c"
+                    #include "ewise/template/GB_add_template.c"
                 }
                 else
                 { 
                     #define GB_IS_EWISEUNION 0
-                    #include "template/GB_add_template.c"
+                    #include "ewise/template/GB_add_template.c"
                 }
             }
             else
@@ -558,12 +558,12 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                 if (is_eWiseUnion)
                 { 
                     #define GB_IS_EWISEUNION 1
-                    #include "template/GB_add_template.c"
+                    #include "ewise/template/GB_add_template.c"
                 }
                 else
                 { 
                     #define GB_IS_EWISEUNION 0
-                    #include "template/GB_add_template.c"
+                    #include "ewise/template/GB_add_template.c"
                 }
             }
 
@@ -599,12 +599,12 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             if (is_eWiseUnion)
             { 
                 #define GB_IS_EWISEUNION 1
-                #include "template/GB_add_template.c"
+                #include "ewise/template/GB_add_template.c"
             }
             else
             { 
                 #define GB_IS_EWISEUNION 0
-                #include "template/GB_add_template.c"
+                #include "ewise/template/GB_add_template.c"
             }
         }
         info = GrB_SUCCESS ;

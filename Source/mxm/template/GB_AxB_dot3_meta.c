@@ -8,15 +8,15 @@
 //------------------------------------------------------------------------------
 
 // This template is #include'd in 3 ways to construct:
-//  * a generic method: Template/GB_AxB_dot_generic.c)
+//  * a generic method: mxm/factory/GB_AxB_dot_generic.c
 //  * a Factory method: FactoryKernels/GB_AxB_*, the Adot3B method
 //  * a JIT kernel: jit_kernels/GB_jit_kernel_AxB_dot3.c
 
 #define GB_DOT3
 #define GB_DOT3_PHASE2
 
-#include "GB_unused.h"
-#include "template/GB_AxB_dot_cij.h"
+#include "shared/GB_unused.h"
+#include "include/GB_AxB_dot_cij.h"
 
 // GB_DOT_ALWAYS_SAVE_CIJ: C(i,j) = cij
 #if GB_CIJ_CHECK
@@ -154,7 +154,7 @@
     {
         GB_DECLARE_TERMINAL_CONST (zterminal) ;
         #define GB_META16
-        #include "template/GB_meta16_definitions.h"
+        #include "include/GB_meta16_definitions.h"
         #include "template/GB_AxB_dot3_template.c"
     }
     #else

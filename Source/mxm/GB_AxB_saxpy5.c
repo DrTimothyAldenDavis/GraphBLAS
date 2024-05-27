@@ -31,7 +31,6 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
-#include "GB_control.h"
 #include "GB_stringify.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include2.h"

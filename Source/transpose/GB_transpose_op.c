@@ -97,7 +97,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
 
         // C = transpose the pattern
         #define GB_ISO_TRANSPOSE
-        #include "template/GB_transpose_template.c"
+        #include "transpose/template/GB_transpose_template.c"
         info = GrB_SUCCESS ;
 
     }
@@ -142,7 +142,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
                 // launch the switch factory
                 //--------------------------------------------------------------
 
-                #include "GB_unop_factory.c"
+                #include "apply/factory/GB_unop_factory.c"
             }
         }
         #endif
@@ -191,7 +191,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
 
             #define GB_A_TYPE GB_void
             #define GB_C_TYPE GB_void
-            #include "template/GB_transpose_template.c"
+            #include "transpose/template/GB_transpose_template.c"
             info = GrB_SUCCESS ;
         }
 
@@ -372,7 +372,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
                     /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */   \
                     fop (Cx +((pC)*zsize), scalarx, ywork) ;                \
                 }
-                #include "template/GB_transpose_template.c"
+                #include "transpose/template/GB_transpose_template.c"
             }
             else
             { 
@@ -386,7 +386,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
                     /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */   \
                     fop (Cx +(pC*zsize), xwork, scalarx) ;                  \
                 }
-                #include "template/GB_transpose_template.c"
+                #include "transpose/template/GB_transpose_template.c"
             }
             info = GrB_SUCCESS ;
         }

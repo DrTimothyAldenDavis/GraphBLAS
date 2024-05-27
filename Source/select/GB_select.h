@@ -207,7 +207,7 @@ static inline void GB_select_iso
 
 // Some parameters are unused for some uses of the FactoryKernels/GB_sel_*
 // functions
-#include "GB_unused.h"
+#include "shared/GB_unused.h"
 
 #endif
 

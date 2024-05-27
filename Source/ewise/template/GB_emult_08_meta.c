@@ -22,7 +22,7 @@
 {
 
     // iB_first is unused if the operator is FIRST or PAIR
-    #include "GB_unused.h"
+    #include "shared/GB_unused.h"
 
     //--------------------------------------------------------------------------
     // get A, B, M, and C

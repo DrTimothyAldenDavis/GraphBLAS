@@ -7,11 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// This methods handles both C bitmap (Template/GB_AxB_saxpy4_panel.c) and C
-// full (Template/GB_AxB_saxbit_A_sparse_B_bitmap_template.c).  Those methods
-// define the GB_HX_COMPUTE macro for use in this method, which computes the
-// single update: H (i,jj) += A(i,k) * B(k,j).  The values of B have already
-// been loaded into the panel G.
+// This methods handles both C bitmap (mxm/template/GB_AxB_saxpy4_panel.c) and
+// C full (mxm/template/GB_AxB_saxbit_A_sparse_B_bitmap_template.c).  Those
+// methods define the GB_HX_COMPUTE macro for use in this method, which
+// computes the single update: H (i,jj) += A(i,k) * B(k,j).  The values of B
+// have already been loaded into the panel G.
 
 {
     switch (np)
