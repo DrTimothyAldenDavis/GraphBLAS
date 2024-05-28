@@ -457,7 +457,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     if (info == GrB_NO_VALUE)
     {
 
-        #include "GB_generic.h"
+        #include "generic/GB_generic.h"
         GB_BURBLE_MATRIX (C, "(generic add: %s) ", op->name) ;
 
         // C(i,j) = (ctype) A(i,j), located in Ax [pA]

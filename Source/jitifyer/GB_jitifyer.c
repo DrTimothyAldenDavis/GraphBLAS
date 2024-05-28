@@ -8,11 +8,11 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 #include "GB_config.h"
-#include "GB_zstd.h"
-#include "GB_JITpackage.h"
-#include "GB_file.h"
+#include "zstd_wrapper/GB_zstd.h"
+#include "JITpackage/GB_JITpackage.h"
+#include "jitifyer/GB_file.h"
 
 typedef GB_JIT_KERNEL_USER_OP_PROTO ((*GB_user_op_f)) ;
 typedef GB_JIT_KERNEL_USER_TYPE_PROTO ((*GB_user_type_f)) ;
@@ -1933,7 +1933,7 @@ GrB_Info GB_jitifyer_load_worker
                          "#define GB_jit_kernel %s\n"
                          "#define GB_jit_query  %s_query\n"
                          "#endif\n"
-                         "#include \"GB_jit_kernel_%s.%s\"\n",
+                         "#include \"template/GB_jit_kernel_%s.%s\"\n",
                          kernel_name, kernel_name, kname,
                          kernel_filetype) ;
 

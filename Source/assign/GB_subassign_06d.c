@@ -177,7 +177,7 @@ GrB_Info GB_subassign_06d
 
         if (info == GrB_NO_VALUE)
         { 
-            #include "GB_generic.h"
+            #include "generic/GB_generic.h"
             GB_BURBLE_MATRIX (A, "(generic C(:,:)<A>=A assign) ") ;
 
             const size_t csize = C->type->size ;

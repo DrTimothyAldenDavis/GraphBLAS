@@ -159,7 +159,7 @@ GrB_Info GB_subassign_23      // C += A; C is full
 
     if (info == GrB_NO_VALUE)
     { 
-        #include "GB_generic.h"
+        #include "generic/GB_generic.h"
         GB_BURBLE_MATRIX (A, "(generic C+=A) ") ;
 
         GxB_binary_function faccum = accum->binop_function ;

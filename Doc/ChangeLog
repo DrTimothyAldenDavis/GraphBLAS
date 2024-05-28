@@ -1,3 +1,10 @@
+June XX, 2024: version 9.3.0    FIXME NOW
+
+    * code restructing:  Source folder split into many subfolders.
+        No visible external change, except that GB_control.h has moved;
+        used by FalkorDB to reduce the # of compiled FactoryKernels.
+        Now located in Source/builtin/include/GB_control.h.
+
 May 22, 2024: version 9.2.0
 
     * Added graphblas_install.m: for a simpler method of compiling

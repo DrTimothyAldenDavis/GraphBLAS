@@ -272,7 +272,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
             // get operators, functions, workspace, contents of D, B, and C
             //------------------------------------------------------------------
 
-            #include "GB_generic.h"
+            #include "generic/GB_generic.h"
             GB_BURBLE_MATRIX (C, "(generic C=D*B rowscale) ") ;
 
             GxB_binary_function fmult = mult->binop_function ;

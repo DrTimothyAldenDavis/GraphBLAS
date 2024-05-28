@@ -11,7 +11,7 @@
 #ifndef GB_CUDA_HPP
 #define GB_CUDA_HPP
 
-#include "GraphBLAS_cuda.hpp"
+#include "CUDA/include/GraphBLAS_cuda.hpp"
 
 extern "C"
 {
@@ -31,8 +31,8 @@ extern "C"
 #include <stdint.h>
 #include <stdio.h>
 
-#include "GB_cuda_error.hpp"
-#include "GB_cuda_timer.hpp"
+#include "CUDA/include/GB_cuda_error.hpp"
+#include "CUDA/include/GB_cuda_timer.hpp"
 
 //------------------------------------------------------------------------------
 // prefetch and memadvise

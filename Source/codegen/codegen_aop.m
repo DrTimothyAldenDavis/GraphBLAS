@@ -4,20 +4,20 @@ function codegen_aop
 % This function creates all files of the form GB_aop__*.[ch], including 260
 % functions (GB_aop__*.c) and one include file, GB_aop__include.h.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\nassign/subassign with accum operator:\n') ;
 
-fh = fopen ('../FactoryKernels/GB_aop__include.h', 'w') ;
+fh = fopen ('../../FactoryKernels/GB_aop__include.h', 'w') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;
 fprintf (fh, '// GB_aop__include.h: definitions for GB_aop__*.c\n') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;
 fprintf (fh, '\n') ;
-fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.\n') ;
+fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.\n') ;
 fprintf (fh, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
 fprintf (fh, '// This file has been automatically generated from Generator/GB_aop.h') ;
-fprintf (fh, '\n#include "GB_math.h"\n\n') ;
+fprintf (fh, '\n#include "math/GB_math.h"\n\n') ;
 fclose (fh) ;
 
 % The ANY operator is not used as a binary operator in the generated functions.

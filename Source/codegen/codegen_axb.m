@@ -3,9 +3,9 @@ function codegen_axb
 %
 % This function creates all files of the form GB_AxB__*.[ch], including all
 % built-in semirings (GB_AxB__*.c) and two include files,
-% Source/mxm/GB_AxB__include1.h and Source/FactoryKernels/GB_AxB__include2.h.
+% Source/mxm/GB_AxB__include1.h and FactoryKernels/GB_AxB__include2.h.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % The ANY operator is not used as a multiplicative operator in the generated
@@ -18,17 +18,17 @@ for k = 1:2
     if (k == 1)
         filename = sprintf ('../mxm/GB_AxB__include%d.h', k) ;
     else
-        filename = sprintf ('../FactoryKernels/GB_AxB__include%d.h', k) ;
+        filename = sprintf ('../../FactoryKernels/GB_AxB__include%d.h', k) ;
     end
     fh = fopen (filename, 'w') ;
     fprintf (fh, '//------------------------------------------------------------------------------\n') ;
     fprintf (fh, '// GB_AxB__include%d.h: definitions for GB_AxB__*.c methods\n', k) ;
     fprintf (fh, '//------------------------------------------------------------------------------\n') ;
     fprintf (fh, '\n') ;
-    fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.\n') ;
+    fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.\n') ;
     fprintf (fh, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
     fprintf (fh, '// This file has been automatically generated from Generator/GB_AxB.h') ;
-    fprintf (fh, '\n#include "GB_math.h"\n\n') ;
+    fprintf (fh, '\n#include "math/GB_math.h"\n\n') ;
     fclose (fh) ;
 end
 

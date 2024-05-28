@@ -3,7 +3,7 @@ function codegen_aop_method (binop, op, xtype)
 %
 % codegen_aop_method (binop, op, xtype)
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 f = fopen ('control.m4', 'w') ;
@@ -131,12 +131,12 @@ fprintf (f, 'm4_divert(0)\n') ;
 fclose (f) ;
 
 % construct the *.c file
-cmd = sprintf ('cat control.m4 Generator/GB_aop.c | m4 -P | awk -f codegen_blank.awk > ../FactoryKernels/GB_aop__%s.c', name) ;
+cmd = sprintf ('cat control.m4 Generator/GB_aop.c | m4 -P | awk -f codegen_blank.awk > ../../FactoryKernels/GB_aop__%s.c', name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
-system ('cat control.m4 Generator/GB_aop.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> ../FactoryKernels/GB_aop__include.h') ;
+system ('cat control.m4 Generator/GB_aop.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> ../../FactoryKernels/GB_aop__include.h') ;
 
 delete ('control.m4') ;
 

@@ -163,7 +163,7 @@ GrB_Info GB_subassign_05d
 
     if (info == GrB_NO_VALUE)
     { 
-        #include "GB_generic.h"
+        #include "generic/GB_generic.h"
         GB_BURBLE_MATRIX (M, "(generic C(:,:)<M>=x assign) ") ;
 
         // Cx [pC] = cwork

@@ -3,7 +3,7 @@ function codegen_axb_method (addop, multop, update, addfunc, mult, ztype, xytype
 %
 % codegen_axb_method (addop, multop, update, addfunc, mult, ztype, xytype, identity, terminal)
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin >= 5 && isempty (mult))
@@ -45,9 +45,9 @@ if (is_any_pair)
     xytype = 'any type' ;
     identity = '(any value)' ;
     terminal = '(any value)' ;
-    fprintf (f, 'm4_define(`GB_axb__include_h'', `#include "GB_AxB__include1.h"'')\n') ;
+    fprintf (f, 'm4_define(`GB_axb__include_h'', `#include "mxm/GB_AxB__include1.h"'')\n') ;
 else
-    fprintf (f, 'm4_define(`GB_axb__include_h'', `#include "GB_AxB__include2.h"'')\n') ;
+    fprintf (f, 'm4_define(`GB_axb__include_h'', `#include "FactoryKernels/GB_AxB__include2.h"'')\n') ;
 end
 
 is_integer = codegen_contains (ztype, 'int') ;
@@ -864,8 +864,8 @@ if (is_any_pair)
     s = '../mxm' ;
     k = 1 ;
 else
-    % all other semirings go in Source/FactoryKernels
-    s = '../FactoryKernels' ;
+    % all other semirings go in ../../FactoryKernels
+    s = '../../FactoryKernels' ;
     k = 2 ;
 end
 

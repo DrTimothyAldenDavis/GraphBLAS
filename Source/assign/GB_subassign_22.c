@@ -160,7 +160,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
 
     if (info == GrB_NO_VALUE)
     { 
-        #include "GB_generic.h"
+        #include "generic/GB_generic.h"
         GB_BURBLE_MATRIX (C, "(generic C(:,:)+=x assign) ") ;
 
         GxB_binary_function faccum = accum->binop_function ;

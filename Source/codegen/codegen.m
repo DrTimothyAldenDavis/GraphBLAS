@@ -1,9 +1,9 @@
 function codegen
-%CODEGEN generate all code for ../FactoryKernels/*.c
+%CODEGEN generate all code for ../../FactoryKernels/*.c
 %
 % This code generation method works on octave7 and MATLAB.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 codegen_as ;        % subassign/assign with no accum

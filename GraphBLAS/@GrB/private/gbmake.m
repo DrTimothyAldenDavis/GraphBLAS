@@ -140,9 +140,8 @@ else
     object_suffix = '.o' ;
 end
 
-inc = '-Iutil -I../../../Include -I../../../Source -I../../../Source/Shared ' ;
-inc = [inc '-I../../../Source/Template '] ;
-
+inc = '-Iutil -I../../../Include -I../../../Source ' ;
+    inc = [inc '-I../../../Source/include '] ;
     inc = [inc '-I../../.. ' ] ;
     inc = [inc '-I../../../Source/ij ' ] ;
     inc = [inc '-I../../../Source/math ' ] ;
@@ -150,61 +149,6 @@ inc = [inc '-I../../../Source/Template '] ;
     inc = [inc '-I../../../Source/binaryop ' ] ;
     inc = [inc '-I../../../Source/transpose ' ] ;
     inc = [inc '-I../../../Source/helper ' ] ;
-
-% FIXME: some of these are not needed:
-%{
-    inc = [inc '-I../../../Source/jitifyer ' ] ;
-    inc = [inc '-I../../../Source/assign ' ] ;
-    inc = [inc '-I../../../Source/cumsum ' ] ;
-    inc = [inc '-I../../../Source/ok ' ] ;
-    inc = [inc '-I../../../Source/omp ' ] ;
-    inc = [inc '-I../../../Source/aliased ' ] ;
-    inc = [inc '-I../../../Source/op ' ] ;
-    inc = [inc '-I../../../Source/matrix ' ] ;
-    inc = [inc '-I../../../Source/werk ' ] ;
-    inc = [inc '-I../../../Source/transplant ' ] ;
-    inc = [inc '-I../../../Source/callback ' ] ;
-    inc = [inc '-I../../../Source/hyper ' ] ;
-    inc = [inc '-I../../../Source/clear ' ] ;
-    inc = [inc '-I../../../Source/type ' ] ;
-    inc = [inc '-I../../../Source/slice ' ] ;
-    inc = [inc '-I../../../Source/wait ' ] ;
-    inc = [inc '-I../../../Source/print ' ] ;
-    inc = [inc '-I../../../Source/compatible ' ] ;
-    inc = [inc '-I../../../Source/nvals ' ] ;
-    inc = [inc '-I../../../Source/cpu ' ] ;
-    inc = [inc '-I../../../Source/dup ' ] ;
-    inc = [inc '-I../../../Source/kronecker ' ] ;
-    inc = [inc '-I../../../Source/positional ' ] ;
-    inc = [inc '-I../../../Source/iso ' ] ;
-    inc = [inc '-I../../../Source/unaryop ' ] ;
-    inc = [inc '-I../../../Source/split ' ] ;
-    inc = [inc '-I../../../Source/concat ' ] ;
-    inc = [inc '-I../../../Source/global ' ] ;
-    inc = [inc '-I../../../Source/lz4_wrapper ' ] ;
-    inc = [inc '-I../../../Source/zstd_wrapper ' ] ;
-    inc = [inc '-I../../../Source/builtin ' ] ;
-    inc = [inc '-I../../../Source/extract ' ] ;
-    inc = [inc '-I../../../Source/pending ' ] ;
-    inc = [inc '-I../../../Source/indexunaryop ' ] ;
-    inc = [inc '-I../../../Source/apply ' ] ;
-    inc = [inc '-I../../../Source/context ' ] ;
-    inc = [inc '-I../../../Source/builder ' ] ;
-    inc = [inc '-I../../../Source/mask ' ] ;
-    inc = [inc '-I../../../Source/element ' ] ;
-    inc = [inc '-I../../../Source/memory ' ] ;
-    inc = [inc '-I../../../Source/serialize ' ] ;
-    inc = [inc '-I../../../Source/get_set ' ] ;
-    inc = [inc '-I../../../Source/semiring ' ] ;
-    inc = [inc '-I../../../Source/extractTuples ' ] ;
-    inc = [inc '-I../../../Source/convert ' ] ;
-    inc = [inc '-I../../../Source/ewise ' ] ;
-    inc = [inc '-I../../../Source/reduce ' ] ;
-    inc = [inc '-I../../../Source/import_export ' ] ;
-    inc = [inc '-I../../../Source/select ' ] ;
-    inc = [inc '-I../../../Source/mxm ' ] ;
-    inc = [inc '-I../../../Source/resize ' ] ;
-%}
 
 if (need_rename)
     % use the renamed library for MATLAB

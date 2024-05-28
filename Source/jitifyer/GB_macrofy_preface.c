@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 void GB_macrofy_preface
 (
@@ -53,6 +53,6 @@ void GB_macrofy_preface
     }
 
     // for all kernels: CPU and CUDA
-    fprintf (fp, "#include \"GB_jit_kernel.h\"\n\n") ;
+    fprintf (fp, "#include \"include/GB_jit_kernel.h\"\n\n") ;
 }
 

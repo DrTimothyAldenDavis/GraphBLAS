@@ -207,10 +207,13 @@ configure_file ( "Config/README.md.in"
 # include directories for both graphblas and the demos
 #-------------------------------------------------------------------------------
 
-include_directories ( Source Include
+include_directories ( ${PROJECT_SOURCE_DIR}
+    Source Include Source/include
     Config xxHash lz4 zstd zstd/zstd_subset JITpackage
     Demo/Include rmm_wrap
     Source/jit_kernels
+    Source/jit_kernels/include
+    Source/jit_kernels/template
     Source/jitifyer
     Source/assign
     Source/gateway
@@ -282,7 +285,7 @@ include_directories ( Source Include
 
 if ( NOT GRAPHBLAS_COMPACT )
     # compile the FactoryKernels
-    include_directories ( Source/FactoryKernels )
+    include_directories ( FactoryKernels )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -295,9 +298,9 @@ include ( GraphBLAS_compiler_options )
 # dynamic graphblas library properties
 #-------------------------------------------------------------------------------
 
-file ( GLOB GRAPHBLAS_SOURCES
-    "PreJIT/*.c"
-    "Config/*.c"
+file ( GLOB GRAPHBLAS_SOURCES "PreJIT/*.c" "Config/*.c" "Source/*/*.c" )
+
+file ( GLOB ALSO_SOURCES
     "Source/jitifyer/*.c"
     "Source/jit_wrappers/*.c"
     "Source/assign/*.c"
@@ -369,7 +372,7 @@ file ( GLOB GRAPHBLAS_SOURCES
 
 if ( NOT GRAPHBLAS_COMPACT )
     # compile the FactoryKernels
-    file ( GLOB GRAPHBLAS_FACTORYKERNELS "Source/FactoryKernels/*.c" )
+    file ( GLOB GRAPHBLAS_FACTORYKERNELS "FactoryKernels/*.c" )
     list ( APPEND GRAPHBLAS_SOURCES ${GRAPHBLAS_FACTORYKERNELS} )
 endif ( )
 

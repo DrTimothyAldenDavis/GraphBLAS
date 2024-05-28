@@ -288,7 +288,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
             // get operators, functions, workspace, contents of A, D, and C
             //------------------------------------------------------------------
 
-            #include "GB_generic.h"
+            #include "generic/GB_generic.h"
             GB_BURBLE_MATRIX (C, "(generic C=A*D colscale) ") ;
 
             GxB_binary_function fmult = mult->binop_function ;

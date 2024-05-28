@@ -4,21 +4,21 @@ function codegen_sel
 % This function creates all files of the form GB_sel__*.c,
 % and the include file GB_sel__include.h.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\nselection operators:\n') ;
 % addpath ('../../Test') ;
 
-fh = fopen ('../FactoryKernels/GB_sel__include.h', 'w') ;
+fh = fopen ('../../FactoryKernels/GB_sel__include.h', 'w') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;
 fprintf (fh, '// GB_sel__include.h: definitions for GB_sel__*.c\n') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;
 fprintf (fh, '\n') ;
-fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.\n') ;
+fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.\n') ;
 fprintf (fh, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
 fprintf (fh, '// This file has been automatically generated from Generator/GB_sel.h') ;
-fprintf (fh, '\n#include "GB_math.h"\n\n') ;
+fprintf (fh, '\n#include "math/GB_math.h"\n\n') ;
 fclose (fh) ;
 
 % NONZOMBIE:         name         selector                     type

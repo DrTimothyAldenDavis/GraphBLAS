@@ -7,4 +7,3 @@ rename GB_ops* to GB_builtin*
 
 move prototype of GB_conform_hyper to GB_convert.h
 
-move GB_shallow_copy from GB_transpose.h to GB_new.h?

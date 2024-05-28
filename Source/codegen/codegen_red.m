@@ -4,31 +4,31 @@ function codegen_red
 % This function creates all files of the form GB_red__*.c, GB_bld__*.c
 % and the include files GB_red__include.h and GB_bld__include.h.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\nreduction operators:\n') ;
 
-fh = fopen ('../FactoryKernels/GB_red__include.h', 'w') ;
+fh = fopen ('../../FactoryKernels/GB_red__include.h', 'w') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;
 fprintf (fh, '// GB_red__include.h: definitions for GB_red__*.c\n') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;
 fprintf (fh, '\n') ;
-fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.\n') ;
+fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.\n') ;
 fprintf (fh, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
 fprintf (fh, '// This file has been automatically generated from Generator/GB_red.h') ;
-fprintf (fh, '\n#include "GB_math.h"\n\n') ;
+fprintf (fh, '\n#include "math/GB_math.h"\n\n') ;
 fclose (fh) ;
 
-fh = fopen ('../FactoryKernels/GB_bld__include.h', 'w') ;
+fh = fopen ('../../FactoryKernels/GB_bld__include.h', 'w') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;
 fprintf (fh, '// GB_bld__include.h: definitions for GB_bld__*.c\n') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;
 fprintf (fh, '\n') ;
-fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.\n') ;
+fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.\n') ;
 fprintf (fh, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
 fprintf (fh, '// This file has been automatically generated from Generator/GB_bld.h') ;
-fprintf (fh, '\n#include "GB_math.h"\n\n') ;
+fprintf (fh, '\n#include "math/GB_math.h"\n\n') ;
 fclose (fh) ;
 
 %-------------------------------------------------------------------------------

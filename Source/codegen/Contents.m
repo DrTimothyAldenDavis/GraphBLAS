@@ -1,8 +1,8 @@
 % SuiteSparse/GraphBLAS/Source
 %
-% These files are used to create the files in Source/*__* and
-% Source/FactoryKernels, from the input files in Source/codegen/Generator.  These
-% functions do not need to be used by the user.
+% These files are used to create the files in GraphBLAS/Source/mxm/*__* and
+% GraphBLAS/FactoryKernels, from the input files in Source/codegen/Generator.
+% These functions do not need to be used by the end user.
 %
 %   codegen
 %   codegen_aop
@@ -29,5 +29,5 @@
 %   codegen_type
 %   codegen_contains
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

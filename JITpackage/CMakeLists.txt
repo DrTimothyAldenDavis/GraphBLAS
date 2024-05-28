@@ -76,10 +76,8 @@ if ( TARGET grb_jitpackage )
     file ( GLOB GRB_SOURCE_FILES
         RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         "../Include/GraphBLAS.h"
-        "../Source/jit_kernels/*.[ch]"
         "../CUDA/template/*"
         "../CUDA/include/*"
-        "../CUDA/jit_kernels/*"
         "../Source/*/template/*"
         "../Source/*/include/*"
         "../Source/include/*" )

@@ -3,7 +3,7 @@ function codegen_as_template (xtype)
 %
 % codegen_as_template (xtype)
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 f = fopen ('control.m4', 'w') ;
@@ -45,11 +45,11 @@ fprintf (f, 'm4_divert(0)\n') ;
 fclose (f) ;
 
 % construct the *.c file
-cmd = sprintf ('cat control.m4 Generator/GB_as.c | m4 -P | awk -f codegen_blank.awk > ../FactoryKernels/GB_as__%s.c', fname) ;
+cmd = sprintf ('cat control.m4 Generator/GB_as.c | m4 -P | awk -f codegen_blank.awk > ../../FactoryKernels/GB_as__%s.c', fname) ;
 system (cmd) ;
 
 % append to the *.h file
-system ('cat control.m4 Generator/GB_as.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> ../FactoryKernels/GB_as__include.h') ;
+system ('cat control.m4 Generator/GB_as.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> ../../FactoryKernels/GB_as__include.h') ;
 
 delete ('control.m4') ;
 

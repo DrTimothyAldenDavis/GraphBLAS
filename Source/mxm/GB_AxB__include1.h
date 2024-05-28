@@ -2,11 +2,11 @@
 // GB_AxB__include1.h: definitions for GB_AxB__*.c methods
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 // This file has been automatically generated from Generator/GB_AxB.h
-#include "GB_math.h"
+#include "math/GB_math.h"
 
 GrB_Info GB (_Adot2B__any_pair_iso)
 (
