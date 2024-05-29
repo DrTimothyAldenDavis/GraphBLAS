@@ -143,6 +143,7 @@ message ( STATUS "CMAKE have OpenMP:          ${OpenMP_C_FOUND}" )
 
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
+# FIXME NOW: remove most of these include directories:
 include_directories ( ..
     ../Source ../Include ../Source/include
     Config ../xxHash ../lz4 ../zstd ../zstd/zstd_subset ../JITpackage 
@@ -235,76 +236,6 @@ include ( GraphBLAS_compiler_options )
 
 file ( GLOB GRAPHBLAS_SOURCES "../PreJIT/*.c" "../Config/*.c"
     "../Source/*/*.c" )
-
-file ( GLOB ALSO_SOURCES
-    "../Source/jitifyer/*.c"
-    "../Source/jit_wrappers/*.c"
-    "../Source/assign/*.c"
-    "../Source/cumsum/*.c"
-    "../Source/omp/*.c"
-    "../Source/aliased/*.c"
-    "../Source/op/*.c"
-    "../Source/init/*.c"
-    "../Source/descriptor/*.c"
-    "../Source/matrix/*.c"
-    "../Source/vector/*.c"
-    "../Source/helper/*.c"
-    "../Source/werk/*.c"
-    "../Source/transplant/*.c"
-    "../Source/callback/*.c"
-    "../Source/hyper/*.c"
-    "../Source/clear/*.c"
-    "../Source/type/*.c"
-    "../Source/sort/*.c"
-    "../Source/scalar/*.c"
-    "../Source/ij/*.c"
-    "../Source/diag/*.c"
-    "../Source/monoid/*.c"
-    "../Source/slice/*.c"
-    "../Source/wait/*.c"
-    "../Source/reshape/*.c"
-    "../Source/resize/*.c"
-    "../Source/print/*.c"
-    "../Source/compatible/*.c"
-    "../Source/nvals/*.c"
-    "../Source/cpu/*.c"
-    "../Source/cast/*.c"
-    "../Source/dup/*.c"
-    "../Source/kronecker/*.c"
-    "../Source/positional/*.c"
-    "../Source/iso/*.c"
-    "../Source/unaryop/*.c"
-    "../Source/split/*.c"
-    "../Source/concat/*.c"
-    "../Source/global/*.c"
-    "../Source/lz4_wrapper/*.c"
-    "../Source/zstd_wrapper/*.c"
-    "../Source/builtin/*.c"
-    "../Source/extract/*.c"
-    "../Source/pending/*.c"
-    "../Source/indexunaryop/*.c"
-    "../Source/math/*.c"
-    "../Source/apply/*.c"
-    "../Source/context/*.c"
-    "../Source/binaryop/*.c"
-    "../Source/builder/*.c"
-    "../Source/mask/*.c"
-    "../Source/element/*.c"
-    "../Source/memory/*.c"
-    "../Source/serialize/*.c"
-    "../Source/get_set/*.c"
-    "../Source/iterator/*.c"
-    "../Source/semiring/*.c"
-    "../Source/extractTuples/*.c"
-    "../Source/convert/*.c"
-    "../Source/ewise/*.c"
-    "../Source/reduce/*.c"
-    "../Source/import_export/*.c"
-    "../Source/pack_unpack/*.c"
-    "../Source/transpose/*.c"
-    "../Source/select/*.c"
-    "../Source/mxm/*.c"
-    )
 
 if ( NOT GRAPHBLAS_COMPACT )
     # compile the FactoryKernels
