@@ -13,8 +13,8 @@
 // w<M> = accum (w,t) where t = A'*u or A*u, but with the multiply operator
 // flipped.  The input descriptor for A, inp1, is also negated.
 
-#include "GB_mxm.h"
-#include "GB_get_mask.h"
+#include "mxm/GB_mxm.h"
+#include "mask/GB_get_mask.h"
 
 GrB_Info GrB_vxm                    // w'<M> = accum (w', u'*A)
 (

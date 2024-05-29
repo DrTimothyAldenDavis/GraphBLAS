@@ -14,7 +14,7 @@
 // whole_C_matrix case with GB_bitmap_assign_noM_noaccum_whole).  For that
 // method, C can be returned with any sparsity structure.
 
-#include "GB_bitmap_assign_methods.h"
+#include "assign/GB_bitmap_assign_methods.h"
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL

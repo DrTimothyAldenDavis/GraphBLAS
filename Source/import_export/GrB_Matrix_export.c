@@ -28,7 +28,7 @@
     GB_Matrix_free (&T) ;           \
 }
 
-#include "GB_transpose.h"
+#include "transpose/GB_transpose.h"
 
 //------------------------------------------------------------------------------
 // GB_export_worker: export a matrix of any type

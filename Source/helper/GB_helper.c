@@ -12,7 +12,7 @@
 // These functions are only used by the @GrB interface for
 // SuiteSparse:GraphBLAS.
 
-#include "GB_helper.h"
+#include "helper/GB_helper.h"
 
 bool GB_factory_kernels_enabled = true ;
 

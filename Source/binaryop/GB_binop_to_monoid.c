@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_binop.h"
+#include "binaryop/GB_binop.h"
 
 GrB_Monoid GB_binop_to_monoid       // return the corresponding monoid, or NULL
 (

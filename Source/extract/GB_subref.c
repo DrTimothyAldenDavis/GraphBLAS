@@ -86,7 +86,7 @@
     GB_FREE_WORKSPACE ;         \
 }
 
-#include "GB_subref.h"
+#include "extract/GB_subref.h"
 
 GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 (

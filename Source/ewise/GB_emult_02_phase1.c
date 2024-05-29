@@ -13,10 +13,10 @@
 
 #define GB_FREE_ALL ;
 
-#include "GB_ewise.h"
-#include "GB_emult.h"
-#include "GB_binop.h"
-#include "GB_stringify.h"
+#include "ewise/GB_ewise.h"
+#include "ewise/GB_emult.h"
+#include "binaryop/GB_binop.h"
+#include "jitifyer/GB_stringify.h"
 
 GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
 (

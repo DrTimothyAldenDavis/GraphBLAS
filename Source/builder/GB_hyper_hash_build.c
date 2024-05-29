@@ -22,7 +22,7 @@
     GB_phybix_free (A) ;                \
 }
 
-#include "GB_build.h"
+#include "builder/GB_build.h"
 
 GrB_Info GB_hyper_hash_build    // construct A->Y if not already constructed
 (

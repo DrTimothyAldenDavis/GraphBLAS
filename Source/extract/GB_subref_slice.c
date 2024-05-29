@@ -45,7 +45,7 @@
     GB_FREE_WORK (&Inext, Inext_size) ;         \
 }
 
-#include "GB_subref.h"
+#include "extract/GB_subref.h"
 
 GrB_Info GB_subref_slice    // phase 1 of GB_subref
 (

@@ -24,7 +24,7 @@
     GB_FREE_WORK (&TaskList, TaskList_size) ;   \
 }
 
-#include "GB_mxm.h"
+#include "mxm/GB_mxm.h"
 
 #define GB_NTASKS_PER_THREAD 256
 

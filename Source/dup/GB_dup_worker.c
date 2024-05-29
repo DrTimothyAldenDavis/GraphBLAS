@@ -15,7 +15,7 @@
 // or dynamic header, depending on C->static_header.
 
 #include "GB.h"
-#include "GB_get_set.h"
+#include "get_set/GB_get_set.h"
 #define GB_FREE_ALL \
     GB_FREE (&C_user_name, C_user_name_size) ;
 

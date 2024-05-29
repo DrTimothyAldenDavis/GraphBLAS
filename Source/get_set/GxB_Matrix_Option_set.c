@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_transpose.h"
+#include "transpose/GB_transpose.h"
 
 #define GB_FREE_ALL ;
 

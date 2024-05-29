@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_casting.h"
+#include "cast/GB_casting.h"
 
 #ifndef GB_MATH_H
 #define GB_MATH_H

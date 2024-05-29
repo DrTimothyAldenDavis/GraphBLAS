@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_kron.h"
-#include "GB_get_mask.h"
+#include "kronecker/GB_kron.h"
+#include "mask/GB_get_mask.h"
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_kronecker_BinaryOp: Kronecker product with binary operator

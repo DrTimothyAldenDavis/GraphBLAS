@@ -12,11 +12,11 @@
 // C can have any sparsity on input; it becomes a full non-iso matrix on output.
 // C can have pending work, which is discarded.
 
-#include "GB_ewise.h"
-#include "GB_binop.h"
-#include "GB_stringify.h"
+#include "ewise/GB_ewise.h"
+#include "binaryop/GB_binop.h"
+#include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "GB_ew__include.h"
+#include "FactoryKernels/GB_ew__include.h"
 #endif
 
 #define GB_FREE_ALL ;

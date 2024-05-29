@@ -13,7 +13,7 @@
 // is iso then so is C.
 
 #include "GB.h"
-#include "GB_convert.h"
+#include "convert/GB_convert.h"
 
 GrB_Matrix GB_hyper_shallow         // return C
 (

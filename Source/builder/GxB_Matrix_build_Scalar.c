@@ -13,7 +13,7 @@
 // duplicate indices are ignored, which is not an error condition.  The I and J
 // arrays are of size nvals, just like GrB_Matrix_build_*.
 
-#include "GB_build.h"
+#include "builder/GB_build.h"
 #define GB_FREE_ALL ;
 
 GrB_Info GxB_Matrix_build_Scalar

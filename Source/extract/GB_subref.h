@@ -9,7 +9,7 @@
 
 #ifndef GB_SUBREF_H
 #define GB_SUBREF_H
-#include "GB_ij.h"
+#include "ij/GB_ij.h"
 
 GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 (

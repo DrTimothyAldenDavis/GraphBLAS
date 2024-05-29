@@ -9,8 +9,8 @@
 
 // w<M> = accum (w,u.*v)
 
-#include "GB_ewise.h"
-#include "GB_get_mask.h"
+#include "ewise/GB_ewise.h"
+#include "mask/GB_get_mask.h"
 
 #define GB_EWISE(op)                                                        \
     /* check inputs */                                                      \

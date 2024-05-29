@@ -14,8 +14,8 @@
     GrB_Scalar_free (&Thunk) ;  \
 }
 
-#include "GB_select.h"
-#include "GB_get_mask.h"
+#include "select/GB_select.h"
+#include "mask/GB_get_mask.h"
 
 GrB_Info GxB_Matrix_select  // C<M> = accum (C, select(A,k)) or select(A',k)
 (

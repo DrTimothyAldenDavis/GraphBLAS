@@ -16,8 +16,8 @@
 // else if u(i) does not appear but v(i) does:
 //      C(i,j) = add (alpha, v(i))
 
-#include "GB_ewise.h"
-#include "GB_get_mask.h"
+#include "ewise/GB_ewise.h"
+#include "mask/GB_get_mask.h"
 
 #define GB_EWISE(op)                                                        \
     /* check inputs */                                                      \

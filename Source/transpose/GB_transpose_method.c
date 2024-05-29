@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_transpose.h"
+#include "transpose/GB_transpose.h"
 
 // GB_transpose can use choose between a merge-sort-based method that takes
 // O(anz*log(anz)) time, or a bucket-sort method that takes O(anz+m+n) time.

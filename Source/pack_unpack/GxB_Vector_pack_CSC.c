@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_export.h"
+#include "import_export/GB_export.h"
 
 GrB_Info GxB_Vector_pack_CSC  // pack a vector in CSC format
 (

@@ -34,7 +34,7 @@
     GB_FREE_WORK (&TaskList, TaskList_size) ;   \
 }
 
-#include "GB_mxm.h"
+#include "mxm/GB_mxm.h"
 #include "slice/factory/GB_search_for_vector_template.c"
 
 //------------------------------------------------------------------------------

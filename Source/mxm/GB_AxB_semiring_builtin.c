@@ -14,8 +14,8 @@
 // typecast the entries in the matrices A and B to the types of x and y of the
 // operator, as needed.
 
-#include "GB_mxm.h"
-#include "GB_binop.h"
+#include "mxm/GB_mxm.h"
+#include "binaryop/GB_binop.h"
 
 bool GB_AxB_semiring_builtin        // true if semiring is builtin
 (

@@ -16,7 +16,7 @@
 // an empty macro is created.
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 void GB_macrofy_cast_copy
 (

@@ -15,7 +15,7 @@
 // defines zterminal itself.
 
 #include "mxm/include/GB_mxm_shared_definitions.h"
-#include "GB_generic.h"
+#include "generic/GB_generic.h"
 
 {
 

@@ -19,12 +19,12 @@
     GB_Matrix_free (&MT) ;  \
 }
 
-#include "GB_ewise.h"
-#include "GB_add.h"
-#include "GB_emult.h"
-#include "GB_transpose.h"
-#include "GB_accum_mask.h"
-#include "GB_binop.h"
+#include "ewise/GB_ewise.h"
+#include "ewise/GB_add.h"
+#include "ewise/GB_emult.h"
+#include "transpose/GB_transpose.h"
+#include "mask/GB_accum_mask.h"
+#include "binaryop/GB_binop.h"
 
 GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 (

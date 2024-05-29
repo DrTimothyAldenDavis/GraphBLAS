@@ -13,7 +13,7 @@
 // a descriptor as the last parameter, to control the # of threads used.
 
 #include "GB.h"
-#include "GB_serialize.h"
+#include "serialize/GB_serialize.h"
 
 GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
 (

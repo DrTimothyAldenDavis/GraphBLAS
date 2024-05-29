@@ -10,8 +10,8 @@
 // A is sparse, hypersparse, or full, and the op is not positional.
 // C is sparse or hypersparse.
 
-#include "GB_select.h"
-#include "GB_ek_slice.h"
+#include "select/GB_select.h"
+#include "slice/GB_ek_slice.h"
 
 GrB_Info GB_select_generic_phase1
 (

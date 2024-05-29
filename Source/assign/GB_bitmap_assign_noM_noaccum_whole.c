@@ -43,9 +43,9 @@
 
 // JIT: needed.
 
-#include "GB_bitmap_assign_methods.h"
+#include "assign/GB_bitmap_assign_methods.h"
 #include "assign/include/GB_assign_shared_definitions.h"
-#include "GB_subassign_dense.h"
+#include "assign/GB_subassign_dense.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;

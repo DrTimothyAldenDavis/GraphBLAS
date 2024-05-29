@@ -9,13 +9,13 @@
 
 // JIT: done.
 
-#include "GB_mxm.h"
-#include "GB_binop.h"
-#include "GB_apply.h"
-#include "GB_ek_slice.h"
-#include "GB_stringify.h"
+#include "mxm/GB_mxm.h"
+#include "binaryop/GB_binop.h"
+#include "apply/GB_apply.h"
+#include "slice/GB_ek_slice.h"
+#include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "GB_ew__include.h"
+#include "FactoryKernels/GB_ew__include.h"
 #endif
 #include "include/GB_unused.h"
 

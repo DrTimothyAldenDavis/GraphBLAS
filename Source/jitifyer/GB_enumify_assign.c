@@ -60,7 +60,7 @@
 //      GB_bitmap_assign_notM_noaccum_whole
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 void GB_enumify_assign      // enumerate a GrB_assign problem
 (

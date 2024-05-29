@@ -14,7 +14,7 @@
 // The unary op header is allocated by the caller, and passed in uninitialized.
 
 #include "GB.h"
-#include "GB_unop.h"
+#include "unaryop/GB_unop.h"
 
 GrB_Info GB_unop_new
 (

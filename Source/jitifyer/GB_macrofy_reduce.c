@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
 (

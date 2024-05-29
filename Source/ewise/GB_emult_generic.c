@@ -14,12 +14,12 @@
 
 // C is not iso, but A and/or B might be.
 
-#include "GB_ewise.h"
-#include "GB_emult.h"
-#include "GB_binop.h"
+#include "ewise/GB_ewise.h"
+#include "ewise/GB_emult.h"
+#include "binaryop/GB_binop.h"
 #include "include/GB_unused.h"
-#include "GB_ek_slice.h"
-#include "GB_generic.h"
+#include "slice/GB_ek_slice.h"
+#include "generic/GB_generic.h"
 
 GrB_Info GB_emult_generic       // generic emult
 (

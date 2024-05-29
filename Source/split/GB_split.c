@@ -18,7 +18,7 @@
         GB_Matrix_free (&(Tiles [k])) ;     \
     }
 
-#include "GB_split.h"
+#include "split/GB_split.h"
 
 GrB_Info GB_split                   // split a matrix
 (

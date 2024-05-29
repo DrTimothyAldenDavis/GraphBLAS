@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_concat.h"
+#include "concat/GB_concat.h"
 
 GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
 (

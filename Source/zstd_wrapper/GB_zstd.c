@@ -13,8 +13,8 @@
 // in place of malloc/calloc/free.
 
 #include "GB.h"
-#include "GB_serialize.h"
-#include "GB_zstd.h"
+#include "serialize/GB_serialize.h"
+#include "zstd_wrapper/GB_zstd.h"
 
 void *ZSTD_malloc (size_t s)
 {

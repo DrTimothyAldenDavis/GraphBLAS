@@ -11,7 +11,7 @@
 // as structural masks.
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 void GB_enumify_mask       // return enum to define mask macros
 (

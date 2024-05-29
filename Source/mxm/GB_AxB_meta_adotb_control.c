@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_mxm.h"
+#include "mxm/GB_mxm.h"
 
 void GB_AxB_meta_adotb_control
 (

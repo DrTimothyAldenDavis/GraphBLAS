@@ -10,7 +10,7 @@
 // All entries in C are now present.  Either set all of C->b to 1, or free it
 // and make C full.
 
-#include "GB_bitmap_assign_methods.h"
+#include "assign/GB_bitmap_assign_methods.h"
 
 void GB_bitmap_assign_to_full   // set all C->b to 1, or free it and make C full
 (

@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 // Currently, the mask M and the accum are not present, and C and A have the
 // same type, but these conditions may change in the future.

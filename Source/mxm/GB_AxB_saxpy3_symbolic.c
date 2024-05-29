@@ -19,7 +19,7 @@
 // If both A and B are bitmap/full for C=A*B or C<!M>=A*B, then saxpy3 is
 // not used.  C is selected as bitmap instead.
 
-#include "GB_AxB_saxpy3.h"
+#include "mxm/GB_AxB_saxpy3.h"
 
 void GB_AxB_saxpy3_symbolic
 (

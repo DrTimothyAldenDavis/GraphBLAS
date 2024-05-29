@@ -49,7 +49,7 @@
 //      GxB_init (mode, my_malloc, NULL, NULL, my_free) ;
 
 #include "GB.h"
-#include "GB_init.h"
+#include "init/GB_init.h"
 
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 (

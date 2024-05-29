@@ -51,13 +51,13 @@
     GB_phybix_free (A) ;                \
 }
 
-#include "GB_select.h"
-#include "GB_add.h"
-#include "GB_binop.h"
-#include "GB_Pending.h"
-#include "GB_build.h"
-#include "GB_jappend.h"
-#include "GB_scalar_wrap.h"
+#include "select/GB_select.h"
+#include "ewise/GB_add.h"
+#include "binaryop/GB_binop.h"
+#include "pending/GB_Pending.h"
+#include "builder/GB_build.h"
+#include "wait/GB_jappend.h"
+#include "scalar/GB_scalar_wrap.h"
 
 GrB_Info GB_wait                // finish all pending computations
 (

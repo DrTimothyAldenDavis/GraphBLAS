@@ -16,9 +16,9 @@
 // done by GB_deserialize, if requested.
 
 #include "GB.h"
-#include "GB_serialize.h"
-#include "GB_lz4.h"
-#include "GB_zstd.h"
+#include "serialize/GB_serialize.h"
+#include "lz4_wrapper/GB_lz4.h"
+#include "zstd_wrapper/GB_zstd.h"
 
 #define GB_FREE_ALL         \
 {                           \

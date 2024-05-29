@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_Pending.h"
+#include "pending/GB_Pending.h"
 
 #define GB_FREE_ALL ;
 

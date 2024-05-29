@@ -35,7 +35,7 @@
 // This method is parallel, but not highly scalable.  At most O(e/m) threads
 // are used.
 
-#include "GB_transpose.h"
+#include "transpose/GB_transpose.h"
 
 #define GB_FREE_WORKSPACE                                               \
 {                                                                       \

@@ -15,8 +15,8 @@
 
 // C->iso is not affected.
 
-#include "GB_assign.h"
-#include "GB_assign_zombie.h"
+#include "assign/GB_assign.h"
+#include "assign/GB_assign_zombie.h"
 
 GrB_Info GB_assign_zombie1
 (

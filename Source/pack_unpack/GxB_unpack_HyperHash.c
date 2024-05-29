@@ -48,7 +48,7 @@
 // matrix A, and then GrB_Matrix_wait (A, GrB_MATERIALIZE) is called, a new
 // hyper_hash matrix is constructed for A.
 
-#include "GB_export.h"
+#include "import_export/GB_export.h"
 #define GB_FREE_ALL ;
 
 GrB_Info GxB_unpack_HyperHash       // move A->Y into Y

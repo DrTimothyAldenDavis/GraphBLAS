@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_subassign.h"
+#include "assign/GB_subassign.h"
 
 int GB_subassigner_method           // return method to use in GB_subassigner
 (

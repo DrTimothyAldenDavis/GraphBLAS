@@ -31,7 +31,7 @@
 // format need not match the by_col input parameter.
 
 #include "GB.h"
-#include "GB_reshape.h"
+#include "reshape/GB_reshape.h"
 
 GrB_Info GxB_Matrix_reshape     // reshape a GrB_Matrix in place
 (

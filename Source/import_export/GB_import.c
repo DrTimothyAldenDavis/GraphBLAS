@@ -10,7 +10,7 @@
 // This method takes O(1) time and memory, unless secure is true (used
 // when the input data is not trusted).
 
-#include "GB_export.h"
+#include "import_export/GB_export.h"
 
 #define GB_FREE_ALL GB_Matrix_free (A) ;
 

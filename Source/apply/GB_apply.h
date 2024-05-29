@@ -10,7 +10,7 @@
 #ifndef GB_APPLY_H
 #define GB_APPLY_H
 #include "GB.h"
-#include "GB_unop.h"
+#include "unaryop/GB_unop.h"
 
 GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 (

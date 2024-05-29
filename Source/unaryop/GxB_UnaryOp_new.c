@@ -12,8 +12,8 @@
 // output arguments internally as needed.
 
 #include "GB.h"
-#include "GB_unop.h"
-#include "GB_stringify.h"
+#include "unaryop/GB_unop.h"
+#include "jitifyer/GB_stringify.h"
 
 GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
 (

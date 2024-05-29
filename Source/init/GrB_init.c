@@ -15,7 +15,7 @@
 // FIXME: rename GxB_*BLOCKING_GPU to GxB_*BLOCKING_CUDA.
 
 #include "GB.h"
-#include "GB_init.h"
+#include "init/GB_init.h"
 
 GrB_Info GrB_init           // start up GraphBLAS
 (

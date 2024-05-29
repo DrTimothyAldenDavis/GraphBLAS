@@ -18,8 +18,8 @@
     I2k = I1k (~Iduplicate) ;
 */
 
-#include "GB_ij.h"
-#include "GB_sort.h"
+#include "ij/GB_ij.h"
+#include "sort/GB_sort.h"
 
 #define GB_FREE_WORKSPACE               \
 {                                       \

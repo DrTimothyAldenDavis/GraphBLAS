@@ -14,9 +14,9 @@
 // The actual work is done in GB_subassign_scalar.c.
 
 #define GB_FREE_ALL ;
-#include "GB_subassign.h"
-#include "GB_ij.h"
-#include "GB_get_mask.h"
+#include "assign/GB_subassign.h"
+#include "ij/GB_ij.h"
+#include "mask/GB_get_mask.h"
 
 #define GB_ASSIGN_SCALAR(type,T,ampersand)                                     \
 GrB_Info GB_EVAL2 (GXB (Vector_subassign_), T) /* w(I)<M> = accum (w(I),x)  */ \
@@ -73,7 +73,7 @@ GB_ASSIGN_SCALAR (void *    , UDT    ,  )
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_Matrix_free (&S) ;
-#include "GB_static_header.h"
+#include "matrix/GB_static_header.h"
 
 GrB_Info GxB_Vector_subassign_Scalar   // w<Mask>(I) = accum (w(I),s)
 (

@@ -51,12 +51,12 @@
     GB_Matrix_free (&Z) ;           \
 }
 
-#include "GB_subassign.h"
-#include "GB_add.h"
-#include "GB_mask.h"
-#include "GB_transpose.h"
-#include "GB_accum_mask.h"
-#include "GB_bitmap_assign.h"
+#include "assign/GB_subassign.h"
+#include "ewise/GB_add.h"
+#include "mask/GB_mask.h"
+#include "transpose/GB_transpose.h"
+#include "mask/GB_accum_mask.h"
+#include "assign/GB_bitmap_assign.h"
 #include "include/GB_unused.h"
 
 /* -----------------------------------------------------------------------------

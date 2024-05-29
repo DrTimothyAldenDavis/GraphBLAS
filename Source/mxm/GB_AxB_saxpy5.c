@@ -30,10 +30,10 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_mxm.h"
-#include "GB_stringify.h"
+#include "mxm/GB_mxm.h"
+#include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "GB_AxB__include2.h"
+#include "FactoryKernels/GB_AxB__include2.h"
 #endif
 
 #define GB_FREE_WORKSPACE               \

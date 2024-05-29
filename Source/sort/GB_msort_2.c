@@ -12,7 +12,7 @@
 // A parallel mergesort of an array of 2-by-n integers.  Each key
 // consists of two integers.
 
-#include "GB_msort_2.h"
+#include "sort/GB_msort_2.h"
 
 //------------------------------------------------------------------------------
 // GB_msort_2_binary_search: binary search for the pivot

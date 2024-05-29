@@ -10,7 +10,7 @@
 // The macro, typically called GB_GETA or GB_GETB, also does typecasting.
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 void GB_macrofy_input
 (

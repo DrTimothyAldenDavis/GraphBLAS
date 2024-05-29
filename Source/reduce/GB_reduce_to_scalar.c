@@ -24,11 +24,11 @@
 // case when nvals(A) is zero, the existence of the identity value makes the
 // code a little simpler.
 
-#include "GB_reduce.h"
-#include "GB_binop.h"
-#include "GB_stringify.h"
+#include "reduce/GB_reduce.h"
+#include "binaryop/GB_binop.h"
+#include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "GB_red__include.h"
+#include "FactoryKernels/GB_red__include.h"
 #endif
 #include "monoid/include/GB_monoid_shared_definitions.h"
 

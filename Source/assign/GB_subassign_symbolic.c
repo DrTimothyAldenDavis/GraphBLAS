@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_subassign_methods.h"
+#include "assign/GB_subassign_methods.h"
 #include "assign/include/GB_assign_shared_definitions.h"
-#include "GB_subref.h"
+#include "extract/GB_subref.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_phybix_free (S) ;

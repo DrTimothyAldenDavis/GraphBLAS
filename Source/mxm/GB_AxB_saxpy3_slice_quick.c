@@ -9,7 +9,7 @@
 
 // create a single task for C=A*B, for a single thread.
 
-#include "GB_AxB_saxpy3.h"
+#include "mxm/GB_AxB_saxpy3.h"
 
 GrB_Info GB_AxB_saxpy3_slice_quick
 (

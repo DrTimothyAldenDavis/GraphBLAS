@@ -55,7 +55,7 @@
 // modified after they were exported/unpacked by
 // GxB_Matrix_(export/unpack)_Hyper(CSR/CSC).
 
-#include "GB_export.h"
+#include "import_export/GB_export.h"
 #define GB_FREE_ALL ;
 
 GrB_Info GxB_pack_HyperHash         // move Y into A->Y

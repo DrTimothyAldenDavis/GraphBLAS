@@ -20,8 +20,8 @@
 // A can be jumbled, in which case C is also jumbled.
 // A can have any sparsity structure (sparse, hyper, bitmap, or full).
 
-#include "GB_subassign_dense.h"
-#include "GB_Pending.h"
+#include "assign/GB_subassign_dense.h"
+#include "pending/GB_Pending.h"
 #define GB_FREE_ALL ;
 
 GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C

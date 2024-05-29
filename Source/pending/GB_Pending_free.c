@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_Pending.h"
+#include "pending/GB_Pending.h"
 
 void GB_Pending_free        // free a list of pending tuples
 (

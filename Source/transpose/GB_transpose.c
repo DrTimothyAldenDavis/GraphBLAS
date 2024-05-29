@@ -52,9 +52,9 @@
     GB_phybix_free (C) ;                \
 }
 
-#include "GB_transpose.h"
-#include "GB_build.h"
-#include "GB_apply.h"
+#include "transpose/GB_transpose.h"
+#include "builder/GB_build.h"
+#include "apply/GB_apply.h"
 
 //------------------------------------------------------------------------------
 // GB_transpose

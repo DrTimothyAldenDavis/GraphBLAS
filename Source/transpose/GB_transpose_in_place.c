@@ -10,7 +10,7 @@
 // All other uses of GB_transpose are not in-place.
 // No operator is applied and no typecasting is done.
 
-#include "GB_transpose.h"
+#include "transpose/GB_transpose.h"
 
 GrB_Info GB_transpose_in_place   // C=A', no change of type, no operators
 (

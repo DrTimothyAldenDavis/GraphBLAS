@@ -14,7 +14,7 @@
 #define GB_HELPER_H
 
 #include "GB.h"
-#include "GB_math.h"
+#include "math/GB_math.h"
 
 double GB_helper0 (void) ;
 

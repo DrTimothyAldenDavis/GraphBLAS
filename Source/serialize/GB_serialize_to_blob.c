@@ -10,7 +10,7 @@
 // JIT: not needed.  Only one variant possible.
 
 #include "GB.h"
-#include "GB_serialize.h"
+#include "serialize/GB_serialize.h"
 
 void GB_serialize_to_blob
 (

@@ -10,7 +10,7 @@
 // Enumify an build operation.
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 void GB_enumify_build       // enumerate a GB_build problem
 (

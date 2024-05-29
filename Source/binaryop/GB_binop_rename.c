@@ -12,8 +12,8 @@
 // be applied, and some of them can be remapped into binary ops (with bind2nd).
 
 #include "GB.h"
-#include "GB_binop.h"
-#include "GB_unop.h"
+#include "binaryop/GB_binop.h"
+#include "unaryop/GB_unop.h"
 
 void GB_binop_rename            // rename a bound binary op or an idxunop
 (

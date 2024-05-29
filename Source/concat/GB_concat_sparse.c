@@ -27,9 +27,9 @@
     GB_phybix_free (C) ;    \
 }
 
-#include "GB_concat.h"
-#include "GB_stringify.h"
-#include "GB_apply.h"
+#include "concat/GB_concat.h"
+#include "jitifyer/GB_stringify.h"
+#include "apply/GB_apply.h"
 #include "include/GB_unused.h"
 
 GrB_Info GB_concat_sparse           // concatenate into a sparse matrix

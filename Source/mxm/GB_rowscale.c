@@ -9,12 +9,12 @@
 
 // JIT: done.
 
-#include "GB_mxm.h"
-#include "GB_binop.h"
-#include "GB_apply.h"
-#include "GB_stringify.h"
+#include "mxm/GB_mxm.h"
+#include "binaryop/GB_binop.h"
+#include "apply/GB_apply.h"
+#include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "GB_ew__include.h"
+#include "FactoryKernels/GB_ew__include.h"
 #endif
 
 #define GB_FREE_ALL GB_phybix_free (C) ;

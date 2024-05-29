@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_get_set.h"
+#include "get_set/GB_get_set.h"
 
 const char *GB_semiring_name_get (GrB_Semiring semiring)
 {

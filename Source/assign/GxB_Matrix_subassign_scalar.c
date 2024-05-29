@@ -18,9 +18,9 @@
 // which uses M and C_Replace differently.
 
 #define GB_FREE_ALL ;
-#include "GB_subassign.h"
-#include "GB_ij.h"
-#include "GB_get_mask.h"
+#include "assign/GB_subassign.h"
+#include "ij/GB_ij.h"
+#include "mask/GB_get_mask.h"
 
 #define GB_ASSIGN_SCALAR(type,T,ampersand)                                     \
 GrB_Info GB_EVAL2 (GXB (Matrix_subassign_), T) /* C(Rows,Cols)<M> += x      */ \
@@ -76,7 +76,7 @@ GB_ASSIGN_SCALAR (void *    , UDT    ,  )
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_Matrix_free (&S) ;
-#include "GB_static_header.h"
+#include "matrix/GB_static_header.h"
 
 GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<M> = accum (C(I,J),s)
 (

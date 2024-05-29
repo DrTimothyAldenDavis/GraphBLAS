@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_get_set.h"
-#include "GB_serialize.h"
+#include "get_set/GB_get_set.h"
+#include "serialize/GB_serialize.h"
 
 //------------------------------------------------------------------------------
 // GB_blob_header_get: get all properties of the blob

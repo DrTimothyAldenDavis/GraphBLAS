@@ -12,9 +12,9 @@
 // with each entry in u equal to x.
 
 #define GB_FREE_ALL ;
-#include "GB_assign.h"
-#include "GB_ij.h"
-#include "GB_get_mask.h"
+#include "assign/GB_assign.h"
+#include "ij/GB_ij.h"
+#include "mask/GB_get_mask.h"
 
 #define GB_ASSIGN_SCALAR(prefix,type,T,ampersand)                              \
 GrB_Info GB_EVAL3 (prefix, _Vector_assign_, T) /* w<M>(Rows)=accum(w(Rows),x)*/\
@@ -70,7 +70,7 @@ GB_ASSIGN_SCALAR (GrB, void *    , UDT    ,  )
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_Matrix_free (&S) ;
-#include "GB_static_header.h"
+#include "matrix/GB_static_header.h"
 
 GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
 (

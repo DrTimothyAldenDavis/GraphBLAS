@@ -35,8 +35,8 @@
     GB_phybix_free (MT) ;       \
 }
 
-#include "GB_mxm.h"
-#include "GB_transpose.h"
+#include "mxm/GB_mxm.h"
+#include "transpose/GB_transpose.h"
 
 GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 (

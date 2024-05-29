@@ -29,13 +29,13 @@
 // This is used by GB_wait only, for merging the pending tuple matrix T into A.
 // In this case, C is always sparse or hypersparse, not bitmap or full.
 
-#include "GB_add.h"
-#include "GB_binop.h"
+#include "ewise/GB_add.h"
+#include "binaryop/GB_binop.h"
 #include "include/GB_unused.h"
-#include "GB_ek_slice.h"
-#include "GB_stringify.h"
+#include "slice/GB_ek_slice.h"
+#include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "GB_ew__include.h"
+#include "FactoryKernels/GB_ew__include.h"
 #endif
 
 #undef  GB_FREE_WORKSPACE

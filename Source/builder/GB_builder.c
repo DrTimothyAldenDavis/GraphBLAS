@@ -105,12 +105,12 @@
 // This method always returns T as hypersparse, and T is iso if and only if Sx
 // is iso.
 
-#include "GB_build.h"
-#include "GB_sort.h"
-#include "GB_binop.h"
-#include "GB_stringify.h"
+#include "builder/GB_build.h"
+#include "sort/GB_sort.h"
+#include "binaryop/GB_binop.h"
+#include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "GB_bld__include.h"
+#include "FactoryKernels/GB_bld__include.h"
 #endif
 
 #define GB_I_WORK(t) (((t) < 0) ? -1 : I_work [t])

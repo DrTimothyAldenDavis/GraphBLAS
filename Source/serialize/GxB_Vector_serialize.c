@@ -31,7 +31,7 @@
 */
 
 #include "GB.h"
-#include "GB_serialize.h"
+#include "serialize/GB_serialize.h"
 
 GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
 (

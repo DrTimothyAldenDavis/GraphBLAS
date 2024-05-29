@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_apply.h"
-#include "GB_scalar_wrap.h"
-#include "GB_get_mask.h"
+#include "apply/GB_apply.h"
+#include "scalar/GB_scalar_wrap.h"
+#include "mask/GB_get_mask.h"
 
 //------------------------------------------------------------------------------
 // GrB_Vector_apply: apply a unary operator to a vector

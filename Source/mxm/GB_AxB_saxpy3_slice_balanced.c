@@ -12,7 +12,7 @@
 // If the mask is present but must be discarded, this function returns
 // GrB_NO_VALUE, to indicate that the analysis was terminated early.
 
-#include "GB_AxB_saxpy3.h"
+#include "mxm/GB_AxB_saxpy3.h"
 #include "include/GB_unused.h"
 
 // control parameters for generating parallel tasks

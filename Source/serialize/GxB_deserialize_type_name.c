@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_serialize.h"
+#include "serialize/GB_serialize.h"
 
 // This method is historical; use GrB_get instead.
 

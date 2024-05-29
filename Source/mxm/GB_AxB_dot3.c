@@ -14,12 +14,12 @@
 
 // JIT: done.
 
-#include "GB_mxm.h"
-#include "GB_binop.h"
-#include "GB_stringify.h"
-#include "GB_AxB__include1.h"
+#include "mxm/GB_mxm.h"
+#include "binaryop/GB_binop.h"
+#include "jitifyer/GB_stringify.h"
+#include "mxm/GB_AxB__include1.h"
 #ifndef GBCOMPACT
-#include "GB_AxB__include2.h"
+#include "FactoryKernels/GB_AxB__include2.h"
 #endif
 #include "include/GB_unused.h"
 

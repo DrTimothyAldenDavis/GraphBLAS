@@ -16,7 +16,7 @@
 #define GB_DEVELOPER 0
 #endif
 
-#include "GB_Pending.h"
+#include "pending/GB_Pending.h"
 #include "GB.h"
 
 GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector

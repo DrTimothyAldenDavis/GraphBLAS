@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_reduce.h"
+#include "reduce/GB_reduce.h"
 
 #define GB_FREE_ALL GB_phybix_free ((GrB_Matrix) S) ;
 

@@ -10,7 +10,7 @@
 // A parallel mergesort of an array of 2-by-n integers.  Each key consists
 // of two integers.
 
-#include "GB_sort.h"
+#include "sort/GB_sort.h"
 
 //------------------------------------------------------------------------------
 // prototypes only needed for GB_msort_1

@@ -9,13 +9,13 @@
 
 // JIT: done.
 
-#include "GB_select.h"
-#include "GB_ek_slice.h"
+#include "select/GB_select.h"
+#include "slice/GB_ek_slice.h"
 #ifndef GBCOMPACT
-#include "GB_sel__include.h"
+#include "FactoryKernels/GB_sel__include.h"
 #endif
-#include "GB_scalar_wrap.h"
-#include "GB_stringify.h"
+#include "scalar/GB_scalar_wrap.h"
+#include "jitifyer/GB_stringify.h"
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \

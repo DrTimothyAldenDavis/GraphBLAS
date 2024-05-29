@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_assign.h"
-#include "GB_bitmap_assign.h"
-#include "GB_get_mask.h"
+#include "assign/GB_assign.h"
+#include "assign/GB_bitmap_assign.h"
+#include "mask/GB_get_mask.h"
 
 GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
 (

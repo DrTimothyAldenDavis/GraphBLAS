@@ -9,7 +9,7 @@
 
 #ifndef GB_ASSIGN_ZOMBIE_H
 #define GB_ASSIGN_ZOMBIE_H
-#include "GB_ij.h"
+#include "ij/GB_ij.h"
 
 GrB_Info GB_assign_zombie1
 (

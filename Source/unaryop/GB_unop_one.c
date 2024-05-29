@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_unop.h"
+#include "unaryop/GB_unop.h"
 
 GrB_UnaryOp GB_unop_one (GB_Type_code xcode)
 {

@@ -10,7 +10,7 @@
 // JIT: needed.
 
 #include "GB.h"
-#include "GB_is_nonzero.h"
+#include "iso/GB_is_nonzero.h"
 
 void GB_expand_iso          // expand an iso scalar into an entire array
 (

@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_get_set.h"
+#include "get_set/GB_get_set.h"
 #include <ctype.h>
-#include "GB_jitifyer.h"
+#include "jitifyer/GB_jitifyer.h"
 
 GrB_Info GB_op_or_type_string_set
 (

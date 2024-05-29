@@ -15,10 +15,10 @@
 // iso expansion is done.
 
 #include "GB.h"
-#include "GB_apply.h"
-#include "GB_stringify.h"
+#include "apply/GB_apply.h"
+#include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "GB_unop__include.h"
+#include "FactoryKernels/GB_unop__include.h"
 #endif
 
 GrB_Info GB_cast_array              // typecast an array

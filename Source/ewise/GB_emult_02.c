@@ -55,13 +55,13 @@
         //      sparse  full        sparse          bitmap
         //      sparse  full        sparse          full  
 
-#include "GB_ewise.h"
-#include "GB_emult.h"
-#include "GB_binop.h"
+#include "ewise/GB_ewise.h"
+#include "ewise/GB_emult.h"
+#include "binaryop/GB_binop.h"
 #include "include/GB_unused.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "GB_ew__include.h"
+#include "FactoryKernels/GB_ew__include.h"
 #endif
 
 #define GB_FREE_WORKSPACE                   \

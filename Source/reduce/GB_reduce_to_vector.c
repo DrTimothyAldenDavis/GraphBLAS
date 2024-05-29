@@ -16,11 +16,11 @@
     GrB_Semiring_free (&semiring) ;     \
 }
 
-#include "GB_reduce.h"
-#include "GB_binop.h"
-#include "GB_mxm.h"
-#include "GB_get_mask.h"
-#include "GB_Semiring_new.h"
+#include "reduce/GB_reduce.h"
+#include "binaryop/GB_binop.h"
+#include "mxm/GB_mxm.h"
+#include "mask/GB_get_mask.h"
+#include "semiring/GB_Semiring_new.h"
 
 GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 (

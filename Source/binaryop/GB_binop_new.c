@@ -15,7 +15,7 @@
 // uninitialized.
 
 #include "GB.h"
-#include "GB_binop.h"
+#include "binaryop/GB_binop.h"
 
 GrB_Info GB_binop_new
 (

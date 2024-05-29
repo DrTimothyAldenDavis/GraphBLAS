@@ -12,8 +12,8 @@
 // ctype is not equal to A->type.  If iso_one is true, C is returned as an
 // iso matrix, with an iso value of 1.
 
-#include "GB_transpose.h"
-#include "GB_unop.h"
+#include "transpose/GB_transpose.h"
+#include "unaryop/GB_unop.h"
 
 GrB_Info GB_transpose_cast      // C= (ctype) A' or one (A'), not in-place
 (

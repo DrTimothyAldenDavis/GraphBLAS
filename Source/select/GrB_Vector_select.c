@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_select.h"
-#include "GB_get_mask.h"
-#include "GB_scalar_wrap.h"
+#include "select/GB_select.h"
+#include "mask/GB_get_mask.h"
+#include "scalar/GB_scalar_wrap.h"
 
 //------------------------------------------------------------------------------
 // GB_sel: select using a GrB_IndexUnaryOp

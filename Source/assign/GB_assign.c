@@ -34,11 +34,11 @@
     GB_FREE_WORK (&J2, J2_size) ;   \
 }
 
-#include "GB_assign.h"
-#include "GB_assign_zombie.h"
-#include "GB_subassign.h"
-#include "GB_subref.h"
-#include "GB_bitmap_assign.h"
+#include "assign/GB_assign.h"
+#include "assign/GB_assign_zombie.h"
+#include "assign/GB_subassign.h"
+#include "extract/GB_subref.h"
+#include "assign/GB_bitmap_assign.h"
 
 GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 (

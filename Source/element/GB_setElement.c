@@ -29,7 +29,7 @@
 
 // Compare this function with GrB_*_extractElement_*
 
-#include "GB_Pending.h"
+#include "pending/GB_Pending.h"
 
 #define GB_FREE_ALL ;
 

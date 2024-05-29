@@ -12,8 +12,8 @@
 // The input matrices A and B are optionally transposed, as determined by the
 // Descriptor desc.
 
-#include "GB_mxm.h"
-#include "GB_get_mask.h"
+#include "mxm/GB_mxm.h"
+#include "mask/GB_get_mask.h"
 
 GrB_Info GrB_mxm                    // C<M> = accum (C, A*B)
 (

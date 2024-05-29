@@ -10,8 +10,8 @@
 // A parallel decompression of a serialized blob into a GrB_Matrix.
 
 #include "GB.h"
-#include "GB_get_set.h"
-#include "GB_serialize.h"
+#include "get_set/GB_get_set.h"
+#include "serialize/GB_serialize.h"
 
 #define GB_FREE_ALL                         \
 {                                           \

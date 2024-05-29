@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_get_set.h"
-#include "GB_jitifyer.h"
+#include "get_set/GB_get_set.h"
+#include "jitifyer/GB_jitifyer.h"
 
 //------------------------------------------------------------------------------
 // GB_global_enum_set: get an enum value from the global state

@@ -19,7 +19,7 @@
 //  GxB_Global_Option_set_FUNCTION      function pointers (as void *)
 
 #include "GB.h"
-#include "GB_jitifyer.h"
+#include "jitifyer/GB_jitifyer.h"
 
 //------------------------------------------------------------------------------
 // GxB_Global_Option_set_INT32: set a global option (int32_t)

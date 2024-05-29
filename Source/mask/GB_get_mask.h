@@ -9,7 +9,7 @@
 
 #ifndef GB_GET_MASK_H
 #define GB_GET_MASK_H
-#include "GB_is_nonzero.h"
+#include "iso/GB_is_nonzero.h"
 
 static inline GrB_Matrix GB_get_mask    // return M_in or NULL
 (

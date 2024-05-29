@@ -18,7 +18,7 @@
 // operator, as needed.
 
 #include "GB.h"
-#include "GB_binop.h"
+#include "binaryop/GB_binop.h"
 #include "include/GB_unused.h"
 
 bool GB_binop_builtin               // true if binary operator is builtin

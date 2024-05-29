@@ -13,8 +13,8 @@
 // in place of malloc/calloc/free.
 
 #include "GB.h"
-#include "GB_serialize.h"
-#include "GB_lz4.h"
+#include "serialize/GB_serialize.h"
+#include "lz4_wrapper/GB_lz4.h"
 
 void *LZ4_malloc (size_t s)
 {

@@ -10,7 +10,7 @@
 // Free the Blocks constructed by GB_serialize_array.
 
 #include "GB.h"
-#include "GB_serialize.h"
+#include "serialize/GB_serialize.h"
 
 void GB_serialize_free_blocks
 (

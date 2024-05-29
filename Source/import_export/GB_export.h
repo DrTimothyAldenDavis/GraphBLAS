@@ -9,7 +9,7 @@
 
 #ifndef GB_EXPORT_H
 #define GB_EXPORT_H
-#include "GB_transpose.h"
+#include "transpose/GB_transpose.h"
 
 
 GrB_Info GB_import      // import/pack a matrix in any format

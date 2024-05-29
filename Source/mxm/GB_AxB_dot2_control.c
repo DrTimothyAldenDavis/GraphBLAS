@@ -10,7 +10,7 @@
 // C=A'*B, C<M>=A'*B, or C<!M>=A'*B where C is constructed in bitmap format.
 // C must be small and likely very dense.
 
-#include "GB_mxm.h"
+#include "mxm/GB_mxm.h"
 
 bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
 (

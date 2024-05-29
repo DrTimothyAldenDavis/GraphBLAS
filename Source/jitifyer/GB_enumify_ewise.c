@@ -12,7 +12,7 @@
 // bind 1st and 2nd, etc.
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 // accum is not present.  Kernels that use it would require accum to be
 // the same as the binary operator (but this may change in the future).

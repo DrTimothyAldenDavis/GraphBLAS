@@ -14,8 +14,8 @@
     GrB_Scalar_free (&Thunk) ;  \
 }
 
-#include "GB_select.h"
-#include "GB_get_mask.h"
+#include "select/GB_select.h"
+#include "mask/GB_get_mask.h"
 
 GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))
 (

@@ -9,7 +9,7 @@
 
 // Reallocate a list of pending tuples.  If it fails, the list is freed.
 
-#include "GB_Pending.h"
+#include "pending/GB_Pending.h"
 
 bool GB_Pending_realloc     // reallocate a list of pending tuples
 (

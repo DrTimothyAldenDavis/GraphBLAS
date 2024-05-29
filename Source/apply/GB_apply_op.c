@@ -17,14 +17,14 @@
 // it is in CSC format.  The caller has already modified the op if A is in CSR
 // format.
 
-#include "GB_apply.h"
-#include "GB_binop.h"
-#include "GB_ek_slice.h"
+#include "apply/GB_apply.h"
+#include "binaryop/GB_binop.h"
+#include "slice/GB_ek_slice.h"
 #include "include/GB_unused.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "GB_unop__include.h"
-#include "GB_ew__include.h"
+#include "FactoryKernels/GB_unop__include.h"
+#include "FactoryKernels/GB_ew__include.h"
 #endif
 
 #define GB_FREE_ALL                         \

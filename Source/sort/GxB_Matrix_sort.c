@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_sort.h"
+#include "sort/GB_sort.h"
 
 GrB_Info GxB_Matrix_sort
 (

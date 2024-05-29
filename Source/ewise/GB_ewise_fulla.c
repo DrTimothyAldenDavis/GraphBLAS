@@ -11,11 +11,11 @@
 
 // JIT: done.
 
-#include "GB_ewise.h"
-#include "GB_binop.h"
-#include "GB_stringify.h"
+#include "ewise/GB_ewise.h"
+#include "binaryop/GB_binop.h"
+#include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "GB_ew__include.h"
+#include "FactoryKernels/GB_ew__include.h"
 #endif
 
 GrB_Info GB_ewise_fulla        // C += A+B, all matrices full

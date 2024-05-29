@@ -19,9 +19,9 @@
 // monoid does not have a terminal value.
 
 #include "GB.h"
-#include "GB_binop.h"
-#include "GB_Monoid_new.h"
-#include "GB_jitifyer.h"
+#include "binaryop/GB_binop.h"
+#include "monoid/GB_Monoid_new.h"
+#include "jitifyer/GB_jitifyer.h"
 
 GrB_Info GB_Monoid_new          // create a monoid
 (

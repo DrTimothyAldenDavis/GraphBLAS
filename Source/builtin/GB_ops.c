@@ -11,8 +11,8 @@
 // operators, index_unary operators, binary operators, monoids, and semirings.
 
 #include "GB.h"
-#include "GB_math.h"
-#include "GB_ops.h"
+#include "math/GB_math.h"
+#include "builtin/GB_ops.h"
 
 //------------------------------------------------------------------------------
 // compiler flags

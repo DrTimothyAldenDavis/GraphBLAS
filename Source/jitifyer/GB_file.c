@@ -20,7 +20,7 @@
 // https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/unlock-file
 
 #include "GB.h"
-#include "GB_file.h"
+#include "jitifyer/GB_file.h"
 
 #ifndef NJIT
 

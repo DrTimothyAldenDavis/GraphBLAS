@@ -39,7 +39,7 @@
 // This method is very similar to GB_macrofy_cast_output.
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 void GB_macrofy_cast_input
 (

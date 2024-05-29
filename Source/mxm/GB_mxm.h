@@ -9,8 +9,8 @@
 
 #ifndef GB_MXM_H
 #define GB_MXM_H
-#include "GB_AxB_saxpy.h"
-#include "GB_binop.h"
+#include "mxm/GB_AxB_saxpy.h"
+#include "binaryop/GB_binop.h"
 
 //------------------------------------------------------------------------------
 

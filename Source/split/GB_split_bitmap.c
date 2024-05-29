@@ -12,9 +12,9 @@
 #define GB_FREE_ALL         \
     GB_Matrix_free (&C) ;
 
-#include "GB_split.h"
-#include "GB_stringify.h"
-#include "GB_apply.h"
+#include "split/GB_split.h"
+#include "jitifyer/GB_stringify.h"
+#include "apply/GB_apply.h"
 
 GrB_Info GB_split_bitmap            // split a bitmap matrix
 (

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_get_set.h"
+#include "get_set/GB_get_set.h"
 
 GrB_Info GB_user_name_set
 (

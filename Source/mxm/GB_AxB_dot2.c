@@ -40,14 +40,14 @@
     GB_phybix_free (C) ;                    \
 }
 
-#include "GB_mxm.h"
-#include "GB_subref.h"
-#include "GB_ek_slice.h"
-#include "GB_bitmap_assign_methods.h"
-#include "GB_stringify.h"
-#include "GB_AxB__include1.h"
+#include "mxm/GB_mxm.h"
+#include "extract/GB_subref.h"
+#include "slice/GB_ek_slice.h"
+#include "assign/GB_bitmap_assign_methods.h"
+#include "jitifyer/GB_stringify.h"
+#include "mxm/GB_AxB__include1.h"
 #ifndef GBCOMPACT
-#include "GB_AxB__include2.h"
+#include "FactoryKernels/GB_AxB__include2.h"
 #endif
 
 GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method

@@ -17,7 +17,7 @@
     GB_phybix_free (C) ;            \
 }
 
-#include "GB_concat.h"
+#include "concat/GB_concat.h"
 
 GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
 (

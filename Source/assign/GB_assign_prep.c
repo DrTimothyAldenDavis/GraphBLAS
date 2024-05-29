@@ -9,13 +9,13 @@
 
 // GB_assign_prep checks the inputs for GB_assign and GB_subassign.
 
-#include "GB_subassign.h"
-#include "GB_bitmap_assign.h"
-#include "GB_assign_zombie.h"
+#include "assign/GB_subassign.h"
+#include "assign/GB_bitmap_assign.h"
+#include "assign/GB_assign_zombie.h"
 #include "assign/include/GB_assign_shared_definitions.h"
-#include "GB_subassign_methods.h"
-#include "GB_transpose.h"
-#include "GB_subref.h"
+#include "assign/GB_subassign_methods.h"
+#include "transpose/GB_transpose.h"
+#include "extract/GB_subref.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                 \
@@ -32,7 +32,7 @@
 }
 
 // redefine to use the revised GB_FREE_ALL above:
-#include "GB_static_header.h"
+#include "matrix/GB_static_header.h"
 
 GrB_Info GB_assign_prep
 (

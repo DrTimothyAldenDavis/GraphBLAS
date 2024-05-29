@@ -25,8 +25,8 @@
 // else if A(i,j) does not appear but B(i,j) does:
 //      C(i,j) = B(i,j)
 
-#include "GB_ewise.h"
-#include "GB_get_mask.h"
+#include "ewise/GB_ewise.h"
+#include "mask/GB_get_mask.h"
 
 #define GB_EWISE(op)                                                        \
     /* check inputs */                                                      \

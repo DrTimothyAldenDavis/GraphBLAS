@@ -16,8 +16,8 @@
 // If C should be hypersparse or sparse, on output, this function simply
 // returns GxB_SPARSE.  The final determination is made by GB_add_phase0.
 
-#include "GB_add.h"
-#include "GB_mask_very_sparse.h"
+#include "ewise/GB_add.h"
+#include "mask/GB_mask_very_sparse.h"
 
 int GB_add_sparsity         // return the sparsity structure for C
 (

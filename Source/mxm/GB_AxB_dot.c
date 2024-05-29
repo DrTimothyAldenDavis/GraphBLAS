@@ -40,8 +40,8 @@
 // calling this function (GrB_mxm, GrB_mxv, or GxB_vxm) and detailed error
 // reports.
 
-#include "GB_mxm.h"
-#include "GB_stringify.h"
+#include "mxm/GB_mxm.h"
+#include "jitifyer/GB_stringify.h"
 #define GB_FREE_ALL ;
 
 GrB_Info GB_AxB_dot                 // dot product (multiple methods)

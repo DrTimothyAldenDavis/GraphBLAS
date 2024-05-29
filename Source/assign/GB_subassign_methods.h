@@ -10,10 +10,10 @@
 #ifndef GB_SUBASSIGN_METHODS_H
 #define GB_SUBASSIGN_METHODS_H
 
-#include "GB_add.h"
-#include "GB_ij.h"
-#include "GB_Pending.h"
-#include "GB_subassign_IxJ_slice.h"
+#include "ewise/GB_add.h"
+#include "ij/GB_ij.h"
+#include "pending/GB_Pending.h"
+#include "assign/GB_subassign_IxJ_slice.h"
 #include "include/GB_unused.h"
 
 //------------------------------------------------------------------------------

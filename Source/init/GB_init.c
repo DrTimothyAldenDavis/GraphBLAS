@@ -36,8 +36,8 @@
 
 #define GB_FREE_ALL ;
 #include "GB.h"
-#include "GB_init.h"
-#include "GB_stringify.h"
+#include "init/GB_init.h"
+#include "jitifyer/GB_stringify.h"
 
 //------------------------------------------------------------------------------
 // GB_init

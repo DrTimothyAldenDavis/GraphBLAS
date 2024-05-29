@@ -18,9 +18,9 @@
     GB_phybix_free (V) ;    \
 }
 
-#include "GB_diag.h"
-#include "GB_select.h"
-#include "GB_scalar_wrap.h"
+#include "diag/GB_diag.h"
+#include "select/GB_select.h"
+#include "scalar/GB_scalar_wrap.h"
 
 GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
 (

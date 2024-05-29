@@ -56,14 +56,14 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_AxB_saxpy.h"
-#include "GB_ek_slice.h"
-#include "GB_binop.h"
+#include "mxm/GB_AxB_saxpy.h"
+#include "slice/GB_ek_slice.h"
+#include "binaryop/GB_binop.h"
 #include "slice/factory/GB_ek_slice_search.c"
-#include "GB_bitmap_assign_methods.h"
+#include "assign/GB_bitmap_assign_methods.h"
 #include "mxm/include/GB_mxm_shared_definitions.h"
-#include "GB_AxB_saxpy_generic.h"
-#include "GB_generic.h"
+#include "mxm/GB_AxB_saxpy_generic.h"
+#include "generic/GB_generic.h"
 
 GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
 (

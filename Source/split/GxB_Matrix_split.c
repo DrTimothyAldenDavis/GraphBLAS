@@ -10,7 +10,7 @@
 // The input matrix A is split into a 2D array of size m-by-n.  The Tile{i,j}
 // matrix has dimension Tile_nrows[i]-by-Tile_ncols[j].
 
-#include "GB_split.h"
+#include "split/GB_split.h"
 
 GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
 (

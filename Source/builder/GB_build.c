@@ -95,7 +95,7 @@
 // The input arrays I, J, and X are not modified.
 
 #define GB_FREE_ALL GrB_Matrix_free (&T) ;
-#include "GB_build.h"
+#include "builder/GB_build.h"
 
 GrB_Info GB_build               // build matrix
 (

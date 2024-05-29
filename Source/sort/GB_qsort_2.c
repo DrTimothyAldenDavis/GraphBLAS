@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_sort.h"
+#include "sort/GB_sort.h"
 
 // returns true if A [a] < B [b]
 #define GB_lt(A,a,B,b)                  \

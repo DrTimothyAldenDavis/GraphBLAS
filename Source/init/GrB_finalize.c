@@ -13,7 +13,7 @@
 // same time.
 
 #include "GB.h"
-#include "GB_jitifyer.h"
+#include "jitifyer/GB_jitifyer.h"
 
 GrB_Info GrB_finalize ( )
 { 

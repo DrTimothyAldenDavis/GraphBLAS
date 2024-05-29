@@ -12,7 +12,7 @@
 // binary (that is handled as an ewise enumify).
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
 (

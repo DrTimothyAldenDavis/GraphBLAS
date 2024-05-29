@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 //------------------------------------------------------------------------------
 // GB_macrofy_mxm: create all macros for GrB_mxm

@@ -9,7 +9,7 @@
 
 // JIT: not needed.  Only one variant possible.
 
-#include "GB_subref.h"
+#include "extract/GB_subref.h"
 
 #define GB_Ai(p) GBI_UNFLIP (Ai, p, avlen)
 

@@ -9,8 +9,8 @@
 
 // Compare with GrB_Col_assign, which uses M and C_replace differently
 
-#include "GB_subassign.h"
-#include "GB_get_mask.h"
+#include "assign/GB_subassign.h"
+#include "mask/GB_get_mask.h"
 
 GrB_Info GxB_Col_subassign          // C(Rows,col)<M> = accum (C(Rows,col),u)
 (

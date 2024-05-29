@@ -19,7 +19,7 @@
     GB_Matrix_free ((GrB_Matrix *) &NewThunk) ; \
 }
 
-#include "GB_select.h"
+#include "select/GB_select.h"
 
 GrB_Info GB_selectop_to_idxunop
 (

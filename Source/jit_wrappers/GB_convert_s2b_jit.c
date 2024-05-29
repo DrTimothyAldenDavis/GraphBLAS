@@ -11,7 +11,7 @@
 // (except for identity), but this could be revised in the future.
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 typedef GB_JIT_KERNEL_CONVERT_S2B_PROTO ((*GB_jit_dl_function)) ;
 

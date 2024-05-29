@@ -46,7 +46,7 @@
 
 // C on input is empty, see GB_add_phase2.c.
 
-#include "GB_add.h"
+#include "ewise/GB_add.h"
 
 #define GB_FREE_ALL ;
 

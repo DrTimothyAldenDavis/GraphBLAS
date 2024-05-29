@@ -18,8 +18,8 @@
     GB_Matrix_free (&T) ;   \
 }
 
-#include "GB_mxm.h"
-#include "GB_accum_mask.h"
+#include "mxm/GB_mxm.h"
+#include "mask/GB_accum_mask.h"
 
 GrB_Info GB_mxm                     // C<M> = A*B
 (

@@ -17,10 +17,10 @@
     GB_FREE_WORKSPACE ;     \
     GB_phybix_free (C) ;
 
-#include "GB_concat.h"
+#include "concat/GB_concat.h"
 #include "include/GB_unused.h"
-#include "GB_apply.h"
-#include "GB_stringify.h"
+#include "apply/GB_apply.h"
+#include "jitifyer/GB_stringify.h"
 
 GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
 (

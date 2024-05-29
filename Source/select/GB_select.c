@@ -14,10 +14,10 @@
     GB_Matrix_free (&T) ;   \
 }
 
-#include "GB_select.h"
-#include "GB_accum_mask.h"
-#include "GB_transpose.h"
-#include "GB_scalar_wrap.h"
+#include "select/GB_select.h"
+#include "mask/GB_accum_mask.h"
+#include "transpose/GB_transpose.h"
+#include "scalar/GB_scalar_wrap.h"
 
 GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 (

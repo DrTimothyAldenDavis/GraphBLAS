@@ -16,7 +16,7 @@
 // by_col input parameter.
 
 #include "GB.h"
-#include "GB_reshape.h"
+#include "reshape/GB_reshape.h"
 
 GrB_Info GxB_Matrix_reshapeDup // reshape a GrB_Matrix into another GrB_Matrix
 (

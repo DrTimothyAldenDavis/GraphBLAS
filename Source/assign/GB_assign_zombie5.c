@@ -22,11 +22,11 @@
 
 // C->iso is not affected.
 
-#include "GB_assign.h"
-#include "GB_assign_zombie.h"
+#include "assign/GB_assign.h"
+#include "assign/GB_assign_zombie.h"
 #include "assign/include/GB_assign_shared_definitions.h"
-#include "GB_subassign_methods.h"
-#include "GB_ek_slice.h"
+#include "assign/GB_subassign_methods.h"
+#include "slice/GB_ek_slice.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \

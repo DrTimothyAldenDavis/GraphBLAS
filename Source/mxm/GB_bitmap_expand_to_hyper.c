@@ -17,7 +17,7 @@
     GB_FREE (&Ci, Ci_size) ;        \
 }
 
-#include "GB_mxm.h"
+#include "mxm/GB_mxm.h"
 
 GrB_Info GB_bitmap_expand_to_hyper
 (

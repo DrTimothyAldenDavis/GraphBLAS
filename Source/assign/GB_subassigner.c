@@ -55,10 +55,10 @@
 // C->x and C->iso have already been computed if C is iso on output, by
 // GB_assign_prep, so if C->iso is true, there is no numeric work to do.
 
-#include "GB_subassign.h"
-#include "GB_subassign_methods.h"
-#include "GB_subassign_dense.h"
-#include "GB_bitmap_assign.h"
+#include "assign/GB_subassign.h"
+#include "assign/GB_subassign_methods.h"
+#include "assign/GB_subassign_dense.h"
+#include "assign/GB_bitmap_assign.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_phybix_free (C) ;

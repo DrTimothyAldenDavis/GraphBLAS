@@ -17,9 +17,9 @@
 
 // Compare with GB_subassign_scalar, which uses M and C_replace differently
 
-#include "GB_assign.h"
-#include "GB_bitmap_assign.h"
-#include "GB_get_mask.h"
+#include "assign/GB_assign.h"
+#include "assign/GB_bitmap_assign.h"
+#include "mask/GB_get_mask.h"
 
 GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x
 (

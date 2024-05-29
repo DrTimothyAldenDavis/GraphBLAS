@@ -9,9 +9,9 @@
 
 // JIT: needed.
 
-#include "GB_sort.h"
-#include "GB_transpose.h"
-#include "GB_ek_slice.h"
+#include "sort/GB_sort.h"
+#include "transpose/GB_transpose.h"
+#include "slice/GB_ek_slice.h"
 
 //  macros:
 
@@ -204,7 +204,7 @@
 }
 
 // redefine to use the revised GB_FREE_ALL above:
-#include "GB_static_header.h"
+#include "matrix/GB_static_header.h"
 
 GrB_Info GB_sort
 (

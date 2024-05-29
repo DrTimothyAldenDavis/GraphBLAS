@@ -35,12 +35,12 @@
 //      Workspaces and A_slice are NULL.
 //      This method is parallel and fully scalable.
 
-#include "GB_transpose.h"
-#include "GB_binop.h"
-#include "GB_stringify.h"
+#include "transpose/GB_transpose.h"
+#include "binaryop/GB_binop.h"
+#include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "GB_unop__include.h"
-#include "GB_ew__include.h"
+#include "FactoryKernels/GB_unop__include.h"
+#include "FactoryKernels/GB_ew__include.h"
 #endif
 
 GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix

@@ -12,7 +12,7 @@
 // operator for C=A*B, or the ewise operator for eWiseMult.
 
 #include "GB.h"
-#include "GB_binop.h"
+#include "binaryop/GB_binop.h"
 
 void GB_binop_pattern
 (

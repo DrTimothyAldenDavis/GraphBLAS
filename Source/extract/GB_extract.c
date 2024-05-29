@@ -19,9 +19,9 @@
 
 #define GB_FREE_ALL GrB_Matrix_free (&T) ;
 
-#include "GB_extract.h"
-#include "GB_subref.h"
-#include "GB_accum_mask.h"
+#include "extract/GB_extract.h"
+#include "extract/GB_subref.h"
+#include "mask/GB_accum_mask.h"
 
 GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
 (

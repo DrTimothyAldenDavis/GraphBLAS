@@ -10,8 +10,8 @@
 #ifndef GB_AXB_SAXPY_H
 #define GB_AXB_SAXPY_H
 #include "GB.h"
-#include "GB_math.h"
-#include "GB_AxB_saxpy3.h"
+#include "math/GB_math.h"
+#include "mxm/GB_AxB_saxpy3.h"
 
 //------------------------------------------------------------------------------
 // GB_AxB_saxpy

@@ -20,8 +20,8 @@
 
 // Compare with GB_assign, which uses M and C_replace differently
 
-#include "GB_subassign.h"
-#include "GB_bitmap_assign.h"
+#include "assign/GB_subassign.h"
+#include "assign/GB_bitmap_assign.h"
 
 #define GB_FREE_ALL                 \
 {                                   \

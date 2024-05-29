@@ -18,7 +18,7 @@
 // If the function pointer is NULL, the function is compiled with the JIT.
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
 (

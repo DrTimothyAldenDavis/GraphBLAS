@@ -12,8 +12,8 @@
 // This function either frees Cp and Ch, or transplants then into C, as C->p
 // and C->h.  Either way, the caller must not free them.
 
-#include "GB_subref.h"
-#include "GB_sort.h"
+#include "extract/GB_subref.h"
+#include "sort/GB_sort.h"
 #include "include/GB_unused.h"
 
 GrB_Info GB_subref_phase3   // C=A(I,J)

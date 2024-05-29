@@ -28,12 +28,12 @@
 
 // C and A can have any sparsity structure.
 
-#include "GB_subassign_methods.h"
+#include "assign/GB_subassign_methods.h"
 #include "assign/include/GB_assign_shared_definitions.h"
-#include "GB_subassign_dense.h"
-#include "GB_stringify.h"
+#include "assign/GB_subassign_dense.h"
+#include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "GB_as__include.h"
+#include "FactoryKernels/GB_as__include.h"
 #endif
 
 #undef  GB_FREE_ALL

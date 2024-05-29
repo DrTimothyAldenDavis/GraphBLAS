@@ -20,7 +20,7 @@
 //      void f (void *z, const void *x, uint64_t i, uint64_t j, const void *y)
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 (

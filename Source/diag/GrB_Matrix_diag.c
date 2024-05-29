@@ -10,7 +10,7 @@
 // Similar to GxB_Matrix_diag (C, v, k, NULL), except that C is constructed
 // as a new matrix, like GrB_Matrix_new.  C has the same type as v.
 
-#include "GB_diag.h"
+#include "diag/GB_diag.h"
 
 GrB_Info GrB_Matrix_diag        // construct a diagonal matrix from a vector
 (

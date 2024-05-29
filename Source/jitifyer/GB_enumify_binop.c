@@ -11,7 +11,7 @@
 // ecodes 32 and up are not valid for use in a monoid; only 32:139 are in use.
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 void GB_enumify_binop
 (

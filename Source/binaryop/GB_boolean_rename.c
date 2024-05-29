@@ -34,7 +34,7 @@
 // is 1/x, is simply 'true' for all x.
 
 #include "GB.h"
-#include "GB_binop.h"
+#include "binaryop/GB_binop.h"
 
 GB_Opcode GB_boolean_rename     // renamed opcode
 (

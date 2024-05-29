@@ -15,7 +15,7 @@
     GB_FREE_WORKSPACE ;                 \
     GB_phybix_free (C) ;
 
-#include "GB_concat.h"
+#include "concat/GB_concat.h"
 
 GrB_Info GB_concat                  // concatenate a 2D array of matrices
 (

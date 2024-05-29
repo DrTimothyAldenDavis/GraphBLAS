@@ -9,9 +9,9 @@
 
 // Compare with GxB_Row_subassign, which uses M and C_replace differently
 
-#include "GB_assign.h"
-#include "GB_bitmap_assign.h"
-#include "GB_get_mask.h"
+#include "assign/GB_assign.h"
+#include "assign/GB_bitmap_assign.h"
+#include "mask/GB_get_mask.h"
 
 GrB_Info GrB_Row_assign             // C<M'>(row,Cols) += u'
 (

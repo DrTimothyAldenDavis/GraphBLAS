@@ -22,7 +22,7 @@
 // A can have any sparsity structure (sparse, hyper, bitmap, or full).
 // A may be jumbled.
 
-#include "GB_ek_slice.h"
+#include "slice/GB_ek_slice.h"
 #include "slice/factory/GB_ek_slice_search.c"
 
 GB_CALLBACK_EK_SLICE_PROTO (GB_ek_slice)

@@ -13,7 +13,7 @@
 // duplicate indices are ignored, which is not an error condition.  The I array
 // is of size nvals, just like GrB_Vector_build_*.
 
-#include "GB_build.h"
+#include "builder/GB_build.h"
 #define GB_FREE_ALL ;
 
 GrB_Info GxB_Vector_build_Scalar    // build a vector from (i,scalar) tuples

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_Pending.h"
+#include "pending/GB_Pending.h"
 
 int64_t GB_Pending_n        // return # of pending tuples in A
 (

@@ -24,7 +24,7 @@
 
 // Compare this function with GB_shallow_copy.c.
 
-#include "GB_apply.h"
+#include "apply/GB_apply.h"
 
 #define GB_FREE_ALL GB_phybix_free (C) ;
 

@@ -13,7 +13,7 @@
 
 #include "GB.h"
 #include <ctype.h>
-#include "GB_jitifyer.h"
+#include "jitifyer/GB_jitifyer.h"
 
 GrB_Info GB_op_name_and_defn
 (

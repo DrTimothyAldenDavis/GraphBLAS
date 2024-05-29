@@ -12,7 +12,7 @@
 // Returns true if A is a square diagonal matrix, with all diagonal entries
 // present.  All pending tuples are ignored.  Zombies are treated as entries.
 
-#include "GB_mxm.h"
+#include "mxm/GB_mxm.h"
 
 bool GB_is_diagonal             // true if A is diagonal
 (

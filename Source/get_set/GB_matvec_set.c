@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_get_set.h"
-#include "GB_transpose.h"
+#include "get_set/GB_get_set.h"
+#include "transpose/GB_transpose.h"
 #define GB_FREE_ALL ;
 
 GrB_Info GB_matvec_set

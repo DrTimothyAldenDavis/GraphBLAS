@@ -8,8 +8,8 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_math.h"
-#include "GB_stringify.h"
+#include "math/GB_math.h"
+#include "jitifyer/GB_stringify.h"
 #include <ctype.h>
 
 void GB_macrofy_binop

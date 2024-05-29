@@ -11,7 +11,7 @@
 // matrix is exported in its current sparsity structure and by-row/by-col
 // format.
 
-#include "GB_export.h"
+#include "import_export/GB_export.h"
 
 #define GB_FREE_ALL                     \
 {                                       \

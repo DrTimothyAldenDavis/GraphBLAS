@@ -10,9 +10,9 @@
 #ifndef GB_CONCAT_H
 #define GB_CONCAT_H
 #include "GB.h"
-#include "GB_transpose.h"
-#include "GB_ek_slice.h"
-#include "GB_build.h"
+#include "transpose/GB_transpose.h"
+#include "slice/GB_ek_slice.h"
+#include "builder/GB_build.h"
 
 #define GB_TILE(Tiles,i,j) (*(Tiles + (i) * n + (j)))
 

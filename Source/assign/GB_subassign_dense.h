@@ -10,7 +10,7 @@
 #ifndef GB_SUBASSIGN_DENSE_H
 #define GB_SUBASSIGN_DENSE_H
 
-#include "GB_ek_slice.h"
+#include "slice/GB_ek_slice.h"
 
 //------------------------------------------------------------------------------
 // GB_subassign_23: C(:,:) += A where C is dense and A is sparse or dense

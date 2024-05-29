@@ -31,9 +31,9 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_mxm.h"
-#include "GB_binop.h"
-#include "GB_AxB_saxpy_generic.h"
+#include "mxm/GB_mxm.h"
+#include "binaryop/GB_binop.h"
+#include "mxm/GB_AxB_saxpy_generic.h"
 
 GrB_Info GB_AxB_saxpy_generic
 (

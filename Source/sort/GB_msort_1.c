@@ -11,7 +11,7 @@
 
 // A parallel mergesort of an array of 1-by-n integers.
 
-#include "GB_msort_1.h"
+#include "sort/GB_msort_1.h"
 
 //------------------------------------------------------------------------------
 // GB_msort_1_binary_search: binary search for the pivot

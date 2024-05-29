@@ -21,8 +21,8 @@
 // and as a result, there is no need for a GB_emult to handle the case when
 // C is full.
 
-#include "GB_emult.h"
-#include "GB_mask_very_sparse.h"
+#include "ewise/GB_emult.h"
+#include "mask/GB_mask_very_sparse.h"
 
 int GB_emult_sparsity       // return the sparsity structure for C
 (

@@ -11,7 +11,7 @@
 // O(log (n)) time which is fast enough, even if n = 2^60, and it works for all
 // monoids including user-defined ones.
 
-#include "GB_reduce.h"
+#include "reduce/GB_reduce.h"
 
 void GB_reduce_worker_iso
 (

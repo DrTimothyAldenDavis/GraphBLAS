@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_transpose.h"
+#include "transpose/GB_transpose.h"
 #define GB_FREE_ALL ;
 
 GrB_Info GrB_Matrix_exportHint  // suggest the best export format

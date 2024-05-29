@@ -11,8 +11,8 @@
 
 // JIT: not needed, but 3 variants possible (A sparse, hyper, or full for DIAG)
 
-#include "GB_select.h"
-#include "GB_ek_slice.h"
+#include "select/GB_select.h"
+#include "slice/GB_ek_slice.h"
 
 GrB_Info GB_select_positional_phase2
 (

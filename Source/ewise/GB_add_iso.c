@@ -11,8 +11,8 @@
 // results in an iso matrix C.  If true, the output scalar c is the iso value
 // for the matrix C.
 
-#include "GB_add.h"
-#include "GB_emult.h"
+#include "ewise/GB_add.h"
+#include "ewise/GB_emult.h"
 
 bool GB_add_iso             // c = op(a,b), return true if C is iso
 (

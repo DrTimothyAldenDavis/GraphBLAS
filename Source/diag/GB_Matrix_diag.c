@@ -20,7 +20,7 @@
     GB_phybix_free (C) ;    \
 }
 
-#include "GB_diag.h"
+#include "diag/GB_diag.h"
 #include "include/GB_unused.h"
 
 GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector

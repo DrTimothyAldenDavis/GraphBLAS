@@ -20,9 +20,9 @@
     GB_phybix_free (C) ;                    \
 }
 
-#include "GB_select.h"
-#include "GB_scalar_wrap.h"
-#include "GB_transpose.h"
+#include "select/GB_select.h"
+#include "scalar/GB_scalar_wrap.h"
+#include "transpose/GB_transpose.h"
 
 GrB_Info GB_select_value_iso
 (

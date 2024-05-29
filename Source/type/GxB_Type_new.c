@@ -34,7 +34,7 @@
 // provided, then an error is returned (GrB_INVALID_VALUE). 
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 GrB_Info GxB_Type_new
 (

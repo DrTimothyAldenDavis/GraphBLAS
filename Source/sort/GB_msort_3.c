@@ -12,7 +12,7 @@
 // A parallel mergesort of an array of 3-by-n integers.  Each key
 // consists of three integers.
 
-#include "GB_msort_3.h"
+#include "sort/GB_msort_3.h"
 
 //------------------------------------------------------------------------------
 // GB_msort_3_binary_search: binary search for the pivot

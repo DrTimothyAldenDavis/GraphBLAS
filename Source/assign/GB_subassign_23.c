@@ -26,12 +26,12 @@
 
 // C and A can have any sparsity structure, but C must be as-if-full.
 
-#include "GB_subassign_dense.h"
+#include "assign/GB_subassign_dense.h"
 #include "assign/include/GB_assign_shared_definitions.h"
-#include "GB_binop.h"
-#include "GB_stringify.h"
+#include "binaryop/GB_binop.h"
+#include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "GB_aop__include.h"
+#include "FactoryKernels/GB_aop__include.h"
 #endif
 #include "include/GB_unused.h"
 

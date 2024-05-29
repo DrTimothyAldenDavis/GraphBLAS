@@ -21,7 +21,7 @@
 
 // Compare this function with GB_shallow_op.c.
 
-#include "GB_transpose.h"
+#include "transpose/GB_transpose.h"
 #include "include/GB_unused.h"
 
 #define GB_FREE_ALL ;

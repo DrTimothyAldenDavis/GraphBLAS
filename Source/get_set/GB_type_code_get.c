@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_get_set.h"
+#include "get_set/GB_get_set.h"
 
 GrB_Type_Code GB_type_code_get  // return the GrB_Type_Code for the code
 (

@@ -16,7 +16,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_AxB_saxpy.h"
+#include "mxm/GB_AxB_saxpy.h"
 
 void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
 (

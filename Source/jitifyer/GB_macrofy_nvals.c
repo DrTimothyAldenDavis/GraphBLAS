@@ -14,7 +14,7 @@
 //      e = GB_nnz_held (A)
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 void GB_macrofy_nvals  
 (

@@ -49,8 +49,8 @@
 // R is iso if both C and Z are iso and zij == cij.  This is handled in
 // GB_masker_phase2.
 
-#include "GB_mask.h"
-#include "GB_add.h"
+#include "mask/GB_mask.h"
+#include "ewise/GB_add.h"
 #define GB_FREE_ALL ;
 
 GrB_Info GB_masker          // R = masker (C, M, Z)

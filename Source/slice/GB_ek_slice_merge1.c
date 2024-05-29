@@ -22,7 +22,7 @@
 // This function sums up the entries computed for C(:,k) by all tasks, so that
 // on output, Cp [k] is the total count of entries in C(:,k).
 
-#include "GB_ek_slice.h"
+#include "slice/GB_ek_slice.h"
 
 GB_CALLBACK_EK_SLICE_MERGE1_PROTO (GB_ek_slice_merge1)
 {

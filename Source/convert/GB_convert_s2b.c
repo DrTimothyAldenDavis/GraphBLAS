@@ -13,9 +13,9 @@
 // FUTURE: A could also be typecasted and/or a unary operator applied,
 // via the JIT kernel.
 
-#include "GB_apply.h"
-#include "GB_ek_slice.h"
-#include "GB_stringify.h"
+#include "apply/GB_apply.h"
+#include "slice/GB_ek_slice.h"
+#include "jitifyer/GB_stringify.h"
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \

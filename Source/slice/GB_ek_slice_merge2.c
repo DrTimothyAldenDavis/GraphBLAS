@@ -31,7 +31,7 @@
 // operate on C(:,klast).  In both cases, task tid starts its computations at
 // the top of C(:,klast), which can be found at Cp [klast].
 
-#include "GB_ek_slice.h"
+#include "slice/GB_ek_slice.h"
 
 void GB_ek_slice_merge2     // merge final results for matrix C
 (

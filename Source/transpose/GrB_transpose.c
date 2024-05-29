@@ -11,9 +11,9 @@
 
 #define GB_FREE_ALL GB_Matrix_free (&T) ;
 
-#include "GB_transpose.h"
-#include "GB_accum_mask.h"
-#include "GB_get_mask.h"
+#include "transpose/GB_transpose.h"
+#include "mask/GB_accum_mask.h"
+#include "mask/GB_get_mask.h"
 
 GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
 (

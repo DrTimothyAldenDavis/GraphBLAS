@@ -24,16 +24,16 @@
     GB_phybix_free (C) ;                    \
 }
 
-#include "GB_mxm.h"
+#include "mxm/GB_mxm.h"
 #include "include/GB_unused.h"
-#include "GB_stringify.h"
-#include "GB_AxB_saxpy.h"
-#include "GB_binop.h"
-#include "GB_ek_slice.h"
-#include "GB_AxB_saxpy_generic.h"
-#include "GB_AxB__include1.h"
+#include "jitifyer/GB_stringify.h"
+#include "mxm/GB_AxB_saxpy.h"
+#include "binaryop/GB_binop.h"
+#include "slice/GB_ek_slice.h"
+#include "mxm/GB_AxB_saxpy_generic.h"
+#include "mxm/GB_AxB__include1.h"
 #ifndef GBCOMPACT
-#include "GB_AxB__include2.h"
+#include "FactoryKernels/GB_AxB__include2.h"
 #endif
 
 //------------------------------------------------------------------------------

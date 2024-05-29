@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_Pending.h"
+#include "pending/GB_Pending.h"
 
 bool GB_Pending_alloc       // create a list of pending tuples
 (

@@ -12,7 +12,7 @@
 // If dup is a valid binary operator, it is used to reduce any duplicates to
 // a single value.
 
-#include "GB_build.h"
+#include "builder/GB_build.h"
 
 #define GB_VECTOR_BUILD(prefix,type,T,xtype)                                  \
 GrB_Info GB_EVAL3 (prefix, _Vector_build_, T) /* build a vector from tuples*/ \

@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 typedef GB_JIT_KERNEL_TRANS_BIND1ST_PROTO ((*GB_jit_dl_function)) ;
 

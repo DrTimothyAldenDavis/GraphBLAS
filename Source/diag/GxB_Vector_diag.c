@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_diag.h"
+#include "diag/GB_diag.h"
 
 GrB_Info GxB_Vector_diag    // extract a diagonal from a matrix, as a vector
 (

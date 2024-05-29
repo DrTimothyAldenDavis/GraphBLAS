@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_extract.h"
-#include "GB_get_mask.h"
+#include "extract/GB_extract.h"
+#include "mask/GB_get_mask.h"
 
 GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
 (

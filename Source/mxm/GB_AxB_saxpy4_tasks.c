@@ -10,7 +10,7 @@
 // GB_AxB_saxpy4_tasks constructs the tasks for GB_AxB_saxpy4, and for
 // GB_AxB_bitmap_saxpy when A is sparse/hyper and B is bitmap/full.
 
-#include "GB_AxB_saxpy.h"
+#include "mxm/GB_AxB_saxpy.h"
 
 void GB_AxB_saxpy4_tasks
 (

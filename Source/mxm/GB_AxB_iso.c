@@ -19,9 +19,9 @@
 //  C = A*B'    n = A->vdim == B->vdim
 //  C = A'*B'   n = A->vlen == B->vdim
 
-#include "GB_mxm.h"
-#include "GB_reduce.h"
-#include "GB_binop.h"
+#include "mxm/GB_mxm.h"
+#include "reduce/GB_reduce.h"
+#include "binaryop/GB_binop.h"
 
 //------------------------------------------------------------------------------
 // GB_AxB_scalar_iso: c = mult(a,b) or c = mult(b,a)

@@ -10,8 +10,8 @@
 // The semiring struct is already allocated on input.
 
 #include "GB.h"
-#include "GB_Semiring_new.h"
-#include "GB_jitifyer.h"
+#include "semiring/GB_Semiring_new.h"
+#include "jitifyer/GB_jitifyer.h"
 
 GrB_Info GB_Semiring_new            // create a semiring
 (

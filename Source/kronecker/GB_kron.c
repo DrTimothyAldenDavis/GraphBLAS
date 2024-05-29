@@ -23,10 +23,10 @@
     GB_Matrix_free (&T) ;   \
 }
 
-#include "GB_kron.h"
-#include "GB_mxm.h"
-#include "GB_transpose.h"
-#include "GB_accum_mask.h"
+#include "kronecker/GB_kron.h"
+#include "mxm/GB_mxm.h"
+#include "transpose/GB_transpose.h"
+#include "mask/GB_accum_mask.h"
 
 GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
 (

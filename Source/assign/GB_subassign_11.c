@@ -20,7 +20,7 @@
 
 // C, M: not bitmap
 
-#include "GB_subassign_methods.h"
+#include "assign/GB_subassign_methods.h"
 #include "assign/include/GB_assign_shared_definitions.h"
 #include "include/GB_unused.h"
 

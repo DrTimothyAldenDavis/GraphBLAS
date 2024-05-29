@@ -13,7 +13,7 @@
 // the output J for GB_extractTuples, and I for GB_transpose when the qsort
 // method is used.
 
-#include "GB_ek_slice.h"
+#include "slice/GB_ek_slice.h"
 
 #define GB_FREE_ALL                         \
 {                                           \

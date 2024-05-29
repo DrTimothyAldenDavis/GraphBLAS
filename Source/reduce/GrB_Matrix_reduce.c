@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_reduce.h"
-#include "GB_binop.h"
+#include "reduce/GB_reduce.h"
+#include "binaryop/GB_binop.h"
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_reduce_TYPE: reduce a matrix to a scalar

@@ -14,10 +14,10 @@
 // nrows_new*ncols_new.
 
 #include "GB.h"
-#include "GB_reshape.h"
-#include "GB_transpose.h"
-#include "GB_ek_slice.h"
-#include "GB_build.h"
+#include "reshape/GB_reshape.h"
+#include "transpose/GB_transpose.h"
+#include "slice/GB_ek_slice.h"
+#include "builder/GB_build.h"
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \

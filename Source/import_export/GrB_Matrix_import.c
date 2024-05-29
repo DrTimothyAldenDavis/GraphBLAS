@@ -10,8 +10,8 @@
 // No typecasting is done.  The type of entries in the Ax array must match
 // the GrB_Type type parameter.
 
-#include "GB_export.h"
-#include "GB_build.h"
+#include "import_export/GB_export.h"
+#include "builder/GB_build.h"
 
 #define GB_FREE_ALL                 \
 {                                   \

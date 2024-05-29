@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_reduce.h"
+#include "reduce/GB_reduce.h"
 
 void GB_reduce_to_scalar_iso        // s = reduce (A) where A is iso
 (

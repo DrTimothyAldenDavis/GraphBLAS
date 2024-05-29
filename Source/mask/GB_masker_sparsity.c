@@ -16,7 +16,7 @@
 // case is handled by GB_subassign instead.  R can be constructed as sparse,
 // hypersparse, or bitmap (not full).  M and Z can have any sparsity pattern.
 
-#include "GB_mask.h"
+#include "mask/GB_mask.h"
 
 int GB_masker_sparsity      // return the sparsity structure for R
 (

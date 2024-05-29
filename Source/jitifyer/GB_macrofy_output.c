@@ -11,7 +11,7 @@
 // type of the monoid or operator, into the type of the C matrix.
 
 #include "GB.h"
-#include "GB_stringify.h"
+#include "jitifyer/GB_stringify.h"
 
 void GB_macrofy_output
 (

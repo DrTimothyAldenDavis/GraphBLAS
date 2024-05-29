@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_export.h"
+#include "import_export/GB_export.h"
 
 GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
 (

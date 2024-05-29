@@ -9,9 +9,9 @@
 
 // JIT: not needed.  Only one variant possible.
 
-#include "GB_select.h"
-#include "GB_scalar_wrap.h"
-#include "GB_resize.h"
+#include "select/GB_select.h"
+#include "scalar/GB_scalar_wrap.h"
+#include "resize/GB_resize.h"
 
 #define GB_FREE_ALL                     \
 {                                       \

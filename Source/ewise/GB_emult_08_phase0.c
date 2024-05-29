@@ -45,7 +45,7 @@
     GB_FREE_WORK (&C_to_B, C_to_B_size) ;       \
 }
 
-#include "GB_emult.h"
+#include "ewise/GB_emult.h"
 
 GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 (

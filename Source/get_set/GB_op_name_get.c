@@ -12,7 +12,7 @@
 // GB_binop_second, and do not exist outside GraphBLAS.  The user application
 // cannot pass them to GrB_get.
 
-#include "GB_get_set.h"
+#include "get_set/GB_get_set.h"
 
 const char *GB_op_name_get (GB_Operator op)
 {

@@ -10,7 +10,7 @@
 #ifndef GB_SPLIT_H
 #define GB_SPLIT_H
 #include "GB.h"
-#include "GB_ek_slice.h"
+#include "slice/GB_ek_slice.h"
 #define GB_TILE(Tiles,i,j) (*(Tiles + (i) * n + (j)))
 
 GrB_Info GB_split                   // split a matrix

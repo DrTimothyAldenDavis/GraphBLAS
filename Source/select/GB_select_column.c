@@ -11,9 +11,9 @@
 
 // The column selectors can be done in a single pass.
 
-#include "GB_select.h"
-#include "GB_transpose.h"
-#include "GB_stringify.h"
+#include "select/GB_select.h"
+#include "transpose/GB_transpose.h"
+#include "jitifyer/GB_stringify.h"
 
 #define GB_FREE_ALL                         \
 {                                           \

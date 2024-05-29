@@ -9,10 +9,10 @@
 
 // JIT: done.
 
-#include "GB_select.h"
-#include "GB_stringify.h"
+#include "select/GB_select.h"
+#include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "GB_sel__include.h"
+#include "FactoryKernels/GB_sel__include.h"
 #endif
 
 #define GB_FREE_ALL         \
