@@ -321,10 +321,10 @@ GrB_Info GB_build               // build matrix
     // created an iso-valued matrix T, but this is not yet known.  X_iso is
     // false for these methods.  Since it has not yet been conformed to its
     // final sparsity structure, the matrix T is hypersparse, not bitmap.  It
-    // has no zombies or pending tuples, so GB_check_if_iso does need to handle
+    // has no zombies or pending tuples, so GB_all_entries_are_iso does need to handle
     // those cases.  T->x [0] is the new iso value of T.
 
-    if (!X_iso && GB_check_if_iso (T))
+    if (!X_iso && GB_all_entries_are_iso (T))
     { 
         // All entries in T are the same; convert T to iso
         GBURBLE ("(post iso) ") ;

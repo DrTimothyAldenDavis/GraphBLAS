@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_ops_template.h: define the unary and binary functions and operators
+// GB_builtin_template.h: define the unary and binary functions and operators
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// This file is #include'd many times in GB_ops.h to define the unary and
+// This file is #include'd many times in GB_builtin.h to define the unary and
 // binary functions.
 
 #define GB_UNOP_STRUCT(op,xtype) \

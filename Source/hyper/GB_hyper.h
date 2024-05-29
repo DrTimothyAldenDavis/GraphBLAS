@@ -22,12 +22,6 @@ GrB_Info GB_hyper_realloc
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_conform_hyper       // conform a matrix to sparse/hypersparse
-(
-    GrB_Matrix A,               // matrix to conform
-    GB_Werk Werk
-) ;
-
 GrB_Info GB_hyper_prune
 (
     // output, not allocated on input:

@@ -1,9 +1,0 @@
-rename GB_check_if_iso to GB_is_iso
-
-rename GB_scalar_wrap.h to GB_Scalar_wrap.h, or
-       GB_Scalar_wrap.c to GB_scalar_wrap.c
-
-rename GB_ops* to GB_builtin*
-
-move prototype of GB_conform_hyper to GB_convert.h
-

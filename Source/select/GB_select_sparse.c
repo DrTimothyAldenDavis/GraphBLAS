@@ -14,7 +14,7 @@
 #ifndef GBCOMPACT
 #include "FactoryKernels/GB_sel__include.h"
 #endif
-#include "scalar/GB_scalar_wrap.h"
+#include "scalar/GB_Scalar_wrap.h"
 #include "jitifyer/GB_stringify.h"
 
 #define GB_FREE_WORKSPACE                   \

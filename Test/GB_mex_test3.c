@@ -669,16 +669,16 @@ void mexFunction
     CHECK (GB_unop_one (GB_UDT_code) == NULL) ;
 
     //--------------------------------------------------------------------------
-    // GB_check_if_iso
+    // GB_all_entries_are_iso
     //--------------------------------------------------------------------------
 
-    CHECK (!GB_check_if_iso (NULL)) ;
+    CHECK (!GB_all_entries_are_iso (NULL)) ;
     OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
     OK (GrB_Matrix_assign_FP32 (C, NULL, NULL, 1, GrB_ALL, 4, GrB_ALL, 4,
         NULL)) ;
     OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
     OK (GrB_Matrix_wait_(C, GrB_MATERIALIZE)) ;
-    CHECK (GB_check_if_iso (C)) ;
+    CHECK (GB_all_entries_are_iso (C)) ;
     GrB_Matrix_free_(&C) ;
 
     OK (GrB_Matrix_new (&C, My4x64, 10, 10)) ;
@@ -689,15 +689,15 @@ void mexFunction
     my4x64_scalar.stuff [3] = 4 ;
     OK (GrB_Matrix_setElement_UDT (C, &my4x64_scalar, 3, 2)) ;
     OK (GrB_Matrix_setElement_UDT (C, &my4x64_scalar, 0, 0)) ;
-    CHECK (!GB_check_if_iso (C)) ;
+    CHECK (!GB_all_entries_are_iso (C)) ;
     OK (GrB_Matrix_wait_(C, GrB_MATERIALIZE)) ;
-    CHECK (GB_check_if_iso (C)) ;
+    CHECK (GB_all_entries_are_iso (C)) ;
 
     my4x64_scalar.stuff [0] = 4 ;
     OK (GrB_Matrix_setElement_UDT (C, &my4x64_scalar, 4, 4)) ;
-    CHECK (!GB_check_if_iso (C)) ;
+    CHECK (!GB_all_entries_are_iso (C)) ;
     OK (GrB_Matrix_wait_(C, GrB_MATERIALIZE)) ;
-    CHECK (!GB_check_if_iso (C)) ;
+    CHECK (!GB_all_entries_are_iso (C)) ;
     GrB_Matrix_free_(&C) ;
 
     //--------------------------------------------------------------------------

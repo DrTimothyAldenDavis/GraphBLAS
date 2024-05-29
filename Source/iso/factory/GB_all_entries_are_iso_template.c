@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_check_if_iso_template: check if all entries in a matrix are identical
+// GB_all_entries_are_iso_template: check if all entries in a matrix are identical
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.

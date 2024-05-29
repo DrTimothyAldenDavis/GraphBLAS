@@ -17,7 +17,7 @@
 #include "binaryop/GB_binop.h"
 #include "transpose/GB_transpose.h"
 #include "mask/GB_accum_mask.h"
-#include "scalar/GB_scalar_wrap.h"
+#include "scalar/GB_Scalar_wrap.h"
 
 GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 (

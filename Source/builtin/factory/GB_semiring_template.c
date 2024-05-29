@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// This file is #include'd many times in GB_ops.c to define the built-in
+// This file is #include'd many times in GB_builtin.c to define the built-in
 // semirings.  That file has defined either GB_BOOLEAN, or GB_TYPE as one of
 // the 10 non-boolean types.
 

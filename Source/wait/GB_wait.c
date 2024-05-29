@@ -57,7 +57,7 @@
 #include "pending/GB_Pending.h"
 #include "builder/GB_build.h"
 #include "wait/GB_jappend.h"
-#include "scalar/GB_scalar_wrap.h"
+#include "scalar/GB_Scalar_wrap.h"
 
 GrB_Info GB_wait                // finish all pending computations
 (

@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "apply/GB_apply.h"
-#include "scalar/GB_scalar_wrap.h"
+#include "scalar/GB_Scalar_wrap.h"
 #include "mask/GB_get_mask.h"
 
 //------------------------------------------------------------------------------

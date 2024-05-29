@@ -307,7 +307,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     // determine if A is iso
     //--------------------------------------------------------------------------
 
-    if (GB_check_if_iso (*A))
+    if (GB_all_entries_are_iso (*A))
     { 
         // All entries in A are the same; convert A to iso
         GBURBLE ("(import post iso) ") ;

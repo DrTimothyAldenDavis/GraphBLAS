@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_ops.c: built-in types, functions, operators, and other externs
+// GB_builtin.c: built-in types, functions, operators, and other externs
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -12,7 +12,7 @@
 
 #include "GB.h"
 #include "math/GB_math.h"
-#include "builtin/GB_ops.h"
+#include "builtin/GB_builtin.h"
 
 //------------------------------------------------------------------------------
 // compiler flags
@@ -411,76 +411,76 @@ GXB_SEL (LE_THUNK , "le_thunk") ;
 
 #define GB_TYPE             bool
 #define GB_XTYPE            BOOL
-#include "builtin/factory/GB_ops_template.c"
+#include "builtin/factory/GB_builtin_template.c"
 
 #define GB_TYPE             int8_t
 #define GB_XTYPE            INT8
 #define GB_SIGNED_INT
-#include "builtin/factory/GB_ops_template.c"
+#include "builtin/factory/GB_builtin_template.c"
 
 #define GB_TYPE             uint8_t
 #define GB_XTYPE            UINT8
 #define GB_UNSIGNED_INT
-#include "builtin/factory/GB_ops_template.c"
+#include "builtin/factory/GB_builtin_template.c"
 
 #define GB_TYPE             int16_t
 #define GB_XTYPE            INT16
 #define GB_SIGNED_INT
-#include "builtin/factory/GB_ops_template.c"
+#include "builtin/factory/GB_builtin_template.c"
 
 #define GB_TYPE             uint16_t
 #define GB_XTYPE            UINT16
 #define GB_UNSIGNED_INT
-#include "builtin/factory/GB_ops_template.c"
+#include "builtin/factory/GB_builtin_template.c"
 
 #define GB_TYPE             int32_t
 #define GB_XTYPE            INT32
 #define GB_SIGNED_INT
 #define GB_SIGNED_INDEX
-#include "builtin/factory/GB_ops_template.c"
+#include "builtin/factory/GB_builtin_template.c"
 
 #define GB_TYPE             uint32_t
 #define GB_XTYPE            UINT32
 #define GB_UNSIGNED_INT
-#include "builtin/factory/GB_ops_template.c"
+#include "builtin/factory/GB_builtin_template.c"
 
 #define GB_TYPE             int64_t
 #define GB_XTYPE            INT64
 #define GB_SIGNED_INT
 #define GB_SIGNED_INDEX
 #define GB_SIGNED_INDEX64
-#include "builtin/factory/GB_ops_template.c"
+#include "builtin/factory/GB_builtin_template.c"
 
 #define GB_TYPE             uint64_t
 #define GB_XTYPE            UINT64
 #define GB_UNSIGNED_INT
-#include "builtin/factory/GB_ops_template.c"
+#include "builtin/factory/GB_builtin_template.c"
 
 #define GB_TYPE             float
 #define GB_XTYPE            FP32
 #define GB_FLOAT
 #define GB_FLOATING_POINT
-#include "builtin/factory/GB_ops_template.c"
+#include "builtin/factory/GB_builtin_template.c"
 
 #define GB_TYPE             double
 #define GB_XTYPE            FP64
 #define GB_DOUBLE
 #define GB_FLOATING_POINT
-#include "builtin/factory/GB_ops_template.c"
+#include "builtin/factory/GB_builtin_template.c"
 
 #define GB_TYPE             GxB_FC32_t
 #define GB_XTYPE            FC32
 #define GB_FLOAT_COMPLEX
 #define GB_COMPLEX
 #define GB_FLOATING_POINT
-#include "builtin/factory/GB_ops_template.c"
+#include "builtin/factory/GB_builtin_template.c"
 
 #define GB_TYPE             GxB_FC64_t
 #define GB_XTYPE            FC64
 #define GB_DOUBLE_COMPLEX
 #define GB_COMPLEX
 #define GB_FLOATING_POINT
-#include "builtin/factory/GB_ops_template.c"
+#include "builtin/factory/GB_builtin_template.c"
 
 //------------------------------------------------------------------------------
 // special cases for functions and operators

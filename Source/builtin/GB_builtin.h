@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_ops.h: built-in unary and binary operators
+// GB_builtin.h: built-in unary and binary operators
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -33,21 +33,21 @@ inline void GB_nonzombie_func (bool *z, const void *x,
 #define GB_BITS             1
 #define GB_REAL
 #define GB_BOOLEAN
-#include "builtin/factory/GB_ops_template.h"
+#include "builtin/factory/GB_builtin_template.h"
 
 #define GB_TYPE             int8_t
 #define GB_XTYPE            INT8
 #define GB_BITS             8
 #define GB_REAL
 #define GB_SIGNED_INT
-#include "builtin/factory/GB_ops_template.h"
+#include "builtin/factory/GB_builtin_template.h"
 
 #define GB_TYPE             int16_t
 #define GB_XTYPE            INT16
 #define GB_BITS             16
 #define GB_REAL
 #define GB_SIGNED_INT
-#include "builtin/factory/GB_ops_template.h"
+#include "builtin/factory/GB_builtin_template.h"
 
 #define GB_TYPE             int32_t
 #define GB_XTYPE            INT32
@@ -55,7 +55,7 @@ inline void GB_nonzombie_func (bool *z, const void *x,
 #define GB_REAL
 #define GB_SIGNED_INT
 #define GB_SIGNED_INDEX
-#include "builtin/factory/GB_ops_template.h"
+#include "builtin/factory/GB_builtin_template.h"
 
 #define GB_TYPE             int64_t
 #define GB_XTYPE            INT64
@@ -64,35 +64,35 @@ inline void GB_nonzombie_func (bool *z, const void *x,
 #define GB_SIGNED_INT
 #define GB_SIGNED_INDEX
 #define GB_SIGNED_INDEX64
-#include "builtin/factory/GB_ops_template.h"
+#include "builtin/factory/GB_builtin_template.h"
 
 #define GB_TYPE             uint8_t
 #define GB_XTYPE            UINT8
 #define GB_BITS             8
 #define GB_REAL
 #define GB_UNSIGNED_INT
-#include "builtin/factory/GB_ops_template.h"
+#include "builtin/factory/GB_builtin_template.h"
 
 #define GB_TYPE             uint16_t
 #define GB_XTYPE            UINT16
 #define GB_BITS             16
 #define GB_REAL
 #define GB_UNSIGNED_INT
-#include "builtin/factory/GB_ops_template.h"
+#include "builtin/factory/GB_builtin_template.h"
 
 #define GB_TYPE             uint32_t
 #define GB_XTYPE            UINT32
 #define GB_BITS             32
 #define GB_REAL
 #define GB_UNSIGNED_INT
-#include "builtin/factory/GB_ops_template.h"
+#include "builtin/factory/GB_builtin_template.h"
 
 #define GB_TYPE             uint64_t
 #define GB_XTYPE            UINT64
 #define GB_BITS             64
 #define GB_REAL
 #define GB_UNSIGNED_INT
-#include "builtin/factory/GB_ops_template.h"
+#include "builtin/factory/GB_builtin_template.h"
 
 #define GB_TYPE             float
 #define GB_XTYPE            FP32
@@ -100,7 +100,7 @@ inline void GB_nonzombie_func (bool *z, const void *x,
 #define GB_REAL
 #define GB_FLOATING_POINT
 #define GB_FLOAT
-#include "builtin/factory/GB_ops_template.h"
+#include "builtin/factory/GB_builtin_template.h"
 
 #define GB_TYPE             double
 #define GB_XTYPE            FP64
@@ -108,7 +108,7 @@ inline void GB_nonzombie_func (bool *z, const void *x,
 #define GB_REAL
 #define GB_FLOATING_POINT
 #define GB_DOUBLE
-#include "builtin/factory/GB_ops_template.h"
+#include "builtin/factory/GB_builtin_template.h"
 
 #define GB_TYPE             GxB_FC32_t
 #define GB_XTYPE            FC32
@@ -116,7 +116,7 @@ inline void GB_nonzombie_func (bool *z, const void *x,
 #define GB_COMPLEX
 #define GB_FLOATING_POINT
 #define GB_FLOAT_COMPLEX
-#include "builtin/factory/GB_ops_template.h"
+#include "builtin/factory/GB_builtin_template.h"
 
 #define GB_TYPE             GxB_FC64_t
 #define GB_XTYPE            FC64
@@ -124,7 +124,7 @@ inline void GB_nonzombie_func (bool *z, const void *x,
 #define GB_COMPLEX
 #define GB_FLOATING_POINT
 #define GB_DOUBLE_COMPLEX
-#include "builtin/factory/GB_ops_template.h"
+#include "builtin/factory/GB_builtin_template.h"
 
 #endif
 

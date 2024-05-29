@@ -235,6 +235,12 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_conform_hyper       // conform a matrix to sparse/hypersparse
+(
+    GrB_Matrix A,               // matrix to conform
+    GB_Werk Werk
+) ;
+
 static inline const char *GB_sparsity_char (int sparsity)
 {
     switch (sparsity)

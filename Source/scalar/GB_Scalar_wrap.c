@@ -14,7 +14,7 @@
 // automatically to the GPU when using CUDA.
 
 #include "GB.h"
-#include "scalar/GB_scalar_wrap.h"
+#include "scalar/GB_Scalar_wrap.h"
 
 GrB_Scalar GB_Scalar_wrap   // create a new GrB_Scalar with one entry
 (

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_scalar_wrap.h: definitions for GB_scalar_wrap
+// GB_Scalar_wrap.h: definitions for GB_Scalar_wrap
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.

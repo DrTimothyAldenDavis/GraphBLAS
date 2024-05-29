@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_ops_template.c: built-in unary and binary functions and operators
+// GB_builtin_template.c: built-in unary and binary functions and operators
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,10 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// This file is #include'd many times in GB_ops.c to define the built-in unary
-// and binary operators.  In that file, GB_TYPE is a built-in C type (bool,
-// int8_t, uint64_t, double, etc) for the inputs x and y, and GB_XTYPE is
-// corresponding GraphBLAS type, without the prefix (BOOL, INT8, etc).
+// This file is #include'd many times in GB_builtin.c to define the built-in
+// unary and binary operators.  In that file, GB_TYPE is a built-in C type
+// (bool, int8_t, uint64_t, double, etc) for the inputs x and y, and GB_XTYPE
+// is corresponding GraphBLAS type, without the prefix (BOOL, INT8, etc).
 
 //------------------------------------------------------------------------------
 // unary functions z=f(x) where z and x have the same type
