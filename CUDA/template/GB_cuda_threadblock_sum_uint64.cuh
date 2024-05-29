@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/Template/GB_cuda_threadblock_sum_uint64.cuh
+// GraphBLAS/CUDA/template/GB_cuda_threadblock_sum_uint64.cuh
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -10,7 +10,7 @@
 
 // Sum across an entire threadblock a single uint64_t scalar.
 
-// Compare with Template/GB_cuda_threadblock_reduce_ztype.
+// Compare with template/GB_cuda_threadblock_reduce_ztype.
 // The #include'ing file must define tile_sz and log2_tile_sz.
 
 __inline__ __device__ uint64_t GB_cuda_threadblock_sum_uint64

@@ -10,7 +10,7 @@ codegen_as ;        % subassign/assign with no accum
 codegen_axb ;       % semirings
 codegen_ew ;        % ewise kernels: binary op and accum
 codegen_aop ;       % subassign/assign kernels with accum
-codegen_unop ;      % unary operators
+codegen_uop ;       % unary operators
 codegen_red ;       % monoids
 codegen_sel ;       % select operators
 

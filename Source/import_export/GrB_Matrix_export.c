@@ -29,6 +29,7 @@
 }
 
 #include "transpose/GB_transpose.h"
+#include "extractTuples/GB_extractTuples.h"
 
 //------------------------------------------------------------------------------
 // GB_export_worker: export a matrix of any type

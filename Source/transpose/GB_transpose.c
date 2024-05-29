@@ -55,6 +55,7 @@
 #include "transpose/GB_transpose.h"
 #include "builder/GB_build.h"
 #include "apply/GB_apply.h"
+#include "extractTuples/GB_extractTuples.h"
 
 //------------------------------------------------------------------------------
 // GB_transpose

@@ -18,7 +18,7 @@
 #include "apply/GB_apply.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "FactoryKernels/GB_unop__include.h"
+#include "FactoryKernels/GB_uop__include.h"
 #endif
 
 GrB_Info GB_cast_array              // typecast an array
@@ -67,12 +67,12 @@ GrB_Info GB_cast_array              // typecast an array
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_unop_apply(zname,xname)                                  \
-            GB (_unop_apply__identity ## zname ## xname)
+        #define GB_uop_apply(zname,xname)                                   \
+            GB (_uop_apply__identity ## zname ## xname)
 
         #define GB_WORKER(ignore1,zname,ztype,xname,xtype)                  \
         {                                                                   \
-            info = GB_unop_apply (zname,xname) (Cx, Ax, Ab, anz,            \
+            info = GB_uop_apply (zname,xname) (Cx, Ax, Ab, anz,             \
                 A_nthreads) ;                                               \
         }                                                                   \
         break ;

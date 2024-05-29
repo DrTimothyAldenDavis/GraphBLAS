@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/Template/GB_cuda_jit_AxB_dot3_phase2end.cuh
+// GraphBLAS/CUDA/template/GB_cuda_jit_AxB_dot3_phase2end.cuh
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.

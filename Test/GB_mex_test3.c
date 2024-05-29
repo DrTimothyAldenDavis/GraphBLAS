@@ -11,7 +11,7 @@
 
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
-#include "GB_bitmap_assign_methods.h"
+#include "../Source/assign/GB_bitmap_assign_methods.h"
 
 #define USAGE "GB_mex_test3"
 

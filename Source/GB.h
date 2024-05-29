@@ -40,7 +40,6 @@
 #include "math/GB_uint64_multiply.h"
 #include "math/GB_int64_multiply.h"
 #include "math/GB_size_t_multiply.h"
-#include "extractTuples/GB_extractTuples.h"
 #include "cumsum/GB_cumsum.h"
 #include "get_set/GB_Descriptor_get.h"
 #include "element/GB_Element.h"

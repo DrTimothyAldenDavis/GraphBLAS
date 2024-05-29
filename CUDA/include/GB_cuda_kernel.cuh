@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/Template/GB_cuda_kernel.cuh: definitions for CUDA kernels
+// GraphBLAS/CUDA/template/GB_cuda_kernel.cuh: definitions for CUDA kernels
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.

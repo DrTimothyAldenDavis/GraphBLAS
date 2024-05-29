@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/Template/GB_cuda_shfl_down.cuh:  warp-level reductions
+// GraphBLAS/CUDA/template/GB_cuda_shfl_down.cuh:  warp-level reductions
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.

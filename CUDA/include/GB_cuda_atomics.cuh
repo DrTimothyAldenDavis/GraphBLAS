@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/Template/GB_cuda_atomics.cuh: CUDA atomics for GraphBLAS
+// GraphBLAS/CUDA/template/GB_cuda_atomics.cuh: CUDA atomics for GraphBLAS
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.

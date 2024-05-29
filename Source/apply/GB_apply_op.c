@@ -23,7 +23,7 @@
 #include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "FactoryKernels/GB_unop__include.h"
+#include "FactoryKernels/GB_uop__include.h"
 #include "FactoryKernels/GB_ew__include.h"
 #endif
 
@@ -417,12 +417,12 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                     // define the worker for the switch factory
                     //----------------------------------------------------------
 
-                    #define GB_unop_apply(unop,zname,aname) \
-                        GB (_unop_apply_ ## unop ## zname ## aname)
+                    #define GB_uop_apply(unop,zname,aname) \
+                        GB (_uop_apply_ ## unop ## zname ## aname)
 
                     #define GB_WORKER(unop,zname,ztype,aname,atype)          \
                     {                                                        \
-                        info = GB_unop_apply (unop,zname,aname) (Cx, Ax, Ab, \
+                        info = GB_uop_apply (unop,zname,aname) (Cx, Ax, Ab,  \
                             anz, A_nthreads) ;                               \
                     }                                                        \
                     break ;

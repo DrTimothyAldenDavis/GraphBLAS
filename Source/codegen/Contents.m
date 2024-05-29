@@ -21,10 +21,10 @@
 %   codegen_red_method
 %   codegen_sel
 %   codegen_sel_method
-%   codegen_unop
-%   codegen_unop_identity
-%   codegen_unop_method
-%   codegen_unop_template
+%   codegen_uop
+%   codegen_uop_identity
+%   codegen_uop_method
+%   codegen_uop_template
 %
 %   codegen_type
 %   codegen_contains

@@ -15,9 +15,9 @@
 
 #include "GB.h"
 
-bool GB_all_entries_are_iso        // return true if A is iso, false otherwise
+bool GB_all_entries_are_iso // return true if A is iso, false otherwise
 (
-    const GrB_Matrix A      // matrix to check if iso
+    const GrB_Matrix A      // matrix to test if all entries are the same
 )
 {
 

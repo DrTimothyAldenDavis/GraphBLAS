@@ -20,6 +20,7 @@
 // If v is iso and X is not NULL, the iso scalar vx [0] is expanded into X.
 
 #include "GB.h"
+#include "extractTuples/GB_extractTuples.h"
 
 #define GB_EXTRACT(prefix,type,T)                                             \
 GrB_Info GB_EVAL3 (prefix, _Vector_extractTuples_, T)                         \

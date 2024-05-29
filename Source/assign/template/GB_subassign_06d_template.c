@@ -102,7 +102,7 @@
 
     int64_t cnvals = C->nvals ;     // for C bitmap
 
-    // future:: divide this Templates into sub-Templates (Mask_struct, etc)
+    // future:: divide this template into sub-template (Mask_struct, etc)
     if (Mask_struct)
     {
 

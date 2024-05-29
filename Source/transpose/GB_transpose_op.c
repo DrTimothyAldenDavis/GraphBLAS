@@ -39,7 +39,7 @@
 #include "binaryop/GB_binop.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
-#include "FactoryKernels/GB_unop__include.h"
+#include "FactoryKernels/GB_uop__include.h"
 #include "FactoryKernels/GB_ew__include.h"
 #endif
 
@@ -128,12 +128,12 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
                 // define the worker for the switch factory
                 //--------------------------------------------------------------
 
-                #define GB_unop_tran(opname,zname,aname) \
-                    GB (_unop_tran_ ## opname ## zname ## aname)
+                #define GB_uop_tran(opname,zname,aname) \
+                    GB (_uop_tran_ ## opname ## zname ## aname)
 
                 #define GB_WORKER(opname,zname,ztype,aname,atype)            \
                 {                                                            \
-                    info = GB_unop_tran (opname,zname,aname)                 \
+                    info = GB_uop_tran (opname,zname,aname)                  \
                         (C, A, Workspaces, A_slice, nworkspaces, nthreads) ; \
                 }                                                            \
                 break ;

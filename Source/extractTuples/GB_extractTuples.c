@@ -21,6 +21,7 @@
 // If A is iso and X is not NULL, the iso scalar Ax [0] is expanded into X.
 
 #include "GB.h"
+#include "extractTuples/GB_extractTuples.h"
 
 #define GB_FREE_ALL                             \
 {                                               \

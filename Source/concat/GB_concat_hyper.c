@@ -18,6 +18,7 @@
 }
 
 #include "concat/GB_concat.h"
+#include "extractTuples/GB_extractTuples.h"
 
 GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
 (
