@@ -7,6 +7,7 @@
 #define GB_add_phase2 GM_add_phase2
 #define GB_add_sparsity GM_add_sparsity
 #define GB_all_aliased GM_all_aliased
+#define GB_all_entries_are_iso GM_all_entries_are_iso
 #define GB_any_aliased GM_any_aliased
 #define GB_apply_bind1st_jit GM_apply_bind1st_jit
 #define GB_apply_bind2nd_jit GM_apply_bind2nd_jit
@@ -206,7 +207,6 @@
 #define GB_cexpm1 GM_cexpm1
 #define GB_cfloorf GM_cfloorf
 #define GB_cfloor GM_cfloor
-#define GB_check_if_iso GM_check_if_iso
 #define GB_cisfinitef GM_cisfinitef
 #define GB_cisfinite GM_cisfinite
 #define GB_cisinff GM_cisinff
