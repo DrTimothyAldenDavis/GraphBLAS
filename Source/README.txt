@@ -41,8 +41,9 @@ cast                typecasting
 
 clear               GrB_clear
 
-codegen             MATLAB scripts for creating Source/FactoryKernels,
-                    and mxm/GB_AxB__any_pair_iso.c.
+codegen             MATLAB scripts for creating ../FactoryKernels,
+                    Source/mxm/GB_AxB__any_pair_iso.c, and
+                    Source/mxm/GB_AxB__include1.h.
 
 compatible          testing if operators and types are compatible (if they can
                     be typecasted to another type.
@@ -71,14 +72,6 @@ ewise               GrB_eWiseAdd, GrB_eWiseMult, and GxB_eWiseUnion
 extract             GrB_extract
 
 extractTuples       GrB_extractTuples
-
-FactoryKernels      FactoryKernel/* files are created by the *.m scripts from
-                    the codegen/Generator/* files, and should not be editted.
-                    If the Generator/ files are modified then type codegen in
-                    MATLAB to construct them.  This is a huge directory but
-                    it is constructed by making many copies (with variations
-                    depeniding on the matrix type, semiring, operator, etc),
-                    from the true source in codegen.
 
 gateway             definitions for calling methods in the CUDA folder
 
