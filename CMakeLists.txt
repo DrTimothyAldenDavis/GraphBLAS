@@ -60,7 +60,7 @@ endif ( )
 
 if ( SUITESPARSE_HAS_CUDA AND GRAPHBLAS_USE_CUDA )
     # FOR NOW: do not compile FactoryKernels when developing the CUDA kernels
-#   set ( GRAPHBLAS_COMPACT ON )    # FIXME NOW
+    set ( GRAPHBLAS_COMPACT ON )
     message ( STATUS "GraphBLAS CUDA JIT: enabled")
     enable_language ( CUDA )
     set ( GRAPHBLAS_HAS_CUDA ON )
@@ -207,87 +207,35 @@ configure_file ( "Config/README.md.in"
 # include directories for both graphblas and the demos
 #-------------------------------------------------------------------------------
 
-# FIXME NOW: remove most of these include directories:
-include_directories ( ${PROJECT_SOURCE_DIR}
-    Source Include Source/include
-    Config xxHash lz4 zstd zstd/zstd_subset JITpackage
-    Demo/Include rmm_wrap
-    Source/jit_kernels
-    Source/jit_kernels/include
-    Source/jit_kernels/template
-    Source/jitifyer
-    Source/assign
-    Source/gateway
-    Source/generic
-    Source/cumsum
-    Source/ok
-    Source/omp
-    Source/aliased
-    Source/op
-    Source/init
-    Source/descriptor
-    Source/matrix
-    Source/vector
-    Source/helper
-    Source/werk
-    Source/transplant
-    Source/callback
-    Source/hyper
-    Source/clear
-    Source/type
-    Source/sort
-    Source/scalar
-    Source/ij
-    Source/diag
-    Source/monoid
-    Source/slice
-    Source/wait
-    Source/reshape
-    Source/resize
-    Source/print
-    Source/compatible
-    Source/nvals
-    Source/cpu
-    Source/cast
-    Source/dup
-    Source/kronecker
-    Source/positional
-    Source/iso
-    Source/unaryop
-    Source/split
-    Source/concat
-    Source/global
-    Source/lz4_wrapper
-    Source/zstd_wrapper
-    Source/builtin
-    Source/extract
-    Source/pending
-    Source/indexunaryop
-    Source/math
+include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
+    xxHash lz4 zstd zstd/zstd_subset JITpackage Demo/Include rmm_wrap
+    # include all Source/* folders that have include/ or template/ subfolders:
     Source/apply
-    Source/context
-    Source/binaryop
+    Source/assign
     Source/builder
-    Source/mask
-    Source/element
-    Source/memory
-    Source/serialize
-    Source/get_set
-    Source/semiring
-    Source/extractTuples
+    Source/builtin
+    Source/callback
+    Source/concat
     Source/convert
     Source/ewise
-    Source/reduce
-    Source/import_export
-    Source/transpose
-    Source/select
+    Source/hyper
+    Source/jit_kernels
+    Source/math
+    Source/memory
+    Source/monoid
     Source/mxm
+    Source/ok
+    Source/omp
+    Source/print
+    Source/reduce
+    Source/select
+    Source/split
+    Source/slice
+    Source/transpose
+    Source/type
+    Source/wait
+    Source/werk
     )
-
-if ( NOT GRAPHBLAS_COMPACT )
-    # compile the FactoryKernels
-    include_directories ( FactoryKernels )
-endif ( )
 
 #-------------------------------------------------------------------------------
 # compiler options
