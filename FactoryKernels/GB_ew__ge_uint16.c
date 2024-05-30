@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "builtin/factory/GB_control.h"
+#include "GB_control.h"
 #include "ewise/GB_emult.h"
 #include "slice/GB_ek_slice.h"
 #include "assign/GB_bitmap_assign_methods.h"

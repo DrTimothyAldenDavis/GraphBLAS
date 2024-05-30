@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "builtin/factory/GB_control.h"
+#include "GB_control.h"
 #include "FactoryKernels/GB_bld__include.h"
 
 // dup operator: Tx [k] += Sx [i], no typecast here

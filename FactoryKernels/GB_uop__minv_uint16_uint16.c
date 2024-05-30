@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "builtin/factory/GB_control.h"
+#include "GB_control.h"
 #include "FactoryKernels/GB_uop__include.h"
 
 // unary operator: z = f(x)

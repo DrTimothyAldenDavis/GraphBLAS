@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "builtin/factory/GB_control.h"
+#include "GB_control.h"
 #include "mxm/GB_AxB_saxpy.h"
 #include "include/GB_unused.h"
 #include "assign/GB_bitmap_assign_methods.h"

@@ -77,6 +77,8 @@ gateway             definitions for calling methods in the CUDA folder
 
 GB.h                primary internal include file
 
+GB_control.h        controls which FactoryKernels are compiled
+
 generic             definitions for generic methods
 
 get_set             GrB_get, GrB_set

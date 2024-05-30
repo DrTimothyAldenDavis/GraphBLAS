@@ -10,7 +10,7 @@
 // C(I,J)<M> = A
 
 #include "GB.h"
-#include "builtin/factory/GB_control.h"
+#include "GB_control.h"
 #include "slice/GB_ek_slice.h"
 #include "FactoryKernels/GB_as__include.h"
 

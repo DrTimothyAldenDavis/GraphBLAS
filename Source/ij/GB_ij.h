@@ -119,7 +119,7 @@ static inline bool GB_ij_is_in_list // determine if i is in the list I
         int64_t inc = Icolon [GxB_INC] ;
         int64_t e   = Icolon [GxB_END] ;
         if (inc == 0)
-        { 
+        {
             // lo:stride:hi with stride of zero.
             // I is empty if inc is zero, so i is not in I.
             return (false) ;

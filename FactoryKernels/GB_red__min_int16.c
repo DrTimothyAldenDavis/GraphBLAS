@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "builtin/factory/GB_control.h"
+#include "GB_control.h"
 #include "FactoryKernels/GB_red__include.h"
 
 // reduction operator and type:
