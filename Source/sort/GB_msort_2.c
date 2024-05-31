@@ -360,7 +360,7 @@ GrB_Info GB_msort_2    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
     // partition and sort the leaves
     //--------------------------------------------------------------------------
 
-    GB_eslice (Slice, n, ntasks) ;
+    GB_e_slice (Slice, n, ntasks) ;
     int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (tid = 0 ; tid < ntasks ; tid++)

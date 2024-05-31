@@ -72,7 +72,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_pslice (A_slice, Ap, anvec, ntasks, false) ;
+    GB_p_slice (A_slice, Ap, anvec, ntasks, false) ;
 
     //--------------------------------------------------------------------------
     // sort the vectors

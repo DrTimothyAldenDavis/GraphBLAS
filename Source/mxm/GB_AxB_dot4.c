@@ -206,8 +206,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         GB_FREE_WORKSPACE ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_pslice (A_slice, A->p, anvec, naslice, false) ;
-    GB_pslice (B_slice, B->p, bnvec, nbslice, false) ;
+    GB_p_slice (A_slice, A->p, anvec, naslice, false) ;
+    GB_p_slice (B_slice, B->p, bnvec, nbslice, false) ;
 
     //--------------------------------------------------------------------------
     // convert C to non-iso

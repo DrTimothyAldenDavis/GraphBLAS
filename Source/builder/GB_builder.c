@@ -246,7 +246,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // Each thread handles about the same number of tuples.  This partition
     // depends only on nvals.
 
-    GB_eslice (tstart_slice, nvals, nthreads) ;
+    GB_e_slice (tstart_slice, nvals, nthreads) ;
 
     // tstart_slice [tid]: first tuple in slice tid
     // tnvec_slice [tid]: # of vectors that start in a slice.  If a vector

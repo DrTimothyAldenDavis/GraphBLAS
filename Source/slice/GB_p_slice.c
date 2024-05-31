@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_pslice: partition Ap for a set of tasks
+// GB_p_slice: partition Ap for a set of tasks
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -19,10 +19,10 @@
 #include "GB.h"
 
 //------------------------------------------------------------------------------
-// GB_pslice_worker: partition Ap for a set of tasks
+// GB_p_slice_worker: partition Ap for a set of tasks
 //------------------------------------------------------------------------------
 
-static void GB_pslice_worker
+static void GB_p_slice_worker
 (
     int64_t *restrict Slice,     // size ntasks+1
     const int64_t *restrict Ap,  // array size n+1
@@ -100,23 +100,25 @@ static void GB_pslice_worker
 
         if (tlo < t-1)
         { 
-            GB_pslice_worker (Slice, Ap, tlo, t) ;
+            GB_p_slice_worker (Slice, Ap, tlo, t) ;
         }
         if (t < thi-1)
         { 
-            GB_pslice_worker (Slice, Ap, t, thi) ;
+            GB_p_slice_worker (Slice, Ap, t, thi) ;
         }
     }
 }
 
 //------------------------------------------------------------------------------
-// GB_pslice: partition Ap for a set of tasks
+// GB_p_slice: partition Ap for a set of tasks
 //------------------------------------------------------------------------------
 
-void GB_pslice                      // slice Ap
+void GB_p_slice                      // slice Ap
 (
-    int64_t *restrict Slice,     // size ntasks+1
-    const int64_t *restrict Ap,  // array size n+1 (NULL if full or bitmap)
+    // output:
+    int64_t *restrict Slice,        // size ntasks+1
+    // input:
+    const int64_t *restrict Ap,     // array size n+1 (NULL if full or bitmap)
     const int64_t n,
     const int ntasks,               // # of tasks
     const bool perfectly_balanced
@@ -146,7 +148,7 @@ void GB_pslice                      // slice Ap
         // A is full or bitmap: slice 0:n equally for all tasks
         //----------------------------------------------------------------------
 
-        GB_eslice (Slice, n, ntasks) ;
+        GB_e_slice (Slice, n, ntasks) ;
 
     }
     else
@@ -190,7 +192,7 @@ void GB_pslice                      // slice Ap
                 // this is much faster, and results in good load balancing if
                 // there is more than one task per thread, and dynamic
                 // scheduling is used.
-                GB_pslice_worker (Slice, Ap, 0, ntasks) ;
+                GB_p_slice_worker (Slice, Ap, 0, ntasks) ;
             }
         }
     }

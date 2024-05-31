@@ -24,6 +24,20 @@
 
 #include "slice/GB_ek_slice.h"
 
+#if 0
+#define GB_CALLBACK_EK_SLICE_MERGE1_PROTO(GX_ek_slice_merge1)               \
+void GX_ek_slice_merge1     /* merge column counts for the matrix C */      \
+(                                                                           \
+    /* input/output: */                                                     \
+    int64_t *restrict Cp,               /* column counts */                 \
+    /* input: */                                                            \
+    const int64_t *restrict Wfirst,     /* size A_ntasks */                 \
+    const int64_t *restrict Wlast,      /* size A_ntasks */                 \
+    const int64_t *A_ek_slicing,        /* size 3*A_ntasks+1 */             \
+    const int A_ntasks                  /* # of tasks */                    \
+)
+#endif
+
 GB_CALLBACK_EK_SLICE_MERGE1_PROTO (GB_ek_slice_merge1)
 {
     const int64_t *restrict kfirst_Aslice = A_ek_slicing ;

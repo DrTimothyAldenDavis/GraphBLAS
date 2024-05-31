@@ -189,7 +189,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GB_pslice (A_slice, A->p, A->nvec, nfine_tasks_per_vector, true) ;
+        GB_p_slice (A_slice, A->p, A->nvec, nfine_tasks_per_vector, true) ;
 
         if (!use_atomics)
         { 
