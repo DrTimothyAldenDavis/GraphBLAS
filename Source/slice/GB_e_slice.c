@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_eslice: equal partition of e items to each task 
+// GB_e_slice: equal partition of e items to each task 
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -12,7 +12,7 @@
 
 #include "GB.h"
 
-void GB_eslice
+void GB_e_slice
 (
     int64_t *Slice,         // array of size ntasks+1
     int64_t e,              // number items to partition amongst the tasks

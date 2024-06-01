@@ -154,7 +154,7 @@ GrB_Info GB_AxB_dot3_slice
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_pslice (Coarse, Cwork, cnz, ntasks1, false) ;
+    GB_p_slice (Coarse, Cwork, cnz, ntasks1, false) ;
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine

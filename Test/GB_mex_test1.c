@@ -749,11 +749,11 @@ void mexFunction
     GB_Global_hack_set (1, save1) ; CHECK (GB_Global_hack_get (1) == save1) ;
 
     //--------------------------------------------------------------------------
-    // GB_pslice
+    // GB_p_slice
     //--------------------------------------------------------------------------
 
     int64_t Slice [30] ;
-    GB_pslice (Slice, NULL, 0, 4, true) ;
+    GB_p_slice (Slice, NULL, 0, 4, true) ;
     for (int t = 0 ; t < 4 ; t++) CHECK (Slice [t] == 0) ;
 
     //--------------------------------------------------------------------------

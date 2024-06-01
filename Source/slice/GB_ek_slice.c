@@ -25,6 +25,18 @@
 #include "slice/GB_ek_slice.h"
 #include "slice/factory/GB_ek_slice_search.c"
 
+#if 0
+#define GB_CALLBACK_EK_SLICE_PROTO(GX_ek_slice)                             \
+void GX_ek_slice            /* slice a matrix */                            \
+(                                                                           \
+    /* output: */                                                           \
+    int64_t *restrict A_ek_slicing, /* size 3*ntasks+1 */                   \
+    /* input: */                                                            \
+    GrB_Matrix A,                   /* matrix to slice */                   \
+    int ntasks                      /* # of tasks */                        \
+)
+#endif
+
 GB_CALLBACK_EK_SLICE_PROTO (GB_ek_slice)
 {
 
@@ -77,7 +89,7 @@ GB_CALLBACK_EK_SLICE_PROTO (GB_ek_slice)
     //--------------------------------------------------------------------------
 
     // FUTURE: this can be done in parallel if there are many tasks
-    GB_eslice (pstart_slice, anz, ntasks) ;
+    GB_e_slice (pstart_slice, anz, ntasks) ;
 
     //--------------------------------------------------------------------------
     // find the first and last vectors in each slice

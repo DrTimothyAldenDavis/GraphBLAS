@@ -168,7 +168,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
                 GB_FREE_ALL ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
-            GB_pslice (A_slice, A->p, A->nvec, nfine_tasks_per_vector, true) ;
+            GB_p_slice (A_slice, A->p, A->nvec, nfine_tasks_per_vector, true) ;
         }
 
         //----------------------------------------------------------------------

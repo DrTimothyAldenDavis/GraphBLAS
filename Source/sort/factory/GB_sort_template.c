@@ -541,7 +541,7 @@ static void GB_SORT (vector)    // sort the pair of arrays A_0, A_1
     // partition and sort the leaves
     //--------------------------------------------------------------------------
 
-    GB_eslice (Slice, n, ntasks) ;
+    GB_e_slice (Slice, n, ntasks) ;
     int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (tid = 0 ; tid < ntasks ; tid++)
@@ -731,7 +731,7 @@ static GrB_Info GB_SORT (matrix)
     int64_t *restrict C_skip  = SortTasks + ntasks ;         // size ntasks+1
     int64_t *restrict C_slice = SortTasks + 2*ntasks + 1;    // size ntasks+1
 
-    GB_pslice (C_slice, Cp, cnvec, ntasks, false) ;
+    GB_p_slice (C_slice, Cp, cnvec, ntasks, false) ;
 
     // sort all short vectors in parallel, one thread per vector
     int tid ;
