@@ -87,7 +87,7 @@ global              global variables and the routines for accessing them
 
 helper              methods used in MATLAB/Octave @GrB interface only
 
-hyper               methods hypersparse matrices
+hyper               methods for hypersparse matrices
 
 ij                  determining properities of I and J index lists for
                     GrB_extract, GrB_assign, and GxB_subassign
