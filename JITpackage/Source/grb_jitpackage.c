@@ -297,5 +297,6 @@ int main (int argc, char **argv)
     fclose (fp) ;
     free (Uncompressed_size) ;
     free (Compressed_size) ;
+    return (0) ;
 }
 
