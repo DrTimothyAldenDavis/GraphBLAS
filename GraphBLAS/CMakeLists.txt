@@ -264,6 +264,9 @@ endif ( )
 
 # get the current library list
 get_target_property ( GB_CMAKE_LIBRARIES graphblas_matlab LINK_LIBRARIES )
+if ( NOT GB_CMAKE_LIBRARIES )
+    set ( GB_CMAKE_LIBRARIES "" )
+endif ( )
 
 #-------------------------------------------------------------------------------
 # determine complex type
