@@ -52,10 +52,10 @@ void mexFunction
         char compiler [2048] ;
         int32_t cver [3] ;
         int32_t have_openmp ;
-        OK (GrB_Global_get_SIZE (GrB_Global, &len, GxB_COMPILER_NAME)) ;
-        OK (GrB_Global_get_String (GrB_Global, compiler, GxB_COMPILER_NAME)) ;
-        OK (GrB_Global_get_VOID (GrB_Global, (void *) cver, GxB_COMPILER_VERSION)) ;
-        OK (GrB_Global_get_INT32 (GrB_Global, &have_openmp, GxB_LIBRARY_OPENMP)) ;
+//      OK (GrB_Global_get_SIZE (GrB_GLOBAL, &len, GxB_COMPILER_NAME)) ;
+        OK (GrB_Global_get_String (GrB_GLOBAL, compiler, GxB_COMPILER_NAME)) ;
+        OK (GrB_Global_get_VOID (GrB_GLOBAL, (void *) cver, GxB_COMPILER_VERSION)) ;
+        OK (GrB_Global_get_INT32 (GrB_GLOBAL, &have_openmp, GxB_LIBRARY_OPENMP)) ;
         printf ("GraphBLAS compiled with %s (v%d.%d.%d), %s OpenMP\n", compiler,
             cver [0], cver [1], cver [2],
             have_openmp ? "with" : "without") ;
