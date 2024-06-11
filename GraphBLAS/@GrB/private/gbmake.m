@@ -54,7 +54,7 @@ if ispc
     % First do the following in GraphBLAS/build, in the Windows console:
     %
     %   cmake ..
-    %   devenv graphblas.sln /build "release|x64" /project graphblas
+    %   cmake --build . --config Release
     %
     % The above commands require MS Visual Studio.  The graphblas.lib is
     % compiled and placed in GraphBLAS/build/Release.  Then in the

@@ -113,7 +113,14 @@ bool match_prefix (char *string, char *prefix)
 // grb_prepackage main program
 //------------------------------------------------------------------------------
 
-#define OK(x) if (!(x)) { fprintf (stderr, "Error line %d\n", __LINE__) ; abort ( ) ; }
+#define OK(x)                                                               \
+{                                                                           \
+    if (!(x))                                                               \
+    {                                                                       \
+        fprintf (stderr, "grb_jitpackage.c: error line %d\n", __LINE__) ;   \
+        abort ( ) ;                                                         \
+    }                                                                       \
+}
 
 int main (int argc, char **argv)
 {
@@ -224,7 +231,7 @@ int main (int argc, char **argv)
         //----------------------------------------------------------------------
 
 //      fprintf (stderr, "k: %zu file: %s\n", k, file_list [k]) ;
-        FILE *ff = fopen (file_list [k], "rb") ;
+        FILE *ff = fopen (file_list [k], "rb") ; // open as binary, for Windows
         OK (ff != NULL) ;
         fseek (ff, 0, SEEK_END) ;
         size_t inputsize = ftell (ff) ;
