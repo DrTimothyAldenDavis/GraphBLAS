@@ -7,13 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-
-#ifdef GBMATLAB
-#include "GB_rename.h"
-#endif
+#include "GraphBLAS.h"
 
 typedef struct
 {
@@ -24,6 +18,6 @@ typedef struct
 }
 GB_JITpackage_index_struct ;
 
-extern int GB_JITpackage_nfiles ;
-extern GB_JITpackage_index_struct GB_JITpackage_index [ ] ;
+GB_GLOBAL int GB_JITpackage_nfiles ;
+GB_GLOBAL GB_JITpackage_index_struct GB_JITpackage_index [ ] ;
 
