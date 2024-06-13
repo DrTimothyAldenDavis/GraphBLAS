@@ -41,8 +41,8 @@ if ( NOT BUILD_SHARED_LIBS )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-# set ( GRAPHBLAS_USE_CUDA OFF )
-  set ( GRAPHBLAS_USE_CUDA ON )     # FIXME: use this for CUDA development
+  set ( GRAPHBLAS_USE_CUDA OFF )
+# set ( GRAPHBLAS_USE_CUDA ON )     # FIXME: use this for CUDA development
 
 include ( SuiteSparsePolicy )
 
@@ -409,13 +409,13 @@ if ( NOT NO_LIBM )
 endif ( )
 
 # libdl
-if ( NOT WIN32 )
+if ( NOT "${CMAKE_DL_LIBS}" STREQUAL "" )
     if ( BUILD_SHARED_LIBS )
-        target_link_libraries ( GraphBLAS PRIVATE dl )
+        target_link_libraries ( GraphBLAS PRIVATE ${CMAKE_DL_LIBS} )
     endif ( )
     if ( BUILD_STATIC_LIBS )
-        list ( APPEND GRAPHBLAS_STATIC_LIBS "dl" )
-        target_link_libraries ( GraphBLAS_static PUBLIC dl )
+        list ( APPEND GRAPHBLAS_STATIC_LIBS ${CMAKE_DL_LIBS} )
+        target_link_libraries ( GraphBLAS_static PUBLIC ${CMAKE_DL_LIBS} )
     endif ( )
 endif ( )
 
