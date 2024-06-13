@@ -5,48 +5,8 @@ using namespace cooperative_groups ;
 
 #include "GB_cuda_atomics.cuh"
 
-__device__ __inline__ uint64_t GB_cuda_tile_sum_uint64
-(
-    thread_block_tile<tile_sz> tile,
-    uint64_t value
-)
-{
+#include "GB_cuda_tile_sum_uint64.cuh"
 
-    //--------------------------------------------------------------------------
-    // sum value on all threads to a single value
-    //--------------------------------------------------------------------------
-
-    #if (tile_sz == 32)
-    {
-        // this is the typical case
-        value += tile.shfl_down (value, 16) ;
-        value += tile.shfl_down (value,  8) ;
-        value += tile.shfl_down (value,  4) ;
-        value += tile.shfl_down (value,  2) ;
-        value += tile.shfl_down (value,  1) ;
-    }
-    #else
-    {
-        // tile_sz is less than 32 (either 1, 2, 4, 8, or 16)
-        #pragma unroll
-        for (int offset = tile_sz >> 1 ; offset > 0 ; offset >>= 1)
-        {
-            value += tile.shfl_down (value, offset) ;
-        }
-    }
-    #endif
-
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
-
-    // Note that only thread 0 will have the full summation of all values in
-    // the tile.  To broadcast it to all threads, use the following:
-
-    // value = tile.shfl (value, 0) ;
-
-    return (value) ;
-}
 
 #include "GB_cuda_threadblock_sum_uint64.cuh"
 
