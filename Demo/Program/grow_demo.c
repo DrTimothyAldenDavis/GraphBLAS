@@ -24,8 +24,15 @@
 #define FREE_ALL                            \
     GrB_Matrix_free (&A) ;                  \
     GrB_Matrix_free (&C) ;                  \
+    GrB_Matrix_free (&T) ;                  \
     GrB_Vector_free (&w) ;                  \
     GrB_finalize ( ) ;
+
+#if defined ( _OPENMP )
+#define WALLCLOCK omp_get_wtime ( )
+#else
+#define WALLCLOCK 0
+#endif
 
 int main (int argc, char **argv)
 {
@@ -33,7 +40,7 @@ int main (int argc, char **argv)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A = NULL, C = NULL ;
+    GrB_Matrix A = NULL, C = NULL, T = NULL ;
     GrB_Vector w = NULL ;
     GrB_Info info ;
 
@@ -47,7 +54,7 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
 
     OK (get_matrix (&A, argc, argv, false, false, false)) ;
-    GrB_Index anrows, ancols, anvals ;
+    GrB_Index anrows, ancols, anvals, cnvals, tnvals ;
     OK (GrB_Matrix_nrows (&anrows, A)) ;
     OK (GrB_Matrix_ncols (&ancols, A)) ;
     OK (GrB_Matrix_nvals (&anvals, A)) ;
@@ -57,22 +64,23 @@ int main (int argc, char **argv)
     GrB_Type atype = NULL ;
     OK (GxB_print (A, 5)) ;
     printf ("type_code: %d\n", type_code) ;
+    GrB_BinaryOp eq ;
 
     switch (type_code)
     {
-        case GrB_BOOL_CODE   : atype = GrB_BOOL    ; break ;
-        case GrB_INT8_CODE   : atype = GrB_INT8    ; break ;
-        case GrB_UINT8_CODE  : atype = GrB_UINT8   ; break ;
-        case GrB_INT16_CODE  : atype = GrB_INT16   ; break ;
-        case GrB_UINT16_CODE : atype = GrB_UINT16  ; break ;
-        case GrB_INT32_CODE  : atype = GrB_INT32   ; break ;
-        case GrB_UINT32_CODE : atype = GrB_UINT32  ; break ;
-        case GrB_INT64_CODE  : atype = GrB_INT64   ; break ;
-        case GrB_UINT64_CODE : atype = GrB_UINT64  ; break ;
-        case GrB_FP32_CODE   : atype = GrB_FP32    ; break ;
-        case GrB_FP64_CODE   : atype = GrB_FP64    ; break ;
-        case GxB_FC32_CODE   : atype = GxB_FC32    ; break ;
-        case GxB_FC64_CODE   : atype = GxB_FC64    ; break ;
+        case GrB_BOOL_CODE   : atype = GrB_BOOL   ; eq = GrB_EQ_BOOL   ; break ;
+        case GrB_INT8_CODE   : atype = GrB_INT8   ; eq = GrB_EQ_INT8   ; break ;
+        case GrB_UINT8_CODE  : atype = GrB_UINT8  ; eq = GrB_EQ_UINT8  ; break ;
+        case GrB_INT16_CODE  : atype = GrB_INT16  ; eq = GrB_EQ_INT16  ; break ;
+        case GrB_UINT16_CODE : atype = GrB_UINT16 ; eq = GrB_EQ_UINT16 ; break ;
+        case GrB_INT32_CODE  : atype = GrB_INT32  ; eq = GrB_EQ_INT32  ; break ;
+        case GrB_UINT32_CODE : atype = GrB_UINT32 ; eq = GrB_EQ_UINT32 ; break ;
+        case GrB_INT64_CODE  : atype = GrB_INT64  ; eq = GrB_EQ_INT64  ; break ;
+        case GrB_UINT64_CODE : atype = GrB_UINT64 ; eq = GrB_EQ_UINT64 ; break ;
+        case GrB_FP32_CODE   : atype = GrB_FP32   ; eq = GrB_EQ_FP32   ; break ;
+        case GrB_FP64_CODE   : atype = GrB_FP64   ; eq = GrB_EQ_FP64   ; break ;
+        case GxB_FC32_CODE   : atype = GxB_FC32   ; eq = GxB_EQ_FC32   ; break ;
+        case GxB_FC64_CODE   : atype = GxB_FC64   ; eq = GxB_EQ_FC64   ; break ;
         default              : ;
     }
 
@@ -91,27 +99,58 @@ int main (int argc, char **argv)
     OK (GrB_set (C, GxB_HYPERSPARSE, GxB_SPARSITY_CONTROL)) ;
     OK (GrB_set (w, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
     printf ("\n\nC empty:\n") ;
-    OK (GxB_print (C, 2)) ;
+    OK (GxB_print (C, 1)) ;
+
+    double t, tt [4] = {0, 0, 0} ;
+    tt [0] = WALLCLOCK ;
 
     for (int64_t i = 0 ; i < anrows ; i++)
     {
-        printf ("\n\ni = %ld\n", i) ;
+        // printf ("\n\ni = %ld\n", i) ;
 
-        // w = A (i,:)
+        // w = A (:,i), using A' via the descriptor
+        t = WALLCLOCK ;
         OK (GrB_Col_extract (w, NULL, NULL, A, GrB_ALL, ancols, i,
             GrB_DESC_T0)) ;
-        // OK (GxB_print (w, 2)) ;
+        tt [1] += (WALLCLOCK - t) ;
+        // OK (GxB_print (w, 3)) ;
 
         // C (i,:) = w
+        t = WALLCLOCK ;
         OK (GrB_Row_assign (C, NULL, NULL, w, i, GrB_ALL, ancols, NULL)) ;
+        tt [2] += (WALLCLOCK - t) ;
 
         // ensure C is finished
+        t = WALLCLOCK ;
         OK (GrB_wait (C, GrB_MATERIALIZE)) ;
+        tt [3] += (WALLCLOCK - t) ;
+        // OK (GxB_print (C, 1)) ;
     }
+
+    tt [0] = WALLCLOCK - tt [0] ;
+    printf ("total time: %g\n", tt [0]) ;
+    printf ("extract:    %g\n", tt [1]) ;
+    printf ("assign:     %g\n", tt [2]) ;
+    printf ("wait:       %g\n", tt [3]) ;
 
     OK (GrB_set (GrB_GLOBAL, false, GxB_BURBLE)) ;
     OK (GxB_print (C, 2)) ;
+
+    // check to see if A and C are equal
+    OK (GrB_Matrix_nvals (&cnvals, C)) ;
+    CHECK (anvals == cnvals, GrB_PANIC) ;
+
+    OK (GrB_Matrix_new (&T, GrB_BOOL, anrows, ancols)) ;
+    OK (GrB_eWiseMult (T, NULL, NULL, eq, A, C, NULL)) ;
+    OK (GxB_print (T, 2)) ;
+    OK (GrB_Matrix_nvals (&tnvals, T)) ;
+    CHECK (anvals == tnvals, GrB_PANIC) ;
+    bool ok = true ;
+    OK (GrB_reduce (&ok, NULL, GrB_LAND_MONOID_BOOL, T, NULL)) ;
+    CHECK (ok, GrB_PANIC) ;
+
     FREE_ALL ;
+    printf ("grow_demo: all tests passed\n") ;
     return (0) ;
 }
 
