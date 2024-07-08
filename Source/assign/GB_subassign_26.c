@@ -31,7 +31,7 @@ GrB_Info GB_subassign_26
 (
     GrB_Matrix C,
     // input:
-    const int64_t j,
+    const int64_t j,        // FUTURE: could handle jlo:jhi
     const GrB_Matrix A,
     GB_Werk Werk
 )
@@ -46,7 +46,7 @@ GrB_Info GB_subassign_26
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
     ASSERT (!GB_PENDING (A)) ;          // FUTURE: could tolerate pending tuples
     ASSERT (!GB_ZOMBIES (A)) ;          // FUTURE: could tolerate zombies
-    ASSERT (A->vdim == 1) ;             // A is a single vector
+    ASSERT (A->vdim == 1) ;             // FUTURE: could handle A as a matrix
     ASSERT (A->type == C->type) ;       // no typecasting
     ASSERT (!A->iso) ;                  // FUTURE: handle iso case
     ASSERT (!C->iso) ;                  // FUTURE: handle iso case
@@ -64,7 +64,6 @@ GrB_Info GB_subassign_26
     int64_t *restrict Ai = A->i ;
     GB_void *restrict Ax = (GB_void *) A->x ;
     int64_t anz = A->nvals ;
-    printf ("\nmethod26: cnvec %ld cnz %ld anz %ld\n", cnvec, cnz, anz) ;
 
     //--------------------------------------------------------------------------
     // Method 26: C(:,j) = A ; append column, no S.
@@ -81,16 +80,14 @@ GrB_Info GB_subassign_26
     if (cnvec == C->plen)
     {
         // double the size of C->h and C->p if needed
-        printf ("double Ch and Cp\n") ;
         GB_OK (GB_hyper_realloc (C, GB_IMIN (C->vdim, 2*(C->plen+1)), Werk)) ;
     }
 
-    printf ("cnz_new %ld nnz max %ld\n", cnz_new, GB_nnz_max (C)) ;
+    // printf ("cnz_new %ld nnz max %ld\n", cnz_new, GB_nnz_max (C)) ;
 
     if (cnz_new > GB_nnz_max (C))
     {
         // double the size of C->i and C->x if needed
-        printf ("double Ci and Cx\n") ;
         GB_OK (GB_ix_realloc (C, 2*cnz_new + 1)) ;
     }
 
@@ -115,27 +112,20 @@ GrB_Info GB_subassign_26
 
     C->jumbled = C->jumbled || A->jumbled ;
 
-    memcpy (Ci + cnz, Ai, anz * sizeof (int64_t)) ;
-    memcpy (Cx + cnz * csize, Ax, anz * csize) ;
-
-#if 0
-    // determine the # of threads to use for the memcpy
-    int nthreads ;
-    if (anz <= GB_MEM_CHUNK)
+    // copy the indices and values
+    if (anz * (sizeof (int64_t) + csize) <= GB_MEM_CHUNK)
     {
-        nthreads = 1 ;
+        memcpy (Ci + cnz, Ai, anz * sizeof (int64_t)) ;
+        memcpy (Cx + cnz * csize, Ax, anz * csize) ;
     }
     else
     {
         int nthreads_max = GB_Context_nthreads_max ( ) ;
         double chunk = GB_Context_chunk ( ) ;
-        nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
+        int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
+        GB_memcpy (Ci + cnz, Ai, anz * sizeof (int64_t), nthreads) ;
+        GB_memcpy (Cx + cnz * csize, Ax, anz * csize, nthreads) ;
     }
-
-    // copy the indices and values
-    GB_memcpy (Ci + cnz, Ai, anz, nthreads) ;
-    GB_memcpy (Cx + cnz * csize, Ax, anz * csize, nthreads) ;
-#endif
 
     //--------------------------------------------------------------------------
     // finalize the matrix and return result
