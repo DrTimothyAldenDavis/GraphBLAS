@@ -122,10 +122,9 @@ static void gb_argminmax
     // 1-based.  The ANY monoid would be faster, but this uses MIN so that the
     // result for the user is repeatable.
 
-    #if 0
+    #if 1
         // p = G*y or G'*y using the MIN_SECONDI semiring
         // this is faster than the method below
-        printf ("with 2ndi\n") ;
         OK (GrB_mxm (*p, NULL, NULL, GxB_MIN_SECONDI1_INT64, G, y, desc)) ;
     #else
         printf ("without 2ndi\n") ;
