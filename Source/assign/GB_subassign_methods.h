@@ -576,7 +576,7 @@ GrB_Info GB_subassign_26
 (
     GrB_Matrix C,
     // input:
-    const int64_t j,
+    const int64_t Jcolon [3],       // j1:j2, with an increment of 1
     const GrB_Matrix A,
     GB_Werk Werk
 ) ;

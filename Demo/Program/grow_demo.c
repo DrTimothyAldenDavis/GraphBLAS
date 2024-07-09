@@ -19,15 +19,6 @@
 #include "import_test.c"
 #include "read_matrix.c"
 
-// macro used by OK(...) to free workspace if an error occurs
-#undef  FREE_ALL
-#define FREE_ALL                            \
-    GrB_Matrix_free (&A) ;                  \
-    GrB_Matrix_free (&C) ;                  \
-    GrB_Matrix_free (&T) ;                  \
-    GrB_Vector_free (&w) ;                  \
-    GrB_finalize ( ) ;
-
 #include "omp.h"
 #if defined ( _OPENMP )
 #define WALLCLOCK omp_get_wtime ( )
@@ -35,13 +26,48 @@
 #define WALLCLOCK 0
 #endif
 
+// macro used by OK(...) to free workspace if an error occurs
+#undef  FREE_ALL
+#define FREE_ALL                            \
+    GrB_Matrix_free (&A) ;                  \
+    GrB_Matrix_free (&C) ;                  \
+    GrB_Matrix_free (&T) ;                  \
+    GrB_Matrix_free (&W) ;                  \
+    GrB_Vector_free (&w) ;                  \
+
+GrB_Info check_result (GrB_Matrix A1, GrB_Matrix C1, GrB_BinaryOp eq) ;
+GrB_Info check_result (GrB_Matrix A1, GrB_Matrix C1, GrB_BinaryOp eq)
+{
+    double t = WALLCLOCK ;
+    GrB_Info info ;
+    GrB_Matrix A = NULL, C = NULL, T = NULL, W = NULL ;
+    GrB_Vector w = NULL ;
+    GrB_Index anvals, cnvals, tnvals, anrows, ancols ;
+    OK (GrB_Matrix_nrows (&anrows, A1)) ;
+    OK (GrB_Matrix_ncols (&ancols, A1)) ;
+    OK (GrB_Matrix_nvals (&anvals, A1)) ;
+    OK (GrB_Matrix_nvals (&cnvals, C1)) ;
+    CHECK (anvals == cnvals, GrB_PANIC) ;
+    OK (GrB_Matrix_new (&T, GrB_BOOL, anrows, ancols)) ;
+    OK (GrB_eWiseMult (T, NULL, NULL, eq, A1, C1, NULL)) ;
+    // OK (GxB_print (T, 2)) ;
+    OK (GrB_Matrix_nvals (&tnvals, T)) ;
+    CHECK (anvals == tnvals, GrB_PANIC) ;
+    bool ok = true ;
+    OK (GrB_reduce (&ok, NULL, GrB_LAND_MONOID_BOOL, T, NULL)) ;
+    CHECK (ok, GrB_PANIC) ;
+    t = (WALLCLOCK - t) ;
+    FREE_ALL ;
+    printf ("A and C match, time %g\n", t) ;
+}
+
 int main (int argc, char **argv)
 {
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A = NULL, C = NULL, T = NULL ;
+    GrB_Matrix A = NULL, C = NULL, T = NULL, W = NULL ;
     GrB_Vector w = NULL ;
     GrB_Info info ;
 
@@ -55,10 +81,9 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
 
     OK (get_matrix (&A, argc, argv, false, false, false)) ;
-    GrB_Index anrows, ancols, anvals, cnvals, tnvals ;
+    GrB_Index anrows, ancols ;
     OK (GrB_Matrix_nrows (&anrows, A)) ;
     OK (GrB_Matrix_ncols (&ancols, A)) ;
-    OK (GrB_Matrix_nvals (&anvals, A)) ;
 
     int type_code ;
     OK (GrB_Matrix_get_INT32 (A, &type_code, GrB_EL_TYPE_CODE)) ;
@@ -85,7 +110,7 @@ int main (int argc, char **argv)
         default              : ;
     }
 
-    OK (GxB_print (atype, 5)) ;
+    // OK (GxB_print (atype, 5)) ;
     CHECK (atype != NULL, GrB_INVALID_VALUE) ;
     OK (GxB_print (A, 1)) ;
 
@@ -102,7 +127,7 @@ int main (int argc, char **argv)
     // printf ("\n\nC empty:\n") ;
     // OK (GxB_print (C, 1)) ;
 
-    double t, tt [4] = {0, 0, 0} ;
+    double t, tt [4] = {0, 0, 0, 0}, t2 [4] = {0, 0, 0, 0} ;
     tt [0] = WALLCLOCK ;
 
     for (int64_t i = 0 ; i < anrows ; i++)
@@ -128,28 +153,91 @@ int main (int argc, char **argv)
         // OK (GxB_print (C, 1)) ;
     }
 
-    // OK (GrB_set (GrB_GLOBAL, false, GxB_BURBLE)) ;
-    OK (GxB_print (C, 1)) ;
+    OK (GrB_set (GrB_GLOBAL, false, GxB_BURBLE)) ;
+    // OK (GxB_print (C, 1)) ;
 
     tt [0] = WALLCLOCK - tt [0] ;
+    printf ("one row at a time:\n") ;
     printf ("total time: %g\n", tt [0]) ;
     printf ("extract:    %g\n", tt [1]) ;
     printf ("assign:     %g\n", tt [2]) ;
     printf ("wait:       %g\n", tt [3]) ;
 
     // check to see if A and C are equal
-    OK (GrB_Matrix_nvals (&cnvals, C)) ;
-    CHECK (anvals == cnvals, GrB_PANIC) ;
+    OK (check_result (A, C, eq)) ;
 
-    OK (GrB_Matrix_new (&T, GrB_BOOL, anrows, ancols)) ;
-    OK (GrB_eWiseMult (T, NULL, NULL, eq, A, C, NULL)) ;
-    // OK (GxB_print (T, 2)) ;
-    OK (GrB_Matrix_nvals (&tnvals, T)) ;
-    CHECK (anvals == tnvals, GrB_PANIC) ;
-    bool ok = true ;
-    OK (GrB_reduce (&ok, NULL, GrB_LAND_MONOID_BOOL, T, NULL)) ;
-    CHECK (ok, GrB_PANIC) ;
+    //--------------------------------------------------------------------------
+    // C = A, multiple rows at a time
+    //--------------------------------------------------------------------------
 
+    // OK (GrB_set (GrB_GLOBAL, true, GxB_BURBLE)) ;
+    GrB_Matrix_free (&C) ;
+    OK (GrB_Matrix_new (&C, atype, anrows, ancols)) ;
+    OK (GrB_set (C, GxB_HYPERSPARSE, GxB_SPARSITY_CONTROL)) ;
+
+    t2 [0] = WALLCLOCK ;
+    int64_t i1 = 0 ;
+    int64_t ilast = anrows - 1 ;
+    while (i1 <= ilast)
+    {
+        // determine the rows i1:i2 of A to append
+        int64_t irows = (ilast - i1) / 2 ;
+        if (irows == 0) irows = 1 ;
+        int64_t i2 = i1 + irows - 1 ;
+        if (i2 > ilast) i2 = ilast ;
+        irows = i2 - i1 + 1 ;
+        // printf ("i1: %ld i2: %ld irows %ld ilast: %ld\n",
+        //     i1, i2, irows, ilast) ;
+
+        // W = A (i1:i2,:)
+        t = WALLCLOCK ;
+        OK (GrB_Matrix_new (&W, atype, irows, ancols)) ;
+        OK (GrB_set (W, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
+        GrB_Index Icolon [3] ;
+        Icolon [GxB_BEGIN] = i1 ;
+        Icolon [GxB_INC  ] = 1 ;
+        Icolon [GxB_END  ] = i2 ;
+        // OK (GxB_print (W, 3)) ;
+        info = GrB_extract (W, NULL, NULL, A, Icolon, GxB_RANGE,
+            GrB_ALL, ancols, NULL) ;
+        // printf ("got here: %d\n", info) ;
+        OK (info) ;
+        t2 [1] += (WALLCLOCK - t) ;
+        // OK (GxB_print (W, 3)) ;
+
+        // C (i1:i2,:) = W
+        t = WALLCLOCK ;
+        OK (GrB_assign (C, NULL, NULL, W, Icolon, GxB_RANGE, GrB_ALL, ancols,
+            NULL)) ;
+        t2 [2] += (WALLCLOCK - t) ;
+
+        // ensure C is finished
+        t = WALLCLOCK ;
+        OK (GrB_wait (C, GrB_MATERIALIZE)) ;
+        t2 [3] += (WALLCLOCK - t) ;
+        // OK (GxB_print (C, 1)) ;
+
+        GrB_Matrix_free (&W) ;
+
+        i1 += irows ;
+    }
+    OK (GrB_set (GrB_GLOBAL, false, GxB_BURBLE)) ;
+
+    t2 [0] = WALLCLOCK - t2 [0] ;
+    printf ("\nmany rows at a time:\n") ;
+    printf ("total time: %g\n", t2 [0]) ;
+    printf ("extract:    %g\n", t2 [1]) ;
+    printf ("assign:     %g\n", t2 [2]) ;
+    printf ("wait:       %g\n", t2 [3]) ;
+
+    // check to see if A and C are equal
+    OK (check_result (A, C, eq)) ;
+
+    //--------------------------------------------------------------------------
+    // C = A, using dup (1 threads and all threads)
+    //--------------------------------------------------------------------------
+
+    printf ("\nsingle call to dup:\n") ;
     for (int trial = 1 ; trial <= 2 ; trial++)
     {
         int threads ;
@@ -162,8 +250,9 @@ int main (int argc, char **argv)
         GrB_set (GrB_GLOBAL, (int) 1, GxB_GLOBAL_NTHREADS) ;
     }
 
-    FREE_ALL ;
     printf ("grow_demo: all tests passed\n") ;
+    FREE_ALL ;
+    GrB_finalize ( ) ;
     return (0) ;
 }
 

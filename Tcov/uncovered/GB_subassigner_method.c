@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "assign/GB_subassign.h"
+#include "GB_subassign.h"
 
 int GB_subassigner_method           // return method to use in GB_subassigner
 (
@@ -76,12 +76,14 @@ int GB_subassigner_method           // return method to use in GB_subassigner
     {
         // C(:,:) = x or A:  whole matrix assignment with no mask
         if (scalar_expansion)
-        { 
+        {   GB_cov[2936]++ ;
+// covered (2936): 44414
             // Method 21: C(:,:) = x
             C_splat_scalar = true ;
         }
         else
-        { 
+        {   GB_cov[2937]++ ;
+// covered (2937): 25095
             // Method 24: C(:,:) = A
             C_splat_matrix = true ;
         }
@@ -91,7 +93,8 @@ int GB_subassigner_method           // return method to use in GB_subassigner
     bool C_dense_update = false ;
     if (C_is_full && whole_C_matrix && no_mask && (accum != NULL)
             && (ctype == accum->ztype) && (ctype == accum->xtype))
-    { 
+    {   GB_cov[2938]++ ;
+// covered (2938): 79784
         // C(:,:) += x or A, where C is full, no typecasting of C
         C_dense_update = true ;
     }
@@ -155,7 +158,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
         //  -   -   -   -   -   S       01:  C(I,J) = x, with S
         //  -   -   -   -   A   S       02:  C(I,J) = A, with S
-        //  -   -   -   -   A   -       26:  C(:,j1:j2) = A, append cols, no S
+        //  -   -   -   -   A   -       26:  C(:,j) = A, append column, no S
         //  -   -   -   +   -   S       03:  C(I,J) += x, with S
         //  -   -   -   +   A   S       04:  C(I,J) += A, with S
         //  -   -   r                        uses methods 01, 02, 03, 04
@@ -211,7 +214,8 @@ int GB_subassigner_method           // return method to use in GB_subassigner
     bool S_Extraction ;
 
     if (C_splat_scalar)
-    { 
+    {   GB_cov[2939]++ ;
+// covered (2939): 44414
 
         //----------------------------------------------------------------------
         // C = x where x is a scalar; C becomes full
@@ -235,7 +239,8 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
     }
     else if (C_splat_matrix)
-    { 
+    {   GB_cov[2940]++ ;
+// covered (2940): 25095
 
         //----------------------------------------------------------------------
         // C = A
@@ -279,12 +284,14 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
         S_Extraction = false ;              // S is not used
         if (scalar_expansion)
-        { 
+        {   GB_cov[2941]++ ;
+// covered (2941): 4590
             // Method 22: C(:,:) += x where C is full
             subassign_method = GB_SUBASSIGN_METHOD_22 ;
         }
         else
-        { 
+        {   GB_cov[2942]++ ;
+// covered (2942): 75194
             // Method 23: C(:,:) += A where C is full
             subassign_method = GB_SUBASSIGN_METHOD_23 ;
         }
@@ -314,29 +321,34 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         if (accum == NULL)
         {
             if (C_is_M && whole_C_matrix && Mask_struct)
-            { 
+            {   GB_cov[2943]++ ;
+// covered (2943): 5080
                 // Method 05f: C(:,:)<C,s> = scalar ; no S ; C == M ; M struct
                 subassign_method = GB_SUBASSIGN_METHOD_05f ;
             }
             else if (C_is_empty && whole_C_matrix && Mask_struct)
-            { 
+            {   GB_cov[2944]++ ;
+// covered (2944): 599
                 // Method 05e: C(:,:)<M,s> = scalar ; no S; C empty, M struct
                 subassign_method = GB_SUBASSIGN_METHOD_05e ;
             }
             else if (C_is_full && whole_C_matrix)
-            { 
+            {   GB_cov[2945]++ ;
+// covered (2945): 235
                 // Method 05d: C(:,:)<M> = scalar ; no S; C is full
                 // C becomes full.
                 subassign_method = GB_SUBASSIGN_METHOD_05d ;
             }
             else
-            { 
+            {   GB_cov[2946]++ ;
+// covered (2946): 6019
                 // Method 05: C(I,J)<M> = scalar ; no S
                 subassign_method = GB_SUBASSIGN_METHOD_05 ;
             }
         }
         else
-        { 
+        {   GB_cov[2947]++ ;
+// covered (2947): 6686
             // Method 07: C(I,J)<M> += scalar ; no S
             subassign_method = GB_SUBASSIGN_METHOD_07 ;
         }
@@ -372,12 +384,14 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             // If C is bitmap, GB_bitmap_assign_M_accum is used instead.
             S_Extraction = M_is_bitmap || A_is_bitmap ;
             if (S_Extraction)
-            { 
+            {   GB_cov[2948]++ ;
+// covered (2948): 81948
                 // Method 08s: C(I,J)<M> += A ; with S
                 subassign_method = GB_SUBASSIGN_METHOD_08s ;
             }
             else
-            { 
+            {   GB_cov[2949]++ ;
+// covered (2949): 59885
                 // Method 08n: C(I,J)<M> += A ; no S
                 // No matrix can be bitmap.
                 subassign_method = GB_SUBASSIGN_METHOD_08n ;
@@ -387,7 +401,8 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         {
             // Methods 06d, 25, 06s, or 06n: no accumulator
             if ((C_is_full || C_is_bitmap) && whole_C_matrix && M_is_A)
-            { 
+            {   GB_cov[2950]++ ;
+// covered (2950): 4852
                 // Method 06d: C(:,:)<A> = A ; no S, C full or bitmap
                 S_Extraction = false ;
                 subassign_method = GB_SUBASSIGN_METHOD_06d ;
@@ -395,7 +410,8 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             }
             else if (C_is_empty && whole_C_matrix && Mask_struct &&
                 (A_is_full || A_is_bitmap))
-            { 
+            {   GB_cov[2951]++ ;
+// covered (2951): 1036
                 // Method 25: C<M,s> = A, where M is structural, A is full or
                 // bitmap, and C starts out empty.  The pattern of C will be
                 // the same as M, and the subassign method is extremely simple.
@@ -404,7 +420,8 @@ int GB_subassigner_method           // return method to use in GB_subassigner
                 subassign_method = GB_SUBASSIGN_METHOD_25 ;
             }
             else
-            { 
+            {   GB_cov[2952]++ ;
+// covered (2952): 418096
                 // C(I,J)<M> = A ;  use 06s (with S) or 06n (without S)
                 // method 06s (with S) is faster when nnz (A) < nnz (M).
                 // Method 06n (no S) or Method 06s (with S):
@@ -413,14 +430,16 @@ int GB_subassigner_method           // return method to use in GB_subassigner
                 // of 06n since M==A implies nnz(A) == nnz(M).
                 S_Extraction = anz < GB_nnz (M) || M_is_bitmap || A_is_bitmap ;
                 if (!S_Extraction)
-                { 
+                {   GB_cov[2953]++ ;
+// covered (2953): 51428
                     // Method 06n: C(I,J)<M> = A ; no S
                     // If M or A are bitmap, this method is not used;
                     // 06s is used instead.
                     subassign_method = GB_SUBASSIGN_METHOD_06n ;
                 }
                 else
-                { 
+                {   GB_cov[2954]++ ;
+// covered (2954): 366668
                     // Method 06s: C(I,J)<M> = A ; using S
                     subassign_method = GB_SUBASSIGN_METHOD_06s ;
                 }
@@ -440,7 +459,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         //  =====================       ==============
         //  -   -   -   -   -   S       01:  C(I,J) = x, with S
         //  -   -   -   -   A   S       02:  C(I,J) = A, with S
-        //  -   -   -   -   A   -       26:  C(:,j1:j2) = A, append cols, no S
+        //  -   -   -   -   A   -       26:  C(:,j) = A, append column, no S
         //  -   -   -   +   -   S       03:  C(I,J) += x, with S
         //  -   -   -   +   A   S       04:  C(I,J) += A, with S
 
@@ -451,12 +470,14 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         {
             S_Extraction = true ;               // S is used
             if (accum == NULL)
-            { 
+            {   GB_cov[2955]++ ;
+// covered (2955): 6197
                 // Method 01: C(I,J) = scalar ; using S
                 subassign_method = GB_SUBASSIGN_METHOD_01 ;
             }
             else
-            { 
+            {   GB_cov[2956]++ ;
+// covered (2956): 10130
                 // Method 03: C(I,J) += scalar ; using S
                 subassign_method = GB_SUBASSIGN_METHOD_03 ;
             }
@@ -464,32 +485,47 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         else
         {
             if (accum == NULL)
-            {
+            {   GB_cov[2957]++ ;
+// covered (2957): 42215
+
+//              printf ("Ikind %d\n", Ikind) ;
+//              printf ("C hyper %d\n", GB_IS_HYPERSPARSE (C)) ;
+//              printf ("A sparse %d\n", GB_IS_SPARSE (C)) ;
+//              printf ("Jkind %d %d\n", Jkind, GB_LIST) ;
+//              printf ("nJ %ld\n", nJ) ;
+//              printf ("C iso %d\n", C->iso) ;
+//              printf ("A iso %d\n", A->iso) ;
+
                 if (Ikind == GB_ALL && GB_IS_HYPERSPARSE (C) && GB_IS_SPARSE (A)
-                    && (Jkind == GB_RANGE) && (nJ >= 1)
+                    && (Jkind == GB_RANGE)
+                    && (nJ == 1)        // FUTURE: allow jlo:jhi
                     && (Jcolon [0] ==
                         ((C->nvec == 0) ? 0 : (C->h [C->nvec-1] + 1)))
                     && (C->type == A->type)
                     && !(A->iso)        // FUTURE: allow A to be iso
                     && !(C->iso))       // FUTURE: allow C to be iso
-                { 
-                    // Method 26: C(:,j1:j2) = A ; append columns.  No S.
+
+                {
+                    // Method 26: C(:,j) = A ; append a single column.  No S.
                     // C must be hypersparse, and the last column currently in
-                    // the hyperlist of C must be j1-1.  A must be sparse.  No
+                    // the hyperlist of C must be j-1.  A must be sparse.  No
                     // typecasting.  Method 26 is a special case of Method 02.
-                    // FUTURE: extend to iso cases
+                    // FUTURE: extend to C(:,jlo:jhi) = A, and iso cases
+//                  printf ("got method 26\n") ;
                     S_Extraction = false ;      // S not used
                     subassign_method = GB_SUBASSIGN_METHOD_26 ;
                 }
                 else
-                { 
+                {
                     // Method 02: C(I,J) = A ; using S
+//                  printf ("punt to method 02\n") ;
                     S_Extraction = true ;       // S is used
                     subassign_method = GB_SUBASSIGN_METHOD_02 ;
                 }
             }
             else
-            { 
+            {   GB_cov[2958]++ ;
+// covered (2958): 151308
                 // Method 04: C(I,J) += A ; using S
                 S_Extraction = true ;           // S is used
                 subassign_method = GB_SUBASSIGN_METHOD_04 ;
@@ -521,17 +557,20 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         if (accum == NULL)
         {
             if (Mask_comp && C_replace)
-            { 
+            {   GB_cov[2959]++ ;
+// covered (2959): 1907
                 // Method 17: C(I,J)<!M,repl> = scalar ; using S
                 subassign_method = GB_SUBASSIGN_METHOD_17 ;
             }
             else if (Mask_comp)
-            { 
+            {   GB_cov[2960]++ ;
+// covered (2960): 6172
                 // Method 13: C(I,J)<!M> = scalar ; using S
                 subassign_method = GB_SUBASSIGN_METHOD_13 ;
             }
             else // if (C_replace)
-            { 
+            {   GB_cov[2961]++ ;
+// covered (2961): 6527
                 // Method 09: C(I,J)<M,repl> = scalar ; using S
                 ASSERT (C_replace) ;
                 subassign_method = GB_SUBASSIGN_METHOD_09 ;
@@ -540,17 +579,20 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         else
         {
             if (Mask_comp && C_replace)
-            { 
+            {   GB_cov[2962]++ ;
+// covered (2962): 6624
                 // Method 19: C(I,J)<!M,repl> += scalar ; using S
                 subassign_method = GB_SUBASSIGN_METHOD_19 ;
             }
             else if (Mask_comp)
-            { 
+            {   GB_cov[2963]++ ;
+// covered (2963): 6569
                 // Method 15: C(I,J)<!M> += scalar ; using S
                 subassign_method = GB_SUBASSIGN_METHOD_15 ;
             }
             else // if (C_replace)
-            { 
+            {   GB_cov[2964]++ ;
+// covered (2964): 2159
                 // Method 11: C(I,J)<M,repl> += scalar ; using S
                 ASSERT (C_replace) ;
                 subassign_method = GB_SUBASSIGN_METHOD_11 ;
@@ -581,17 +623,20 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         if (accum == NULL)
         {
             if (Mask_comp && C_replace)
-            { 
+            {   GB_cov[2965]++ ;
+// covered (2965): 27143
                 // Method 18: C(I,J)<!M,repl> = A ; using S
                 subassign_method = GB_SUBASSIGN_METHOD_18 ;
             }
             else if (Mask_comp)
-            { 
+            {   GB_cov[2966]++ ;
+// covered (2966): 53026
                 // Method 14: C(I,J)<!M> = A ; using S
                 subassign_method = GB_SUBASSIGN_METHOD_14 ;
             }
             else // if (C_replace)
-            { 
+            {   GB_cov[2967]++ ;
+// covered (2967): 41450
                 // Method 10: C(I,J)<M,repl> = A ; using S
                 ASSERT (C_replace) ;
                 subassign_method = GB_SUBASSIGN_METHOD_10 ;
@@ -600,16 +645,19 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         else
         {
             if (Mask_comp && C_replace)
-            { 
+            {   GB_cov[2968]++ ;
+// covered (2968): 8613
                 // Method 20: C(I,J)<!M,repl> += A ; using S
                 subassign_method = GB_SUBASSIGN_METHOD_20 ;
             }
             else if (Mask_comp)
-            { 
+            {   GB_cov[2969]++ ;
+// covered (2969): 10705
                 subassign_method = GB_SUBASSIGN_METHOD_16 ;
             }
             else // if (C_replace)
-            { 
+            {   GB_cov[2970]++ ;
+// covered (2970): 23855
                 // Method 12: C(I,J)<M,repl> += A ; using S
                 ASSERT (C_replace) ;
                 subassign_method = GB_SUBASSIGN_METHOD_12 ;
@@ -651,13 +699,15 @@ int GB_subassigner_method           // return method to use in GB_subassigner
                 acode, asize) ;
             bool c_ok = false ;
             if (C_is_empty)
-            { 
+            {   GB_cov[2971]++ ;
+// covered (2971): 47553
                 // C is empty on input; note that C->iso might also be true,
                 // but this is ignored.
                 c_ok = true ;
             }
             else if (C->iso)
-            { 
+            {   GB_cov[2972]++ ;
+// covered (2972): 323
                 // C is iso on input; compare cout and C->x
                 c_ok = (memcmp (cout, C->x, csize) == 0) ;
             }
@@ -670,12 +720,14 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             if (c_ok && accum != NULL && C->iso)
             {
                 if (C_is_empty)
-                { 
+                {   GB_cov[2973]++ ;
+// covered (2973): 76
                     // If C is empty, the accum is not applied.
                     accum_ok = true ;
                 }
                 else
-                { 
+                {   GB_cov[2974]++ ;
+// covered (2974): 17
                     // C is iso and not empty; check the result of accum
                     GxB_binary_function faccum = accum->binop_function ;
 
@@ -716,12 +768,18 @@ int GB_subassigner_method           // return method to use in GB_subassigner
                 // C_out is iso if C_in empty, or C_in iso and cin == scalar
                 //--------------------------------------------------------------
 
-                case GB_SUBASSIGN_METHOD_01 :   // C(I,J) = scalar
-                case GB_SUBASSIGN_METHOD_05 :   // C(I,J)<M> = scalar
-                case GB_SUBASSIGN_METHOD_13 :   // C(I,J)<!M> = scalar
-                case GB_SUBASSIGN_METHOD_05d :  // C(:,:)<M> = scalar ; C full
-                case GB_SUBASSIGN_METHOD_09 :   // C(I,J)<M,replace> = scalar
-                case GB_SUBASSIGN_METHOD_17 :   // C(I,J)<!M,replace> = scalar
+                case GB_SUBASSIGN_METHOD_01  : GB_cov[2975]++ ;    // C(I,J) = scalar
+// covered (2975): 6197
+                case GB_SUBASSIGN_METHOD_05  : GB_cov[2976]++ ;    // C(I,J)<M> = scalar
+// covered (2976): 10398
+                case GB_SUBASSIGN_METHOD_13  : GB_cov[2977]++ ;    // C(I,J)<!M> = scalar
+// covered (2977): 16084
+                case GB_SUBASSIGN_METHOD_05d  : GB_cov[2978]++ ;   // C(:,:)<M> = scalar ; C full
+// covered (2978): 16319
+                case GB_SUBASSIGN_METHOD_09  : GB_cov[2979]++ ;    // C(I,J)<M,replace> = scalar
+// covered (2979): 22274
+                case GB_SUBASSIGN_METHOD_17  : GB_cov[2980]++ ;    // C(I,J)<!M,replace> = scalar
+// covered (2980): 23475
                     (*C_iso_out) = c_ok ;
                     break ;
 
@@ -729,15 +787,23 @@ int GB_subassigner_method           // return method to use in GB_subassigner
                 // C_out is iso if C_in empty, or C_in iso and cin == a
                 //--------------------------------------------------------------
 
-                case GB_SUBASSIGN_METHOD_02 :   // C(I,J) = A
+                case GB_SUBASSIGN_METHOD_02  : GB_cov[2981]++ ;    // C(I,J) = A
+// covered (2981): 8227
 //              FUTURE: handle iso case for method 26
-//              case GB_SUBASSIGN_METHOD_26:    // C(:,j) = A, append column
-                case GB_SUBASSIGN_METHOD_06s :  // C(I,J)<M> = A ; with S
-                case GB_SUBASSIGN_METHOD_14 :   // C(I,J)<!M> = A
-                case GB_SUBASSIGN_METHOD_10 :   // C(I,J)<M,replace> = A
-                case GB_SUBASSIGN_METHOD_18 :   // C(I,J)<!M,replace> = A
-                case GB_SUBASSIGN_METHOD_06d :  // C(:,:)<A> = A ; C is full
-                case GB_SUBASSIGN_METHOD_06n :  // C(I,J)<M> = A ; no S
+//              case GB_SUBASSIGN_METHOD_26  : GB_cov[2982]++ ;    // C(:,j) = A, append column
+// NOT COVERED (2982):
+                case GB_SUBASSIGN_METHOD_06s  : GB_cov[2983]++ ;   // C(I,J)<M> = A ; with S
+// covered (2983): 73940
+                case GB_SUBASSIGN_METHOD_14  : GB_cov[2984]++ ;    // C(I,J)<!M> = A
+// covered (2984): 76930
+                case GB_SUBASSIGN_METHOD_10  : GB_cov[2985]++ ;    // C(I,J)<M,replace> = A
+// covered (2985): 78584
+                case GB_SUBASSIGN_METHOD_18  : GB_cov[2986]++ ;    // C(I,J)<!M,replace> = A
+// covered (2986): 79760
+                case GB_SUBASSIGN_METHOD_06d  : GB_cov[2987]++ ;   // C(:,:)<A> = A ; C is full
+// covered (2987): 80707
+                case GB_SUBASSIGN_METHOD_06n  : GB_cov[2988]++ ;   // C(I,J)<M> = A ; no S
+// covered (2988): 84496
                     (*C_iso_out) = c_ok ;
                     break ;
 
@@ -745,9 +811,12 @@ int GB_subassigner_method           // return method to use in GB_subassigner
                 // C_out is always iso, regardless of C_in
                 //--------------------------------------------------------------
 
-                case GB_SUBASSIGN_METHOD_21 :   // C(:,:) = scalar
-                case GB_SUBASSIGN_METHOD_05e :  // C(:,:)<M,struct>=x ; C empty
-                case GB_SUBASSIGN_METHOD_05f :  // C(:,:)<C,struct>=scalar
+                case GB_SUBASSIGN_METHOD_21  : GB_cov[2989]++ ;    // C(:,:) = scalar
+// covered (2989): 44414
+                case GB_SUBASSIGN_METHOD_05e  : GB_cov[2990]++ ;   // C(:,:)<M,struct>=x ; C empty
+// covered (2990): 45013
+                case GB_SUBASSIGN_METHOD_05f  : GB_cov[2991]++ ;   // C(:,:)<C,struct>=scalar
+// covered (2991): 50093
                     (*C_iso_out) = true ;       // scalars are always iso
                     break ;
 
@@ -755,8 +824,10 @@ int GB_subassigner_method           // return method to use in GB_subassigner
                 // C_out is iso if A is iso, regardless of C_in
                 //--------------------------------------------------------------
 
-                case GB_SUBASSIGN_METHOD_24 :   // C = A
-                case GB_SUBASSIGN_METHOD_25 :   // C(:,:)<M,str> = A ; C empty
+                case GB_SUBASSIGN_METHOD_24  : GB_cov[2992]++ ;    // C = A
+// covered (2992): 2007
+                case GB_SUBASSIGN_METHOD_25  : GB_cov[2993]++ ;    // C(:,:)<M,str> = A ; C empty
+// covered (2993): 2124
                     (*C_iso_out) = true ;       // A is iso (see above)
                     break ;
 
@@ -764,12 +835,18 @@ int GB_subassigner_method           // return method to use in GB_subassigner
                 // C_out is iso if C_in empty, or C_in iso and cin == cin+scalar
                 //--------------------------------------------------------------
 
-                case GB_SUBASSIGN_METHOD_03 :   // C(I,J) += scalar
-                case GB_SUBASSIGN_METHOD_07 :   // C(I,J)<M> += scalar
-                case GB_SUBASSIGN_METHOD_15 :   // C(I,J)<!M> += scalar
-                case GB_SUBASSIGN_METHOD_22 :   // C += scalar ; C is full
-                case GB_SUBASSIGN_METHOD_11 :   // C(I,J)<M,replace> += scalar
-                case GB_SUBASSIGN_METHOD_19 :   // C(I,J)<!M,replace> += scalar
+                case GB_SUBASSIGN_METHOD_03  : GB_cov[2994]++ ;    // C(I,J) += scalar
+// covered (2994): 10130
+                case GB_SUBASSIGN_METHOD_07  : GB_cov[2995]++ ;    // C(I,J)<M> += scalar
+// covered (2995): 14252
+                case GB_SUBASSIGN_METHOD_15  : GB_cov[2996]++ ;    // C(I,J)<!M> += scalar
+// covered (2996): 20147
+                case GB_SUBASSIGN_METHOD_22  : GB_cov[2997]++ ;    // C += scalar ; C is full
+// covered (2997): 24737
+                case GB_SUBASSIGN_METHOD_11  : GB_cov[2998]++ ;    // C(I,J)<M,replace> += scalar
+// covered (2998): 26098
+                case GB_SUBASSIGN_METHOD_19  : GB_cov[2999]++ ;    // C(I,J)<!M,replace> += scalar
+// covered (2999): 32054
                     (*C_iso_out) = accum_ok ;
                     break ;
 
@@ -777,13 +854,20 @@ int GB_subassigner_method           // return method to use in GB_subassigner
                 // C_out is iso if C_in empty, or C_in and A iso and cin==cin+a
                 //--------------------------------------------------------------
 
-                case GB_SUBASSIGN_METHOD_12 :   // C(I,J)<M,replace> += A
-                case GB_SUBASSIGN_METHOD_20 :   // C(I,J)<!M,replace> += A
-                case GB_SUBASSIGN_METHOD_04 :   // C(I,J) += A
-                case GB_SUBASSIGN_METHOD_08s :  // C(I,J)<M> += A, with S
-                case GB_SUBASSIGN_METHOD_16 :   // C(I,J)<!M> += A 
-                case GB_SUBASSIGN_METHOD_23 :   // C += A ; C is full
-                case GB_SUBASSIGN_METHOD_08n :  // C(I,J)<M> += A, no S
+                case GB_SUBASSIGN_METHOD_12  : GB_cov[3000]++ ;    // C(I,J)<M,replace> += A
+// covered (3000): 2174
+                case GB_SUBASSIGN_METHOD_20  : GB_cov[3001]++ ;    // C(I,J)<!M,replace> += A
+// covered (3001): 3816
+                case GB_SUBASSIGN_METHOD_04  : GB_cov[3002]++ ;    // C(I,J) += A
+// covered (3002): 19271
+                case GB_SUBASSIGN_METHOD_08s  : GB_cov[3003]++ ;   // C(I,J)<M> += A, with S
+// covered (3003): 26375
+                case GB_SUBASSIGN_METHOD_16  : GB_cov[3004]++ ;    // C(I,J)<!M> += A 
+// covered (3004): 28313
+                case GB_SUBASSIGN_METHOD_23  : GB_cov[3005]++ ;    // C += A ; C is full
+// covered (3005): 40679
+                case GB_SUBASSIGN_METHOD_08n  : GB_cov[3006]++ ;   // C(I,J)<M> += A, no S
+// covered (3006): 48939
                     (*C_iso_out) = accum_ok ;
                     break ;
 
@@ -791,7 +875,8 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             }
         }
         else
-        { 
+        {   GB_cov[3007]++ ;
+// covered (3007): 833669
             // A is non-iso, so C is non-iso on output, and cout is not
             // computed
             (*C_iso_out) = false ;
@@ -812,28 +897,43 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         // scalar assignent methods
         //----------------------------------------------------------------------
 
-        case GB_SUBASSIGN_METHOD_01 :   // C(I,J) = scalar
-        case GB_SUBASSIGN_METHOD_03 :   // C(I,J) += scalar
-        case GB_SUBASSIGN_METHOD_05 :   // C(I,J)<M> = scalar
-        case GB_SUBASSIGN_METHOD_07 :   // C(I,J)<M> += scalar
-        case GB_SUBASSIGN_METHOD_13 :   // C(I,J)<!M> = scalar
-        case GB_SUBASSIGN_METHOD_15 :   // C(I,J)<!M> += scalar
-        case GB_SUBASSIGN_METHOD_21 :   // C(:,:) = scalar
+        case GB_SUBASSIGN_METHOD_01  : GB_cov[3008]++ ;    // C(I,J) = scalar
+// covered (3008): 6197
+        case GB_SUBASSIGN_METHOD_03  : GB_cov[3009]++ ;    // C(I,J) += scalar
+// covered (3009): 16327
+        case GB_SUBASSIGN_METHOD_05  : GB_cov[3010]++ ;    // C(I,J)<M> = scalar
+// covered (3010): 22346
+        case GB_SUBASSIGN_METHOD_07  : GB_cov[3011]++ ;    // C(I,J)<M> += scalar
+// covered (3011): 29032
+        case GB_SUBASSIGN_METHOD_13  : GB_cov[3012]++ ;    // C(I,J)<!M> = scalar
+// covered (3012): 35204
+        case GB_SUBASSIGN_METHOD_15  : GB_cov[3013]++ ;    // C(I,J)<!M> += scalar
+// covered (3013): 41773
+        case GB_SUBASSIGN_METHOD_21  : GB_cov[3014]++ ;    // C(:,:) = scalar
+// covered (3014): 86187
             // M can have any sparsity structure, including bitmap
             GB_USE_BITMAP_IF (C_is_bitmap) ;
             break ;
 
-        case GB_SUBASSIGN_METHOD_05d :  // C(:,:)<M> = scalar ; C is full
-        case GB_SUBASSIGN_METHOD_05e :  // C(:,:)<M,struct> = scalar ; C empty
-        case GB_SUBASSIGN_METHOD_05f :  // C(:,:)<C,struct> = scalar
-        case GB_SUBASSIGN_METHOD_22 :   // C += scalar ; C is full
+        case GB_SUBASSIGN_METHOD_05d  : GB_cov[3015]++ ;   // C(:,:)<M> = scalar ; C is full
+// covered (3015): 235
+        case GB_SUBASSIGN_METHOD_05e  : GB_cov[3016]++ ;   // C(:,:)<M,struct> = scalar ; C empty
+// covered (3016): 834
+        case GB_SUBASSIGN_METHOD_05f  : GB_cov[3017]++ ;   // C(:,:)<C,struct> = scalar
+// covered (3017): 5914
+        case GB_SUBASSIGN_METHOD_22  : GB_cov[3018]++ ;    // C += scalar ; C is full
+// covered (3018): 10504
             // C and M can have any sparsity pattern, including bitmap
             break ;
 
-        case GB_SUBASSIGN_METHOD_09 :   // C(I,J)<M,replace> = scalar
-        case GB_SUBASSIGN_METHOD_11 :   // C(I,J)<M,replace> += scalar
-        case GB_SUBASSIGN_METHOD_17 :   // C(I,J)<!M,replace> = scalar
-        case GB_SUBASSIGN_METHOD_19 :   // C(I,J)<!M,replace> += scalar
+        case GB_SUBASSIGN_METHOD_09  : GB_cov[3019]++ ;    // C(I,J)<M,replace> = scalar
+// covered (3019): 6527
+        case GB_SUBASSIGN_METHOD_11  : GB_cov[3020]++ ;    // C(I,J)<M,replace> += scalar
+// covered (3020): 8686
+        case GB_SUBASSIGN_METHOD_17  : GB_cov[3021]++ ;    // C(I,J)<!M,replace> = scalar
+// covered (3021): 10593
+        case GB_SUBASSIGN_METHOD_19  : GB_cov[3022]++ ;    // C(I,J)<!M,replace> += scalar
+// covered (3022): 17217
             // M can have any sparsity structure, including bitmap
             GB_USE_BITMAP_IF (C_is_bitmap || C_is_full) ;
             break ;
@@ -844,51 +944,68 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
         // GB_accum_mask may use any of these methods, with I and J as GB_ALL.
 
-        case GB_SUBASSIGN_METHOD_02 :   // C(I,J) = A
-        case GB_SUBASSIGN_METHOD_06s :  // C(I,J)<M> = A ; with S
-        case GB_SUBASSIGN_METHOD_14 :   // C(I,J)<!M> = A
-        case GB_SUBASSIGN_METHOD_10 :   // C(I,J)<M,replace> = A
-        case GB_SUBASSIGN_METHOD_18 :   // C(I,J)<!M,replace> = A
-        case GB_SUBASSIGN_METHOD_12 :   // C(I,J)<M,replace> += A
-        case GB_SUBASSIGN_METHOD_20 :   // C(I,J)<!M,replace> += A
+        case GB_SUBASSIGN_METHOD_02  : GB_cov[3023]++ ;    // C(I,J) = A
+// covered (3023): 42200
+        case GB_SUBASSIGN_METHOD_06s  : GB_cov[3024]++ ;   // C(I,J)<M> = A ; with S
+// covered (3024): 408868
+        case GB_SUBASSIGN_METHOD_14  : GB_cov[3025]++ ;    // C(I,J)<!M> = A
+// covered (3025): 461894
+        case GB_SUBASSIGN_METHOD_10  : GB_cov[3026]++ ;    // C(I,J)<M,replace> = A
+// covered (3026): 503344
+        case GB_SUBASSIGN_METHOD_18  : GB_cov[3027]++ ;    // C(I,J)<!M,replace> = A
+// covered (3027): 530487
+        case GB_SUBASSIGN_METHOD_12  : GB_cov[3028]++ ;    // C(I,J)<M,replace> += A
+// covered (3028): 554342
+        case GB_SUBASSIGN_METHOD_20  : GB_cov[3029]++ ;    // C(I,J)<!M,replace> += A
+// covered (3029): 562955
             // M can have any sparsity structure, including bitmap
             GB_USE_BITMAP_IF (C_is_bitmap || C_is_full) ;
             break ;
 
-        case GB_SUBASSIGN_METHOD_04 :   // C(I,J) += A
-        case GB_SUBASSIGN_METHOD_08s :  // C(I,J)<M> += A, with S
-        case GB_SUBASSIGN_METHOD_16 :   // C(I,J)<!M> += A 
-        case GB_SUBASSIGN_METHOD_24 :   // C = A
+        case GB_SUBASSIGN_METHOD_04  : GB_cov[3030]++ ;    // C(I,J) += A
+// covered (3030): 151308
+        case GB_SUBASSIGN_METHOD_08s  : GB_cov[3031]++ ;   // C(I,J)<M> += A, with S
+// covered (3031): 233256
+        case GB_SUBASSIGN_METHOD_16  : GB_cov[3032]++ ;    // C(I,J)<!M> += A 
+// covered (3032): 243961
+        case GB_SUBASSIGN_METHOD_24  : GB_cov[3033]++ ;    // C = A
+// covered (3033): 269056
             // M can have any sparsity structure, including bitmap
             GB_USE_BITMAP_IF (C_is_bitmap) ;
             break ;
 
-        case GB_SUBASSIGN_METHOD_06d :  // C(:,:)<A> = A ; C is full
-        case GB_SUBASSIGN_METHOD_23 :   // C += A ; C is full
+        case GB_SUBASSIGN_METHOD_06d  : GB_cov[3034]++ ;   // C(:,:)<A> = A ; C is full
+// covered (3034): 4852
+        case GB_SUBASSIGN_METHOD_23  : GB_cov[3035]++ ;    // C += A ; C is full
+// covered (3035): 80046
             // C, M, and A can have any sparsity structure, including bitmap
             break ;
 
-        case GB_SUBASSIGN_METHOD_25 :   // C(:,:)<M,struct> = A ; C empty
+        case GB_SUBASSIGN_METHOD_25  : GB_cov[3036]++ ;    // C(:,:)<M,struct> = A ; C empty
+// covered (3036): 1036
             // C, M, and A can have any sparsity structure, including bitmap,
             // but if M is bitmap or full, use bitmap assignment instead.
             GB_USE_BITMAP_IF (M_is_bitmap || GB_IS_FULL (M)) ;
             break ;
 
-        case GB_SUBASSIGN_METHOD_06n :  // C(I,J)<M> = A ; no S
+        case GB_SUBASSIGN_METHOD_06n  : GB_cov[3037]++ ;   // C(I,J)<M> = A ; no S
+// covered (3037): 51428
             // If M or A are bitmap, Method 06s is used instead of 06n.
             GB_USE_BITMAP_IF (C_is_bitmap || C_is_full) ;
             ASSERT (!M_is_bitmap) ;
             ASSERT (!A_is_bitmap) ;
             break ;
 
-        case GB_SUBASSIGN_METHOD_08n :  // C(I,J)<M> += A, no S
+        case GB_SUBASSIGN_METHOD_08n  : GB_cov[3038]++ ;   // C(I,J)<M> += A, no S
+// covered (3038): 59885
             // Method 08s is used instead of 08n if M or A are bitmap.
             GB_USE_BITMAP_IF (C_is_bitmap) ;
             ASSERT (!M_is_bitmap) ;
             ASSERT (!A_is_bitmap) ;
             break ;
 
-        case GB_SUBASSIGN_METHOD_26 :   // C(:,j) = A, append column, no S
+        case GB_SUBASSIGN_METHOD_26  : GB_cov[3039]++ ;    // C(:,j) = A, append column, no S
+// covered (3039): 15
             // Method 26, C is hypersparse, A is sparse: no bitmap method used
             ASSERT (!C_is_bitmap) ;
             ASSERT (!A_is_bitmap) ;
