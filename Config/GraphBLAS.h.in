@@ -1387,7 +1387,8 @@ typedef enum            // for global options or matrix options
     //------------------------------------------------------------
 
     GxB_HYPER_SWITCH = 7000,    // switch to hypersparse (double value)
-    GxB_HYPER_HASH = 7048,      // hyper_hash control (int64 value)
+    GxB_HYPER_HASH = 7048,      // hyper_hash control (global int64 value,
+                                // or bool per matrix)
     GxB_BITMAP_SWITCH = 7001,   // switch to bitmap (double value)
     GxB_FORMAT = 7002,          // historical; use GrB_STORAGE_ORIENTATION_HINT
 
@@ -1618,11 +1619,11 @@ typedef enum
     GrB_STORAGE_ORIENTATION_HINT = 100, // GrB_Orientation
 
     // GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize):
-    GrB_EL_TYPE_CODE = 102,         // a GrB_Type_code (see below)
+    GrB_EL_TYPE_CODE = 102,         // a GrB_Type_Code (see below)
     GrB_EL_TYPE_STRING = 106,       // name of the type
 
     // GrB_*Op, GrB_Monoid, and GrB_Semiring:
-    GrB_INP0_TYPE_CODE = 103,       // GrB_Type_code
+    GrB_INP0_TYPE_CODE = 103,       // GrB_Type_Code
     GrB_INP1_TYPE_CODE = 104,
     GrB_OUTP_TYPE_CODE = 105,
     GrB_INP0_TYPE_STRING = 107,     // name of the type, as a string

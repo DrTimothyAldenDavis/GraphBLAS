@@ -471,6 +471,17 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         break ;
 
+        case GB_SUBASSIGN_METHOD_26 : 
+        {
+            // Method 26: C(:,j) = A ; append a column, no S.
+            GBURBLE ("Method 26: C(:,j) = Z ; append") ;
+            ASSERT (Ikind == GB_ALL) ;
+            ASSERT (Jkind == GB_LIST) ;
+            ASSERT (nJ == 1) ;
+            GB_OK (GB_subassign_26 (C, J [0], A, Werk)) ;
+        }
+        break ;
+
         case GB_SUBASSIGN_METHOD_02 : 
         {
             // Method 02: C(I,J) = A ; using S
