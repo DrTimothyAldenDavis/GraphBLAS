@@ -21,8 +21,6 @@
 // C: hypersparse
 // A: sparse
 
-#define GB_DEBUG
-
 #include "assign/GB_subassign_methods.h"
 #include "assign/include/GB_assign_shared_definitions.h"
 #undef  GB_FREE_ALL
