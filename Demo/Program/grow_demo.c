@@ -134,7 +134,7 @@ int main (int argc, char **argv)
     {
         // printf ("\n\ni = %ld\n", i) ;
 
-        // w = A (:,i), using A' via the descriptor
+        // w = A (i,:), using A' via the descriptor
         t = WALLCLOCK ;
         OK (GrB_Col_extract (w, NULL, NULL, A, GrB_ALL, ancols, i,
             GrB_DESC_T0)) ;
