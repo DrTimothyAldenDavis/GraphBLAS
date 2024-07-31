@@ -758,6 +758,10 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             int64_t avlen = A->vlen ;
             GB_Type_code acode = Atype->code ;
 
+            // A can be iso-valued, but C is not
+            bool A_iso = A->iso ;
+            ASSERT (C_code_iso == GB_NON_ISO) ;
+
             GxB_index_unary_function fop = op->idxunop_function ;
             size_t asize = Atype->size ;
             size_t zsize = op->ztype->size ;
@@ -765,11 +769,11 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             GB_Type_code xcode = op->xtype->code ;
             GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
 
-            // Cx [p] = op (Ax [p], i, j, ythunk)
+            // Cx [p] = op (Ax [A_iso ? 0:p], i, j, ythunk)
             #define GB_APPLY_OP(p)                                          \
                 int64_t i = GBI_A (Ai, p, avlen) ;                          \
                 GB_void xwork [GB_VLA(xsize)] ;                             \
-                cast_A_to_X (xwork, Ax +(p)*asize, asize) ;                 \
+                cast_A_to_X (xwork, Ax +(A_iso ? 0 : p)*asize, asize) ;     \
                 fop (Cx +(p*zsize), xwork,                                  \
                     flipij ? j : i, flipij ? i : j, ythunk) ;
             #include "apply/template/GB_apply_unop_ijp.c"
