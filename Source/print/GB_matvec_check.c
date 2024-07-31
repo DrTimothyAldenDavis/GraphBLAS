@@ -16,10 +16,6 @@
 #define GB_DEVELOPER 0
 #endif
 
-// FIXME HACK
-#undef  GB_DEVELOPER
-#define GB_DEVELOPER 1
-
 #include "pending/GB_Pending.h"
 #include "GB.h"
 
