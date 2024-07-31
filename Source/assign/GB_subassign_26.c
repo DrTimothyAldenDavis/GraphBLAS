@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_26: C(:,j) = A ; append column, no S
+// GB_subassign_26: C(:,j1:j2) = A ; append columns, no S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 // JIT: needed.
 
-// Method 26: C(:,j) = A ; append column, no S
+// Method 26: C(:,j1:j2) = A ; append columns, no S
 
 // M:           NULL
 // Mask_comp:   false
@@ -31,7 +31,7 @@ GrB_Info GB_subassign_26
 (
     GrB_Matrix C,
     // input:
-    const int64_t j,        // FUTURE: could handle jlo:jhi
+    const int64_t Jcolon [3],       // j1:j2, with an increment of 1
     const GrB_Matrix A,
     GB_Werk Werk
 )
@@ -46,7 +46,6 @@ GrB_Info GB_subassign_26
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
     ASSERT (!GB_PENDING (A)) ;          // FUTURE: could tolerate pending tuples
     ASSERT (!GB_ZOMBIES (A)) ;          // FUTURE: could tolerate zombies
-    ASSERT (A->vdim == 1) ;             // FUTURE: could handle A as a matrix
     ASSERT (A->type == C->type) ;       // no typecasting
     ASSERT (!A->iso) ;                  // FUTURE: handle iso case
     ASSERT (!C->iso) ;                  // FUTURE: handle iso case
@@ -65,8 +64,14 @@ GrB_Info GB_subassign_26
     GB_void *restrict Ax = (GB_void *) A->x ;
     int64_t anz = A->nvals ;
 
+    int64_t j1 = Jcolon [GxB_BEGIN] ;
+    int64_t j2 = Jcolon [GxB_END  ] ;
+    ASSERT (Jcolon [GxB_INC] == 1) ;
+    int64_t nJ = j2 - j1 + 1 ;
+    ASSERT (nJ == A->vdim) ;
+
     //--------------------------------------------------------------------------
-    // Method 26: C(:,j) = A ; append column, no S.
+    // Method 26: C(:,j1:j2) = A ; append column(s), no S.
     //--------------------------------------------------------------------------
 
     // Time: Optimal.  Work is O(nnz(A)).
@@ -77,16 +82,15 @@ GrB_Info GB_subassign_26
 
     int64_t cnz_new = cnz + anz ;
 
-    if (cnvec == C->plen)
-    {
+    if (cnvec + nJ > C->plen)
+    { 
         // double the size of C->h and C->p if needed
-        GB_OK (GB_hyper_realloc (C, GB_IMIN (C->vdim, 2*(C->plen+1)), Werk)) ;
+        int64_t plen_new = GB_IMIN (C->vdim, 2*(C->plen + nJ)) ;
+        GB_OK (GB_hyper_realloc (C, plen_new, Werk)) ;
     }
 
-    // printf ("cnz_new %ld nnz max %ld\n", cnz_new, GB_nnz_max (C)) ;
-
     if (cnz_new > GB_nnz_max (C))
-    {
+    { 
         // double the size of C->i and C->x if needed
         GB_OK (GB_ix_realloc (C, 2*cnz_new + 1)) ;
     }
@@ -97,38 +101,81 @@ GrB_Info GB_subassign_26
     GB_void *restrict Cx = (GB_void *) C->x ;
 
     //--------------------------------------------------------------------------
-    // append the new column
+    // determine any parallelism to use
     //--------------------------------------------------------------------------
 
-    ASSERT (cnvec == 0 || Ch [cnvec-1] == j-1) ;
+    ASSERT (cnvec == 0 || Ch [cnvec-1] == j1-1) ;
 
-    Ch [cnvec] = j ;
-    Cp [++(C->nvec)] = cnz_new ;
-    C->nvals = cnz_new ;
-    if (C->nvec_nonempty >= 0 && anz > 0)
-    {
-        C->nvec_nonempty++ ;
+    bool phase1_parallel = (nJ > GB_CHUNK_DEFAULT) ;
+    bool phase2_parallel = (anz * (sizeof (int64_t) + csize) > GB_MEM_CHUNK) ;
+    int nthreads_max ;
+    double chunk ;
+
+    if (phase1_parallel || phase2_parallel)
+    { 
+        nthreads_max = GB_Context_nthreads_max ( ) ;
+        chunk = GB_Context_chunk ( ) ;
     }
 
-    C->jumbled = C->jumbled || A->jumbled ;
+    //--------------------------------------------------------------------------
+    // phase1: compute Cp, Ch, # of new nonempty vectors, and matrix properties
+    //--------------------------------------------------------------------------
 
-    // copy the indices and values
-    if (anz * (sizeof (int64_t) + csize) <= GB_MEM_CHUNK)
-    {
-        memcpy (Ci + cnz, Ai, anz * sizeof (int64_t)) ;
-        memcpy (Cx + cnz * csize, Ax, anz * csize) ;
+    int64_t anvec_nonempty = 0 ;
+    #define COMPUTE_CP_AND_CH                   \
+        for (int64_t k = 0 ; k < nJ ; k++)      \
+        {                                       \
+            int64_t apk = Ap [k] ;              \
+            int64_t anzk = Ap [k+1] - apk ;     \
+            Ch [cnvec + k] = j1 + k ;           \
+            Cp [cnvec + k] = cnz + apk ;        \
+            anvec_nonempty += (anzk > 0) ;      \
+        }
+
+    int nthreads = (phase1_parallel) ?
+        GB_nthreads (nJ, chunk, nthreads_max) : 1 ;
+    if (nthreads > 1)
+    { 
+        // compute Cp and Ch in parallel
+        #pragma omp parallel for num_threads(nthreads) schedule(static) \
+            reduction(+:anvec_nonempty)
+        COMPUTE_CP_AND_CH ;
     }
     else
-    {
-        int nthreads_max = GB_Context_nthreads_max ( ) ;
-        double chunk = GB_Context_chunk ( ) ;
-        int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
+    { 
+        // compute Cp and Ch in a single thread
+        COMPUTE_CP_AND_CH ;
+    }
+
+    if (C->nvec_nonempty >= 0)
+    { 
+        C->nvec_nonempty += anvec_nonempty ;
+    }
+    C->nvec += nJ ;
+    Cp [C->nvec] = cnz_new ;
+    C->nvals = cnz_new ;
+    C->jumbled = C->jumbled || A->jumbled ;
+
+    //--------------------------------------------------------------------------
+    // phase2: copy the indices and values
+    //--------------------------------------------------------------------------
+
+    nthreads = (phase2_parallel) ? GB_nthreads (anz, chunk, nthreads_max) : 1 ;
+    if (nthreads > 1)
+    { 
+        // copy Ci and Cx with parallel memcpy's
         GB_memcpy (Ci + cnz, Ai, anz * sizeof (int64_t), nthreads) ;
         GB_memcpy (Cx + cnz * csize, Ax, anz * csize, nthreads) ;
     }
+    else
+    { 
+        // copy Ci and Cx with single-threaded memcpy's
+        memcpy (Ci + cnz, Ai, anz * sizeof (int64_t)) ;
+        memcpy (Cx + cnz * csize, Ax, anz * csize) ;
+    }
 
     //--------------------------------------------------------------------------
-    // finalize the matrix and return result
+    // return result
     //--------------------------------------------------------------------------
 
     return (GrB_SUCCESS) ;

@@ -155,7 +155,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
         //  -   -   -   -   -   S       01:  C(I,J) = x, with S
         //  -   -   -   -   A   S       02:  C(I,J) = A, with S
-        //  -   -   -   -   A   -       26:  C(:,j) = A, append column, no S
+        //  -   -   -   -   A   -       26:  C(:,j1:j2) = A, append cols, no S
         //  -   -   -   +   -   S       03:  C(I,J) += x, with S
         //  -   -   -   +   A   S       04:  C(I,J) += A, with S
         //  -   -   r                        uses methods 01, 02, 03, 04
@@ -440,7 +440,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         //  =====================       ==============
         //  -   -   -   -   -   S       01:  C(I,J) = x, with S
         //  -   -   -   -   A   S       02:  C(I,J) = A, with S
-        //  -   -   -   -   A   -       26:  C(:,j) = A, append column, no S
+        //  -   -   -   -   A   -       26:  C(:,j1:j2) = A, append cols, no S
         //  -   -   -   +   -   S       03:  C(I,J) += x, with S
         //  -   -   -   +   A   S       04:  C(I,J) += A, with S
 
@@ -464,39 +464,26 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         else
         {
             if (accum == NULL)
-            { 
-
-//              printf ("Ikind %d\n", Ikind) ;
-//              printf ("C hyper %d\n", GB_IS_HYPERSPARSE (C)) ;
-//              printf ("A sparse %d\n", GB_IS_SPARSE (C)) ;
-//              printf ("Jkind %d %d\n", Jkind, GB_LIST) ;
-//              printf ("nJ %ld\n", nJ) ;
-//              printf ("C iso %d\n", C->iso) ;
-//              printf ("A iso %d\n", A->iso) ;
-
+            {
                 if (Ikind == GB_ALL && GB_IS_HYPERSPARSE (C) && GB_IS_SPARSE (A)
-                    && (Jkind == GB_RANGE)
-                    && (nJ == 1)        // FUTURE: allow jlo:jhi
+                    && (Jkind == GB_RANGE) && (nJ >= 1)
                     && (Jcolon [0] ==
                         ((C->nvec == 0) ? 0 : (C->h [C->nvec-1] + 1)))
                     && (C->type == A->type)
                     && !(A->iso)        // FUTURE: allow A to be iso
                     && !(C->iso))       // FUTURE: allow C to be iso
-
-                {
-                    // Method 26: C(:,j) = A ; append a single column.  No S.
+                { 
+                    // Method 26: C(:,j1:j2) = A ; append columns.  No S.
                     // C must be hypersparse, and the last column currently in
-                    // the hyperlist of C must be j-1.  A must be sparse.  No
+                    // the hyperlist of C must be j1-1.  A must be sparse.  No
                     // typecasting.  Method 26 is a special case of Method 02.
-                    // FUTURE: extend to C(:,jlo:jhi) = A, and iso cases
-//                  printf ("got method 26\n") ;
+                    // FUTURE: extend to iso cases
                     S_Extraction = false ;      // S not used
                     subassign_method = GB_SUBASSIGN_METHOD_26 ;
                 }
                 else
-                {
+                { 
                     // Method 02: C(I,J) = A ; using S
-//                  printf ("punt to method 02\n") ;
                     S_Extraction = true ;       // S is used
                     subassign_method = GB_SUBASSIGN_METHOD_02 ;
                 }
@@ -744,7 +731,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
                 case GB_SUBASSIGN_METHOD_02 :   // C(I,J) = A
 //              FUTURE: handle iso case for method 26
-//              case GB_SUBASSIGN_METHOD_26 :   // C(:,j) = A, append column
+//              case GB_SUBASSIGN_METHOD_26:    // C(:,j) = A, append column
                 case GB_SUBASSIGN_METHOD_06s :  // C(I,J)<M> = A ; with S
                 case GB_SUBASSIGN_METHOD_14 :   // C(I,J)<!M> = A
                 case GB_SUBASSIGN_METHOD_10 :   // C(I,J)<M,replace> = A
