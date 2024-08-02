@@ -1686,8 +1686,16 @@ GrB_Type_Code ;
 
 typedef enum
 {
-    GrB_COMPLETE = 0,       // establishes a happens-before relation
-    GrB_MATERIALIZE = 1     // object is complete
+    GrB_COMPLETE = 0,       // establishes a happens-before relation; work may
+                            // remain to compute the object but this can now
+                            // be done safely by any user thread.
+    GrB_MATERIALIZE = 1     // all work on the object is finished (also
+                            // establishes a happens-before relation).  The
+                            // object can be safely be used as an input to a
+                            // GraphBLAS method by multiple user threads at
+                            // the same time.  For example, the A or B matrices
+                            // of GrB_mxm can be shared by 2 user threads, but
+                            // their output matrices C must be different.
 }
 GrB_WaitMode ;
 
