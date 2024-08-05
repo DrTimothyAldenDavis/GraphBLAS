@@ -163,11 +163,32 @@
 #ifndef GXB_COMPLEX_H
 #define GXB_COMPLEX_H
 
-// Compiler has support for C99 floating point number arithmetic
-#cmakedefine GxB_HAVE_COMPLEX_C99
-
-// Compiler has support for MSVC-style complex numbers
-#cmakedefine GxB_HAVE_COMPLEX_MSVC
+    #if defined ( GxB_HAVE_COMPLEX_C99 ) || defined ( GxB_HAVE_COMPLEX_MSVC )
+        // Bypass the cmake configuration and let the user application decide
+        // itself which complex type to use.  This may differ from the compiled
+        // GraphBLAS library so this approach may not work in all cases.
+        // To use C99 complex types, use:
+        //
+        //      -DGxB_HAVE_COMPLEX_C99
+        //
+        // To use MS complex types for C:
+        //
+        //      -DGxB_HAVE_COMPLEX_MSVC
+        //
+        // One of the above options is required.  To use the JIT, these two
+        // options must also be added at run time via
+        // GrB_set (GrB_Global, GxB_JIT_C_COMPILER_FLAGS, "...")
+        // where "..." would be all the flags required to compile a JIT kernel,
+        // including "-O3 -fopenmp" and so on, as well as one of the above two
+        // options.
+    #else
+        // Let the cmake configuration script determine the complex type
+        // that is available:
+        // Compiler has support for C99 floating point number arithmetic
+        #cmakedefine GxB_HAVE_COMPLEX_C99
+        // Compiler has support for MSVC-style complex numbers
+        #cmakedefine GxB_HAVE_COMPLEX_MSVC
+    #endif
 
     #if defined (GxB_HAVE_COMPLEX_MSVC)
 
@@ -1366,7 +1387,8 @@ typedef enum            // for global options or matrix options
     //------------------------------------------------------------
 
     GxB_HYPER_SWITCH = 7000,    // switch to hypersparse (double value)
-    GxB_HYPER_HASH = 7048,      // hyper_hash control (int64 value)
+    GxB_HYPER_HASH = 7048,      // hyper_hash control (global int64 value,
+                                // or bool per matrix)
     GxB_BITMAP_SWITCH = 7001,   // switch to bitmap (double value)
     GxB_FORMAT = 7002,          // historical; use GrB_STORAGE_ORIENTATION_HINT
 
@@ -1597,11 +1619,11 @@ typedef enum
     GrB_STORAGE_ORIENTATION_HINT = 100, // GrB_Orientation
 
     // GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize):
-    GrB_EL_TYPE_CODE = 102,         // a GrB_Type_code (see below)
+    GrB_EL_TYPE_CODE = 102,         // a GrB_Type_Code (see below)
     GrB_EL_TYPE_STRING = 106,       // name of the type
 
     // GrB_*Op, GrB_Monoid, and GrB_Semiring:
-    GrB_INP0_TYPE_CODE = 103,       // GrB_Type_code
+    GrB_INP0_TYPE_CODE = 103,       // GrB_Type_Code
     GrB_INP1_TYPE_CODE = 104,
     GrB_OUTP_TYPE_CODE = 105,
     GrB_INP0_TYPE_STRING = 107,     // name of the type, as a string
@@ -1664,8 +1686,16 @@ GrB_Type_Code ;
 
 typedef enum
 {
-    GrB_COMPLETE = 0,       // establishes a happens-before relation
-    GrB_MATERIALIZE = 1     // object is complete
+    GrB_COMPLETE = 0,       // establishes a happens-before relation; work may
+                            // remain to compute the object but this can now
+                            // be done safely by any user thread.
+    GrB_MATERIALIZE = 1     // all work on the object is finished (also
+                            // establishes a happens-before relation).  The
+                            // object can be safely be used as an input to a
+                            // GraphBLAS method by multiple user threads at
+                            // the same time.  For example, the A or B matrices
+                            // of GrB_mxm can be shared by 2 user threads, but
+                            // their output matrices C must be different.
 }
 GrB_WaitMode ;
 
@@ -7116,7 +7146,7 @@ GrB_Info GrB_Vector_apply_BinaryOp1st_Scalar    // w<mask> = accum (w, op(x,u))
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
-// historical: identical to GxB_Vector_apply_BinaryOp1st
+// historical: identical to GrB_Vector_apply_BinaryOp1st_Scalar
 GrB_Info GxB_Vector_apply_BinaryOp1st           // w<mask> = accum (w, op(x,u))
 (
     GrB_Vector w,                   // input/output vector for results
@@ -11856,7 +11886,7 @@ GrB_Info GxB_Vector_Iterator_seek (GxB_Iterator iterator, GrB_Index p) ;
 
 #define GB_Vector_Iterator_seek(iterator, q)                                \
 (                                                                           \
-    (q >= iterator->pmax) ?                                                 \
+    (((int64_t) q) >= iterator->pmax) ?                                     \
     (                                                                       \
         /* the iterator is exhausted */                                     \
         iterator->p = iterator->pmax,                                       \

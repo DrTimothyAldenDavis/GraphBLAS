@@ -3933,7 +3933,8 @@ any duplicates are ignored.  If duplicates appear, the last one in the
 list of tuples is taken and the prior ones ignored.  This is not an error.
 
 \begin{alert}
-{\bf SPEC:} Results are defined even if \verb'dup' is non-associative.
+{\bf SPEC:} Results are defined even if \verb'dup' is non-associative and/or
+non-commutative.
 \end{alert}
 
 %-------------------------------------------------------------------------------
@@ -4539,8 +4540,9 @@ any duplicates are ignored.  If duplicates appear, the last one in the
 list of tuples is taken and the prior ones ignored.  This is not an error.
 
 \begin{alert}
-{\bf SPEC:} As an extension to the specification, results are defined even if \verb'dup'
-is non-associative.
+{\bf SPEC:} As an extension to the specification,
+results are defined even if \verb'dup'
+is non-associative and/or non-commutative.
 \end{alert}
 
 The GraphBLAS API requires \verb'dup' to be associative so
@@ -8117,8 +8119,7 @@ prior versions, user-defined types and operators were handled by {\em generic}
 kernels that used function pointers for each operator and for any typecasting
 required.  Even built-in types and operators were sometimes handled by the
 generic kernels, if any typecasting was done, or if the specific operator,
-monoid, or semiring was disabled by the \verb'Source/GB_control.h' file when
-GraphBLAS was compiled.
+monoid, or semiring was disabled when GraphBLAS was compiled.
 
 \subsection{Using the JIT}
 
@@ -14341,10 +14342,12 @@ Visual Studio 2019, but may work for earlier versions.
     patient; some files may take a while to compile and sometimes may appear to
     be stalled.  Just wait.
 
-    % Alternatively, type this command in the terminal window:
-    % {\small
-    % \begin{verbatim}
-    % devenv graphblas.sln /build "release|x64" /project graphblas \end{verbatim}}
+\item Alternatively, instead of opening Visual Studio,
+    type this command in the terminal window while in the \verb'build' folder:
+    {\small
+    \begin{verbatim}
+    cmake --build . --config Release
+    \end{verbatim}}
 
 \item Add the \verb'GraphBLAS/build/Release' folder to the Windows System path:
 
@@ -14356,6 +14359,8 @@ Visual Studio 2019, but may work for earlier versions.
     \item From the top left side of the \verb'System' window, select
         \verb'Advanced System Settings'.  You may have to authenticate
         at this step.
+        If you cannot authenticate, try setting the User Environment Variables
+        instead.
     \item The \verb'Systems Properties' window should appear with the
         \verb'Advanced' tab selected;
         select \verb'Environment Variables'.
@@ -14367,6 +14372,9 @@ Visual Studio 2019, but may work for earlier versions.
     \item Add the full path of the \verb'GraphBLAS\build\Release' folder
         (typically starting with \verb'C:\Users\you\'..., where \verb'you' is
         your Windows username) to the \verb'Path'.
+        To use the MATLAB interface, add
+        the full path of the \verb'GraphBLAS\GraphBLAS\build\Release' folder
+        as well.
     \item If the above steps do not work, you can instead copy the
         \verb'graphblas.*' files from \verb'GraphBLAS\build\Release' into any
         existing folder listed in your \verb'Path'.
@@ -14483,6 +14491,20 @@ GraphBLAS folder.
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
+
+\item Aug 2, 2024: version 9.3.0
+
+    \begin{itemize}
+    \item code restructuring:  Source folder split into many subfolders, and
+        some files and internal functions renamed.  No visible external change.
+    \item (55) bug fix: \verb'GrB_apply' with user-defined index-unary op and
+        generic kernel.
+    \item (54) bug fix: reducing a huge iso full matrix to a scalar resulted in
+        integer overflow if nrows*ncols was larger than about $2^{60}$.
+    \item reduced size of compiled library: \verb'int16' and \verb'uint16'
+        types and operators for FactoryKernels are disabled in
+        \verb'GB_control.h'.  The JIT will always be used instead.
+    \end{itemize}
 
 \item May 22, 2024: version 9.2.0
 
