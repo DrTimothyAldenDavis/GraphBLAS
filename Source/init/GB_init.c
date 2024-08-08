@@ -153,7 +153,9 @@ GrB_Info GB_init            // start up GraphBLAS
     if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
     {
         // initialize the GPUs
-        GB_OK (GB_cuda_init ( )) ;
+        info = GB_cuda_init ( ) ;
+        printf ("GB_cuda_init: %d\n", info) ;
+        GB_OK (info) ;
     }
     else
     #endif
