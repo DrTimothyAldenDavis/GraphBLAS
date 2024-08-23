@@ -1,4 +1,4 @@
-// SuiteSparse:GraphBLAS 9.3.1
+// SuiteSparse:GraphBLAS 9.3.2
 //------------------------------------------------------------------------------
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
@@ -275,10 +275,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Aug 12, 2024"
+#define GxB_IMPLEMENTATION_DATE "Sept XX, 2024"
 #define GxB_IMPLEMENTATION_MAJOR 9
 #define GxB_IMPLEMENTATION_MINOR 3
-#define GxB_IMPLEMENTATION_SUB   1
+#define GxB_IMPLEMENTATION_SUB   2
 #define GxB_SPEC_DATE "Dec 22, 2023"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 1
@@ -319,11 +319,11 @@
 
 // The 'spec' string describes the GraphBLAS spec:
 #define GxB_SPEC_ABOUT \
-"GraphBLAS C API, by Benjamin Brock, Aydin Buluc, Raye Kimmerer,\n" \
+"GraphBLAS C API, by Benjamin Brock, Aydin Buluc, Raye Kimmerer,\n"           \
 "Jim Kitchen, Manoj Kumar, Timothy Mattson, Scott McMillan, Jose' Moreira,\n" \
-"Erik Welch, and Carl Yang.  Based on 'GraphBLAS Mathematics by Jeremy\n" \
-"Kepner.  See also 'Graph Algorithms in the Language of Linear Algebra,'\n" \
-"edited by J. Kepner and J. Gilbert, SIAM, 2011.\n"
+"Michel Pelletier, Erik Welch, and Carl Yang.  Based on 'GraphBLAS\n"         \
+"Mathematics by Jeremy Kepner.  See also 'Graph Algorithms in the Language\n" \
+"of Linear Algebra,' edited by J. Kepner and J. Gilbert, SIAM, 2011.\n"
 
 //==============================================================================
 // GrB_Index: the GraphBLAS integer
