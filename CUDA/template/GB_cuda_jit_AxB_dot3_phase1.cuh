@@ -140,10 +140,10 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
 
         // This threadblock works on Mi/Mx and Ci/Mx, in positions pfirst to
         // pfirst + my_chunk_size - 1.
-        int64_t my_chunk_size, mnvec1 ;
+        int64_t my_chunk_size, mnvec1, kfirst, klast ;
         float slope ;
-        int64_t kfirst = GB_cuda_ek_slice_setup (Mp, mnvec, mnz, pfirst,
-            chunk_size, &my_chunk_size, &mnvec1, &slope) ;
+        GB_cuda_ek_slice_setup (Mp, mnvec, mnz, pfirst, chunk_size,
+            &kfirst, &klast, &my_chunk_size, &mnvec1, &slope) ;
 
         //----------------------------------------------------------------------
         // assign entries in C(i,j) to the buckets

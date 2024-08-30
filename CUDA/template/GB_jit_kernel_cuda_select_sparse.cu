@@ -67,11 +67,10 @@ __global__ void GB_cuda_select_sparse_phase1
             pfirst < anz ;
             pfirst += gridDim.x << log2_chunk_size )
     {
-        int64_t my_chunk_size, anvec_sub1 ;
+        int64_t my_chunk_size, anvec_sub1, kfirst, klast ;
         float slope ;
-        // TODO: I also want klast from ek_slice_setup. This should be easy to add.
-        int64_t kfirst = GB_cuda_ek_slice_setup (Ap, anvec, anz, pfirst,
-            chunk_size, &my_chunk_size, &anvec_sub1, &slope) ;
+        GB_cuda_ek_slice_setup (Ap, anvec, anz, pfirst, chunk_size,
+            &kfirst, &klast, &my_chunk_size, &anvec_sub1, &slope) ;
 
         // Now, I can update the column counts for col_counts[kfirst:klast]
         for (int64_t pdelta = threadIdx.x ; pdelta < my_chunk_size ; pdelta += blockDim.x)
