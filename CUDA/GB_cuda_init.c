@@ -46,7 +46,7 @@ GrB_Info GB_cuda_init (void)
             // of the work.  Alternatively, move GB_cuda_init here (if so,
             // ensure that it doesn't depend on any other initializations
             // below).
-            256 * 1000000L, 256 * 100000000L, 1) ;
+            256 * 1000000L, 1024 * 100000000L, 1) ; // FIXME: ask the GPU(s)
     }
 
     // warm up the GPUs
@@ -63,7 +63,6 @@ GrB_Info GB_cuda_init (void)
     GB_Context_gpu_id_set (NULL, 0) ;   // set GxB_CONTEXT_WORLD->gpu_id to 0
 
     // also check for jit cache, pre-load library of common kernels ...
-    printf ("GB_cuda_init line %d OK\n", __LINE__) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -377,11 +377,13 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
         int64_t s = offset [0] ;
         C->nzombies = s ;
+        printf ("zombies: %ld\n", s) ;
         bool all_in_one = false ;
         for (int bucket = 1 ; bucket < NBUCKETS+1 ; bucket++)
         {
             Bucketp[bucket] = s ; 
             s += offset [bucket] ;
+            printf ("bucket %d: %ld\n", bucket, s) ;
             if ((Bucketp [bucket] - Bucketp [bucket-1] ) == mnz)
             {
                 all_in_one = true ;

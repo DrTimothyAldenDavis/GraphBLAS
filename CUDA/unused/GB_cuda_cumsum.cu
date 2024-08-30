@@ -41,9 +41,10 @@ GrB_Info GB_cuda_cumsum             // compute the cumulative sum of an array
     //--------------------------------------------------------------------------
 
     void *d_temp_storage = NULL;
-    size_t temp_storage_bytes;
+    size_t temp_storage_bytes = 0 ;
     cub::DeviceScan::ExclusiveSum(d_temp_storage, temp_storage_bytes, count,
         count, (int) n) ;
+
     size_t size ;
     d_temp_storage  = GB_malloc_memory( temp_storage_bytes, 1, &size);
     if ( d_temp_storage == NULL){
