@@ -306,8 +306,11 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         Nanobuckets = GB_MALLOC_WORK (nanobuckets_size, int64_t, &Nb_size) ;
         Blockbucket = GB_MALLOC_WORK (blockbuckets_size, int64_t, &Bb_size) ;
         Bucketp = GB_MALLOC_WORK (NBUCKETS+1, int64_t, &Bup_size) ;
-        offset = GB_MALLOC_WORK (NBUCKETS, int64_t, &O_size) ;
+        offset = GB_MALLOC_WORK (NBUCKETS+1, int64_t, &O_size) ;
         Bucket = GB_MALLOC_WORK (mnz, int64_t, &Bu_size) ;
+
+        memset (offset, 0, (NBUCKETS+1) * sizeof (int64_t)) ;
+        memset (Bucketp, 0, (NBUCKETS+1) * sizeof (int64_t)) ;
 
         if (Nanobuckets == NULL || Blockbucket == NULL || Bucketp == NULL
             || Bucket == NULL || offset == NULL)
