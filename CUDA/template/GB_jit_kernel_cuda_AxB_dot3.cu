@@ -383,7 +383,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         {
             Bucketp[bucket] = s ; 
             s += offset [bucket] ;
-            printf ("bucket %d: %ld\n", bucket, s) ;
+            printf ("bucket %d: %ld offset: %ld\n", bucket, s, offset [bucket]) ;
             if ((Bucketp [bucket] - Bucketp [bucket-1] ) == mnz)
             {
                 all_in_one = true ;
