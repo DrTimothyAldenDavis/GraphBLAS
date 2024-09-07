@@ -133,6 +133,16 @@ int64_t start_time = (int64_t) clock ( ) ;
         pA_end   = Ap[i+1] ;
         #endif
 
+        // find B(:,j)
+        int64_t pB_start, pB_end ;
+        #if GB_B_IS_HYPER
+        GB_hyper_hash_lookup (Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
+           j, &pB_start, &pB_end) ;
+        #else
+        pB_start = Bp[j] ;
+        pB_end   = Bp[j+1] ;
+        #endif
+
         int64_t ainz = pA_end - pA_start ;
 
         GB_DECLAREA (aki) ;
@@ -145,6 +155,16 @@ int64_t start_time = (int64_t) clock ( ) ;
         int shared_steps_A = (ainz + shared_vector_size -1)/shared_vector_size;
 
         int64_t step_end = (shared_steps_A <= 1? ainz : shared_vector_size);
+
+	while( (shared_steps_A>0) && (Bi[pB_start] > Ai[pA_start+ step_end-1]) )
+	{  // Fast forward to skip empty intersections
+           pA_start += step_end;
+           ainz = pA_end - pA_start ;
+	   shared_steps_A -= 1;
+           step_end = (shared_steps_A <= 1? ainz : shared_vector_size);
+	}
+
+
         for ( int64_t i = tid; i< step_end; i+= blockDim.x)
         {
             Ai_s[i] = Ai[ i + pA_start];
@@ -152,22 +172,20 @@ int64_t start_time = (int64_t) clock ( ) ;
         this_thread_block().sync();
          
 
-        // find B(:,j)
-        int64_t pB_start, pB_end ;
-        #if GB_B_IS_HYPER
-        GB_hyper_hash_lookup (Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
-           j, &pB_start, &pB_end) ;
-        #else
-        pB_start = Bp[j] ;
-        pB_end   = Bp[j+1] ;
-        #endif
-
         int64_t bjnz = pB_end - pB_start;          // bjnz
-        int shared_steps_B = (bjnz + shared_vector_size -1)/shared_vector_size;
          
         __shared__ int64_t Bj_s[shared_vector_size];
-
+        int shared_steps_B = (bjnz + shared_vector_size -1)/shared_vector_size;
         step_end = (shared_steps_B <= 1 ? bjnz : shared_vector_size);
+
+	while( (shared_steps_B>0) && (Ai[pA_start] > Bi[pB_start + step_end-1]) )
+	{  //Fast forward to skip 
+	   pB_start+= step_end;
+	   bjnz = pB_end - pB_start;
+	   shared_steps_B -= 1;
+           step_end = (shared_steps_B <= 1 ? bjnz : shared_vector_size);
+	}
+
         for ( int64_t i =tid; i< step_end; i+= blockDim.x)
         {
             Bj_s[i] = Bi[ i + pB_start];
@@ -205,9 +223,18 @@ int64_t start_time = (int64_t) clock ( ) ;
                 x_max = pivot * (1 - (Apiv < Bpiv)) + x_max * (Apiv < Bpiv);
 
             }
-
             int xcoord = x_min;
             int ycoord = diag -x_min -1;
+
+	    /* 
+	    //predictor-corrector search independent on each thread
+	    int xcoord = GB_IMAX(diag-1, 0); //predicted to be uniform distribution
+	    while ( Ai_s[xcoord] < Bj_s[diag-xcoord-1] && (xcoord<x_max) ) xcoord++; 
+	    while ( Ai_s[xcoord] > Bj_s[diag-xcoord-1] && (xcoord>x_min) ) xcoord--;
+
+            int ycoord = diag -xcoord -1;
+	    */
+
             int64_t Atest = Ai_s[xcoord] ;
             int64_t Btest = Bj_s[ycoord] ;
             if ( (diag > 0) && (diag < nxy ) && (ycoord >= 0 ) && (Atest == Btest)) 
@@ -217,6 +244,7 @@ int64_t start_time = (int64_t) clock ( ) ;
             // two start points are known now
             int tx_start = xcoord; // +pA_start;
             int ty_start = diag -xcoord; // +pB_start; 
+
 
 
             x_min = GB_IMAX( (diag_end - bwork), 0); //bwork replace bjnz
@@ -234,6 +262,16 @@ int64_t start_time = (int64_t) clock ( ) ;
 
             xcoord = x_min;
             ycoord = diag_end -x_min -1;
+ 
+
+/*	    
+	    //predictor-corrector search independent on each thread
+	    xcoord = diag_end-1; //predicted to be uniform distribution
+	    while ( Ai_s[xcoord] < Bj_s[diag_end-xcoord-1] && (xcoord<x_max)) xcoord++; 
+	    while ( Ai_s[xcoord] > Bj_s[diag_end-xcoord-1] && (xcoord>x_min)) xcoord--;
+
+            ycoord = diag_end -xcoord -1;
+*/	   
 
             // two end points are known now
             int tx_end = xcoord; // +pA_start; 
@@ -277,6 +315,14 @@ int64_t start_time = (int64_t) clock ( ) ;
                 if (shared_steps_B == 0) break;
 
                 step_end = ( (pA_end - pA_start) < shared_vector_size ? (pA_end - pA_start) : shared_vector_size);
+		while( (shared_steps_A>0) && (Bi[pB_start] > Ai[pA_start + step_end-1]) )
+		{ //fast forward
+                   pA_start += step_end;
+		   shared_steps_A -= 1;
+                   step_end = ( (pA_end - pA_start) < shared_vector_size ? (pA_end - pA_start) : shared_vector_size);
+		}
+                if (shared_steps_A == 0) break;
+
                 for ( int64_t i = tid; i< step_end; i+= blockDim.x)
                 {
                     Ai_s[i] = Ai[ i + pA_start];
@@ -284,6 +330,14 @@ int64_t start_time = (int64_t) clock ( ) ;
                 this_thread_block().sync();
 
                 step_end = ( (pB_end - pB_start) < shared_vector_size ? (pB_end - pB_start) : shared_vector_size);
+		while( (shared_steps_B>0) && (Ai[pA_start] > Bi[pB_start + step_end-1]) )
+		{ //fast forward
+                   pB_start += step_end;
+		   shared_steps_B -= 1;
+                   step_end = ( (pB_end - pB_start) < shared_vector_size ? (pB_end - pB_start) : shared_vector_size);
+		}
+                if (shared_steps_B == 0) break;
+
                 for ( int64_t i = tid; i< step_end; i+= blockDim.x)
                 {
                     Bj_s[i] = Bi[ i + pB_start];
@@ -298,6 +352,14 @@ int64_t start_time = (int64_t) clock ( ) ;
                 if (shared_steps_A == 0) break;
 
                 step_end= ( (pA_end - pA_start) < shared_vector_size ? (pA_end - pA_start) : shared_vector_size);
+		while( (shared_steps_A>0) && (Bi[pB_start] > Ai[pA_start + step_end-1]) )
+		{ //fast forward
+                   pA_start += step_end;
+		   shared_steps_A -= 1;
+                   step_end= ( (pA_end - pA_start) < shared_vector_size ? (pA_end - pA_start) : shared_vector_size);
+		}
+                if (shared_steps_A == 0) break;
+
                 for ( int64_t i = tid; i< step_end; i+= blockDim.x)
                 {
                     Ai_s[i] = Ai[ i + pA_start];
@@ -312,6 +374,14 @@ int64_t start_time = (int64_t) clock ( ) ;
                 if (shared_steps_B == 0) break;
 
                 step_end = ( (pB_end - pB_start) < shared_vector_size ? (pB_end - pB_start) : shared_vector_size);
+		while( (shared_steps_B>0) && (Ai[pA_start] > Bi[pB_start + step_end-1]) )
+		{ //fast forward
+                   pB_start += step_end;
+		   shared_steps_B -= 1;
+                   step_end = ( (pB_end - pB_start) < shared_vector_size ? (pB_end - pB_start) : shared_vector_size);
+		}
+                if (shared_steps_B == 0) break;
+
                 for ( int64_t i = tid; i< step_end; i+= blockDim.x)
                 {
                     Bj_s[i] = Bi[ i + pB_start];
