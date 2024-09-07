@@ -106,7 +106,8 @@ typedef enum
     // both A and B are sparse/hyper:
     GB_BUCKET_VSVS = 1,         // vsvs: both A(:,i) and B(:,j) are very sparse
     GB_BUCKET_MERGEPATH = 2,    // mp: use the merge-path method
-    // A is sparse/hyper and B is bitmap/full, or
+    GB_BUCKET_VSSP = 3,         // vssp: very sparse x sparse, binary search 
+    // A is sparse/hyper and B is bitmap/full,  
     // A is bitmap/full  and B is sparse/hyper
     GB_BUCKET_VSDN = 1,         // vsdn: the sparse vector is very sparse
     GB_BUCKET_SPDN = 2,         // spdn: sparse vector has lots of entries;
@@ -476,9 +477,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                                 gridsz = number_of_sms ;
                             }
                             gridsz = GB_IMIN (gridsz, 256*number_of_sms) ;
-//                          dim3 grid_3 (gridsz) ;
-// HACK:
-                            dim3 grid_3 (1) ;
+                            dim3 grid_3 (gridsz) ;
                             GB_cuda_AxB_dot3_phase3_mp_kernel
                                 <<<grid_3, block, 0, stream>>>
                                 (start, end, Bucket, C, M, A, B) ;
