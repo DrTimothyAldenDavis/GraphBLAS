@@ -40,6 +40,8 @@
 //------------------------------------------------------------------------------
 // GB_cuda_AxB_dot3_phase3_mp_kernel
 //------------------------------------------------------------------------------
+
+#include <time.h>
   
 __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
 (
@@ -110,6 +112,9 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
          kk < end;  
          kk += gridDim.x )
     {
+
+// HACK:
+int64_t start_time = (int64_t) clock ( ) ;
 
         int64_t pair_id = all_in_one ? kk : Bucket [kk] ;
         int64_t i = Mi[pair_id];
@@ -332,6 +337,11 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
             cij = GB_cuda_tile_reduce_ztype (tile, cij) ;
         }
         #endif
+
+// HACK
+int64_t end_time = (int64_t) clock ( ) ;
+cij = end_time - start_time ;
+cij_exists = 1 ;
 
         // write result for this block to global mem
         if (tid == 0)

@@ -380,7 +380,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
         int64_t s = offset [0] ;
         C->nzombies = s ;
-        printf ("zombies: %ld\n", s) ;
+        printf ("\nzombies: %ld\n", s) ;
         bool all_in_one = false ;
         for (int bucket = 1 ; bucket < NBUCKETS+1 ; bucket++)
         {
@@ -476,7 +476,9 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                                 gridsz = number_of_sms ;
                             }
                             gridsz = GB_IMIN (gridsz, 256*number_of_sms) ;
-                            dim3 grid_3 (gridsz) ;
+//                          dim3 grid_3 (gridsz) ;
+// HACK:
+                            dim3 grid_3 (1) ;
                             GB_cuda_AxB_dot3_phase3_mp_kernel
                                 <<<grid_3, block, 0, stream>>>
                                 (start, end, Bucket, C, M, A, B) ;

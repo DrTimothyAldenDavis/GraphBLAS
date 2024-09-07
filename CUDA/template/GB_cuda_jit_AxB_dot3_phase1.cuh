@@ -229,6 +229,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
                             (GB_B_IS_SPARSE || GB_B_IS_HYPER)
                         // A and B are both sparse/hyper
                         bool vsvs = (ainz + bjnz <= 128) ;
+//                      bool vsvs = (ainz < 128) || (bjnz < 128) ;
                         bucket = (GB_bucket_code)
                            (  ((int) ( vsvs)) * ((int) GB_BUCKET_VSVS)
                             + ((int) (!vsvs)) * ((int) GB_BUCKET_MERGEPATH)) ;
