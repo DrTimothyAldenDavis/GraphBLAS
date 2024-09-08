@@ -152,7 +152,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
         GB_CIJ_EXIST_POSTCHECK ;
 
 // HACK
-cij_exists = false ;
+// cij_exists = false ;
 
         if (cij_exists)
         {
