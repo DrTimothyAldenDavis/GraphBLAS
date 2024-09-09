@@ -41,7 +41,7 @@
 // GB_cuda_AxB_dot3_phase3_mp_kernel
 //------------------------------------------------------------------------------
 
-#include <time.h>
+//#include <time.h>
   
 __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
 (
@@ -114,7 +114,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
     {
 
 // HACK:
-int64_t start_time = (int64_t) clock ( ) ;
+//int64_t start_time = (int64_t) clock ( ) ;
 
         int64_t pair_id = all_in_one ? kk : Bucket [kk] ;
         int64_t i = Mi[pair_id];
@@ -142,6 +142,20 @@ int64_t start_time = (int64_t) clock ( ) ;
         pB_start = Bp[j] ;
         pB_end   = Bp[j+1] ;
         #endif
+
+	//try to trim tail of A
+
+	while ( (pA_end - pA_start > shared_vector_size) 
+             && (Bi[pB_end-1] < Ai[pA_end - shared_vector_size -1 ])  )
+	{
+           pA_end -= shared_vector_size;
+	}
+	//try to trim tail of B
+	while ( (pB_end - pB_start > shared_vector_size) 
+             && (Ai[pA_end-1] < Bi[pB_end - shared_vector_size -1 ]) )
+	{
+           pB_end -= shared_vector_size;
+	}
 
         int64_t ainz = pA_end - pA_start ;
 
@@ -409,9 +423,9 @@ int64_t start_time = (int64_t) clock ( ) ;
         #endif
 
 // HACK
-int64_t end_time = (int64_t) clock ( ) ;
-cij = end_time - start_time ;
-cij_exists = 1 ;
+//int64_t end_time = (int64_t) clock ( ) ;
+//cij = end_time - start_time ;
+//cij_exists = 1 ;
 
         // write result for this block to global mem
         if (tid == 0)

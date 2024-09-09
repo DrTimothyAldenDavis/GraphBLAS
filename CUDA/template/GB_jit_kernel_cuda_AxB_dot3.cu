@@ -33,7 +33,7 @@
 #define log2_chunk_size 7
 #define tile_sz 32 
 #define log2_tile_sz 5 
-#define shared_vector_size 128 
+#define shared_vector_size 256 
 #define blocksize  32
 #define threads_per_block 32
 
@@ -106,7 +106,7 @@ typedef enum
     // both A and B are sparse/hyper:
     GB_BUCKET_VSVS = 1,         // vsvs: both A(:,i) and B(:,j) are very sparse
     GB_BUCKET_MERGEPATH = 2,    // mp: use the merge-path method
-    GB_BUCKET_VSSP = 3,         // vssp: very sparse x sparse, binary search 
+    //GB_BUCKET_VSSP = 3,         // vssp: very sparse x sparse, binary search 
     // A is sparse/hyper and B is bitmap/full,  
     // A is bitmap/full  and B is sparse/hyper
     GB_BUCKET_VSDN = 1,         // vsdn: the sparse vector is very sparse
