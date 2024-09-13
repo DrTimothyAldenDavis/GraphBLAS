@@ -54,6 +54,8 @@ __global__ void GB_cuda_AxB_dot3_dense_phase1_kernel
     // determine the vector k of all entries in C(i,j), one chunk at a time
     //--------------------------------------------------------------------------
 
+    printf ("\ndense phase1\n") ;
+
     // grid-stride loop for each threadblock:
     for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
                  pfirst < mnz ;

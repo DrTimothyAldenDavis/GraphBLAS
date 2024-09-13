@@ -229,6 +229,9 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
     int number_of_blocks_1 = GB_IMIN (nblks_1,  chunk_size * number_of_sms) ;
 
     // most methods can use these launch geometries:
+    printf ("\nmnz: %ld\n", mnz) ;
+    printf ("number_of_blocks_1: %d\n", number_of_blocks_1) ;
+    printf ("threads_per_block: %d\n", threads_per_block) ;
     dim3 grid_1 (number_of_blocks_1) ;
     dim3 block (threads_per_block) ;
 
@@ -357,6 +360,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
         // kernel_timer.Start();
 
+        printf ("\nLaunching sparse phase1:\n") ;
         GB_jit_AxB_dot3_phase1_kernel <<<grid_1, block, 0, stream>>>
             (Nanobuckets, Blockbucket, C, M, A, B) ;
 
@@ -377,6 +381,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
         // kernel_timer.Start();
 
+        printf ("Launching sparse phase2:\n") ;
         GB_cuda_AxB_dot3_phase2_kernel <<<grid_2, block, 0, stream>>>
             (Blockbucket, offset, number_of_blocks_1) ;
 
@@ -408,6 +413,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         {
             // kernel_timer.Start();
 
+            printf ("Launching sparse phase2end:\n") ;
             GB_cuda_AxB_dot3_phase2end_kernel <<<grid_1, block, 0, stream>>>
                 (Nanobuckets, Blockbucket, Bucketp, Bucket, offset, C, mnz) ;
 
@@ -428,6 +434,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
             int64_t end   = Bucketp [bucket + 1] ;
             int64_t cnz_in_bucket = end - start ;
             int gridsz, blocksz, work_per_thread ;
+            printf ("bucket %d, cnz_in_bucket %ld\n", bucket, cnz_in_bucket) ;
             if (cnz_in_bucket > 0)
             {
 

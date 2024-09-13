@@ -127,6 +127,11 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     // FIXME: tune this loop (and all others) for GPU architectures, where # of
     // threadblocks can differ on different GPUs.
 
+    if (threadIdx.x == 0)
+    {
+        printf ("\nphase1:\n") ;
+    }
+
     // grid-stride loop for each threadblock:
     for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
                  pfirst < mnz ;
@@ -240,6 +245,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
                             if (vsvs)
                             {
                                 bucket = GB_BUCKET_VSVS ;
+                                printf ("i %ld, k %ld, j %ld: vsvs\n",i,k,j) ;
                             }
                             else
                             {
@@ -248,19 +254,20 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
                                 if (dmax >= 32 * dmin)
                                 {
                                     bucket = GB_BUCKET_VSSP ;
+                                printf ("i %ld, k %ld, j %ld: vsps\n",i,k,j) ;
                                 }
                                 else
                                 {
                                     bucket = GB_BUCKET_MERGEPATH ;
+                                printf ("i %ld, k %ld, j %ld: mp\n",i,k,j) ;
                                 }
                             }
 
-#if 0
-                            // bool vsvs = (ainz < 128) || (bjnz < 128) ;
-                            bucket = (GB_bucket_code)
-                               (  ((int) ( vsvs)) * ((int) GB_BUCKET_VSVS)
-                                + ((int) (!vsvs)) * ((int) GB_BUCKET_MERGEPATH)) ;
-#endif
+//                          // bool vsvs = (ainz < 128) || (bjnz < 128) ;
+//                          bucket = (GB_bucket_code)
+//                             (  ((int) ( vsvs)) * ((int) GB_BUCKET_VSVS)
+//                              + ((int) (!vsvs)) * ((int) GB_BUCKET_MERGEPATH)) ;
+
 
                         }
                         #elif (GB_A_IS_SPARSE || GB_A_IS_HYPER) && \
