@@ -1,27 +1,12 @@
 //------------------------------------------------------------------------------
-// spGEMM_very_sparse_sparse.cu 
+// GraphBLAS/CUDA/template/GB_cuda_jit_AxB_dot3_phase3_vssp.cuh
 //------------------------------------------------------------------------------
-
-// The spGEM_vssp CUDA kernel produces the semi-ring product of two
-// sparse matrices of types T_A and T_B and common index space size n, to a  
-// output matrix of type T_C. The matrices are sparse, with different numbers
-// of non-zeros and different sparsity patterns. 
-// ie. we want to produce C = A'*B in the sense of the given semi-ring.
 
 // This version uses a binary-search algorithm, when the sizes nnzA and nnzB
 // are far apart in size, neither is very spare nor dense, for any size of N.
 
 // Both the grid and block are 1D, so blockDim.x is the # threads in a
 // threadblock, and the # of threadblocks is grid.x
-
-// Let b = blockIdx.x, and let s be blockDim.x. s= 32 with a variable number
-// of active threads = min( min(nzA, nzB), 32) 
-
-// Thus, each t in threadblock b owns a part of the set of pairs in the 
-// sparse-sparse bucket of work. The job for each pair of vectors is to find 
-// the intersection of the index sets Ai and Bi, perform the semi-ring dot 
-// product on those items in the intersection, and finally
-// on exit write it to Cx [pair].
 
 //  int64_t start          <- start of vector pairs for this kernel
 //  int64_t end            <- end of vector pairs for this kernel
@@ -30,45 +15,8 @@
 //  GrB_Matrix M         <- mask matrix
 //  GrB_Matrix A         <- input matrix A
 //  GrB_Matrix B         <- input matrix B
-#pragma once
 
-#include <cmath>
-#include <limits>
-#include <cstdint>
-#include <cooperative_groups.h>
-#include "GB_cuda_kernel.h"
-
-// Using tile size fixed at compile time, we don't need shared memory
-#define tile_sz 32 
-
-using namespace cooperative_groups;
-
-template< typename T, int warpSize >
-__device__ T reduce_sum(thread_block_tile<warpSize> g, T val)
-{
-    // Each iteration halves the number of active threads
-    // Each thread adds its partial sum[i] to sum[lane+i]
-    /*
-    for (int i = warpSize >> 1; i > 0; i >>= 1)
-    {
-        val += g.shfl_down(val,i) ;
-    }
-    */
-        val += g.shfl_down(val,16) ;
-        val += g.shfl_down(val,8) ;
-        val += g.shfl_down(val,4) ;
-        val += g.shfl_down(val,2) ;
-        val += g.shfl_down(val,1) ;
-    return val; // note: only thread 0 will return full sum
-}
-
-#define intersects_per_thread 8
-
-template<
-    typename T_C, typename T_A, typename T_B,
-    typename T_Z, typename T_X, typename T_Y,
-    uint64_t srcode>
-__global__ void AxB_dot3_phase3_vssp
+__global__ void GB_cuda_AxB_dot3_phase3_vssp_kernel
 (
     int64_t start,
     int64_t end,
@@ -76,69 +24,104 @@ __global__ void AxB_dot3_phase3_vssp
     GrB_Matrix C,
     GrB_Matrix M,
     GrB_Matrix A,
-    GrB_Matrix B,
-    int sz
+    GrB_Matrix B
 )
 {
-    // TODO: Figure out how to use graphblas-specific INFINITY macro
-    #ifndef INFINITY
-    #define INFINITY std::numeric_limits<T_C>::max()
+
+    #if !GB_A_IS_PATTERN
+    const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *)A->x  ;
+    #endif
+    #if !GB_B_IS_PATTERN
+    const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *)B->x  ;
+    #endif
+          GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *)C->x  ;
+          int64_t *__restrict__ Ci = C->i ;
+    const int64_t *__restrict__ Mi = M->i ;
+    #if GB_M_IS_HYPER
+    const int64_t *__restrict__ Mh = M->h ;
     #endif
 
-    // Typed pointers to access data in A,B,C
-   const T_A *__restrict__ Ax = (T_A*)A->x;
-   const T_B *__restrict__ Bx = (T_B*)B->x;
-         T_C *__restrict__ Cx = (T_C*)C->x;
-         int64_t *__restrict__ Ci = C->i;
-   const int64_t *__restrict__ Mi = M->i;
-   const int64_t *__restrict__ Ai = A->i;
-   const int64_t *__restrict__ Bi = B->i;
-   const int64_t *__restrict__ Ap = A->p;
-   const int64_t *__restrict__ Bp = B->p;
+    ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
+    const int64_t *__restrict__ Ai = A->i ;
+    const int64_t *__restrict__ Ap = A->p ;
 
-   
-   thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( this_thread_block());
+    ASSERT (GB_B_IS_HYPER || GB_B_IS_SPARSE) ;
+    const int64_t *__restrict__ Bi = B->i ;
+    const int64_t *__restrict__ Bp = B->p ;
 
-   // zombie count
-   int64_t zc = 0;
-   int64_t pair_id;// im;
+    #if GB_A_IS_HYPER
+    const int64_t anvec = A->nvec ;
+    const int64_t *__restrict__ Ah = A->h ;
+    const int64_t *__restrict__ A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+    const int64_t *__restrict__ A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
+    const int64_t *__restrict__ A_Yx = (int64_t *)
+        ((A->Y == NULL) ? NULL : A->Y->x) ;
+    const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
+    #endif
 
-   // set thread ID
-   unsigned int tid_global = threadIdx.x+ blockDim.x* blockIdx.x;
+    #if GB_B_IS_HYPER
+    const int64_t bnvec = B->nvec ;
+    const int64_t *__restrict__ Bh = B->h ;
+    const int64_t *__restrict__ B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;
+    const int64_t *__restrict__ B_Yi = (B->Y == NULL) ? NULL : B->Y->i ;
+    const int64_t *__restrict__ B_Yx = (int64_t *)
+        ((B->Y == NULL) ? NULL : B->Y->x) ;
+    const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
+    #endif
 
-   unsigned long int b = blockIdx.x ;
+    // zombie count (only maintained by threadIdx.x == zero)
+    uint64_t zc = 0 ;
+
+    GB_M_NVALS (mnz) ;
+    int all_in_one = ( (end - start) == mnz ) ;
+
+    thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( this_thread_block());
 
     // Main loop over pairs in Bucket [start:end-1]
-  //for (int64_t kk = start+ tid_global, im = 0; 
-  //             kk < end && im < m;  
-  //             kk += gridDim.x*blockDim.x, ++im)
     for (int64_t kk = start+ blockIdx.x; 
                  kk < end ;  
                  kk += gridDim.x)
     {
 
-        pair_id = Bucket[ kk ];
+        int64_t pair_id = all_in_one ? kk : Bucket[ kk ];
 
         int64_t i = Mi[pair_id];
-        int64_t j = Ci[pair_id] >> 4;
+        int64_t k = Ci[pair_id] >> 4;
+        // assert: Ci [pair_id] & 0xF == GB_BUCKET_VSSP
 
-        int64_t pA_start= Ap[i];
-        int64_t pA_end  = Ap[i+1];
-        int64_t nnzA = pA_end - pA;
+        // j = k or j = Mh [k] if C and M are hypersparse
+        int64_t j = GBH_M (Mh, k) ;
 
-        int64_t pB_start= Bp[j];
-        int64_t pB_end  = Bp[j+1];
-        int64_t nnzB = pB_end - pB;
+        // find A(:,i):  A is always sparse or hypersparse
+        int64_t pA, pA_end ;
+        #if GB_A_IS_HYPER
+        GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
+           i, &pA, &pA_end) ;
+        #else
+        pA     = Ap [i] ;
+        pA_end = Ap [i+1] ;
+        #endif
 
-        //Search for each nonzero in the smaller vector to find intersection 
-        bool cij_exists = false;
+        // find B(:,j):  B is always sparse or hypersparse
+        int64_t pB, pB_end ;
+        #if GB_B_IS_HYPER
+        GB_hyper_hash_lookup (Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
+           j, &pB, &pB_end) ;
+        #else
+        pB     = Bp [j] ;
+        pB_end = Bp [j+1] ;
+        #endif
 
         GB_DECLAREA (aki) ;
         GB_DECLAREB (bkj) ;
-        T_Z cij = GB_IDENTITY ;
+        GB_DECLARE_IDENTITY (cij) ;         // GB_Z_TYPE cij = identity
 
-	int64_t pA = pA_start;
-	int64_t pB = pB_start;
+        bool cij_exists = false;
+
+        int64_t nnzA = pA_end - pA;
+        int64_t nnzB = pB_end - pB;
+
+        //Search for each nonzero in the smaller vector to find intersection 
 
         if (nnzA <= nnzB)
         {
@@ -226,9 +209,9 @@ __global__ void AxB_dot3_phase3_vssp
 	tile.sync ( ) ;
       
 	#if  !GB_C_ISO
-        if ( cij_exists){
-	   cij = GB_cuda_tile_reduce_ztype (tile, cij) ;
-
+        if ( cij_exists)
+        {
+	    cij = GB_cuda_tile_reduce_ztype (tile, cij) ;
 	}
         #endif
 
@@ -237,7 +220,7 @@ __global__ void AxB_dot3_phase3_vssp
             if (cij_exists)
 	    {
 	        Ci[pair_id] = i ;
-	        GB_PUTC ( Cx[pair_id] = (T_C)cij ) ;
+	        GB_PUTC (cij, Cx, pair_id) ;
             }
 	    else 
 	    {
@@ -246,21 +229,20 @@ __global__ void AxB_dot3_phase3_vssp
 		Ci[pair_id] = GB_FLIP( i ) ;
             }
 	}
-
-
     }
     this_thread_block().sync();
 
     //--------------------------------------------------------------------------
-    // reduce sum per-thread values to a single scalar
+    // update the zombie count
     //--------------------------------------------------------------------------
-    zc = reduce_sum<int,tile_sz>(tile, zc);
 
-    if( threadIdx.x ==0 && zc > 0) {
-      //printf("vssp warp %d zombie count = %d\n", blockIdx.x, zc);
-      GB_cuda_atomic_add<uint64_t>( &(C->nzombies), zc) ;
-      //printf(" vssp Czombie = %lld\n",C->nzombies);
+    if (threadIdx.x ==0 && zc > 0)
+    {
+        // this threadblock accumulates its zombie count into the global
+        // zombie count
+        //printf("vssp warp %d zombie count = %d\n", blockIdx.x, zc);
+        GB_cuda_atomic_add<uint64_t>( &(C->nzombies), zc) ;
+        //printf(" vssp Czombie = %lld\n",C->nzombies);
     }
-
 }
 

@@ -119,6 +119,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
         int64_t pair_id = all_in_one ? kk : Bucket [kk] ;
         int64_t i = Mi[pair_id];
         int64_t k = Ci[pair_id] >> 4;
+        // assert: Ci [pair_id] & 0xF == GB_BUCKET_MERGEPATH
 
         // j = k or j = Mh [k] if C and M are hypersparse
         int64_t j = GBH_M (Mh, k) ;

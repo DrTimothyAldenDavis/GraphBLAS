@@ -117,7 +117,10 @@ __global__ void GB_cuda_AxB_dot3_phase2end_kernel
             //bucket_s[ibucket][ idx ] = p;
 
             bucket_idx [tid] = my_bucket [ibucket]++ ;
-            Ci [p] = (ibucket==0) * (Ci [p] >> 4) + (ibucket > 0) * Ci [p] ;
+
+            // finalize the zombie bucket; no change to the rest of Ci
+            Ci [p] = (ibucket == GB_BUCKET_ZOMBIE) * (Ci [p] >> 4) +
+                     (ibucket != GB_BUCKET_ZOMBIE) * (Ci [p]) ;
 
             //if(ibucket == 0) {
             ////    bucket[my_bucket[0]++] = p;

@@ -91,7 +91,7 @@
 // dot3 buckets
 //------------------------------------------------------------------------------
 
-#define NBUCKETS 3
+#define NBUCKETS 4
 
 // NBUCKETS buckets: computed by up to NBUCKETS-1 kernel launches (zombies need
 // no work...), each using different kernels (with different configurations
@@ -103,10 +103,12 @@
 typedef enum
 {
     GB_BUCKET_ZOMBIE = 0,       // C(i,j) is a zombie (not a bucket)
+
     // both A and B are sparse/hyper:
     GB_BUCKET_VSVS = 1,         // vsvs: both A(:,i) and B(:,j) are very sparse
     GB_BUCKET_MERGEPATH = 2,    // mp: use the merge-path method
-    //GB_BUCKET_VSSP = 3,         // vssp: very sparse x sparse, binary search 
+    GB_BUCKET_VSSP = 3,         // vssp: very sparse x sparse, binary search 
+
     // A is sparse/hyper and B is bitmap/full,  
     // A is bitmap/full  and B is sparse/hyper
     GB_BUCKET_VSDN = 1,         // vsdn: the sparse vector is very sparse
@@ -169,6 +171,7 @@ GB_bucket_code ;    // FIXME: rename GB_dot3_bucket_code
         // sparse-sparse
         #include "GB_cuda_jit_AxB_dot3_phase3_mp.cuh"
         #include "GB_cuda_jit_AxB_dot3_phase3_vsvs.cuh"
+        #include "GB_cuda_jit_AxB_dot3_phase3_vssp.cuh"
     #else
         // sparse-dense or dense-sparse
         #include "GB_cuda_jit_AxB_dot3_phase3_spdn.cuh"
@@ -483,6 +486,34 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                                 (start, end, Bucket, C, M, A, B) ;
                         }
                         break ;
+
+                        //------------------------------------------------------
+                        // vssp bucket:
+                        //------------------------------------------------------
+
+                        case GB_BUCKET_VSSP :
+                        {
+                            // FIXME: should be a function of cuda architecture
+                            blocksz = 32 ;
+                            work_per_thread = 256 ;
+                            if (cnz_in_bucket > (2<<20))
+                            {
+                                work_per_thread = 1024 ;
+                            }
+                            gridsz = GB_ICEIL (cnz_in_bucket, work_per_thread) ;
+                            if ((gridsz < number_of_sms) &&
+                                (cnz_in_bucket > (2<<20)))
+                            {
+                                gridsz = number_of_sms ;
+                            }
+                            gridsz = GB_IMIN (gridsz, 256*number_of_sms) ;
+                            dim3 grid_3 (gridsz) ;
+                            GB_cuda_AxB_dot3_phase3_vssp_kernel
+                                <<<grid_3, block, 0, stream>>>
+                                (start, end, Bucket, C, M, A, B) ;
+                        }
+                        break ;
+
                     }
 
                 #else
