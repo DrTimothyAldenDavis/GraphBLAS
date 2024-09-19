@@ -127,11 +127,6 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     // FIXME: tune this loop (and all others) for GPU architectures, where # of
     // threadblocks can differ on different GPUs.
 
-    if (threadIdx.x == 0)
-    {
-        printf ("\nphase1:\n") ;
-    }
-
     // grid-stride loop for each threadblock:
     for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
                  pfirst < mnz ;
@@ -240,28 +235,40 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
                             (GB_B_IS_SPARSE || GB_B_IS_HYPER)
                         {
                             // A and B are both sparse/hyper
-                            bool vsvs = (ainz + bjnz <= 128) ;
 
-                            if (vsvs)
+                            // NOTE: these methods are about the same:
+#if 0
+                            // use vsvs if both are very sparse:
+                            int vsvs = (int) (ainz + bjnz <= 128) ;
+                            // otherwise, use vssp if
+                            // max(ainz,bjnz) >= 8 * min (ainz,bjnz)
+                            int vssp = ((int) (!vsvs)) * (int)
+                              ((ainz >= (bjnz << 3)) || (bjnz >= (ainz << 3))) ;
+                            // otherwise, use mp
+                            int mp = (int) (!vsvs && !vssp) ;
+                            bucket = (GB_bucket_code) (
+                                ((vsvs) * (int) GB_BUCKET_VSVS) +
+                                ((vssp) * (int) GB_BUCKET_VSSP) +
+                                ((mp  ) * (int) GB_BUCKET_MERGEPATH)) ;
+#else
+                            if (ainz + bjnz <= 128)
                             {
                                 bucket = GB_BUCKET_VSVS ;
-                                printf ("i %ld, k %ld, j %ld: vsvs\n",i,k,j) ;
                             }
                             else
                             {
-                                int64_t dmax = GB_IMAX (ainz, bjnz) ;
-                                int64_t dmin = GB_IMIN (ainz, bjnz) ;
-                                if (dmax >= 32 * dmin)
+                                int64_t dmax = max (ainz, bjnz) ;
+                                int64_t dmin = min (ainz, bjnz) ;
+                                if (dmax >= 8 * dmin)
                                 {
                                     bucket = GB_BUCKET_VSSP ;
-                                printf ("i %ld, k %ld, j %ld: vsps\n",i,k,j) ;
                                 }
                                 else
                                 {
                                     bucket = GB_BUCKET_MERGEPATH ;
-                                printf ("i %ld, k %ld, j %ld: mp\n",i,k,j) ;
                                 }
                             }
+#endif
 
 //                          // bool vsvs = (ainz < 128) || (bjnz < 128) ;
 //                          bucket = (GB_bucket_code)
