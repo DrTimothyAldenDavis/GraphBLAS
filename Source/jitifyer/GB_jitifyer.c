@@ -2506,7 +2506,7 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     // FIXME: add GB_CUDA_INC here:
     "-I/usr/local/cuda/include -std=c++17 " 
     // FIXME: use GB_CUDA_ARCHITECTURES here:
-    " -arch=sm_70 "
+    " -arch=sm_60 "
     " -fPIC " 
     // FIXME: add GB_CUDA_FLAGS here:
     " -O3 "   // HACK FIXME (for CUDA)
