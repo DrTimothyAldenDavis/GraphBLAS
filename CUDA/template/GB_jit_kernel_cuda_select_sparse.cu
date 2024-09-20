@@ -16,8 +16,7 @@ Steps:
 // Compute keep array
 __global__ void GB_cuda_select_sparse_phase1
 (
-    uint8_t *keep,
-    size_t *nkeep,
+    int64_t *keep,
     GrB_Matrix A,
     void *ythunk
 )
@@ -80,6 +79,10 @@ __global__ void GB_cuda_select_sparse_phase1
     #endif
 }
 
+//------------------------------------------------------------------------------
+// select sparse, host method
+//------------------------------------------------------------------------------
+
 extern "C"
 {
     GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel) ;
@@ -93,18 +96,23 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     dim3 grid (gridsz) ;
     dim3 block (blocksz) ;
 
-    int8_t *compress ;
-    size_t *nkeep ;
-    size_t compress_size, nkeep_size ;
-    compress = GB_MALLOC_WORK (A->nvals, int8_t, &compress_size) ;
-    nkeep = GB_MALLOC_WORK (sizeof(size_t), size_t, &nkeep_size) ;
+    // Phase 1: keep [p] = 1 if Ai,Ax [p] is kept, 0 otherwise; then cumsum
+    int64_t *keep ;
+    size_t keep_size ;
+    keep = GB_MALLOC_WORK (A->nvals, int64_t, &keep_size) ;
+    // FIXME: check for NULL out of memory ...
 
-    GB_cuda_select_sparse_phase1 <<<grid, block, 0, stream>>> (compress, nkeep, A, ythunk) ;
+    GB_cuda_select_sparse_phase1 <<<grid, block, 0, stream>>>
+        (keep, A, ythunk) ;
 
-    GB_cuda_cumsum (compress, NULL, A->nvals, stream, GB_CUDA_CUMSUM_INCLUSIVE_IN_PLACE) ;
+    CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-    // Phase 2: Build Ci, Cx, and Aj'
-    // Phase 3: Build delta array over Aj'
+    // keep = cumsum (keep), in-place
+    GB_cuda_cumsum (keep, keep, A->nvals, stream, GB_CUDA_CUMSUM_INCLUSIVE_IN_PLACE) ;
+    int64_t *map = keep ;   // keep has been replaced with map
+
+    // Phase 2: Build Ci, Cx, and Ak_keep
+    // Phase 3: Build delta array over Ak_keep
     // Cumsum over delta array
     // Phase 4: Build Cp and Ch
     // Done!

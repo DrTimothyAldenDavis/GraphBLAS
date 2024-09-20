@@ -12,21 +12,21 @@
 
 #include <cub/cub.h>
 
-typedef enum GB_CUDA_CUMSUM_TYPE
+typedef enum GB_cuda_cumsum_type
 {
-    GB_CUDA_CUMSUM_EXCLUSIVE_IN_PLACE,
-    GB_CUDA_CUMSUM_INCLUSIVE_IN_PLACE,
     GB_CUDA_CUMSUM_EXCLUSIVE,
     GB_CUDA_CUMSUM_INCLUSIVE
-} GB_CUDA_CUMSUM_TYPE;
+} GB_cuda_cumsum_type ;
 
 __host__ GrB_Info GB_cuda_cumsum             // compute the cumulative sum of an array
 (
     int64_t *restrict in,    // size n or n+1, input
-    int64_t *restrict out,   // ignored if in-place sum, else size n or n+1
+    int64_t *restrict out,   // size n or n+1, output.
+    // to do an in-place cumsum, pass out == in
+
     const int64_t n,
     cudaStream_t stream,
-    GB_CUDA_CUMSUM_TYPE type
+    GB_cuda_cumsum_type type
 )
 {
 
@@ -35,18 +35,7 @@ __host__ GrB_Info GB_cuda_cumsum             // compute the cumulative sum of an
     //--------------------------------------------------------------------------
 
     ASSERT (in != NULL) ;
-
-    if (type >= 2)
-    {
-        ASSERT (out != NULL) ;
-    } 
-    else 
-    {
-        out = in;
-        type = (type == 0 ? GB_CUDA_CUMSUM_INCLUSIVE :
-                            GB_CUDA_CUMSUM_EXCLUSIVE) ;
-    }
-
+    ASSERT (out != NULL) ;
     ASSERT (n >= 0) ;
 
     void *d_temp_storage = NULL;
