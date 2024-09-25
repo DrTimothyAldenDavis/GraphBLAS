@@ -34,9 +34,8 @@
 // GB_BUCKET_VSVS       both A(:,i) and B(:,j) are very sparse.
 // GB_BUCKET_MERGEPATH  both A(:,i) and B(:,j) are sparse, but neither are
 //                      very sparse
-
-// FIXME: What if all entries are in one bucket;
-// can we skip the bucket creation?
+// GB_BUCKET_VSSP:      one of A(:,i) or B(:,j) is very sparse, and the other
+//                      is sparse but with many entries
 
 __global__ void GB_jit_AxB_dot3_phase1_kernel
 (
@@ -140,10 +139,10 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
 
         // This threadblock works on Mi/Mx and Ci/Mx, in positions pfirst to
         // pfirst + my_chunk_size - 1.
-        int64_t my_chunk_size, mnvec1 ;
+        int64_t my_chunk_size, mnvec1, kfirst, klast ;
         float slope ;
-        int64_t kfirst = GB_cuda_ek_slice_setup (Mp, mnvec, mnz, pfirst,
-            chunk_size, &my_chunk_size, &mnvec1, &slope) ;
+        GB_cuda_ek_slice_setup (Mp, mnvec, mnz, pfirst, chunk_size,
+            &kfirst, &klast, &my_chunk_size, &mnvec1, &slope) ;
 
         //----------------------------------------------------------------------
         // assign entries in C(i,j) to the buckets
@@ -224,27 +223,77 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
                     // A is bitmap or full: no need to look up A(:,i)
                     #endif
                     {
+
+                        //------------------------------------------------------
                         // determine the bucket for C(i,j)
+                        //------------------------------------------------------
+
+                        // ainz is the # of entries in A(:,i)
+                        // bjnz is the # of entries in B(:,j)
+
                         #if (GB_A_IS_SPARSE || GB_A_IS_HYPER) && \
                             (GB_B_IS_SPARSE || GB_B_IS_HYPER)
-                        // A and B are both sparse/hyper
-                        bool vsvs = (ainz + bjnz <= 128) ;
-                        bucket = (GB_bucket_code)
-                           (  ((int) ( vsvs)) * ((int) GB_BUCKET_VSVS)
-                            + ((int) (!vsvs)) * ((int) GB_BUCKET_MERGEPATH)) ;
+                        {
+                            // A and B are both sparse/hyper
+
+                            // NOTE: these methods are about the same:
+#if 0
+                            // use vsvs if both are very sparse:
+                            int vsvs = (int) (ainz + bjnz <= 128) ;
+                            // otherwise, use vssp if
+                            // max(ainz,bjnz) >= 8 * min (ainz,bjnz)
+                            int vssp = ((int) (!vsvs)) * (int)
+                              ((ainz >= (bjnz << 3)) || (bjnz >= (ainz << 3))) ;
+                            // otherwise, use mp
+                            int mp = (int) (!vsvs && !vssp) ;
+                            bucket = (GB_bucket_code) (
+                                ((vsvs) * (int) GB_BUCKET_VSVS) +
+                                ((vssp) * (int) GB_BUCKET_VSSP) +
+                                ((mp  ) * (int) GB_BUCKET_MERGEPATH)) ;
+#else
+                            if (ainz + bjnz <= 128)
+                            {
+                                bucket = GB_BUCKET_VSVS ;
+                            }
+                            else
+                            {
+                                int64_t dmax = max (ainz, bjnz) ;
+                                int64_t dmin = min (ainz, bjnz) ;
+                                if (dmax >= 8 * dmin)
+                                {
+                                    bucket = GB_BUCKET_VSSP ;
+                                }
+                                else
+                                {
+                                    bucket = GB_BUCKET_MERGEPATH ;
+                                }
+                            }
+#endif
+
+//                          // bool vsvs = (ainz < 128) || (bjnz < 128) ;
+//                          bucket = (GB_bucket_code)
+//                             (  ((int) ( vsvs)) * ((int) GB_BUCKET_VSVS)
+//                              + ((int) (!vsvs)) * ((int) GB_BUCKET_MERGEPATH)) ;
+
+
+                        }
                         #elif (GB_A_IS_SPARSE || GB_A_IS_HYPER) && \
                               (GB_B_IS_BITMAP || GB_B_IS_FULL)
-                        // A is sparse/hyper, B is bitmap/full
-                        bool vsvs = (ainz <= 128) ;
-                        bucket = (GB_bucket_code)
-                           (  ((int) ( vsvs)) * ((int) GB_BUCKET_VSDN)
-                            + ((int) (!vsvs)) * ((int) GB_BUCKET_SPDN)) ;
+                        {
+                            // A is sparse/hyper, B is bitmap/full
+                            bool vsvs = (ainz <= 128) ;
+                            bucket = (GB_bucket_code)
+                               (  ((int) ( vsvs)) * ((int) GB_BUCKET_VSDN)
+                                + ((int) (!vsvs)) * ((int) GB_BUCKET_SPDN)) ;
+                        }
                         #else
-                        // A is bitmap/full, B is sparse/hyper
-                        bool vsvs = (bjnz <= 128) ;
-                        bucket = (GB_bucket_code)
-                           (  ((int) ( vsvs)) * ((int) GB_BUCKET_VSDN)
-                            + ((int) (!vsvs)) * ((int) GB_BUCKET_SPDN)) ;
+                        {
+                            // A is bitmap/full, B is sparse/hyper
+                            bool vsvs = (bjnz <= 128) ;
+                            bucket = (GB_bucket_code)
+                               (  ((int) ( vsvs)) * ((int) GB_BUCKET_VSDN)
+                                + ((int) (!vsvs)) * ((int) GB_BUCKET_SPDN)) ;
+                        }
                         #endif
                     }
                 }

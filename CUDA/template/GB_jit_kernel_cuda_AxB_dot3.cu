@@ -33,7 +33,7 @@
 #define log2_chunk_size 7
 #define tile_sz 32 
 #define log2_tile_sz 5 
-#define shared_vector_size 128 
+#define shared_vector_size 256 
 #define blocksize  32
 #define threads_per_block 32
 
@@ -91,7 +91,7 @@
 // dot3 buckets
 //------------------------------------------------------------------------------
 
-#define NBUCKETS 3
+#define NBUCKETS 4
 
 // NBUCKETS buckets: computed by up to NBUCKETS-1 kernel launches (zombies need
 // no work...), each using different kernels (with different configurations
@@ -103,10 +103,13 @@
 typedef enum
 {
     GB_BUCKET_ZOMBIE = 0,       // C(i,j) is a zombie (not a bucket)
+
     // both A and B are sparse/hyper:
     GB_BUCKET_VSVS = 1,         // vsvs: both A(:,i) and B(:,j) are very sparse
     GB_BUCKET_MERGEPATH = 2,    // mp: use the merge-path method
-    // A is sparse/hyper and B is bitmap/full, or
+    GB_BUCKET_VSSP = 3,         // vssp: very sparse x sparse, binary search 
+
+    // A is sparse/hyper and B is bitmap/full,  
     // A is bitmap/full  and B is sparse/hyper
     GB_BUCKET_VSDN = 1,         // vsdn: the sparse vector is very sparse
     GB_BUCKET_SPDN = 2,         // spdn: sparse vector has lots of entries;
@@ -168,6 +171,7 @@ GB_bucket_code ;    // FIXME: rename GB_dot3_bucket_code
         // sparse-sparse
         #include "GB_cuda_jit_AxB_dot3_phase3_mp.cuh"
         #include "GB_cuda_jit_AxB_dot3_phase3_vsvs.cuh"
+        #include "GB_cuda_jit_AxB_dot3_phase3_vssp.cuh"
     #else
         // sparse-dense or dense-sparse
         #include "GB_cuda_jit_AxB_dot3_phase3_spdn.cuh"
@@ -225,6 +229,9 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
     int number_of_blocks_1 = GB_IMIN (nblks_1,  chunk_size * number_of_sms) ;
 
     // most methods can use these launch geometries:
+    // printf ("\nmnz: %ld\n", mnz) ;
+    // printf ("number_of_blocks_1: %d\n", number_of_blocks_1) ;
+    // printf ("threads_per_block: %d\n", threads_per_block) ;
     dim3 grid_1 (number_of_blocks_1) ;
     dim3 block (threads_per_block) ;
 
@@ -306,8 +313,11 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         Nanobuckets = GB_MALLOC_WORK (nanobuckets_size, int64_t, &Nb_size) ;
         Blockbucket = GB_MALLOC_WORK (blockbuckets_size, int64_t, &Bb_size) ;
         Bucketp = GB_MALLOC_WORK (NBUCKETS+1, int64_t, &Bup_size) ;
-        offset = GB_MALLOC_WORK (NBUCKETS, int64_t, &O_size) ;
+        offset = GB_MALLOC_WORK (NBUCKETS+1, int64_t, &O_size) ;
         Bucket = GB_MALLOC_WORK (mnz, int64_t, &Bu_size) ;
+
+        memset (offset, 0, (NBUCKETS+1) * sizeof (int64_t)) ;
+        memset (Bucketp, 0, (NBUCKETS+1) * sizeof (int64_t)) ;
 
         if (Nanobuckets == NULL || Blockbucket == NULL || Bucketp == NULL
             || Bucket == NULL || offset == NULL)
@@ -350,6 +360,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
         // kernel_timer.Start();
 
+        // printf ("\nLaunching sparse phase1:\n") ;
         GB_jit_AxB_dot3_phase1_kernel <<<grid_1, block, 0, stream>>>
             (Nanobuckets, Blockbucket, C, M, A, B) ;
 
@@ -370,6 +381,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
         // kernel_timer.Start();
 
+        // printf ("Launching sparse phase2:\n") ;
         GB_cuda_AxB_dot3_phase2_kernel <<<grid_2, block, 0, stream>>>
             (Blockbucket, offset, number_of_blocks_1) ;
 
@@ -377,11 +389,13 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
         int64_t s = offset [0] ;
         C->nzombies = s ;
+        printf ("\nzombies: %ld\n", offset [0]) ;
         bool all_in_one = false ;
         for (int bucket = 1 ; bucket < NBUCKETS+1 ; bucket++)
         {
-            Bucketp[bucket] = s ; 
+            Bucketp[bucket] = s ;
             s += offset [bucket] ;
+            printf ("bucket %d: %ld\n", bucket, offset [bucket]) ;
             if ((Bucketp [bucket] - Bucketp [bucket-1] ) == mnz)
             {
                 all_in_one = true ;
@@ -398,7 +412,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         if (!all_in_one) 
         {
             // kernel_timer.Start();
-
+            // printf ("Launching sparse phase2end:\n") ;
             GB_cuda_AxB_dot3_phase2end_kernel <<<grid_1, block, 0, stream>>>
                 (Nanobuckets, Blockbucket, Bucketp, Bucket, offset, C, mnz) ;
 
@@ -419,6 +433,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
             int64_t end   = Bucketp [bucket + 1] ;
             int64_t cnz_in_bucket = end - start ;
             int gridsz, blocksz, work_per_thread ;
+            // printf ("bucket %d, cnz_in_bucket %ld\n", bucket, cnz_in_bucket);
             if (cnz_in_bucket > 0)
             {
 
@@ -477,6 +492,34 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                                 (start, end, Bucket, C, M, A, B) ;
                         }
                         break ;
+
+                        //------------------------------------------------------
+                        // vssp bucket:
+                        //------------------------------------------------------
+
+                        case GB_BUCKET_VSSP :
+                        {
+                            // FIXME: should be a function of cuda architecture
+                            blocksz = 32 ;
+                            work_per_thread = 256 ;
+                            if (cnz_in_bucket > (2<<20))
+                            {
+                                work_per_thread = 1024 ;
+                            }
+                            gridsz = GB_ICEIL (cnz_in_bucket, work_per_thread) ;
+                            if ((gridsz < number_of_sms) &&
+                                (cnz_in_bucket > (2<<20)))
+                            {
+                                gridsz = number_of_sms ;
+                            }
+                            gridsz = GB_IMIN (gridsz, 256*number_of_sms) ;
+                            dim3 grid_3 (gridsz) ;
+                            GB_cuda_AxB_dot3_phase3_vssp_kernel
+                                <<<grid_3, block, 0, stream>>>
+                                (start, end, Bucket, C, M, A, B) ;
+                        }
+                        break ;
+
                     }
 
                 #else
