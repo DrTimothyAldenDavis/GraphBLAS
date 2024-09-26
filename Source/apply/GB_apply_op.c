@@ -97,9 +97,9 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         is64 = (op->ztype == GrB_INT64) ;
         is32 = (op->ztype == GrB_INT32) ;
 
-        if (GB_IS_BINARYOP_CODE_POSITIONAL (opcode))
+        if (GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode))
         {
-            // rename positional binary ops to positional unary ops
+            // rename builtin positional binary ops to positional unary ops
             GrB_UnaryOp op1 = NULL ;
             switch (opcode)
             {

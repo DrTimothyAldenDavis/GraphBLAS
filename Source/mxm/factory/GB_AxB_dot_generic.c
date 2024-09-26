@@ -28,7 +28,7 @@
     GxB_binary_function fmult = mult->binop_function ;    // NULL if positional
     GxB_binary_function fadd  = add->op->binop_function ;
     GB_Opcode opcode = mult->opcode ;
-    bool op_is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (opcode) ;
+    bool op_is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
 
     size_t csize = C->type->size ;
     size_t asize = A_is_pattern ? 0 : A->type->size ;

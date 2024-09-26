@@ -12,7 +12,7 @@
 
 ASSERT (xcode == zcode) ;
 ASSERT (ycode == zcode) ;
-ASSERT (GB_IS_BINARYOP_CODE_POSITIONAL (mult_binop_code)) ;
+ASSERT (GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (mult_binop_code)) ;
 
 {
     if (zcode == GB_INT32_code)

@@ -82,7 +82,7 @@ GrB_Info GB_AxB_saxpy_generic
     // C = A*B via saxpy3 or bitmap method, function pointers, and typecasting
     //--------------------------------------------------------------------------
 
-    if (GB_IS_BINARYOP_CODE_POSITIONAL (opcode))
+    if (GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode))
     { 
 
         //----------------------------------------------------------------------

@@ -57,7 +57,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     }
 
     bool op_is_from_idxunop =
-        GB_IS_BINARYOP_CODE_POSITIONAL (opcode) ||
+        GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ||
         GB_IS_INDEXBINARYOP_CODE (opcode) ;
     bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
     bool op_is_second = (opcode == GB_SECOND_binop_code) ;

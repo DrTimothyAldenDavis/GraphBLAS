@@ -64,7 +64,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     // check operator types; all must be identical, and the operator cannot
     // be positional
     if (op->xtype != op->ztype || op->ytype != op->ztype ||
-        GB_OP_IS_POSITIONAL (op))   // FIXME: allow them here
+        GB_OP_IS_POSITIONAL (op))
     { 
         return (GrB_DOMAIN_MISMATCH) ;
     }

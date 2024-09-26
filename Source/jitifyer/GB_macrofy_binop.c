@@ -74,7 +74,6 @@ void GB_macrofy_binop
         else if (flipxy)
         { 
             // flipped multiplicative or ewise operator
-            // note: no positional operands for user-defined ops (yet)
             fprintf (fp, "#define %s(z,y,x,j%s,i) ", macro_name, karg) ;
         }
         else
@@ -83,7 +82,19 @@ void GB_macrofy_binop
             fprintf (fp, "#define %s(z,x,y,i%s,j) ", macro_name, karg) ;
         }
 
-        fprintf (fp, " %s (&(z), &(x), &(y))\n", op->name) ;
+        if (GB_IS_INDEXBINARYOP_CODE (op->opcode))
+        { 
+            // user-defined index binary op
+            ASSERT (!is_monoid_or_build) ;
+            const char *xindices = is_ewise ? "i,j" : "i,k" ;
+            const char *yindices = is_ewise ? "i,j" : "k,j" ;
+            fprintf (fp, " %s (&(z), &(x),%s, &(y),%s, theta)\n",
+                op->name, xindices, yindices) ;
+        }
+        else
+        { 
+            fprintf (fp, " %s (&(z), &(x), &(y))\n", op->name) ;
+        }
 
         if (is_monoid_or_build && op->ztype == op->xtype)
         { 

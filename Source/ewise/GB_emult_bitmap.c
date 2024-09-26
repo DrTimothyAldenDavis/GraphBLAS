@@ -152,7 +152,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     GB_Opcode opcode = op->opcode ;
-    bool op_is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (opcode) ;
+    bool op_is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
     bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
     bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;

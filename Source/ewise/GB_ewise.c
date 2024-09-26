@@ -162,8 +162,10 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // handle CSR and CSC formats
     //--------------------------------------------------------------------------
 
+    // The op can be a built-in or user-defined positional operator.
+
     GB_Opcode opcode = op->opcode ;
-    bool op_is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (opcode) ;
+    bool op_is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
 
     // CSC/CSR format of T is same as C.  Conform A and B to the format of C.
     bool T_is_csc = C->is_csc ;

@@ -149,7 +149,7 @@ typedef enum
          (opcode) <= GB_USER_unop_code)
 
     // true if opcode is for a GrB_UnaryOp positional operator
-    #define GB_IS_UNARYOP_CODE_POSITIONAL(opcode) \
+    #define GB_IS_BUILTIN_UNOP_CODE_POSITIONAL(opcode) \
         ((opcode) >= GB_POSITIONI_unop_code && \
          (opcode) <= GB_POSITIONJ1_unop_code)
 
@@ -288,7 +288,7 @@ typedef enum
         ((opcode) >= GB_FIRST_binop_code && (opcode) <= GB_USER_binop_code)
 
     // true if opcode is for a GrB_BinaryOp positional operator
-    #define GB_IS_BINARYOP_CODE_POSITIONAL(opcode) \
+    #define GB_IS_BUILTIN_BINOP_CODE_POSITIONAL(opcode) \
         (((opcode) >= GB_FIRSTI_binop_code && \
          (opcode) <= GB_SECONDJ1_binop_code))
 
@@ -341,10 +341,10 @@ GB_Opcode ;
 
 // true if the opcode is a positional operator of any kind
 #define GB_OPCODE_IS_POSITIONAL(opcode)                 \
-    (GB_IS_UNARYOP_CODE_POSITIONAL (opcode) ||          \
+    (GB_IS_BUILTIN_UNOP_CODE_POSITIONAL (opcode) ||     \
      GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode) ||     \
      GB_IS_INDEXBINARYOP_CODE (opcode) ||               \
-     GB_IS_BINARYOP_CODE_POSITIONAL (opcode) ||         \
+     GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ||    \
      GB_IS_SELECTOP_CODE_POSITIONAL (opcode))
 
 // true if the op is a unary or binary positional operator

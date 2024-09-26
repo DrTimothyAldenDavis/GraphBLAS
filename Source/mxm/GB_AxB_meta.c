@@ -107,7 +107,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     //--------------------------------------------------------------------------
 
     GB_Opcode opcode = semiring_in->multiply->opcode  ;
-    bool op_is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (opcode) ;
+    bool op_is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
     bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
     bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;

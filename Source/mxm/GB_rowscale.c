@@ -90,7 +90,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     // C = D*B, row scale, compute numerical values
     //--------------------------------------------------------------------------
 
-    if (GB_IS_BINARYOP_CODE_POSITIONAL (opcode))
+    if (GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode))
     {
 
         //----------------------------------------------------------------------

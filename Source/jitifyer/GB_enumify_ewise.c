@@ -55,14 +55,14 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     // get the types of X, Y, and Z, and handle the C_iso case, and GB_wait
     //--------------------------------------------------------------------------
 
-    GB_Opcode binaryop_opcode ;
+    GB_Opcode opcode ;
     GB_Type_code xcode, ycode, zcode ;
     ASSERT (binaryop != NULL) ;
 
     if (C_iso)
     { 
         // values of C are not computed by the kernel
-        binaryop_opcode = GB_PAIR_binop_code ;
+        opcode = GB_PAIR_binop_code ;
         xcode = 0 ;
         ycode = 0 ;
         zcode = 0 ;
@@ -70,7 +70,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     else
     { 
         // normal case
-        binaryop_opcode = binaryop->opcode ;
+        opcode = binaryop->opcode ;
         xcode = binaryop->xtype->code ;
         ycode = binaryop->ytype->code ;
         zcode = binaryop->ztype->code ;
@@ -95,7 +95,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
     { 
         // rename the operator
-        binaryop_opcode = GB_boolean_rename (binaryop_opcode) ;
+        opcode = GB_boolean_rename (opcode) ;
     }
 
     //--------------------------------------------------------------------------
@@ -104,10 +104,10 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
 
     // These 1st, 2nd, and pair operators are all handled by the flip, so if
     // flipxy is still true, all of these booleans will be false.
-    bool op_is_first  = (binaryop_opcode == GB_FIRST_binop_code ) ;
-    bool op_is_second = (binaryop_opcode == GB_SECOND_binop_code) ;
-    bool op_is_pair   = (binaryop_opcode == GB_PAIR_binop_code) ;
-    bool op_is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (binaryop_opcode) ;
+    bool op_is_first  = (opcode == GB_FIRST_binop_code ) ;
+    bool op_is_second = (opcode == GB_SECOND_binop_code) ;
+    bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
+    bool op_is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
 
     if (op_is_positional || op_is_pair || C_iso)
     { 
@@ -140,7 +140,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     //--------------------------------------------------------------------------
 
     int binop_ecode ;
-    GB_enumify_binop (&binop_ecode, binaryop_opcode, xcode, false) ;
+    GB_enumify_binop (&binop_ecode, opcode, xcode, false) ;
 
     int is_union  = (is_eWiseUnion) ? 1 : 0 ;
     int is_emult  = (is_eWiseMult ) ? 1 : 0 ;

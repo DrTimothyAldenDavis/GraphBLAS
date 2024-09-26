@@ -1,4 +1,4 @@
-// SuiteSparse:GraphBLAS 9.3.2
+// SuiteSparse:GraphBLAS 9.4.0
 //------------------------------------------------------------------------------
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
@@ -275,10 +275,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Sept XX, 2024"
+#define GxB_IMPLEMENTATION_DATE "Month XXX, 2024"
 #define GxB_IMPLEMENTATION_MAJOR 9
-#define GxB_IMPLEMENTATION_MINOR 3
-#define GxB_IMPLEMENTATION_SUB   2
+#define GxB_IMPLEMENTATION_MINOR 4
+#define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "Dec 22, 2023"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 1
@@ -1226,7 +1226,7 @@ typedef void (*GxB_binary_function) (void *, const void *, const void *) ;
 // GzB_IndexBinaryOp: a function z=f(x,ia,jb, y,ib,jb, theta).  The function f
 // must have the signature:
 
-//      void f (void *z, const void *x, GrB_Index ix, GrB_Index ix,
+//      void f (void *z, const void *x, GrB_Index ix, GrB_Index jx,
 //                       const void *y, GrB_Index iy, GrB_Index jy,
 //                       const void *theta) ;
 
@@ -3078,6 +3078,9 @@ GrB_Info GrB_IndexUnaryOp_free  // free a user-created IndexUnaryOp
 // GrB_Monoid
 //==============================================================================
 
+// The GrB_BinaryOp must be associative and commutative (but this cannot be
+// checked).  It cannot be based on a GzB_IndexBinaryOp.
+
 GrB_Info GrB_Monoid_new_BOOL        // create a new boolean monoid
 (
     GrB_Monoid *monoid,             // handle of monoid to create
@@ -3349,6 +3352,9 @@ GrB_Info GrB_Monoid_free            // free a user-created monoid
 //==============================================================================
 // GrB_Semiring
 //==============================================================================
+
+// The multiply op can be any GrB_BinaryOp, including those based on a
+// GzB_IndexBinaryOp.
 
 GrB_Info GrB_Semiring_new           // create a semiring
 (
@@ -3743,6 +3749,8 @@ GrB_Info GrB_Vector_free    // free a vector
 
 // GrB_Vector_build:  w = sparse (I,1,X), but using any
 // associative operator to assemble duplicate entries.
+
+// The dup operator cannot be based on a GzB_IndexBinaryOp.
 
 GrB_Info GrB_Vector_build_BOOL      // build a vector from (I,X) tuples
 (
@@ -4409,6 +4417,7 @@ GrB_Info GrB_Matrix_free    // free a matrix
 
 // GrB_Matrix_build:  C = sparse (I,J,X), but using any
 // associative operator to assemble duplicate entries.
+// The dup operator cannot be based on a GzB_IndexBinaryOp.
 
 GrB_Info GrB_Matrix_build_BOOL      // build a matrix from (I,J,X) tuples
 (
@@ -5328,11 +5337,16 @@ GrB_Info GrB_BinaryOp_get_INT32  (GrB_BinaryOp, int32_t * , GrB_Field) ;
 GrB_Info GrB_BinaryOp_get_SIZE   (GrB_BinaryOp, size_t *  , GrB_Field) ;
 GrB_Info GrB_BinaryOp_get_VOID   (GrB_BinaryOp, void *    , GrB_Field) ;
 
-GrB_Info GzB_IndexBinaryOp_get_Scalar (GzB_IndexBinaryOp, GrB_Scalar, GrB_Field) ;
-GrB_Info GzB_IndexBinaryOp_get_String (GzB_IndexBinaryOp, char *    , GrB_Field) ;
-GrB_Info GzB_IndexBinaryOp_get_INT32  (GzB_IndexBinaryOp, int32_t * , GrB_Field) ;
-GrB_Info GzB_IndexBinaryOp_get_SIZE   (GzB_IndexBinaryOp, size_t *  , GrB_Field) ;
-GrB_Info GzB_IndexBinaryOp_get_VOID   (GzB_IndexBinaryOp, void *    , GrB_Field) ;
+GrB_Info GzB_IndexBinaryOp_get_Scalar (GzB_IndexBinaryOp, GrB_Scalar,
+    GrB_Field) ;
+GrB_Info GzB_IndexBinaryOp_get_String (GzB_IndexBinaryOp, char *    ,
+    GrB_Field) ;
+GrB_Info GzB_IndexBinaryOp_get_INT32  (GzB_IndexBinaryOp, int32_t * ,
+    GrB_Field) ;
+GrB_Info GzB_IndexBinaryOp_get_SIZE   (GzB_IndexBinaryOp, size_t *  ,
+    GrB_Field) ;
+GrB_Info GzB_IndexBinaryOp_get_VOID   (GzB_IndexBinaryOp, void *    ,
+    GrB_Field) ;
 
 GrB_Info GrB_Monoid_get_Scalar (GrB_Monoid, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Monoid_get_String (GrB_Monoid, char *    , GrB_Field) ;
@@ -5557,17 +5571,21 @@ GrB_Info GrB_IndexUnaryOp_set_Scalar (GrB_IndexUnaryOp, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_IndexUnaryOp_set_String (GrB_IndexUnaryOp, char *    , GrB_Field) ;
 GrB_Info GrB_IndexUnaryOp_set_INT32  (GrB_IndexUnaryOp, int32_t   , GrB_Field) ;
 GrB_Info GrB_IndexUnaryOp_set_VOID   (GrB_IndexUnaryOp, void *    , GrB_Field,
-                                                                    size_t) ;
+    size_t) ;
 
 GrB_Info GrB_BinaryOp_set_Scalar (GrB_BinaryOp, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_BinaryOp_set_String (GrB_BinaryOp, char *    , GrB_Field) ;
 GrB_Info GrB_BinaryOp_set_INT32  (GrB_BinaryOp, int32_t   , GrB_Field) ;
 GrB_Info GrB_BinaryOp_set_VOID   (GrB_BinaryOp, void *    , GrB_Field, size_t) ;
 
-GrB_Info GzB_IndexBinaryOp_set_Scalar (GzB_IndexBinaryOp, GrB_Scalar, GrB_Field) ;
-GrB_Info GzB_IndexBinaryOp_set_String (GzB_IndexBinaryOp, char *    , GrB_Field) ;
-GrB_Info GzB_IndexBinaryOp_set_INT32  (GzB_IndexBinaryOp, int32_t   , GrB_Field) ;
-GrB_Info GzB_IndexBinaryOp_set_VOID   (GzB_IndexBinaryOp, void *    , GrB_Field, size_t) ;
+GrB_Info GzB_IndexBinaryOp_set_Scalar (GzB_IndexBinaryOp, GrB_Scalar,
+    GrB_Field) ;
+GrB_Info GzB_IndexBinaryOp_set_String (GzB_IndexBinaryOp, char *    ,
+    GrB_Field) ;
+GrB_Info GzB_IndexBinaryOp_set_INT32  (GzB_IndexBinaryOp, int32_t   ,
+    GrB_Field) ;
+GrB_Info GzB_IndexBinaryOp_set_VOID   (GzB_IndexBinaryOp, void *    ,
+    GrB_Field, size_t) ;
 
 GrB_Info GrB_Monoid_set_Scalar (GrB_Monoid, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Monoid_set_String (GrB_Monoid, char *    , GrB_Field) ;
@@ -5808,14 +5826,18 @@ GrB_Info GxB_Scalar_wait (GrB_Scalar *s) ;
 GrB_Info GrB_Type_error         (const char **error, const GrB_Type      type) ;
 GrB_Info GrB_UnaryOp_error      (const char **error, const GrB_UnaryOp     op) ;
 GrB_Info GrB_BinaryOp_error     (const char **error, const GrB_BinaryOp    op) ;
-GrB_Info GrB_IndexUnaryOp_error (const char **error, const GrB_IndexUnaryOp op) ;
-GrB_Info GzB_IndexBinaryOp_error(const char **error, const GzB_IndexBinaryOp op);
+GrB_Info GrB_IndexUnaryOp_error (const char **error,
+    const GrB_IndexUnaryOp op) ;
+GrB_Info GzB_IndexBinaryOp_error(const char **error,
+    const GzB_IndexBinaryOp op);
 GrB_Info GrB_Monoid_error       (const char **error, const GrB_Monoid monoid) ;
-GrB_Info GrB_Semiring_error     (const char **error, const GrB_Semiring semiring) ;
+GrB_Info GrB_Semiring_error     (const char **error, const GrB_Semiring
+    semiring) ;
 GrB_Info GrB_Scalar_error       (const char **error, const GrB_Scalar     s) ;
 GrB_Info GrB_Vector_error       (const char **error, const GrB_Vector     v) ;
 GrB_Info GrB_Matrix_error       (const char **error, const GrB_Matrix     A) ;
 GrB_Info GrB_Descriptor_error   (const char **error, const GrB_Descriptor d) ;
+
 // GxB_Scalar_error is historical: use GrB_Scalar_error instead
 GrB_Info GxB_Scalar_error       (const char **error, const GrB_Scalar     s) ;
 GrB_Info GxB_Context_error      (const char **error, const GxB_Context Context);
@@ -5845,6 +5867,8 @@ GrB_Info GxB_Context_error      (const char **error, const GxB_Context Context);
 //==============================================================================
 // GrB_mxm, vxm, mxv: matrix multiplication over a semiring
 //==============================================================================
+
+// No accum operator in any method can be based on a GzB_IndexBinaryOp.
 
 GrB_Info GrB_mxm                    // C<Mask> = accum (C, A*B)
 (
@@ -5886,6 +5910,8 @@ GrB_Info GrB_mxv                    // w<Mask> = accum (w, A*u)
 // GrB_eWiseMult computes C<Mask> = accum (C, A.*B), where ".*" is the Hadamard
 // product, and where pairs of elements in two matrices (or vectors) are
 // pairwise "multiplied" with C(i,j) = mult (A(i,j),B(i,j)).
+
+// The mult operator can be based on a GzB_IndexBinaryOp.
 
 GrB_Info GrB_Vector_eWiseMult_Semiring       // w<Mask> = accum (w, u.*v)
 (

@@ -63,7 +63,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
         return (false) ;
     }
 
-    bool op_is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (*opcode) ;
+    bool op_is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (*opcode) ;
 
     // check if A matches the input to the operator
     if (!A_is_pattern && !op_is_positional)

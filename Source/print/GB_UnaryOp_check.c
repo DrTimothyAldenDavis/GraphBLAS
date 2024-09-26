@@ -54,7 +54,7 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
     char *op_name = (actual_len > 0) ? op->name : "f" ;
     GBPR0 ("z=%s(x)\n", op_name) ;
 
-    bool op_is_positional = GB_IS_UNARYOP_CODE_POSITIONAL (opcode) ;
+    bool op_is_positional = GB_IS_BUILTIN_UNOP_CODE_POSITIONAL (opcode) ;
     bool op_is_one = (opcode == GB_ONE_unop_code) ;
     bool op_is_identity = (opcode == GB_IDENTITY_unop_code) ;
 

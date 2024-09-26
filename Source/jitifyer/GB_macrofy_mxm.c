@@ -110,7 +110,7 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
 
     // turn off terminal condition for builtin monoids coupled with positional
     // multiply operators
-    bool is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (mult->opcode) ;
+    bool is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (mult->opcode) ;
 
     fprintf (fp, "\n// monoid:\n") ;
     const char *u_expr, *g_expr ;
