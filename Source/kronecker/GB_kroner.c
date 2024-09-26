@@ -191,6 +191,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     int64_t *restrict Cx_int64 = NULL ;
     int32_t *restrict Cx_int32 = NULL ;
 
+    // FIXME: handle mult->idxbinop_function here
     GxB_binary_function fmult = op->binop_function ;
     GB_Opcode opcode = op->opcode ;
     bool op_is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
@@ -393,9 +394,10 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                 else if (!C_iso)
                 { 
                     // standard binary operator
+                    // FIXME: add index binop
+                    ASSERT (fmult != NULL) ;
                     fmult (Cx +(pC*csize), awork, bwork) ;
                 }
-                // FIXME: add index binop
                 pC++ ;
             }
         }

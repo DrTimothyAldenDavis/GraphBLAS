@@ -492,6 +492,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         ASSERT (opcode != GB_SECOND_binop_code) ;
         ASSERT (opcode != GB_PAIR_binop_code) ;
         ASSERT (opcode != GB_ANY_binop_code) ;
+        ASSERT (opcode != GB_USER_idxbinop_code) ;
 
         size_t asize = Atype->size ;
         size_t ssize = scalar->type->size ;
@@ -667,6 +668,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
             GB_Type_code acode = Atype->code ;
             GxB_binary_function fop = op->binop_function ;
+            ASSERT (fop != NULL) ;
             ASSERT (!A->iso) ;
 
             if (binop_bind1st)

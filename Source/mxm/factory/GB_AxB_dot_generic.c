@@ -25,6 +25,7 @@
 
     ASSERT (!C->iso) ;
 
+    // FIXME: handle mult->idxbinop_function here
     GxB_binary_function fmult = mult->binop_function ;    // NULL if positional
     GxB_binary_function fadd  = add->op->binop_function ;
     GB_Opcode opcode = mult->opcode ;
@@ -314,6 +315,7 @@
         else if (flipxy)
         { 
             // t = B(k,j) * (A')(i,k)
+            ASSERT (fmult != NULL) ;
             #undef  GB_MULT
             #define GB_MULT(t, aki, bkj, i, k, j) fmult (t, bkj, aki)
             #if defined ( GB_DOT2_GENERIC )
@@ -325,6 +327,7 @@
         else
         { 
             // t = (A')(i,k) * B(k,j)
+            ASSERT (fmult != NULL) ;
             #undef  GB_MULT
             #define GB_MULT(t, aki, bkj, i, k, j) fmult (t, aki, bkj)
             #if defined ( GB_DOT2_GENERIC )

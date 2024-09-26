@@ -50,6 +50,7 @@ bool GB_emult_iso           // c = op(a,b), return true if C is iso
     //--------------------------------------------------------------------------
 
     const GxB_binary_function femult = op->binop_function ;
+    ASSERT (femult != NULL) ;       // the op is not positional (see test above)
     GB_Opcode opcode = op->opcode ;
 
     const GrB_Type xtype = op->xtype ;

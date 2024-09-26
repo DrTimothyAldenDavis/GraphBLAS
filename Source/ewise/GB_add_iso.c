@@ -171,6 +171,8 @@ bool GB_add_iso             // c = op(a,b), return true if C is iso
             // C is iso if op(a,beta) == op(a,b) == op(alpha,b)
             //------------------------------------------------------------------
 
+            ASSERT (fadd != NULL) ;
+
             // a = (xtype) Ax [0]
             GB_void a [GB_VLA(xsize)] ;
             GB_cast_scalar (a, xcode, A->x, acode, asize) ;
@@ -248,6 +250,7 @@ bool GB_add_iso             // c = op(a,b), return true if C is iso
 
             // get the binary operator
             const GxB_binary_function fadd = op->binop_function ;
+            ASSERT (fadd != NULL) ;
 
             const GrB_Type xtype = op->xtype ;
             const GrB_Type ytype = op->ytype ;

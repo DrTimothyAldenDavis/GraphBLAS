@@ -249,6 +249,8 @@ GrB_Info GB_emult_generic       // generic emult
         // standard binary operator
         //----------------------------------------------------------------------
 
+        // FIXME: handle op->idxbinop_function here
+
         // z = op (aij, bij)
         #undef  GB_BINOP
         #define GB_BINOP(z, aij, bij, i, j)             \

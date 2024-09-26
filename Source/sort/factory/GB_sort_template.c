@@ -705,6 +705,7 @@ static GrB_Info GB_SORT (matrix)
     size_t csize = ctype->size ;
     size_t xsize = op->xtype->size ;
     GxB_binary_function flt = op->binop_function ;
+    ASSERT (flt != NULL) ;
     GB_cast_function fcast = GB_cast_factory (op->xtype->code, ctype->code) ;
     #endif
 

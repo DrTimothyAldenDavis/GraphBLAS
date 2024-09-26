@@ -39,6 +39,7 @@ void GB_reduce_to_scalar_iso        // s = reduce (A) where A is iso
 
     // get the monoid
     GxB_binary_function freduce = monoid->op->binop_function ;
+    ASSERT (freduce != NULL) ;
     GrB_Type ztype = monoid->op->ztype ;
     size_t zsize = ztype->size ;
     GB_Type_code zcode = ztype->code ;

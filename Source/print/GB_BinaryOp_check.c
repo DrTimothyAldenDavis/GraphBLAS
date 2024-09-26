@@ -56,7 +56,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         return (GrB_INVALID_OBJECT) ;
     }
 
-    bool op_is_from_idxunop =
+    bool op_is_from_idxbinop =
         GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ||
         GB_IS_INDEXBINARYOP_CODE (opcode) ;
     bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
@@ -80,7 +80,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         // FIRST_UDT binary operator created by GB_reduce_to_vector
         GBPR0 ("(generated): z=%s(x,y)\n", op_name) ;
     }
-    else if (op_is_from_idxunop)
+    else if (op_is_from_idxbinop)
     { 
         // built-in index binary operator
         GBPR0 ("(built-in index): z=%s(x,ix,iy,y,iy,yj,theta)\n", op_name) ;
@@ -91,8 +91,9 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         GBPR0 ("(built-in): z=%s(x,y)\n", op_name) ;
     }
 
-    if (!(op_is_from_idxunop || op_is_first || op_is_second)
-       && op->binop_function == NULL)
+    if ((!(op_is_from_idxbinop || op_is_first || op_is_second)
+            && op->binop_function == NULL)
+       || (op_is_from_idxbinop && op->idxbinop_function == NULL))
     { 
         GBPR0 ("    BinaryOp has a NULL function pointer\n") ;
         return (GrB_INVALID_OBJECT) ;

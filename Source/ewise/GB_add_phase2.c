@@ -577,6 +577,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
             #undef GB_POSITIONAL_OP
             GxB_binary_function fadd = op->binop_function ;
+            // FIXME: handle fadd->idxbinop_function here
 
             // The binary op is not used if fadd is null since in that case
             // the intersection of A and B is empty

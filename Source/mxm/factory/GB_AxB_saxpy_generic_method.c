@@ -111,6 +111,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     ASSERT (mult->ztype == add->op->ztype) ;
     ASSERT (mult->ztype == C->type) ;
 
+    // FIXME: handle mult->idxbinop_function here
     GxB_binary_function fmult = mult->binop_function ;    // NULL if positional
     GxB_binary_function fadd  = add->op->binop_function ;
     GB_Opcode opcode = mult->opcode ;

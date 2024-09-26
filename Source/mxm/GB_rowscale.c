@@ -275,6 +275,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
             #include "generic/GB_generic.h"
             GB_BURBLE_MATRIX (C, "(generic C=D*B rowscale) ") ;
 
+            // FIXME: handle mult->idxbinop_function here
             GxB_binary_function fmult = mult->binop_function ;
 
             size_t csize = C->type->size ;
@@ -337,12 +338,14 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
 
             if (flipxy)
             { 
+                ASSERT (fmult != NULL) ;
                 #undef  GB_EWISEOP
                 #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),y,x)
                 #include "mxm/template/GB_rowscale_template.c"
             }
             else
             { 
+                ASSERT (fmult != NULL) ;
                 #undef  GB_EWISEOP
                 #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),x,y)
                 #include "mxm/template/GB_rowscale_template.c"
