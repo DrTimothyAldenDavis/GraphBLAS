@@ -193,7 +193,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     GxB_binary_function fmult = op->binop_function ;
     GB_Opcode opcode = op->opcode ;
-    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    bool op_is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (opcode) ;
     GB_cast_function cast_A = NULL, cast_B = NULL ;
     if (!A_is_pattern)
     { 
@@ -332,7 +332,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                 }
                 if (op_is_positional)
                 {
-                    // positional binary operator
+                    // built-in positional binary operator
                     switch (opcode)
                     {
                         case GB_FIRSTI_binop_code   : 
@@ -395,6 +395,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                     // standard binary operator
                     fmult (Cx +(pC*csize), awork, bwork) ;
                 }
+                // FIXME: add index binop
                 pC++ ;
             }
         }

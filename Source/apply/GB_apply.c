@@ -65,7 +65,13 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     struct GB_Scalar_opaque Thunk_header ;
     int64_t ithunk = 0 ;
 
-    if (op_is_unop)
+    if (GB_IS_INDEXBINARYOP_CODE (opcode))
+    { 
+        // user-defined GzB_IndexBinaryOp not allowed here
+        GB_ERROR (GrB_DOMAIN_MISMATCH, "%s",
+            "User-defined GzB_IndexBinaryOps cannot be used in GrB_apply") ;
+    }
+    else if (op_is_unop)
     {
         // apply a unary operator: scalar is ignored
         ASSERT_OP_OK ( op, "unop for GB_apply", GB0) ;

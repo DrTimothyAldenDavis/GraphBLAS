@@ -46,6 +46,13 @@ GrB_Info GrB_IndexUnaryOp_error (const char **error, const GrB_IndexUnaryOp op)
     return (GrB_SUCCESS) ;
 }
 
+GrB_Info GzB_IndexBinaryOp_error (const char **error, const GzB_IndexBinaryOp op)
+{ 
+    GB_RETURN_IF_NULL (error) ;
+    (*error) = empty ;
+    return (GrB_SUCCESS) ;
+}
+
 GrB_Info GrB_Monoid_error (const char **error, const GrB_Monoid monoid)
 { 
     GB_RETURN_IF_NULL (error) ;

@@ -107,7 +107,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool op_is_first  = (binaryop_opcode == GB_FIRST_binop_code ) ;
     bool op_is_second = (binaryop_opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (binaryop_opcode == GB_PAIR_binop_code) ;
-    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (binaryop_opcode) ;
+    bool op_is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (binaryop_opcode) ;
 
     if (op_is_positional || op_is_pair || C_iso)
     { 

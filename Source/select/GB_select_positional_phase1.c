@@ -36,7 +36,7 @@ GrB_Info GB_select_positional_phase1
     GB_Opcode opcode = op->opcode ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)
         || (opcode == GB_DIAG_idxunop_code)) ;
-    ASSERT (GB_OPCODE_IS_POSITIONAL (opcode)
+    ASSERT (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)
         || opcode == GB_NONZOMBIE_idxunop_code) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
 

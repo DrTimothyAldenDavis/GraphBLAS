@@ -34,7 +34,8 @@ GrB_Info GB_select_generic_phase1
 
     GB_Opcode opcode = op->opcode ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
-    ASSERT (!GB_OPCODE_IS_POSITIONAL (opcode)) ;
+    ASSERT (GB_IS_INDEXUNARYOP_CODE (opcode)) ;
+    ASSERT (!GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)) ;
     ASSERT (opcode != GB_NONZOMBIE_idxunop_code) ;
 
     //--------------------------------------------------------------------------

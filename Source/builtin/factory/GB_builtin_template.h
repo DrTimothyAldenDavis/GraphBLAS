@@ -1228,6 +1228,86 @@ inline void GB_FUNC (NE) (GB_Zbool_X_Y_ARGS)
 #endif
 
 //------------------------------------------------------------------------------
+// builtin index binary operators
+//------------------------------------------------------------------------------
+
+#if defined ( GB_SIGNED_INDEX )
+
+    GB_BINOP_STRUCT (FIRSTI, GB_XTYPE) ;
+    inline void GB_FUNC (FIRSTI) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = (GB_TYPE) ix ;
+    }
+
+    GB_BINOP_STRUCT (FIRSTI1, GB_XTYPE) ;
+    inline void GB_FUNC (FIRSTI1) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = ((GB_TYPE) ix) + 1 ;
+    }
+
+    GB_BINOP_STRUCT (FIRSTJ, GB_XTYPE) ;
+    inline void GB_FUNC (FIRSTJ) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = (GB_TYPE) jx ;
+    }
+
+    GB_BINOP_STRUCT (FIRSTJ1, GB_XTYPE) ;
+    inline void GB_FUNC (FIRSTJ1) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = ((GB_TYPE) jx) + 1 ;
+    }
+
+    GB_BINOP_STRUCT (SECONDI, GB_XTYPE) ;
+    inline void GB_FUNC (SECONDI) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = (GB_TYPE) iy ;
+    }
+
+    GB_BINOP_STRUCT (SECONDI1, GB_XTYPE) ;
+    inline void GB_FUNC (SECONDI1) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = ((GB_TYPE) iy) + 1 ;
+    }
+
+    GB_BINOP_STRUCT (SECONDJ, GB_XTYPE) ;
+    inline void GB_FUNC (SECONDJ) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = (GB_TYPE) jy ;
+    }
+
+    GB_BINOP_STRUCT (SECONDJ1, GB_XTYPE) ;
+    inline void GB_FUNC (SECONDJ1) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = ((GB_TYPE) jy) + 1 ;
+    }
+
+#endif
+
+//------------------------------------------------------------------------------
 // clear macros for next use of this file
 //------------------------------------------------------------------------------
 

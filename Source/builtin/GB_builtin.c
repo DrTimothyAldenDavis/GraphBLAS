@@ -2,7 +2,7 @@
 // GB_builtin.c: built-in types, functions, operators, and other externs
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -149,7 +149,8 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
         (GxB_unary_function) (& GB_FUNC_T (op, xtype)), NULL, NULL,         \
         name, 0,                    /* name and name_len */                 \
         GB_ ## op ## _unop_code,    /* opcode */                            \
-        NULL, 0, 0                  /* defn, alloc, hash */                 \
+        NULL, 0, 0,                 /* defn, alloc, hash */                 \
+        NULL, NULL, NULL, 0         /* theta_type, etc */                   \
     }
 
 #define GRB_OP1z(op,name,z_t,ztype)                                         \
@@ -183,7 +184,8 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
         NULL, NULL, (GxB_binary_function) (& GB_FUNC_T (op, xtype)),        \
         name, 0,                    /* name and name_len */                 \
         GB_ ## op ## _binop_code,   /* opcode */                            \
-        NULL, 0, 0                  /* defn, alloc, hash */                 \
+        NULL, 0, 0,                 /* defn, alloc, hash */                 \
+        NULL, NULL, NULL, 0         /* theta_type, etc */                   \
     }
 
 #define GRB_OP2z(op,name,z_t,ztype)                                          \
@@ -203,12 +205,12 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
     GrB_BinaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
 //------------------------------------------------------------------------------
-// positional unary and binary operators
+// positional unary operators
 //------------------------------------------------------------------------------
 
-// The function pointer inside a positional operator cannot be called directly,
-// since it does not depend on the values of its two arguments.  The operator
-// can only be implemented via its opcode.
+// The function pointer inside a positional unary operator cannot be called
+// directly, since it does not depend on the values of its two arguments.  The
+// operator can only be implemented via its opcode.
 
 // helper macros to define positional unary operators
 #define GXB_OP1_POS(op,name,type)                                           \
@@ -222,25 +224,10 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
         NULL, NULL, NULL,           /* no function pointer */               \
         name, 0,                    /* name and name_len */                 \
         GB_ ## op ## _unop_code,    /* opcode */                            \
-        NULL, 0, 0                  /* defn, alloc, hash */                 \
+        NULL, 0, 0,                 /* defn, alloc, hash */                 \
+        NULL, NULL, NULL, 0         /* theta_type, etc */                   \
     } ;                                                                     \
     GrB_UnaryOp GXB (op ## _ ## type) = & GB_OPAQUE (op ## _ ## type)
-
-// helper macros to define positional binary operators
-#define GXB_OP2_POS(op,name,type)                                           \
-    struct GB_BinaryOp_opaque GB_OPAQUE (op ## _ ## type) =                 \
-    {                                                                       \
-        GB_MAGIC, 0,                /* magic and header_size */             \
-        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
-        & GB_OPAQUE (type),         /* ztype */                             \
-        & GB_OPAQUE (type),         /* xtype */                             \
-        & GB_OPAQUE (type),         /* ytype */                             \
-        NULL, NULL, NULL,           /* no function pointer */               \
-        name, 0,                    /* name and name_len */                 \
-        GB_ ## op ## _binop_code,   /* opcode */                            \
-        NULL, 0, 0                  /* defn, alloc, hash */                 \
-    } ;                                                                     \
-    GrB_BinaryOp GXB (op ## _ ## type) = & GB_OPAQUE (op ## _ ## type)
 
 GXB_OP1_POS (POSITIONI , "positioni" , INT32) ;
 GXB_OP1_POS (POSITIONI , "positioni" , INT64) ;
@@ -251,23 +238,34 @@ GXB_OP1_POS (POSITIONJ , "positionj" , INT64) ;
 GXB_OP1_POS (POSITIONJ1, "positionj1", INT32) ;
 GXB_OP1_POS (POSITIONJ1, "positionj1", INT64) ;
 
-GXB_OP2_POS (FIRSTI    , "firsti"    , INT32) ;
-GXB_OP2_POS (FIRSTI    , "firsti"    , INT64) ;
-GXB_OP2_POS (FIRSTI1   , "firsti1"   , INT32) ;
-GXB_OP2_POS (FIRSTI1   , "firsti1"   , INT64) ;
-GXB_OP2_POS (FIRSTJ    , "firstj"    , INT32) ;
-GXB_OP2_POS (FIRSTJ    , "firstj"    , INT64) ;
-GXB_OP2_POS (FIRSTJ1   , "firstj1"   , INT32) ;
-GXB_OP2_POS (FIRSTJ1   , "firstj1"   , INT64) ;
+//------------------------------------------------------------------------------
+// built-in index binary operators
+//------------------------------------------------------------------------------
 
-GXB_OP2_POS (SECONDI   , "secondi"   , INT32) ;
-GXB_OP2_POS (SECONDI   , "secondi"   , INT64) ;
-GXB_OP2_POS (SECONDI1  , "secondi1"  , INT32) ;
-GXB_OP2_POS (SECONDI1  , "secondi1"  , INT64) ;
-GXB_OP2_POS (SECONDJ   , "secondj"   , INT32) ;
-GXB_OP2_POS (SECONDJ   , "secondj"   , INT64) ;
-GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT32) ;
-GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
+// helper macros to define index binary operators
+#define GXB_OP2_POS(op,name,theta)                                          \
+    extern void GB_FUNC_T(op,GB_XTYPE) (GB_TYPE *z,                         \
+        const void *x, GrB_Index ix, GrB_Index jx,                          \
+        const void *y, GrB_Index iy, GrB_Index jy,                          \
+        const void *th) ;                                                   \
+    GB_TYPE GB_OPAQUE (GB_EVAL3 (op, GB_XTYPE, _theta)) = theta ;           \
+    struct GB_BinaryOp_opaque GB_OPAQUE (GB_OP (op)) =                      \
+    {                                                                       \
+        GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
+        & GB_OPAQUE (GB_XTYPE),     /* ztype */                             \
+        & GB_OPAQUE (GB_XTYPE),     /* xtype */                             \
+        & GB_OPAQUE (GB_XTYPE),     /* ytype */                             \
+        NULL, NULL, NULL,           /* no function pointer */               \
+        name, 0,                    /* name and name_len */                 \
+        GB_ ## op ## _binop_code,   /* opcode */                            \
+        NULL, 0, 0,                 /* defn, alloc, hash */                 \
+        & GB_OPAQUE (GB_XTYPE),     /* theta_type */                        \
+        (GzB_index_binary_function) (& GB_FUNC_T (op, GB_XTYPE)), /* func */\
+        & GB_OPAQUE (GB_EVAL3 (op, GB_XTYPE, _theta)),     /* theta */      \
+        0                           /* theta_size */                        \
+    } ;                                                                     \
+    GrB_BinaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
 //------------------------------------------------------------------------------
 // built-in index_unary operators
@@ -288,7 +286,8 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
         NULL, (GxB_index_unary_function) (& GB_FUNC_T (op, GB_XTYPE)), NULL,\
         name, 0,                    /* name and name_len */                 \
         GB_ ## op ## _idxunop_code, /* opcode */                            \
-        NULL, 0, 0                  /* defn, alloc, hash */                 \
+        NULL, 0, 0,                 /* defn, alloc, hash */                 \
+        NULL, NULL, NULL, 0         /* theta_type, etc */                   \
     } ;                                                                     \
     GrB_IndexUnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
@@ -307,7 +306,8 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
         NULL, (GxB_index_unary_function) (& GB_FUNC_T (op, GB_XTYPE)), NULL,\
         name, 0,                    /* name and name_len */                 \
         GB_ ## op ## _idxunop_code, /* opcode */                            \
-        NULL, 0, 0                  /* defn, alloc, hash */                 \
+        NULL, 0, 0,                 /* defn, alloc, hash */                 \
+        NULL, NULL, NULL, 0         /* theta_type, etc */                   \
     } ;                                                                     \
     GrB_IndexUnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
@@ -327,7 +327,8 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
         NULL, (GxB_index_unary_function) (& GB_FUNC_T (op, GB_XTYPE)), NULL,\
         name, 0,                    /* name and name_len */                 \
         GB_ ## op ## _idxunop_code, /* opcode */                            \
-        NULL, 0, 0                  /* defn, alloc, hash */                 \
+        NULL, 0, 0,                 /* defn, alloc, hash */                 \
+        NULL, NULL, NULL, 0         /* theta_type, etc */                   \
     } ;                                                                     \
     GrB_IndexUnaryOp GRB (op) = & GB_OPAQUE (GB_OP (op))
 
@@ -345,7 +346,8 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
         NULL, (GxB_index_unary_function) (& GB_FUNC_T (op, GB_XTYPE)), NULL,\
         name, 0,                    /* name and name_len */                 \
         GB_ ## op ## _idxunop_code, /* opcode */                            \
-        NULL, 0, 0                  /* defn, alloc, hash */                 \
+        NULL, 0, 0,                 /* defn, alloc, hash */                 \
+        NULL, NULL, NULL, 0         /* theta_type, etc */                   \
     } ;                                                                     \
     GrB_IndexUnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
@@ -363,7 +365,8 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
         NULL, (GxB_index_unary_function) (& GB_FUNC_T (op, GB_XTYPE)), NULL,\
         name, 0,                    /* name and name_len */                 \
         GB_ ## op ## _idxunop_code, /* opcode */                            \
-        NULL, 0, 0                  /* defn, alloc, hash */                 \
+        NULL, 0, 0,                 /* defn, alloc, hash */                 \
+        NULL, NULL, NULL, 0         /* theta_type, etc */                   \
     } ;                                                                     \
     GrB_IndexUnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
@@ -382,7 +385,8 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
         NULL, NULL, NULL,           /* no function pointer */               \
         name, 0,                    /* name and name_len */                 \
         GB_ ## op ## _selop_code,   /* opcode */                            \
-        NULL, 0, 0                  /* defn, alloc, hash */                 \
+        NULL, 0, 0,                 /* defn, alloc, hash */                 \
+        NULL, NULL, NULL, 0         /* theta_type, etc */                   \
     } ;                                                                     \
     GxB_SelectOp GXB (op) = & GB_OPAQUE (op)
 
@@ -507,7 +511,8 @@ struct GB_BinaryOp_opaque GB_OPAQUE (IGNORE_DUP) =
     NULL, NULL, NULL,           // no function pointer
     "ignore_dup", 0,            // name and name_len
     GB_NOP_code,                // opcode
-    NULL, 0, 0                  // defn, alloc, and hash
+    NULL, 0, 0,                 // defn, alloc, and hash
+    NULL, NULL, NULL, 0         // theta_type, etc
 } ;
 GrB_BinaryOp GxB_IGNORE_DUP = & GB_OPAQUE (IGNORE_DUP) ;
 
@@ -541,7 +546,8 @@ struct GB_IndexUnaryOp_opaque GB_OPAQUE (NONZOMBIE) =
     NULL, (GxB_index_unary_function) &GB_nonzombie_func, NULL,
     "nonzombie", 0,             // name and name_len
     GB_NONZOMBIE_idxunop_code,  // opcode
-    NULL, 0, 0                  // defn, alloc, hash
+    NULL, 0, 0,                 // defn, alloc, hash
+    NULL, NULL, NULL, 0         // theta_type, etc
 } ;
 GrB_IndexUnaryOp GxB_NONZOMBIE = & GB_OPAQUE (NONZOMBIE) ;
 

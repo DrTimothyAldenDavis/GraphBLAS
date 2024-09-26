@@ -126,7 +126,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
 
     if (!T_is_csc)
     {
-        if (GB_OP_IS_POSITIONAL (op))
+        if (GB_IS_BINARYOP_CODE_POSITIONAL (op->opcode))
         { 
             // positional ops must be flipped, with i and j swapped
             op = GB_positional_binop_ijflip (op) ;

@@ -43,7 +43,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
 
     GB_CHECK_MAGIC (op) ;
     GB_Opcode opcode = op->opcode ;
-    if (!GB_IS_BINARYOP_CODE (opcode))
+    if (!GB_IS_BINARYOP_CODE (opcode) || GB_IS_INDEXBINARYOP_CODE (opcode))
     { 
         GBPR0 ("    BinaryOp has an invalid opcode\n") ;
         return (GrB_INVALID_OBJECT) ;
@@ -56,7 +56,9 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         return (GrB_INVALID_OBJECT) ;
     }
 
-    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    bool op_is_from_idxunop =
+        GB_IS_BINARYOP_CODE_POSITIONAL (opcode) ||
+        GB_IS_INDEXBINARYOP_CODE (opcode) ;
     bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
     bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
@@ -69,15 +71,19 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         // user-defined binary operator
         GBPR0 ("(user-defined): z=%s(x,y)\n", op_name) ;
     }
+    else if (opcode == GB_USER_idxbinop_code)
+    {
+        GBPR0 ("(user-defined index): z=%s(x,ix,iy,y,iy,yj,theta)\n", op_name) ;
+    }
     else if (opcode == GB_FIRST_binop_code && op->ztype->code == GB_UDT_code)
     { 
         // FIRST_UDT binary operator created by GB_reduce_to_vector
         GBPR0 ("(generated): z=%s(x,y)\n", op_name) ;
     }
-    else if (op_is_positional)
+    else if (op_is_from_idxunop)
     { 
-        // built-in positional binary operator
-        GBPR0 ("(built-in positional): z=%s(x,y,i,k,j)\n", op_name) ;
+        // built-in index binary operator
+        GBPR0 ("(built-in index): z=%s(x,ix,iy,y,iy,yj,theta)\n", op_name) ;
     }
     else
     { 
@@ -85,7 +91,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         GBPR0 ("(built-in): z=%s(x,y)\n", op_name) ;
     }
 
-    if (!(op_is_positional || op_is_first || op_is_second)
+    if (!(op_is_from_idxunop || op_is_first || op_is_second)
        && op->binop_function == NULL)
     { 
         GBPR0 ("    BinaryOp has a NULL function pointer\n") ;
@@ -100,7 +106,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
 
     info = GB_Type_check (op->ztype, "ztype", pr, f) ;
     ASSERT (info == GrB_SUCCESS) ;
-    if (!op_is_positional && !op_is_pair)
+    if (!op_is_pair)
     {
         if (!op_is_second)
         {

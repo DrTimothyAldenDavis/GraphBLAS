@@ -77,7 +77,7 @@ GrB_Info GB_emult_generic       // generic emult
 
     GB_Opcode opcode = op->opcode ;
 
-    const bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    const bool op_is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (opcode) ;
     const bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
     const bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     const bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;

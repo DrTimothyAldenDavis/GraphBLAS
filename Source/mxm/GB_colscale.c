@@ -104,7 +104,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     // C = A*D, column scale, compute numerical values
     //--------------------------------------------------------------------------
 
-    if (GB_OPCODE_IS_POSITIONAL (opcode))
+    if (GB_IS_BINARYOP_CODE_POSITIONAL (opcode))
     { 
 
         //----------------------------------------------------------------------

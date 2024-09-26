@@ -93,10 +93,11 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         opcode = op->opcode ;
         op_is_unop = GB_IS_UNARYOP_CODE (opcode) ;
         op_is_binop = GB_IS_BINARYOP_CODE (opcode) ;
+        ASSERT (!GB_IS_INDEXBINARYOP_CODE (opcode)) ;
         is64 = (op->ztype == GrB_INT64) ;
         is32 = (op->ztype == GrB_INT32) ;
 
-        if (op_is_binop && GB_OPCODE_IS_POSITIONAL (opcode))
+        if (GB_IS_BINARYOP_CODE_POSITIONAL (opcode))
         {
             // rename positional binary ops to positional unary ops
             GrB_UnaryOp op1 = NULL ;
@@ -133,7 +134,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             opcode = op->opcode ;
             op_is_unop = true ;
             op_is_binop = false ;
-            ASSERT (GB_OPCODE_IS_POSITIONAL (opcode)) ;
+            ASSERT (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)) ;
         }
 
     }

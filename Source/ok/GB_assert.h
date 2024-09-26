@@ -83,6 +83,7 @@
 #undef  ASSERT_TYPE_OK_OR_NULL
 #undef  ASSERT_BINARYOP_OK
 #undef  ASSERT_INDEXUNARYOP_OK
+#undef  ASSERT_INDEXBINARYOP_OK
 #undef  ASSERT_BINARYOP_OK_OR_NULL
 #undef  ASSERT_UNARYOP_OK
 #undef  ASSERT_UNARYOP_OK_OR_NULL
@@ -112,6 +113,9 @@
 
 #define ASSERT_INDEXUNARYOP_OK(op,name,pr)  \
     ASSERT_OK (GB_IndexUnaryOp_check (op, name, pr, NULL))
+
+#define ASSERT_INDEXBINARYOP_OK(op,name,pr)  \
+    ASSERT_OK (GB_IndexBinaryOp_check (op, name, pr, NULL))
 
 #define ASSERT_BINARYOP_OK_OR_NULL(op,name,pr)  \
     ASSERT_OK_OR_NULL (GB_BinaryOp_check (op, name, pr, NULL))

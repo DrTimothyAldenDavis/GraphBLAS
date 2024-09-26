@@ -57,13 +57,13 @@ bool GB_binop_builtin               // true if binary operator is builtin
     }
 
     ASSERT (GB_IS_BINARYOP_CODE (*opcode)) ;
-    if (*opcode == GB_USER_binop_code)
+    if (*opcode == GB_USER_binop_code || *opcode == GB_USER_idxbinop_code)
     { 
         // the binary operator is user-defined
         return (false) ;
     }
 
-    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (*opcode) ;
+    bool op_is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (*opcode) ;
 
     // check if A matches the input to the operator
     if (!A_is_pattern && !op_is_positional)

@@ -17,7 +17,7 @@
 {
 
     // this switch factory does not handle positional operators
-    ASSERT (!GB_OPCODE_IS_POSITIONAL (opcode)) ;
+    ASSERT (!GB_IS_BINARYOP_CODE_POSITIONAL (opcode)) ;
 
     switch (opcode)
     {

@@ -36,6 +36,8 @@ GrB_Info GB_op_name_and_defn
     //--------------------------------------------------------------------------
 
     ASSERT (op_name != NULL) ;
+    ASSERT (op_name_len != NULL) ;
+    ASSERT (op_hash != NULL) ;
     ASSERT (op_defn != NULL) ;
     ASSERT (op_defn_size != NULL) ;
     (*op_defn) = NULL ;

@@ -45,7 +45,8 @@ GrB_Info GB_selector
     // positional op (tril, triu, diag, offdiag, resize, rowindex, ...):
     // can't be jumbled.  nonzombie, entry-valued op, user op: jumbled OK
     GB_Opcode opcode = op->opcode ;
-    ASSERT (GB_IMPLIES (GB_OPCODE_IS_POSITIONAL (opcode), !GB_JUMBLED (A))) ;
+    ASSERT (GB_IMPLIES (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode),
+        !GB_JUMBLED (A))) ;
     ASSERT (C == NULL || (C != NULL && (C->static_header || GBNSTATIC))) ;
 
     bool in_place_A = (C == NULL) ; // GrB_wait and GB_resize only

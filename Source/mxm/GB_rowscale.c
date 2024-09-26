@@ -90,8 +90,8 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     // C = D*B, row scale, compute numerical values
     //--------------------------------------------------------------------------
 
-    if (GB_OPCODE_IS_POSITIONAL (opcode))
-    { 
+    if (GB_IS_BINARYOP_CODE_POSITIONAL (opcode))
+    {
 
         //----------------------------------------------------------------------
         // apply a positional operator: convert C=D*B to C=op(B)
