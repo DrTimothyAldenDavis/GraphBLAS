@@ -221,6 +221,9 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
             int diag     = GB_IMIN( work_per_thread*tid, nxy);
             int diag_end = GB_IMIN( diag + work_per_thread, nxy);
 
+// HERE: awork/bwork asymmetry:
+{
+
             // bwork takes place of bjnz:
             int x_min = GB_IMAX( (diag - bwork) , 0);
 
@@ -291,6 +294,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
             // two end points are known now
             int tx_end = xcoord; // +pA_start; 
             int ty_end = diag_end - xcoord; // + pB_start; 
+
+} // HERE ends awork/bwork asymmetry
 
             //merge-path dot product
             int64_t pA = tx_start;       // pA
