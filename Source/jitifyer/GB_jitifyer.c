@@ -1795,7 +1795,7 @@ GrB_Info GB_jitifyer_load2_worker
     // lock the kernel
     //--------------------------------------------------------------------------
 
-    // FIXME: add kernel_name to the lock filename.  If the lock fails,
+    // TODO: add kernel_name to the lock filename.  If the lock fails,
     // sleep for 1 second and try again repeatedly, with a timeout limit of
     // (say) 60 seconds.
 
@@ -1990,7 +1990,7 @@ GrB_Info GB_jitifyer_load_worker
             GB_jit_control = GxB_JIT_LOAD ;
             // remove the compiled library
             remove (GB_jit_temp) ;
-            return (GrB_NO_VALUE) ;     // FIXME: use another error code?
+            return (GrB_NO_VALUE) ;     // TODO: use another error code?
         }
 
     }
@@ -2020,7 +2020,7 @@ GrB_Info GB_jitifyer_load_worker
         GB_jit_control = GxB_JIT_RUN ;
         // remove the compiled library
         remove (GB_jit_temp) ;
-        return (GrB_NO_VALUE) ;     // FIXME: use another error code?
+        return (GrB_NO_VALUE) ;     // TODO: use another error code?
     }
 
     // insert the new kernel into the hash table
@@ -2499,17 +2499,17 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
 
     // compile:
     "sh -c \""                          // execute with POSIX shell
-    // FIXME: use GB_CUDA_COMPILER here:
+    // Fixme for CUDA: use GB_CUDA_COMPILER here:
     "nvcc "                             // compiler command
     "-forward-unknown-to-host-compiler "
     "-DGB_JIT_RUNTIME=1  "              // nvcc flags
-    // FIXME: add GB_CUDA_INC here:
+    // Fixme for CUDA: add GB_CUDA_INC here:
     "-I/usr/local/cuda/include -std=c++17 " 
-    // FIXME: use GB_CUDA_ARCHITECTURES here:
+    // Fixme for CUDA: use GB_CUDA_ARCHITECTURES here:
     " -arch=sm_60 "
     " -fPIC " 
-    // FIXME: add GB_CUDA_FLAGS here:
-    " -O3 "   // HACK FIXME (for CUDA)
+    // Fixme for CUDA: add GB_CUDA_FLAGS here:
+    " -O3 "   // HACK Fixme for CUDA
     "-I'%s/src' "                       // include source directory
     "-I'%s/src/template' "
     "-I'%s/src/include' "
