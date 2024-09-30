@@ -27,7 +27,8 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // extract the binaryop scode
     //--------------------------------------------------------------------------
 
-    // method (3 bits)
+    // flipij and method (one hex digit)
+    bool flipij     = GB_RSHIFT (scode, 51, 1) ;
 //  bool is_emult   = GB_RSHIFT (scode, 50, 1) ;
 //  bool is_union   = GB_RSHIFT (scode, 49, 1) ;
     bool copy_to_C  = GB_RSHIFT (scode, 48, 1) ;
@@ -91,16 +92,21 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         if (binaryop->hash == 0)
         { 
             // builtin operator
-            fprintf (fp, "// op: (%s%s, %s)\n\n",
-                binaryop->name, flipxy ? " (flipped)" : "", xtype_name) ;
+            fprintf (fp, "// op: (%s%s%s, %s)\n\n",
+                binaryop->name,
+                flipij ? " (flipped ij)" : "",
+                flipxy ? " (flipped xy)" : "",
+                xtype_name) ;
         }
         else
         { 
             // user-defined operator, or created by GB_wait
             fprintf (fp,
-                "// op: %s%s%s, ztype: %s, xtype: %s, ytype: %s\n\n",
+                "// op: %s%s%s%s, ztype: %s, xtype: %s, ytype: %s\n\n",
                 (binaryop->opcode == GB_SECOND_binop_code) ? "2nd_" : "",
-                binaryop->name, flipxy ? " (flipped)" : "",
+                binaryop->name,
+                flipij ? " (flipped ij)" : "",
+                flipxy ? " (flipped xy)" : "",
                 ztype_name, xtype_name, ytype_name) ;
         }
     }
@@ -126,9 +132,11 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // construct macros for the binary operator
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n// binary operator%s:\n", flipxy ? " (flipped)" : "") ;
-    GB_macrofy_binop (fp, "GB_BINOP", flipxy, false, true, binop_ecode, C_iso,
-        binaryop, NULL, NULL, NULL) ;
+    fprintf (fp, "\n// binary operator%s%s:\n",
+        flipij ? " (flipped ij)" : "",
+        flipxy ? " (flipped xy)" : "") ;
+    GB_macrofy_binop (fp, "GB_BINOP", flipij, flipxy, false, true, binop_ecode,
+        C_iso, binaryop, NULL, NULL, NULL) ;
 
     if (binaryop->opcode == GB_SECOND_binop_code)
     { 

@@ -27,6 +27,7 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const bool flipxy,
     const GrB_Matrix A,         // NULL for apply bind1st
     const GrB_Matrix B          // NULL for apply bind2nd
@@ -56,7 +57,7 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     encoding->kcode = kcode ;
     GB_enumify_ewise (&encoding->code, is_eWiseMult, is_eWiseUnion,
         can_copy_to_C, C_iso, C_in_iso, C_sparsity, ctype, M, Mask_struct,
-        Mask_comp, binaryop, flipxy, A, B) ;
+        Mask_comp, binaryop, flipij, flipxy, A, B) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length

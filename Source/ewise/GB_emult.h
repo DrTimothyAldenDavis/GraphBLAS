@@ -36,6 +36,7 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    const bool flipij,      // if true, i,j must be flipped
     GB_Werk Werk
 ) ;
 
@@ -101,6 +102,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    const bool flipij,      // if true, i,j must be flipped
     // from phase1:
     int64_t **Cp_handle,    // vector pointers for C
     size_t Cp_size,
@@ -139,6 +141,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     const GrB_Matrix A,     // input A matrix (sparse/hyper)
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     GrB_BinaryOp op,        // op to perform C = op (A,B)
+    const bool flipij,      // if true, i,j must be flipped
     GB_Werk Werk
 ) ;
 
@@ -175,6 +178,7 @@ GrB_Info GB_emult_03        // C=A.*B when A is bitmap/full, B sparse/hyper
     const GrB_Matrix A,     // input A matrix (sparse/hyper)
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     GrB_BinaryOp op,        // op to perform C = op (A,B)
+    const bool flipij,      // if true, i,j must be flipped
     GB_Werk Werk
 ) ;
 
@@ -189,6 +193,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     const GrB_Matrix A,     // input A matrix (bitmap/full)
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    const bool flipij,      // if true, i,j must be flipped
     GB_Werk Werk
 ) ;
 
@@ -205,6 +210,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     const GrB_Matrix A,     // input A matrix (bitmap/full)
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    const bool flipij,      // if true, i,j must be flipped
     GB_Werk Werk
 ) ;
 
@@ -225,6 +231,7 @@ GrB_Info GB_emult_generic       // generic emult
     GrB_Matrix C,           // output matrix, static header
     // input:
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    const bool flipij,      // if true, i,j must be flipped
     // tasks from phase1a:
     const GB_task_struct *restrict TaskList,  // array of structs
     const int C_ntasks,                         // # of tasks

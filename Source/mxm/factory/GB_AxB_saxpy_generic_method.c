@@ -111,8 +111,8 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     ASSERT (mult->ztype == add->op->ztype) ;
     ASSERT (mult->ztype == C->type) ;
 
-    // FIXME: handle mult->idxbinop_function here
     GxB_binary_function fmult = mult->binop_function ;    // NULL if positional
+    GzB_index_binary_function fmult_idx = mult->idxbinop_function ;
     GxB_binary_function fadd  = add->op->binop_function ;
     GB_Opcode opcode = mult->opcode ;
 
@@ -167,7 +167,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     { 
 
         //----------------------------------------------------------------------
-        // generic semirings with positional mulitiply operators
+        // generic semirings with builtin positional mulitiply operators
         //----------------------------------------------------------------------
 
         // C and Z type become int32_t or int64_t
@@ -319,7 +319,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     {
 
         //----------------------------------------------------------------------
-        // generic semirings with standard multiply operators
+        // generic semirings with other multiply operators
         //----------------------------------------------------------------------
 
         // aik = A(i,k), located in Ax [A_iso ? 0:pA]
@@ -423,12 +423,32 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
             #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, bkj, aik)
             #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
         }
-        #else
+        #elif GB_GENERIC_NOFLIPXY
         { 
             // t = A(i,k) * B(k,j)
             ASSERT (fmult != NULL) ;
             #undef  GB_MULT
             #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, aik, bkj)
+            #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
+        }
+        #elif GB_GENERIC_IDX_FLIPXY
+        { 
+            // t = B(k,j) * A(i,k)
+            ASSERT (fmult_idx != NULL) ;
+            const void *theta = mult->theta ;
+            #undef  GB_MULT
+            #define GB_MULT(t, aik, bkj, i, k, j) \
+                fmult_idx (t, bkj, j, k, aik, k, i, theta)
+            #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
+        }
+        #elif GB_GENERIC_IDX_NOFLIPXY
+        { 
+            // t = A(i,k) * B(k,j)
+            ASSERT (fmult_idx != NULL) ;
+            const void *theta = mult->theta ;
+            #undef  GB_MULT
+            #define GB_MULT(t, aik, bkj, i, k, j) \
+                fmult_idx (t, aik, i, k, bkj, k, j, theta)
             #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
         }
         #endif

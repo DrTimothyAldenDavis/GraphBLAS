@@ -34,7 +34,7 @@ GrB_Info GB_apply_bind2nd_jit   // Cx = op (x,B), apply bind2nd via the JIT
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_APPLYBIND2, false,
         false, false, GxB_FULL, ctype, NULL, false, false,
-        binaryop, false, A, NULL) ;
+        binaryop, false, false, A, NULL) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

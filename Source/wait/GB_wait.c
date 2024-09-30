@@ -459,7 +459,7 @@ GrB_Info GB_wait                // finish all pending computations
     
             GB_CLEAR_STATIC_HEADER (S, &S_header) ;
             GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A1, T,
-                false, NULL, NULL, op_2nd, true, Werk)) ;
+                false, NULL, NULL, op_2nd, false, true, Werk)) ;
 
             ASSERT_MATRIX_OK (S, "S = A1+T", GB0) ;
 
@@ -556,7 +556,7 @@ GrB_Info GB_wait                // finish all pending computations
 
         GB_CLEAR_STATIC_HEADER (S, &S_header) ;
         GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T,
-            false, NULL, NULL, op_2nd, true, Werk)) ;
+            false, NULL, NULL, op_2nd, false, true, Werk)) ;
         GB_Matrix_free (&T) ;
         ASSERT_MATRIX_OK (S, "S after GB_wait:add", GB0) ;
 

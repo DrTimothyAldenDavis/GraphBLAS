@@ -40,7 +40,7 @@ endif ( )
 
 if ( SUITESPARSE_HAS_CUDA AND GRAPHBLAS_USE_CUDA )
     # FOR NOW: do not compile FactoryKernels when developing the CUDA kernels
-#   set ( GRAPHBLAS_COMPACT on )    # FIXME
+#   set ( GRAPHBLAS_COMPACT on )    # Fixme for CUDA
 endif ( )
 
 include ( CheckSymbolExists )

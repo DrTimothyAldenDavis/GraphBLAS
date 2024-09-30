@@ -36,7 +36,7 @@ GrB_Info GB_transpose_bind1st_jit
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_TRANSBIND1, false,
         false, false, GB_sparsity (C), C->type, NULL, false, false,
-        binaryop, false, NULL, A) ;
+        binaryop, false, false, NULL, A) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

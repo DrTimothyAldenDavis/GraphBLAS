@@ -25,11 +25,12 @@
 
     ASSERT (!C->iso) ;
 
-    // FIXME: handle mult->idxbinop_function here
     GxB_binary_function fmult = mult->binop_function ;    // NULL if positional
+    GzB_index_binary_function fmult_idx = mult->idxbinop_function ;
     GxB_binary_function fadd  = add->op->binop_function ;
     GB_Opcode opcode = mult->opcode ;
-    bool op_is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
+    bool op_is_builtin_positional =
+        GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
 
     size_t csize = C->type->size ;
     size_t asize = A_is_pattern ? 0 : A->type->size ;
@@ -69,7 +70,7 @@
     // C = A'*B via dot products, function pointers, and typecasting
     //--------------------------------------------------------------------------
 
-    if (op_is_positional)
+    if (op_is_builtin_positional)
     { 
 
         //----------------------------------------------------------------------
@@ -225,7 +226,7 @@
     {
 
         //----------------------------------------------------------------------
-        // generic semirings with standard multiply operators
+        // generic semirings
         //----------------------------------------------------------------------
 
         // aki = A(i,k), located in Ax [A_iso?0:(pA)]
@@ -312,29 +313,61 @@
             #include "mxm/template/GB_AxB_dot3_meta.c"
             #endif
         }
-        else if (flipxy)
-        { 
-            // t = B(k,j) * (A')(i,k)
-            ASSERT (fmult != NULL) ;
-            #undef  GB_MULT
-            #define GB_MULT(t, aki, bkj, i, k, j) fmult (t, bkj, aki)
-            #if defined ( GB_DOT2_GENERIC )
-            #include "mxm/template/GB_AxB_dot2_meta.c"
-            #elif defined ( GB_DOT3_GENERIC )
-            #include "mxm/template/GB_AxB_dot3_meta.c"
-            #endif
+        else if (fmult != NULL)
+        {
+            // standard binary op
+            if (flipxy)
+            { 
+                // t = B(k,j) * (A')(i,k)
+                #undef  GB_MULT
+                #define GB_MULT(t, aki, bkj, i, k, j) fmult (t, bkj, aki)
+                #if defined ( GB_DOT2_GENERIC )
+                #include "mxm/template/GB_AxB_dot2_meta.c"
+                #elif defined ( GB_DOT3_GENERIC )
+                #include "mxm/template/GB_AxB_dot3_meta.c"
+                #endif
+            }
+            else
+            { 
+                // t = (A')(i,k) * B(k,j)
+                #undef  GB_MULT
+                #define GB_MULT(t, aki, bkj, i, k, j) fmult (t, aki, bkj)
+                #if defined ( GB_DOT2_GENERIC )
+                #include "mxm/template/GB_AxB_dot2_meta.c"
+                #elif defined ( GB_DOT3_GENERIC )
+                #include "mxm/template/GB_AxB_dot3_meta.c"
+                #endif
+            }
         }
         else
-        { 
-            // t = (A')(i,k) * B(k,j)
-            ASSERT (fmult != NULL) ;
-            #undef  GB_MULT
-            #define GB_MULT(t, aki, bkj, i, k, j) fmult (t, aki, bkj)
-            #if defined ( GB_DOT2_GENERIC )
-            #include "mxm/template/GB_AxB_dot2_meta.c"
-            #elif defined ( GB_DOT3_GENERIC )
-            #include "mxm/template/GB_AxB_dot3_meta.c"
-            #endif
+        {
+            // index binary op
+            ASSERT (fmult_idx != NULL) ;
+            const void *theta = mult->theta ;
+            if (flipxy)
+            { 
+                // t = B(k,j) * (A')(i,k)
+                #undef  GB_MULT
+                #define GB_MULT(t, aki, bkj, i, k, j) \
+                    fmult_idx (t, bkj, j, k, aki, k, i, theta)
+                #if defined ( GB_DOT2_GENERIC )
+                #include "mxm/template/GB_AxB_dot2_meta.c"
+                #elif defined ( GB_DOT3_GENERIC )
+                #include "mxm/template/GB_AxB_dot3_meta.c"
+                #endif
+            }
+            else
+            { 
+                // t = (A')(i,k) * B(k,j)
+                #undef  GB_MULT
+                #define GB_MULT(t, aki, bkj, i, k, j) \
+                    fmult_idx (t, aki, i, k, bkj, k, j, theta)
+                #if defined ( GB_DOT2_GENERIC )
+                #include "mxm/template/GB_AxB_dot2_meta.c"
+                #elif defined ( GB_DOT3_GENERIC )
+                #include "mxm/template/GB_AxB_dot3_meta.c"
+                #endif
+            }
         }
     }
 }

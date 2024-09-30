@@ -22,6 +22,7 @@ GrB_Info GB_union_jit      // C=A+B, C<#M>=A+B, eWiseUnion, via the JIT
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const GB_void *alpha_scalar_in,
@@ -54,7 +55,7 @@ GrB_Info GB_union_jit      // C=A+B, C<#M>=A+B, eWiseUnion, via the JIT
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_UNION, false,
         false, false, C_sparsity, C->type, M, Mask_struct, Mask_comp,
-        binaryop, false, A, B) ;
+        binaryop, flipij, false, A, B) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

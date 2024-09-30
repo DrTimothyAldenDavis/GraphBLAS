@@ -17,6 +17,7 @@ void GB_macrofy_binop
     FILE *fp,
     // input:
     const char *macro_name,
+    bool flipij,                // if true: op is f(x,y,j,i) for ewise ops
     bool flipxy,                // if true: op is f(y,x) for a semiring
     bool is_monoid_or_build,    // if true: additive operator for monoid,
                                 // or binary op for GrB_Matrix_build, or
@@ -73,8 +74,15 @@ void GB_macrofy_binop
         }
         else if (flipxy)
         { 
-            // flipped multiplicative or ewise operator
+            // flipped multiplicative operator (flip both xy and ij)
+            ASSERT (!is_ewise) ;
             fprintf (fp, "#define %s(z,y,x,j%s,i) ", macro_name, karg) ;
+        }
+        else if (flipij)
+        {
+            // i,j flipped ewise operator (just flip ij, do not flip xy)
+            ASSERT (is_ewise) ;
+            fprintf (fp, "#define %s(z,x,y,j,i) ", macro_name) ;
         }
         else
         { 
@@ -702,7 +710,7 @@ void GB_macrofy_binop
             case 149 : f = "z = GxB_CMPLX (1,0)" ; break ;
 
             //------------------------------------------------------------------
-            // positional ops
+            // builtin positional ops
             //------------------------------------------------------------------
 
             // in a semiring:  cij += aik * bkj

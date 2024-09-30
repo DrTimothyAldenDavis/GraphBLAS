@@ -36,7 +36,8 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool Mask_comp,         // mask is complemented
     // operator:
     GrB_BinaryOp binaryop,  // the binary operator to enumify
-    bool flipxy,            // multiplier is: op(a,b) or op(b,a)
+    bool flipij,            // multiplier is: op(a,b,i,j) or op(a,b,j,i)
+    bool flipxy,            // multiplier is: op(a,b,i,j) or op(b,a,j,i)
     // A and B:
     GrB_Matrix A,           // NULL for unary apply with binop, bind 1st
     GrB_Matrix B            // NULL for unary apply with binop, bind 2nd
@@ -107,9 +108,10 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool op_is_first  = (opcode == GB_FIRST_binop_code ) ;
     bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
-    bool op_is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
+    bool op_is_builtin_positional =
+        GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
 
-    if (op_is_positional || op_is_pair || C_iso)
+    if (op_is_builtin_positional || op_is_pair || C_iso)
     { 
         // x and y are not used
         xcode = 0 ;
@@ -188,11 +190,12 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     // construct the ewise scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 51 (13 hex digits)
+    // total scode bits: 52 (13 hex digits)
 
     (*scode) =
                                                // range        bits
-                // method (3 bits) (1 hex digit, 0 to 7)
+                // method (4 bits) (1 hex digit)
+                GB_LSHIFT (flipij     , 51) |  // 0 or 1       1
                 GB_LSHIFT (is_emult   , 50) |  // 0 or 1       1
                 GB_LSHIFT (is_union   , 49) |  // 0 or 1       1
                 GB_LSHIFT (copy_to_C  , 48) |  // 0 or 1       1

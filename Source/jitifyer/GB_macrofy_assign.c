@@ -175,8 +175,8 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     if (accum != NULL)
     {
         fprintf (fp, "\n// accum operator:\n") ;
-        GB_macrofy_binop (fp, "GB_ACCUM_OP", false, true, false, accum_ecode,
-            C_iso, accum, NULL, NULL, NULL) ;
+        GB_macrofy_binop (fp, "GB_ACCUM_OP", false, false, true, false,
+            accum_ecode, C_iso, accum, NULL, NULL, NULL) ;
 
         char *yname = "ywork" ;
 

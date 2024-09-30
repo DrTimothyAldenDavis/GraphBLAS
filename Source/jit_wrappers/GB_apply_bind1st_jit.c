@@ -34,7 +34,7 @@ GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_APPLYBIND1, false,
         false, false, GxB_FULL, ctype, NULL, false, false,
-        binaryop, false, NULL, B) ;
+        binaryop, false, false, NULL, B) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

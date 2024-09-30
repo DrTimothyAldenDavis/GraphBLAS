@@ -14,6 +14,9 @@
 #define GB_GENERIC_C_IS_SPARSE_OR_HYPERSPARSE  1
 #define GB_GENERIC_OP_IS_POSITIONAL            1
 #define GB_GENERIC_FLIPXY                      0
+#define GB_GENERIC_NOFLIPXY                    0
+#define GB_GENERIC_IDX_FLIPXY                  0
+#define GB_GENERIC_IDX_NOFLIPXY                0
 #define GB_GENERIC_OP_IS_INT64                 1
 #define GB_GENERIC_OP_IS_FIRSTI                0
 #define GB_GENERIC_OP_IS_FIRSTJ                0

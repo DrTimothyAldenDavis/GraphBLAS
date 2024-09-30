@@ -59,6 +59,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    const bool flipij,      // if true, i,j must be flipped
     const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
     // from phase1:
     int64_t **Cp_handle,    // vector pointers for C
@@ -124,7 +125,10 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     ASSERT (C_is_hyper == (Ch != NULL)) ;
 
     GB_Opcode opcode = op->opcode ;
-    bool op_is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
+    bool op_is_builtin_positional =
+        GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
+    bool op_is_index_binop = GB_IS_INDEXBINARYOP_CODE (opcode) ;
+    bool op_is_positional = op_is_builtin_positional || op_is_index_binop ;
     bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
     bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
@@ -140,10 +144,15 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         ASSERT (GB_Type_compatible (ctype, B->type)) ;
     }
     ASSERT (GB_Type_compatible (ctype, op->ztype)) ;
-    ASSERT (GB_IMPLIES (!(op_is_second || op_is_pair || op_is_positional),
-            GB_Type_compatible (A->type, op->xtype))) ;
-    ASSERT (GB_IMPLIES (!(op_is_first  || op_is_pair || op_is_positional),
-            GB_Type_compatible (B->type, op->ytype))) ;
+    ASSERT (GB_IMPLIES (!(op_is_second || op_is_pair ||
+        op_is_builtin_positional),
+        GB_Type_compatible (A->type, op->xtype))) ;
+    ASSERT (GB_IMPLIES (!(op_is_first  || op_is_pair ||
+        op_is_builtin_positional),
+        GB_Type_compatible (B->type, op->ytype))) ;
+    // builtin positional ops have already been flipped by changing the op,
+    // and other ops never need i,j flipped
+    ASSERT (GB_IMPLIES (!op_is_index_binop, !flipij)) ;
 #endif
 
     //--------------------------------------------------------------------------
@@ -177,7 +186,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         asize = A->type->size ;
         bsize = B->type->size ;
 
-        if (op_is_second || op_is_pair || op_is_positional)
+        if (op_is_second || op_is_pair || op_is_builtin_positional)
         { 
             // the op does not depend on the value of A(i,j)
             xsize = 1 ;
@@ -189,7 +198,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             cast_A_to_X = GB_cast_factory (op->xtype->code, A->type->code) ;
         }
 
-        if (op_is_first || op_is_pair || op_is_positional)
+        if (op_is_first || op_is_pair || op_is_builtin_positional)
         { 
             // the op does not depend on the value of B(i,j)
             ysize = 1 ;
@@ -431,7 +440,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         if (is_eWiseUnion)
         { 
             info = GB_union_jit (C, C_sparsity, M, Mask_struct,
-                Mask_comp, op, A, B, alpha_scalar, beta_scalar,
+                Mask_comp, op, flipij, A, B, alpha_scalar, beta_scalar,
                 Ch_is_Mh, C_to_M, C_to_A, C_to_B, 
                 TaskList, C_ntasks, C_nthreads,
                 M_ek_slicing, M_nthreads, M_ntasks,
@@ -441,7 +450,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         else
         { 
             info = GB_add_jit (C, C_sparsity, M, Mask_struct,
-                Mask_comp, op, A, B,
+                Mask_comp, op, flipij, A, B,
                 Ch_is_Mh, C_to_M, C_to_A, C_to_B, 
                 TaskList, C_ntasks, C_nthreads,
                 M_ek_slicing, M_nthreads, M_ntasks,
@@ -500,7 +509,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         #undef  GB_PUTC
         #define GB_PUTC(z, Cx, p) cast_Z_to_C (Cx +((p)*csize), &z, csize)
 
-        if (op_is_positional)
+        if (op_is_builtin_positional)
         {
 
             //------------------------------------------------------------------
@@ -509,10 +518,10 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
             // z = op (aij, bij)
             #undef  GB_BINOP
-            #define GB_BINOP(z,x,y,i,j)                             \
+            #define GB_BINOP(z,x,y,i,j)                                 \
                 z = (positional_is_i ? (i):(j)) + offset
 
-            #define GB_POSITIONAL_OP
+            #define GB_BUILTIN_POSITIONAL_OP
             const bool positional_is_i = 
                 (opcode == GB_FIRSTI_binop_code)    ||
                 (opcode == GB_FIRSTI1_binop_code)   ||
@@ -566,6 +575,63 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                     #include "ewise/template/GB_add_template.c"
                 }
             }
+            #undef GB_BUILTIN_POSITIONAL_OP
+
+        }
+        else if (op_is_index_binop)
+        {
+
+            //------------------------------------------------------------------
+            // index binary operator
+            //------------------------------------------------------------------
+
+            GzB_index_binary_function fadd_idx = op->idxbinop_function ;
+            ASSERT (fadd_idx != NULL) ;
+
+            // C(i,j) = (ctype) (A(i,j) + B(i,j))
+            #undef  GB_EWISEOP
+            #define GB_EWISEOP(Cx, p, aij, bij, i, j)       \
+            {                                               \
+                GB_void z [GB_VLA(zsize)] ;                 \
+                GB_BINOP (z, aij, bij, i, j) ;              \
+                GB_PUTC (z, Cx, p) ;                        \
+            }
+
+            const void *theta = op->theta ;
+
+            if (flipij)
+            {
+                // i and j must be flipped
+                #undef  GB_BINOP
+                #define GB_BINOP(z, aij, bij, j, i)             \
+                    fadd_idx (z, aij, i, j, bij, i, j, theta) ;
+                if (is_eWiseUnion)
+                { 
+                    #define GB_IS_EWISEUNION 1
+                    #include "ewise/template/GB_add_template.c"
+                }
+                else
+                { 
+                    #define GB_IS_EWISEUNION 0
+                    #include "ewise/template/GB_add_template.c"
+                }
+            }
+            else
+            {
+                #undef  GB_BINOP
+                #define GB_BINOP(z, aij, bij, i, j)             \
+                    fadd_idx (z, aij, i, j, bij, i, j, theta) ;
+                if (is_eWiseUnion)
+                { 
+                    #define GB_IS_EWISEUNION 1
+                    #include "ewise/template/GB_add_template.c"
+                }
+                else
+                { 
+                    #define GB_IS_EWISEUNION 0
+                    #include "ewise/template/GB_add_template.c"
+                }
+            }
 
         }
         else
@@ -575,9 +641,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             // standard binary operator
             //------------------------------------------------------------------
 
-            #undef GB_POSITIONAL_OP
             GxB_binary_function fadd = op->binop_function ;
-            // FIXME: handle fadd->idxbinop_function here
 
             // The binary op is not used if fadd is null since in that case
             // the intersection of A and B is empty

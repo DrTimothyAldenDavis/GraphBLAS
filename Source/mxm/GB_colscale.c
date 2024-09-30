@@ -209,7 +209,8 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         info = GrB_NO_VALUE ;
 
         #if defined ( GRAPHBLAS_HAS_CUDA )
-        if (GB_cuda_colscale_branch (A, D, semiring, flipxy)) {
+        if (GB_cuda_colscale_branch (A, D, semiring, flipxy))
+        {
             info = GB_cuda_colscale (C, A, D, semiring, flipxy) ;
         }
         #endif
@@ -357,7 +358,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
                 if (flipxy)
                 { 
                     #undef  GB_EWISEOP
-                    #define GB_EWISEOP(Cx,p,x,y,j,i) fmult (Cx +((p)*csize),y,x)
+                    #define GB_EWISEOP(Cx,p,y,x,j,i) fmult (Cx +((p)*csize),x,y)
                     #include "mxm/template/GB_colscale_template.c"
                 }
                 else
@@ -376,20 +377,20 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
                 const void *theta = mult->theta ;
                 if (flipxy)
                 { 
+                    // flip both x,y and i,j
                     #undef  GB_EWISEOP
-                    #define GB_EWISEOP(Cx,p,x,y,j,i) \
-                        fmult_idx (Cx +((p)*csize),y,i,j,x,i,j,theta)
+                    #define GB_EWISEOP(Cx,p,y,x,j,i) \
+                        fmult_idx (Cx +((p)*csize), x,i,j, y,i,j, theta)
                     #include "mxm/template/GB_colscale_template.c"
                 }
                 else
                 { 
                     #undef  GB_EWISEOP
                     #define GB_EWISEOP(Cx,p,x,y,i,j) \
-                        fmult (Cx +((p)*csize),x,i,j,y,i,j,theta)
+                        fmult_idx (Cx +((p)*csize), x,i,j, y,i,j, theta)
                     #include "mxm/template/GB_colscale_template.c"
                 }
             }
-
             info = GrB_SUCCESS ;
         }
     }

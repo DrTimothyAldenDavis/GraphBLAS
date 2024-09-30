@@ -86,7 +86,7 @@ GrB_Info GB_AxB_saxpy_generic
     { 
 
         //----------------------------------------------------------------------
-        // generic semirings with positional mulitiply operators
+        // generic semirings with positional multiply operators
         //----------------------------------------------------------------------
 
         GB_BURBLE_MATRIX (C, "(generic positional C=A*B) ") ;
@@ -272,6 +272,134 @@ GrB_Info GB_AxB_saxpy_generic
         }
 
     }
+    else if (opcode == GB_FIRST_binop_code)
+    {
+
+        //----------------------------------------------------------------------
+        // generic semirings with FIRST multiply operators
+        //----------------------------------------------------------------------
+
+        GB_BURBLE_MATRIX (C, "(generic first C=A*B) ") ;
+        // t = A(i,k)
+        // fmult is not used and can be NULL.  This is required for
+        // GB_reduce_to_vector for user-defined types.
+        ASSERT (!flipxy) ;
+        ASSERT (B_is_pattern) ;
+        if (saxpy_method == GB_SAXPY_METHOD_3)
+        { 
+            // C is sparse or hypersparse
+            info = GB_AxB_saxpy3_generic_first 
+                 (C, M, Mask_comp, Mask_struct, M_in_place,
+                  A, A_is_pattern, B, B_is_pattern, semiring,
+                  ntasks, nthreads,
+                  SaxpyTasks, nfine, do_sort, Werk) ;
+        }
+        else
+        { 
+            // C is bitmap
+            info = GB_AxB_saxbit_generic_first 
+                 (C, M, Mask_comp, Mask_struct, M_in_place,
+                  A, A_is_pattern, B, B_is_pattern, semiring,
+                  ntasks, nthreads,
+                  nfine_tasks_per_vector, use_coarse_tasks,
+                  use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
+                  A_slice, H_slice, Wcx, Wf) ;
+        }
+
+    }
+    else if (opcode == GB_SECOND_binop_code)
+    {
+
+        //----------------------------------------------------------------------
+        // generic semirings with SECOND multiply operators
+        //----------------------------------------------------------------------
+
+        GB_BURBLE_MATRIX (C, "(generic second C=A*B) ") ;
+        // t = B(i,k)
+        // fmult is not used and can be NULL.  This is required for
+        // GB_reduce_to_vector for user-defined types.
+        ASSERT (!flipxy) ;
+        ASSERT (A_is_pattern) ;
+        if (saxpy_method == GB_SAXPY_METHOD_3)
+        { 
+            // C is sparse or hypersparse
+            info = GB_AxB_saxpy3_generic_second 
+                 (C, M, Mask_comp, Mask_struct, M_in_place,
+                  A, A_is_pattern, B, B_is_pattern, semiring,
+                  ntasks, nthreads,
+                  SaxpyTasks, nfine, do_sort, Werk) ;
+        }
+        else
+        { 
+            // C is bitmap
+            info = GB_AxB_saxbit_generic_second 
+                 (C, M, Mask_comp, Mask_struct, M_in_place,
+                  A, A_is_pattern, B, B_is_pattern, semiring,
+                  ntasks, nthreads,
+                  nfine_tasks_per_vector, use_coarse_tasks,
+                  use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
+                  A_slice, H_slice, Wcx, Wf) ;
+        }
+
+    }
+    else if (GB_IS_INDEXBINARYOP_CODE (opcode))
+    {
+
+        //----------------------------------------------------------------------
+        // generic semirings with index binary multiply operators
+        //----------------------------------------------------------------------
+
+        GB_BURBLE_MATRIX (C, "(generic index C=A*B) ") ;
+        if (flipxy)
+        {
+            // t = B(k,j) * A(i,k)
+            if (saxpy_method == GB_SAXPY_METHOD_3)
+            { 
+                // C is sparse or hypersparse, mult is flipped
+                info = GB_AxB_saxpy3_generic_idx_flipped 
+                     (C, M, Mask_comp, Mask_struct, M_in_place,
+                      A, A_is_pattern, B, B_is_pattern, semiring,
+                      ntasks, nthreads,
+                      SaxpyTasks, nfine, do_sort, Werk) ;
+            }
+            else
+            { 
+                // C is bitmap, mult is flipped
+                info = GB_AxB_saxbit_generic_idx_flipped 
+                     (C, M, Mask_comp, Mask_struct, M_in_place,
+                      A, A_is_pattern, B, B_is_pattern, semiring,
+                      ntasks, nthreads,
+                      nfine_tasks_per_vector, use_coarse_tasks,
+                      use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
+                      A_slice, H_slice, Wcx, Wf) ;
+            }
+        }
+        else
+        {
+            // t = A(i,k) * B(k,j)
+            if (saxpy_method == GB_SAXPY_METHOD_3)
+            { 
+                // C is sparse or hypersparse, mult is unflipped
+                info = GB_AxB_saxpy3_generic_idx_unflipped 
+                     (C, M, Mask_comp, Mask_struct, M_in_place,
+                      A, A_is_pattern, B, B_is_pattern, semiring,
+                      ntasks, nthreads,
+                      SaxpyTasks, nfine, do_sort, Werk) ;
+            }
+            else
+            { 
+                // C is bitmap, mult is unflipped
+                info = GB_AxB_saxbit_generic_idx_unflipped 
+                     (C, M, Mask_comp, Mask_struct, M_in_place,
+                      A, A_is_pattern, B, B_is_pattern, semiring,
+                      ntasks, nthreads,
+                      nfine_tasks_per_vector, use_coarse_tasks,
+                      use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
+                      A_slice, H_slice, Wcx, Wf) ;
+            }
+        }
+
+    }
     else
     {
 
@@ -279,65 +407,9 @@ GrB_Info GB_AxB_saxpy_generic
         // generic semirings with standard multiply operators
         //----------------------------------------------------------------------
 
+        // standard binary op
         GB_BURBLE_MATRIX (C, "(generic C=A*B) ") ;
-
-        if (opcode == GB_FIRST_binop_code)
-        {
-            // t = A(i,k)
-            // fmult is not used and can be NULL.  This is required for
-            // GB_reduce_to_vector for user-defined types.
-            ASSERT (!flipxy) ;
-            ASSERT (B_is_pattern) ;
-            if (saxpy_method == GB_SAXPY_METHOD_3)
-            { 
-                // C is sparse or hypersparse
-                info = GB_AxB_saxpy3_generic_first 
-                     (C, M, Mask_comp, Mask_struct, M_in_place,
-                      A, A_is_pattern, B, B_is_pattern, semiring,
-                      ntasks, nthreads,
-                      SaxpyTasks, nfine, do_sort, Werk) ;
-            }
-            else
-            { 
-                // C is bitmap
-                info = GB_AxB_saxbit_generic_first 
-                     (C, M, Mask_comp, Mask_struct, M_in_place,
-                      A, A_is_pattern, B, B_is_pattern, semiring,
-                      ntasks, nthreads,
-                      nfine_tasks_per_vector, use_coarse_tasks,
-                      use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
-                      A_slice, H_slice, Wcx, Wf) ;
-            }
-        }
-        else if (opcode == GB_SECOND_binop_code)
-        {
-            // t = B(i,k)
-            // fmult is not used and can be NULL.  This is required for
-            // GB_reduce_to_vector for user-defined types.
-            ASSERT (!flipxy) ;
-            ASSERT (A_is_pattern) ;
-            if (saxpy_method == GB_SAXPY_METHOD_3)
-            { 
-                // C is sparse or hypersparse
-                info = GB_AxB_saxpy3_generic_second 
-                     (C, M, Mask_comp, Mask_struct, M_in_place,
-                      A, A_is_pattern, B, B_is_pattern, semiring,
-                      ntasks, nthreads,
-                      SaxpyTasks, nfine, do_sort, Werk) ;
-            }
-            else
-            { 
-                // C is bitmap
-                info = GB_AxB_saxbit_generic_second 
-                     (C, M, Mask_comp, Mask_struct, M_in_place,
-                      A, A_is_pattern, B, B_is_pattern, semiring,
-                      ntasks, nthreads,
-                      nfine_tasks_per_vector, use_coarse_tasks,
-                      use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
-                      A_slice, H_slice, Wcx, Wf) ;
-            }
-        }
-        else if (flipxy)
+        if (flipxy)
         {
             // t = B(k,j) * A(i,k)
             if (saxpy_method == GB_SAXPY_METHOD_3)

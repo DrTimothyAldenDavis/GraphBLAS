@@ -253,6 +253,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         }
         else if (op_is_binop)
         { 
+            // flip i and j for any builtin positional ops (not user-defined)
             op = (GB_Operator) GB_positional_binop_ijflip ((GrB_BinaryOp) op) ;
         }
         else // op_is_idxunop
@@ -264,7 +265,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         opcode = op->opcode ;
     }
 
-    // user operator must have i,j flipped
+    // user-defined index unary ops must have their i,j flipped
     bool flipij = (!T_is_csc && opcode == GB_USER_idxunop_code) ;
 
     if (A_transpose)
