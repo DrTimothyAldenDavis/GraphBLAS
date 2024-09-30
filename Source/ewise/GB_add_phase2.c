@@ -29,6 +29,8 @@
 // This is used by GB_wait only, for merging the pending tuple matrix T into A.
 // In this case, C is always sparse or hypersparse, not bitmap or full.
 
+#define GB_DEBUG /* HACK FIXME */
+
 #include "ewise/GB_add.h"
 #include "binaryop/GB_binop.h"
 #include "include/GB_unused.h"
@@ -466,6 +468,9 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     if (info == GrB_NO_VALUE)
     {
 
+        GxB_binary_function fadd = op->binop_function ;
+        GzB_index_binary_function fadd_idx = op->idxbinop_function ;
+
         #include "generic/GB_generic.h"
         GB_BURBLE_MATRIX (C, "(generic add: %s) ", op->name) ;
 
@@ -509,84 +514,12 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         #undef  GB_PUTC
         #define GB_PUTC(z, Cx, p) cast_Z_to_C (Cx +((p)*csize), &z, csize)
 
-        if (op_is_builtin_positional)
-        {
-
-            //------------------------------------------------------------------
-            // C(i,j) = positional_op (aij, bij)
-            //------------------------------------------------------------------
-
-            // z = op (aij, bij)
-            #undef  GB_BINOP
-            #define GB_BINOP(z,x,y,i,j)                                 \
-                z = (positional_is_i ? (i):(j)) + offset
-
-            #define GB_BUILTIN_POSITIONAL_OP
-            const bool positional_is_i = 
-                (opcode == GB_FIRSTI_binop_code)    ||
-                (opcode == GB_FIRSTI1_binop_code)   ||
-                (opcode == GB_SECONDI_binop_code)   ||
-                (opcode == GB_SECONDI1_binop_code) ;
-            const int64_t offset = GB_positional_offset (opcode, NULL, NULL) ;
-            if (op->ztype == GrB_INT64)
-            {
-
-                // C(i,j) = positional_op (aij, bij)
-                #undef  GB_EWISEOP
-                #define GB_EWISEOP(Cx, p, aij, bij, i, j)               \
-                {                                                       \
-                    int64_t z ;                                         \
-                    GB_BINOP (z, , , i, j) ;                            \
-                    GB_PUTC (z, Cx, p) ;                                \
-                }
-
-                if (is_eWiseUnion)
-                { 
-                    #define GB_IS_EWISEUNION 1
-                    #include "ewise/template/GB_add_template.c"
-                }
-                else
-                { 
-                    #define GB_IS_EWISEUNION 0
-                    #include "ewise/template/GB_add_template.c"
-                }
-            }
-            else
-            {
-
-                // C(i,j) = positional_op (aij, bij)
-                #undef  GB_EWISEOP
-                #define GB_EWISEOP(Cx, p, aij, bij, i, j)               \
-                {                                                       \
-                    int64_t z ;                                         \
-                    GB_BINOP (z, , , i, j) ;                            \
-                    int32_t z32 = (int32_t) z ;                         \
-                    GB_PUTC (z32, Cx, p) ;                              \
-                }
-
-                if (is_eWiseUnion)
-                { 
-                    #define GB_IS_EWISEUNION 1
-                    #include "ewise/template/GB_add_template.c"
-                }
-                else
-                { 
-                    #define GB_IS_EWISEUNION 0
-                    #include "ewise/template/GB_add_template.c"
-                }
-            }
-            #undef GB_BUILTIN_POSITIONAL_OP
-
-        }
-        else if (op_is_index_binop)
+        if (fadd_idx != NULL)
         {
 
             //------------------------------------------------------------------
             // index binary operator
             //------------------------------------------------------------------
-
-            GzB_index_binary_function fadd_idx = op->idxbinop_function ;
-            ASSERT (fadd_idx != NULL) ;
 
             // C(i,j) = (ctype) (A(i,j) + B(i,j))
             #undef  GB_EWISEOP
@@ -640,8 +573,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             //------------------------------------------------------------------
             // standard binary operator
             //------------------------------------------------------------------
-
-            GxB_binary_function fadd = op->binop_function ;
 
             // The binary op is not used if fadd is null since in that case
             // the intersection of A and B is empty
