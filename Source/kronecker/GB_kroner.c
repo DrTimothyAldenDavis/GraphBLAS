@@ -36,6 +36,7 @@
     GB_phybix_free (C) ;    \
 }
 
+#define GB_DEBUG    /* HACK FIXME */
 #include "kronecker/GB_kron.h"
 #include "ewise/GB_emult.h"
 
@@ -44,6 +45,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     GrB_Matrix C,                   // output matrix
     const bool C_is_csc,            // desired format of C
     const GrB_BinaryOp op,          // multiply operator
+    const bool flipij,              // if true, i and j are flipped: z=(x,y,j,i)
     const GrB_Matrix A_in,          // input matrix
     bool A_is_pattern,              // true if values of A are not used
     const GrB_Matrix B_in,          // input matrix
@@ -188,13 +190,10 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     int64_t *restrict Ch = C->h ;
     int64_t *restrict Ci = C->i ;
     GB_void *restrict Cx = (GB_void *) C->x ;
-    int64_t *restrict Cx_int64 = NULL ;
-    int32_t *restrict Cx_int32 = NULL ;
 
-    // FIXME: handle mult->idxbinop_function here
     GxB_binary_function fmult = op->binop_function ;
-    GB_Opcode opcode = op->opcode ;
-    bool op_is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
+    GzB_index_binary_function fmult_idx = op->idxbinop_function ;
+    const void *theta = op->theta ;
     GB_cast_function cast_A = NULL, cast_B = NULL ;
     if (!A_is_pattern)
     { 
@@ -204,16 +203,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     { 
         cast_B = GB_cast_factory (op->ytype->code, B->type->code) ;
     }
-
-    int64_t offset = 0 ;
-    bool depends_on_j = false ;
-    if (op_is_positional)
-    { 
-        offset = GB_positional_offset (opcode, NULL, &depends_on_j) ;
-        Cx_int64 = (int64_t *) Cx ;
-        Cx_int32 = (int32_t *) Cx ;
-    }
-    bool is64 = (ctype == GrB_INT64) ;
 
     //--------------------------------------------------------------------------
     // compute the column counts of C, and C->h if C is hypersparse
@@ -331,72 +320,30 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                     int64_t iC = iAblock + iB ;
                     Ci [pC] = iC ;
                 }
-                if (op_is_positional)
+                if (C_iso)
                 {
-                    // built-in positional binary operator
-                    switch (opcode)
-                    {
-                        case GB_FIRSTI_binop_code   : 
-                            // z = first_i(A(iA,jA),y) == iA
-                        case GB_FIRSTI1_binop_code  : 
-                            // z = first_i1(A(iA,jA),y) == iA+1
-                            if (is64)
-                            { 
-                                Cx_int64 [pC] = iA + offset ;
-                            }
-                            else
-                            { 
-                                Cx_int32 [pC] = (int32_t) (iA + offset) ;
-                            }
-                            break ;
-                        case GB_FIRSTJ_binop_code   : 
-                            // z = first_j(A(iA,jA),y) == jA
-                        case GB_FIRSTJ1_binop_code  : 
-                            // z = first_j1(A(iA,jA),y) == jA+1
-                            if (is64)
-                            { 
-                                Cx_int64 [pC] = jA + offset ;
-                            }
-                            else
-                            { 
-                                Cx_int32 [pC] = (int32_t) (jA + offset) ;
-                            }
-                            break ;
-                        case GB_SECONDI_binop_code  : 
-                            // z = second_i(x,B(iB,jB)) == iB
-                        case GB_SECONDI1_binop_code : 
-                            // z = second_i1(x,B(iB,jB)) == iB+1
-                            if (is64)
-                            { 
-                                Cx_int64 [pC] = iB + offset ;
-                            }
-                            else
-                            { 
-                                Cx_int32 [pC] = (int32_t) (iB + offset) ;
-                            }
-                            break ;
-                        case GB_SECONDJ_binop_code  : 
-                            // z = second_j(x,B(iB,jB)) == jB
-                        case GB_SECONDJ1_binop_code : 
-                            // z = second_j1(x,B(iB,jB)) == jB+1
-                            if (is64)
-                            { 
-                                Cx_int64 [pC] = jB + offset ;
-                            }
-                            else
-                            { 
-                                Cx_int32 [pC] = (int32_t) (jB + offset) ;
-                            }
-                            break ;
-                        default: ;
-                    }
+                    // nothing to do
+                    ;
                 }
-                else if (!C_iso)
+                else if (fmult != NULL)
                 { 
                     // standard binary operator
-                    // FIXME: add index binop
-                    ASSERT (fmult != NULL) ;
                     fmult (Cx +(pC*csize), awork, bwork) ;
+                }
+                else // if (fmult_idx != NULL)
+                {
+                    // index binary operator
+                    ASSERT (fmult_idx != NULL) ;
+                    if (flipij)
+                    {
+                        fmult_idx (Cx +(pC*csize),
+                            awork, jA, iA, bwork, jB, iB, theta) ;
+                    }
+                    else
+                    {
+                        fmult_idx (Cx +(pC*csize),
+                            awork, iA, jA, bwork, iB, jB, theta) ;
+                    }
                 }
                 pC++ ;
             }

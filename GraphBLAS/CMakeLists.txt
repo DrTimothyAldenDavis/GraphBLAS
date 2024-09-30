@@ -21,6 +21,13 @@ set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 include ( GraphBLAS_version )
 
 #-------------------------------------------------------------------------------
+# define the project
+#-------------------------------------------------------------------------------
+
+project ( graphblas_matlab
+    VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" LANGUAGES C )
+
+#-------------------------------------------------------------------------------
 # SuiteSparse policies
 #-------------------------------------------------------------------------------
 
@@ -50,13 +57,6 @@ if ( SUITESPARSE_USE_STRICT AND GRAPHBLAS_USE_CUDA AND NOT GRAPHBLAS_HAS_CUDA )
 endif ( )
 
 include ( GraphBLAS_JIT_paths )
-
-#-------------------------------------------------------------------------------
-# define the project
-#-------------------------------------------------------------------------------
-
-project ( graphblas_matlab
-    VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" LANGUAGES C )
 
 #-------------------------------------------------------------------------------
 # find OpenMP

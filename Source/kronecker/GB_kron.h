@@ -32,6 +32,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     GrB_Matrix C,                   // output matrix (static header)
     const bool C_is_csc,            // desired format of C
     const GrB_BinaryOp op,          // multiply operator
+    const bool flipij,              // if true, i and j are flipped: z=(x,y,j,i)
     const GrB_Matrix A,             // input matrix
     bool A_is_pattern,              // true if values of A are not used
     const GrB_Matrix B,             // input matrix

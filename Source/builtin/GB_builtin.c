@@ -247,7 +247,7 @@ GXB_OP1_POS (POSITIONJ1, "positionj1", INT64) ;
     extern void GB_FUNC_T(op,GB_XTYPE) (GB_TYPE *z,                         \
         const void *x, GrB_Index ix, GrB_Index jx,                          \
         const void *y, GrB_Index iy, GrB_Index jy,                          \
-        const void *th) ;                                                   \
+        const void *theta_parameter) ;                                      \
     GB_TYPE GB_OPAQUE (GB_EVAL3 (op, GB_XTYPE, _theta)) = theta ;           \
     struct GB_BinaryOp_opaque GB_OPAQUE (GB_OP (op)) =                      \
     {                                                                       \
