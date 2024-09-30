@@ -46,6 +46,7 @@ GrB_Info GB_AxB_dot2_jit        // C<M>=A'*B, dot2 method, via the JIT
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
     //--------------------------------------------------------------------------
+
     void *dl_function ;
     GrB_Info info = GB_jitifyer_load (&dl_function,
         GB_jit_mxm_family, "AxB_dot2",

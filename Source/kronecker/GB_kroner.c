@@ -36,7 +36,6 @@
     GB_phybix_free (C) ;    \
 }
 
-#define GB_DEBUG    /* HACK FIXME */
 #include "kronecker/GB_kron.h"
 #include "ewise/GB_emult.h"
 

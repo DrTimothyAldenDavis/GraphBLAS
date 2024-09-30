@@ -32,23 +32,11 @@
 // This template is used to construct the following methods, all of which
 // are called by GB_AxB_saxpy_generic:
 
-//      GB_AxB_saxpy3_generic_firsti64
-//      GB_AxB_saxpy3_generic_firstj64
-//      GB_AxB_saxpy3_generic_secondj64
-//      GB_AxB_saxpy3_generic_firsti32
-//      GB_AxB_saxpy3_generic_firstj32
-//      GB_AxB_saxpy3_generic_secondj32
 //      GB_AxB_saxpy3_generic_first
 //      GB_AxB_saxpy3_generic_second
 //      GB_AxB_saxpy3_generic_flipped
 //      GB_AxB_saxpy3_generic_unflipped
 
-//      GB_AxB_saxbit_generic_firsti64
-//      GB_AxB_saxbit_generic_firstj64
-//      GB_AxB_saxbit_generic_secondj64
-//      GB_AxB_saxbit_generic_firsti32
-//      GB_AxB_saxbit_generic_firstj32
-//      GB_AxB_saxbit_generic_secondj32
 //      GB_AxB_saxbit_generic_first
 //      GB_AxB_saxbit_generic_second
 //      GB_AxB_saxbit_generic_flipped
@@ -163,295 +151,134 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     // definitions for GB_AxB_saxpy_generic_template.c
     #include "mxm/include/GB_AxB_saxpy3_template.h"
 
-    #if GB_GENERIC_OP_IS_POSITIONAL
+    // aik = A(i,k), located in Ax [A_iso ? 0:pA]
+    #undef  GB_A_IS_PATTERN
+    #define GB_A_IS_PATTERN 0
+    #undef  GB_DECLAREA
+    #define GB_DECLAREA(aik)                                            \
+        GB_void aik [GB_VLA(aik_size)] ;
+    #undef  GB_GETA
+    #define GB_GETA(aik,Ax,pA,A_iso)                                    \
+        if (!A_is_pattern)                                              \
+        {                                                               \
+            cast_A (aik, Ax +((A_iso) ? 0:((pA)*asize)), asize) ;       \
+        }
+
+    // bkj = B(k,j), located in Bx [B_iso ? 0:pB]
+    #undef  GB_B_IS_PATTERN
+    #define GB_B_IS_PATTERN 0
+    #undef  GB_DECLAREB
+    #define GB_DECLAREB(bkj)                                            \
+        GB_void bkj [GB_VLA(bkj_size)] ;
+    #undef  GB_GETB
+    #define GB_GETB(bkj,Bx,pB,B_iso)                                    \
+        if (!B_is_pattern)                                              \
+        {                                                               \
+            cast_B (bkj, Bx +((B_iso) ? 0:((pB)*bsize)), bsize) ;       \
+        }
+
+    // define t for each task
+    #undef  GB_CIJ_DECLARE
+    #define GB_CIJ_DECLARE(t) GB_void t [GB_VLA(csize)]
+
+    // address of Cx [p]
+    #undef  GB_CX
+    #define GB_CX(p) (Cx +((p)*csize))
+
+    // Cx [p] = t
+    #undef  GB_CIJ_WRITE
+    #define GB_CIJ_WRITE(p,t) memcpy (GB_CX (p), t, csize)
+
+    // address of Hx [i]
+    #undef  GB_HX
+    #define GB_HX(i) (Hx +((i)*csize))
+
+    // Hx [i] = t
+    #undef  GB_HX_WRITE
+    #define GB_HX_WRITE(i,t) memcpy (GB_HX (i), t, csize)
+
+    // Cx [p] = Hx [i]
+    #undef  GB_CIJ_GATHER
+    #define GB_CIJ_GATHER(p,i) memcpy (GB_CX (p), GB_HX(i), csize)
+
+    // Cx [p:p+len=-1] = Hx [i:i+len-1]
+    // via memcpy (&(Cx [p]), &(Hx [i]), len*csize)
+    #undef  GB_CIJ_MEMCPY
+    #define GB_CIJ_MEMCPY(p,i,len) memcpy (GB_CX (p), GB_HX (i), (len)*csize)
+
+    // Cx [p] += Hx [i]
+    #undef  GB_CIJ_GATHER_UPDATE
+    #define GB_CIJ_GATHER_UPDATE(p,i) fadd (GB_CX (p), GB_CX (p), GB_HX (i))
+
+    // Cx [p] += t
+    #undef  GB_CIJ_UPDATE
+    #define GB_CIJ_UPDATE(p,t) fadd (GB_CX (p), GB_CX (p), t)
+
+    // Hx [i] += t
+    #undef  GB_HX_UPDATE
+    #define GB_HX_UPDATE(i,t) fadd (GB_HX (i), GB_HX (i), t)
+
+    // generic types for C and Z
+    #undef  GB_C_TYPE
+    #define GB_C_TYPE GB_void
+
+    #undef  GB_Z_TYPE
+    #define GB_Z_TYPE GB_void
+
+    #undef  GB_C_SIZE
+    #define GB_C_SIZE csize
+
+    #if GB_GENERIC_OP_IS_FIRST
     { 
-
-        //----------------------------------------------------------------------
-        // generic semirings with builtin positional mulitiply operators
-        //----------------------------------------------------------------------
-
-        // C and Z type become int32_t or int64_t
-
-        // C always has type int64_t or int32_t.  The monoid must be used via
-        // its function pointer.  The positional multiply operator must be
-        // hard-coded since it has no function pointer.  The numerical values
-        // and types of A and B are not accessed.
-
-        ASSERT (A_is_pattern) ;
+        // t = A(i,k)
         ASSERT (B_is_pattern) ;
-
-        // aik = A(i,k), located in Ax [A_iso ? 0:pA], value not used
-        #undef  GB_A_IS_PATTERN
-        #define GB_A_IS_PATTERN 1
-        #define GB_DECLAREA(aik)
-        #define GB_GETA(aik,Ax,pA,A_iso)
-
-        // bkj = B(k,j), located in Bx [B_iso ? 0:pB], value not used
-        #undef  GB_B_IS_PATTERN
-        #define GB_B_IS_PATTERN 1
-        #define GB_DECLAREB(bkj)
-        #define GB_GETB(bkj,Bx,pB,B_iso)
-
-        // define t for each task
-        #undef  GB_CIJ_DECLARE
-        #define GB_CIJ_DECLARE(t) GB_C_TYPE t
-
-        // address of Cx [p]
-        #define GB_CX(p) (&Cx [p])
-
-        // Cx [p] = t
-        #undef  GB_CIJ_WRITE
-        #define GB_CIJ_WRITE(p,t) Cx [p] = t
-
-        // address of Hx [i]
-        #define GB_HX(i) (&Hx [i])
-
-        // Hx [i] = t
-        #undef  GB_HX_WRITE
-        #define GB_HX_WRITE(i,t) Hx [i] = t
-
-        // Cx [p] = Hx [i]
-        #undef  GB_CIJ_GATHER
-        #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
-
-        // Cx [p:p+len=-1] = Hx [i:i+len-1]
-        // via memcpy (&(Cx [p]), &(Hx [i]), len*csize)
-        #undef  GB_CIJ_MEMCPY
-        #define GB_CIJ_MEMCPY(p,i,len) memcpy (GB_CX (p), GB_HX (i), (len)*csize)
-
-        // Cx [p] += Hx [i]
-        #undef  GB_CIJ_GATHER_UPDATE
-        #define GB_CIJ_GATHER_UPDATE(p,i) fadd (GB_CX (p), GB_CX (p), GB_HX (i))
-
-        // Cx [p] += t
-        #undef  GB_CIJ_UPDATE
-        #define GB_CIJ_UPDATE(p,t) fadd (GB_CX (p), GB_CX (p), &t)
-
-        // Hx [i] += t
-        #undef  GB_HX_UPDATE
-        #define GB_HX_UPDATE(i,t) fadd (GB_HX (i), GB_HX (i), &t)
-
-        // the original multiplier op may have been flipped, but the offset
-        // is unchanged
-        int64_t offset = GB_positional_offset (mult->opcode, NULL, NULL) ;
-
-        #if GB_GENERIC_OP_IS_INT64
-        {
-            #undef  GB_C_TYPE
-            #define GB_C_TYPE int64_t
-            #undef  GB_Z_TYPE
-            #define GB_Z_TYPE int64_t
-            // future:: rename GB_C_SIZE to GB_Z_SIZE
-            #undef  GB_C_SIZE
-            #define GB_C_SIZE (sizeof (int64_t))
-            ASSERT (C->type == GrB_INT64) ;
-            ASSERT (csize == sizeof (int64_t)) ;
-            #if GB_GENERIC_OP_IS_FIRSTI
-            { 
-                // GB_FIRSTI_binop_code   :   // z = first_i(A(i,k),y) == i
-                // GB_FIRSTI1_binop_code  :   // z = first_i1(A(i,k),y) == i+1
-                #undef  GB_MULT
-                #define GB_MULT(t, aik, bkj, i, k, j) t = i + offset
-                #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
-            }
-            #elif GB_GENERIC_OP_IS_FIRSTJ
-            { 
-                // GB_FIRSTJ_binop_code   :   // z = first_j(A(i,k),y) == k
-                // GB_FIRSTJ1_binop_code  :   // z = first_j1(A(i,k),y) == k+1
-                // GB_SECONDI_binop_code  :   // z = second_i(x,B(k,j)) == k
-                // GB_SECONDI1_binop_code :   // z = second_i1(x,B(k,j))== k+1
-                #undef  GB_MULT
-                #define GB_MULT(t, aik, bkj, i, k, j) t = k + offset
-                #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
-            }
-            #else
-            { 
-                // GB_SECONDJ_binop_code  :   // z = second_j(x,B(k,j)) == j
-                // GB_SECONDJ1_binop_code :   // z = second_j1(x,B(k,j))== j+1
-                #undef  GB_MULT
-                #define GB_MULT(t, aik, bkj, i, k, j) t = j + offset
-                #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
-            }
-            #endif
-        }
-        #else
-        {
-            #undef  GB_C_TYPE
-            #define GB_C_TYPE int32_t
-            #undef  GB_Z_TYPE
-            #define GB_Z_TYPE int32_t
-            #undef  GB_C_SIZE
-            #define GB_C_SIZE (sizeof (int32_t))
-            ASSERT (C->type == GrB_INT32) ;
-            ASSERT (csize == sizeof (int32_t)) ;
-            #if GB_GENERIC_OP_IS_FIRSTI
-            { 
-                // GB_FIRSTI_binop_code   :   // z = first_i(A(i,k),y) == i
-                // GB_FIRSTI1_binop_code  :   // z = first_i1(A(i,k),y) == i+1
-                #undef  GB_MULT
-                #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (i + offset)
-                #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
-            }
-            #elif GB_GENERIC_OP_IS_FIRSTJ
-            { 
-                // GB_FIRSTJ_binop_code   :   // z = first_j(A(i,k),y) == k
-                // GB_FIRSTJ1_binop_code  :   // z = first_j1(A(i,k),y) == k+1
-                // GB_SECONDI_binop_code  :   // z = second_i(x,B(k,j)) == k
-                // GB_SECONDI1_binop_code :   // z = second_i1(x,B(k,j))== k+1
-                #undef  GB_MULT
-                #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (k + offset)
-                #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
-            }
-            #else
-            { 
-                // GB_SECONDJ_binop_code  :   // z = second_j(x,B(k,j)) == j
-                // GB_SECONDJ1_binop_code :   // z = second_j1(x,B(k,j))== j+1
-                #undef  GB_MULT
-                #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (j + offset)
-                #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
-            }
-            #endif
-        }
-        #endif
-
+        #undef  GB_MULT
+        #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, aik, csize)
+        #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
     }
-    #else
-    {
-
-        //----------------------------------------------------------------------
-        // generic semirings with other multiply operators
-        //----------------------------------------------------------------------
-
-        // aik = A(i,k), located in Ax [A_iso ? 0:pA]
-        #undef  GB_A_IS_PATTERN
-        #define GB_A_IS_PATTERN 0
-        #undef  GB_DECLAREA
-        #define GB_DECLAREA(aik)                                            \
-            GB_void aik [GB_VLA(aik_size)] ;
-        #undef  GB_GETA
-        #define GB_GETA(aik,Ax,pA,A_iso)                                    \
-            if (!A_is_pattern)                                              \
-            {                                                               \
-                cast_A (aik, Ax +((A_iso) ? 0:((pA)*asize)), asize) ;       \
-            }
-
-        // bkj = B(k,j), located in Bx [B_iso ? 0:pB]
-        #undef  GB_B_IS_PATTERN
-        #define GB_B_IS_PATTERN 0
-        #undef  GB_DECLAREB
-        #define GB_DECLAREB(bkj)                                            \
-            GB_void bkj [GB_VLA(bkj_size)] ;
-        #undef  GB_GETB
-        #define GB_GETB(bkj,Bx,pB,B_iso)                                    \
-            if (!B_is_pattern)                                              \
-            {                                                               \
-                cast_B (bkj, Bx +((B_iso) ? 0:((pB)*bsize)), bsize) ;       \
-            }
-
-        // define t for each task
-        #undef  GB_CIJ_DECLARE
-        #define GB_CIJ_DECLARE(t) GB_void t [GB_VLA(csize)]
-
-        // address of Cx [p]
-        #undef  GB_CX
-        #define GB_CX(p) (Cx +((p)*csize))
-
-        // Cx [p] = t
-        #undef  GB_CIJ_WRITE
-        #define GB_CIJ_WRITE(p,t) memcpy (GB_CX (p), t, csize)
-
-        // address of Hx [i]
-        #undef  GB_HX
-        #define GB_HX(i) (Hx +((i)*csize))
-
-        // Hx [i] = t
-        #undef  GB_HX_WRITE
-        #define GB_HX_WRITE(i,t) memcpy (GB_HX (i), t, csize)
-
-        // Cx [p] = Hx [i]
-        #undef  GB_CIJ_GATHER
-        #define GB_CIJ_GATHER(p,i) memcpy (GB_CX (p), GB_HX(i), csize)
-
-        // Cx [p:p+len=-1] = Hx [i:i+len-1]
-        // via memcpy (&(Cx [p]), &(Hx [i]), len*csize)
-        #undef  GB_CIJ_MEMCPY
-        #define GB_CIJ_MEMCPY(p,i,len) memcpy (GB_CX (p), GB_HX (i), (len)*csize)
-
-        // Cx [p] += Hx [i]
-        #undef  GB_CIJ_GATHER_UPDATE
-        #define GB_CIJ_GATHER_UPDATE(p,i) fadd (GB_CX (p), GB_CX (p), GB_HX (i))
-
-        // Cx [p] += t
-        #undef  GB_CIJ_UPDATE
-        #define GB_CIJ_UPDATE(p,t) fadd (GB_CX (p), GB_CX (p), t)
-
-        // Hx [i] += t
-        #undef  GB_HX_UPDATE
-        #define GB_HX_UPDATE(i,t) fadd (GB_HX (i), GB_HX (i), t)
-
-        // generic types for C and Z
-        #undef  GB_C_TYPE
-        #define GB_C_TYPE GB_void
-
-        #undef  GB_Z_TYPE
-        #define GB_Z_TYPE GB_void
-
-        #undef  GB_C_SIZE
-        #define GB_C_SIZE csize
-
-        #if GB_GENERIC_OP_IS_FIRST
-        { 
-            // t = A(i,k)
-            ASSERT (B_is_pattern) ;
-            #undef  GB_MULT
-            #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, aik, csize)
-            #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
-        }
-        #elif GB_GENERIC_OP_IS_SECOND
-        { 
-            // t = B(i,k)
-            ASSERT (A_is_pattern) ;
-            #undef  GB_MULT
-            #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, bkj, csize)
-            #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
-        }
-        #elif GB_GENERIC_FLIPXY
-        { 
-            // t = B(k,j) * A(i,k)
-            ASSERT (fmult != NULL) ;
-            #undef  GB_MULT
-            #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, bkj, aik)
-            #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
-        }
-        #elif GB_GENERIC_NOFLIPXY
-        { 
-            // t = A(i,k) * B(k,j)
-            ASSERT (fmult != NULL) ;
-            #undef  GB_MULT
-            #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, aik, bkj)
-            #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
-        }
-        #elif GB_GENERIC_IDX_FLIPXY
-        { 
-            // t = B(k,j) * A(i,k)
-            ASSERT (fmult_idx != NULL) ;
-            const void *theta = mult->theta ;
-            #undef  GB_MULT
-            #define GB_MULT(t, aik, bkj, i, k, j) \
-                fmult_idx (t, bkj, j, k, aik, k, i, theta)
-            #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
-        }
-        #elif GB_GENERIC_IDX_NOFLIPXY
-        { 
-            // t = A(i,k) * B(k,j)
-            ASSERT (fmult_idx != NULL) ;
-            const void *theta = mult->theta ;
-            #undef  GB_MULT
-            #define GB_MULT(t, aik, bkj, i, k, j) \
-                fmult_idx (t, aik, i, k, bkj, k, j, theta)
-            #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
-        }
-        #endif
+    #elif GB_GENERIC_OP_IS_SECOND
+    { 
+        // t = B(i,k)
+        ASSERT (A_is_pattern) ;
+        #undef  GB_MULT
+        #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, bkj, csize)
+        #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
+    }
+    #elif GB_GENERIC_FLIPXY
+    { 
+        // t = B(k,j) * A(i,k)
+        ASSERT (fmult != NULL) ;
+        #undef  GB_MULT
+        #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, bkj, aik)
+        #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
+    }
+    #elif GB_GENERIC_NOFLIPXY
+    { 
+        // t = A(i,k) * B(k,j)
+        ASSERT (fmult != NULL) ;
+        #undef  GB_MULT
+        #define GB_MULT(t, aik, bkj, i, k, j) fmult (t, aik, bkj)
+        #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
+    }
+    #elif GB_GENERIC_IDX_FLIPXY
+    { 
+        // t = B(k,j) * A(i,k)
+        ASSERT (fmult_idx != NULL) ;
+        const void *theta = mult->theta ;
+        #undef  GB_MULT
+        #define GB_MULT(t, aik, bkj, i, k, j) \
+            fmult_idx (t, bkj, j, k, aik, k, i, theta)
+        #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
+    }
+    #elif GB_GENERIC_IDX_NOFLIPXY
+    { 
+        // t = A(i,k) * B(k,j)
+        ASSERT (fmult_idx != NULL) ;
+        const void *theta = mult->theta ;
+        #undef  GB_MULT
+        #define GB_MULT(t, aik, bkj, i, k, j) \
+            fmult_idx (t, aik, i, k, bkj, k, j, theta)
+        #include "mxm/factory/GB_AxB_saxpy_generic_template.c"
     }
     #endif
 

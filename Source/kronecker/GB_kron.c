@@ -23,7 +23,6 @@
     GB_Matrix_free (&T) ;   \
 }
 
-#define GB_DEBUG /* HACK FIXME */
 #include "kronecker/GB_kron.h"
 #include "mxm/GB_mxm.h"
 #include "transpose/GB_transpose.h"
