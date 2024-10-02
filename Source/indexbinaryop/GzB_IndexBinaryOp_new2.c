@@ -58,6 +58,7 @@ GrB_Info GzB_IndexBinaryOp_new2
         &header_size) ;
     if (op == NULL)
     { 
+GB_GOTCHA ;
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -100,6 +101,7 @@ GrB_Info GzB_IndexBinaryOp_new2
         idxop_name, idxop_defn, true, jitable) ;
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         // out of memory
         GB_FREE (&op, header_size) ;
         return (info) ;
@@ -115,7 +117,8 @@ GrB_Info GzB_IndexBinaryOp_new2
         void *user_function ;
         info = GB_user_op_jit (&user_function, (GB_Operator) op) ;
         if (info != GrB_SUCCESS)
-        {
+        { 
+GB_GOTCHA ;
             // unable to construct the function pointer
             GB_Op_free ((GB_Operator *) &op) ;
             return (GrB_NULL_POINTER) ;

@@ -16,7 +16,8 @@ GrB_Info GB_IndexBinaryOp_check  // check a GraphBLAS index_binary operator
     int pr,                 // print level
     FILE *f                 // file for output
 )
-{
+{ 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -26,6 +27,7 @@ GrB_Info GB_IndexBinaryOp_check  // check a GraphBLAS index_binary operator
 
     if (op == NULL)
     { 
+GB_GOTCHA ;
         GBPR0 ("NULL\n") ;
         return (GrB_NULL_POINTER) ;
     }
@@ -38,6 +40,7 @@ GrB_Info GB_IndexBinaryOp_check  // check a GraphBLAS index_binary operator
     GB_Opcode opcode = op->opcode ;
     if (!GB_IS_INDEXBINARYOP_CODE (opcode))
     { 
+GB_GOTCHA ;
         GBPR0 ("    IndexBinaryOp has an invalid opcode\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
@@ -53,12 +56,14 @@ GrB_Info GB_IndexBinaryOp_check  // check a GraphBLAS index_binary operator
 
     if (op->idxbinop_function == NULL)
     { 
+GB_GOTCHA ;
         GBPR0 ("    IndexBinaryOp has a NULL function pointer\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
 
     if (opcode == GB_USER_idxbinop_code && name_len != actual_len)
     { 
+GB_GOTCHA ;
         GBPR0 ("    IndexBinaryOp has an invalid name_len\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
@@ -68,6 +73,7 @@ GrB_Info GB_IndexBinaryOp_check  // check a GraphBLAS index_binary operator
     info = GB_Type_check (op->ztype, "ztype", pr, f) ;
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         GBPR0 ("    IndexBinaryOp has an invalid ztype\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
@@ -75,6 +81,7 @@ GrB_Info GB_IndexBinaryOp_check  // check a GraphBLAS index_binary operator
     info = GB_Type_check (op->xtype, "xtype", pr, f) ;
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         GBPR0 ("    IndexBinaryOp has an invalid xtype\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
@@ -82,6 +89,7 @@ GrB_Info GB_IndexBinaryOp_check  // check a GraphBLAS index_binary operator
     info = GB_Type_check (op->ytype, "ytype", pr, f) ;
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         GBPR0 ("    IndexBinaryOp has an invalid ytype\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
@@ -89,12 +97,14 @@ GrB_Info GB_IndexBinaryOp_check  // check a GraphBLAS index_binary operator
     info = GB_Type_check (op->theta_type, "theta_type", pr, f) ;
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         GBPR0 ("    IndexBinaryOp has an invalid theta_type\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
 
     if (op->defn != NULL)
     { 
+GB_GOTCHA ;
         GBPR0 ("%s\n", op->defn) ;
     }
 

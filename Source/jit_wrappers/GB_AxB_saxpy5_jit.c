@@ -59,6 +59,6 @@ GrB_Info GB_AxB_saxpy5_jit          // C+=A*B, saxpy5 method, via the JIT
     bool cpu_has_avx512f = GB_Global_cpu_features_avx512f ( ) ;
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, A, B, ntasks, nthreads, B_slice,
-        cpu_has_avx2, cpu_has_avx512f)) ;
+        cpu_has_avx2, cpu_has_avx512f, semiring->multiply->theta)) ;
 }
 

@@ -17,6 +17,7 @@ GrB_Info GzB_IndexBinaryOp_fprint   // print and check a GzB_IndexBinaryOp
     FILE *f                         // file for output
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs

@@ -20,6 +20,7 @@ GrB_Info GzB_IndexBinaryOp_get_Scalar
     GrB_Field field
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -48,6 +49,7 @@ GrB_Info GzB_IndexBinaryOp_get_String
     GrB_Field field
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -76,6 +78,7 @@ GrB_Info GzB_IndexBinaryOp_get_INT32
     GrB_Field field
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -104,6 +107,7 @@ GrB_Info GzB_IndexBinaryOp_get_SIZE
     GrB_Field field
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -132,6 +136,7 @@ GrB_Info GzB_IndexBinaryOp_get_VOID
     GrB_Field field
 )
 { 
+GB_GOTCHA ;
     return (GrB_INVALID_VALUE) ;
 }
 

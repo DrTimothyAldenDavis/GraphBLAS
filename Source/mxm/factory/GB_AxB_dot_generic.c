@@ -187,6 +187,7 @@
         const void *theta = mult->theta ;
         if (flipxy)
         { 
+GB_GOTCHA ;
             // t = B(k,j) * (A')(i,k)
             #undef  GB_MULT
             #define GB_MULT(t, aki, bkj, i, k, j) \

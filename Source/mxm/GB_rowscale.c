@@ -363,6 +363,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
                 const void *theta = mult->theta ;
                 if (flipxy)
                 { 
+GB_GOTCHA ;
                     // flip both x,y and i,j
                     #undef  GB_EWISEOP
                     #define GB_EWISEOP(Cx,p,y,x,j,i) \
@@ -371,6 +372,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
                 }
                 else
                 { 
+GB_GOTCHA ;
                     #undef  GB_EWISEOP
                     #define GB_EWISEOP(Cx,p,x,y,i,j) \
                         fmult_idx (Cx +((p)*csize), x,i,j, y,i,j, theta)

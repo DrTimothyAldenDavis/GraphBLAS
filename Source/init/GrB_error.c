@@ -48,6 +48,7 @@ GrB_Info GrB_IndexUnaryOp_error (const char **error, const GrB_IndexUnaryOp op)
 
 GrB_Info GzB_IndexBinaryOp_error (const char **error, const GzB_IndexBinaryOp op)
 { 
+GB_GOTCHA ;
     GB_RETURN_IF_NULL (error) ;
     (*error) = empty ;
     return (GrB_SUCCESS) ;

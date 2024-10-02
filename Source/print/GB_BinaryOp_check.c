@@ -43,7 +43,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
 
     GB_CHECK_MAGIC (op) ;
     GB_Opcode opcode = op->opcode ;
-    if (!GB_IS_BINARYOP_CODE (opcode) || GB_IS_INDEXBINARYOP_CODE (opcode))
+    if (!(GB_IS_BINARYOP_CODE (opcode) || GB_IS_INDEXBINARYOP_CODE (opcode)))
     { 
         GBPR0 ("    BinaryOp has an invalid opcode\n") ;
         return (GrB_INVALID_OBJECT) ;

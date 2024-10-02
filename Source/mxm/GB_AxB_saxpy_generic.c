@@ -218,6 +218,7 @@ GrB_Info GB_AxB_saxpy_generic
             // t = B(k,j) * A(i,k)
             if (saxpy_method == GB_SAXPY_METHOD_3)
             { 
+GB_GOTCHA ;
                 // C is sparse or hypersparse, mult is flipped
                 info = GB_AxB_saxpy3_generic_idx_flipped (C, M,
                     Mask_comp, Mask_struct, M_in_place,
@@ -226,6 +227,7 @@ GrB_Info GB_AxB_saxpy_generic
             }
             else
             { 
+GB_GOTCHA ;
                 // C is bitmap, mult is flipped
                 info = GB_AxB_saxbit_generic_idx_flipped (C, M,
                     Mask_comp, Mask_struct, M_in_place,

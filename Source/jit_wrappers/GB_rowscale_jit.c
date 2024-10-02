@@ -52,6 +52,6 @@ GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, D, B, nthreads)) ;
+    return (GB_jit_kernel (C, D, B, nthreads, binaryop->theta)) ;
 }
 

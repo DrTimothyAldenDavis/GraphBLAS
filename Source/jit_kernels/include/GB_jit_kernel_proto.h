@@ -48,7 +48,8 @@ GrB_Info GB_jit_kernel_add                                              \
     const int B_nthreads,                                               \
     const int B_ntasks,                                                 \
     const bool M_is_A,                                                  \
-    const bool M_is_B                                                   \
+    const bool M_is_B,                                                  \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_APPLY_BIND1ST_PROTO(GB_jit_kernel_apply_bind1st)  \
@@ -95,7 +96,8 @@ GrB_Info GB_jit_kernel_AxB_dot2                                         \
     const int64_t *restrict B_slice,                                    \
     const int nthreads,                                                 \
     const int naslice,                                                  \
-    const int nbslice                                                   \
+    const int nbslice,                                                  \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_AXB_DOT2N_PROTO(GB_jit_kernel_AxB_dot2n)          \
@@ -109,7 +111,8 @@ GrB_Info GB_jit_kernel_AxB_dot2n                                        \
     const int64_t *restrict B_slice,                                    \
     const int nthreads,                                                 \
     const int naslice,                                                  \
-    const int nbslice                                                   \
+    const int nbslice,                                                  \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_AXB_DOT3_PROTO(GB_jit_kernel_AxB_dot3)            \
@@ -121,7 +124,8 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
     const GrB_Matrix B,                                                 \
     const GB_task_struct *restrict TaskList,                            \
     const int ntasks,                                                   \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_AXB_DOT4_PROTO(GB_jit_kernel_AxB_dot4)            \
@@ -136,7 +140,8 @@ GrB_Info GB_jit_kernel_AxB_dot4                                         \
     const int nbslice,                                                  \
     const int nthreads,                                                 \
     GB_Werk Werk,                                                       \
-    const GB_callback_struct *restrict my_callback                      \
+    const GB_callback_struct *restrict my_callback,                     \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_AXB_SAXBIT_PROTO(GB_jit_kernel_AxB_saxbit)        \
@@ -160,7 +165,8 @@ GrB_Info GB_jit_kernel_AxB_saxbit                                       \
     int8_t *restrict Wf,                                                \
     const int nthreads_max,                                             \
     double chunk,                                                       \
-    const GB_callback_struct *restrict my_callback                      \
+    const GB_callback_struct *restrict my_callback,                     \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_AXB_SAXPY3_PROTO(GB_jit_kernel_AxB_saxpy3)        \
@@ -179,7 +185,8 @@ GrB_Info GB_jit_kernel_AxB_saxpy3                                       \
     const int nthreads_max,                                             \
     double chunk,                                                       \
     GB_Werk Werk,                                                       \
-    const GB_callback_struct *restrict my_callback                      \
+    const GB_callback_struct *restrict my_callback,                     \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_AXB_SAXPY4_PROTO(GB_jit_kernel_AxB_saxpy4)        \
@@ -196,7 +203,8 @@ GrB_Info GB_jit_kernel_AxB_saxpy4                                       \
     const int64_t *restrict A_slice,                                    \
     const int64_t *restrict H_slice,                                    \
     GB_void *restrict Wcx,                                              \
-    int8_t *restrict Wf                                                 \
+    int8_t *restrict Wf,                                                \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_AXB_SAXPY5_PROTO(GB_jit_kernel_AxB_saxpy5)        \
@@ -209,7 +217,8 @@ GrB_Info GB_jit_kernel_AxB_saxpy5                                       \
     const int nthreads,                                                 \
     const int64_t *restrict B_slice,                                    \
     bool cpu_has_avx2,                                                  \
-    bool cpu_has_avx512f                                                \
+    bool cpu_has_avx512f,                                               \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_BUILD_PROTO(GB_jit_kernel_build)                  \
@@ -235,7 +244,8 @@ GrB_Info GB_jit_kernel_colscale                                         \
     const GrB_Matrix D,                                                 \
     const int64_t *A_ek_slicing,                                        \
     const int A_ntasks,                                                 \
-    const int A_nthreads                                                \
+    const int A_nthreads,                                               \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_CONCAT_BITMAP_PROTO(GB_jit_kernel_concat_bitmap)  \
@@ -296,7 +306,8 @@ GrB_Info GB_jit_kernel_emult_02                                         \
     const int64_t *restrict Cp_kfirst,                                  \
     const int64_t *A_ek_slicing,                                        \
     const int A_ntasks,                                                 \
-    const int A_nthreads                                                \
+    const int A_nthreads,                                               \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_EMULT_03_PROTO(GB_jit_kernel_emult_03)            \
@@ -311,7 +322,8 @@ GrB_Info GB_jit_kernel_emult_03                                         \
     const int64_t *restrict Cp_kfirst,                                  \
     const int64_t *B_ek_slicing,                                        \
     const int B_ntasks,                                                 \
-    const int B_nthreads                                                \
+    const int B_nthreads,                                               \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_EMULT_04_PROTO(GB_jit_kernel_emult_04)            \
@@ -325,7 +337,8 @@ GrB_Info GB_jit_kernel_emult_04                                         \
     const int64_t *restrict Cp_kfirst,                                  \
     const int64_t *M_ek_slicing,                                        \
     const int M_ntasks,                                                 \
-    const int M_nthreads                                                \
+    const int M_nthreads,                                               \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_EMULT_08_PROTO(GB_jit_kernel_emult_08)            \
@@ -342,7 +355,8 @@ GrB_Info GB_jit_kernel_emult_08                                         \
     const int64_t *restrict C_to_B,                                     \
     const GB_task_struct *restrict TaskList,                            \
     const int C_ntasks,                                                 \
-    const int C_nthreads                                                \
+    const int C_nthreads,                                               \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_EMULT_BITMAP_PROTO(GB_jit_kernel_emult_bitmap)    \
@@ -358,7 +372,8 @@ GrB_Info GB_jit_kernel_emult_bitmap                                     \
     const int M_ntasks,                                                 \
     const int M_nthreads,                                               \
     const int C_nthreads,                                               \
-    const GB_callback_struct *restrict my_callback                      \
+    const GB_callback_struct *restrict my_callback,                     \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_EWISE_FULLA_PROTO(GB_jit_kernel_ewise_fulla)      \
@@ -397,7 +412,8 @@ GrB_Info GB_jit_kernel_rowscale                                         \
     GrB_Matrix C,                                                       \
     const GrB_Matrix D,                                                 \
     const GrB_Matrix B,                                                 \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_KERNEL_SELECT_BITMAP_PROTO(GB_jit_kernel_select_bitmap)  \
@@ -554,7 +570,8 @@ GrB_Info GB_jit_kernel_union                                            \
     const int B_nthreads,                                               \
     const int B_ntasks,                                                 \
     const bool M_is_A,                                                  \
-    const bool M_is_B                                                   \
+    const bool M_is_B,                                                  \
+    const void *theta                                                   \
 )
 
 //------------------------------------------------------------------------------
@@ -572,6 +589,7 @@ GrB_Info GB_jit_kernel_reduce                                           \
     int32_t blocksz                                                     \
 )
 
+// FIXME: add theta to cuda_rowscale
 #define GB_JIT_CUDA_KERNEL_ROWSCALE_PROTO(GB_jit_kernel_rowscale)       \
 GrB_Info GB_jit_kernel_rowscale                                         \
 (                                                                       \
@@ -583,6 +601,7 @@ GrB_Info GB_jit_kernel_rowscale                                         \
     int32_t blocksz                                                     \
 )
 
+// FIXME: add theta to cuda_colscale
 #define GB_JIT_CUDA_KERNEL_COLSCALE_PROTO(GB_jit_kernel_colscale)       \
 GrB_Info GB_jit_kernel_colscale                                         \
 (                                                                       \
@@ -639,6 +658,7 @@ GrB_Info GB_jit_kernel_select_bitmap                                        \
     int32_t blocksz                                                         \
 )                                                                           \
 
+// FIXME: add theta to cuda_dot3
 #define GB_JIT_CUDA_KERNEL_DOT3_PROTO(GB_jit_kernel_AxB_dot3)           \
 GrB_Info GB_jit_kernel_AxB_dot3                                         \
 (                                                                       \

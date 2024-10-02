@@ -29,7 +29,8 @@ GrB_Info GzB_BinaryOp_IndexOp_new
     GB_RETURN_IF_NULL_OR_FAULTY (theta) ;
 
     if (!GB_Type_compatible (idxbinop->theta_type, theta->type))
-    {
+    { 
+GB_GOTCHA ;
         GB_ERROR (GrB_DOMAIN_MISMATCH,
             "Scalar of type [%s] cannot be typecast to type [%s]\n",
                 theta->type->name, idxbinop->theta_type->name) ;
@@ -43,6 +44,7 @@ GrB_Info GzB_BinaryOp_IndexOp_new
     GrB_BinaryOp binop = GB_CALLOC (1, struct GB_BinaryOp_opaque, &header_size);
     if (binop == NULL)
     { 
+GB_GOTCHA ;
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -71,6 +73,7 @@ GrB_Info GzB_BinaryOp_IndexOp_new
         idxbinop->name, idxbinop->defn, true, jitable) ;
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         // out of memory
         GB_FREE (&binop, header_size) ;
         return (info) ;
@@ -83,7 +86,8 @@ GrB_Info GzB_BinaryOp_IndexOp_new
     binop->theta = GB_MALLOC (binop->theta_type->size, GB_void,
         &(binop->theta_size)) ;
     if (binop->theta == NULL)
-    {
+    { 
+GB_GOTCHA ;
         // out of memory
         GB_FREE (&binop, header_size) ;
         return (GrB_OUT_OF_MEMORY) ;

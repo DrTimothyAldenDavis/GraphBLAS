@@ -14,6 +14,12 @@
 #undef  GB_ABORT
 #define GB_ABORT GB_Global_abort ( )
 
+// HACK FIXME
+#ifdef GBMATLAB
+#undef  GB_ABORT
+#define GB_ABORT ;
+#endif
+
 #undef ASSERT
 #undef ASSERT_OK
 #undef ASSERT_OK_OR_NULL
