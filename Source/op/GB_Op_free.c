@@ -27,6 +27,11 @@ GrB_Info GB_Op_free             // free a user-created op
             { 
                 GB_FREE (&(op->defn), defn_size) ;
             }
+            size_t theta_size = op->theta_size ;
+            if (theta_size > 0)
+            { 
+                GB_FREE (&(op->theta), theta_size) ;
+            }
             size_t header_size = op->header_size ;
             if (header_size > 0)
             { 

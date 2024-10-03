@@ -90,6 +90,10 @@ hack (2) = 0 ; GB_mex_hack (hack) ;
 
 malloc_debugging = stat ;
 
+% lots of tests
+jall = {4,3,2,1,4,2} ;
+fall = {1,1,1,1,0,0} ;
+
 %===============================================================================
 % statement coverage test, with malloc debugging
 %===============================================================================
@@ -98,6 +102,7 @@ malloc_debugging = stat ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
+logstat ('test282'    ,t, jall, fall) ; % test argmax, index binary op
 logstat ('test281'    ,t, j4  , f1  ) ; % test user-defined idx unop, no JIT
 logstat ('test201'    ,t, j4  , f1  ) ; % test iso reduce to vector and scalar
 logstat ('test169'    ,t, j0  , f1  ) ; % C<M>=A+B with many formats
@@ -114,8 +119,6 @@ logstat ('test271'    ,t, j0  , f1  ) ; % binary op get/set
 logstat ('test270'    ,t, j0  , f1  ) ; % unary op get/set
 logstat ('test269'    ,t, j0  , f1  ) ; % get/set for type, scalar, vec, mtx
 logstat ('test268'    ,t, j4  , f1  ) ; % C<M>=Z sparse masker
-jall = {4,3,2,1,4,2} ;
-fall = {1,1,1,1,0,0} ;
 logstat ('test145'    ,t, jall, fall) ; % dot4 for C += A'*B
 
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack

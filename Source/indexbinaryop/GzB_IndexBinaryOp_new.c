@@ -19,7 +19,6 @@ GrB_Info GzB_IndexBinaryOp_new
     GrB_Type theta_type             // type of input theta
 )
 { 
-// GB_GOTCHA ;  new index binary op
     return (GzB_IndexBinaryOp_new2 (op, function, ztype, xtype, ytype,
         theta_type, NULL, NULL)) ;
 }

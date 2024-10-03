@@ -73,7 +73,8 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     }
     else if (opcode == GB_USER_idxbinop_code)
     {
-        GBPR0 ("(user-defined index): z=%s(x,ix,iy,y,iy,yj,theta)\n", op_name) ;
+        GBPR0 ("(user-defined index):\n    z=%s(x,ix,iy,y,iy,yj,theta)\n",
+            op_name) ;
     }
     else if (opcode == GB_FIRST_binop_code && op->ztype->code == GB_UDT_code)
     { 
@@ -83,7 +84,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     else if (op_is_from_idxbinop)
     { 
         // built-in index binary operator
-        GBPR0 ("(built-in index): z=%s(x,ix,iy,y,iy,yj,theta)\n", op_name) ;
+        GBPR0 ("(built-in index):\n    z=%s(x,ix,iy,y,iy,yj,theta)\n", op_name) ;
     }
     else
     { 
@@ -128,6 +129,24 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
                 return (GrB_INVALID_OBJECT) ;
             }
         }
+    }
+
+    if (op_is_from_idxbinop)
+    {
+        info = GB_Type_check (op->theta_type, "theta_type", pr, f) ;
+        if (info != GrB_SUCCESS)
+        { 
+            GBPR0 ("    BinaryOp has an invalid theta_type\n") ;
+            return (GrB_INVALID_OBJECT) ;
+        }
+        GBPR0 ("    theta: ") ;
+        info = GB_entry_check (op->theta_type, op->theta, pr, f) ;
+        if (info != GrB_SUCCESS)
+        { 
+            GBPR0 ("    BinaryOp has an invalid theta\n") ;
+            return (GrB_INVALID_OBJECT) ;
+        }
+        GBPR0 ("\n") ;
     }
 
     if (op->defn != NULL)

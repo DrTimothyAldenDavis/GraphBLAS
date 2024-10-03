@@ -14,7 +14,6 @@ GrB_Info GzB_IndexBinaryOp_free     // free a user-created index binary operator
     GzB_IndexBinaryOp *op           // handle of index binary operator to free
 )
 { 
-// GB_GOTCHA ;  free index binary op
     return (GB_Op_free ((GB_Operator *) op)) ;
 }
 

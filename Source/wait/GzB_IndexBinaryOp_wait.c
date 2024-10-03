@@ -19,7 +19,6 @@ GrB_Info GzB_IndexBinaryOp_wait   // no work, just check if valid
     GrB_WaitMode waitmode
 )
 { 
-GB_GOTCHA ; // wait index binary op
 
     //--------------------------------------------------------------------------
     // check inputs

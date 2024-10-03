@@ -17,7 +17,6 @@ GrB_Info GB_IndexBinaryOp_check  // check a GraphBLAS index_binary operator
     FILE *f                 // file for output
 )
 { 
-GB_GOTCHA ; // index binary op, any check
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -47,7 +46,7 @@ GB_GOTCHA ; // index binary op, bad opcode
 
     // only user-defined IndexBinaryOps exist
     ASSERT (opcode == GB_USER_idxbinop_code) ;
-    GBPR0 ("(user-defined): ") ;
+    GBPR0 ("(user-defined):\n    ") ;
 
     int32_t name_len = op->name_len ;
     int32_t actual_len = (int32_t) strlen (op->name) ;
@@ -104,7 +103,6 @@ GB_GOTCHA ; // index binary op, bad theta_type
 
     if (op->defn != NULL)
     { 
-GB_GOTCHA ; // index binary op, print defn
         GBPR0 ("%s\n", op->defn) ;
     }
 
