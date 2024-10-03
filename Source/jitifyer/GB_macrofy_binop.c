@@ -92,7 +92,7 @@ void GB_macrofy_binop
 
         if (GB_IS_INDEXBINARYOP_CODE (op->opcode))
         { 
-// GB_GOTCHA ;
+// GB_GOTCHA ;  // macrofy index binary op
             // user-defined index binary op
             ASSERT (!is_monoid_or_build) ;
             const char *xindices = is_ewise ? "i,j" : "i,k" ;

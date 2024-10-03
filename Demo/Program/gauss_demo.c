@@ -211,6 +211,7 @@ int main (void)
     // MINGW it is treated as always false).  Only Linux and Mac can change
     // this setting.
     TRY (GxB_Global_Option_set (GxB_JIT_USE_CMAKE, true)) ;
+    TRY (GxB_Global_Option_set (GxB_JIT_ERROR_FALLBACK, false)) ;
 
     printf ("Gauss demo.  Note that all transposes are array transposes,\n"
         "not matrix (conjugate) transposes.\n\n") ;

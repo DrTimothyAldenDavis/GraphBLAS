@@ -58,7 +58,7 @@ GrB_Info GzB_IndexBinaryOp_new2
         &header_size) ;
     if (op == NULL)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // new2 binary op from index binary op, out of memory
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -101,7 +101,7 @@ GB_GOTCHA ;
         idxop_name, idxop_defn, true, jitable) ;
     if (info != GrB_SUCCESS)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // new2 binary op from index binary op, out of memory
         // out of memory
         GB_FREE (&op, header_size) ;
         return (info) ;
@@ -118,10 +118,14 @@ GB_GOTCHA ;
         info = GB_user_op_jit (&user_function, (GB_Operator) op) ;
         if (info != GrB_SUCCESS)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // new2 binary op from index binary op, jit error
             // unable to construct the function pointer
             GB_Op_free ((GB_Operator *) &op) ;
-            return (GrB_NULL_POINTER) ;
+            // If the JIT fails, it returns GrB_NO_VALUE or GrB_JIT_ERROR,
+            // depending on the GxB_JIT_ERROR_FALLBACK setting.  Convert
+            // GrB_NO_VALUE to GrB_NULL_POINTER (the function is NULL and
+            // cannot be compiled by the JIT).
+            return (info == GrB_NO_VALUE ? GrB_NULL_POINTER : info) ;
         }
         op->idxbinop_function = (GzB_index_binary_function) user_function ;
         GB_BURBLE_END ;

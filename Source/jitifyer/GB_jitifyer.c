@@ -48,6 +48,11 @@ static bool GB_jit_use_cmake =
     false ;     // otherwise, default is to skip cmake and compile directly
     #endif
 
+// GB_jit_error_fallback: if false, a JIT compiler error returns GxB_JIT_ERROR.
+// If true, it returns GrB_NO_VALUE, and the generic kernel takes over as a
+// fallback.
+static bool GB_jit_error_fallback = false ; // FIXME: default to true
+
 // path to user cache folder:
 static char    *GB_jit_cache_path = NULL ;
 static size_t   GB_jit_cache_path_allocated = 0 ;
@@ -717,7 +722,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     if (dst == NULL)
     {
         // JITPackage error: out of memory; disable the JIT
-        GB_jit_control = GxB_JIT_RUN ;
+        GB_jit_control = GxB_JIT_PAUSE ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -1213,6 +1218,32 @@ GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries)
 }
 
 //------------------------------------------------------------------------------
+// GB_jitifyer_get_error_fallback: return true/false if JIT error fallback
+//------------------------------------------------------------------------------
+
+bool GB_jitifyer_get_error_fallback (void)
+{ 
+    bool error_fallback ;
+    #pragma omp critical (GB_jitifyer_worker)
+    {
+        error_fallback = GB_jit_error_fallback ;
+    }
+    return (error_fallback) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_error_fallback: set controls true/false, JIT error fallback
+//------------------------------------------------------------------------------
+
+void GB_jitifyer_set_error_fallback (bool error_fallback)
+{ 
+    #pragma omp critical (GB_jitifyer_worker)
+    {
+        GB_jit_error_fallback = error_fallback ;
+    }
+}
+
+//------------------------------------------------------------------------------
 // GB_jitifyer_get_use_cmake: return true/false if cmake is in use
 //------------------------------------------------------------------------------
 
@@ -1550,6 +1581,8 @@ GrB_Info GB_jitifyer_load
     if (hash == UINT64_MAX)
     { 
         // The kernel may not be compiled; it does not have a valid definition.
+        // This is not a JIT failure.  It is an expected error if the strings
+        // (name & defn) are NULL, so always fallback to the generic case.
         GBURBLE ("(jit: undefined) ") ;
         return (GrB_NO_VALUE) ;
     }
@@ -1557,6 +1590,7 @@ GrB_Info GB_jitifyer_load
     if ((GB_jit_control == GxB_JIT_OFF) || (GB_jit_control == GxB_JIT_PAUSE))
     { 
         // The JIT control has disabled all JIT kernels.  Punt to generic.
+        // This is not a JIT failure.
         return (GrB_NO_VALUE) ;
     }
 
@@ -1589,6 +1623,9 @@ GrB_Info GB_jitifyer_load
             // No kernels may be loaded or compiled, but existing kernels
             // already loaded may be run (handled above if dl_function was
             // found).  This kernel was not loaded, so punt to generic.
+            // This is not a JIT failure since the JIT control is already
+            // set to 'run', and the kernel is not already loaded.  So always
+            // fallback to the generic kernel.
             return (GrB_NO_VALUE) ;
         }
     }
@@ -1724,6 +1761,9 @@ GrB_Info GB_jitifyer_load2_worker
         // No kernels may be loaded or compiled, but existing kernels already
         // loaded may be run (handled above if dl_function was found).  This
         // kernel was not loaded, so punt to generic.
+        // This is not a JIT failure since the JIT control is already
+        // set to 'run', and the kernel is not already loaded.  So always
+        // fallback to the generic kernel.
         return (GrB_NO_VALUE) ;
     }
 
@@ -1806,10 +1846,12 @@ GrB_Info GB_jitifyer_load2_worker
     int fd_klock = -1 ;
     if (!GB_file_open_and_lock (GB_jit_temp, &fp_klock, &fd_klock))
     {
-        // JIT error: unable to lock the kernel
+        // JIT failure: unable to lock the kernel
         // disable the JIT to avoid repeated load errors
         GB_jit_control = GxB_JIT_RUN ;
-        return (GrB_NO_VALUE) ;
+        // report the error: punt to generic or panic
+        GBURBLE (" (jit failure: cannot lock the kernel!) ") ;
+        return (GB_jit_error_fallback ? GrB_NO_VALUE : GxB_JIT_ERROR) ;
     }
 
     //--------------------------------------------------------------------------
@@ -1911,7 +1953,9 @@ GrB_Info GB_jitifyer_load_worker
 
         if (GB_jit_control < GxB_JIT_ON)
         { 
-            // No new kernels may be compiled, so punt to generic.
+            // No new kernels may be compiled, so punt to generic.  This is not
+            // a JIT failure.  It is an expected condition because of the JIT
+            // control, so always allow a fallback to the generic kernel.
             GBURBLE ("(jit: not compiled) ") ;
             return (GrB_NO_VALUE) ;
         }
@@ -1985,12 +2029,13 @@ GrB_Info GB_jitifyer_load_worker
         if (dl_handle == NULL)
         { 
             // unable to create the kernel source or open lib*.so file
-            GBURBLE ("(jit: compiler error; compilation disabled) ") ;
             // disable the JIT to avoid repeated compilation errors
             GB_jit_control = GxB_JIT_LOAD ;
             // remove the compiled library
             remove (GB_jit_temp) ;
-            return (GrB_NO_VALUE) ;     // TODO: use another error code?
+            // report the error: punt to generic or panic
+            GBURBLE ("(jit failure: compiler error; compilation disabled) ") ;
+            return (GB_jit_error_fallback ? GrB_NO_VALUE : GxB_JIT_ERROR) ;
         }
 
     }
@@ -2014,26 +2059,29 @@ GrB_Info GB_jitifyer_load_worker
     if ((*dl_function) == NULL)
     {
         // JIT error: dlsym unable to find GB_jit_kernel: punt to generic
-        GBURBLE ("(jit: load error; JIT loading disabled) ") ;
         GB_file_dlclose (dl_handle) ; dl_handle = NULL ;
         // disable the JIT to avoid repeated loading errors
         GB_jit_control = GxB_JIT_RUN ;
         // remove the compiled library
         remove (GB_jit_temp) ;
-        return (GrB_NO_VALUE) ;     // TODO: use another error code?
+        // report the error: punt to generic or panic
+        GBURBLE ("(jit failure: load error; compilation disabled) ") ;
+        return (GB_jit_error_fallback ? GrB_NO_VALUE : GxB_JIT_ERROR) ;
     }
 
     // insert the new kernel into the hash table
     if (!GB_jitifyer_insert (hash, encoding, suffix, dl_handle, (*dl_function),
         -1))
     {
-        // JIT error: unable to add kernel to hash table: punt to generic
+        // JIT error: unable to add kernel to hash table
         GB_file_dlclose (dl_handle) ; dl_handle = NULL ;
         // disable the JIT to avoid repeated errors
         GB_jit_control = GxB_JIT_PAUSE ;
         // remove the compiled library
         remove (GB_jit_temp) ;
-        return (GrB_NO_VALUE) ;
+        // report the error: punt to generic or panic
+        GBURBLE ("(jit failure: unable to insert kernel into hash table) ") ;
+        return (GB_jit_error_fallback ? GrB_NO_VALUE : GxB_JIT_ERROR) ;
     }
 
     return (GrB_SUCCESS) ;

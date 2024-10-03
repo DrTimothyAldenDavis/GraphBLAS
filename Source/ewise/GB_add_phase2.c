@@ -29,8 +29,6 @@
 // This is used by GB_wait only, for merging the pending tuple matrix T into A.
 // In this case, C is always sparse or hypersparse, not bitmap or full.
 
-#define GB_DEBUG /* HACK FIXME */
-
 #include "ewise/GB_add.h"
 #include "binaryop/GB_binop.h"
 #include "include/GB_unused.h"
@@ -540,13 +538,13 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                     fadd_idx (z, aij, i, j, bij, i, j, theta) ;
                 if (is_eWiseUnion)
                 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // ewiseunion with index binary op, flipped
                     #define GB_IS_EWISEUNION 1
                     #include "ewise/template/GB_add_template.c"
                 }
                 else
                 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // ewiseadd with index binary op, flipped
                     #define GB_IS_EWISEUNION 0
                     #include "ewise/template/GB_add_template.c"
                 }

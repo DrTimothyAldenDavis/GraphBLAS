@@ -17,7 +17,7 @@ GrB_Info GB_IndexBinaryOp_check  // check a GraphBLAS index_binary operator
     FILE *f                 // file for output
 )
 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // index binary op, any check
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -27,7 +27,7 @@ GB_GOTCHA ;
 
     if (op == NULL)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // index binary op, null op
         GBPR0 ("NULL\n") ;
         return (GrB_NULL_POINTER) ;
     }
@@ -40,7 +40,7 @@ GB_GOTCHA ;
     GB_Opcode opcode = op->opcode ;
     if (!GB_IS_INDEXBINARYOP_CODE (opcode))
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // index binary op, bad opcode
         GBPR0 ("    IndexBinaryOp has an invalid opcode\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
@@ -56,14 +56,14 @@ GB_GOTCHA ;
 
     if (op->idxbinop_function == NULL)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // index binary op, null function
         GBPR0 ("    IndexBinaryOp has a NULL function pointer\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
 
     if (opcode == GB_USER_idxbinop_code && name_len != actual_len)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // index binary op, bad name
         GBPR0 ("    IndexBinaryOp has an invalid name_len\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
@@ -73,7 +73,7 @@ GB_GOTCHA ;
     info = GB_Type_check (op->ztype, "ztype", pr, f) ;
     if (info != GrB_SUCCESS)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // index binary op, bad ztype
         GBPR0 ("    IndexBinaryOp has an invalid ztype\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
@@ -81,7 +81,7 @@ GB_GOTCHA ;
     info = GB_Type_check (op->xtype, "xtype", pr, f) ;
     if (info != GrB_SUCCESS)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // index binary op, bad xtype
         GBPR0 ("    IndexBinaryOp has an invalid xtype\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
@@ -89,7 +89,7 @@ GB_GOTCHA ;
     info = GB_Type_check (op->ytype, "ytype", pr, f) ;
     if (info != GrB_SUCCESS)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // index binary op, bad ytype
         GBPR0 ("    IndexBinaryOp has an invalid ytype\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
@@ -97,14 +97,14 @@ GB_GOTCHA ;
     info = GB_Type_check (op->theta_type, "theta_type", pr, f) ;
     if (info != GrB_SUCCESS)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // index binary op, bad theta_type
         GBPR0 ("    IndexBinaryOp has an invalid theta_type\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
 
     if (op->defn != NULL)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // index binary op, print defn
         GBPR0 ("%s\n", op->defn) ;
     }
 

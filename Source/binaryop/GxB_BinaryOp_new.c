@@ -80,7 +80,11 @@ GrB_Info GxB_BinaryOp_new
         { 
             // unable to construct the function pointer
             GB_Op_free ((GB_Operator *) &op) ;
-            return (GrB_NULL_POINTER) ;
+            // If the JIT fails, it returns GrB_NO_VALUE or GrB_JIT_ERROR,
+            // depending on the GxB_JIT_ERROR_FALLBACK setting.  Convert
+            // GrB_NO_VALUE to GrB_NULL_POINTER (the function is NULL and
+            // cannot be compiled by the JIT).
+            return (info == GrB_NO_VALUE ? GrB_NULL_POINTER : info) ;
         }
         op->binop_function = (GxB_binary_function) user_function ;
         GB_BURBLE_END ;

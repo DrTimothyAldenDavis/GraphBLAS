@@ -20,7 +20,7 @@ GrB_Info GzB_IndexBinaryOp_set_Scalar
     GrB_Field field
 )
 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // GrB_set index binary op, scalar
     return (GrB_INVALID_VALUE) ;
 }
 
@@ -35,7 +35,7 @@ GrB_Info GzB_IndexBinaryOp_set_String
     GrB_Field field
 )
 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // GrB_set index binary op, string
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -64,7 +64,7 @@ GrB_Info GzB_IndexBinaryOp_set_INT32
     GrB_Field field
 )
 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // GrB_set index binary op, int
     return (GrB_INVALID_VALUE) ;
 }
 
@@ -80,7 +80,7 @@ GrB_Info GzB_IndexBinaryOp_set_VOID
     size_t size
 )
 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // GrB_set index binary op, void
     return (GrB_INVALID_VALUE) ;
 }
 

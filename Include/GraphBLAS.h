@@ -382,7 +382,8 @@ typedef enum
     GrB_INSUFFICIENT_SPACE = -103,  // output array not large enough
     GrB_INVALID_OBJECT = -104,      // object is corrupted
     GrB_INDEX_OUT_OF_BOUNDS = -105, // row or col index out of bounds
-    GrB_EMPTY_OBJECT = -106         // an object does not contain a value
+    GrB_EMPTY_OBJECT = -106,        // an object does not contain a value
+    GxB_JIT_ERROR = -1001,          // JIT compiler/loader error
 
 }
 GrB_Info ;
@@ -1463,6 +1464,7 @@ typedef enum            // for global options or matrix options
     GxB_JIT_C_CMAKE_LIBS = 7031,     // CPU JIT C libraries when using cmake
     GxB_JIT_USE_CMAKE = 7032,        // CPU JIT: use cmake or direct compile
     GxB_JIT_ERROR_LOG = 7033,        // CPU JIT: error log file
+    GxB_JIT_ERROR_FALLBACK = 7049,   // CPU JIT: error fallback
 
     GxB_JIT_CUDA_PREFACE = 7100,     // CUDA JIT C++ preface
 

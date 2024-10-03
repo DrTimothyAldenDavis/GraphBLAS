@@ -262,7 +262,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     }
     #elif GB_GENERIC_IDX_FLIPXY
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // generic saxpy, index binary op, flipped
         // t = B(k,j) * A(i,k)
         ASSERT (fmult_idx != NULL) ;
         const void *theta = mult->theta ;

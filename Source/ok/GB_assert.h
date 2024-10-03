@@ -14,7 +14,7 @@
 #undef  GB_ABORT
 #define GB_ABORT GB_Global_abort ( )
 
-// HACK FIXME
+// HACK FIXME: turn off MATLAB abort for now
 #ifdef GBMATLAB
 #undef  GB_ABORT
 #define GB_ABORT ;
