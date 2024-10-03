@@ -184,7 +184,7 @@ void mexFunction
     if (jit)
     {
         OK (GxB_Type_new (&Tuple, sizeof (tuple_kv), "tuple_kv", TUPLE_KV)) ;
-        OK (GzB_IndexBinaryOp_new2 (&Iop,
+        METHOD (GzB_IndexBinaryOp_new2 (&Iop,
             (GzB_index_binary_function) make_tuple_kv,
             Tuple, GrB_FP64, GrB_BOOL, GrB_BOOL,
             "make_tuple_kv", MAKE_TUPLE_KV)) ;
@@ -192,7 +192,7 @@ void mexFunction
     else
     {
         OK (GrB_Type_new (&Tuple, sizeof (tuple_kv))) ;
-        OK (GzB_IndexBinaryOp_new (&Iop,
+        METHOD (GzB_IndexBinaryOp_new (&Iop,
             (GzB_index_binary_function) make_tuple_kv,
             Tuple, GrB_FP64, GrB_BOOL, GrB_BOOL)) ;
     }
@@ -203,7 +203,7 @@ void mexFunction
     {
         mexErrMsgTxt ("index binary op failed") ;
     }
-    OK (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
+    METHOD (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
     if (pr)
     {
         printf ("\njit enabled: %d\n", jit) ;

@@ -44,7 +44,6 @@ GB_GOTCHA ; // new index binary op, typecast error
     GrB_BinaryOp binop = GB_CALLOC (1, struct GB_BinaryOp_opaque, &header_size);
     if (binop == NULL)
     { 
-GB_GOTCHA ; // new index binary op, out of memory
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -73,7 +72,6 @@ GB_GOTCHA ; // new index binary op, out of memory
         idxbinop->name, idxbinop->defn, true, jitable) ;
     if (info != GrB_SUCCESS)
     { 
-GB_GOTCHA ; // new index binary op, out of memory
         // out of memory
         GB_FREE (&binop, header_size) ;
         return (info) ;
@@ -87,9 +85,8 @@ GB_GOTCHA ; // new index binary op, out of memory
         &(binop->theta_size)) ;
     if (binop->theta == NULL)
     { 
-GB_GOTCHA ; // new index binary op, out of memory
         // out of memory
-        GB_FREE (&binop, header_size) ;
+        GB_Op_free ((GB_Operator *) (&binop)) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 

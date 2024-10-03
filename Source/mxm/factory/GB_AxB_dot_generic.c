@@ -187,7 +187,7 @@
         const void *theta = mult->theta ;
         if (flipxy)
         { 
-GB_GOTCHA ; // generic doc, with index binary op, flipped
+GB_GOTCHA ; // generic dot, with index binary op, flipped
             // t = B(k,j) * (A')(i,k)
             #undef  GB_MULT
             #define GB_MULT(t, aki, bkj, i, k, j) \

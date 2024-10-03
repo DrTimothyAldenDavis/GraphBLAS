@@ -58,7 +58,6 @@ GrB_Info GzB_IndexBinaryOp_new2
         &header_size) ;
     if (op == NULL)
     { 
-GB_GOTCHA ; // new2 binary op from index binary op, out of memory
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -101,7 +100,6 @@ GB_GOTCHA ; // new2 binary op from index binary op, out of memory
         idxop_name, idxop_defn, true, jitable) ;
     if (info != GrB_SUCCESS)
     { 
-GB_GOTCHA ; // new2 binary op from index binary op, out of memory
         // out of memory
         GB_FREE (&op, header_size) ;
         return (info) ;
