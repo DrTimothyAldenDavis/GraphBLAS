@@ -36,7 +36,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
     GrB_Matrix C,   // result matrix
     GrB_Matrix M,   // mask matrix
     GrB_Matrix A,   // input matrix A
-    GrB_Matrix B    // input matrix B
+    GrB_Matrix B,   // input matrix B
+    const void *theta
 )
 {
 

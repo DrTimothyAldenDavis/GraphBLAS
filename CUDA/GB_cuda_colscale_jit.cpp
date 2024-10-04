@@ -30,7 +30,7 @@ GrB_Info GB_cuda_colscale_jit
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_CUDA_KERNEL_COLSCALE, false,
         false, false, GB_sparsity (C), C->type, NULL, false, false,
-        binaryop, flipxy, A, D) ;
+        binaryop, false, flipxy, A, D) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -48,5 +48,5 @@ GrB_Info GB_cuda_colscale_jit
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, A, D, stream, gridsz, blocksz)) ;
+    return (GB_jit_kernel (C, A, D, stream, gridsz, blocksz, binaryop->theta)) ;
 }

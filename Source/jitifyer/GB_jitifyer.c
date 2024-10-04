@@ -51,7 +51,7 @@ static bool GB_jit_use_cmake =
 // GB_jit_error_fallback: if false, a JIT compiler error returns GxB_JIT_ERROR.
 // If true (default case)), it returns GrB_NO_VALUE, and the generic kernel
 // takes over as a fallback.
-static bool     GB_jit_error_fallback = true ;
+static bool     GB_jit_error_fallback = false ; // FIXME: not the default
 
 // path to user cache folder:
 static char    *GB_jit_cache_path = NULL ;
@@ -1851,7 +1851,7 @@ GrB_Info GB_jitifyer_load2_worker
         GB_jit_control = GxB_JIT_RUN ;
         // report the error: punt to generic or panic
         GBURBLE (" (jit failure: cannot lock the kernel!) ") ;
-        return (GB_jit_error_fallback ? GrB_NO_VALUE : GxB_JIT_ERROR) ;
+        return (GxB_JIT_ERROR) ;
     }
 
     //--------------------------------------------------------------------------
@@ -2081,7 +2081,7 @@ GrB_Info GB_jitifyer_load_worker
         remove (GB_jit_temp) ;
         // report the error: punt to generic or panic
         GBURBLE ("(jit failure: unable to insert kernel into hash table) ") ;
-        return (GB_jit_error_fallback ? GrB_NO_VALUE : GxB_JIT_ERROR) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     return (GrB_SUCCESS) ;

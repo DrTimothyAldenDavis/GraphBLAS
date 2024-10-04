@@ -288,7 +288,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         // kernel_timer.Start();
 
         GB_cuda_AxB_dot3_phase3_dndn_kernel <<grid_2, block, 0, stream>>
-            (C, M, A, B) ;
+            (C, M, A, B, theta) ;
 
     }
     #else
@@ -462,7 +462,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                             dim3 grid_3 (gridsz) ;
                             GB_cuda_AxB_dot3_phase3_vsvs_kernel
                                 <<<grid_3, block, 0, stream>>>
-                                (start, end, Bucket, C, M, A, B) ;
+                                (start, end, Bucket, C, M, A, B, theta) ;
                         }
                         break ;
 
@@ -489,7 +489,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                             dim3 grid_3 (gridsz) ;
                             GB_cuda_AxB_dot3_phase3_mp_kernel
                                 <<<grid_3, block, 0, stream>>>
-                                (start, end, Bucket, C, M, A, B) ;
+                                (start, end, Bucket, C, M, A, B, theta) ;
                         }
                         break ;
 
@@ -516,7 +516,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                             dim3 grid_3 (gridsz) ;
                             GB_cuda_AxB_dot3_phase3_vssp_kernel
                                 <<<grid_3, block, 0, stream>>>
-                                (start, end, Bucket, C, M, A, B) ;
+                                (start, end, Bucket, C, M, A, B, theta) ;
                         }
                         break ;
 
@@ -546,7 +546,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                             dim3 grid_3 (gridsz) ;
                             GB_cuda_AxB_dot3_phase3_vsdn_kernel
                                 <<<grid_3, block, 0, stream>>>
-                                (start, end, Bucket, C, M, A, B) ;
+                                (start, end, Bucket, C, M, A, B, theta) ;
                         }
                         break ;
 
@@ -573,7 +573,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                             dim3 grid_3 (gridsz) ;
                             GB_cuda_AxB_dot3_phase3_spdn_kernel
                                 <<<grid_3, block, 0, stream>>>
-                                (start, end, Bucket, C, M, A, B) ;
+                                (start, end, Bucket, C, M, A, B, theta) ;
                             break ;
                         }
                     }
