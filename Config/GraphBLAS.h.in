@@ -1674,6 +1674,13 @@ typedef enum
     // GrB_Semiring only:
     GxB_SEMIRING_MONOID = 7046,     // semiring monoid
     GxB_SEMIRING_MULTIPLY = 7047,   // semiring multiplicative op
+
+    // GrB_BinaryOp and GzB_IndexBinaryOp:
+    GzB_THETA_TYPE_CODE = 7050,     // for binary and index binary ops
+    GzB_THETA_TYPE_STRING = 7051,
+
+    // GrB_BinaryOp only:
+    GzB_THETA = 7052,               // to get the value of theta
 }
 GrB_Field ;
 

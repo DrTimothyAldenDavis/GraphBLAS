@@ -20,7 +20,6 @@ GrB_Info GzB_IndexBinaryOp_get_Scalar
     GrB_Field field
 )
 { 
-GB_GOTCHA ; // GrB_get index binary op, scalar
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -49,7 +48,6 @@ GrB_Info GzB_IndexBinaryOp_get_String
     GrB_Field field
 )
 { 
-GB_GOTCHA ; // GrB_get index binary op, string
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -78,7 +76,6 @@ GrB_Info GzB_IndexBinaryOp_get_INT32
     GrB_Field field
 )
 { 
-GB_GOTCHA ; // GrB_get index binary op, int
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -107,7 +104,6 @@ GrB_Info GzB_IndexBinaryOp_get_SIZE
     GrB_Field field
 )
 { 
-GB_GOTCHA ; // GrB_get index binary op, size
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -129,6 +125,8 @@ GB_GOTCHA ; // GrB_get index binary op, size
 // GzB_IndexBinaryOp_get_VOID
 //------------------------------------------------------------------------------
 
+// FIXME: provide a way to extract the size and value of THETA, using GzB_THETA
+
 GrB_Info GzB_IndexBinaryOp_get_VOID
 (
     GzB_IndexBinaryOp op,
@@ -136,7 +134,6 @@ GrB_Info GzB_IndexBinaryOp_get_VOID
     GrB_Field field
 )
 { 
-GB_GOTCHA ; // GrB_get index binary op, void
     return (GrB_INVALID_VALUE) ;
 }
 

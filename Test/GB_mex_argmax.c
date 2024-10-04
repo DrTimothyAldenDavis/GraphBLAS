@@ -10,6 +10,7 @@
 // This is for testing only.  See GrB.argmax instead.
 
 #include "GB_mex.h"
+#include "GB_mex_errors.h"
 
  typedef struct { int64_t k ; double v ; } tuple_kv ;
 #define TUPLE_KV \
@@ -96,20 +97,11 @@ void max_tuple_kv (tuple_kv *z, const tuple_kv *x, const tuple_kv *y)
     GrB_Matrix_free (&y) ;              \
     GrB_Matrix_free (&c) ;              \
     GrB_Scalar_free (&Theta) ;          \
+    GrB_Scalar_free (&Beta) ;           \
     GB_mx_put_global (true) ;           \
 }
 
 #define FREE_WORK FREE_ALL
-
-#define OK(method)                              \
-{                                               \
-    info = method ;                             \
-    if (info != GrB_SUCCESS)                    \
-    {                                           \
-        FREE_WORK ;                             \
-        mexErrMsgTxt ("failure") ;              \
-    }                                           \
-}
 
 void mexFunction
 (
@@ -129,7 +121,7 @@ void mexFunction
     GrB_BinaryOp Bop = NULL, MonOp = NULL ;
     GrB_Monoid Monoid = NULL ;
     GrB_Semiring Semiring = NULL ;
-    GrB_Scalar Theta = NULL ;
+    GrB_Scalar Theta = NULL, Beta = NULL ;
     GrB_UnaryOp Getv = NULL, Getk = NULL ;
     GrB_Matrix x = NULL, p = NULL, c = NULL, y = NULL, z = NULL ;
     GrB_Scalar s = NULL ;
@@ -301,6 +293,28 @@ void mexFunction
     OK (GrB_Matrix_apply (x, NULL, NULL, Getv, c, NULL)) ;
     // p = getk (c)
     OK (GrB_Matrix_apply (p, NULL, NULL, Getk, c, NULL)) ;
+
+    //--------------------------------------------------------------------------
+    // test get/set
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Scalar_new (&Beta, GrB_INT64)) ;
+    OK (GzB_IndexBinaryOp_get_Scalar (Iop, Beta, GrB_OUTP_TYPE_CODE)) ;
+    int32_t code = -1;
+    OK (GrB_Scalar_extractElement_INT32 (&code, Beta)) ;
+    printf ("code %d\n", code) ;
+    CHECK (code == GrB_UDT_CODE) ;
+    code = 62 ;
+    OK (GzB_IndexBinaryOp_get_INT32 (Iop, &code, GrB_OUTP_TYPE_CODE)) ;
+    CHECK (code == GrB_UDT_CODE) ;
+    size_t name_size ;
+    OK (GzB_IndexBinaryOp_get_SIZE (Iop, &name_size, GxB_JIT_C_NAME)) ;
+    printf ("name size %d\n", (int) name_size) ;
+    char name [256] ;
+    OK (GzB_IndexBinaryOp_get_String (Iop, &name, GxB_JIT_C_NAME)) ;
+    printf ("name [%s]\n", name) ;
+    int expected = GrB_INVALID_VALUE ;
+    ERR (GzB_IndexBinaryOp_get_VOID (Iop, &name, GxB_JIT_C_NAME)) ;
 
     //--------------------------------------------------------------------------
     // return x and p as MATLAB sparse matrices

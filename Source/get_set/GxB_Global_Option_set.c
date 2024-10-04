@@ -81,6 +81,7 @@ GrB_Info GxB_Global_Option_set_INT32      // set a global default option
 
         case GxB_JIT_ERROR_FALLBACK : 
 
+GB_GOTCHA ; // set jit error fallback
             GB_jitifyer_set_error_fallback ((bool) value) ;
             break ;
 
@@ -575,6 +576,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
         case GxB_JIT_ERROR_FALLBACK : 
 
             {
+GB_GOTCHA ; // set jit error fallback
                 va_start (ap, field) ;
                 int value = va_arg (ap, int) ;
                 va_end (ap) ;
