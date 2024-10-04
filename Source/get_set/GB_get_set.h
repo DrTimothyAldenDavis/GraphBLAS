@@ -24,6 +24,7 @@ GrB_Type_Code GB_type_code_get  // return the GrB_Type_Code for the code
 
 const char *GB_type_name_get (GrB_Type type) ;
 const char *GB_code_name_get (GB_Type_code code, char *user_name) ;
+const char *GB_desc_name_get (GrB_Descriptor desc) ;
 
 GrB_Info GB_matvec_name_size_get (GrB_Matrix A, size_t *value, int field) ;
 GrB_Info GB_matvec_name_get (GrB_Matrix A, char *name, int field) ;

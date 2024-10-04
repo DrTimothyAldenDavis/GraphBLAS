@@ -8,13 +8,15 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
+#include "get_set/GB_get_set.h"
 
 GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
 (
     const GrB_Monoid monoid,    // GraphBLAS monoid to print and check
     const char *name,           // name of the monoid, optional
     int pr,                     // print level
-    FILE *f                     // file for output
+    FILE *f,                    // file for output
+    bool in_semiring            // if true, then called by GB_Semiring_check
 )
 {
 
@@ -55,6 +57,13 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
         return (GrB_INVALID_OBJECT) ;
     }
 
+    // name given by GrB_set, or 'GrB_*' name for built-in objects
+    const char *given_name = GB_monoid_name_get (monoid) ;
+    if (given_name != NULL)
+    { 
+        GBPR0 ("    Monoid given name: [%s]\n", given_name) ;
+    }
+
     if (monoid->op->xtype != monoid->op->ztype ||
         monoid->op->ytype != monoid->op->ztype)
     { 
@@ -85,7 +94,7 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
             if (info != GrB_SUCCESS) return (info) ;
             GBPR (" ]") ;
         }
-        GBPR ("\n") ;
+        if (!in_semiring) GBPR ("\n") ;
     }
 
     return (GrB_SUCCESS) ;

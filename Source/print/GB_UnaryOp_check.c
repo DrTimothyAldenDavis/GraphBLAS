@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
+#include "get_set/GB_get_set.h"
 
 GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
 (
@@ -68,6 +69,13 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
     { 
         GBPR0 ("    UnaryOp has an invalid name_len\n") ;
         return (GrB_INVALID_OBJECT) ;
+    }
+
+    // name given by GrB_set, or 'GrB_*' name for built-in objects
+    const char *given_name = GB_op_name_get (op) ;
+    if (given_name != NULL)
+    { 
+        GBPR0 ("    UnaryOp given name: [%s]\n", given_name) ;
     }
 
     GrB_Info info ;

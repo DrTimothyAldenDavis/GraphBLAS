@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
+#include "get_set/GB_get_set.h"
 
 GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
 (
@@ -104,6 +105,13 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     { 
         GBPR0 ("    BinaryOp has an invalid name_len\n") ;
         return (GrB_INVALID_OBJECT) ;
+    }
+
+    // name given by GrB_set, or 'GrB_*' name for built-in operators
+    const char *given_name = GB_op_name_get (op) ;
+    if (given_name != NULL)
+    { 
+        GBPR0 ("    BinaryOp given name: [%s]\n", given_name) ;
     }
 
     info = GB_Type_check (op->ztype, "ztype", pr, f) ;

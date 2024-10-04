@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
+#include "get_set/GB_get_set.h"
 
 GrB_Info GB_IndexBinaryOp_check  // check a GraphBLAS index_binary operator
 (
@@ -52,6 +53,13 @@ GB_GOTCHA ; // index binary op, bad opcode
     int32_t actual_len = (int32_t) strlen (op->name) ;
     char *op_name = (actual_len > 0) ? op->name : "f" ;
     GBPR0 ("z=%s(x,ix,jx,y,iy,jy,theta)\n", op_name) ;
+
+    // name given by GrB_set, or 'GrB_*' name for built-in operators
+    const char *given_name = GB_op_name_get (op) ;
+    if (given_name != NULL)
+    { 
+        GBPR0 ("    IndexBinaryOp given name: [%s]\n", given_name) ;
+    }
 
     if (op->idxbinop_function == NULL)
     { 

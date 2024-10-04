@@ -38,6 +38,13 @@ GrB_Info GB_Context_check       // check a GraphBLAS Context
 
     GBPR0 ("\n") ;
 
+    // name given by GrB_set, or 'GrB_*' name for built-in objects
+    char *given_name = Context->user_name ;
+    if (Context->user_name_size > 0 && given_name != NULL)
+    { 
+        GBPR0 ("    Context given name: [%s]\n", given_name) ;
+    }
+
     int nthreads_max = GB_Context_nthreads_max_get (Context) ;
     GBPR0 ("    Context.nthreads: %d\n", nthreads_max) ;
 

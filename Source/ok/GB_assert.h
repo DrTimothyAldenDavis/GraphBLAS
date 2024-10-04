@@ -14,12 +14,6 @@
 #undef  GB_ABORT
 #define GB_ABORT GB_Global_abort ( )
 
-// HACK FIXME: turn off MATLAB abort for now
-#ifdef GBMATLAB
-#undef  GB_ABORT
-#define GB_ABORT ;
-#endif
-
 #undef ASSERT
 #undef ASSERT_OK
 #undef ASSERT_OK_OR_NULL
@@ -145,7 +139,7 @@
     ASSERT_OK_OR_NULL (GB_Operator_check (op, name, pr, NULL))
 
 #define ASSERT_MONOID_OK(mon,name,pr)  \
-    ASSERT_OK (GB_Monoid_check (mon, name, pr, NULL))
+    ASSERT_OK (GB_Monoid_check (mon, name, pr, NULL, false))
 
 #define ASSERT_SEMIRING_OK(s,name,pr)  \
     ASSERT_OK (GB_Semiring_check (s, name, pr, NULL))

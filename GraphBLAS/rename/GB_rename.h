@@ -273,6 +273,7 @@
 #define GB_ctrunc GM_ctrunc
 #define GB_cumsum GM_cumsum
 #define GB_demacrofy_name GM_demacrofy_name
+#define GB_desc_name_get GM_desc_name_get
 #define GB_Descriptor_check GM_Descriptor_check
 #define GB_Descriptor_get GM_Descriptor_get
 #define GB_deserialize_from_blob GM_deserialize_from_blob

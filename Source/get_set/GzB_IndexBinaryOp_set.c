@@ -35,7 +35,6 @@ GrB_Info GzB_IndexBinaryOp_set_String
     GrB_Field field
 )
 { 
-GB_GOTCHA ; // GrB_set index binary op, string
 
     //--------------------------------------------------------------------------
     // check inputs

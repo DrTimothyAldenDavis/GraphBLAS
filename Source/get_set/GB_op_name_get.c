@@ -1688,6 +1688,7 @@ const char *GB_op_name_get (GB_Operator op)
 
         case GB_USER_unop_code :
         case GB_USER_idxunop_code :
+        case GB_USER_idxbinop_code :
         case GB_USER_binop_code :   return (op->user_name) ;
 
         //----------------------------------------------------------------------
