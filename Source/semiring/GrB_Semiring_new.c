@@ -27,6 +27,9 @@
 // two input operands always appear in that order.  That is, the multiply
 // operator is not assumed to be commutative.
 
+// The multiply operator can be any GrB_BinaryOp, including ones created from a
+// GzB_IndexBinaryOp.
+
 #include "GB.h"
 #include "semiring/GB_Semiring_new.h"
 

@@ -297,6 +297,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             { 
                 // C(i,j) += scalar
                 GxB_binary_function faccum = accum->binop_function ;
+                ASSERT (faccum != NULL) ;
 
                 GB_cast_function cast_C_to_X, cast_Z_to_Y, cast_Z_to_C ;
                 cast_C_to_X = GB_cast_factory (accum->xtype->code, ctype->code);

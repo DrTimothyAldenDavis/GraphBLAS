@@ -58,6 +58,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     const GrB_Matrix A,     // input A matrix (bitmap/full)
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    const bool flipij,      // if true, i,j must be flipped
     GB_Werk Werk
 )
 {
@@ -248,7 +249,10 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     //--------------------------------------------------------------------------
 
     GB_Opcode opcode = op->opcode ;
-    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    bool op_is_builtin_positional =
+        GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
+    bool op_is_index_binop = GB_IS_INDEXBINARYOP_CODE (opcode) ;
+    bool op_is_positional = op_is_builtin_positional || op_is_index_binop ;
     bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
     bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
@@ -265,8 +269,8 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // Contrast with ewiseadd.
 
     // A is passed as x, and B as y, in z = op(x,y)
-    bool A_is_pattern = op_is_second || op_is_pair || op_is_positional ;
-    bool B_is_pattern = op_is_first  || op_is_pair || op_is_positional ;
+    bool A_is_pattern = op_is_second || op_is_pair || op_is_builtin_positional ;
+    bool B_is_pattern = op_is_first  || op_is_pair || op_is_builtin_positional ;
 
     //--------------------------------------------------------------------------
     // using a built-in binary operator (except for positional operators)
@@ -337,7 +341,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
 
     if (info == GrB_NO_VALUE)
     { 
-        info = GB_emult_04_jit (C, C_sparsity, M, Mask_struct, op,
+        info = GB_emult_04_jit (C, C_sparsity, M, Mask_struct, op, flipij,
             A, B, Cp_kfirst, M_ek_slicing, M_ntasks, M_nthreads) ;
     }
 
@@ -348,7 +352,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     if (info == GrB_NO_VALUE)
     { 
         GB_BURBLE_MATRIX (C, "(generic emult_04: %s) ", op->name) ;
-        info = GB_emult_generic (C, op, NULL, 0, 0,
+        info = GB_emult_generic (C, op, flipij, NULL, 0, 0,
             NULL, NULL, NULL, C_sparsity, GB_EMULT_METHOD4, Cp_kfirst,
             M_ek_slicing, M_ntasks, M_nthreads, NULL, 0, 0, NULL, 0, 0,
             M, Mask_struct, false, A, B) ;

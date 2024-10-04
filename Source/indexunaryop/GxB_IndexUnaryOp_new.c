@@ -10,7 +10,7 @@
 // Create a new a index_unary operator: z = f (x,i,j,thunk).  The
 // index_unary function signature must be:
 
-// void f (void *z, const void *x, int64_t i, int64_t j, const void *thunk)
+// void f (void *z, const void *x, uint64_t i, uint64_t j, const void *thunk)
 
 // and then it must recast its inputs (x and thunk) and output (z) arguments
 // internally as needed.  When used with a GrB_Vector, j is zero.
@@ -49,7 +49,7 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     //--------------------------------------------------------------------------
 
     size_t header_size ;
-    GrB_IndexUnaryOp op = GB_MALLOC (1, struct GB_IndexUnaryOp_opaque,
+    GrB_IndexUnaryOp op = GB_CALLOC (1, struct GB_IndexUnaryOp_opaque,
         &header_size) ;
     if (op == NULL)
     { 
@@ -110,7 +110,11 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
         {
             // unable to construct the function pointer
             GB_Op_free ((GB_Operator *) &op) ;
-            return (GrB_NULL_POINTER) ;
+            // If the JIT fails, it returns GrB_NO_VALUE or GrB_JIT_ERROR,
+            // depending on the GxB_JIT_ERROR_FALLBACK setting.  Convert
+            // GrB_NO_VALUE to GrB_NULL_POINTER (the function is NULL and
+            // cannot be compiled by the JIT).
+            return (info == GrB_NO_VALUE ? GrB_NULL_POINTER : info) ;
         }
         op->idxunop_function = (GxB_index_unary_function) user_function ;
         GB_BURBLE_END ;

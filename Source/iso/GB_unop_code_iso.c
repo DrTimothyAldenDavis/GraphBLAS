@@ -32,6 +32,7 @@ GB_iso_code GB_unop_code_iso    // return the iso status of C
 
     GB_Opcode opcode = GB_NOP_code ;
     if (op != NULL) opcode = op->opcode ;
+    ASSERT (!GB_IS_INDEXBINARYOP_CODE (opcode)) ;
 
     //--------------------------------------------------------------------------
     // positional ops or user-defined idxunops never result in an iso matrix

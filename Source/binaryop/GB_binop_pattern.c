@@ -30,12 +30,13 @@ void GB_binop_pattern
     // determine A_is_pattern and B_is_pattern
     //--------------------------------------------------------------------------
 
-    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    bool op_is_builtin_positional =
+        GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
     bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
     bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
 
-    if (op_is_positional || op_is_pair)
+    if (op_is_builtin_positional || op_is_pair)
     { 
         // mult (x,y) does not depend on the values of x or y
         (*A_is_pattern) = true ;

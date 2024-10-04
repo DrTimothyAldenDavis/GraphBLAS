@@ -31,7 +31,7 @@ GrB_Info GB_select_positional_bitmap
 
     GB_Opcode opcode = op->opcode ;
     ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
-    ASSERT (GB_OPCODE_IS_POSITIONAL (opcode)) ;
+    ASSERT (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)) ;
 
     //--------------------------------------------------------------------------
     // positional operators when C is bitmap

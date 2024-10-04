@@ -22,6 +22,7 @@ GrB_Info GB_emult_08_jit      // C<#M>=A.*B, emult_08, via the JIT
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *restrict C_to_M,
@@ -42,7 +43,7 @@ GrB_Info GB_emult_08_jit      // C<#M>=A.*B, emult_08, via the JIT
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_EMULT8, true,
         false, false, C_sparsity, C->type, M, Mask_struct, Mask_comp,
-        binaryop, false, A, B) ;
+        binaryop, flipij, false, A, B) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -61,6 +62,6 @@ GrB_Info GB_emult_08_jit      // C<#M>=A.*B, emult_08, via the JIT
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, M, Mask_struct, Mask_comp, A, B, C_to_M, C_to_A,
-        C_to_B, TaskList, C_ntasks, C_nthreads)) ;
+        C_to_B, TaskList, C_ntasks, C_nthreads, binaryop->theta)) ;
 }
 

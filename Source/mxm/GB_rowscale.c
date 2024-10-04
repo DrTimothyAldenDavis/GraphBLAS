@@ -90,8 +90,8 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     // C = D*B, row scale, compute numerical values
     //--------------------------------------------------------------------------
 
-    if (GB_OPCODE_IS_POSITIONAL (opcode))
-    { 
+    if (GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode))
+    {
 
         //----------------------------------------------------------------------
         // apply a positional operator: convert C=D*B to C=op(B)
@@ -196,7 +196,8 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         info = GrB_NO_VALUE ;
 
         #if defined ( GRAPHBLAS_HAS_CUDA )
-        if (GB_cuda_rowscale_branch (D, B, semiring, flipxy)) {
+        if (GB_cuda_rowscale_branch (D, B, semiring, flipxy))
+        {
             info = GB_cuda_rowscale (C, D, B, semiring, flipxy) ;
         }
         #endif
@@ -335,17 +336,48 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
 
             #include "ewise/include/GB_ewise_shared_definitions.h"
 
-            if (flipxy)
-            { 
-                #undef  GB_EWISEOP
-                #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),y,x)
-                #include "mxm/template/GB_rowscale_template.c"
+            if (fmult != NULL)
+            {
+                // conventional binary op
+                if (flipxy)
+                { 
+                    ASSERT (fmult != NULL) ;
+                    #undef  GB_EWISEOP
+                    #define GB_EWISEOP(Cx,p,y,x,j,i) fmult (Cx +((p)*csize),x,y)
+                    #include "mxm/template/GB_rowscale_template.c"
+                }
+                else
+                { 
+                    ASSERT (fmult != NULL) ;
+                    #undef  GB_EWISEOP
+                    #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),x,y)
+                    #include "mxm/template/GB_rowscale_template.c"
+                }
             }
             else
-            { 
-                #undef  GB_EWISEOP
-                #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),x,y)
-                #include "mxm/template/GB_rowscale_template.c"
+            {
+                // index binary op
+                GzB_index_binary_function fmult_idx = mult->idxbinop_function ;
+                ASSERT (fmult_idx != NULL) ;
+                ASSERT (GB_IS_INDEXBINARYOP_CODE (mult->opcode)) ;
+                const void *theta = mult->theta ;
+                if (flipxy)
+                { 
+GB_GOTCHA ; // generic rowscale, index binary op, flipped
+                    // flip both x,y and i,j
+                    #undef  GB_EWISEOP
+                    #define GB_EWISEOP(Cx,p,y,x,j,i) \
+                        fmult_idx (Cx +((p)*csize), x,i,j, y,i,j, theta)
+                    #include "mxm/template/GB_rowscale_template.c"
+                }
+                else
+                { 
+GB_GOTCHA ; // generic rowscale, index binary op, not flipped
+                    #undef  GB_EWISEOP
+                    #define GB_EWISEOP(Cx,p,x,y,i,j) \
+                        fmult_idx (Cx +((p)*csize), x,i,j, y,i,j, theta)
+                    #include "mxm/template/GB_rowscale_template.c"
+                }
             }
             info = GrB_SUCCESS ;
         }

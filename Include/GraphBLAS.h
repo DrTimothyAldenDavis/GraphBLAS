@@ -1,4 +1,4 @@
-// SuiteSparse:GraphBLAS 9.3.2
+// SuiteSparse:GraphBLAS 9.4.0
 //------------------------------------------------------------------------------
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
@@ -153,7 +153,7 @@
 //------------------------------------------------------------------------------
 
 #ifndef GRAPHBLAS_HAS_CUDA
-#define GRAPHBLAS_HAS_CUDA
+/* #undef GRAPHBLAS_HAS_CUDA */
 #endif
 
 //------------------------------------------------------------------------------
@@ -275,10 +275,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Sept XX, 2024"
+#define GxB_IMPLEMENTATION_DATE "Month XXX, 2024"
 #define GxB_IMPLEMENTATION_MAJOR 9
-#define GxB_IMPLEMENTATION_MINOR 3
-#define GxB_IMPLEMENTATION_SUB   2
+#define GxB_IMPLEMENTATION_MINOR 4
+#define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "Dec 22, 2023"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 1
@@ -382,7 +382,8 @@ typedef enum
     GrB_INSUFFICIENT_SPACE = -103,  // output array not large enough
     GrB_INVALID_OBJECT = -104,      // object is corrupted
     GrB_INDEX_OUT_OF_BOUNDS = -105, // row or col index out of bounds
-    GrB_EMPTY_OBJECT = -106         // an object does not contain a value
+    GrB_EMPTY_OBJECT = -106,        // an object does not contain a value
+    GxB_JIT_ERROR = -1001,          // JIT compiler/loader error
 
 }
 GrB_Info ;
@@ -1220,6 +1221,28 @@ GB_GLOBAL GrB_BinaryOp GxB_IGNORE_DUP ;
 typedef void (*GxB_binary_function) (void *, const void *, const void *) ;
 
 //==============================================================================
+// GzB_IndexBinaryOp: index binary operators
+//==============================================================================
+
+// GzB_IndexBinaryOp: a function z=f(x,ia,jb, y,ib,jb, theta).  The function f
+// must have the signature:
+
+//      void f (void *z, const void *x, GrB_Index ix, GrB_Index jx,
+//                       const void *y, GrB_Index iy, GrB_Index jy,
+//                       const void *theta) ;
+
+// The pointers are void * but they are always of pointers to objects of type
+// ztype, xtype, ytype, and theta_type, respectively.
+// for examples.
+
+typedef struct GB_IndexBinaryOp_opaque *GzB_IndexBinaryOp ;
+
+typedef void (*GzB_index_binary_function) (void *,
+    const void *, GrB_Index, GrB_Index,
+    const void *, GrB_Index, GrB_Index,
+    const void *) ;
+
+//==============================================================================
 // GxB_SelectOp: select operators (DEPRECATED: do not use)
 //==============================================================================
 
@@ -1441,6 +1464,7 @@ typedef enum            // for global options or matrix options
     GxB_JIT_C_CMAKE_LIBS = 7031,     // CPU JIT C libraries when using cmake
     GxB_JIT_USE_CMAKE = 7032,        // CPU JIT: use cmake or direct compile
     GxB_JIT_ERROR_LOG = 7033,        // CPU JIT: error log file
+    GxB_JIT_ERROR_FALLBACK = 7049,   // CPU JIT: error fallback
 
     GxB_JIT_CUDA_PREFACE = 7100,     // CUDA JIT C++ preface
 
@@ -1637,7 +1661,8 @@ typedef enum
     // SuiteSparse extensions:
     //--------------------------------------------------------------------------
 
-    // GrB_Type, GrB_UnaryOp, GrB_BinaryOp, and GrB_IndexUnaryOp:
+    // GrB_Type, GrB_UnaryOp, GrB_BinaryOp, GrB_IndexUnaryOp,
+    // and GzB_IndexBinaryOp
     GxB_JIT_C_NAME = 7041,          // C type or function name
     GxB_JIT_C_DEFINITION = 7042,    // C typedef or function definition
 
@@ -1649,6 +1674,13 @@ typedef enum
     // GrB_Semiring only:
     GxB_SEMIRING_MONOID = 7046,     // semiring monoid
     GxB_SEMIRING_MULTIPLY = 7047,   // semiring multiplicative op
+
+    // GrB_BinaryOp and GzB_IndexBinaryOp:
+    GzB_THETA_TYPE_CODE = 7050,     // for binary and index binary ops
+    GzB_THETA_TYPE_STRING = 7051,
+
+    // GrB_BinaryOp only:
+    GzB_THETA = 7052,               // to get the value of theta
 }
 GrB_Field ;
 
@@ -2966,6 +2998,48 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 ) ;
 
 //==============================================================================
+// GzB_IndexBinaryOp: index binary operators
+//==============================================================================
+
+// GzB_IndexBinaryOp_new creates a user-defined index binary op; no name or defn
+GrB_Info GzB_IndexBinaryOp_new
+(
+    GzB_IndexBinaryOp *op,          // handle for the new index binary operator
+    GzB_index_binary_function function, // pointer to the index binary function
+    GrB_Type ztype,                 // type of output z
+    GrB_Type xtype,                 // type of input x
+    GrB_Type ytype,                 // type of input y
+    GrB_Type theta_type             // type of input theta
+) ;
+
+// GzB_IndexBinaryOp_new creates a user-defined index binary op; with a name
+// and defn
+GrB_Info GzB_IndexBinaryOp_new2
+(
+    GzB_IndexBinaryOp *op,          // handle for the new index binary operator
+    GzB_index_binary_function function, // pointer to the index binary function
+    GrB_Type ztype,                 // type of output z
+    GrB_Type xtype,                 // type of input x
+    GrB_Type ytype,                 // type of input y
+    GrB_Type theta_type,            // type of input theta
+    const char *idxbinop_name,      // name of the user function
+    const char *idxbinop_defn       // definition of the user function
+) ;
+
+GrB_Info GzB_IndexBinaryOp_free     // free a user-created index binary operator
+(
+    GzB_IndexBinaryOp *op           // handle of index binary operator to free
+) ;
+
+// GzB_BinaryOp_IndexOp_new: create a new binary op from an index binary op
+GrB_Info GzB_BinaryOp_IndexOp_new
+(
+    GrB_BinaryOp *binop,            // handle of binary op to create
+    GzB_IndexBinaryOp idxbinop,     // based on this index binary op
+    GrB_Scalar theta                // theta value to bind to the new binary op
+) ;
+
+//==============================================================================
 // GxB_SelectOp: select operators (DEPRECATED: do not use)
 //==============================================================================
 
@@ -3012,6 +3086,9 @@ GrB_Info GrB_IndexUnaryOp_free  // free a user-created IndexUnaryOp
 //==============================================================================
 // GrB_Monoid
 //==============================================================================
+
+// The GrB_BinaryOp must be associative and commutative (but this cannot be
+// checked).  It cannot be based on a GzB_IndexBinaryOp.
 
 GrB_Info GrB_Monoid_new_BOOL        // create a new boolean monoid
 (
@@ -3284,6 +3361,9 @@ GrB_Info GrB_Monoid_free            // free a user-created monoid
 //==============================================================================
 // GrB_Semiring
 //==============================================================================
+
+// The multiply op can be any GrB_BinaryOp, including those based on a
+// GzB_IndexBinaryOp.
 
 GrB_Info GrB_Semiring_new           // create a semiring
 (
@@ -3678,6 +3758,8 @@ GrB_Info GrB_Vector_free    // free a vector
 
 // GrB_Vector_build:  w = sparse (I,1,X), but using any
 // associative operator to assemble duplicate entries.
+
+// The dup operator cannot be based on a GzB_IndexBinaryOp.
 
 GrB_Info GrB_Vector_build_BOOL      // build a vector from (I,X) tuples
 (
@@ -4344,6 +4426,7 @@ GrB_Info GrB_Matrix_free    // free a matrix
 
 // GrB_Matrix_build:  C = sparse (I,J,X), but using any
 // associative operator to assemble duplicate entries.
+// The dup operator cannot be based on a GzB_IndexBinaryOp.
 
 GrB_Info GrB_Matrix_build_BOOL      // build a matrix from (I,J,X) tuples
 (
@@ -5263,6 +5346,17 @@ GrB_Info GrB_BinaryOp_get_INT32  (GrB_BinaryOp, int32_t * , GrB_Field) ;
 GrB_Info GrB_BinaryOp_get_SIZE   (GrB_BinaryOp, size_t *  , GrB_Field) ;
 GrB_Info GrB_BinaryOp_get_VOID   (GrB_BinaryOp, void *    , GrB_Field) ;
 
+GrB_Info GzB_IndexBinaryOp_get_Scalar (GzB_IndexBinaryOp, GrB_Scalar,
+    GrB_Field) ;
+GrB_Info GzB_IndexBinaryOp_get_String (GzB_IndexBinaryOp, char *    ,
+    GrB_Field) ;
+GrB_Info GzB_IndexBinaryOp_get_INT32  (GzB_IndexBinaryOp, int32_t * ,
+    GrB_Field) ;
+GrB_Info GzB_IndexBinaryOp_get_SIZE   (GzB_IndexBinaryOp, size_t *  ,
+    GrB_Field) ;
+GrB_Info GzB_IndexBinaryOp_get_VOID   (GzB_IndexBinaryOp, void *    ,
+    GrB_Field) ;
+
 GrB_Info GrB_Monoid_get_Scalar (GrB_Monoid, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Monoid_get_String (GrB_Monoid, char *    , GrB_Field) ;
 GrB_Info GrB_Monoid_get_INT32  (GrB_Monoid, int32_t * , GrB_Field) ;
@@ -5364,6 +5458,16 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                         int32_t *   : GrB_BinaryOp_get_INT32  ,             \
                         size_t *    : GrB_BinaryOp_get_SIZE   ,             \
                         void *      : GrB_BinaryOp_get_VOID                 \
+                ) ,                                                         \
+            GzB_IndexBinaryOp :                                             \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GzB_IndexBinaryOp_get_Scalar ,        \
+                        char *      : GzB_IndexBinaryOp_get_String ,        \
+                        int32_t *   : GzB_IndexBinaryOp_get_INT32  ,        \
+                        size_t *    : GzB_IndexBinaryOp_get_SIZE   ,        \
+                        void *      : GzB_IndexBinaryOp_get_VOID            \
                 ) ,                                                         \
             GrB_Monoid :                                                    \
                 _Generic                                                    \
@@ -5476,12 +5580,21 @@ GrB_Info GrB_IndexUnaryOp_set_Scalar (GrB_IndexUnaryOp, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_IndexUnaryOp_set_String (GrB_IndexUnaryOp, char *    , GrB_Field) ;
 GrB_Info GrB_IndexUnaryOp_set_INT32  (GrB_IndexUnaryOp, int32_t   , GrB_Field) ;
 GrB_Info GrB_IndexUnaryOp_set_VOID   (GrB_IndexUnaryOp, void *    , GrB_Field,
-                                                                    size_t) ;
+    size_t) ;
 
 GrB_Info GrB_BinaryOp_set_Scalar (GrB_BinaryOp, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_BinaryOp_set_String (GrB_BinaryOp, char *    , GrB_Field) ;
 GrB_Info GrB_BinaryOp_set_INT32  (GrB_BinaryOp, int32_t   , GrB_Field) ;
 GrB_Info GrB_BinaryOp_set_VOID   (GrB_BinaryOp, void *    , GrB_Field, size_t) ;
+
+GrB_Info GzB_IndexBinaryOp_set_Scalar (GzB_IndexBinaryOp, GrB_Scalar,
+    GrB_Field) ;
+GrB_Info GzB_IndexBinaryOp_set_String (GzB_IndexBinaryOp, char *    ,
+    GrB_Field) ;
+GrB_Info GzB_IndexBinaryOp_set_INT32  (GzB_IndexBinaryOp, int32_t   ,
+    GrB_Field) ;
+GrB_Info GzB_IndexBinaryOp_set_VOID   (GzB_IndexBinaryOp, void *    ,
+    GrB_Field, size_t) ;
 
 GrB_Info GrB_Monoid_set_Scalar (GrB_Monoid, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Monoid_set_String (GrB_Monoid, char *    , GrB_Field) ;
@@ -5574,6 +5687,15 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
                         int32_t     : GrB_BinaryOp_set_INT32  ,             \
                         void *      : GrB_BinaryOp_set_VOID                 \
                 ) ,                                                         \
+            GzB_IndexBinaryOp :                                             \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GzB_IndexBinaryOp_set_Scalar ,        \
+                        char *      : GzB_IndexBinaryOp_set_String ,        \
+                        int32_t     : GzB_IndexBinaryOp_set_INT32  ,        \
+                        void *      : GzB_IndexBinaryOp_set_VOID            \
+                ) ,                                                         \
             GrB_Monoid :                                                    \
                 _Generic                                                    \
                 (                                                           \
@@ -5644,6 +5766,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
             GrB_UnaryOp      *: GrB_UnaryOp_free      , \
             GrB_BinaryOp     *: GrB_BinaryOp_free     , \
             GrB_IndexUnaryOp *: GrB_IndexUnaryOp_free , \
+            GzB_IndexBinaryOp*: GzB_IndexBinaryOp_free, \
             GrB_Monoid       *: GrB_Monoid_free       , \
             GrB_Semiring     *: GrB_Semiring_free     , \
             GrB_Scalar       *: GrB_Scalar_free       , \
@@ -5666,6 +5789,7 @@ GrB_Info GrB_Type_wait         (GrB_Type       type    , GrB_WaitMode waitmode);
 GrB_Info GrB_UnaryOp_wait      (GrB_UnaryOp    op      , GrB_WaitMode waitmode);
 GrB_Info GrB_BinaryOp_wait     (GrB_BinaryOp   op      , GrB_WaitMode waitmode);
 GrB_Info GrB_IndexUnaryOp_wait (GrB_IndexUnaryOp op    , GrB_WaitMode waitmode);
+GrB_Info GzB_IndexBinaryOp_wait(GzB_IndexBinaryOp op   , GrB_WaitMode waitmode);
 GrB_Info GrB_Monoid_wait       (GrB_Monoid     monoid  , GrB_WaitMode waitmode);
 GrB_Info GrB_Semiring_wait     (GrB_Semiring   semiring, GrB_WaitMode waitmode);
 GrB_Info GrB_Descriptor_wait   (GrB_Descriptor desc    , GrB_WaitMode waitmode);
@@ -5684,6 +5808,7 @@ GrB_Info GxB_Context_wait      (GxB_Context    Context , GrB_WaitMode waitmode);
             GrB_UnaryOp      : GrB_UnaryOp_wait      ,  \
             GrB_BinaryOp     : GrB_BinaryOp_wait     ,  \
             GrB_IndexUnaryOp : GrB_IndexUnaryOp_wait ,  \
+            GzB_IndexBinaryOp: GzB_IndexBinaryOp_wait,  \
             GrB_Monoid       : GrB_Monoid_wait       ,  \
             GrB_Semiring     : GrB_Semiring_wait     ,  \
             GrB_Scalar       : GrB_Scalar_wait       ,  \
@@ -5710,13 +5835,18 @@ GrB_Info GxB_Scalar_wait (GrB_Scalar *s) ;
 GrB_Info GrB_Type_error         (const char **error, const GrB_Type      type) ;
 GrB_Info GrB_UnaryOp_error      (const char **error, const GrB_UnaryOp     op) ;
 GrB_Info GrB_BinaryOp_error     (const char **error, const GrB_BinaryOp    op) ;
-GrB_Info GrB_IndexUnaryOp_error (const char **error, const GrB_IndexUnaryOp op) ;
+GrB_Info GrB_IndexUnaryOp_error (const char **error,
+    const GrB_IndexUnaryOp op) ;
+GrB_Info GzB_IndexBinaryOp_error(const char **error,
+    const GzB_IndexBinaryOp op);
 GrB_Info GrB_Monoid_error       (const char **error, const GrB_Monoid monoid) ;
-GrB_Info GrB_Semiring_error     (const char **error, const GrB_Semiring semiring) ;
+GrB_Info GrB_Semiring_error     (const char **error, const GrB_Semiring
+    semiring) ;
 GrB_Info GrB_Scalar_error       (const char **error, const GrB_Scalar     s) ;
 GrB_Info GrB_Vector_error       (const char **error, const GrB_Vector     v) ;
 GrB_Info GrB_Matrix_error       (const char **error, const GrB_Matrix     A) ;
 GrB_Info GrB_Descriptor_error   (const char **error, const GrB_Descriptor d) ;
+
 // GxB_Scalar_error is historical: use GrB_Scalar_error instead
 GrB_Info GxB_Scalar_error       (const char **error, const GrB_Scalar     s) ;
 GrB_Info GxB_Context_error      (const char **error, const GxB_Context Context);
@@ -5731,6 +5861,7 @@ GrB_Info GxB_Context_error      (const char **error, const GxB_Context Context);
                   GrB_UnaryOp      : GrB_UnaryOp_error      ,   \
                   GrB_BinaryOp     : GrB_BinaryOp_error     ,   \
                   GrB_IndexUnaryOp : GrB_IndexUnaryOp_error ,   \
+                  GzB_IndexBinaryOp: GzB_IndexBinaryOp_error,   \
                   GrB_Monoid       : GrB_Monoid_error       ,   \
                   GrB_Semiring     : GrB_Semiring_error     ,   \
                   GrB_Scalar       : GrB_Scalar_error       ,   \
@@ -5745,6 +5876,8 @@ GrB_Info GxB_Context_error      (const char **error, const GxB_Context Context);
 //==============================================================================
 // GrB_mxm, vxm, mxv: matrix multiplication over a semiring
 //==============================================================================
+
+// No accum operator in any method can be based on a GzB_IndexBinaryOp.
 
 GrB_Info GrB_mxm                    // C<Mask> = accum (C, A*B)
 (
@@ -5786,6 +5919,8 @@ GrB_Info GrB_mxv                    // w<Mask> = accum (w, A*u)
 // GrB_eWiseMult computes C<Mask> = accum (C, A.*B), where ".*" is the Hadamard
 // product, and where pairs of elements in two matrices (or vectors) are
 // pairwise "multiplied" with C(i,j) = mult (A(i,j),B(i,j)).
+
+// The mult operator can be based on a GzB_IndexBinaryOp.
 
 GrB_Info GrB_Vector_eWiseMult_Semiring       // w<Mask> = accum (w, u.*v)
 (
@@ -9250,6 +9385,14 @@ GrB_Info GxB_IndexUnaryOp_fprint    // print and check a GrB_IndexUnaryOp
     FILE *f                         // file for output
 ) ;
 
+GrB_Info GzB_IndexBinaryOp_fprint   // print and check a GzB_IndexBinaryOp
+(
+    GzB_IndexBinaryOp op,           // object to print and check
+    const char *name,               // name of the object
+    GxB_Print_Level pr,             // print level
+    FILE *f                         // file for output
+) ;
+
 GrB_Info GxB_SelectOp_fprint (GxB_SelectOp op, const char *name,
     GxB_Print_Level pr, FILE *f) ;
 
@@ -9318,6 +9461,7 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
                   GrB_UnaryOp      : GxB_UnaryOp_fprint      ,  \
                   GrB_BinaryOp     : GxB_BinaryOp_fprint     ,  \
                   GrB_IndexUnaryOp : GxB_IndexUnaryOp_fprint ,  \
+                  GzB_IndexBinaryOp: GzB_IndexBinaryOp_fprint,  \
                   GxB_SelectOp     : GxB_SelectOp_fprint     ,  \
                   GrB_Monoid       : GxB_Monoid_fprint       ,  \
                   GrB_Semiring     : GxB_Semiring_fprint     ,  \

@@ -61,6 +61,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    const bool flipij,      // if true, i,j must be flipped
     GB_Werk Werk
 )
 {
@@ -174,7 +175,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
             return (GB_add (C, ctype, C_is_csc, M, Mask_struct,
                 Mask_comp, mask_applied, A, B, false, NULL, NULL,
-                op, false, Werk)) ;
+                op, flipij, false, Werk)) ;
 
         case GB_EMULT_METHOD2 :  // A sparse/hyper, B bitmap/full
 
@@ -210,7 +211,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
             return (GB_emult_02 (C, ctype, C_is_csc,
                 (apply_mask) ? M : NULL, Mask_struct, Mask_comp,
-                A, B, op, Werk)) ;
+                A, B, op, flipij, Werk)) ;
 
         case GB_EMULT_METHOD3 :  // A bitmap/full, B sparse/hyper
 
@@ -252,14 +253,14 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
                 // GB_binop_factory.
                 return (GB_emult_02 (C, ctype, C_is_csc,
                     (apply_mask) ? M : NULL, Mask_struct, Mask_comp,
-                    B, A, op, Werk)) ;
+                    B, A, op, flipij, Werk)) ;
             }
             else
             {
                 // the op is not commutative: use GB_emult_03
                 return (GB_emult_03 (C, ctype, C_is_csc,
                     (apply_mask) ? M : NULL, Mask_struct, Mask_comp,
-                    A, B, op, Werk)) ;
+                    A, B, op, flipij, Werk)) ;
             }
 
         case GB_EMULT_METHOD8 : 
@@ -337,7 +338,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
             return (GB_emult_bitmap (C, ewise_method, ctype, C_is_csc,
                 M, Mask_struct, Mask_comp, mask_applied, A, B,
-                op, Werk)) ;
+                op, flipij, Werk)) ;
 
         case GB_EMULT_METHOD4 : 
 
@@ -350,7 +351,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      sparse  sparse      full            full    (GB_add or 4)
 
             return (GB_emult_04 (C, ctype, C_is_csc, M, Mask_struct,
-                mask_applied, A, B, op, Werk)) ;
+                mask_applied, A, B, op, flipij, Werk)) ;
 
         case GB_EMULT_METHOD9 : break ; // punt
 
@@ -455,7 +456,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
     GB_OK (GB_emult_08_phase2 (
         // computed or used by phase2:
-        C, ctype, C_is_csc, op,
+        C, ctype, C_is_csc, op, flipij,
         // from phase1:
         &Cp, Cp_size, Cnvec_nonempty,
         // from phase1a:

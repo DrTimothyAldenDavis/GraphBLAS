@@ -89,6 +89,7 @@ void mexFunction
 
 if (jit_enabled)
 {
+    printf ("JIT enabled:\n") ;
 
     OK (GrB_Matrix_new (&A, GrB_FP32, 3, 4)) ;
     OK (GrB_assign (A, NULL, NULL, 1, GrB_ALL, 3, GrB_ALL, 4, NULL)) ;
@@ -258,7 +259,12 @@ if (jit_enabled)
     OK (GrB_free (&MyType)) ;
 
     printf ("\n--------------------------- intentional compile errors:\n") ;
-    expected = GrB_INVALID_VALUE ;
+
+    int error_fallback ;
+    OK (GxB_Global_Option_get_INT32 (GxB_JIT_ERROR_FALLBACK, &error_fallback)) ;
+    printf ("error_fallback: %d\n", error_fallback) ;
+
+    expected = error_fallback ? GrB_INVALID_VALUE : GxB_JIT_ERROR ;
     ERR (GxB_Type_new (&MyType, 0, "mytype2", "garbage")) ;
     CHECK (MyType == NULL) ;
     printf ("\n-------------------------------------------------------\n\n") ;
@@ -276,7 +282,6 @@ if (jit_enabled)
     printf ("new error log: [%s]\n", t) ;
     CHECK (MATCH (t, "/tmp/grb_error_log.txt")) ;
 
-    expected = GrB_INVALID_VALUE ;
     ERR (GxB_Type_new (&MyType, 0, "mytype2", "garbage")) ;
     CHECK (MyType == NULL) ;
 
@@ -291,7 +296,6 @@ if (jit_enabled)
     CHECK (MATCH (s, "/tmp/grberr2.txt")) ;
 
     OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
-    expected = GrB_INVALID_VALUE ;
     ERR (GxB_Type_new (&MyType, 0, "mytype2", "more garbage")) ;
     CHECK (MyType == NULL) ;
 
@@ -478,6 +482,8 @@ if (jit_enabled)
 
 if (jit_enabled)
 {
+    printf ("JIT enabled:\n") ;
+
     bool ok = GB_file_mkdir (NULL) ;
     CHECK (!ok) ;
     ok = GB_file_unlock_and_close (NULL, NULL) ;

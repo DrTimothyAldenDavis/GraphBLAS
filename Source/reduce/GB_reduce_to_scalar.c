@@ -269,6 +269,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             #include "generic/GB_generic.h"
 
             GxB_binary_function freduce = monoid->op->binop_function ;
+            ASSERT (freduce != NULL) ;
 
             // ztype z = identity
             #define GB_DECLARE_IDENTITY(z)                          \
@@ -413,6 +414,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
     else
     { 
         GxB_binary_function faccum = accum->binop_function ;
+        ASSERT (faccum != NULL) ;
 
         GB_cast_function cast_C_to_xaccum, cast_Z_to_yaccum, cast_zaccum_to_C ;
         cast_C_to_xaccum = GB_cast_factory (accum->xtype->code, ctype->code) ;

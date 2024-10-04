@@ -79,6 +79,12 @@ GrB_Info GxB_Global_Option_set_INT32      // set a global default option
             GB_jitifyer_set_use_cmake ((bool) value) ;
             break ;
 
+        case GxB_JIT_ERROR_FALLBACK : 
+
+GB_GOTCHA ; // set jit error fallback
+            GB_jitifyer_set_error_fallback ((bool) value) ;
+            break ;
+
         case GxB_JIT_C_CONTROL : 
 
             GB_jitifyer_set_control ((int) value) ;
@@ -564,6 +570,17 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 int value = va_arg (ap, int) ;
                 va_end (ap) ;
                 GB_jitifyer_set_use_cmake ((bool) value) ;
+            }
+            break ;
+
+        case GxB_JIT_ERROR_FALLBACK : 
+
+            {
+GB_GOTCHA ; // set jit error fallback
+                va_start (ap, field) ;
+                int value = va_arg (ap, int) ;
+                va_end (ap) ;
+                GB_jitifyer_set_error_fallback ((bool) value) ;
             }
             break ;
 

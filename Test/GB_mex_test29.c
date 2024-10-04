@@ -201,6 +201,14 @@ void mexFunction
     CHECK (i == 1) ;
     OK (GrB_Global_set_INT32_ (GrB_GLOBAL, use_cmake, (GrB_Field) GxB_JIT_USE_CMAKE)) ;
 
+    int32_t error_fallback ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &error_fallback, (GrB_Field) GxB_JIT_ERROR_FALLBACK)) ;
+    printf ("jit error fallback: %d\n", error_fallback) ;
+    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, 1, (GrB_Field) GxB_JIT_ERROR_FALLBACK)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i,(GrB_Field)  GxB_JIT_ERROR_FALLBACK)) ;
+    CHECK (i == 1) ;
+    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, error_fallback, (GrB_Field) GxB_JIT_ERROR_FALLBACK)) ;
+
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Global_set_INT32_ (GrB_GLOBAL, 1, GrB_BLOCKING_MODE)) ;
     expected = GrB_EMPTY_OBJECT ;

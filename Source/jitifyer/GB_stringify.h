@@ -134,6 +134,7 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const bool flipxy,
     const GrB_Matrix A,
     const GrB_Matrix B
@@ -158,7 +159,8 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool Mask_comp,         // mask is complemented
     // operator:
     GrB_BinaryOp binaryop,  // the binary operator to enumify
-    bool flipxy,            // multiplier is: op(a,b) or op(b,a)
+    bool flipij,            // multiplier is: op(a,b,i,j) or op(a,b,j,i)
+    bool flipxy,            // multiplier is: op(a,b,i,j) or op(b,a,j,i)
     // A and B:
     GrB_Matrix A,           // NULL for unary apply with binop, bind 1st
     GrB_Matrix B            // NULL for unary apply with binop, bind 2nd
@@ -186,6 +188,7 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool Ch_is_Mh,
@@ -216,6 +219,7 @@ GrB_Info GB_union_jit      // C=A+B, C<#M>=A+B, eWiseUnion, via the JIT
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const GB_void *alpha_scalar_in,
@@ -248,6 +252,7 @@ GrB_Info GB_emult_08_jit      // C<#M>=A.*B, emult_08, via the JIT
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *restrict C_to_M,
@@ -268,6 +273,7 @@ GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *restrict Cp_kfirst,
@@ -286,6 +292,7 @@ GrB_Info GB_emult_03_jit      // C<#M>=A.*B, emult_03, via the JIT
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *restrict Cp_kfirst,
@@ -303,6 +310,7 @@ GrB_Info GB_emult_04_jit      // C<M>=A.*B, emult_04, via the JIT
     const GrB_Matrix M,
     const bool Mask_struct,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *restrict Cp_kfirst,
@@ -320,6 +328,7 @@ GrB_Info GB_emult_bitmap_jit      // C<#M>=A.*B, emult_bitmap, via the JIT
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *M_ek_slicing,
@@ -700,6 +709,7 @@ void GB_macrofy_binop
     FILE *fp,
     // input:
     const char *macro_name,
+    bool flipij,                // if true: op is f(x,y,j,i) for ewise ops
     bool flipxy,                // if true: op is f(y,x) for a semiring
     bool is_monoid_or_build,    // if true: additive operator for monoid,
                                 // or binary op for GrB_Matrix_build, or

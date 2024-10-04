@@ -27,6 +27,7 @@ GrB_Info GB_emult_generic       // generic emult
     GrB_Matrix C,           // output matrix, static header
     // input:
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    const bool flipij,      // if true, i,j must be flipped
     // tasks from phase1a:
     const GB_task_struct *restrict TaskList,  // array of structs
     const int C_ntasks,                         // # of tasks
@@ -77,14 +78,19 @@ GrB_Info GB_emult_generic       // generic emult
 
     GB_Opcode opcode = op->opcode ;
 
-    const bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    const bool op_is_builtin_positional =
+        GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
+    const bool op_is_index_binop = GB_IS_INDEXBINARYOP_CODE (opcode) ;
     const bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
     const bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     const bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
-    const bool A_is_pattern = (op_is_second || op_is_pair || op_is_positional) ;
-    const bool B_is_pattern = (op_is_first  || op_is_pair || op_is_positional) ;
+    const bool A_is_pattern = (op_is_second || op_is_pair
+        || op_is_builtin_positional) ;
+    const bool B_is_pattern = (op_is_first  || op_is_pair
+        || op_is_builtin_positional) ;
 
     const GxB_binary_function fop = op->binop_function ; // NULL if positional
+    const GzB_index_binary_function fop_idx = op->idxbinop_function ;
     const size_t csize = ctype->size ;
     const size_t asize = A->type->size ;
     const size_t bsize = B->type->size ;
@@ -136,89 +142,83 @@ GrB_Info GB_emult_generic       // generic emult
     #undef  GB_PUTC
     #define GB_PUTC(z, Cx, p) cast_Z_to_C (Cx +((p)*csize), &z, csize)
 
-    if (op_is_positional)
+    // C(i,j) = (ctype) (A(i,j) + B(i,j))
+    #undef  GB_EWISEOP
+    #define GB_EWISEOP(Cx, p, aij, bij, i, j)       \
+    {                                               \
+        GB_void z [GB_VLA(zsize)] ;                 \
+        GB_BINOP (z, aij, bij, i, j) ;              \
+        GB_PUTC (z, Cx, p) ;                        \
+    }
+
+    if (fop_idx != NULL)
     {
 
         //----------------------------------------------------------------------
-        // C(i,j) = positional_op (aij, bij)
+        // index binary operator
         //----------------------------------------------------------------------
 
-        bool depends_on_j ;
-        const int64_t offset = GB_positional_offset (opcode, NULL,
-            &depends_on_j) ;
-        const bool index_is_i = 
-            (opcode == GB_FIRSTI_binop_code  ) ||
-            (opcode == GB_FIRSTI1_binop_code ) ||
-            (opcode == GB_SECONDI_binop_code ) ||
-            (opcode == GB_SECONDI1_binop_code) ;
+        const void *theta = op->theta ;
 
-        if (op->ztype == GrB_INT64)
+        if (flipij)
         {
-
-            // z = op (aij, bij)
+            // z = op (aij, bij, j, i)
             #undef  GB_BINOP
-            #define GB_BINOP(z,x,y,i,j)                             \
-                z = ((index_is_i)? (i):(j)) + offset
-
-            // C(i,j) = positional_op (aij, bij)
-            #undef  GB_EWISEOP
-            #define GB_EWISEOP(Cx, p, aij, bij, i, j)               \
-            {                                                       \
-                int64_t z ;                                         \
-                GB_BINOP (z, , , i, j) ;                            \
-                GB_PUTC (z, Cx, p) ;                                \
-            }
-
+            #define GB_BINOP(z, aij, bij, j, i)             \
+                fop_idx (z, aij, i, j, bij, i, j, theta) ;
+            // C(i,j) = (ctype) (A(i,j) + B(i,j))
             if (ewise_method == GB_EMULT_METHOD2)
             { 
+GB_GOTCHA ; // emult generic with flipij, method2
+                // emult method 2 (abc)
                 // C=A.*B or C<#M>=A.*B; A sparse/hyper; M and B bitmap/full
                 // C is sparse
                 #include "ewise/template/GB_emult_02_template.c"
             }
             else if (ewise_method == GB_EMULT_METHOD3)
             { 
+GB_GOTCHA ; // emult generic with flipij, method3
+                // emult method 3 (abc)
                 // C=A.*B or C<#M>=A.*B; B sparse/hyper; M and A bitmap/full
                 // C is sparse
                 #include "ewise/template/GB_emult_03_template.c"
             }
             else if (ewise_method == GB_EMULT_METHOD4)
             { 
+GB_GOTCHA ; // emult generic with flipij, method4
                 // C<M>=A.*B; M sparse/hyper, A and B bitmap/full
                 // C is sparse
                 #include "ewise/template/GB_emult_04_template.c"
             }
             else if (C_sparsity == GxB_BITMAP)
             { 
+GB_GOTCHA ; // emult generic with flipij, bitmap method
                 // C is bitmap: emult methods 5, 6, or 7
                 #include "ewise/template/GB_emult_bitmap_template.c"
             }
             else
             { 
+GB_GOTCHA ; // emult generic with flipij, method8
                 // C is sparse: emult method 8 (abcdefgh)
                 #include "ewise/template/GB_emult_08_meta.c"
             }
         }
         else
         {
-
-            // C(i,j) = positional_op (aij, bij)
-            #undef  GB_EWISEOP
-            #define GB_EWISEOP(Cx, p, aij, bij, i, j)               \
-            {                                                       \
-                int64_t z ;                                         \
-                GB_BINOP (z, , , i, j) ;                            \
-                int32_t z32 = (int32_t) z ;                         \
-                GB_PUTC (z32, Cx, p) ;                              \
-            }
-
+            // z = op (aij, bij, i, j)
+            #undef  GB_BINOP
+            #define GB_BINOP(z, aij, bij, i, j)             \
+                fop_idx (z, aij, i, j, bij, i, j, theta) ;
             if (ewise_method == GB_EMULT_METHOD2)
             { 
+                // emult method 2 (abc)
                 // C=A.*B or C<#M>=A.*B; A sparse/hyper; M and B bitmap/full
                 // C is sparse
                 #include "ewise/template/GB_emult_02_template.c"
             }
             else if (ewise_method == GB_EMULT_METHOD3)
             { 
+                // emult method 3 (abc)
                 // C=A.*B or C<#M>=A.*B; B sparse/hyper; M and A bitmap/full
                 // C is sparse
                 #include "ewise/template/GB_emult_03_template.c"
@@ -254,15 +254,6 @@ GrB_Info GB_emult_generic       // generic emult
         #define GB_BINOP(z, aij, bij, i, j)             \
             ASSERT (fop != NULL) ;                      \
             fop (z, aij, bij) ;
-
-        // C(i,j) = (ctype) (A(i,j) + B(i,j))
-        #undef  GB_EWISEOP
-        #define GB_EWISEOP(Cx, p, aij, bij, i, j)       \
-        {                                               \
-            GB_void z [GB_VLA(zsize)] ;                 \
-            GB_BINOP (z, aij, bij, i, j) ;              \
-            GB_PUTC (z, Cx, p) ;                        \
-        }
 
         // C(i,j) = (ctype) (A(i,j) + B(i,j))
         if (ewise_method == GB_EMULT_METHOD2)

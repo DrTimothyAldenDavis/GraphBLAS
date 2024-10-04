@@ -2,7 +2,7 @@
 // GB_opaque.h: definitions of opaque objects
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -149,7 +149,7 @@ typedef enum
          (opcode) <= GB_USER_unop_code)
 
     // true if opcode is for a GrB_UnaryOp positional operator
-    #define GB_IS_UNARYOP_CODE_POSITIONAL(opcode) \
+    #define GB_IS_BUILTIN_UNOP_CODE_POSITIONAL(opcode) \
         ((opcode) >= GB_POSITIONI_unop_code && \
          (opcode) <= GB_POSITIONJ1_unop_code)
 
@@ -269,7 +269,7 @@ typedef enum
     GB_CMPLX_binop_code     = 114,  // z = cmplx (x,y)
 
     //--------------------------------------------------------------------------
-    // positional binary operators: z is int64, x and y are ignored
+    // built-in positional binary operators: z is int64, x and y are ignored
     //--------------------------------------------------------------------------
 
     GB_FIRSTI_binop_code    = 115,  // z = first_i(A(i,j),y) == i
@@ -288,9 +288,18 @@ typedef enum
         ((opcode) >= GB_FIRST_binop_code && (opcode) <= GB_USER_binop_code)
 
     // true if opcode is for a GrB_BinaryOp positional operator
-    #define GB_IS_BINARYOP_CODE_POSITIONAL(opcode) \
-        ((opcode) >= GB_FIRSTI_binop_code && \
-         (opcode) <= GB_SECONDJ1_binop_code)
+    #define GB_IS_BUILTIN_BINOP_CODE_POSITIONAL(opcode) \
+        (((opcode) >= GB_FIRSTI_binop_code && \
+         (opcode) <= GB_SECONDJ1_binop_code))
+
+    //--------------------------------------------------------------------------
+    // index binary operators:
+    //--------------------------------------------------------------------------
+
+    GB_USER_idxbinop_code = 140,
+
+    // true if opcode is for a GzB_IndexBinaryOp
+    #define GB_IS_INDEXBINARYOP_CODE(opcode) ((opcode) == GB_USER_idxbinop_code)
 
     //==========================================================================
     // built-in GxB_SelectOp operators (DEPRECATED: do not use)
@@ -331,10 +340,11 @@ typedef enum
 GB_Opcode ;
 
 // true if the opcode is a positional operator of any kind
-#define GB_OPCODE_IS_POSITIONAL(opcode)             \
-    (GB_IS_UNARYOP_CODE_POSITIONAL (opcode) ||      \
-     GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode) || \
-     GB_IS_BINARYOP_CODE_POSITIONAL (opcode) ||     \
+#define GB_OPCODE_IS_POSITIONAL(opcode)                 \
+    (GB_IS_BUILTIN_UNOP_CODE_POSITIONAL (opcode) ||     \
+     GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode) ||     \
+     GB_IS_INDEXBINARYOP_CODE (opcode) ||               \
+     GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ||    \
      GB_IS_SELECTOP_CODE_POSITIONAL (opcode))
 
 // true if the op is a unary or binary positional operator
@@ -390,6 +400,11 @@ struct GB_IndexUnaryOp_opaque   // content of GrB_IndexUnaryOp
 } ;
 
 struct GB_BinaryOp_opaque   // content of GrB_BinaryOp
+{
+    #include "include/GB_Operator.h"
+} ;
+
+struct GB_IndexBinaryOp_opaque   // content of GzB_IndexBinaryOp
 {
     #include "include/GB_Operator.h"
 } ;

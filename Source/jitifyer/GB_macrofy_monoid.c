@@ -39,8 +39,8 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // create macros for the additive operator
     //--------------------------------------------------------------------------
 
-    GB_macrofy_binop (fp, "GB_ADD", false, true, false, add_ecode, C_iso,
-        op, NULL, u_expression, g_expression) ;
+    GB_macrofy_binop (fp, "GB_ADD", false, false, true, false, add_ecode,
+        C_iso, op, NULL, u_expression, g_expression) ;
 
     //--------------------------------------------------------------------------
     // create macros for the identity value

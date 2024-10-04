@@ -246,6 +246,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
 
         GB_Type_code acode = Atype->code ;
         GxB_binary_function fop = op->binop_function ;
+        ASSERT (fop != NULL) ;
         GB_cast_function cast_A_to_Y = GB_cast_factory (ycode, acode) ;
         GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
 

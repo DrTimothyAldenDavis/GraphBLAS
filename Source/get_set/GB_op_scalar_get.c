@@ -9,6 +9,8 @@
 
 #include "get_set/GB_get_set.h"
 
+// FIXME: add GzB_THETA to get the value of op->theta as a GrB_Scalar
+
 GrB_Info GB_op_scalar_get
 (
     GB_Operator op,

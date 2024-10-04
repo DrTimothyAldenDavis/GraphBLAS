@@ -26,9 +26,11 @@
     ASSERT (!C->iso) ;
 
     GxB_binary_function fmult = mult->binop_function ;    // NULL if positional
+    GzB_index_binary_function fmult_idx = mult->idxbinop_function ;
     GxB_binary_function fadd  = add->op->binop_function ;
     GB_Opcode opcode = mult->opcode ;
-    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    bool op_is_builtin_positional =
+        GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
 
     size_t csize = C->type->size ;
     size_t asize = A_is_pattern ? 0 : A->type->size ;
@@ -68,250 +70,94 @@
     // C = A'*B via dot products, function pointers, and typecasting
     //--------------------------------------------------------------------------
 
-    if (op_is_positional)
+    // aki = A(i,k), located in Ax [A_iso?0:(pA)]
+    #undef  GB_A_IS_PATTERN
+    #define GB_A_IS_PATTERN 0
+    #undef  GB_DECLAREA
+    #define GB_DECLAREA(aki)                                        \
+        GB_void aki [GB_VLA(aki_size)] ;
+    #undef  GB_GETA
+    #define GB_GETA(aki,Ax,pA,A_iso)                                \
+        if (!A_is_pattern) cast_A (aki, Ax +((A_iso) ? 0:(pA)*asize), asize)
+
+    // bkj = B(k,j), located in Bx [B_iso?0:pB]
+    #undef  GB_B_IS_PATTERN
+    #define GB_B_IS_PATTERN 0
+    #undef  GB_DECLAREB
+    #define GB_DECLAREB(bkj)                                        \
+        GB_void bkj [GB_VLA(bkj_size)] ;
+    #undef  GB_GETB
+    #define GB_GETB(bkj,Bx,pB,B_iso)                                \
+        if (!B_is_pattern) cast_B (bkj, Bx +((B_iso) ? 0:(pB)*bsize), bsize)
+
+    // define cij for each task
+    #undef  GB_CIJ_DECLARE
+    #define GB_CIJ_DECLARE(cij) GB_void cij [GB_VLA(csize)]
+
+    // Cx [p] = cij
+    #undef  GB_PUTC
+    #define GB_PUTC(cij,Cx,p) memcpy (Cx +((p)*csize), cij, csize)
+
+    // instead of GB_DECLARE_TERMINAL_CONST (zterminal):
+    GB_void *restrict zterminal = (GB_void *) add->terminal ;
+
+    // break if cij reaches the terminal value
+    #undef  GB_IF_TERMINAL_BREAK
+    #define GB_IF_TERMINAL_BREAK(z,zterminal)                       \
+        if (is_terminal && memcmp (z, zterminal, csize) == 0)       \
+        {                                                           \
+            break ;                                                 \
+        }
+    #undef  GB_TERMINAL_CONDITION
+    #define GB_TERMINAL_CONDITION(z,zterminal)                      \
+        (is_terminal && memcmp (z, zterminal, csize) == 0)
+
+    // C(i,j) += (A')(i,k) * B(k,j)
+    #undef  GB_MULTADD
+    #define GB_MULTADD(cij, aki, bkj, i, k, j)                      \
+        GB_void zwork [GB_VLA(csize)] ;                             \
+        GB_MULT (zwork, aki, bkj, i, k, j) ;                        \
+        fadd (cij, cij, zwork)
+
+    // generic types for C and Z
+    #undef  GB_C_TYPE
+    #define GB_C_TYPE GB_void
+
+    #undef  GB_Z_TYPE
+    #define GB_Z_TYPE GB_void
+
+    if (opcode == GB_FIRST_binop_code)
     { 
-
-        //----------------------------------------------------------------------
-        // generic semirings with positional multiply operators
-        //----------------------------------------------------------------------
-
-        // C and Z types become int32_t or int64_t
-
+        // t = A(i,k)
+        // fmult is not used and can be NULL (for user-defined types)
         ASSERT (!flipxy) ;
-
-        // aki = A(i,k), located in Ax [A_iso?0:(pA)], but value not used
-        #undef  GB_A_IS_PATTERN
-        #define GB_A_IS_PATTERN 1
-        #define GB_DECLAREA(aki)
-        #define GB_GETA(aki,Ax,pA,A_iso)
-
-        // bkj = B(k,j), located in Bx [B_iso?0:pB], but value not used
-        #undef  GB_B_IS_PATTERN
-        #define GB_B_IS_PATTERN 1
-        #define GB_DECLAREB(bkj)
-        #define GB_GETB(bkj,Bx,pB,B_iso)
-
-        // define cij for each task
-        #undef  GB_CIJ_DECLARE
-        #define GB_CIJ_DECLARE(cij) GB_C_TYPE cij
-
-        // Cx [p] = cij
-        #define GB_PUTC(cij,Cx,p) Cx [p] = cij
-
-        // break if cij reaches the terminal value.  The terminal condition
-        // 'is_terminal' is checked even if the monoid is not terminal.
-        #undef  GB_MONOID_IS_TERMINAL
-        #define GB_MONOID_IS_TERMINAL 1
-        #undef  GB_IF_TERMINAL_BREAK
-        #define GB_IF_TERMINAL_BREAK(z,zterminal)                       \
-            if (is_terminal && z == zterminal)                          \
-            {                                                           \
-                break ;                                                 \
-            }
-        #undef  GB_TERMINAL_CONDITION
-        #define GB_TERMINAL_CONDITION(z,zterminal)                      \
-            (is_terminal && z == zterminal)
-
-        // C(i,j) += (A')(i,k) * B(k,j)
-        #define GB_MULTADD(cij, aki, bkj, i, k, j)                      \
-            GB_C_TYPE zwork ;                                           \
-            GB_MULT (zwork, aki, bkj, i, k, j) ;                        \
-            fadd (&cij, &cij, &zwork)
-
-        int64_t offset = GB_positional_offset (opcode, NULL, NULL) ;
-
-        if (mult->ztype == GrB_INT64)
-        {
-            #undef  GB_C_TYPE
-            #define GB_C_TYPE int64_t
-            #undef  GB_Z_TYPE
-            #define GB_Z_TYPE int64_t
-            // instead of GB_DECLARE_TERMINAL_CONST (zterminal):
-            int64_t zterminal = 0 ;
-            if (is_terminal)
-            { 
-                memcpy (&zterminal, add->terminal, sizeof (int64_t)) ;
-            }
-            switch (opcode)
-            {
-                case GB_FIRSTI_binop_code   :   // first_i(A'(i,k),y) == i
-                case GB_FIRSTI1_binop_code  :   // first_i1(A'(i,k),y) == i+1
-                    #undef  GB_MULT
-                    #define GB_MULT(t, aki, bkj, i, k, j) t = i + offset
-                    #if defined ( GB_DOT2_GENERIC )
-                    #include "mxm/template/GB_AxB_dot2_meta.c"
-                    #elif defined ( GB_DOT3_GENERIC )
-                    #include "mxm/template/GB_AxB_dot3_meta.c"
-                    #endif
-                    break ;
-                case GB_FIRSTJ_binop_code   :   // first_j(A'(i,k),y) == k
-                case GB_FIRSTJ1_binop_code  :   // first_j1(A'(i,k),y) == k+1
-                case GB_SECONDI_binop_code  :   // second_i(x,B(k,j)) == k
-                case GB_SECONDI1_binop_code :   // second_i1(x,B(k,j)) == k+1
-                    #undef  GB_MULT
-                    #define GB_MULT(t, aki, bkj, i, k, j) t = k + offset
-                    #if defined ( GB_DOT2_GENERIC )
-                    #include "mxm/template/GB_AxB_dot2_meta.c"
-                    #elif defined ( GB_DOT3_GENERIC )
-                    #include "mxm/template/GB_AxB_dot3_meta.c"
-                    #endif
-                    break ;
-                case GB_SECONDJ_binop_code  :   // second_j(x,B(k,j)) == j
-                case GB_SECONDJ1_binop_code :   // second_j1(x,B(k,j)) == j+1
-                    #undef  GB_MULT
-                    #define GB_MULT(t, aki, bkj, i, k, j) t = j + offset
-                    #if defined ( GB_DOT2_GENERIC )
-                    #include "mxm/template/GB_AxB_dot2_meta.c"
-                    #elif defined ( GB_DOT3_GENERIC )
-                    #include "mxm/template/GB_AxB_dot3_meta.c"
-                    #endif
-                    break ;
-                default: ;
-            }
-        }
-        else
-        {
-            #undef  GB_C_TYPE
-            #define GB_C_TYPE int32_t
-            #undef  GB_Z_TYPE
-            #define GB_Z_TYPE int32_t
-            // instead of GB_DECLARE_TERMINAL_CONST (zterminal):
-            int32_t zterminal = 0 ;
-            if (is_terminal)
-            { 
-                memcpy (&zterminal, add->terminal, sizeof (int32_t)) ;
-            }
-            switch (opcode)
-            {
-                case GB_FIRSTI_binop_code   :   // first_i(A'(i,k),y) == i
-                case GB_FIRSTI1_binop_code  :   // first_i1(A'(i,k),y) == i+1
-                    #undef  GB_MULT
-                    #define GB_MULT(t,aki,bkj,i,k,j) t = (int32_t) (i + offset)
-                    #if defined ( GB_DOT2_GENERIC )
-                    #include "mxm/template/GB_AxB_dot2_meta.c"
-                    #elif defined ( GB_DOT3_GENERIC )
-                    #include "mxm/template/GB_AxB_dot3_meta.c"
-                    #endif
-                    break ;
-                case GB_FIRSTJ_binop_code   :   // first_j(A'(i,k),y) == k
-                case GB_FIRSTJ1_binop_code  :   // first_j1(A'(i,k),y) == k+1
-                case GB_SECONDI_binop_code  :   // second_i(x,B(k,j)) == k
-                case GB_SECONDI1_binop_code :   // second_i1(x,B(k,j)) == k+1
-                    #undef  GB_MULT
-                    #define GB_MULT(t,aki,bkj,i,k,j) t = (int32_t) (k + offset)
-                    #if defined ( GB_DOT2_GENERIC )
-                    #include "mxm/template/GB_AxB_dot2_meta.c"
-                    #elif defined ( GB_DOT3_GENERIC )
-                    #include "mxm/template/GB_AxB_dot3_meta.c"
-                    #endif
-                    break ;
-                case GB_SECONDJ_binop_code  :   // second_j(x,B(k,j)) == j
-                case GB_SECONDJ1_binop_code :   // second_j1(x,B(k,j)) == j+1
-                    #undef  GB_MULT
-                    #define GB_MULT(t,aki,bkj,i,k,j) t = (int32_t) (j + offset)
-                    #if defined ( GB_DOT2_GENERIC )
-                    #include "mxm/template/GB_AxB_dot2_meta.c"
-                    #elif defined ( GB_DOT3_GENERIC )
-                    #include "mxm/template/GB_AxB_dot3_meta.c"
-                    #endif
-                    break ;
-                default: ;
-            }
-        }
-
+        ASSERT (B_is_pattern) ;
+        #undef  GB_MULT
+        #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, aik, csize)
+        #if defined ( GB_DOT2_GENERIC )
+        #include "mxm/template/GB_AxB_dot2_meta.c"
+        #elif defined ( GB_DOT3_GENERIC )
+        #include "mxm/template/GB_AxB_dot3_meta.c"
+        #endif
     }
-    else
+    else if (opcode == GB_SECOND_binop_code)
+    { 
+        // t = B(i,k)
+        // fmult is not used and can be NULL (for user-defined types)
+        ASSERT (!flipxy) ;
+        ASSERT (A_is_pattern) ;
+        #undef  GB_MULT
+        #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, bkj, csize)
+        #if defined ( GB_DOT2_GENERIC )
+        #include "mxm/template/GB_AxB_dot2_meta.c"
+        #elif defined ( GB_DOT3_GENERIC )
+        #include "mxm/template/GB_AxB_dot3_meta.c"
+        #endif
+    }
+    else if (fmult != NULL)
     {
-
-        //----------------------------------------------------------------------
-        // generic semirings with standard multiply operators
-        //----------------------------------------------------------------------
-
-        // aki = A(i,k), located in Ax [A_iso?0:(pA)]
-        #undef  GB_A_IS_PATTERN
-        #define GB_A_IS_PATTERN 0
-        #undef  GB_DECLAREA
-        #define GB_DECLAREA(aki)                                        \
-            GB_void aki [GB_VLA(aki_size)] ;
-        #undef  GB_GETA
-        #define GB_GETA(aki,Ax,pA,A_iso)                                \
-            if (!A_is_pattern) cast_A (aki, Ax +((A_iso) ? 0:(pA)*asize), asize)
-
-        // bkj = B(k,j), located in Bx [B_iso?0:pB]
-        #undef  GB_B_IS_PATTERN
-        #define GB_B_IS_PATTERN 0
-        #undef  GB_DECLAREB
-        #define GB_DECLAREB(bkj)                                        \
-            GB_void bkj [GB_VLA(bkj_size)] ;
-        #undef  GB_GETB
-        #define GB_GETB(bkj,Bx,pB,B_iso)                                \
-            if (!B_is_pattern) cast_B (bkj, Bx +((B_iso) ? 0:(pB)*bsize), bsize)
-
-        // define cij for each task
-        #undef  GB_CIJ_DECLARE
-        #define GB_CIJ_DECLARE(cij) GB_void cij [GB_VLA(csize)]
-
-        // Cx [p] = cij
-        #undef  GB_PUTC
-        #define GB_PUTC(cij,Cx,p) memcpy (Cx +((p)*csize), cij, csize)
-
-        // instead of GB_DECLARE_TERMINAL_CONST (zterminal):
-        GB_void *restrict zterminal = (GB_void *) add->terminal ;
-
-        // break if cij reaches the terminal value
-        #undef  GB_IF_TERMINAL_BREAK
-        #define GB_IF_TERMINAL_BREAK(z,zterminal)                       \
-            if (is_terminal && memcmp (z, zterminal, csize) == 0)       \
-            {                                                           \
-                break ;                                                 \
-            }
-        #undef  GB_TERMINAL_CONDITION
-        #define GB_TERMINAL_CONDITION(z,zterminal)                      \
-            (is_terminal && memcmp (z, zterminal, csize) == 0)
-
-        // C(i,j) += (A')(i,k) * B(k,j)
-        #undef  GB_MULTADD
-        #define GB_MULTADD(cij, aki, bkj, i, k, j)                      \
-            GB_void zwork [GB_VLA(csize)] ;                             \
-            GB_MULT (zwork, aki, bkj, i, k, j) ;                        \
-            fadd (cij, cij, zwork)
-
-        // generic types for C and Z
-        #undef  GB_C_TYPE
-        #define GB_C_TYPE GB_void
-
-        #undef  GB_Z_TYPE
-        #define GB_Z_TYPE GB_void
-
-        if (opcode == GB_FIRST_binop_code)
-        { 
-            // t = A(i,k)
-            // fmult is not used and can be NULL (for user-defined types)
-            ASSERT (!flipxy) ;
-            ASSERT (B_is_pattern) ;
-            #undef  GB_MULT
-            #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, aik, csize)
-            #if defined ( GB_DOT2_GENERIC )
-            #include "mxm/template/GB_AxB_dot2_meta.c"
-            #elif defined ( GB_DOT3_GENERIC )
-            #include "mxm/template/GB_AxB_dot3_meta.c"
-            #endif
-        }
-        else if (opcode == GB_SECOND_binop_code)
-        { 
-            // t = B(i,k)
-            // fmult is not used and can be NULL (for user-defined types)
-            ASSERT (!flipxy) ;
-            ASSERT (A_is_pattern) ;
-            #undef  GB_MULT
-            #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, bkj, csize)
-            #if defined ( GB_DOT2_GENERIC )
-            #include "mxm/template/GB_AxB_dot2_meta.c"
-            #elif defined ( GB_DOT3_GENERIC )
-            #include "mxm/template/GB_AxB_dot3_meta.c"
-            #endif
-        }
-        else if (flipxy)
+        // standard binary op
+        if (flipxy)
         { 
             // t = B(k,j) * (A')(i,k)
             #undef  GB_MULT
@@ -327,6 +173,37 @@
             // t = (A')(i,k) * B(k,j)
             #undef  GB_MULT
             #define GB_MULT(t, aki, bkj, i, k, j) fmult (t, aki, bkj)
+            #if defined ( GB_DOT2_GENERIC )
+            #include "mxm/template/GB_AxB_dot2_meta.c"
+            #elif defined ( GB_DOT3_GENERIC )
+            #include "mxm/template/GB_AxB_dot3_meta.c"
+            #endif
+        }
+    }
+    else
+    {
+        // index binary op
+        ASSERT (fmult_idx != NULL) ;
+        const void *theta = mult->theta ;
+        if (flipxy)
+        { 
+GB_GOTCHA ; // generic dot, with index binary op, flipped
+            // t = B(k,j) * (A')(i,k)
+            #undef  GB_MULT
+            #define GB_MULT(t, aki, bkj, i, k, j) \
+                fmult_idx (t, bkj, j, k, aki, k, i, theta)
+            #if defined ( GB_DOT2_GENERIC )
+            #include "mxm/template/GB_AxB_dot2_meta.c"
+            #elif defined ( GB_DOT3_GENERIC )
+            #include "mxm/template/GB_AxB_dot3_meta.c"
+            #endif
+        }
+        else
+        { 
+            // t = (A')(i,k) * B(k,j)
+            #undef  GB_MULT
+            #define GB_MULT(t, aki, bkj, i, k, j) \
+                fmult_idx (t, aki, i, k, bkj, k, j, theta)
             #if defined ( GB_DOT2_GENERIC )
             #include "mxm/template/GB_AxB_dot2_meta.c"
             #elif defined ( GB_DOT3_GENERIC )

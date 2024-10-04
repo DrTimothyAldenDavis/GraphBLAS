@@ -39,6 +39,7 @@ void GB_reduce_to_scalar_iso        // s = reduce (A) where A is iso
 
     // get the monoid
     GxB_binary_function freduce = monoid->op->binop_function ;
+    ASSERT (freduce != NULL) ;
     GrB_Type ztype = monoid->op->ztype ;
     size_t zsize = ztype->size ;
     GB_Type_code zcode = ztype->code ;
@@ -57,7 +58,7 @@ void GB_reduce_to_scalar_iso        // s = reduce (A) where A is iso
         // this can occur is if A is a huge full iso-valued matrix, where vlen
         // * vdim caused uint64_t overflow in GB_nnz_full and returned
         // INT64_MAX.  Reduce the matrix in two steps: first reducing each
-        // vector of size vlen to a scalar t, obtainting an implicit iso full
+        // vector of size vlen to a scalar t, obtaining an implicit iso full
         // vector T of size vdim.  Each entry in this vector T has the value t,
         // and then this vector T is reduced to the result s.
         GBURBLE ("(reduce huge iso full matrix to scalar) ") ;

@@ -45,6 +45,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    const bool flipij,      // if true, i,j must be flipped
     // from phase1:
     int64_t **Cp_handle,    // vector pointers for C
     size_t Cp_size,
@@ -110,16 +111,21 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     ASSERT (C_is_hyper == (Ch != NULL)) ;
 
     GB_Opcode opcode = op->opcode ;
-    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    bool op_is_builtin_positional =
+        GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
+    bool op_is_index_binop = GB_IS_INDEXBINARYOP_CODE (opcode) ;
+    bool op_is_positional = op_is_builtin_positional || op_is_index_binop ;
     bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
     bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
 
     ASSERT (GB_Type_compatible (ctype, op->ztype)) ;
-    ASSERT (GB_IMPLIES (!(op_is_second || op_is_pair || op_is_positional),
-            GB_Type_compatible (A->type, op->xtype))) ;
-    ASSERT (GB_IMPLIES (!(op_is_first || op_is_pair || op_is_positional),
-            GB_Type_compatible (B->type, op->ytype))) ;
+    ASSERT (GB_IMPLIES (!(op_is_second || op_is_pair
+        || op_is_builtin_positional),
+        GB_Type_compatible (A->type, op->xtype))) ;
+    ASSERT (GB_IMPLIES (!(op_is_first || op_is_pair
+        || op_is_builtin_positional),
+        GB_Type_compatible (B->type, op->ytype))) ;
 
     //--------------------------------------------------------------------------
     // check if C is iso and compute its iso value if it is
@@ -252,8 +258,8 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
 
     if (info == GrB_NO_VALUE)
     { 
-        info = GB_emult_08_jit (C, C_sparsity, M, Mask_struct,
-            Mask_comp, op, A, B, C_to_M, C_to_A, C_to_B, TaskList, C_ntasks,
+        info = GB_emult_08_jit (C, C_sparsity, M, Mask_struct, Mask_comp,
+            op, flipij, A, B, C_to_M, C_to_A, C_to_B, TaskList, C_ntasks,
             C_nthreads) ;
     }
 
@@ -264,7 +270,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     if (info == GrB_NO_VALUE)
     { 
         GB_BURBLE_MATRIX (C, "(generic emult: %s) ", op->name) ;
-        info = GB_emult_generic (C, op, TaskList, C_ntasks, C_nthreads,
+        info = GB_emult_generic (C, op, flipij, TaskList, C_ntasks, C_nthreads,
             C_to_M, C_to_A, C_to_B, C_sparsity, ewise_method, NULL,
             NULL, 0, 0, NULL, 0, 0, NULL, 0, 0,
             M, Mask_struct, Mask_comp, A, B) ;

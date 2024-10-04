@@ -124,14 +124,9 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
         B_transpose = !B_transpose ;
     }
 
-    if (!T_is_csc)
-    {
-        if (GB_OP_IS_POSITIONAL (op))
-        { 
-            // positional ops must be flipped, with i and j swapped
-            op = GB_positional_binop_ijflip (op) ;
-        }
-    }
+    // do not flipij the builtin positional ops (FIRSTI, and friends);
+    // this is no longer needed with the new index binary ops.
+    bool flipij = (!T_is_csc) ;
 
     bool A_is_pattern, B_is_pattern ;
     GB_binop_pattern (&A_is_pattern, &B_is_pattern, false, op->opcode) ;
@@ -160,7 +155,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     //--------------------------------------------------------------------------
 
     GB_CLEAR_STATIC_HEADER (T, &T_header) ;
-    GB_OK (GB_kroner (T, T_is_csc, op,
+    GB_OK (GB_kroner (T, T_is_csc, op, flipij,
         A_transpose ? AT : A, A_is_pattern,
         B_transpose ? BT : B, B_is_pattern, Werk)) ;
 

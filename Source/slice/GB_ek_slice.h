@@ -56,7 +56,7 @@ void GB_ek_slice_merge2     // merge final results for matrix C
 // use the GB_GET_PA_AND_PC macro instead, #define'd in
 // Source/slice/include/GB_ek_slice_kernels.h.
 
-// FIXME: replace GB_GET_PA_AND_PC with this static inline function and use
+// TODO: replace GB_GET_PA_AND_PC with this static inline function and use
 // this instead (but without the assignment of p0 and p1).
 
 #if 0
@@ -121,7 +121,7 @@ static inline void GB_get_pA_and_pC
 // GB_get_pA and GB_GET_PA are very similar, except that GB_get_pA computes
 // p0 and p1.
 
-// FIXME: unify GB_get_pA and GB_GET_PA into a single method.
+// TODO: unify GB_get_pA and GB_GET_PA into a single method.
 
 static inline void GB_get_pA
 (

@@ -30,7 +30,8 @@ GrB_Info GB_select_generic_bitmap
 
     GB_Opcode opcode = op->opcode ;
     ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
-    ASSERT (!GB_OPCODE_IS_POSITIONAL (opcode)) ;
+    ASSERT (GB_IS_INDEXUNARYOP_CODE (opcode)) ;
+    ASSERT (!GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)) ;
     ASSERT (!(A->iso) || (opcode == GB_USER_idxunop_code)) ;
     ASSERT ((opcode >= GB_VALUENE_idxunop_code &&
              opcode <= GB_VALUELE_idxunop_code) ||

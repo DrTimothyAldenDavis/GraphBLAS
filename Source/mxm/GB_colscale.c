@@ -104,7 +104,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     // C = A*D, column scale, compute numerical values
     //--------------------------------------------------------------------------
 
-    if (GB_OPCODE_IS_POSITIONAL (opcode))
+    if (GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode))
     { 
 
         //----------------------------------------------------------------------
@@ -207,11 +207,12 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         }
 
         info = GrB_NO_VALUE ;
-        
+
         #if defined ( GRAPHBLAS_HAS_CUDA )
-        if (GB_cuda_colscale_branch (A, D, semiring, flipxy)) {
+        if (GB_cuda_colscale_branch (A, D, semiring, flipxy))
+        {
             info = GB_cuda_colscale (C, A, D, semiring, flipxy) ;
-        } 
+        }
         #endif
 
         //----------------------------------------------------------------------
@@ -351,17 +352,46 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
 
             #include "ewise/include/GB_ewise_shared_definitions.h"
 
-            if (flipxy)
-            { 
-                #undef  GB_EWISEOP
-                #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),y,x)
-                #include "mxm/template/GB_colscale_template.c"
+            if (fmult != NULL)
+            {
+                // conventional binary op
+                if (flipxy)
+                { 
+                    #undef  GB_EWISEOP
+                    #define GB_EWISEOP(Cx,p,y,x,j,i) fmult (Cx +((p)*csize),x,y)
+                    #include "mxm/template/GB_colscale_template.c"
+                }
+                else
+                { 
+                    #undef  GB_EWISEOP
+                    #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),x,y)
+                    #include "mxm/template/GB_colscale_template.c"
+                }
             }
             else
-            { 
-                #undef  GB_EWISEOP
-                #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),x,y)
-                #include "mxm/template/GB_colscale_template.c"
+            {
+                // index binary op
+                GzB_index_binary_function fmult_idx = mult->idxbinop_function ;
+                ASSERT (fmult_idx != NULL) ;
+                ASSERT (GB_IS_INDEXBINARYOP_CODE (mult->opcode)) ;
+                const void *theta = mult->theta ;
+                if (flipxy)
+                { 
+GB_GOTCHA ; // generic colscale, index binary op, flipped
+                    // flip both x,y and i,j
+                    #undef  GB_EWISEOP
+                    #define GB_EWISEOP(Cx,p,y,x,j,i) \
+                        fmult_idx (Cx +((p)*csize), x,i,j, y,i,j, theta)
+                    #include "mxm/template/GB_colscale_template.c"
+                }
+                else
+                { 
+GB_GOTCHA ; // generic colscale, index binary op, not flipped
+                    #undef  GB_EWISEOP
+                    #define GB_EWISEOP(Cx,p,x,y,i,j) \
+                        fmult_idx (Cx +((p)*csize), x,i,j, y,i,j, theta)
+                    #include "mxm/template/GB_colscale_template.c"
+                }
             }
             info = GrB_SUCCESS ;
         }

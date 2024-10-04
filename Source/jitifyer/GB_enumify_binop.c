@@ -30,10 +30,11 @@ void GB_enumify_binop
     {
 
         //----------------------------------------------------------------------
-        // user-defined operator
+        // user-defined operators
         //----------------------------------------------------------------------
 
         case GB_USER_binop_code : 
+        case GB_USER_idxbinop_code : 
 
             e = 0 ; break ;
 

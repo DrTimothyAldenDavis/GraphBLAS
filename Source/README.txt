@@ -99,6 +99,8 @@ include             general-purpose header files that do not fit into any
                     settings, and GB_include.h which is a primary internal
                     include file.
 
+indexbinaryop       GzB_IndexBinaryOp object
+
 indexunaryop        GrB_IndexUnaryOp object
 
 init                GrB_init, GxB_init, GrB_finalize, GrB_error, GrB_getVersion
@@ -189,4 +191,5 @@ werk                the Werk space is a small amount of space on the stack
                     and such.  It is spell differently for easier 'grep'.
 
 zstd_wrapper        wrapper for the zstd compression package
+
 

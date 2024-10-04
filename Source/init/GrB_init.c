@@ -12,7 +12,7 @@
 // and its RMM memory manager: use a mode of GxB_BLOCKING_GPU or
 // GxB_NONBLOCKING_GPU.
 
-// FIXME: rename GxB_*BLOCKING_GPU to GxB_*BLOCKING_CUDA.
+// Fixme for CUDA: rename GxB_*BLOCKING_GPU to GxB_*BLOCKING_CUDA.
 
 #include "GB.h"
 #include "init/GB_init.h"

@@ -2,12 +2,15 @@
 // GB_Semiring_new: create a new semiring
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 // The semiring struct is already allocated on input.
+
+// The multiply operator can be any GrB_BinaryOp, including ones created from a
+// GzB_IndexBinaryOp.
 
 #include "GB.h"
 #include "semiring/GB_Semiring_new.h"

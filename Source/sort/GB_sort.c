@@ -247,11 +247,13 @@ GrB_Info GB_sort
 
     if (op->ztype != GrB_BOOL || op->xtype != op->ytype || atype != ctype
         || !(ptype == GrB_INT64 || ptype == GrB_UINT64)
-        || !GB_Type_compatible (atype, op->xtype))
+        || !GB_Type_compatible (atype, op->xtype)
+        || GB_IS_INDEXBINARYOP_CODE (op->opcode))
     { 
         // op must return bool, and its inputs x and y must have the same type;
         // the types of A and C must match exactly; P must be INT64 or UINT64;
         // A and C must be typecasted to the input type of the op.
+        // Positional ops are not allowed.
         return (GrB_DOMAIN_MISMATCH) ;
     }
 

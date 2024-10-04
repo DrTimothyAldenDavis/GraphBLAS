@@ -127,6 +127,11 @@ static GrB_Info GB_global_enum_get (int32_t *value, int field)
             (*value) = (int) GB_jitifyer_get_use_cmake ( ) ;
             break ;
 
+        case GxB_JIT_ERROR_FALLBACK : 
+
+            (*value) = (int) GB_jitifyer_get_error_fallback ( ) ;
+            break ;
+
         default : 
 
             return (GrB_INVALID_VALUE) ;

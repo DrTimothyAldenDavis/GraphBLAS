@@ -12,11 +12,10 @@
 
 #define GB_AXB_SAXPY_GENERIC_METHOD GB_AxB_saxpy3_generic_flipped 
 #define GB_GENERIC_C_IS_SPARSE_OR_HYPERSPARSE  1
-#define GB_GENERIC_OP_IS_POSITIONAL            0
 #define GB_GENERIC_FLIPXY                      1
-#define GB_GENERIC_OP_IS_INT64                 0
-#define GB_GENERIC_OP_IS_FIRSTI                0
-#define GB_GENERIC_OP_IS_FIRSTJ                0
+#define GB_GENERIC_NOFLIPXY                    0
+#define GB_GENERIC_IDX_FLIPXY                  0
+#define GB_GENERIC_IDX_NOFLIPXY                0
 #define GB_GENERIC_OP_IS_FIRST                 0
 #define GB_GENERIC_OP_IS_SECOND                0
 

@@ -59,6 +59,6 @@ GrB_Info GB_AxB_dot4_jit            // C+=A'*B, dot4 method, via the JIT
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, A, B, A_slice, B_slice, naslice, nbslice,
-        nthreads, Werk, &GB_callback)) ;
+        nthreads, Werk, &GB_callback, semiring->multiply->theta)) ;
 }
 

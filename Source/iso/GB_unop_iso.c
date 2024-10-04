@@ -120,6 +120,7 @@ void GB_unop_iso            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
             size_t xsize = op->xtype->size ;
             size_t ysize = op->ytype->size ;
             GxB_binary_function fop = op->binop_function ;
+            ASSERT (fop != NULL) ;
             GB_void x [GB_VLA(xsize)] ;
             GB_void y [GB_VLA(ysize)] ;
 
