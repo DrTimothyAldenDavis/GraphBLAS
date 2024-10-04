@@ -33,7 +33,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
     GrB_Matrix C, 
     GrB_Matrix M, 
     GrB_Matrix A, 
-    GrB_Matrix B
+    GrB_Matrix B,
+    const void *theta
 )
 {
 

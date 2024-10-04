@@ -589,7 +589,6 @@ GrB_Info GB_jit_kernel_reduce                                           \
     int32_t blocksz                                                     \
 )
 
-// FIXME: add theta to cuda_rowscale
 #define GB_JIT_CUDA_KERNEL_ROWSCALE_PROTO(GB_jit_kernel_rowscale)       \
 GrB_Info GB_jit_kernel_rowscale                                         \
 (                                                                       \
@@ -598,10 +597,10 @@ GrB_Info GB_jit_kernel_rowscale                                         \
     GrB_Matrix B,                                                       \
     cudaStream_t stream,                                                \
     int32_t gridsz,                                                     \
-    int32_t blocksz                                                     \
+    int32_t blocksz,                                                    \
+    const void *theta                                                   \
 )
 
-// FIXME: add theta to cuda_colscale
 #define GB_JIT_CUDA_KERNEL_COLSCALE_PROTO(GB_jit_kernel_colscale)       \
 GrB_Info GB_jit_kernel_colscale                                         \
 (                                                                       \
@@ -610,7 +609,8 @@ GrB_Info GB_jit_kernel_colscale                                         \
     GrB_Matrix D,                                                       \
     cudaStream_t stream,                                                \
     int32_t gridsz,                                                     \
-    int32_t blocksz                                                     \
+    int32_t blocksz,                                                    \
+    const void *theta                                                   \
 )
 
 #define GB_JIT_CUDA_KERNEL_APPLY_BIND1ST_PROTO(GB_jit_kernel_apply_bind1st) \
@@ -658,7 +658,6 @@ GrB_Info GB_jit_kernel_select_bitmap                                        \
     int32_t blocksz                                                         \
 )                                                                           \
 
-// FIXME: add theta to cuda_dot3
 #define GB_JIT_CUDA_KERNEL_DOT3_PROTO(GB_jit_kernel_AxB_dot3)           \
 GrB_Info GB_jit_kernel_AxB_dot3                                         \
 (                                                                       \
@@ -669,7 +668,8 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
     cudaStream_t stream,                                                \
     int device,                                                         \
     int number_of_sms,                                                  \
-    const GB_callback_struct *restrict my_callback                      \
+    const GB_callback_struct *restrict my_callback,                     \
+    const void *theta                                                   \
 )
 
 //------------------------------------------------------------------------------
