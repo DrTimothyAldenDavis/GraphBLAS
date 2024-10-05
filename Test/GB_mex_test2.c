@@ -12,8 +12,6 @@
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
 
-#define USAGE "GB_mex_test2"
-
 typedef struct
 {
     int stuff [16] ;

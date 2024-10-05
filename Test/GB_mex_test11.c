@@ -12,8 +12,6 @@
 #include "../Source/jitifyer/GB_file.h"
 #include "../Source/jitifyer/GB_jitifyer.h"
 
-#define USAGE "GB_mex_test11"
-
 #define FREE_ALL ;
 #define GET_DEEP_COPY ;
 #define FREE_DEEP_COPY ;

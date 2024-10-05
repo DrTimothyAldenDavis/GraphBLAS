@@ -11,8 +11,6 @@
 #include "GB_mex_errors.h"
 #include "../Source/jitifyer/GB_stringify.h"
 
-#define USAGE "GB_mex_test24"
-
 #define FREE_ALL ;
 #define GET_DEEP_COPY ;
 #define FREE_DEEP_COPY ;

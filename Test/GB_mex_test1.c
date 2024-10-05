@@ -12,8 +12,6 @@
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
 
-#define USAGE "GB_mex_test1"
-
 GrB_Info ack (int64_t *stuff, GrB_Matrix GunkIt) ;
 
 GrB_Info ack (int64_t *stuff, GrB_Matrix GunkIt)
