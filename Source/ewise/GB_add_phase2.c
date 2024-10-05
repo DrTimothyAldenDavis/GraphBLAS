@@ -544,7 +544,6 @@ GB_GOTCHA ; // ewiseunion with index binary op, flipped
                 }
                 else
                 { 
-GB_GOTCHA ; // ewiseadd with index binary op, flipped
                     #define GB_IS_EWISEUNION 0
                     #include "ewise/template/GB_add_template.c"
                 }
