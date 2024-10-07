@@ -58,6 +58,7 @@ GB_GOTCHA ; // index binary op, bad opcode
     const char *given_name = GB_op_name_get (op) ;
     if (given_name != NULL)
     { 
+GB_GOTCHA ; // index binary op, given name
         GBPR0 ("    IndexBinaryOp given name: [%s]\n", given_name) ;
     }
 

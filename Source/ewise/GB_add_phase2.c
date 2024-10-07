@@ -538,11 +538,13 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                     fadd_idx (z, aij, i, j, bij, i, j, theta) ;
                 if (is_eWiseUnion)
                 { 
+GB_GOTCHA ; // generic ewise union, flipij
                     #define GB_IS_EWISEUNION 1
                     #include "ewise/template/GB_add_template.c"
                 }
                 else
                 { 
+GB_GOTCHA ; // generic ewise add, flipij
                     #define GB_IS_EWISEUNION 0
                     #include "ewise/template/GB_add_template.c"
                 }
