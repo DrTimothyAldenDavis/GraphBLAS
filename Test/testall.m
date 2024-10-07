@@ -34,9 +34,11 @@ t = threads ;
 % single thread
 s {1} = [1 1] ;
 
-
 % clear the statement coverage counts
 clear global GraphBLAS_grbcov
+
+global GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
+    GraphBLAS_scripts GraphBLAS_times
 
 % use built-in complex data types by default
 GB_builtin_complex_set (true) ;
@@ -94,6 +96,9 @@ malloc_debugging = stat ;
 jall = {4,3,2,1,4,2} ;
 fall = {1,1,1,1,0,0} ;
 
+jlot = {4,3,2,1} ;
+flot = {1,1,1,1} ;
+
 %===============================================================================
 % statement coverage test, with malloc debugging
 %===============================================================================
@@ -102,7 +107,7 @@ fall = {1,1,1,1,0,0} ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
-logstat ('test282'    ,t, jall, fall) ; % test argmax, index binary op
+logstat ('test282'    ,t, jlot, flot) ; % test argmax, index binary op
 logstat ('test281'    ,t, j4  , f1  ) ; % test user-defined idx unop, no JIT
 logstat ('test201'    ,t, j4  , f1  ) ; % test iso reduce to vector and scalar
 logstat ('test169'    ,t, j0  , f1  ) ; % C<M>=A+B with many formats
@@ -113,7 +118,7 @@ logstat ('test277'    ,t, j0  , f1  ) ; % context get/set
 logstat ('test276'    ,t, j0  , f1  ) ; % semiring get/set
 logstat ('test275'    ,t, j0  , f1  ) ; % monoid get/set
 logstat ('test274'    ,t, j0  , f1  ) ; % index unary op get/set
-logstat ('test273'    ,t, j0  , f1  ) ; % global get/set
+logstat ('test273'    ,t, j0  , f1  ) ; % Global get/set
 logstat ('test272'    ,t, j0  , f1  ) ; % misc simple tests
 logstat ('test271'    ,t, j0  , f1  ) ; % binary op get/set
 logstat ('test270'    ,t, j0  , f1  ) ; % unary op get/set
@@ -278,7 +283,7 @@ logstat ('test225'    ,t, j4  , f1  ) ; % test mask operations (GB_masker)
 logstat ('test176'    ,t, j4  , f1  ) ; % test GrB_assign, method 09, 11
 logstat ('test208'    ,t, j4  , f1  ) ; % test iso apply, bind 1st and 2nd
 logstat ('test216'    ,t, j4  , f1  ) ; % test C<A>=A, iso case
-logstat ('test142'    ,t, j040, f100) ; %% test GrB_assign with accum
+logstat ('test142'    ,t, j04 , f10 ) ; %% test GrB_assign with accum
 logstat ('test137'    ,s, j40 , f11 ) ; % GrB_eWiseMult, FIRST and SECOND
 logstat ('test139'    ,s, j4  , f1  ) ; % merge sort, special cases
 logstat ('test172'    ,t, j4  , f1  ) ; % test eWiseMult with M bitmap/full
