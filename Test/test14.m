@@ -98,7 +98,7 @@ if (isempty (tasks))
     } ;
 end
 
-track_coverage = true ;
+track_coverage = false ;
 if (track_coverage)
     global GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
         GraphBLAS_scripts GraphBLAS_times

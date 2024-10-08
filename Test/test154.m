@@ -751,7 +751,7 @@ if (isempty (tasks))
     } ;
 end
 
-track_coverage = true ;
+track_coverage = false ;
 if (track_coverage)
     global GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
         GraphBLAS_scripts GraphBLAS_times
@@ -899,7 +899,7 @@ for kk = 1:length(tasks)
         CT.is_csc = csc ;
 
         C1 = GB_mex_apply2 (C, [ ], [ ], op, 0, A, y) ;
-        C2 = GB_spec_Matrix_eWiseMult (C, .  [ ], [ ], op_bind2, A, Y, [ ]) ;
+        C2 = GB_spec_Matrix_eWiseMult (C, [ ], [ ], op_bind2, A, Y, [ ]) ;
         GB_spec_compare (C1, C2, 0, tol) ;
         C1 = GB_mex_apply2 (C, [ ], [ ], op, 1, A, y) ;
         GB_spec_compare (C1, C2, 0, tol) ;
