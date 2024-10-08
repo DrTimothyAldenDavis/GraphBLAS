@@ -107,6 +107,7 @@ flot = {1,1,1,1} ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
+logstat ('test283'    ,t, j4  , f1  ) ; % test index binary op
 logstat ('test282'    ,t, jlot, flot) ; % test argmax, index binary op
 logstat ('test281'    ,t, j4  , f1  ) ; % test user-defined idx unop, no JIT
 logstat ('test201'    ,t, j4  , f1  ) ; % test iso reduce to vector and scalar
@@ -311,7 +312,14 @@ logstat ('test125'    ,t, j4  , f1  ) ; % test GrB_mxm: row and column scaling
 % 1 to 10/sec
 %----------------------------------------
 
+save test234_start GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
+    GraphBLAS_scripts GraphBLAS_times
+
 logstat ('test234'    ,t, j40 , f11 ) ; % test GxB_eWiseUnion
+
+save test234_end GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
+    GraphBLAS_scripts GraphBLAS_times
+
 logstat ('test242'    ,t, j4  , f1  ) ; % test GxB_Iterator for matrices
 logstat ('test173'    ,t, j4  , f1  ) ; % test GrB_assign C<A>=A
 logstat ('test200'    ,t, j4  , f1  ) ; % test iso full matrix multiply

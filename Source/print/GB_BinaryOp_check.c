@@ -144,7 +144,6 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         info = GB_Type_check (op->theta_type, "theta_type", pr, f) ;
         if (info != GrB_SUCCESS)
         { 
-GB_GOTCHA ; // binop has invalid theta type
             GBPR0 ("    BinaryOp has an invalid theta_type\n") ;
             return (GrB_INVALID_OBJECT) ;
         }

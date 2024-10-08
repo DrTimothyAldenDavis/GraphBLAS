@@ -75,6 +75,13 @@ if (length (i) > 0)
 end
 clear T i j x
 
+A_is_csc   = 0 ;
+B_is_csc   = 0 ;
+C_is_csc   = 0 ;
+
+M_is_very_sparse = 0 ;
+M_is_csc   = 0 ;
+
 for k1 = 1:length (types)
     type = types {k1}  ;
     fprintf ('\n\n%-8s : ', type) ;
@@ -102,163 +109,152 @@ for k1 = 1:length (types)
         fprintf (' %s', binop) ;
 
         for A_sparsity_control = 0:1
-        for A_is_csc   = 0 % 0:1
-        for B_sparsity_control = 0:1
-        for B_is_csc   = 0 % 0:1
-        for C_sparsity_control = 0:1
-        for C_is_csc   = 0 % 0:1
+            for B_sparsity_control = 0:1
+                for C_sparsity_control = 0:1
 
-        if (A_sparsity_control == 0)
-            A_is_hyper = 0 ; % not hyper
-            A_sparsity = 1 ; % sparse
-        else
-            A_is_hyper = 0 ; % not hyper
-            A_sparsity = 4 ; % bitmap
-        end
+                    if (A_sparsity_control == 0)
+                        A_is_hyper = 0 ; % not hyper
+                        A_sparsity = 1 ; % sparse
+                    else
+                        A_is_hyper = 0 ; % not hyper
+                        A_sparsity = 4 ; % bitmap
+                    end
 
-        if (B_sparsity_control == 0)
-            B_is_hyper = 0 ; % not hyper
-            B_sparsity = 1 ; % sparse
-        else
-            B_is_hyper = 0 ; % not hyper
-            B_sparsity = 4 ; % bitmap
-        end
+                    if (B_sparsity_control == 0)
+                        B_is_hyper = 0 ; % not hyper
+                        B_sparsity = 1 ; % sparse
+                    else
+                        B_is_hyper = 0 ; % not hyper
+                        B_sparsity = 4 ; % bitmap
+                    end
 
-        if (C_sparsity_control == 0)
-            C_is_hyper = 0 ; % not hyper
-            C_sparsity = 1 ; % sparse
-        else
-            C_is_hyper = 0 ; % not hyper
-            C_sparsity = 4 ; % bitmap
-        end
+                    if (C_sparsity_control == 0)
+                        C_is_hyper = 0 ; % not hyper
+                        C_sparsity = 1 ; % sparse
+                    else
+                        C_is_hyper = 0 ; % not hyper
+                        C_sparsity = 4 ; % bitmap
+                    end
 
-        for native = 1 % 0:1
+                    clear A B C u v
 
-        clear A B C u v
+                    if (isequal (binop, 'pow'))
+                        A.matrix = Amat2 ;
+                        B.matrix = Bmat2 ;
+                        C.matrix = Cmat2 ;
+                        u.matrix = uvec2 ;
+                        v.matrix = vvec2 ;
+                    else
+                        A.matrix = Amat ;
+                        B.matrix = Bmat ;
+                        C.matrix = Cmat ;
+                        u.matrix = uvec ;
+                        v.matrix = vvec ;
+                    end
 
-        if (isequal (binop, 'pow'))
-            A.matrix = Amat2 ;
-            B.matrix = Bmat2 ;
-            C.matrix = Cmat2 ;
-            u.matrix = uvec2 ;
-            v.matrix = vvec2 ;
-        else
-            A.matrix = Amat ;
-            B.matrix = Bmat ;
-            C.matrix = Cmat ;
-            u.matrix = uvec ;
-            v.matrix = vvec ;
-        end
+                    A.is_hyper = A_is_hyper ;
+                    A.is_csc   = A_is_csc   ;
+                    A.sparsity = A_sparsity ;
+                    A.class = op.optype ;
+                    a0 = GB_mex_cast (1, op.optype) ;
 
-        A.is_hyper = A_is_hyper ;
-        A.is_csc   = A_is_csc   ;
-        A.sparsity = A_sparsity ;
-        if (native)
-            A.class = op.optype ;
-        end
-        a0 = GB_mex_cast (1, op.optype) ;
+                    B.is_hyper = B_is_hyper ;
+                    B.sparsity = B_sparsity ;
+                    B.is_csc   = B_is_csc   ;
+                    B.class = op.optype ;
+                    b0 = GB_mex_cast (2, op.optype) ;
 
-        B.is_hyper = B_is_hyper ;
-        B.sparsity = B_sparsity ;
-        B.is_csc   = B_is_csc   ;
-        if (native)
-            B.class = op.optype ;
-        end
-        b0 = GB_mex_cast (2, op.optype) ;
+                    C.is_hyper = C_is_hyper ;
+                    C.is_csc   = C_is_csc   ;
+                    C.sparsity = C_sparsity ;
 
-        C.is_hyper = C_is_hyper ;
-        C.is_csc   = C_is_csc   ;
-        C.sparsity = C_sparsity ;
+                    u.is_csc = true ;
+                    u.class = op.optype ;
+                    u0 = GB_mex_cast (1, op.optype) ;
 
-        u.is_csc = true ;
-        if (native)
-            u.class = op.optype ;
-        end
-        u0 = GB_mex_cast (1, op.optype) ;
+                    v.is_csc = true ;
+                    v.class = op.optype ;
+                    v0 = GB_mex_cast (2, op.optype) ;
 
-        v.is_csc = true ;
-        if (native)
-            v.class = op.optype ;
-        end
-        v0 = GB_mex_cast (2, op.optype) ;
+                    %---------------------------------------
+                    % A+B
+                    %---------------------------------------
 
-        %---------------------------------------
-        % A+B
-        %---------------------------------------
+                    C0 = GB_spec_Matrix_eWiseUnion (C, ...
+                        [ ], [ ], op, A, a0, B, b0, dnn) ;
+                    C1 = GB_mex_Matrix_eWiseUnion  (C, ...
+                        [ ], [ ], op, A, a0, B, b0, dnn) ;
+                    GB_spec_compare (C0, C1, 0, tol) ;
 
-        C0 = GB_spec_Matrix_eWiseUnion (C, [ ], [ ], op, A, a0, B, b0, dnn) ;
-        C1 = GB_mex_Matrix_eWiseUnion  (C, [ ], [ ], op, A, a0, B, b0, dnn) ;
-        GB_spec_compare (C0, C1, 0, tol) ;
+                    w0 = GB_spec_Vector_eWiseUnion (w, ...
+                        [ ], [ ], op, u, u0, v, v0, dnn) ;
+                    w1 = GB_mex_Vector_eWiseUnion  (w, ...
+                        [ ], [ ], op, u, u0, v, v0, dnn) ;
+                    GB_spec_compare (w0, w1, 0, tol) ;
 
-        w0 = GB_spec_Vector_eWiseUnion (w, [ ], [ ], op, u, u0, v, v0, dnn) ;
-        w1 = GB_mex_Vector_eWiseUnion  (w, [ ], [ ], op, u, u0, v, v0, dnn) ;
-        GB_spec_compare (w0, w1, 0, tol) ;
+                    %-----------------------------------------------
+                    % with mask
+                    %-----------------------------------------------
 
-        %-----------------------------------------------
-        % with mask
-        %-----------------------------------------------
+                    for M_sparsity_control = 0:1
 
-        for M_is_very_sparse = 0 % 0:1
-        % for M_is_hyper = 0 % 0:1
-        for M_sparsity_control = 0:1
-        for M_is_csc   = 0 % 0:1
+                        clear Mask mask
+                        if (M_is_very_sparse)
+                            Mask.matrix = Maskmat2 ;
+                            mask.matrix = maskvec2 ;
+                        else
+                            Mask.matrix = Maskmat ;
+                            mask.matrix = maskvec ;
+                        end
 
-        clear Mask mask
-        if (M_is_very_sparse)
-            Mask.matrix = Maskmat2 ;
-            mask.matrix = maskvec2 ;
-        else
-            Mask.matrix = Maskmat ;
-            mask.matrix = maskvec ;
-        end
+                        if (M_sparsity_control == 0)
+                            M_is_hyper = 0 ; % not hyper
+                            M_sparsity = 1 ; % sparse
+                        else
+                            M_is_hyper = 0 ; % not hyper
+                            M_sparsity = 4 ; % bitmap
+                        end
 
-        if (M_sparsity_control == 0)
-            M_is_hyper = 0 ; % not hyper
-            M_sparsity = 1 ; % sparse
-        else
-            M_is_hyper = 0 ; % not hyper
-            M_sparsity = 4 ; % bitmap
-        end
+                        Mask.is_hyper = M_is_hyper ;
+                        Mask.sparsity = M_sparsity ;
+                        Mask.is_csc   = M_is_csc   ;
+                        mask.is_csc = true ;
 
-        Mask.is_hyper = M_is_hyper ;
-        Mask.sparsity = M_sparsity ;
-        Mask.is_csc   = M_is_csc   ;
-        mask.is_csc = true ;
+                        %---------------------------------------
+                        % A+B, with mask
+                        %---------------------------------------
 
-        %---------------------------------------
-        % A+B, with mask
-        %---------------------------------------
+                        C0 = GB_spec_Matrix_eWiseUnion (C, Mask, ...
+                            [ ], op, A, a0, B, b0, dnn) ;
+                        C1 = GB_mex_Matrix_eWiseUnion  (C, Mask, ...
+                            [ ], op, A, a0, B, b0, dnn) ;
+                        GB_spec_compare (C0, C1, 0, tol) ;
 
-        C0 = GB_spec_Matrix_eWiseUnion (C, Mask, [ ], op, A, a0, B, b0, dnn) ;
-        C1 = GB_mex_Matrix_eWiseUnion  (C, Mask, [ ], op, A, a0, B, b0, dnn) ;
-        GB_spec_compare (C0, C1, 0, tol) ;
+                        w0 = GB_spec_Vector_eWiseUnion (w, mask, ...
+                            [ ], op, u, u0, v, v0, dnn) ;
+                        w1 = GB_mex_Vector_eWiseUnion  (w, mask, ...
+                            [ ], op, u, u0, v, v0, dnn) ;
+                        GB_spec_compare (w0, w1, 0, tol) ;
 
-        w0 = GB_spec_Vector_eWiseUnion (w, mask, [ ], op, u, u0, v, v0, dnn) ;
-        w1 = GB_mex_Vector_eWiseUnion  (w, mask, [ ], op, u, u0, v, v0, dnn) ;
-        GB_spec_compare (w0, w1, 0, tol) ;
+                        %---------------------------------------
+                        % A+B, with mask complemented
+                        %---------------------------------------
 
-        %---------------------------------------
-        % A+B, with mask complemented
-        %---------------------------------------
+                        C0 = GB_spec_Matrix_eWiseUnion (C, Mask, ...
+                            [ ], op, A, a0, B, b0, dnn_notM) ;
+                        C1 = GB_mex_Matrix_eWiseUnion  (C, Mask, ...
+                            [ ], op, A, a0, B, b0, dnn_notM) ;
+                        GB_spec_compare (C0, C1, 0, tol) ;
 
-        C0 = GB_spec_Matrix_eWiseUnion (C, Mask, [ ], op, A, a0, B, b0, dnn_notM) ;
-        C1 = GB_mex_Matrix_eWiseUnion  (C, Mask, [ ], op, A, a0, B, b0, dnn_notM) ;
-        GB_spec_compare (C0, C1, 0, tol) ;
+                        w0 = GB_spec_Vector_eWiseUnion (w, mask, ...
+                            [ ], op, u, u0, v, v0, dnn_notM) ;
+                        w1 = GB_mex_Vector_eWiseUnion  (w, mask, ...
+                            [ ], op, u, u0, v, v0, dnn_notM) ;
+                        GB_spec_compare (w0, w1, 0, tol) ;
 
-        w0 = GB_spec_Vector_eWiseUnion (w, mask, [ ], op, u, u0, v, v0, dnn_notM) ;
-        w1 = GB_mex_Vector_eWiseUnion  (w, mask, [ ], op, u, u0, v, v0, dnn_notM) ;
-        GB_spec_compare (w0, w1, 0, tol) ;
-
-
-        end
-        end
-        end
-        end
-        end
-        end
-        end
-        end
-        end
+                    end
+                end
+            end
         end
     end
 end

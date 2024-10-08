@@ -352,9 +352,9 @@ GrB_Info GB_select_sparse
     }
 
     if (info != GrB_SUCCESS)
-    { 
-GB_GOTCHA ; // select sparse, phase 2, error
-        // out of memory, or other error
+    {
+        // sparse select phase 2 cannot fail but this is here in case it does
+        // in the future; this block of code thus cannot be tested.
         GB_FREE_ALL ;
         return (info) ;
     }

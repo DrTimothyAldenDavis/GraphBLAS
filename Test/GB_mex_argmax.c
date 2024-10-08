@@ -198,7 +198,7 @@ void mexFunction
     METHOD (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
     if (pr)
     {
-        printf ("\njit enabled: %d\n", jit) ;
+        // printf ("\njit enabled: %d\n", jit) ;
         OK (GzB_IndexBinaryOp_fprint (Iop, "make_tuple_kv idx", 5, stdout)) ;
     }
 
@@ -251,24 +251,24 @@ void mexFunction
     OK (GzB_IndexBinaryOp_get_Scalar (Iop, Beta, GrB_OUTP_TYPE_CODE)) ;
     int32_t code = -1;
     OK (GrB_Scalar_extractElement_INT32 (&code, Beta)) ;
-    printf ("code %d\n", code) ;
+    // printf ("code %d\n", code) ;
     CHECK (code == GrB_UDT_CODE) ;
     code = 62 ;
     OK (GzB_IndexBinaryOp_get_INT32 (Iop, &code, GrB_OUTP_TYPE_CODE)) ;
     CHECK (code == GrB_UDT_CODE) ;
     size_t name_size ;
     OK (GzB_IndexBinaryOp_get_SIZE (Iop, &name_size, GxB_JIT_C_NAME)) ;
-    printf ("name size %d\n", (int) name_size) ;
+    // printf ("name size %d\n", (int) name_size) ;
     char name [256] ;
     OK (GzB_IndexBinaryOp_get_String (Iop, &name, GxB_JIT_C_NAME)) ;
-    printf ("name [%s]\n", name) ;
+    // printf ("name [%s]\n", name) ;
     int expected = GrB_INVALID_VALUE ;
     ERR (GzB_IndexBinaryOp_get_VOID (Iop, &name, GxB_JIT_C_NAME)) ;
 
     OK (GzB_IndexBinaryOp_set_String (Iop, "my index binop", GrB_NAME)) ;
     name [0] = '\0' ;
     OK (GzB_IndexBinaryOp_get_String (Iop, name, GrB_NAME)) ;
-    printf ("name [%s]\n", name) ;
+    // printf ("name [%s]\n", name) ;
     CHECK (strcmp (name, "my index binop") == 0) ;
 
     //--------------------------------------------------------------------------

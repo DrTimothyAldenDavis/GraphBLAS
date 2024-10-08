@@ -42,7 +42,6 @@ GrB_Info GB_Context_check       // check a GraphBLAS Context
     char *given_name = Context->user_name ;
     if (Context->user_name_size > 0 && given_name != NULL)
     { 
-GB_GOTCHA ; // Context with set name
         GBPR0 ("    Context given name: [%s]\n", given_name) ;
     }
 

@@ -102,13 +102,15 @@ void mexFunction
     OK (GrB_Scalar_new (&Theta, GrB_FP64)) ;
     OK (GrB_Scalar_setElement_FP64 (Theta, x)) ;
 
-    OK (GxB_print (A, 5)) ;
-    OK (GxB_print (Theta, 5)) ;
+    // OK (GxB_print (A, 5)) ;
+    // OK (GxB_print (Theta, 5)) ;
 
     OK (GzB_IndexBinaryOp_new2 (&Iop,
         (GzB_index_binary_function) test37_idxbinop,
         GrB_FP64, GrB_FP64, GrB_FP64, GrB_FP64,
         "test37_idxbinop", TEST37_IDXBINOP)) ;
+
+    OK (GzB_IndexBinaryOp_set_String (Iop, "test37 idx binop", GrB_NAME)) ;
     OK (GxB_print (Iop, 5)) ;
 
     OK (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
@@ -119,7 +121,7 @@ void mexFunction
     OK (GrB_Scalar_setElement_FP64 (Alpha, (double) 3.14159)) ;
     OK (GrB_Scalar_setElement_FP64 (Beta, (double) 42)) ;
 
-    OK (GrB_Global_set_INT32 (GrB_GLOBAL, 1 , (GrB_Field) GxB_BURBLE)) ;
+    // OK (GrB_Global_set_INT32 (GrB_GLOBAL, 1 , (GrB_Field) GxB_BURBLE)) ;
 
     //--------------------------------------------------------------------------
     // test index binary ops
@@ -140,11 +142,11 @@ void mexFunction
                             for (int jit = 0 ; jit <= 1 ; jit++)
                             {
 
-                                printf ("\n\n-----------------------------"
-                                    "JIT: %d A: %d %d %d %d C2: %d B2: %d\n", jit,
-                                    a1_sparsity, a2_sparsity,
-                                    a1_store, a2_store,
-                                    c2_store, b2_store) ;
+                                printf (".") ;
+//                              printf ("\n\n-----------------------------"
+//                                  "JIT: %d A: %d %d %d %d C2: %d B2: %d\n",
+//                                  jit, a1_sparsity, a2_sparsity,
+//                                  a1_store, a2_store, c2_store, b2_store) ;
 
                                 // turn on/off the JIT
                                 OK (GrB_Global_set_INT32 (GrB_GLOBAL,
@@ -162,8 +164,8 @@ void mexFunction
                                     GrB_STORAGE_ORIENTATION_HINT)) ;
 
                                 // C1 = add (A, A')
-                                OK (GrB_Matrix_eWiseAdd_BinaryOp (C1, NULL, NULL,
-                                    Bop, A, A, GrB_DESC_T1)) ;
+                                OK (GrB_Matrix_eWiseAdd_BinaryOp (C1,
+                                    NULL, NULL, Bop, A, A, GrB_DESC_T1)) ;
                                 // B1 = union (A, A')
                                 OK (GxB_Matrix_eWiseUnion (B1, NULL, NULL, Bop,
                                     A, Alpha, A, Beta, GrB_DESC_T1)) ;
@@ -187,8 +189,8 @@ void mexFunction
                                     GrB_STORAGE_ORIENTATION_HINT)) ;
 
                                 // C2 = add (A, A')
-                                OK (GrB_Matrix_eWiseAdd_BinaryOp (C2, NULL, NULL,
-                                    Bop, A, A, GrB_DESC_T1)) ;
+                                OK (GrB_Matrix_eWiseAdd_BinaryOp (C2,
+                                    NULL, NULL, Bop, A, A, GrB_DESC_T1)) ;
                                 // B2 = union (A, A')
                                 OK (GxB_Matrix_eWiseUnion (B2, NULL, NULL,
                                     Bop, A, Alpha, A, Beta, GrB_DESC_T1)) ;
@@ -199,7 +201,7 @@ void mexFunction
                                 // OK (GxB_print (B1, 5)) ;
                                 // OK (GxB_print (B2, 5)) ;
 
-                                // change C2 and B2 to the same storage as C1 and B1
+                                // change C2 and B2 to same storage as C1 and B1
                                 OK (GrB_Matrix_set_INT32 (C2, GrB_COLMAJOR,
                                     GrB_STORAGE_ORIENTATION_HINT)) ;
                                 OK (GrB_Matrix_set_INT32 (B2, GrB_COLMAJOR,
@@ -208,8 +210,8 @@ void mexFunction
                                 // FIXME: check C1 and B1 matrices
 
                                 OK (GrB_Matrix_new (&D, GrB_FP64, 10, 10)) ;
-                                OK (GrB_Matrix_eWiseAdd_BinaryOp (D, NULL, NULL,
-                                    GrB_MINUS_FP64, C1, B1, NULL)) ;
+                                OK (GrB_Matrix_eWiseAdd_BinaryOp (D, NULL,
+                                    NULL, GrB_MINUS_FP64, C1, B1, NULL)) ;
                                 OK (GrB_Matrix_select_FP64 (D, NULL, NULL,
                                     GrB_VALUENE_FP64, D, (double) 0, NULL)) ;
                                 // OK (GxB_print (D, 5)) ;
@@ -224,6 +226,61 @@ void mexFunction
             }
         }
     }
+
+    //------------------------------------------------------------------------
+    // error tests
+    //------------------------------------------------------------------------
+
+    printf ("\nerror handling tests:\n") ;
+
+    int expected = GrB_INVALID_OBJECT ;
+    void *p = Bop->theta_type = NULL ;
+    Bop->theta_type = NULL ;
+    ERR (GB_BinaryOp_check (Bop, "Bop: bad theta_type", 5, stdout)) ;
+    Bop->theta_type = p ;
+
+    p = Iop->idxbinop_function ;
+    Iop->idxbinop_function = NULL ;
+    ERR (GB_IndexBinaryOp_check (Iop, "Iop: null function", 5, stdout)) ;
+    Iop->idxbinop_function = p ;
+
+    p = Iop->ztype ;
+    Iop->ztype = NULL ;
+    ERR (GB_IndexBinaryOp_check (Iop, "Iop: null ztype", 5, stdout)) ;
+    Iop->ztype = p ;
+
+    p = Iop->xtype ;
+    Iop->xtype = NULL ;
+    ERR (GB_IndexBinaryOp_check (Iop, "Iop: null xtype", 5, stdout)) ;
+    Iop->xtype = p ;
+
+    p = Iop->ytype ;
+    Iop->ytype = NULL ;
+    ERR (GB_IndexBinaryOp_check (Iop, "Iop: null ytype", 5, stdout)) ;
+    Iop->ytype = p ;
+
+    p = Iop->theta_type ;
+    Iop->theta_type = NULL ;
+    ERR (GB_IndexBinaryOp_check (Iop, "Iop: null theta_type", 5, stdout)) ;
+    Iop->theta_type = p ;
+
+    GB_Opcode code = Iop->opcode ;
+    Iop->opcode = GB_PLUS_binop_code ;
+    ERR (GB_IndexBinaryOp_check (Iop, "Iop: invalid opcode", 5, stdout)) ;
+    Iop->opcode = code ;
+
+    int len = Iop->name_len ;
+    Iop->name_len = 3 ;
+    ERR (GB_IndexBinaryOp_check (Iop, "Iop: invalid name_len", 5, stdout)) ;
+    Iop->name_len = len ;
+
+    expected = GrB_NULL_POINTER ;
+    ERR (GB_IndexBinaryOp_check (NULL, "Iop: null", 5, stdout)) ;
+
+    expected = GrB_INVALID_VALUE ;
+    ERR (GzB_IndexBinaryOp_set_Scalar (Iop, Theta, GrB_NAME)) ;
+    ERR (GzB_IndexBinaryOp_set_INT32 (Iop, 2, GrB_SIZE)) ;
+    ERR (GzB_IndexBinaryOp_set_VOID (Iop, NULL, GrB_SIZE, 0)) ;
 
     //------------------------------------------------------------------------
     // finalize GraphBLAS
