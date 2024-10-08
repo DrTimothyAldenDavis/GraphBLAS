@@ -19,7 +19,7 @@ dtn = struct ( 'inp0', 'tran' ) ;
 dnt = struct ( 'inp1', 'tran' ) ;
 dtt = struct ( 'inp0', 'tran', 'inp1', 'tran' ) ;
 
-track_coverage = true ;
+track_coverage = false ;
 if (track_coverage)
     global GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
         GraphBLAS_scripts GraphBLAS_times
@@ -430,7 +430,7 @@ for k1 = [1 2 11 12 13]
                     if (d == 0)
                         fprintf ('.', d) ;
                     else
-                        fprintf ('[%d]\n', d) ;
+                        fprintf ('[%d]', d) ;
                     end
                     clast = c ;
                 else
