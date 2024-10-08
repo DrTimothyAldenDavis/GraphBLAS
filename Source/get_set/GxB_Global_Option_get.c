@@ -956,7 +956,6 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
         case GxB_JIT_ERROR_FALLBACK : 
 
             {
-GB_GOTCHA ; // get jit error fallback
                 va_start (ap, field) ;
                 bool *error_fallback = va_arg (ap, bool *) ;
                 va_end (ap) ;

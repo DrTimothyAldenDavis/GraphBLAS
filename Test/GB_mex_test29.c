@@ -207,6 +207,16 @@ void mexFunction
     CHECK (i == 1) ;
     OK (GrB_Global_set_INT32_ (GrB_GLOBAL, error_fallback, (GrB_Field) GxB_JIT_ERROR_FALLBACK)) ;
 
+    bool error_fallback2 ;
+    OK (GxB_Global_Option_get (GxB_JIT_ERROR_FALLBACK, &error_fallback2)) ;
+    printf ("%d %d\n", error_fallback, error_fallback2 ) ;
+    CHECK (error_fallback == error_fallback2) ;
+    printf ("jit error fallback again: %d\n", error_fallback) ;
+    OK (GxB_Global_Option_set_INT32 (GxB_JIT_ERROR_FALLBACK, 1)) ;
+    OK (GxB_Global_Option_get (GxB_JIT_ERROR_FALLBACK, &i)) ;
+    CHECK (i == 1) ;
+    OK (GxB_Global_Option_set (GxB_JIT_ERROR_FALLBACK, error_fallback2)) ;
+
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Global_set_INT32_ (GrB_GLOBAL, 1, GrB_BLOCKING_MODE)) ;
     expected = GrB_EMPTY_OBJECT ;

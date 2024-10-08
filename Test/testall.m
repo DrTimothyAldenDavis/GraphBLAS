@@ -151,7 +151,8 @@ logstat ('test254'    ,t, j440, f100) ; %% mask types
 logstat ('test253'    ,t, j4  , f1  ) ; % basic JIT tests
 logstat ('test252'    ,t, j4  , f1  ) ; % basic tests
 logstat ('test280'    ,t, j4  , f1  ) ; % subassign method 26
-logstat ('test251'    ,t, j44 , f10 ) ; % dot4, dot2, with plus_pair
+logstat ('test251'    ,t, j4  , f1  ) ; % dot4, dot2, with plus_pair
+logstat ('test251b'   ,t, j4  , f0  ) ; % dot4, dot2, with plus_pair
 logstat ('test249'    ,t, j4  , f1  ) ; % GxB_Context object
 logstat ('test247'    ,t, j4  , f1  ) ; % GrB_mxm: fine Hash method
 logstat ('test246'    ,t, j4  , f1  ) ; % GrB_mxm parallelism (slice_balanced)
@@ -221,7 +222,8 @@ logstat ('test144'    ,t, j4  , f1  ) ; % cumsum
 
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 
-logstat ('test14'     ,t, j44 , f10 ) ; % GrB_reduce
+logstat ('test14'     ,t, j4  , f1  ) ; % GrB_reduce
+logstat ('test14b'    ,t, j4  , f0  ) ; % GrB_reduce
 logstat ('test180'    ,s, j4  , f1  ) ; % test assign and subassign (1 thread)
 logstat ('test236'    ,t, j4  , f1  ) ; % test GxB_Matrix_sort, GxB_Vector_sort
 
@@ -240,12 +242,20 @@ logstat ('test228'    ,t, j4  , f1  ) ; % test serialize/deserialize
 
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 
+save test154_start GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
+    GraphBLAS_scripts GraphBLAS_times
+
 logstat ('test154'    ,t, j40 , f11 ) ; % apply with binop and scalar binding
 logstat ('test238'    ,t, j44 , f10 ) ; % test GrB_mxm (dot4 and dot2)
+
+save test151b_start GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
+    GraphBLAS_scripts GraphBLAS_times
+
 logstat ('test151b'   ,t, j4  , f1  ) ; % test bshift operator
 logstat ('test184'    ,t, j4  , f1  ) ; % special cases: mxm, transpose, build
 logstat ('test191'    ,t, j40 , f10 ) ; %% test split
-logstat ('test188'    ,t, j40 , f11 ) ; % test concat
+logstat ('test188'    ,t, j4  , f1  ) ; % test concat
+logstat ('test188b'   ,t, j0  , f1  ) ; % test concat
 
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
@@ -284,6 +294,10 @@ logstat ('test225'    ,t, j4  , f1  ) ; % test mask operations (GB_masker)
 logstat ('test176'    ,t, j4  , f1  ) ; % test GrB_assign, method 09, 11
 logstat ('test208'    ,t, j4  , f1  ) ; % test iso apply, bind 1st and 2nd
 logstat ('test216'    ,t, j4  , f1  ) ; % test C<A>=A, iso case
+
+save test142_start GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
+    GraphBLAS_scripts GraphBLAS_times
+
 logstat ('test142'    ,t, j04 , f10 ) ; %% test GrB_assign with accum
 logstat ('test137'    ,s, j40 , f11 ) ; % GrB_eWiseMult, FIRST and SECOND
 logstat ('test139'    ,s, j4  , f1  ) ; % merge sort, special cases
@@ -312,14 +326,8 @@ logstat ('test125'    ,t, j4  , f1  ) ; % test GrB_mxm: row and column scaling
 % 1 to 10/sec
 %----------------------------------------
 
-save test234_start GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
-    GraphBLAS_scripts GraphBLAS_times
-
-logstat ('test234'    ,t, j40 , f11 ) ; % test GxB_eWiseUnion
-
-save test234_end GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
-    GraphBLAS_scripts GraphBLAS_times
-
+logstat ('test234'    ,t, j4  , f1  ) ; % test GxB_eWiseUnion
+logstat ('test234b'   ,t, j0  , f1  ) ; % test GxB_eWiseUnion
 logstat ('test242'    ,t, j4  , f1  ) ; % test GxB_Iterator for matrices
 logstat ('test173'    ,t, j4  , f1  ) ; % test GrB_assign C<A>=A
 logstat ('test200'    ,t, j4  , f1  ) ; % test iso full matrix multiply
@@ -336,6 +344,10 @@ logstat ('test129'    ,t, j4  , f1  ) ; % test GxB_select (tril, nonz, hyper)
 logstat ('test69'     ,t, j4  , f1  ) ; % assign and subassign with alias
 logstat ('test230'    ,t, j4  , f1  ) ; % test apply with idxunops
 logstat ('test74'     ,t, j0  , f1  ) ; % test GrB_mxm on all semirings
+
+save test127_start GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
+    GraphBLAS_scripts GraphBLAS_times
+
 logstat ('test127'    ,t, j0  , f1  ) ; % test eWiseAdd, eWiseMult
 logstat ('test19'     ,t, j4  , f1  ) ; % GxB_subassign, many pending operators
 
@@ -346,6 +358,10 @@ logstat ('test19'     ,t, j4  , f1  ) ; % GxB_subassign, many pending operators
 logstat ('test11'     ,t, j4  , f1  ) ; % exhaustive test of GrB_extractTuples
 logstat ('test215'    ,t, j4  , f1  ) ; % test C<M>=A'*B (dot2, ANY_PAIR)
 logstat ('test193'    ,t, j4  , f1  ) ; % test GxB_Matrix_diag
+
+save test127_start GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
+    GraphBLAS_scripts GraphBLAS_times
+
 logstat ('test195'    ,t, j4  , f1  ) ; % all variants of saxpy3 slice_balanced
 logstat ('test243'    ,t, j4  , f1  ) ; % test GxB_Vector_Iterator
 logstat ('test29'     ,t, j0  , f1  ) ; % reduce with zombies
