@@ -375,12 +375,10 @@ for k1 = 1:length(types)
                 end
                 end
                 end
-
             end
         end
     end
     fprintf ('\n') ;
-
 end
 
 fprintf ('\ntest10: all tests passed\n') ;

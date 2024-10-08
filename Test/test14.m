@@ -137,11 +137,7 @@ for kk = 1:length(tasks)
     A_is_hyper = task {3} ;
     A_is_csc = task {4} ;
 
-% end
-% for k1 = 1:length(types)
-
     atype = types {k1} ;
-%   fprintf ('.') ;
 
     A = A_matrices {k1} ;
     B = B_matrices {k1} ;
@@ -163,200 +159,194 @@ for kk = 1:length(tasks)
     is_float = test_contains (atype, 'single') || ...
                test_contains (atype, 'double') ;
 
-%   for A_is_hyper = 0:1
-%   for A_is_csc   = 0:1
-
     A.is_csc = A_is_csc ; A.is_hyper = A_is_hyper ;
     B.is_csc = A_is_csc ; B.is_hyper = A_is_hyper ;
 
-%   for k2 = 1:length(add_ops)
-%       op = add_ops {k2} ;
+    if (isequal (op, 'any'))
+        tol = [ ] ;
+    elseif (test_contains (atype, 'single'))
+        tol = 1e-5 ;
+    elseif (test_contains (atype, 'double'))
+        tol = 1e-12 ;
+    else
+        tol = 0 ;
+    end
 
-        if (isequal (op, 'any'))
-            tol = [ ] ;
-        elseif (test_contains (atype, 'single'))
-            tol = 1e-5 ;
-        elseif (test_contains (atype, 'double'))
-            tol = 1e-12 ;
+    try
+        GB_spec_operator (op, atype) ;
+        identity = GB_spec_identity (op, atype) ;
+    catch
+        continue
+    end
+
+    % no mask
+    w1 = GB_spec_reduce_to_vector (w, [], [], op, A, []) ;
+    w2 = GB_mex_reduce_to_vector  (w, [], [], op, A, []) ;
+    GB_spec_compare (w1, w2, identity, tol) ;
+
+    % no mask, with accum
+    w1 = GB_spec_reduce_to_vector (w, [], 'plus', op, A, []) ;
+    w2 = GB_mex_reduce_to_vector  (w, [], 'plus', op, A, []) ;
+    GB_spec_compare (w1, w2, identity, tol) ;
+
+    % with mask
+    w1 = GB_spec_reduce_to_vector (w, mask, [], op, A, []) ;
+    w2 = GB_mex_reduce_to_vector  (w, mask, [], op, A, []) ;
+    GB_spec_compare (w1, w2, identity, tol) ;
+
+    % with mask and accum
+    w1 = GB_spec_reduce_to_vector (w, mask, 'plus', op, A, []) ;
+    w2 = GB_mex_reduce_to_vector  (w, mask, 'plus', op, A, []) ;
+    GB_spec_compare (w1, w2, identity, tol) ;
+
+    % no mask, transpose
+    w1 = GB_spec_reduce_to_vector (w, [], [], op, B, dt) ;
+    w2 = GB_mex_reduce_to_vector  (w, [], [], op, B, dt) ;
+    GB_spec_compare (w1, w2, identity, tol) ;
+
+    % no mask, with accum, transpose
+    w1 = GB_spec_reduce_to_vector (w, [], 'plus', op, B, dt) ;
+    w2 = GB_mex_reduce_to_vector  (w, [], 'plus', op, B, dt) ;
+    GB_spec_compare (w1, w2, identity, tol) ;
+
+    % with mask, transpose
+    w1 = GB_spec_reduce_to_vector (w, mask, [], op, B, dt) ;
+    w2 = GB_mex_reduce_to_vector  (w, mask, [], op, B, dt) ;
+    GB_spec_compare (w1, w2, identity, tol) ;
+
+    % with mask and accum, transpose
+    w1 = GB_spec_reduce_to_vector (w, mask, 'plus', op, B, dt) ;
+    w2 = GB_mex_reduce_to_vector  (w, mask, 'plus', op, B, dt) ;
+    GB_spec_compare (w1, w2, identity, tol) ;
+
+    % GB_spec_reduce_to_scalar always operates column-wise, but GrB_reduce
+    % operates in whatever order it is given: by column if CSC or by row if
+    % CSR.  The result can vary slightly because of different round off
+    % errors.  A_flip causes GB_spec_reduce_to_scalar to operate in the
+    % same order as GrB_reduce.
+
+    A_flip = A ;
+    if (~A.is_csc && is_float)
+        A_flip.matrix = A_flip.matrix.' ;
+        A_flip.pattern = A_flip.pattern' ;
+        A_flip.is_csc = true ;
+    end
+
+    % Parallel reduction leads to different roundoff.  So even with A_flip,
+    % c1 and c2 can only be compared to within round-off error.
+
+    % to scalar
+    c2 = GB_mex_reduce_to_scalar  (cin, [ ], op, A) ;
+    if (isequal (op, 'any'))
+        X = GB_mex_cast (full (A.matrix (A.pattern)), A.class) ;
+        assert (any (X == c2)) ;
+    else
+        c1 = GB_spec_reduce_to_scalar (cin, [ ], op, A_flip) ;
+        if (is_float)
+            assert (abs (c1-c2) < tol *  (abs(c1) + 1))
         else
-            tol = 0 ;
+            assert (isequal (c1, c2)) ;
         end
+    end
 
-        try
-            GB_spec_operator (op, atype) ;
-            identity = GB_spec_identity (op, atype) ;
-        catch
-            continue
-        end
-
-        % no mask
-        w1 = GB_spec_reduce_to_vector (w, [], [], op, A, []) ;
-        w2 = GB_mex_reduce_to_vector  (w, [], [], op, A, []) ;
-        GB_spec_compare (w1, w2, identity, tol) ;
-
-        % no mask, with accum
-        w1 = GB_spec_reduce_to_vector (w, [], 'plus', op, A, []) ;
-        w2 = GB_mex_reduce_to_vector  (w, [], 'plus', op, A, []) ;
-        GB_spec_compare (w1, w2, identity, tol) ;
-
-        % with mask
-        w1 = GB_spec_reduce_to_vector (w, mask, [], op, A, []) ;
-        w2 = GB_mex_reduce_to_vector  (w, mask, [], op, A, []) ;
-        GB_spec_compare (w1, w2, identity, tol) ;
-
-        % with mask and accum
-        w1 = GB_spec_reduce_to_vector (w, mask, 'plus', op, A, []) ;
-        w2 = GB_mex_reduce_to_vector  (w, mask, 'plus', op, A, []) ;
-        GB_spec_compare (w1, w2, identity, tol) ;
-
-        % no mask, transpose
-        w1 = GB_spec_reduce_to_vector (w, [], [], op, B, dt) ;
-        w2 = GB_mex_reduce_to_vector  (w, [], [], op, B, dt) ;
-        GB_spec_compare (w1, w2, identity, tol) ;
-
-        % no mask, with accum, transpose
-        w1 = GB_spec_reduce_to_vector (w, [], 'plus', op, B, dt) ;
-        w2 = GB_mex_reduce_to_vector  (w, [], 'plus', op, B, dt) ;
-        GB_spec_compare (w1, w2, identity, tol) ;
-
-        % with mask, transpose
-        w1 = GB_spec_reduce_to_vector (w, mask, [], op, B, dt) ;
-        w2 = GB_mex_reduce_to_vector  (w, mask, [], op, B, dt) ;
-        GB_spec_compare (w1, w2, identity, tol) ;
-
-        % with mask and accum, transpose
-        w1 = GB_spec_reduce_to_vector (w, mask, 'plus', op, B, dt) ;
-        w2 = GB_mex_reduce_to_vector  (w, mask, 'plus', op, B, dt) ;
-        GB_spec_compare (w1, w2, identity, tol) ;
-
-        % GB_spec_reduce_to_scalar always operates column-wise, but GrB_reduce
-        % operates in whatever order it is given: by column if CSC or by row if
-        % CSR.  The result can vary slightly because of different round off
-        % errors.  A_flip causes GB_spec_reduce_to_scalar to operate in the
-        % same order as GrB_reduce.
-
-        A_flip = A ;
-        if (~A.is_csc && is_float)
-            A_flip.matrix = A_flip.matrix.' ;
-            A_flip.pattern = A_flip.pattern' ;
-            A_flip.is_csc = true ;
-        end
-
-        % Parallel reduction leads to different roundoff.  So even with A_flip,
-        % c1 and c2 can only be compared to within round-off error.
-
-        % to scalar
-        c2 = GB_mex_reduce_to_scalar  (cin, [ ], op, A) ;
-        if (isequal (op, 'any'))
-            X = GB_mex_cast (full (A.matrix (A.pattern)), A.class) ;
-            assert (any (X == c2)) ;
+    % to GrB_Scalar
+    S = GB_mex_reduce_to_GrB_Scalar (S_input, [ ], op, A) ;
+    c2 = S.matrix ;
+    if (isequal (op, 'any'))
+        X = GB_mex_cast (full (A.matrix (A.pattern)), A.class) ;
+        assert (any (X == c2)) ;
+    else
+        c1 = GB_spec_reduce_to_scalar (cin, [ ], op, A_flip) ;
+        if (is_float)
+            assert (abs (c1-c2) < tol *  (abs(c1) + 1))
         else
-            c1 = GB_spec_reduce_to_scalar (cin, [ ], op, A_flip) ;
-            if (is_float)
-                assert (abs (c1-c2) < tol *  (abs(c1) + 1))
-            else
-                assert (isequal (c1, c2)) ;
-            end
+            assert (isequal (c1, c2)) ;
         end
+    end
 
-        % to GrB_Scalar
-        S = GB_mex_reduce_to_GrB_Scalar (S_input, [ ], op, A) ;
-        c2 = S.matrix ;
-        if (isequal (op, 'any'))
-            X = GB_mex_cast (full (A.matrix (A.pattern)), A.class) ;
-            assert (any (X == c2)) ;
+    % to GrB_Scalar
+    S = GB_mex_reduce_to_GrB_Scalar (E_input, [ ], op, A) ;
+    c2 = S.matrix ;
+    if (isequal (op, 'any'))
+        X = GB_mex_cast (full (A.matrix (A.pattern)), A.class) ;
+        assert (any (X == c2)) ;
+    else
+        c1 = GB_spec_reduce_to_scalar (cin, [ ], op, A_flip) ;
+        if (is_float)
+            assert (abs (c1-c2) < tol *  (abs(c1) + 1))
         else
-            c1 = GB_spec_reduce_to_scalar (cin, [ ], op, A_flip) ;
-            if (is_float)
-                assert (abs (c1-c2) < tol *  (abs(c1) + 1))
-            else
-                assert (isequal (c1, c2)) ;
-            end
+            assert (isequal (c1, c2)) ;
         end
+    end
 
-        % to GrB_Scalar
-        S = GB_mex_reduce_to_GrB_Scalar (E_input, [ ], op, A) ;
-        c2 = S.matrix ;
-        if (isequal (op, 'any'))
-            X = GB_mex_cast (full (A.matrix (A.pattern)), A.class) ;
-            assert (any (X == c2)) ;
+    % vector to GrB_Scalar
+    S = GB_mex_reduce_to_GrB_Scalar (S_input, [ ], op, w) ;
+    c2 = S.matrix ;
+    if (isequal (op, 'any'))
+        X = GB_mex_cast (full (w.matrix (w.pattern)), w.class) ;
+        assert (any (X == c2)) ;
+    else
+        c1 = GB_spec_reduce_to_scalar (cin, [ ], op, w) ;
+        if (is_float)
+            assert (abs (c1-c2) < tol *  (abs(c1) + 1))
         else
-            c1 = GB_spec_reduce_to_scalar (cin, [ ], op, A_flip) ;
-            if (is_float)
-                assert (abs (c1-c2) < tol *  (abs(c1) + 1))
-            else
-                assert (isequal (c1, c2)) ;
-            end
+            assert (isequal (c1, c2)) ;
         end
+    end
 
-        % vector to GrB_Scalar
-        S = GB_mex_reduce_to_GrB_Scalar (S_input, [ ], op, w) ;
-        c2 = S.matrix ;
-        if (isequal (op, 'any'))
-            X = GB_mex_cast (full (w.matrix (w.pattern)), w.class) ;
-            assert (any (X == c2)) ;
+    % to scalar, with accum
+    c2 = GB_mex_reduce_to_scalar (cin, 'plus', op, A) ;
+    if (~isequal (op, 'any'))
+        c1 = GB_spec_reduce_to_scalar (cin, 'plus', op, A_flip) ;
+        if (is_float)
+            assert (abs (c1-c2) < tol *  (abs(c1) + 1))
         else
-            c1 = GB_spec_reduce_to_scalar (cin, [ ], op, w) ;
-            if (is_float)
-                assert (abs (c1-c2) < tol *  (abs(c1) + 1))
-            else
-                assert (isequal (c1, c2)) ;
-            end
+            assert (isequal (c1, c2)) ;
         end
+    end
 
-        % to scalar, with accum
-        c2 = GB_mex_reduce_to_scalar (cin, 'plus', op, A) ;
-        if (~isequal (op, 'any'))
-            c1 = GB_spec_reduce_to_scalar (cin, 'plus', op, A_flip) ;
-            if (is_float)
-                assert (abs (c1-c2) < tol *  (abs(c1) + 1))
-            else
-                assert (isequal (c1, c2)) ;
-            end
-        end
-
-        % to GrB_Scalar, with accum
-        S = GB_mex_reduce_to_GrB_Scalar (S_input, 'plus', op, A) ;
-        c2 = S.matrix ;
-        if (~isequal (op, 'any'))
-            c1 = GB_spec_reduce_to_scalar (cin, 'plus', op, A_flip) ;
-            if (is_float)
-                assert (abs (c1-c2) < tol *  (abs(c1) + 1))
-            else
-                assert (isequal (c1, c2)) ;
-            end
-        end
-
-        % vector to GrB_Scalar, with accum
-        S = GB_mex_reduce_to_GrB_Scalar (S_input, 'plus', op, w) ;
-        c2 = S.matrix ;
-        if (~isequal (op, 'any'))
-            c1 = GB_spec_reduce_to_scalar (cin, 'plus', op, w) ;
-            if (is_float)
-                assert (abs (c1-c2) < tol *  (abs(c1) + 1))
-            else
-                assert (isequal (c1, c2)) ;
-            end
-        end
-
-        if (track_coverage)
-            c = sum (GraphBLAS_grbcov > 0) ;
-            d = c - clast ;
-            if (d > 0)
-                oo = sprintf ('''%s''', op) ;
-                fprintf ('{%8s, %2d, %d, %d},', ...
-                    oo, k1, A_is_hyper, A_is_csc) ;
-                fprintf (' ... %% (%3d, %3d)\n', d, c-cfirst) ;
-            end
-            clast = c ;
+    % to GrB_Scalar, with accum
+    S = GB_mex_reduce_to_GrB_Scalar (S_input, 'plus', op, A) ;
+    c2 = S.matrix ;
+    if (~isequal (op, 'any'))
+        c1 = GB_spec_reduce_to_scalar (cin, 'plus', op, A_flip) ;
+        if (is_float)
+            assert (abs (c1-c2) < tol *  (abs(c1) + 1))
         else
-            fprintf ('.') ;
+            assert (isequal (c1, c2)) ;
         end
+    end
 
-%   end
-%   end
-%   end
+    % vector to GrB_Scalar, with accum
+    S = GB_mex_reduce_to_GrB_Scalar (S_input, 'plus', op, w) ;
+    c2 = S.matrix ;
+    if (~isequal (op, 'any'))
+        c1 = GB_spec_reduce_to_scalar (cin, 'plus', op, w) ;
+        if (is_float)
+            assert (abs (c1-c2) < tol *  (abs(c1) + 1))
+        else
+            assert (isequal (c1, c2)) ;
+        end
+    end
+
+    if (track_coverage)
+        c = sum (GraphBLAS_grbcov > 0) ;
+        d = c - clast ;
+        if (d > 0)
+            oo = sprintf ('''%s''', op) ;
+            fprintf ('{%8s, %2d, %d, %d},', ...
+                oo, k1, A_is_hyper, A_is_csc) ;
+            fprintf (' ... %% (%3d, %3d)\n', d, c-cfirst) ;
+        end
+        clast = c ;
+    else
+        fprintf ('.') ;
+    end
 end
+
+%-------------------------------------------------------------------------------
+% final test
+%-------------------------------------------------------------------------------
 
 clear A
 A.matrix = sparse (4,5) ;

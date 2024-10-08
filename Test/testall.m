@@ -242,10 +242,8 @@ logstat ('test228'    ,t, j4  , f1  ) ; % test serialize/deserialize
 
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 
-save test154_start GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
-    GraphBLAS_scripts GraphBLAS_times
-
-logstat ('test154'    ,t, j40 , f11 ) ; % apply with binop and scalar binding
+logstat ('test154'    ,t, j4  , f1  ) ; % apply with binop and scalar binding
+logstat ('test154b'   ,t, j0  , f1  ) ; % apply with binop and scalar binding
 logstat ('test238'    ,t, j44 , f10 ) ; % test GrB_mxm (dot4 and dot2)
 
 save test151b_start GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
