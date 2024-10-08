@@ -69,7 +69,7 @@ GrB_Info GB_IndexUnaryOp_check  // check a GraphBLAS index_unary operator
     }
 
     // name given by GrB_set, or 'GrB_*' name for built-in operators
-    const char *given_name = GB_op_name_get (op) ;
+    const char *given_name = GB_op_name_get ((GB_Operator) op) ;
     if (given_name != NULL)
     { 
         GBPR0 ("    IndexUnaryOp given name: [%s]\n", given_name) ;

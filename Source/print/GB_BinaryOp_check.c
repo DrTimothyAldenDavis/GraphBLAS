@@ -108,7 +108,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     }
 
     // name given by GrB_set, or 'GrB_*' name for built-in operators
-    const char *given_name = GB_op_name_get (op) ;
+    const char *given_name = GB_op_name_get ((GB_Operator) op) ;
     if (given_name != NULL)
     { 
         GBPR0 ("    BinaryOp given name: [%s]\n", given_name) ;

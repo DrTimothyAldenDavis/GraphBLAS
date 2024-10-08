@@ -67,7 +67,7 @@ void mexFunction
     bool malloc_debug = GB_mx_get_global (true) ;
 
     //--------------------------------------------------------------------------
-    // test index binary ops
+    // create index binary ops and test matrices
     //--------------------------------------------------------------------------
 
     GrB_Scalar Theta = NULL, Alpha = NULL, Beta = NULL ;
@@ -80,6 +80,10 @@ void mexFunction
     OK (GrB_Matrix_new (&C2, GrB_FP64, 10, 10)) ;
     OK (GrB_Matrix_new (&B1, GrB_FP64, 10, 10)) ;
     OK (GrB_Matrix_new (&B2, GrB_FP64, 10, 10)) ;
+
+    // C1 and B1 always stay by column
+    OK (GrB_Matrix_set_INT32 (C1, GrB_COLMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
+    OK (GrB_Matrix_set_INT32 (B1, GrB_COLMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
 
     double x = 1 ;
     for (int64_t i = 0 ; i < 9 ; i++)
@@ -117,45 +121,109 @@ void mexFunction
 
     OK (GrB_Global_set_INT32 (GrB_GLOBAL, 1 , (GrB_Field) GxB_BURBLE)) ;
 
-    OK (GrB_Matrix_eWiseAdd_BinaryOp (C1, NULL, NULL, Bop, A, A,
-        GrB_DESC_T1)) ;
-    OK (GxB_Matrix_eWiseUnion (B1, NULL, NULL, Bop, A, Alpha, A, Beta,
-        GrB_DESC_T1)) ;
+    //--------------------------------------------------------------------------
+    // test index binary ops
+    //--------------------------------------------------------------------------
 
-    // turn off the JIT
-    OK (GrB_Global_set_INT32 (GrB_GLOBAL, GxB_JIT_OFF,
-        (GrB_Field) GxB_JIT_C_CONTROL)) ;
+    for (int a1_sparsity = 0 ; a1_sparsity <= 1 ; a1_sparsity++)
+    {
+        for (int a2_sparsity = 0 ; a2_sparsity <= 1 ; a2_sparsity++)
+        {
+            for (int a1_store = 0 ; a1_store <= 1 ; a1_store++)
+            {
+                for (int a2_store = 0 ; a2_store <= 1 ; a2_store++)
+                {
+                    for (int c2_store = 0 ; c2_store <= 1 ; c2_store++)
+                    {
+                        for (int b2_store = 0 ; b2_store <= 1 ; b2_store++)
+                        {
+                            for (int jit = 0 ; jit <= 1 ; jit++)
+                            {
 
-    OK (GrB_Matrix_set_INT32 (A,  GrB_ROWMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
-    OK (GrB_Matrix_set_INT32 (C2, GrB_ROWMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
-    OK (GrB_Matrix_set_INT32 (B2, GrB_ROWMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
-    OK (GxB_print (A, 5)) ;
+                                printf ("\n\n-----------------------------"
+                                    "JIT: %d A: %d %d %d %d C2: %d B2: %d\n", jit,
+                                    a1_sparsity, a2_sparsity,
+                                    a1_store, a2_store,
+                                    c2_store, b2_store) ;
 
-    OK (GrB_Matrix_eWiseAdd_BinaryOp (C2, NULL, NULL, Bop, A, A,
-        GrB_DESC_T1)) ;
-    OK (GxB_Matrix_eWiseUnion (B2, NULL, NULL, Bop, A, Alpha, A, Beta,
-        GrB_DESC_T1)) ;
+                                // turn on/off the JIT
+                                OK (GrB_Global_set_INT32 (GrB_GLOBAL,
+                                    jit ? GxB_JIT_ON : GxB_JIT_OFF,
+                                    (GrB_Field) GxB_JIT_C_CONTROL)) ;
 
-    OK (GxB_print (C1, 5)) ;
-//  OK (GxB_print (C2, 5)) ;
+                                // change A sparsity
+                                OK (GrB_Matrix_set_INT32 (A,
+                                    a1_sparsity ? GxB_SPARSE : GxB_BITMAP,
+                                    (GrB_Field) GxB_SPARSITY_CONTROL)) ;
 
-    OK (GxB_print (B1, 5)) ;
-//  OK (GxB_print (B2, 5)) ;
+                                // change A storage orientation
+                                OK (GrB_Matrix_set_INT32 (A,
+                                    a1_store ? GrB_ROWMAJOR : GrB_COLMAJOR,
+                                    GrB_STORAGE_ORIENTATION_HINT)) ;
 
-    OK (GrB_Matrix_set_INT32 (C2, GrB_COLMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
-    OK (GrB_Matrix_set_INT32 (B2, GrB_COLMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
+                                // C1 = add (A, A')
+                                OK (GrB_Matrix_eWiseAdd_BinaryOp (C1, NULL, NULL,
+                                    Bop, A, A, GrB_DESC_T1)) ;
+                                // B1 = union (A, A')
+                                OK (GxB_Matrix_eWiseUnion (B1, NULL, NULL, Bop,
+                                    A, Alpha, A, Beta, GrB_DESC_T1)) ;
 
-    // FIXME: check C1 and B1 matrices
+                                // change A sparsity again
+                                OK (GrB_Matrix_set_INT32 (A,
+                                    a2_sparsity ? GxB_SPARSE : GxB_BITMAP,
+                                    (GrB_Field) GxB_SPARSITY_CONTROL)) ;
 
-    OK (GrB_Matrix_new (&D, GrB_FP64, 10, 10)) ;
-    OK (GrB_Matrix_eWiseAdd_BinaryOp (D, NULL, NULL, GrB_MINUS_FP64, C1, B1,
-        NULL)) ;
-    OK (GrB_Matrix_select_FP64 (D, NULL, NULL, GrB_VALUENE_FP64, D,
-        (double) 0, NULL)) ;
-    OK (GxB_print (D, 5)) ;
+                                // change A storage again
+                                OK (GrB_Matrix_set_INT32 (A,
+                                    a2_store ? GrB_ROWMAJOR : GrB_COLMAJOR,
+                                    GrB_STORAGE_ORIENTATION_HINT)) ;
 
-    CHECK (GB_mx_isequal (C1, C2, 0)) ;
-    CHECK (GB_mx_isequal (B1, B2, 0)) ;
+                                // change C2 and B2 storage
+                                OK (GrB_Matrix_set_INT32 (C2,
+                                    c2_store ? GrB_ROWMAJOR : GrB_COLMAJOR,
+                                    GrB_STORAGE_ORIENTATION_HINT)) ;
+                                OK (GrB_Matrix_set_INT32 (B2,
+                                    b2_store ? GrB_ROWMAJOR : GrB_COLMAJOR,
+                                    GrB_STORAGE_ORIENTATION_HINT)) ;
+
+                                // C2 = add (A, A')
+                                OK (GrB_Matrix_eWiseAdd_BinaryOp (C2, NULL, NULL,
+                                    Bop, A, A, GrB_DESC_T1)) ;
+                                // B2 = union (A, A')
+                                OK (GxB_Matrix_eWiseUnion (B2, NULL, NULL,
+                                    Bop, A, Alpha, A, Beta, GrB_DESC_T1)) ;
+
+                                // OK (GxB_print (C1, 5)) ;
+                                // OK (GxB_print (C2, 5)) ;
+
+                                // OK (GxB_print (B1, 5)) ;
+                                // OK (GxB_print (B2, 5)) ;
+
+                                // change C2 and B2 to the same storage as C1 and B1
+                                OK (GrB_Matrix_set_INT32 (C2, GrB_COLMAJOR,
+                                    GrB_STORAGE_ORIENTATION_HINT)) ;
+                                OK (GrB_Matrix_set_INT32 (B2, GrB_COLMAJOR,
+                                    GrB_STORAGE_ORIENTATION_HINT)) ;
+
+                                // FIXME: check C1 and B1 matrices
+
+                                OK (GrB_Matrix_new (&D, GrB_FP64, 10, 10)) ;
+                                OK (GrB_Matrix_eWiseAdd_BinaryOp (D, NULL, NULL,
+                                    GrB_MINUS_FP64, C1, B1, NULL)) ;
+                                OK (GrB_Matrix_select_FP64 (D, NULL, NULL,
+                                    GrB_VALUENE_FP64, D, (double) 0, NULL)) ;
+                                // OK (GxB_print (D, 5)) ;
+                                OK (GrB_Matrix_free (&D)) ;
+
+                                CHECK (GB_mx_isequal (C1, C2, 0)) ;
+                                CHECK (GB_mx_isequal (B1, B2, 0)) ;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     //------------------------------------------------------------------------
     // finalize GraphBLAS

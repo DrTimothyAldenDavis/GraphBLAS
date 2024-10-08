@@ -512,6 +512,10 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         #undef  GB_PUTC
         #define GB_PUTC(z, Cx, p) cast_Z_to_C (Cx +((p)*csize), &z, csize)
 
+printf ("########################################################\n") ;
+printf ("\nGENERIC add: flipij %d union %d\n", flipij, is_eWiseUnion) ;
+printf ("########################################################\n") ;
+
         if (fadd_idx != NULL)
         {
 
@@ -530,6 +534,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
             const void *theta = op->theta ;
 
+printf ("\nGENERIC idxbinop: flipij %d union %d\n", flipij, is_eWiseUnion) ;
+
             if (flipij)
             {
                 // i and j must be flipped
@@ -538,13 +544,28 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                     fadd_idx (z, aij, i, j, bij, i, j, theta) ;
                 if (is_eWiseUnion)
                 { 
-GB_GOTCHA ; // generic ewise union, flipij
                     #define GB_IS_EWISEUNION 1
                     #include "ewise/template/GB_add_template.c"
                 }
                 else
                 { 
-GB_GOTCHA ; // generic ewise add, flipij
+printf ("########################################################\n") ;
+printf ("########################################################\n") ;
+printf ("########################################################\n") ;
+printf ("########################################################\n") ;
+printf ("########################################################\n") ;
+printf ("########################################################\n") ;
+printf ("########################################################\n") ;
+printf ("########################################################\n") ;
+printf ("########################################################\n") ;
+printf ("########################################################\n") ;
+printf ("########################################################\n") ;
+printf ("########################################################\n") ;
+printf ("########################################################\n") ;
+printf ("########################################################\n") ;
+printf ("########################################################\n") ;
+GB_GOTCHA ; // generic ewise add with index op, flipij
+
                     #define GB_IS_EWISEUNION 0
                     #include "ewise/template/GB_add_template.c"
                 }
@@ -591,6 +612,8 @@ GB_GOTCHA ; // generic ewise add, flipij
                 GB_BINOP (z, aij, bij, i, j) ;              \
                 GB_PUTC (z, Cx, p) ;                        \
             }
+
+printf ("\nGENERIC binop: union %d\n", is_eWiseUnion) ;
 
             if (is_eWiseUnion)
             { 

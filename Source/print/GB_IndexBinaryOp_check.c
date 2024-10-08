@@ -55,7 +55,7 @@ GB_GOTCHA ; // index binary op, bad opcode
     GBPR0 ("z=%s(x,ix,jx,y,iy,jy,theta)\n", op_name) ;
 
     // name given by GrB_set, or 'GrB_*' name for built-in operators
-    const char *given_name = GB_op_name_get (op) ;
+    const char *given_name = GB_op_name_get ((GB_Operator) op) ;
     if (given_name != NULL)
     { 
 GB_GOTCHA ; // index binary op, given name
