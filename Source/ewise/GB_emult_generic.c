@@ -183,7 +183,6 @@ GrB_Info GB_emult_generic       // generic emult
             }
             else if (ewise_method == GB_EMULT_METHOD4)
             { 
-GB_GOTCHA ; // emult generic with flipij, method4
                 // C<M>=A.*B; M sparse/hyper, A and B bitmap/full
                 // C is sparse
                 #include "ewise/template/GB_emult_04_template.c"

@@ -21,6 +21,7 @@
     GrB_Scalar_free (&Crud_Scalar) ;    \
     GrB_Type_free (&Crud_Type) ;        \
     GrB_Matrix_free (&A) ;              \
+    GrB_Matrix_free (&M) ;              \
     GrB_Matrix_free (&A2) ;             \
     GrB_Matrix_free (&C1) ;             \
     GrB_Matrix_free (&C2) ;             \
@@ -30,6 +31,8 @@
     GrB_Matrix_free (&E2) ;             \
     GrB_Matrix_free (&F1) ;             \
     GrB_Matrix_free (&F2) ;             \
+    GrB_Matrix_free (&G1) ;             \
+    GrB_Matrix_free (&G2) ;             \
     GrB_Matrix_free (&D) ;              \
     GrB_BinaryOp_free (&Bop) ;          \
     GzB_IndexBinaryOp_free (&Iop) ;     \
@@ -82,9 +85,11 @@ void mexFunction
     GzB_IndexBinaryOp Iop = NULL, Crud_Iop = NULL ;
     GrB_BinaryOp Bop = NULL, Crud_Bop = NULL ;
     GrB_Matrix A = NULL, C1 = NULL, C2 = NULL, B1 = NULL, B2 = NULL, D = NULL,
-        E1 = NULL, E2 = NULL, A2 = NULL, F1 = NULL, F2 = NULL ;
+        E1 = NULL, E2 = NULL, A2 = NULL, F1 = NULL, F2 = NULL, M = NULL,
+        G1 = NULL, G2 = NULL ;
 
     OK (GrB_Matrix_new (&A, GrB_FP64, 10, 10)) ;
+
     OK (GrB_Matrix_new (&C1, GrB_FP64, 10, 10)) ;
     OK (GrB_Matrix_new (&C2, GrB_FP64, 10, 10)) ;
     OK (GrB_Matrix_new (&B1, GrB_FP64, 10, 10)) ;
@@ -93,6 +98,8 @@ void mexFunction
     OK (GrB_Matrix_new (&E2, GrB_FP64, 10, 10)) ;
     OK (GrB_Matrix_new (&F1, GrB_FP64, 10, 10)) ;
     OK (GrB_Matrix_new (&F2, GrB_FP64, 10, 10)) ;
+    OK (GrB_Matrix_new (&G1, GrB_FP64, 10, 10)) ;
+    OK (GrB_Matrix_new (&G2, GrB_FP64, 10, 10)) ;
 
     // C1 and B1 always stay by column
     OK (GrB_Matrix_set_INT32 (C1, GrB_COLMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
@@ -115,9 +122,6 @@ void mexFunction
     OK (GrB_Scalar_new (&Theta, GrB_FP64)) ;
     OK (GrB_Scalar_setElement_FP64 (Theta, x)) ;
 
-    // OK (GxB_print (A, 5)) ;
-    // OK (GxB_print (Theta, 5)) ;
-
     OK (GzB_IndexBinaryOp_new2 (&Iop,
         (GzB_index_binary_function) test37_idxbinop,
         GrB_FP64, GrB_FP64, GrB_FP64, GrB_FP64,
@@ -135,8 +139,10 @@ void mexFunction
     OK (GrB_Scalar_setElement_FP64 (Beta, (double) 42)) ;
 
     OK (GrB_Matrix_dup (&A2, A)) ;
+    OK (GrB_Matrix_dup (&M, A)) ;
 
-    // OK (GrB_Global_set_INT32 (GrB_GLOBAL, 1 , (GrB_Field) GxB_BURBLE)) ;
+    OK (GrB_Matrix_set_INT32 (M, GxB_SPARSE,
+        (GrB_Field) GxB_SPARSITY_CONTROL)) ;
 
     //--------------------------------------------------------------------------
     // test index binary ops
@@ -186,6 +192,9 @@ void mexFunction
                                 // F1 = emult (A, A')
                                 OK (GrB_Matrix_eWiseMult_BinaryOp (F1,
                                     NULL, NULL, Bop, A, A2, GrB_DESC_T1)) ;
+                                // G1<M> = emult (A, A')
+                                OK (GrB_Matrix_eWiseMult_BinaryOp (G1,
+                                    M, NULL, Bop, A, A2, GrB_DESC_RT1)) ;
 
                                 // change A sparsity again
                                 OK (GrB_Matrix_set_INT32 (A2,
@@ -210,6 +219,9 @@ void mexFunction
                                 OK (GrB_Matrix_set_INT32 (F2,
                                     b2_store ? GrB_ROWMAJOR : GrB_COLMAJOR,
                                     GrB_STORAGE_ORIENTATION_HINT)) ;
+                                OK (GrB_Matrix_set_INT32 (G2,
+                                    b2_store ? GrB_ROWMAJOR : GrB_COLMAJOR,
+                                    GrB_STORAGE_ORIENTATION_HINT)) ;
 
                                 // C2 = add (A, A')
                                 OK (GrB_Matrix_eWiseAdd_BinaryOp (C2,
@@ -223,12 +235,9 @@ void mexFunction
                                 // F2 = emult (A, A2')
                                 OK (GrB_Matrix_eWiseMult_BinaryOp (F2,
                                     NULL, NULL, Bop, A, A2, GrB_DESC_T1)) ;
-
-                                // OK (GxB_print (C1, 5)) ;
-                                // OK (GxB_print (C2, 5)) ;
-
-                                // OK (GxB_print (B1, 5)) ;
-                                // OK (GxB_print (B2, 5)) ;
+                                // G2<M> = emult (A, A2')
+                                OK (GrB_Matrix_eWiseMult_BinaryOp (G2,
+                                    M, NULL, Bop, A, A2, GrB_DESC_RT1)) ;
 
                                 // change C2 etc to same storage as C1 etc
                                 OK (GrB_Matrix_set_INT32 (C2, GrB_COLMAJOR,
@@ -239,14 +248,18 @@ void mexFunction
                                     GrB_STORAGE_ORIENTATION_HINT)) ;
                                 OK (GrB_Matrix_set_INT32 (F2, GrB_COLMAJOR,
                                     GrB_STORAGE_ORIENTATION_HINT)) ;
+                                OK (GrB_Matrix_set_INT32 (G2, GrB_COLMAJOR,
+                                    GrB_STORAGE_ORIENTATION_HINT)) ;
 
                                 // FIXME: check C1, etc matrices
 
                                 OK (GrB_Matrix_new (&D, GrB_FP64, 10, 10)) ;
                                 OK (GrB_Matrix_eWiseAdd_BinaryOp (D, NULL,
-                                    NULL, GrB_MINUS_FP64, C1, B1, NULL)) ;
+                                    NULL, GrB_MINUS_FP64, C1, C2, NULL)) ;
                                 OK (GrB_Matrix_select_FP64 (D, NULL, NULL,
                                     GrB_VALUENE_FP64, D, (double) 0, NULL)) ;
+                                int64_t nvals ;
+                                OK (GrB_Matrix_nvals (&nvals, D)) ;
                                 // OK (GxB_print (D, 5)) ;
                                 OK (GrB_Matrix_free (&D)) ;
 
@@ -255,6 +268,7 @@ void mexFunction
                                 CHECK (GB_mx_isequal (E1, E2, 0)) ;
                                 CHECK (GB_mx_isequal (F1, F2, 0)) ;
                                 CHECK (GB_mx_isequal (F1, E2, 0)) ;
+                                CHECK (GB_mx_isequal (G1, G2, 0)) ;
                             }
                         }
                     }
@@ -358,8 +372,7 @@ void mexFunction
     printf ("-------- test JIT with error fallback:\n") ;
     OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
     OK (GxB_set (GxB_JIT_ERROR_FALLBACK, true)) ;
-//  OK (GxB_set (GxB_BURBLE, true)) ;
-    OK (GrB_Global_set_INT32 (GrB_GLOBAL, 1 , (GrB_Field) GxB_BURBLE)) ;
+    OK (GxB_set (GxB_BURBLE, true)) ;
 
     expected = GrB_NULL_POINTER ;
     ERR (GzB_IndexBinaryOp_new2 (&Crud_Iop, NULL,
@@ -381,9 +394,7 @@ void mexFunction
 
     OK (GxB_set (GxB_JIT_C_CONTROL, save_jit)) ;
     OK (GxB_set (GxB_JIT_ERROR_FALLBACK, &save_fallback)) ;
-//  OK (GxB_set (GxB_BURBLE, save_burble)) ;
-    OK (GrB_Global_set_INT32 (GrB_GLOBAL, save_burble,
-        (GrB_Field) GxB_BURBLE)) ;
+    OK (GxB_set (GxB_BURBLE, save_burble)) ;
 
     //------------------------------------------------------------------------
     // finalize GraphBLAS
