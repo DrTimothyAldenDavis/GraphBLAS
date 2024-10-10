@@ -30,7 +30,6 @@ GrB_Info GzB_BinaryOp_IndexOp_new
 
     if (!GB_Type_compatible (idxbinop->theta_type, theta->type))
     { 
-GB_GOTCHA ; // new index binary op, typecast error
         GB_ERROR (GrB_DOMAIN_MISMATCH,
             "Scalar of type [%s] cannot be typecast to type [%s]\n",
                 theta->type->name, idxbinop->theta_type->name) ;

@@ -137,7 +137,6 @@ GrB_Info GxB_Type_new
         GrB_Info info = GB_user_type_jit (&sizeof_type, t) ;
         if (info != GrB_SUCCESS)
         { 
-printf ("info: %d\n", info) ;
             // unable to determine the type size
             GrB_Type_free (&t) ;
             // If the JIT fails, it returns GrB_NO_VALUE or GrB_JIT_ERROR,

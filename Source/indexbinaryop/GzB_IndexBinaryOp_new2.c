@@ -23,7 +23,7 @@
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
-GrB_Info GzB_IndexBinaryOp_new2
+GrB_Info GzB_IndexBinaryOp_new2     // FIXME: rename to GzB_IndexBinaryOp_new
 (
     GzB_IndexBinaryOp *op_handle,   // handle for the new index binary operator
     GzB_index_binary_function function, // pointer to the index binary function
@@ -116,7 +116,6 @@ GrB_Info GzB_IndexBinaryOp_new2
         info = GB_user_op_jit (&user_function, (GB_Operator) op) ;
         if (info != GrB_SUCCESS)
         { 
-GB_GOTCHA ; // new2 binary op from index binary op, jit error
             // unable to construct the function pointer
             GB_Op_free ((GB_Operator *) &op) ;
             // If the JIT fails, it returns GrB_NO_VALUE or GrB_JIT_ERROR,

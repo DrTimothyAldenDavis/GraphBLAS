@@ -18,6 +18,8 @@
     GrB_Scalar_free (&Theta) ;          \
     GrB_Scalar_free (&Alpha) ;          \
     GrB_Scalar_free (&Beta) ;           \
+    GrB_Scalar_free (&Crud_Scalar) ;    \
+    GrB_Type_free (&Crud_Type) ;        \
     GrB_Matrix_free (&A) ;              \
     GrB_Matrix_free (&A2) ;             \
     GrB_Matrix_free (&C1) ;             \
@@ -75,9 +77,10 @@ void mexFunction
     // create index binary ops and test matrices
     //--------------------------------------------------------------------------
 
-    GrB_Scalar Theta = NULL, Alpha = NULL, Beta = NULL ;
-    GzB_IndexBinaryOp Iop = NULL ;
-    GrB_BinaryOp Bop = NULL ;
+    GrB_Type Crud_Type = NULL ;
+    GrB_Scalar Theta = NULL, Alpha = NULL, Beta = NULL, Crud_Scalar ;
+    GzB_IndexBinaryOp Iop = NULL, Crud_Iop = NULL ;
+    GrB_BinaryOp Bop = NULL, Crud_Bop = NULL ;
     GrB_Matrix A = NULL, C1 = NULL, C2 = NULL, B1 = NULL, B2 = NULL, D = NULL,
         E1 = NULL, E2 = NULL, A2 = NULL, F1 = NULL, F2 = NULL ;
 
@@ -264,7 +267,16 @@ void mexFunction
     // error tests
     //------------------------------------------------------------------------
 
-    printf ("\nerror handling tests:\n") ;
+    // turn on the JIT
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, GxB_JIT_ON,
+        (GrB_Field) GxB_JIT_C_CONTROL)) ;
+
+    int save_jit = 0, save_burble = 0 ;
+    bool save_fallback = false ;
+    OK (GxB_get (GxB_JIT_C_CONTROL, &save_jit)) ;
+    CHECK (save_jit == GxB_JIT_ON) ;
+
+    printf ("\nerror handling tests: JIT is %d\n", save_jit) ;
 
     int expected = GrB_INVALID_OBJECT ;
     void *p = Bop->theta_type = NULL ;
@@ -314,6 +326,64 @@ void mexFunction
     ERR (GzB_IndexBinaryOp_set_Scalar (Iop, Theta, GrB_NAME)) ;
     ERR (GzB_IndexBinaryOp_set_INT32 (Iop, 2, GrB_SIZE)) ;
     ERR (GzB_IndexBinaryOp_set_VOID (Iop, NULL, GrB_SIZE, 0)) ;
+
+    expected = GrB_DOMAIN_MISMATCH ;
+    OK (GrB_Type_new (&Crud_Type, 4)) ;
+    OK (GrB_Scalar_new (&Crud_Scalar, Crud_Type)) ;
+    ERR (GzB_BinaryOp_IndexOp_new (&Crud_Bop, Iop, Crud_Scalar)) ;
+    ERR (GrB_Matrix_apply (A, NULL, NULL, Bop, A, NULL)) ;
+
+    //------------------------------------------------------------------------
+    // JIT testing
+    //------------------------------------------------------------------------
+
+    printf ("\n\n-------------- lots of compiler errors expected here:\n") ;
+
+    #define CRUD_IDXBINOP                               \
+    "void crud_idxbinop (double *z, "                   \
+    " const double *x, GrB_Index ix, GrB_Index jx, "    \
+    " const double *y, GrB_Index iy, GrB_Index jy, "    \
+    " const double *theta) "                            \
+    "{ "                                                \
+    "    compiler error occurs here "                   \
+    "}"
+
+    OK (GxB_get (GxB_JIT_C_CONTROL, &save_jit)) ;
+    OK (GxB_get (GxB_JIT_ERROR_FALLBACK, &save_fallback)) ;
+    OK (GxB_get (GxB_BURBLE, &save_burble)) ;
+
+    OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_OFF)) ;
+    OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
+
+    printf ("-------- test JIT with error fallback:\n") ;
+    OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
+    OK (GxB_set (GxB_JIT_ERROR_FALLBACK, true)) ;
+//  OK (GxB_set (GxB_BURBLE, true)) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, 1 , (GrB_Field) GxB_BURBLE)) ;
+
+    expected = GrB_NULL_POINTER ;
+    ERR (GzB_IndexBinaryOp_new2 (&Crud_Iop, NULL,
+        GrB_FP64, GrB_FP64, GrB_FP64, GrB_FP64,
+        "crud_idxbinop", CRUD_IDXBINOP)) ;
+
+    printf ("-------- test JIT without error fallback:\n") ;
+    OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
+    OK (GxB_set (GxB_JIT_ERROR_FALLBACK, false)) ;
+    bool fallback = true ;
+    OK (GxB_get (GxB_JIT_ERROR_FALLBACK, &fallback)) ;
+    CHECK (!fallback) ;
+    printf ("fallback is now: %d\n", fallback) ;
+
+    expected = GxB_JIT_ERROR ;
+    ERR (GzB_IndexBinaryOp_new2 (&Crud_Iop, NULL,
+        GrB_FP64, GrB_FP64, GrB_FP64, GrB_FP64,
+        "crud_idxbinop", "still more errors here")) ;
+
+    OK (GxB_set (GxB_JIT_C_CONTROL, save_jit)) ;
+    OK (GxB_set (GxB_JIT_ERROR_FALLBACK, &save_fallback)) ;
+//  OK (GxB_set (GxB_BURBLE, save_burble)) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, save_burble,
+        (GrB_Field) GxB_BURBLE)) ;
 
     //------------------------------------------------------------------------
     // finalize GraphBLAS

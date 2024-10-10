@@ -1850,7 +1850,7 @@ GrB_Info GB_jitifyer_load2_worker
         // disable the JIT to avoid repeated load errors
         GB_jit_control = GxB_JIT_RUN ;
         // report the error: punt to generic or panic
-        GBURBLE (" (jit failure: cannot lock the kernel!) ") ;
+        GBURBLE ("\n(jit failure: cannot create a file I/O lock)\n") ;
         return (GxB_JIT_ERROR) ;
     }
 
@@ -2034,7 +2034,7 @@ GrB_Info GB_jitifyer_load_worker
             // remove the compiled library
             remove (GB_jit_temp) ;
             // report the error: punt to generic or panic
-            GBURBLE ("(jit failure: compiler error; compilation disabled) ") ;
+            GBURBLE ("\n(jit failure: compiler error; compilation disabled)\n");
             return (GB_jit_error_fallback ? GrB_NO_VALUE : GxB_JIT_ERROR) ;
         }
 
@@ -2065,7 +2065,7 @@ GrB_Info GB_jitifyer_load_worker
         // remove the compiled library
         remove (GB_jit_temp) ;
         // report the error: punt to generic or panic
-        GBURBLE ("(jit failure: load error; compilation disabled) ") ;
+        GBURBLE ("\n(jit failure: load error; compilation disabled)\n") ;
         return (GB_jit_error_fallback ? GrB_NO_VALUE : GxB_JIT_ERROR) ;
     }
 
@@ -2080,7 +2080,6 @@ GrB_Info GB_jitifyer_load_worker
         // remove the compiled library
         remove (GB_jit_temp) ;
         // report the error: punt to generic or panic
-        GBURBLE ("(jit failure: unable to insert kernel into hash table) ") ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
