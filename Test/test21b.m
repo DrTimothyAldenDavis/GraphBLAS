@@ -1,6 +1,8 @@
 function test21b (fulltest)
 %TEST21B test GrB_assign
 
+% FIXME: prune this test (132 sec, lo cover)
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 

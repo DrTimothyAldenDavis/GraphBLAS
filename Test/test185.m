@@ -5,10 +5,11 @@ function test185
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% FIXME: prune this test (193 sec, low cover)
+
 fprintf ('test185 -------------------- C+=A''*B when C is dense\n') ;
 
 rng ('default') ;
-GB_mex_burble (0) ;
 
 semiring.add = 'plus' ;
 semiring.multiply = 'times' ;
@@ -93,7 +94,6 @@ for da = [0.01 0.1 .5 0.9 inf]
 end
 
 fprintf ('\n') ;
-GB_mex_burble (0) ;
 fprintf ('maxerr: %g\n', maxerr) ;
 fprintf ('test185: all tests passed\n') ;
 

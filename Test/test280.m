@@ -4,6 +4,8 @@ function test280
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% FIXME: prune this test (108 sec, lo cover): (use a smaller matrix)
+
 load west0479
 GB_mex_grow (west0479) ;
 

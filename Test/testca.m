@@ -4,6 +4,11 @@ function testca(use_builtin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% FIXME: prune this test (126 sec with debug on)
+% only extra 1 statement covered with debug_on; but 2x the time
+% (62 sec to 126 sec).  Split into 2 tests, or run with debug_off and see if
+% another test covers that statement with debug_on.
+
 if (nargin < 1)
     use_builtin = true ;
 end

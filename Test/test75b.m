@@ -78,8 +78,6 @@ dtn_saxpy = struct ( 'inp0', 'tran', 'axb', 'saxpy' ) ;
 dnt = struct ( 'inp1', 'tran' ) ;
 dtt = struct ( 'inp0', 'tran', 'inp1', 'tran' ) ;
 
-n_semirings = 0 ;
-
 track_coverage = false ;
 if (track_coverage)
     global GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
@@ -277,8 +275,6 @@ for k1 = 1:length(semirings)
     Y.class = type ;
     D.class = add_op.optype ;
 
-    n_semirings = n_semirings + 1 ;
-
     % C += A'*B, C dense, typecasting of C
     C1 = GB_mex_mxm  (Din, [ ], add_op, semiring, A, B, dtn_dot) ;
     C2 = GB_spec_mxm (Din, [ ], add_op, semiring, A, B, dtn) ;
@@ -307,6 +303,5 @@ for k1 = 1:length(semirings)
 
 end
 
-fprintf ('\nsemirings tested: %d\n', n_semirings) ;
 fprintf ('\ntest75b: all tests passed\n') ;
 

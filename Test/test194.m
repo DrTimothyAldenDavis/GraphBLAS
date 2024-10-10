@@ -4,6 +4,9 @@ function test194
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% FIXME: prune this test (113 sec, lo cover)
+% 4 statements with debug_off, only 1 more statement covered with debug_on
+
 fprintf ('test194 ----------- V = diag (A,k)\n') ;
 
 [~, ~, ~, types, ~, ~] = GB_spec_opsall ;

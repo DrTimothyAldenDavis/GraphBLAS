@@ -4,18 +4,25 @@ function grbcov
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-fprintf ('grbcov, starting at %s\n', datestr (now)) ;
+clear all
+tstart = tic ;
+
+system ('make purge') ;
+
+fp = fopen ('log.txt', 'a') ;
+fprintf (fp, '%s grbcov starting\n', datestr (now)) ;
+fclose (fp) ;
 
 !rmtmph
-clear all
 clear mex
-tstart = tic ;
-system ('make purge') ;
 grbmake ;
 testcov ;
 grbshow ;
 ttotal = toc (tstart) ;
 
-fprintf ('grbcov, ending   at %s\n', datestr (now)) ;
+fp = fopen ('log.txt', 'a') ;
+fprintf (fp, '%s grbcov ending\n', datestr (now)) ;
+fclose (fp) ;
+
 fprintf ('\nTotal time, incl compilation: %8.2f minutes\n', ttotal / 60) ;
 

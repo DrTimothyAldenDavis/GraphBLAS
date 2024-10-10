@@ -1,6 +1,8 @@
 function test160
 %TEST160 test GrB_mxm
 
+% FIXME: prune this test (115 sec, low cover)
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
@@ -156,3 +158,4 @@ GB_spec_compare (C1, C2) ;
 GB_spec_compare (C1, C3) ;
 
 fprintf ('\ntest160: all tests passed\n') ;
+

@@ -4,6 +4,8 @@ function test238
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% FIXME: prune this test (110 seconds)
+
 rng ('default') ;
 
 desc.inp0 = 'tran' ;

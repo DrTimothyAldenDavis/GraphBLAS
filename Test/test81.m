@@ -4,6 +4,8 @@ function test81
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% FIXME: prune this test (151 seconds, very low coverage)
+
 fprintf ('test81:  GrB_Matrix_extract with index range, stride, backwards\n') ;
 
 rng ('default') ;

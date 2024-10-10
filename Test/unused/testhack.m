@@ -34,7 +34,7 @@ end
 s {1} = [1 1] ;
 
 % clear the statement coverage counts
-clear global GraphBLAS_grbcov
+%% clear global GraphBLAS_grbcov
 
 global GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
     GraphBLAS_scripts GraphBLAS_times
@@ -85,9 +85,6 @@ hack (2) = 0 ; GB_mex_hack (hack) ;
 
 % save the current malloc debug status
 debug_save = stat ;
-
-jlot = {4,3,2,1} ;
-flot = {1,1,1,1} ;
 
 %===============================================================================
 % quick tests (< 1 sec)
@@ -219,15 +216,11 @@ logstat ('test129'    ,t, j4  , f1  ) ; % test GxB_select (tril, nonz, hyper)
 logstat ('test69'     ,t, j4  , f1  ) ; % assign and subassign with alias
 logstat ('test11'     ,t, j4  , f1  ) ; % exhaustive test of GrB_extractTuples
 logstat ('test29'     ,t, j0  , f1  ) ; % reduce with zombies
-logstat ('test282'    ,t, jlot, flot) ; % test argmax, index binary op
-%ogstat ('test282'    ,t, j42 , f11 ) ; % test argmax, index binary op
+logstat ('test282'    ,t, j42 , f11 ) ; % test argmax, index binary op
 logstat ('test249'    ,t, j4  , f1  ) ; % GxB_Context object
 logstat ('test196'    ,t, j4  , f1  ) ; % test hypersparse concat
 logstat ('test250'    ,t, j44 , f10 ) ; % JIT tests, set/get, other tests
-jall = {4,3,2,1,4,2} ;
-fall = {1,1,1,1,0,0} ;
-logstat ('test145'    ,t, jall, fall) ; % dot4 for C += A'*B
-%ogstat ('test145'    ,t, j42 , f11 ) ; % dot4 for C += A'*B
+logstat ('test145'    ,t, j42 , f11 ) ; % dot4 for C += A'*B
 logstat ('test229'    ,t, j40 , f11 ) ; % test setElement
 logstat ('test209'    ,t, j4  , f1  ) ; % test iso build
 logstat ('test224'    ,t, j4  , f1  ) ; % test unpack/pack
@@ -266,27 +259,25 @@ logstat ('test152'    ,t, j44 , f10 ) ; % test binops C=A+B, all matrices dense
 logstat ('test160'    ,s, j0  , f1  ) ; % test A*B, single threaded
 
 % 10 to 100 seconds, no Werk, debug_off
-set_malloc_debug (mdebug, 1)
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 logstat ('test188b'   ,t, j0  , f1  ) ; % test concat
 logstat ('test186'    ,t, j4  , f1  ) ; % saxpy, all formats (slice_balanced)
-logstat ('test186'    ,t, j40 , f11 ) ; % saxpy, all formats (slice_balanced)
-logstat ('test186(0)' ,t, j4  , f1  ) ; % repeat with default slice_balanced
+%ogstat ('test186'    ,t, j40 , f11 ) ; % saxpy, all formats (slice_balanced)
+%ogstat ('test186(0)' ,t, j4  , f1  ) ; % repeat with default slice_balanced
 logstat ('test192'    ,t, j4  , f1  ) ; % test C<C,struct>=scalar
+logstat ('test187'    ,t, j4  , f1  ) ; % test dup/assign for all formats
 logstat ('test181'    ,s, j4  , f1  ) ; % transpose with explicit zeros in mask
 logstat ('test238'    ,t, j44 , f10 ) ; % test GrB_mxm (dot4 and dot2)
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
 % 10 to 100 seconds: debug_on
 set_malloc_debug (mdebug, 1)
-logstat ('test187'    ,t, j4  , f1  ) ; % test dup/assign for all formats
 logstat ('test189'    ,t, j4  , f1  ) ; % test large assign
 logstat ('test169'    ,t, j0  , f1  ) ; % C<M>=A+B with many formats
 logstat ('test76'     ,s, j4  , f1  ) ; % GxB_resize (single threaded)
 logstat ('test01'     ,t, j4  , f1  ) ; % error handling
 logstat ('test228'    ,t, j4  , f1  ) ; % test serialize/deserialize
 logstat ('test104'    ,t, j4  , f1  ) ; % export/import
-logstat ('test02'     ,t, j4  , f1  ) ; % matrix copy and dup tests
 logstat ('test244'    ,t, j4  , f1  ) ; % test GxB_Matrix_reshape*
 
 % 10 to 100 seconds, no Werk, debug_on
