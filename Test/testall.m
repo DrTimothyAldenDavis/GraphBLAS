@@ -262,7 +262,9 @@ logstat ('test246'    ,t, j4  , f1  ) ; % GrB_mxm parallelism (slice_balanced)
 logstat ('test206'    ,t, j44 , f10 ) ; % test iso select
 logstat ('test251'    ,t, j4  , f1  ) ; % dot4, dot2, with plus_pair
 logstat ('test251b'   ,t, j4  , f0  ) ; % dot4, dot2, with plus_pair
+save test152_start GraphBLAS_grbcov
 logstat ('test152'    ,t, j44 , f10 ) ; % test binops C=A+B, all matrices dense
+save test160_start GraphBLAS_grbcov
 logstat ('test160'    ,s, j0  , f1  ) ; % test A*B, single threaded
 
 % 10 to 100 seconds, no Werk, debug_off
@@ -274,6 +276,7 @@ logstat ('test186'    ,t, j40 , f11 ) ; % saxpy, all formats (slice_balanced)
 logstat ('test186(0)' ,t, j4  , f1  ) ; % repeat with default slice_balanced
 logstat ('test192'    ,t, j4  , f1  ) ; % test C<C,struct>=scalar
 logstat ('test181'    ,s, j4  , f1  ) ; % transpose with explicit zeros in mask
+save test238_start GraphBLAS_grbcov
 logstat ('test238'    ,t, j44 , f10 ) ; % test GrB_mxm (dot4 and dot2)
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
@@ -305,12 +308,17 @@ hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
 % > 100 seconds, debug_off
 set_malloc_debug (mdebug, 0)
+save test125_start GraphBLAS_grbcov
 logstat ('test125'    ,t, j4  , f1  ) ; % test GrB_mxm: row and column scaling
+save test280_start GraphBLAS_grbcov
 logstat ('test280'    ,t, j4  , f1  ) ; % subassign method 26
 logstat ('test10'     ,t, j4  , f1  ) ; % GrB_apply
 logstat ('test75b'    ,t, j4  , f1  ) ; % test GrB_mxm A'*B
+save test81_start GraphBLAS_grbcov
 logstat ('test81'     ,t, j4  , f1  ) ; % extract with stride, range, backwards
+save test230_start GraphBLAS_grbcov
 logstat ('test230'    ,t, j4  , f1  ) ; % test apply with idxunops
+save test21b_start GraphBLAS_grbcov
 logstat ('test21b'    ,t, j4  , f1  ) ; % quick test of GB_mex_assign
 logstat ('test74'     ,t, j0  , f1  ) ; % test GrB_mxm on all semirings
 logstat ('test234'    ,t, j4  , f1  ) ; % test GxB_eWiseUnion
@@ -318,12 +326,15 @@ logstat ('test234b'   ,t, j0  , f1  ) ; % test GxB_eWiseUnion
 
 % > 100 seconds, no Werk, debug_off
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
+save test185_start GraphBLAS_grbcov
 logstat ('test185'    ,s, j4  , f1  ) ; % test dot4, saxpy for all sparsity
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
 % > 100 seconds, debug_on
 set_malloc_debug (mdebug, 1)
+save testca_start GraphBLAS_grbcov
 logstat ('testca(1)'  ,t, j4  , f1  ) ; % test complex mxm, mxv, and vxm
+save test194_start GraphBLAS_grbcov
 logstat ('test194'    ,t, j4  , f1  ) ; % test GxB_Vector_diag
 
 % > 100 seconds, no Werk, debug_on

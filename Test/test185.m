@@ -31,10 +31,14 @@ maxerr = 0 ;
 
 M = sparse (rand (n, n) > 0.5) ;
 
-for da = [0.01 0.1 .5 0.9 inf]
+densities = [0.01 0.1 .5 0.9 inf] ;
+
+for ka = 1:length(densities)
+    da = densities (ka) ;
     A = GB_spec_random (n, n, da, 1, 'double') ;
 
-    for db = [0.01 0.1 .5 0.9 inf]
+    for kb = 1:length(densities)
+        db = densities (kb) ;
         B = GB_spec_random (n, n, db, 1, 'double') ;
 
         for A_sparsity = [1 2 4 8]
