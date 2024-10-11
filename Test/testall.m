@@ -93,6 +93,8 @@ flot = {1,1,1,1} ;
 % quick tests (< 1 sec)
 %===============================================================================
 
+logstat ('test284'    ,t, j0  , f0  ) ; % semirings w/ index binary ops
+
 % < 1 second: debug_off
 set_malloc_debug (mdebug, 0)
 logstat ('test109'    ,t, j404, f110) ; % terminal monoid with user-defined type
