@@ -14,7 +14,7 @@ try
     spok_install ;
     cd ../../Tcov
     mex -g -R2018a ../Test/GB_spones_mex.c
-    grbcover ;      % FIXME: rename grbcov_build or something
+    grbcov_testmake ;
     testall ([ ], true) ;
 catch me
     debug_off ;

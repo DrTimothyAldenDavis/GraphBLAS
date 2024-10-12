@@ -55,10 +55,6 @@ FUTURE plans for GraphBLAS:
         * check if vectorization of GrB_mxm is effective when using clang
         * see how HNSW vector search could be implemented in GraphBLAS
 
-    for CUDA JIT:
-
-        https://developer.nvidia.com/blog/cuda-12-0-compiler-support-for-runtime-lto-using-nvjitlink-library/
-            Developer webpage talking about ways to do nvJit with link time
-            optimization using CUDA 12.0  Shows precompiled path and JIT path to
-            generate kernels
+    vanilla mode: provide a way to compile GraphBLAS so it only provides GrB*
+        methods, not GxB, for testing LAGraph.
 

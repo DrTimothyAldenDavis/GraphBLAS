@@ -5,7 +5,7 @@ function grbmake
 % libgraphblas_tcov.so (or *.dylib) library, inserting code code for statement
 % coverage testing.  It does not compile the mexFunctions.
 %
-% See also: grbcover, grbcover_edit
+% See also: grbcov_testmake, grbcover_edit
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

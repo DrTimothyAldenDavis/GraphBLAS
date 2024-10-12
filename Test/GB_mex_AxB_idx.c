@@ -9,6 +9,9 @@
 
 // This is for testing only.  See GrB_mxm instead.
 
+// FIXME: add other monoids
+// FIXME: add other multops: firsti, etc
+
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
 

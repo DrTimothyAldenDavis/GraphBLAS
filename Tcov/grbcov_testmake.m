@@ -1,12 +1,10 @@
-function grbcover (what)
-%GBCOVER compile ../Test/* for statement coverage testing
+function grbcov_testmake (what)
+%GBCOV_TESTMAKE compile ../Test/* for statement coverage testing
 %
 % This function compiles just the mexFunctions in ../Test.
 % It does not compile the GraphBLAS library itself.
 %
 % See also: grbcover_edit, grbmake
-
-% FIXME: rename to grbcov_make
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
