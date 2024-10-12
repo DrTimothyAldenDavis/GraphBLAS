@@ -4,15 +4,9 @@ function test284
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-fprintf ('\ntest284: GrB_mxm with (min,second1), JIT and factory OFF\n') ;
+fprintf ('\ntest284: GrB_mxm with (min,secondi1)\n') ;
 
 rng ('default') ;
-
-% turn off the JIT and turn off the factory kernels
-jit_save = GB_mex_jit_control ;
-GB_mex_jit_control (0) ;
-factory_save = GB_mex_factory_control ;
-GB_mex_factory_control (0) ;
 
 n = 5 ;
 A = GB_spec_random (n, n, 0.3, 100, 'double') ;
@@ -70,43 +64,26 @@ for A_is_csc = 0:1
                         end
                     end
 
-%{
                     for at = 0:1
                         % C = A*D, A'*D
-                        A
-                        A.matrix
-                        A.pattern
-                        D
-                        at
-
-                        fprintf ('builtin:\n') ;
                         C1 = GB_mex_AxB_idx (A, D, at, 0, 0, C_is_csc, 1) ;
-                        C1 = GB_spec_matrix (C1, 0)
-                        C1.matrix
-
-                        fprintf ('user-defined:\n') ;
                         C2 = GB_mex_AxB_idx (A, D, at, 0, 0, C_is_csc, 0) ;
-                        C2 = GB_spec_matrix (C2, 0)
-                        C2.matrix
-
                         GB_spec_compare (C1, C2) ;
                     end
+
                     for bt = 0:1
                         % C = D*B, D*B'
                         C1 = GB_mex_AxB_idx (D, B, 0, bt, 0, C_is_csc, 1) ;
                         C2 = GB_mex_AxB_idx (D, B, 0, bt, 0, C_is_csc, 0) ;
                         GB_spec_compare (C1, C2) ;
                     end
-%}
 
+                    fprintf ('.') ;
                 end
             end
         end
     end
 end
 
-% restore the JIT and factory controls
-GB_mex_jit_control (jit_save) ;
-GB_mex_factory_control (factory_save) ;
 fprintf ('\ntest284: all tests passed\n') ;
 

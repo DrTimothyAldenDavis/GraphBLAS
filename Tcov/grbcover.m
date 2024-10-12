@@ -6,6 +6,8 @@ function grbcover (what)
 %
 % See also: grbcover_edit, grbmake
 
+% FIXME: rename to grbcov_make
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 

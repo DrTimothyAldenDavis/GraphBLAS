@@ -24,8 +24,8 @@ GB_mex_factory_control (1) ;
 
 test_coverage = (~isempty (strfind (pwd, 'Tcov'))) ;
 if (test_coverage)
-    global GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
-        GraphBLAS_scripts GraphBLAS_times
+    global GraphBLAS_debug GraphBLAS_grbcov
+%   global GraphBLAS_grbcovs GraphBLAS_scripts GraphBLAS_times
 end
 
 % default JIT controls
@@ -46,6 +46,13 @@ if (isempty (factory_controls))
     factory_controls {1} = 1 ;  % factory on
 %   factory_controls {2} = 1 ;  % factory on
 %   factory_controls {3} = 0 ;  % factory off
+end
+
+if (0)
+    jall = {4,3,2,1,0,4,3,2,1,0} ;
+    fall = {1,1,1,1,1,0,0,0,0,0} ;
+    jit_controls    = jall ;
+    factory_controls = fall ;
 end
 
 if (nargin < 2)
@@ -149,12 +156,13 @@ for control_trial = 1:length (jit_controls)
         fprintf (f, '%s %-11s %7.1f sec ', s, testscript, t) ;
 
         if (test_coverage)
-            GraphBLAS_grbcovs {end+1} = GraphBLAS_grbcov (1:n) ;
-            GraphBLAS_scripts {end+1} = sprintf ('%s.%d.%d.%d', testscript, ...
-                jit_control, factory_control, trial) ;
-            GraphBLAS_times   {end+1} = t ;
-            save grbstat GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
-                GraphBLAS_scripts GraphBLAS_times
+
+%           GraphBLAS_grbcovs {end+1} = GraphBLAS_grbcov (1:n) ;
+%           GraphBLAS_scripts {end+1} = sprintf ('%s.%d.%d.%d', testscript, ...
+%               jit_control, factory_control, trial) ;
+%           GraphBLAS_times   {end+1} = t ;
+            save grbstat GraphBLAS_debug GraphBLAS_grbcov
+%               GraphBLAS_grbcovs GraphBLAS_scripts GraphBLAS_times
             if (isempty (GraphBLAS_debug))
                 GraphBLAS_debug = false ;
             end

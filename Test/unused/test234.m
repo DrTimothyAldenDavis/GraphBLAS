@@ -84,8 +84,7 @@ M_is_csc   = 0 ;
 
 track_coverage = true ;
 if (track_coverage)
-    global GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
-        GraphBLAS_scripts GraphBLAS_times
+    global GraphBLAS_grbcov
     track_coverage = ~isempty (GraphBLAS_grbcov) ;
     clast = sum (GraphBLAS_grbcov > 0) ;
     cfirst = clast ;

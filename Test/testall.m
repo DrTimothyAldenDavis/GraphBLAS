@@ -36,8 +36,7 @@ s {1} = [1 1] ;
 % clear the statement coverage counts
 clear global GraphBLAS_grbcov
 
-global GraphBLAS_debug GraphBLAS_grbcov GraphBLAS_grbcovs ...
-    GraphBLAS_scripts GraphBLAS_times
+global GraphBLAS_debug GraphBLAS_grbcov
 
 % use built-in complex data types by default
 GB_builtin_complex_set (true) ;
@@ -67,18 +66,16 @@ f0 = {0} ;          % factory off
 
 % run twice
 j44 = {4,4} ;       % JIT     on, on
-j04 = {0,4} ;       % JIT     off, on
 j40 = {4,0} ;       % JIT     on, off
 f10 = {1,0} ;       % factory on, off
-f00 = {0,0} ;       % factory off, off
 f11 = {1,1} ;       % factory on, on
 j42 = {4,2} ;       % JIT     on, pause
 
 % 3 runs
-j440 = {4,4,0} ;    % JIT     on, on , off
 j404 = {4,0,4} ;    % JIT     on, off, on
-f100 = {1,0,0} ;    % factory on, off, off
 f110 = {1,1,0} ;    % factory on, on , off
+j420 = {4,2,0} ;
+f110 = {1,1,0} ;
 
 % start with the Werk stack enabled
 hack (2) = 0 ; GB_mex_hack (hack) ;
@@ -86,17 +83,16 @@ hack (2) = 0 ; GB_mex_hack (hack) ;
 % save the current malloc debug status
 debug_save = stat ;
 
-jlot = {4,3,2,1} ;
-flot = {1,1,1,1} ;
+jall = {4,3,2,1,0,4,3,2,1,0} ;
+fall = {1,1,1,1,1,0,0,0,0,0} ;
 
 %===============================================================================
 % quick tests (< 1 sec)
 %===============================================================================
 
-logstat ('test284'    ,t, j0  , f0  ) ; % semirings w/ index binary ops
-
 % < 1 second: debug_off
-set_malloc_debug (mdebug, 0)
+set_malloc_debug (mdebug, 0) ;
+logstat ('test247'    ,t, j4  , f1  ) ; % GrB_mxm: fine Hash method
 logstat ('test109'    ,t, j404, f110) ; % terminal monoid with user-defined type
 logstat ('test138'    ,s, j4  , f1  ) ; % assign, coarse-only tasks in IxJ slice
 logstat ('test139'    ,s, j4  , f1  ) ; % merge sort, special cases
@@ -130,7 +126,6 @@ logstat ('test277'    ,t, j0  , f1  ) ; % context get/set
 logstat ('test279'    ,t, j0  , f1  ) ; % blob get/set
 logstat ('test281'    ,t, j4  , f1  ) ; % test user-defined idx unop, no JIT
 logstat ('test268'    ,t, j4  , f1  ) ; % C<M>=Z sparse masker
-logstat ('test247'    ,t, j4  , f1  ) ; % GrB_mxm: fine Hash method
 logstat ('test207'    ,t, j4  , f1  ) ; % test iso subref
 logstat ('test211'    ,t, j4  , f1  ) ; % test iso assign
 logstat ('test183'    ,s, j4  , f1  ) ; % test eWiseMult with hypersparse mask
@@ -138,7 +133,7 @@ logstat ('test212'    ,t, j44 , f10 ) ; % test iso mask all zero
 logstat ('test219'    ,s, j44 , f10 ) ; % test reduce to scalar (1 thread)
 
 % < 1 second: debug_on
-set_malloc_debug (mdebug, 1)
+set_malloc_debug (mdebug, 1) ;
 logstat ('test09'     ,t, j4  , f1  ) ; % duplicate I,J test of GB_mex_subassign
 logstat ('test108'    ,t, j40 , f10 ) ; % boolean monoids
 logstat ('test137'    ,s, j40 , f11 ) ; % GrB_eWiseMult, FIRST and SECOND
@@ -177,7 +172,7 @@ logstat ('test144'    ,t, j4  , f1  ) ; % cumsum
 %===============================================================================
 
 % 1 to 10 seconds: debug_off
-set_malloc_debug (mdebug, 0)
+set_malloc_debug (mdebug, 0) ;
 logstat ('testc2(0,0)',t, j0  , f1  ) ; % A'*B, A+B, A*B, user-defined complex
 logstat ('test239'    ,t, j44 , f10 ) ; % test GxB_eWiseUnion
 logstat ('test245'    ,t, j40 , f11 ) ; % test complex row/col scale
@@ -213,7 +208,8 @@ logstat ('test256'    ,t, j4  , f0  ) ; % JIT error handling
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
 % 1 to 10 seconds: debug_on
-set_malloc_debug (mdebug, 1)
+set_malloc_debug (mdebug, 1) ;
+logstat ('test284'    ,t, j420, f110) ; % semirings w/ index binary ops
 logstat ('test130'    ,t, j4  , f1  ) ; % GrB_apply, hypersparse cases
 logstat ('test148'    ,t, j4  , f1  ) ; % ewise with alias
 logstat ('test231'    ,t, j4  , f1  ) ; % test GrB_select with idxunp
@@ -221,15 +217,13 @@ logstat ('test129'    ,t, j4  , f1  ) ; % test GxB_select (tril, nonz, hyper)
 logstat ('test69'     ,t, j4  , f1  ) ; % assign and subassign with alias
 logstat ('test11'     ,t, j4  , f1  ) ; % exhaustive test of GrB_extractTuples
 logstat ('test29'     ,t, j0  , f1  ) ; % reduce with zombies
-logstat ('test282'    ,t, jlot, flot) ; % test argmax, index binary op
-%ogstat ('test282'    ,t, j42 , f11 ) ; % test argmax, index binary op
+%ogstat ('test282'    ,t, jall, fall) ; % test argmax, index binary op
+logstat ('test282'    ,t, j4  , f1  ) ; % test argmax, index binary op
 logstat ('test249'    ,t, j4  , f1  ) ; % GxB_Context object
 logstat ('test196'    ,t, j4  , f1  ) ; % test hypersparse concat
 logstat ('test250'    ,t, j44 , f10 ) ; % JIT tests, set/get, other tests
-jall = {4,3,2,1,4,2} ;
-fall = {1,1,1,1,0,0} ;
-logstat ('test145'    ,t, jall, fall) ; % dot4 for C += A'*B
-%ogstat ('test145'    ,t, j42 , f11 ) ; % dot4 for C += A'*B
+%ogstat ('test145'    ,t, jall, fall) ; % dot4 for C += A'*B
+logstat ('test145'    ,t, j42 , f1  ) ; % dot4 for C += A'*B
 logstat ('test229'    ,t, j40 , f11 ) ; % test setElement
 logstat ('test209'    ,t, j4  , f1  ) ; % test iso build
 logstat ('test224'    ,t, j4  , f1  ) ; % test unpack/pack
@@ -250,7 +244,7 @@ hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 %===============================================================================
 
 % 10 to 100 seconds: debug_off
-set_malloc_debug (mdebug, 0)
+set_malloc_debug (mdebug, 0) ;
 logstat ('test18'     ,t, j4  , f1  ) ; % GrB_eWiseAdd and eWiseMult
 logstat ('testc7(0)'  ,t, j4  , f1  ) ; % assign, builtin complex
 logstat ('test193'    ,t, j4  , f1  ) ; % test GxB_Matrix_diag
@@ -260,7 +254,7 @@ logstat ('test243'    ,t, j4  , f1  ) ; % test GxB_Vector_Iterator
 logstat ('test53'     ,t, j4  , f1  ) ; % quick test of GB_mex_Matrix_extract
 logstat ('test242'    ,t, j4  , f1  ) ; % test GxB_Iterator for matrices
 logstat ('test17'     ,t, j4  , f1  ) ; % quick test of GrB_*_extractElement
-logstat ('test246'    ,t, j4  , f1  ) ; % GrB_mxm parallelism (slice_balanced)
+logstat ('test246'    ,t, j4  , f1  ) ; % GrB_mxm: fine Hash, parallelism
 logstat ('test206'    ,t, j44 , f10 ) ; % test iso select
 logstat ('test251'    ,t, j4  , f1  ) ; % dot4, dot2, with plus_pair
 logstat ('test251b'   ,t, j4  , f0  ) ; % dot4, dot2, with plus_pair
@@ -270,11 +264,11 @@ save test160_start GraphBLAS_grbcov
 logstat ('test160'    ,s, j0  , f1  ) ; % test A*B, single threaded
 
 % 10 to 100 seconds, no Werk, debug_off
-set_malloc_debug (mdebug, 1)
+set_malloc_debug (mdebug, 1) ;
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 logstat ('test188b'   ,t, j0  , f1  ) ; % test concat
 logstat ('test186'    ,t, j4  , f1  ) ; % saxpy, all formats (slice_balanced)
-logstat ('test186'    ,t, j40 , f11 ) ; % saxpy, all formats (slice_balanced)
+%ogstat ('test186'    ,t, j40 , f11 ) ; % saxpy, all formats (slice_balanced)
 logstat ('test186(0)' ,t, j4  , f1  ) ; % repeat with default slice_balanced
 logstat ('test192'    ,t, j4  , f1  ) ; % test C<C,struct>=scalar
 logstat ('test181'    ,s, j4  , f1  ) ; % transpose with explicit zeros in mask
@@ -283,7 +277,7 @@ logstat ('test238'    ,t, j44 , f10 ) ; % test GrB_mxm (dot4 and dot2)
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
 % 10 to 100 seconds: debug_on
-set_malloc_debug (mdebug, 1)
+set_malloc_debug (mdebug, 1) ;
 logstat ('test187'    ,t, j4  , f1  ) ; % test dup/assign for all formats
 logstat ('test189'    ,t, j4  , f1  ) ; % test large assign
 logstat ('test169'    ,t, j0  , f1  ) ; % C<M>=A+B with many formats
@@ -309,7 +303,7 @@ hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 %===============================================================================
 
 % > 100 seconds, debug_off
-set_malloc_debug (mdebug, 0)
+set_malloc_debug (mdebug, 0) ;
 save test125_start GraphBLAS_grbcov
 logstat ('test125'    ,t, j4  , f1  ) ; % test GrB_mxm: row and column scaling
 save test280_start GraphBLAS_grbcov
@@ -333,7 +327,7 @@ logstat ('test185'    ,s, j4  , f1  ) ; % test dot4, saxpy for all sparsity
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
 % > 100 seconds, debug_on
-set_malloc_debug (mdebug, 1)
+set_malloc_debug (mdebug, 1) ;
 save testca_start GraphBLAS_grbcov
 logstat ('testca(1)'  ,t, j4  , f1  ) ; % test complex mxm, mxv, and vxm
 save test194_start GraphBLAS_grbcov
@@ -350,7 +344,7 @@ hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 %===============================================================================
 
 % restore the original malloc debug state
-set_malloc_debug (mdebug, debug_save)
+set_malloc_debug (mdebug, debug_save) ;
 t = toc (testall_time) ;
 fprintf ('\ntestall: all tests passed, total time %0.4g minutes\n', t / 60) ;
 
