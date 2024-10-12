@@ -45,7 +45,7 @@ void secondi1_idxbinop (int64_t *z,
     const void *y, GrB_Index iy, GrB_Index jy,
     const void *theta)
 {
-    (*z) = iy + 1 ;
+    (*z) = iy + 1 ; // FIXME: use theta
 }
 
 #define SECONDI1_IDXBINOP                               \
