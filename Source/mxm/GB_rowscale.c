@@ -66,9 +66,14 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     GrB_Type ztype = mult->ztype ;
     ASSERT (ztype == semiring->add->op->ztype) ;
     GB_Opcode opcode = mult->opcode ;
+    GxB_binary_function fmult = mult->binop_function ;
+
     // GB_reduce_to_vector does not use GB_rowscale:
-    ASSERT (!(mult->binop_function == NULL &&
+    ASSERT (!(fmult == NULL &&
         (opcode == GB_FIRST_binop_code || opcode == GB_SECOND_binop_code))) ;
+
+    // user-defined index binaryops do not use GB_colscale:
+    ASSERT (!GB_IS_INDEXBINARYOP_CODE (opcode)) ;
 
     //--------------------------------------------------------------------------
     // determine if C is iso (ignore the monoid since it isn't used)
@@ -85,6 +90,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     // set C->iso = C_iso   OK
     GB_OK (GB_dup_worker (&C, C_iso, B, false, ztype)) ;
     info = GrB_NO_VALUE ;
+    ASSERT (C->type == ztype) ;
 
     //--------------------------------------------------------------------------
     // C = D*B, row scale, compute numerical values
@@ -165,6 +171,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         // determine if the values are accessed
         //----------------------------------------------------------------------
 
+        ASSERT (fmult != NULL) ;
         bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
         bool op_is_second = (opcode == GB_SECOND_binop_code) ;
         bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
@@ -276,8 +283,6 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
             #include "generic/GB_generic.h"
             GB_BURBLE_MATRIX (C, "(generic C=D*B rowscale) ") ;
 
-            GxB_binary_function fmult = mult->binop_function ;
-
             size_t csize = C->type->size ;
             size_t dsize = D_is_pattern ? 0 : D->type->size ;
             size_t bsize = B_is_pattern ? 0 : B->type->size ;
@@ -336,48 +341,20 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
 
             #include "ewise/include/GB_ewise_shared_definitions.h"
 
-            if (fmult != NULL)
-            {
-                // conventional binary op
-                if (flipxy)
-                { 
-                    ASSERT (fmult != NULL) ;
-                    #undef  GB_EWISEOP
-                    #define GB_EWISEOP(Cx,p,y,x,j,i) fmult (Cx +((p)*csize),x,y)
-                    #include "mxm/template/GB_rowscale_template.c"
-                }
-                else
-                { 
-                    ASSERT (fmult != NULL) ;
-                    #undef  GB_EWISEOP
-                    #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),x,y)
-                    #include "mxm/template/GB_rowscale_template.c"
-                }
+            // conventional binary op
+            if (flipxy)
+            { 
+                ASSERT (fmult != NULL) ;
+                #undef  GB_EWISEOP
+                #define GB_EWISEOP(Cx,p,y,x,j,i) fmult (Cx +((p)*csize),x,y)
+                #include "mxm/template/GB_rowscale_template.c"
             }
             else
-            {
-                // index binary op
-                GzB_index_binary_function fmult_idx = mult->idxbinop_function ;
-                ASSERT (fmult_idx != NULL) ;
-                ASSERT (GB_IS_INDEXBINARYOP_CODE (mult->opcode)) ;
-                const void *theta = mult->theta ;
-                if (flipxy)
-                { 
-GB_GOTCHA ; // generic rowscale, index binary op, flipped
-                    // flip both x,y and i,j
-                    #undef  GB_EWISEOP
-                    #define GB_EWISEOP(Cx,p,y,x,j,i) \
-                        fmult_idx (Cx +((p)*csize), x,i,j, y,i,j, theta)
-                    #include "mxm/template/GB_rowscale_template.c"
-                }
-                else
-                { 
-GB_GOTCHA ; // generic rowscale, index binary op, not flipped
-                    #undef  GB_EWISEOP
-                    #define GB_EWISEOP(Cx,p,x,y,i,j) \
-                        fmult_idx (Cx +((p)*csize), x,i,j, y,i,j, theta)
-                    #include "mxm/template/GB_rowscale_template.c"
-                }
+            { 
+                ASSERT (fmult != NULL) ;
+                #undef  GB_EWISEOP
+                #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),x,y)
+                #include "mxm/template/GB_rowscale_template.c"
             }
             info = GrB_SUCCESS ;
         }
