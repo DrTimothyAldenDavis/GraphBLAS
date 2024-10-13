@@ -354,7 +354,6 @@ if (track_coverage)
     track_coverage = ~isempty (GraphBLAS_grbcov) ;
     clast = sum (GraphBLAS_grbcov > 0) ;
     cfirst = clast ;
-    cstart = find (GraphBLAS_grbcov > 0) ;
 end
 
 % [binops, ~, ~, types, ~, ~] = GB_spec_opsall ;

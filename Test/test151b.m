@@ -23,7 +23,6 @@ if (track_coverage)
     track_coverage = ~isempty (GraphBLAS_grbcov) ;
     clast = sum (GraphBLAS_grbcov > 0) ;
     cfirst = clast ;
-    cstart = find (GraphBLAS_grbcov > 0) ;
 end
 
 for k = 1:8

@@ -276,8 +276,8 @@ logstat ('test186'    ,t, j4  , f1  ) ; % saxpy, all formats (slice_balanced)
 %ogstat ('test186(0)' ,t, j4  , f1  ) ; % repeat with default slice_balanced
 logstat ('test192'    ,t, j4  , f1  ) ; % test C<C,struct>=scalar
 logstat ('test181'    ,s, j4  , f1  ) ; % transpose with explicit zeros in mask
-save test238_start GraphBLAS_grbcov
-logstat ('test238'    ,t, j44 , f10 ) ; % test GrB_mxm (dot4 and dot2)
+logstat ('test238'    ,t, j4  , f1  ) ; % test GrB_mxm (dot4 and dot2)
+logstat ('test238b'   ,t, j4  , f0  ) ; % test GrB_mxm (dot4 and dot2)
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
 % 10 to 100 seconds: debug_on
