@@ -4,8 +4,6 @@ function test81
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% FIXME: prune this test (151 seconds, very low coverage)
-
 fprintf ('test81:  GrB_Matrix_extract with index range, stride, backwards\n') ;
 
 rng ('default') ;
@@ -18,10 +16,14 @@ Ahyper.matrix = A ;
 Ahyper.is_hyper = true ;
 Ahyper.is_csc = true ;
 
-for ilo = 1:2:n
-    for ihi = 1:2:n
-        fprintf ('#') ;
-        for i_inc = [-n:n inf]
+for jlen = 1:2:n
+    JJ {jlen} = randperm (n) ;
+end
+
+for ilo = 1 % 1:2:n
+    for ihi = 4 % 1:2:n
+%       fprintf ('\n#') ;
+        for i_inc = [-10 2 inf] % [-n:n inf]
             clear I
             I.begin = ilo-1 ;
             I.end = ihi-1 ;
@@ -32,10 +34,11 @@ for ilo = 1:2:n
                 iinc = 1 ;
             end
 
-            fprintf (':') ;
+%           fprintf (':') ;
             for jlen = [1:2:n]
                 clear J
-                J = randperm (n) ;
+%               J = randperm (n) ;
+                J = JJ {jlen} ;
                 J = J (1:jlen) ;
                 J0 = uint64 (J) - 1 ;
                 C1 = A (ilo:iinc:ihi, J) ;
@@ -48,7 +51,7 @@ for ilo = 1:2:n
                 assert (isequal (C1, C3.matrix)) ;
             end
 
-            fprintf ('.') ;
+%           fprintf ('.') ;
             for jlo = 1:2:n
                 for jhi = 1:2:n
                     for j_inc = [-n:n inf]
@@ -77,7 +80,6 @@ for ilo = 1:2:n
                     end
                 end
             end
-
         end
     end
 end

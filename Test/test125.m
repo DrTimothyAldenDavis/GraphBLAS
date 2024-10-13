@@ -5,8 +5,6 @@ function test125
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% FIXME: prune this test (100 seconds)
-
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
 mult_ops = binops.all ;
 types = types.all ;
