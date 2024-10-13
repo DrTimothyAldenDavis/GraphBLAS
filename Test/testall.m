@@ -264,9 +264,7 @@ logstat ('test246'    ,t, j4  , f1  ) ; % GrB_mxm: fine Hash, parallelism
 logstat ('test206'    ,t, j44 , f10 ) ; % test iso select
 logstat ('test251'    ,t, j4  , f1  ) ; % dot4, dot2, with plus_pair
 logstat ('test251b'   ,t, j4  , f0  ) ; % dot4, dot2, with plus_pair
-save test152_start GraphBLAS_grbcov
 logstat ('test152'    ,t, j44 , f10 ) ; % test binops C=A+B, all matrices dense
-save test160_start GraphBLAS_grbcov
 logstat ('test160'    ,s, j0  , f1  ) ; % test A*B, single threaded
 
 % 10 to 100 seconds, no Werk, debug_off
