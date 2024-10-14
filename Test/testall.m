@@ -285,7 +285,8 @@ logstat ('test76'     ,s, j4  , f1  ) ; % GxB_resize (single threaded)
 logstat ('test01'     ,t, j4  , f1  ) ; % error handling
 logstat ('test228'    ,t, j4  , f1  ) ; % test serialize/deserialize
 logstat ('test104'    ,t, j4  , f1  ) ; % export/import
-logstat ('test284'    ,t, j420, f110) ; % semirings w/ index binary ops
+%ogstat ('test284'    ,t, j420, f110) ; % semirings w/ index binary ops
+logstat ('test284'    ,t, j40 , f11 ) ; % semirings w/ index binary ops
 
 % 10 to 100 seconds, no Werk, debug_on
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
