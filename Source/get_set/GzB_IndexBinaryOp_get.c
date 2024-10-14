@@ -125,8 +125,6 @@ GrB_Info GzB_IndexBinaryOp_get_SIZE
 // GzB_IndexBinaryOp_get_VOID
 //------------------------------------------------------------------------------
 
-// FIXME: provide a way to extract the size and value of THETA, using GzB_THETA
-
 GrB_Info GzB_IndexBinaryOp_get_VOID
 (
     GzB_IndexBinaryOp op,

@@ -1,10 +1,12 @@
 {
     gbname = $4
     gsub (/^_GxB_/, "GxB_", gbname) ;
+    gsub (/^_GzB_/, "GzB_", gbname) ;
     gsub (/^_GrB_/, "GrB_", gbname) ;
     gsub (/^_GB_/, "GB_", gbname) ;
     gbrename = gbname
     gsub (/GxB/, "GxM", gbrename) ;
+    gsub (/GzB/, "GzM", gbrename) ;
     gsub (/GrB/, "GrM", gbrename) ;
     gsub (/GB/, "GM", gbrename) ;
     if (length (gbname) > 0) {

@@ -122,7 +122,7 @@ void mexFunction
     OK (GrB_Scalar_new (&Theta, GrB_FP64)) ;
     OK (GrB_Scalar_setElement_FP64 (Theta, x)) ;
 
-    OK (GzB_IndexBinaryOp_new2 (&Iop,
+    OK (GzB_IndexBinaryOp_new (&Iop,
         (GzB_index_binary_function) test37_idxbinop,
         GrB_FP64, GrB_FP64, GrB_FP64, GrB_FP64,
         "test37_idxbinop", TEST37_IDXBINOP)) ;
@@ -130,10 +130,61 @@ void mexFunction
     OK (GzB_IndexBinaryOp_set_String (Iop, "test37 idx binop", GrB_NAME)) ;
     OK (GxB_print (Iop, 5)) ;
 
-    OK (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
+    size_t theta_type_namelen = 0 ;
+    OK (GzB_IndexBinaryOp_get_SIZE (Iop, &theta_type_namelen,
+        GzB_THETA_TYPE_STRING)) ;
+    printf ("theta name length: %d\n", (int) theta_type_namelen) ;
+    CHECK (theta_type_namelen == strlen ("GrB_FP64") + 1) ;
+
+    char theta_type_name [256] ;
+    theta_type_name [0] = '\0' ;
+    OK (GzB_IndexBinaryOp_get_String (Iop, &theta_type_name,
+        GzB_THETA_TYPE_STRING)) ;
+    CHECK (strcmp (theta_type_name, "GrB_FP64") == 0)  ;
+
+    int32_t theta_type_code = -1 ;
+    OK (GzB_IndexBinaryOp_get_INT32 (Iop, &theta_type_code,
+        GzB_THETA_TYPE_CODE)) ;
+    CHECK (theta_type_code == GrB_FP64_CODE) ;
+
+    OK (GrB_BinaryOp_get_INT32 (GxB_FIRSTI1_INT32, &theta_type_code,
+        GzB_THETA_TYPE_CODE)) ;
+    CHECK (theta_type_code == GrB_INT32_CODE) ;
+
+    OK (GrB_BinaryOp_get_INT32 (GxB_FIRSTI1_INT64, &theta_type_code,
+        GzB_THETA_TYPE_CODE)) ;
+    CHECK (theta_type_code == GrB_INT64_CODE) ;
+
+    OK (GzB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
     OK (GxB_print (Bop, 5)) ;
 
     OK (GrB_Scalar_new (&Alpha, GrB_FP64)) ;
+
+    double y = 0 ;
+    int expected = GrB_INVALID_VALUE ;
+    ERR (GzB_IndexBinaryOp_get_Scalar (Iop, Alpha, GzB_THETA)) ;
+
+    y = 0 ;
+    OK (GrB_Scalar_clear (Alpha)) ;
+    OK (GrB_BinaryOp_get_Scalar (Bop, Alpha, GzB_THETA)) ;
+    OK (GrB_Scalar_extractElement_FP64 (&y, Alpha)) ;
+    CHECK (x == y) ;
+
+    theta_type_code = -1 ;
+    OK (GrB_BinaryOp_get_INT32 (Bop, &theta_type_code,
+        GzB_THETA_TYPE_CODE)) ;
+    CHECK (theta_type_code == GrB_FP64_CODE) ;
+
+    theta_type_namelen = 0 ;
+    OK (GrB_BinaryOp_get_SIZE (Bop, &theta_type_namelen,
+        GzB_THETA_TYPE_STRING)) ;
+    CHECK (theta_type_namelen == strlen ("GrB_FP64") + 1) ;
+
+    theta_type_name [0] = '\0' ;
+    OK (GrB_BinaryOp_get_String (Bop, &theta_type_name,
+        GzB_THETA_TYPE_STRING)) ;
+    CHECK (strcmp (theta_type_name, "GrB_FP64") == 0)  ;
+
     OK (GrB_Scalar_new (&Beta, GrB_FP64)) ;
     OK (GrB_Scalar_setElement_FP64 (Alpha, (double) 3.14159)) ;
     OK (GrB_Scalar_setElement_FP64 (Beta, (double) 42)) ;
@@ -292,7 +343,7 @@ void mexFunction
 
     printf ("\nerror handling tests: JIT is %d\n", save_jit) ;
 
-    int expected = GrB_INVALID_OBJECT ;
+    expected = GrB_INVALID_OBJECT ;
     void *p = Bop->theta_type = NULL ;
     Bop->theta_type = NULL ;
     ERR (GB_BinaryOp_check (Bop, "Bop: bad theta_type", 5, stdout)) ;
@@ -344,7 +395,7 @@ void mexFunction
     expected = GrB_DOMAIN_MISMATCH ;
     OK (GrB_Type_new (&Crud_Type, 4)) ;
     OK (GrB_Scalar_new (&Crud_Scalar, Crud_Type)) ;
-    ERR (GzB_BinaryOp_IndexOp_new (&Crud_Bop, Iop, Crud_Scalar)) ;
+    ERR (GzB_BinaryOp_new_IndexOp (&Crud_Bop, Iop, Crud_Scalar)) ;
     ERR (GrB_Matrix_apply (A, NULL, NULL, Bop, A, NULL)) ;
 
     //------------------------------------------------------------------------
@@ -375,7 +426,7 @@ void mexFunction
     OK (GxB_set (GxB_BURBLE, true)) ;
 
     expected = GrB_NULL_POINTER ;
-    ERR (GzB_IndexBinaryOp_new2 (&Crud_Iop, NULL,
+    ERR (GzB_IndexBinaryOp_new (&Crud_Iop, NULL,
         GrB_FP64, GrB_FP64, GrB_FP64, GrB_FP64,
         "crud_idxbinop", CRUD_IDXBINOP)) ;
 
@@ -388,7 +439,7 @@ void mexFunction
     printf ("fallback is now: %d\n", fallback) ;
 
     expected = GxB_JIT_ERROR ;
-    ERR (GzB_IndexBinaryOp_new2 (&Crud_Iop, NULL,
+    ERR (GzB_IndexBinaryOp_new (&Crud_Iop, NULL,
         GrB_FP64, GrB_FP64, GrB_FP64, GrB_FP64,
         "crud_idxbinop", "still more errors here")) ;
 

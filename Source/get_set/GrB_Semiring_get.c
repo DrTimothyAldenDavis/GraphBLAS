@@ -86,9 +86,10 @@ GrB_Info GrB_Semiring_get_String
             #pragma omp flush
             return (GrB_SUCCESS) ;
 
-        case GrB_INP0_TYPE_STRING : 
-        case GrB_INP1_TYPE_STRING : 
-        case GrB_OUTP_TYPE_STRING : 
+        case GzB_THETA_TYPE_STRING :    // theta input of multiply op
+        case GrB_INP0_TYPE_STRING :     // x input of multiply op
+        case GrB_INP1_TYPE_STRING :     // y input of multiply op
+        case GrB_OUTP_TYPE_STRING :     // also the ztype of the monoid
             return (GB_op_string_get ((GB_Operator) (semiring->multiply),
                 value, field)) ;
 
@@ -171,6 +172,10 @@ GrB_Info GrB_Semiring_get_SIZE
 
         case GrB_OUTP_TYPE_STRING : 
             name = GB_type_name_get (semiring->multiply->ztype) ;
+            break ;
+
+        case GzB_THETA_TYPE_STRING : 
+            name = GB_type_name_get (semiring->multiply->theta_type) ;
             break ;
 
         case GxB_MONOID_OPERATOR : 

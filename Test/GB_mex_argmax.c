@@ -98,6 +98,7 @@ void max_tuple_kv (tuple_kv *z, const tuple_kv *x, const tuple_kv *y)
     GrB_Matrix_free (&c) ;              \
     GrB_Scalar_free (&Theta) ;          \
     GrB_Scalar_free (&Beta) ;           \
+    GrB_Scalar_free (&Gunk) ;           \
     GB_mx_put_global (true) ;           \
 }
 
@@ -121,7 +122,7 @@ void mexFunction
     GrB_BinaryOp Bop = NULL, MonOp = NULL ;
     GrB_Monoid Monoid = NULL ;
     GrB_Semiring Semiring = NULL ;
-    GrB_Scalar Theta = NULL, Beta = NULL ;
+    GrB_Scalar Theta = NULL, Beta = NULL, Gunk = NULL ;
     GrB_UnaryOp Getv = NULL, Getk = NULL ;
     GrB_Matrix x = NULL, p = NULL, c = NULL, y = NULL, z = NULL ;
     GrB_Scalar s = NULL ;
@@ -176,7 +177,7 @@ void mexFunction
     if (jit)
     {
         OK (GxB_Type_new (&Tuple, sizeof (tuple_kv), "tuple_kv", TUPLE_KV)) ;
-        METHOD (GzB_IndexBinaryOp_new2 (&Iop,
+        METHOD (GzB_IndexBinaryOp_new (&Iop,
             (GzB_index_binary_function) make_tuple_kv,
             Tuple, GrB_FP64, GrB_BOOL, GrB_BOOL,
             "make_tuple_kv", MAKE_TUPLE_KV)) ;
@@ -186,7 +187,8 @@ void mexFunction
         OK (GrB_Type_new (&Tuple, sizeof (tuple_kv))) ;
         METHOD (GzB_IndexBinaryOp_new (&Iop,
             (GzB_index_binary_function) make_tuple_kv,
-            Tuple, GrB_FP64, GrB_BOOL, GrB_BOOL)) ;
+            Tuple, GrB_FP64, GrB_BOOL, GrB_BOOL,
+            NULL, NULL)) ;
     }
     OK (GzB_IndexBinaryOp_wait (Iop, GrB_MATERIALIZE)) ;
     char *error ;
@@ -195,7 +197,7 @@ void mexFunction
     {
         mexErrMsgTxt ("index binary op failed") ;
     }
-    METHOD (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
+    METHOD (GzB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
     if (pr)
     {
         // printf ("\njit enabled: %d\n", jit) ;
@@ -220,6 +222,17 @@ void mexFunction
 
     OK (GrB_Monoid_new_UDT (&Monoid, MonOp, &id)) ;
     OK (GrB_Semiring_new (&Semiring, Monoid, Bop)) ;
+
+    size_t namelen = 0 ;
+    OK (GrB_Semiring_get_SIZE (Semiring, &namelen, GzB_THETA_TYPE_STRING)) ;
+    printf ("theta namelen: %d\n", (int) namelen) ;
+    CHECK (namelen == strlen ("GrB_BOOL") + 1) ;
+    char theta_type_name [256] ;
+    theta_type_name [0] = '\0' ;
+    OK (GrB_Semiring_get_String (Semiring, theta_type_name,
+        GzB_THETA_TYPE_STRING)) ;
+    printf ("theta type: [%s]\n", theta_type_name) ;
+    CHECK (strcmp (theta_type_name, "GrB_BOOL") == 0) ;
 
     if (jit)
     {
@@ -270,6 +283,10 @@ void mexFunction
     OK (GzB_IndexBinaryOp_get_String (Iop, name, GrB_NAME)) ;
     // printf ("name [%s]\n", name) ;
     CHECK (strcmp (name, "my index binop") == 0) ;
+
+    expected = GrB_DOMAIN_MISMATCH ;
+    OK (GrB_Scalar_new (&Gunk, Tuple)) ;
+    ERR (GrB_BinaryOp_get_Scalar (Bop, Gunk, GzB_THETA)) ;
 
     //--------------------------------------------------------------------------
     // compute [x,p] = argmax (A,dim)

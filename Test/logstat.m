@@ -71,14 +71,7 @@ else
     end
 end
 
-n = 1 ;
-if (~isempty (strfind (pwd, 'Tcov')))
-    % load in the # of lines in the test coverage
-    fp = fopen ('tmp_cover/count', 'r') ;
-    n = textscan (fp, '%f') ;
-    n = n {1} ;
-    fclose (fp) ;
-end
+n = grblines ;  % total # of lines in the test coverage
 
 for control_trial = 1:length (jit_controls)
     for trial = 1:length (threads)
@@ -161,8 +154,9 @@ for control_trial = 1:length (jit_controls)
 %           GraphBLAS_scripts {end+1} = sprintf ('%s.%d.%d.%d', testscript, ...
 %               jit_control, factory_control, trial) ;
 %           GraphBLAS_times   {end+1} = t ;
-            save grbstat GraphBLAS_debug GraphBLAS_grbcov
+%           save grbstat GraphBLAS_debug GraphBLAS_grbcov
 %               GraphBLAS_grbcovs GraphBLAS_scripts GraphBLAS_times
+
             if (isempty (GraphBLAS_debug))
                 GraphBLAS_debug = false ;
             end

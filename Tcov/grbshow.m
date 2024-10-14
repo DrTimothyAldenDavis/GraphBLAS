@@ -13,7 +13,14 @@ infiles = [ dir('tmp_source/*.*') ; dir('tmp_include/*.*') ] ;
 
 nfiles = length (infiles) ;
 
-load grbstat.mat
+% load grbstat.mat
+global GraphBLAS_grbcov
+n = grblines ;
+c = sum (GraphBLAS_grbcov > 0) ;
+if (c == n)
+    fprintf ('all %d lines covered\n', n) ;
+    return
+end
 
 for k = 1:nfiles
 

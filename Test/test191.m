@@ -4,6 +4,8 @@ function test191
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% FIXME: prune this test
+
 fprintf ('test191 ----------- Tiles = split (A)\n') ;
 
 [~, ~, ~, types, ~, ~] = GB_spec_opsall ;

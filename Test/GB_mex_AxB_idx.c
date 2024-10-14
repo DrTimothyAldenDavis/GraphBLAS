@@ -138,13 +138,13 @@ void mexFunction
     else
     {
         // user-defined (MIN,SECONDI1)
-        OK (GzB_IndexBinaryOp_new2 (&Secondi1,
+        OK (GzB_IndexBinaryOp_new (&Secondi1,
             (GzB_index_binary_function) secondi1_idxbinop,
             GrB_INT64, GrB_FP64, GrB_FP64, GrB_FP64,
             "secondi1_idxbinop", SECONDI1_IDXBINOP)) ;
         OK (GrB_Scalar_new (&Theta, GrB_INT64)) ;
         OK (GrB_Scalar_setElement_INT64 (Theta, 1)) ;
-        OK (GzB_BinaryOp_IndexOp_new (&mult, Secondi1, Theta)) ;
+        OK (GzB_BinaryOp_new_IndexOp (&mult, Secondi1, Theta)) ;
         OK (GrB_Semiring_new (&semiring, GrB_MIN_MONOID_INT64, mult)) ;
     }
 

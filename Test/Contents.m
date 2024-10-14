@@ -3,6 +3,8 @@
 
 % Primary functiuns
 
+% FIXME: add new functions here
+
 %   testmake - compiles the test interface to GraphBLAS
 %   testall - run all GraphBLAS tests
 
@@ -251,6 +253,7 @@
 %   grb_get_coverage    - return current statement coverage
 %   feature_numcores    - determine # of cores the system has
 %   jit_reset           - turn off the JIT and then set it back to its original state
+%   grblines            - # of lines in test coverage
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

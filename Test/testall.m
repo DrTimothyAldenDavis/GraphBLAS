@@ -217,17 +217,10 @@ logstat ('test129'    ,t, j4  , f1  ) ; % test GxB_select (tril, nonz, hyper)
 logstat ('test69'     ,t, j4  , f1  ) ; % assign and subassign with alias
 logstat ('test11'     ,t, j4  , f1  ) ; % exhaustive test of GrB_extractTuples
 logstat ('test29'     ,t, j0  , f1  ) ; % reduce with zombies
-
-%ogstat ('test282'    ,t, jall, fall) ; % test argmax, index binary op
 logstat ('test282'    ,t, j4  , f1  ) ; % test argmax, index binary op
-
 logstat ('test249'    ,t, j4  , f1  ) ; % GxB_Context object
 logstat ('test196'    ,t, j4  , f1  ) ; % test hypersparse concat
 logstat ('test250'    ,t, j44 , f10 ) ; % JIT tests, set/get, other tests
-
-% jall = {4,3,2,1,0,4,3,2,1,0} ;
-% fall = {1,1,1,1,1,0,0,0,0,0} ;
-%ogstat ('test145'    ,t, jall, fall) ; % dot4 for C += A'*B
 logstat ('test145'    ,t, j42 , f11 ) ; % dot4 for C += A'*B
 
 logstat ('test229'    ,t, j40 , f11 ) ; % test setElement
@@ -268,12 +261,9 @@ logstat ('test152'    ,t, j44 , f10 ) ; % test binops C=A+B, all matrices dense
 logstat ('test160'    ,s, j0  , f1  ) ; % test A*B, single threaded
 
 % 10 to 100 seconds, no Werk, debug_off
-set_malloc_debug (mdebug, 1) ;
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 logstat ('test188b'   ,t, j0  , f1  ) ; % test concat
 logstat ('test186'    ,t, j4  , f1  ) ; % saxpy, all formats (slice_balanced)
-%ogstat ('test186'    ,t, j40 , f11 ) ; % saxpy, all formats (slice_balanced)
-%ogstat ('test186(0)' ,t, j4  , f1  ) ; % repeat with default slice_balanced
 logstat ('test192'    ,t, j4  , f1  ) ; % test C<C,struct>=scalar
 logstat ('test181'    ,s, j4  , f1  ) ; % transpose with explicit zeros in mask
 logstat ('test238'    ,t, j4  , f1  ) ; % test GrB_mxm (dot4 and dot2)
