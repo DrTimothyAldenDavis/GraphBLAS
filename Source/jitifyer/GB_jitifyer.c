@@ -51,7 +51,7 @@ static bool GB_jit_use_cmake =
 // GB_jit_error_fallback: if false, a JIT compiler error returns GxB_JIT_ERROR.
 // If true (default case)), it returns GrB_NO_VALUE, and the generic kernel
 // takes over as a fallback.
-static bool     GB_jit_error_fallback = false ; // FIXME: not the default
+static bool     GB_jit_error_fallback = true ;
 
 // path to user cache folder:
 static char    *GB_jit_cache_path = NULL ;
