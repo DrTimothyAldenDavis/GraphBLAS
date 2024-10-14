@@ -26,7 +26,7 @@ GrB_Info GB_op_string_set
     bool jitable =
         (op->ztype->hash != UINT64_MAX) &&
         (op->xtype->hash != UINT64_MAX) &&
-        (op->ytype == NULL || op->ytype->hash != UINT64_MAX) ;
+        (op->ytype == NULL || op->ytype->hash != UINT64_MAX) &&
         (op->theta_type == NULL || op->theta_type->hash != UINT64_MAX) ;
 
     return (GB_op_or_type_string_set (user_defined, jitable, value, field,

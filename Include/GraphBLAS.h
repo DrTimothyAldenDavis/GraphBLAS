@@ -1679,7 +1679,7 @@ typedef enum
     GzB_THETA_TYPE_CODE = 7050,     // for binary and index binary ops
     GzB_THETA_TYPE_STRING = 7051,
 
-    // GrB_BinaryOp only:
+    // GrB_BinaryOp or GrB_Semiring:
     GzB_THETA = 7052,               // to get the value of theta
 }
 GrB_Field ;
