@@ -232,7 +232,6 @@ logstat ('test145'    ,t, j42 , f11 ) ; % dot4 for C += A'*B
 logstat ('test229'    ,t, j40 , f11 ) ; % test setElement
 logstat ('test209'    ,t, j4  , f1  ) ; % test iso build
 logstat ('test224'    ,t, j4  , f1  ) ; % test unpack/pack
-logstat ('test02'     ,t, j4  , f1  ) ; % matrix copy and dup tests
 
 % 1 to 10 seconds, no Werk, debug_on
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
@@ -277,6 +276,7 @@ hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
 % 10 to 100 seconds: debug_on
 set_malloc_debug (mdebug, 1) ;
+logstat ('test02'     ,t, j4  , f1  ) ; % matrix copy and dup tests
 logstat ('test11'     ,t, j4  , f1  ) ; % exhaustive test of GrB_extractTuples
 logstat ('test187'    ,t, j4  , f1  ) ; % test dup/assign for all formats
 logstat ('test189'    ,t, j4  , f1  ) ; % test large assign
@@ -292,6 +292,7 @@ hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 logstat ('test180'    ,s, j4  , f1  ) ; % test assign and subassign (1 thread)
 logstat ('test188'    ,t, j4  , f1  ) ; % test concat
 logstat ('test151b'   ,t, j4  , f1  ) ; % test bshift operator
+save test191_start GraphBLAS_grbcov
 logstat ('test191'    ,t, j40 , f10 ) ; % test split
 logstat ('test14'     ,t, j4  , f1  ) ; % GrB_reduce
 logstat ('test14b'    ,t, j4  , f0  ) ; % GrB_reduce
