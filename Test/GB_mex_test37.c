@@ -10,9 +10,76 @@
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
 
+void test37_idxbinop (double *z,
+    const double *x, GrB_Index ix, GrB_Index jx,
+    const double *y, GrB_Index iy, GrB_Index jy,
+    const double *theta) ;
+
+void test37_idxbinop (double *z,
+    const double *x, GrB_Index ix, GrB_Index jx,
+    const double *y, GrB_Index iy, GrB_Index jy,
+    const double *theta)
+{
+    (*z) = (*x) + 2*(*y) - 42*ix + jx + 3*iy + 1000*jy - (*theta) ;
+}
+
+#define TEST37_IDXBINOP                                                     \
+"void test37_idxbinop (double *z,                                       \n" \
+"    const double *x, GrB_Index ix, GrB_Index jx,                       \n" \
+"    const double *y, GrB_Index iy, GrB_Index jy,                       \n" \
+"    const double *theta)                                               \n" \
+"{                                                                      \n" \
+"    (*z) = (*x) + 2*(*y) - 42*ix + jx + 3*iy + 1000*jy - (*theta) ;    \n" \
+"}                                                                      \n"
+
+//------------------------------------------------------------------------------
+
+// C0 = add (A,A')
+// B0 = union (A,A')
+// E0 = emult (A,A')
+// G0<M> = emult (A,A')
+
+#define FREE_WORK                                           \
+{                                                           \
+    if (Ab != NULL) free_function (Ab) ; Ab = NULL ;        \
+    if (Ax != NULL) free_function (Ax) ; Ax = NULL ;        \
+}
+
+#undef  FREE_ALL
+#define FREE_ALL                        \
+{                                       \
+    FREE_WORK ;                         \
+    GrB_Matrix_free (&C) ;              \
+}
+
+GrB_Matrix ewise (GrB_Matrix A, int kind) ;
+
+GrB_Matrix ewise (GrB_Matrix A, int kind)
+{
+    int8_t *Ab = NULL ;
+    double *Ax = NULL ;
+    GrB_Index Ab_size = 0, Ax_size = 0 ;
+    void (* free_function) (void *) = NULL ;
+
+    // get the current free function
+    free_function = GB_Global_free_function_get (void) ;
+
+    // extract A in bitmap CSC format
+    OK (GrB_Matrix_dup (&A_copy, A)) ;
+    OK (GxB_Matrix_unpack_BitmapC (A_copy, &Ab, &Ax, &Ab_size, &Ax_size,
+        NULL, &A_nvals)) ;
+    GrB_Matrix_free (&A_copy) ;
+
+    FREE_WORK ;
+    return (C) ;
+}
+
+//------------------------------------------------------------------------------
+
 #define GET_DEEP_COPY ;
 #define FREE_DEEP_COPY ;
 
+#undef  FREE_ALL
 #define FREE_ALL                        \
 {                                       \
     GrB_Scalar_free (&Theta) ;          \
@@ -37,28 +104,6 @@
     GrB_BinaryOp_free (&Bop) ;          \
     GzB_IndexBinaryOp_free (&Iop) ;     \
 }
-
-void test37_idxbinop (double *z,
-    const double *x, GrB_Index ix, GrB_Index jx,
-    const double *y, GrB_Index iy, GrB_Index jy,
-    const double *theta) ;
-
-void test37_idxbinop (double *z,
-    const double *x, GrB_Index ix, GrB_Index jx,
-    const double *y, GrB_Index iy, GrB_Index jy,
-    const double *theta)
-{
-    (*z) = (*x) + 2*(*y) - 42*ix + jx + 3*iy + 1000*jy - (*theta) ;
-}
-
-#define TEST37_IDXBINOP                                                     \
-"void test37_idxbinop (double *z,                                       \n" \
-"    const double *x, GrB_Index ix, GrB_Index jx,                       \n" \
-"    const double *y, GrB_Index iy, GrB_Index jy,                       \n" \
-"    const double *theta)                                               \n" \
-"{                                                                      \n" \
-"    (*z) = (*x) + 2*(*y) - 42*ix + jx + 3*iy + 1000*jy - (*theta) ;    \n" \
-"}                                                                      \n"
 
 void mexFunction
 (
@@ -337,7 +382,7 @@ void mexFunction
         (GrB_Field) GxB_JIT_C_CONTROL)) ;
 
     int save_jit = 0, save_burble = 0 ;
-    bool save_fallback = false ;
+//  bool save_fallback = false ;
     OK (GxB_get (GxB_JIT_C_CONTROL, &save_jit)) ;
     CHECK (save_jit == GxB_JIT_ON) ;
 
@@ -413,38 +458,36 @@ void mexFunction
     "    compiler error occurs here "                   \
     "}"
 
+    printf ("-------- test JIT compiler error:\n") ;
     OK (GxB_get (GxB_JIT_C_CONTROL, &save_jit)) ;
-    OK (GxB_get (GxB_JIT_ERROR_FALLBACK, &save_fallback)) ;
+//  OK (GxB_get (GxB_JIT_ERROR_FALLBACK, &save_fallback)) ;
     OK (GxB_get (GxB_BURBLE, &save_burble)) ;
 
     OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_OFF)) ;
     OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
 
-    printf ("-------- test JIT with error fallback:\n") ;
-    OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
-    OK (GxB_set (GxB_JIT_ERROR_FALLBACK, true)) ;
-    OK (GxB_set (GxB_BURBLE, true)) ;
-
-    expected = GrB_NULL_POINTER ;
-    ERR (GzB_IndexBinaryOp_new (&Crud_Iop, NULL,
-        GrB_FP64, GrB_FP64, GrB_FP64, GrB_FP64,
-        "crud_idxbinop", CRUD_IDXBINOP)) ;
-
-    printf ("-------- test JIT without error fallback:\n") ;
-    OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
-    OK (GxB_set (GxB_JIT_ERROR_FALLBACK, false)) ;
-    bool fallback = true ;
-    OK (GxB_get (GxB_JIT_ERROR_FALLBACK, &fallback)) ;
-    CHECK (!fallback) ;
-    printf ("fallback is now: %d\n", fallback) ;
+//  printf ("-------- test JIT with error fallback:\n") ;
+//  OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
+//  OK (GxB_set (GxB_JIT_ERROR_FALLBACK, true)) ;
+//  OK (GxB_set (GxB_BURBLE, true)) ;
+//  expected = GrB_NULL_POINTER ;
+//  ERR (GzB_IndexBinaryOp_new (&Crud_Iop, NULL,
+//      GrB_FP64, GrB_FP64, GrB_FP64, GrB_FP64,
+//      "crud_idxbinop", "many compiler errors here")) ;
+//  OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
+//  OK (GxB_set (GxB_JIT_ERROR_FALLBACK, false)) ;
+//  bool fallback = true ;
+//  OK (GxB_get (GxB_JIT_ERROR_FALLBACK, &fallback)) ;
+//  CHECK (!fallback) ;
+//  printf ("fallback is now: %d\n", fallback) ;
 
     expected = GxB_JIT_ERROR ;
     ERR (GzB_IndexBinaryOp_new (&Crud_Iop, NULL,
         GrB_FP64, GrB_FP64, GrB_FP64, GrB_FP64,
-        "crud_idxbinop", "still more errors here")) ;
+        "crud_idxbinop", CRUD_IDXBINOP)) ;
 
     OK (GxB_set (GxB_JIT_C_CONTROL, save_jit)) ;
-    OK (GxB_set (GxB_JIT_ERROR_FALLBACK, &save_fallback)) ;
+//  OK (GxB_set (GxB_JIT_ERROR_FALLBACK, &save_fallback)) ;
     OK (GxB_set (GxB_BURBLE, save_burble)) ;
 
     //------------------------------------------------------------------------

@@ -195,27 +195,31 @@ void mexFunction
     OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &use_cmake, (GrB_Field) GxB_JIT_USE_CMAKE)) ;
     printf ("jit cmake %d\n", use_cmake) ;
     OK (GrB_Global_set_INT32_ (GrB_GLOBAL, 1, (GrB_Field) GxB_JIT_USE_CMAKE)) ;
-    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i,(GrB_Field)  GxB_JIT_USE_CMAKE)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i,(GrB_Field) GxB_JIT_USE_CMAKE)) ;
     CHECK (i == 1) ;
     OK (GrB_Global_set_INT32_ (GrB_GLOBAL, use_cmake, (GrB_Field) GxB_JIT_USE_CMAKE)) ;
 
-    int32_t error_fallback ;
-    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &error_fallback, (GrB_Field) GxB_JIT_ERROR_FALLBACK)) ;
-    printf ("jit error fallback: %d\n", error_fallback) ;
-    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, 1, (GrB_Field) GxB_JIT_ERROR_FALLBACK)) ;
-    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i,(GrB_Field)  GxB_JIT_ERROR_FALLBACK)) ;
-    CHECK (i == 1) ;
-    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, error_fallback, (GrB_Field) GxB_JIT_ERROR_FALLBACK)) ;
+//  int32_t error_fallback ;
+//  OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &error_fallback,
+//      (GrB_Field) GxB_JIT_ERROR_FALLBACK)) ;
+//  printf ("jit error fallback: %d\n", error_fallback) ;
+//  OK (GrB_Global_set_INT32_ (GrB_GLOBAL, 1,
+//      (GrB_Field) GxB_JIT_ERROR_FALLBACK)) ;
+//  OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i,
+//      (GrB_Field) GxB_JIT_ERROR_FALLBACK)) ;
+//  CHECK (i == 1) ;
+//  OK (GrB_Global_set_INT32_ (GrB_GLOBAL, error_fallback,
+//      (GrB_Field) GxB_JIT_ERROR_FALLBACK)) ;
 
-    bool error_fallback2 ;
-    OK (GxB_Global_Option_get (GxB_JIT_ERROR_FALLBACK, &error_fallback2)) ;
-    printf ("%d %d\n", error_fallback, error_fallback2 ) ;
-    CHECK (error_fallback == error_fallback2) ;
-    printf ("jit error fallback again: %d\n", error_fallback) ;
-    OK (GxB_Global_Option_set_INT32 (GxB_JIT_ERROR_FALLBACK, 1)) ;
-    OK (GxB_Global_Option_get (GxB_JIT_ERROR_FALLBACK, &i)) ;
-    CHECK (i == 1) ;
-    OK (GxB_Global_Option_set (GxB_JIT_ERROR_FALLBACK, error_fallback2)) ;
+//  bool error_fallback2 ;
+//  OK (GxB_Global_Option_get (GxB_JIT_ERROR_FALLBACK, &error_fallback2)) ;
+//  printf ("%d %d\n", error_fallback, error_fallback2 ) ;
+//  CHECK (error_fallback == error_fallback2) ;
+//  printf ("jit error fallback again: %d\n", error_fallback) ;
+//  OK (GxB_Global_Option_set_INT32 (GxB_JIT_ERROR_FALLBACK, 1)) ;
+//  OK (GxB_Global_Option_get (GxB_JIT_ERROR_FALLBACK, &i)) ;
+//  CHECK (i == 1) ;
+//  OK (GxB_Global_Option_set (GxB_JIT_ERROR_FALLBACK, error_fallback2)) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Global_set_INT32_ (GrB_GLOBAL, 1, GrB_BLOCKING_MODE)) ;

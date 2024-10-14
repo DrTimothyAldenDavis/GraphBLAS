@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_AxB_idx: C=A*B, A'*B, A*B', or A'*B' using the (MIN,SECONDI1) semiring
+// GB_mex_AxB_idx: C=A*B, A'*B, A*B', or A'*B' using the indexop semirings
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -9,14 +9,14 @@
 
 // This is for testing only.  See GrB_mxm instead.
 
-// FIXME: add other monoids
-// FIXME: add other multops: firsti, etc
+// monoid: min, max, plus, times
+// mult: firsti, firsti1, firstj, firstj1, secondi, secondi1, secondj, secondj1
 
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
 
 #define USAGE "C = GB_mex_AxB_idx (A, B, atrans, btrans, axb_method," \
-    " C_is_csc, builtin)"
+    " C_is_csc, builtin, add, mult)"
 
 #define FREE_ALL                                \
 {                                               \
@@ -26,35 +26,102 @@
     GrB_Scalar_free (&Theta) ;                  \
     GrB_Descriptor_free (&desc) ;               \
     GrB_BinaryOp_free (&mult) ;                 \
-    GzB_IndexBinaryOp_free (&Secondi1) ;        \
+    GzB_IndexBinaryOp_free (&Iop) ;             \
+    GrB_Monoid_free (&monoid) ;                 \
     GrB_Semiring_free (&semiring) ;             \
     GB_mx_put_global (true) ;                   \
 }
 
 //------------------------------------------------------------------------------
-// user-defined SECONDI1 index binary operator
+// user-defined index binary operators
 //------------------------------------------------------------------------------
 
-void secondi1_idxbinop (int64_t *z,
+void firsti_theta (int64_t *z,
     const void *x, GrB_Index ix, GrB_Index jx,
     const void *y, GrB_Index iy, GrB_Index jy,
-    const void *theta) ;
+    const int64_t *theta) ;
 
-void secondi1_idxbinop (int64_t *z,
+void firsti_theta (int64_t *z,
     const void *x, GrB_Index ix, GrB_Index jx,
     const void *y, GrB_Index iy, GrB_Index jy,
-    const void *theta)
+    const int64_t *theta)
 {
-    (*z) = iy + 1 ; // FIXME: use theta
+    (*z) = ix + (*theta) ;
 }
 
-#define SECONDI1_IDXBINOP                               \
-"void secondi1_idxbinop (int64_t *z,                \n" \
+#define FIRSTI_THETA                                    \
+"void firsti_theta (int64_t *z,                     \n" \
 "    const void *x, GrB_Index ix, GrB_Index jx,     \n" \
 "    const void *y, GrB_Index iy, GrB_Index jy,     \n" \
-"    const void *theta)                             \n" \
+"    const int64_t *theta)                          \n" \
 "{                                                  \n" \
-"    (*z) = iy + 1 ;                                \n" \
+"    (*z) = ix + (*theta) ;                         \n" \
+"}"
+
+void secondi_theta (int64_t *z,
+    const void *x, GrB_Index ix, GrB_Index jx,
+    const void *y, GrB_Index iy, GrB_Index jy,
+    const int64_t *theta) ;
+
+void secondi_theta (int64_t *z,
+    const void *x, GrB_Index ix, GrB_Index jx,
+    const void *y, GrB_Index iy, GrB_Index jy,
+    const int64_t *theta)
+{
+    (*z) = iy + (*theta) ;
+}
+
+#define SECONDI_THETA                                   \
+"void secondi_theta (int64_t *z,                    \n" \
+"    const void *x, GrB_Index ix, GrB_Index jx,     \n" \
+"    const void *y, GrB_Index iy, GrB_Index jy,     \n" \
+"    const int64_t *theta)                          \n" \
+"{                                                  \n" \
+"    (*z) = iy + (*theta) ;                         \n" \
+"}"
+
+void firstj_theta (int64_t *z,
+    const void *x, GrB_Index ix, GrB_Index jx,
+    const void *y, GrB_Index iy, GrB_Index jy,
+    const int64_t *theta) ;
+
+void firstj_theta (int64_t *z,
+    const void *x, GrB_Index ix, GrB_Index jx,
+    const void *y, GrB_Index iy, GrB_Index jy,
+    const int64_t *theta)
+{
+    (*z) = jx + (*theta) ;
+}
+
+#define FIRSTJ_THETA                                    \
+"void firstj_theta (int64_t *z,                     \n" \
+"    const void *x, GrB_Index ix, GrB_Index jx,     \n" \
+"    const void *y, GrB_Index iy, GrB_Index jy,     \n" \
+"    const int64_t *theta)                          \n" \
+"{                                                  \n" \
+"    (*z) = jx + (*theta) ;                         \n" \
+"}"
+
+void secondj_theta (int64_t *z,
+    const void *x, GrB_Index ix, GrB_Index jx,
+    const void *y, GrB_Index iy, GrB_Index jy,
+    const int64_t *theta) ;
+
+void secondj_theta (int64_t *z,
+    const void *x, GrB_Index ix, GrB_Index jx,
+    const void *y, GrB_Index iy, GrB_Index jy,
+    const int64_t *theta)
+{
+    (*z) = jy + (*theta) ;
+}
+
+#define SECONDJ_THETA                                   \
+"void secondj_theta (int64_t *z,                    \n" \
+"    const void *x, GrB_Index ix, GrB_Index jx,     \n" \
+"    const void *y, GrB_Index iy, GrB_Index jy,     \n" \
+"    const int64_t *theta)                          \n" \
+"{                                                  \n" \
+"    (*z) = jy + (*theta) ;                         \n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -73,13 +140,14 @@ void mexFunction
     GrB_Matrix A = NULL, B = NULL, C = NULL ;
     GrB_Scalar Theta = NULL ;
     GrB_BinaryOp mult = NULL ;
-    GzB_IndexBinaryOp Secondi1 = NULL ;
+    GzB_IndexBinaryOp Iop = NULL ;
     GrB_Semiring semiring = NULL ;
     GrB_Index anrows = 0, ancols = 0, bnrows = 0, bncols = 0 ;
     GrB_Descriptor desc = NULL ;
+    GrB_Monoid monoid = NULL ;
 
     // check inputs
-    if (nargout > 1 || nargin < 2 || nargin > 7)
+    if (nargout > 1 || nargin < 2 || nargin > 9)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
@@ -111,6 +179,31 @@ void mexFunction
     // get the builtin option
     bool GET_SCALAR (6, bool, builtin, true) ;
 
+    // get the add monoid; defaults to 'min'
+    #define LEN 256
+    char addname [LEN+1] ;
+    strcpy (addname, "min") ;
+    if (nargin > 7)
+    {
+        int len = GB_mx_mxArray_to_string (addname, LEN, pargin [7]) ;
+        if (len == -1)
+        {
+            mexErrMsgTxt ("addname must be char") ;
+        }
+    }
+
+    // get the mult operator; defaults to 'secondi1'
+    char multname [LEN+1] ;
+    strcpy (multname, "secondi1") ;
+    if (nargin > 8)
+    {
+        int len = GB_mx_mxArray_to_string (multname, LEN, pargin [8]) ;
+        if (len == -1)
+        {
+            mexErrMsgTxt ("multname must be char") ;
+        }
+    }
+
     // set the Descriptor
     OK (GrB_Descriptor_new (&desc)) ;
     OK (GrB_Descriptor_set (desc, GrB_INP0, atrans ? GrB_TRAN : GxB_DEFAULT)) ;
@@ -129,24 +222,125 @@ void mexFunction
     OK (GrB_Matrix_new (&C, GrB_INT64, cnrows, cncols)) ;
     OK (GrB_Matrix_set_INT32 (C, C_is_csc, GrB_STORAGE_ORIENTATION_HINT)) ;
 
-    // create the semiring
+    // create the monoid
+         if (MATCH (addname, "min"  )) monoid = GrB_MIN_MONOID_INT64 ;
+    else if (MATCH (addname, "max"  )) monoid = GrB_MAX_MONOID_INT64 ;
+    else if (MATCH (addname, "plus" )) monoid = GrB_PLUS_MONOID_INT64 ;
+    else if (MATCH (addname, "times")) monoid = GrB_TIMES_MONOID_INT64 ;
+    else
+    {
+        mexErrMsgTxt ("add not supported") ;
+    }
+
+    // create the mult operator
     if (builtin)
     {
-        // builtin (MIN,SECONDI1)
-        semiring = GxB_MIN_SECONDI1_INT64 ;
+
+        //----------------------------------------------------------------------
+        // built-in operator
+        //----------------------------------------------------------------------
+
+             if (MATCH (multname, "firsti"  )) mult = GxB_FIRSTI_INT64 ;
+        else if (MATCH (multname, "firsti1" )) mult = GxB_FIRSTI1_INT64 ;
+        else if (MATCH (multname, "firstj"  )) mult = GxB_FIRSTJ_INT64 ;
+        else if (MATCH (multname, "firstj1" )) mult = GxB_FIRSTJ1_INT64 ;
+        else if (MATCH (multname, "secondi" )) mult = GxB_SECONDI_INT64 ;
+        else if (MATCH (multname, "secondi1")) mult = GxB_SECONDI1_INT64 ;
+        else if (MATCH (multname, "secondj" )) mult = GxB_SECONDJ_INT64 ;
+        else if (MATCH (multname, "secondj1")) mult = GxB_SECONDJ1_INT64 ;
+        else
+        {
+            mexErrMsgTxt ("mult not supported") ;
+        }
+
     }
     else
     {
-        // user-defined (MIN,SECONDI1)
-        OK (GzB_IndexBinaryOp_new (&Secondi1,
-            (GzB_index_binary_function) secondi1_idxbinop,
-            GrB_INT64, GrB_FP64, GrB_FP64, GrB_FP64,
-            "secondi1_idxbinop", SECONDI1_IDXBINOP)) ;
+
+        //----------------------------------------------------------------------
+        // user-defined operator
+        //----------------------------------------------------------------------
+
+        // create the index binary op
+        int theta ;
+        if (MATCH (multname, "firsti" ))
+        {
+            theta = 0 ;
+            OK (GzB_IndexBinaryOp_new (&Iop,
+                (GzB_index_binary_function) firsti_theta,
+                GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
+                "firsti_theta", FIRSTI_THETA)) ;
+        }
+        else if (MATCH (multname, "firsti1"))
+        {
+            theta = 1 ;
+            OK (GzB_IndexBinaryOp_new (&Iop,
+                (GzB_index_binary_function) firsti_theta,
+                GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
+                "firsti_theta", FIRSTI_THETA)) ;
+        }
+        else if (MATCH (multname, "firstj" ))
+        {
+            theta = 0 ;
+            OK (GzB_IndexBinaryOp_new (&Iop,
+                (GzB_index_binary_function) firstj_theta,
+                GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
+                "firstj_theta", FIRSTJ_THETA)) ;
+        }
+        else if (MATCH (multname, "firstj1"))
+        {
+            theta = 1 ;
+            OK (GzB_IndexBinaryOp_new (&Iop,
+                (GzB_index_binary_function) firstj_theta,
+                GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
+                "firstj_theta", FIRSTJ_THETA)) ;
+        }
+        else if (MATCH (multname, "secondi" ))
+        {
+            theta = 0 ;
+            OK (GzB_IndexBinaryOp_new (&Iop,
+                (GzB_index_binary_function) secondi_theta,
+                GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
+                "secondi_theta", SECONDI_THETA)) ;
+        }
+        else if (MATCH (multname, "secondi1"))
+        {
+            theta = 1 ;
+            OK (GzB_IndexBinaryOp_new (&Iop,
+                (GzB_index_binary_function) secondi_theta,
+                GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
+                "secondi_theta", SECONDI_THETA)) ;
+        }
+        else if (MATCH (multname, "secondj" ))
+        {
+            theta = 0 ;
+            OK (GzB_IndexBinaryOp_new (&Iop,
+                (GzB_index_binary_function) secondj_theta,
+                GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
+                "secondj_theta", SECONDJ_THETA)) ;
+        }
+        else if (MATCH (multname, "secondj1"))
+        {
+            theta = 1 ;
+            OK (GzB_IndexBinaryOp_new (&Iop,
+                (GzB_index_binary_function) secondj_theta,
+                GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
+                "secondj_theta", SECONDJ_THETA)) ;
+        }
+        else
+        {
+            mexErrMsgTxt ("mult not supported") ;
+        }
+
+        // create the mult binary op
         OK (GrB_Scalar_new (&Theta, GrB_INT64)) ;
-        OK (GrB_Scalar_setElement_INT64 (Theta, 1)) ;
-        OK (GzB_BinaryOp_new_IndexOp (&mult, Secondi1, Theta)) ;
-        OK (GrB_Semiring_new (&semiring, GrB_MIN_MONOID_INT64, mult)) ;
+        OK (GrB_Scalar_setElement_INT64 (Theta, theta)) ;
+        OK (GzB_BinaryOp_new_IndexOp (&mult, Iop, Theta)) ;
     }
+
+    // create the semiring
+    OK (GrB_Semiring_new (&semiring, monoid, mult)) ;
+    // GxB_print (semiring, 5) ;
 
     // C = A*B, A'*B, A*B', or A'*B'
     OK (GrB_mxm (C, NULL, NULL, semiring, A, B, desc)) ;

@@ -134,6 +134,8 @@ logstat ('test219'    ,s, j44 , f10 ) ; % test reduce to scalar (1 thread)
 
 % < 1 second: debug_on
 set_malloc_debug (mdebug, 1) ;
+logstat ('test244'    ,t, j4  , f1  ) ; % test GxB_Matrix_reshape*
+logstat ('test194'    ,t, j4  , f1  ) ; % test GxB_Vector_diag
 logstat ('test09'     ,t, j4  , f1  ) ; % duplicate I,J test of GB_mex_subassign
 logstat ('test108'    ,t, j40 , f10 ) ; % boolean monoids
 logstat ('test137'    ,s, j40 , f11 ) ; % GrB_eWiseMult, FIRST and SECOND
@@ -173,6 +175,7 @@ logstat ('test144'    ,t, j4  , f1  ) ; % cumsum
 
 % 1 to 10 seconds: debug_off
 set_malloc_debug (mdebug, 0) ;
+logstat ('test81'     ,t, j4  , f1  ) ; % extract with stride, range, backwards
 logstat ('testc2(0,0)',t, j0  , f1  ) ; % A'*B, A+B, A*B, user-defined complex
 logstat ('test239'    ,t, j44 , f10 ) ; % test GxB_eWiseUnion
 logstat ('test245'    ,t, j40 , f11 ) ; % test complex row/col scale
@@ -204,34 +207,38 @@ logstat ('test232'    ,t, j4  , f1  ) ; % test assign with GrB_Scalar
 
 % 1 to 10 seconds, no Werk, debug_off
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
+logstat ('test188b'   ,t, j0  , f1  ) ; % test concat
+logstat ('test185'    ,s, j4  , f1  ) ; % test dot4, saxpy for all sparsity
 logstat ('test256'    ,t, j4  , f0  ) ; % JIT error handling
+logstat ('test238'    ,t, j4  , f1  ) ; % test GrB_mxm (dot4 and dot2)
+logstat ('test238b'   ,t, j4  , f0  ) ; % test GrB_mxm (dot4 and dot2)
+logstat ('test186'    ,t, j4  , f1  ) ; % saxpy, all formats (slice_balanced)
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
 % 1 to 10 seconds: debug_on
 set_malloc_debug (mdebug, 1) ;
-logstat ('test284'    ,t, j420, f110) ; % semirings w/ index binary ops
+logstat ('testca(1)'  ,t, j4  , f1  ) ; % test complex mxm, mxv, and vxm
 logstat ('test130'    ,t, j4  , f1  ) ; % GrB_apply, hypersparse cases
 logstat ('test148'    ,t, j4  , f1  ) ; % ewise with alias
 logstat ('test231'    ,t, j4  , f1  ) ; % test GrB_select with idxunp
 logstat ('test129'    ,t, j4  , f1  ) ; % test GxB_select (tril, nonz, hyper)
 logstat ('test69'     ,t, j4  , f1  ) ; % assign and subassign with alias
-logstat ('test11'     ,t, j4  , f1  ) ; % exhaustive test of GrB_extractTuples
 logstat ('test29'     ,t, j0  , f1  ) ; % reduce with zombies
 logstat ('test282'    ,t, j4  , f1  ) ; % test argmax, index binary op
 logstat ('test249'    ,t, j4  , f1  ) ; % GxB_Context object
 logstat ('test196'    ,t, j4  , f1  ) ; % test hypersparse concat
 logstat ('test250'    ,t, j44 , f10 ) ; % JIT tests, set/get, other tests
 logstat ('test145'    ,t, j42 , f11 ) ; % dot4 for C += A'*B
-
 logstat ('test229'    ,t, j40 , f11 ) ; % test setElement
 logstat ('test209'    ,t, j4  , f1  ) ; % test iso build
 logstat ('test224'    ,t, j4  , f1  ) ; % test unpack/pack
+logstat ('test02'     ,t, j4  , f1  ) ; % matrix copy and dup tests
 
 % 1 to 10 seconds, no Werk, debug_on
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 logstat ('test150'    ,t, j0  , f0  ) ; % mxm zombies, typecasting (dot3,saxpy)
 logstat ('test240'    ,t, j4  , f1  ) ; % test dot4, saxpy4, and saxpy5
-logstat ('test240'    ,s, j4  , f1  ) ; % test dot4, saxpy4, and saxpy5 (1 task)
+%ogstat ('test240'    ,s, j4  , f1  ) ; % test dot4, saxpy4, and saxpy5 (1 task)
 logstat ('test237'    ,t, j40 , f10 ) ; % test GrB_mxm (saxpy4)
 logstat ('test237'    ,s, j40 , f10 ) ; % test GrB_mxm (saxpy4) (1 task)
 logstat ('test184'    ,t, j4  , f1  ) ; % special cases: mxm, transpose, build
@@ -244,6 +251,7 @@ hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
 % 10 to 100 seconds: debug_off
 set_malloc_debug (mdebug, 0) ;
+logstat ('test230'    ,t, j4  , f1  ) ; % test apply with idxunops
 logstat ('test18'     ,t, j4  , f1  ) ; % GrB_eWiseAdd and eWiseMult
 logstat ('testc7(0)'  ,t, j4  , f1  ) ; % assign, builtin complex
 logstat ('test193'    ,t, j4  , f1  ) ; % test GxB_Matrix_diag
@@ -262,16 +270,14 @@ logstat ('test160'    ,s, j0  , f1  ) ; % test A*B, single threaded
 
 % 10 to 100 seconds, no Werk, debug_off
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
-logstat ('test188b'   ,t, j0  , f1  ) ; % test concat
-logstat ('test186'    ,t, j4  , f1  ) ; % saxpy, all formats (slice_balanced)
+%ogstat ('test186'    ,t, j4  , f1  ) ; % saxpy, all formats (slice_balanced)
 logstat ('test192'    ,t, j4  , f1  ) ; % test C<C,struct>=scalar
 logstat ('test181'    ,s, j4  , f1  ) ; % transpose with explicit zeros in mask
-logstat ('test238'    ,t, j4  , f1  ) ; % test GrB_mxm (dot4 and dot2)
-logstat ('test238b'   ,t, j4  , f0  ) ; % test GrB_mxm (dot4 and dot2)
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
 % 10 to 100 seconds: debug_on
 set_malloc_debug (mdebug, 1) ;
+logstat ('test11'     ,t, j4  , f1  ) ; % exhaustive test of GrB_extractTuples
 logstat ('test187'    ,t, j4  , f1  ) ; % test dup/assign for all formats
 logstat ('test189'    ,t, j4  , f1  ) ; % test large assign
 logstat ('test169'    ,t, j0  , f1  ) ; % C<M>=A+B with many formats
@@ -279,8 +285,7 @@ logstat ('test76'     ,s, j4  , f1  ) ; % GxB_resize (single threaded)
 logstat ('test01'     ,t, j4  , f1  ) ; % error handling
 logstat ('test228'    ,t, j4  , f1  ) ; % test serialize/deserialize
 logstat ('test104'    ,t, j4  , f1  ) ; % export/import
-logstat ('test02'     ,t, j4  , f1  ) ; % matrix copy and dup tests
-logstat ('test244'    ,t, j4  , f1  ) ; % test GxB_Matrix_reshape*
+logstat ('test284'    ,t, j420, f110) ; % semirings w/ index binary ops
 
 % 10 to 100 seconds, no Werk, debug_on
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
@@ -299,31 +304,22 @@ hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 % > 100 seconds, debug_off
 set_malloc_debug (mdebug, 0) ;
 logstat ('test125'    ,t, j4  , f1  ) ; % test GrB_mxm: row and column scaling
-logstat ('test280'    ,t, j4  , f1  ) ; % subassign method 26
 logstat ('test10'     ,t, j4  , f1  ) ; % GrB_apply
 logstat ('test75b'    ,t, j4  , f1  ) ; % test GrB_mxm A'*B
-logstat ('test81'     ,t, j4  , f1  ) ; % extract with stride, range, backwards
-logstat ('test230'    ,t, j4  , f1  ) ; % test apply with idxunops
 logstat ('test21b'    ,t, j4  , f1  ) ; % quick test of GB_mex_assign
 logstat ('test74'     ,t, j0  , f1  ) ; % test GrB_mxm on all semirings
 logstat ('test234'    ,t, j4  , f1  ) ; % test GxB_eWiseUnion
 logstat ('test234b'   ,t, j0  , f1  ) ; % test GxB_eWiseUnion
 
-% > 100 seconds, no Werk, debug_off
-hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
-logstat ('test185'    ,s, j4  , f1  ) ; % test dot4, saxpy for all sparsity
-hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
-
-% > 100 seconds, debug_on
-set_malloc_debug (mdebug, 1) ;
-logstat ('testca(1)'  ,t, j4  , f1  ) ; % test complex mxm, mxv, and vxm
-logstat ('test194'    ,t, j4  , f1  ) ; % test GxB_Vector_diag
-
 % > 100 seconds, no Werk, debug_on
+set_malloc_debug (mdebug, 1) ;
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 logstat ('test154'    ,t, j4  , f1  ) ; % apply with binop and scalar binding
 logstat ('test154b'   ,t, j0  , f1  ) ; % apply with binop and scalar binding
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
+
+% > 100 seconds, debug_off
+logstat ('test280'    ,t, j4  , f1  ) ; % subassign method 26
 
 %===============================================================================
 % finalize

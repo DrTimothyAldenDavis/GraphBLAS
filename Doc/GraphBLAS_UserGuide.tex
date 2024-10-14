@@ -1306,6 +1306,7 @@ Error                         & value & description \\
 \verb'GrB_INVALID_OBJECT'       & -104 & object is corrupted \\
 \verb'GrB_INDEX_OUT_OF_BOUNDS'  & -105 & a row or column index is out of bounds \\
 \verb'GrB_EMPTY_OBJECT'         & -106 & a input scalar has no entry \\
+\verb'GxB_JIT_ERROR'            &-1001 & JIT compiler error \\
 \hline
 \end{tabular}
 \vspace{0.2in}
@@ -8173,7 +8174,7 @@ field                       & value         & description \\
 \verb'GxB_JIT_C_PREFACE'      & \verb'char *' & C code as preface to JIT kernels \\
 \verb'GxB_JIT_C_CONTROL'      & see below     & CPU JIT control \\
 \verb'GxB_JIT_USE_CMAKE'      & see below     & CPU JIT control \\
-\verb'GxB_JIT_ERROR_FALLBACK' & \verb'int32_t' & how to handle JIT compiler errors \\
+%\verb'GxB_JIT_ERROR_FALLBACK'& \verb'int32_t' & how to handle JIT compiler errors \\
 \verb'GxB_JIT_ERROR_LOG'      & \verb'char *' & error log file \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
 \hline
@@ -8242,14 +8243,17 @@ control to \verb'GxB_JIT_LOAD' or \verb'GxB_JIT_ON', the setting is changed to
 \verb'GxB_JIT_RUN' instead.  This is not an error condition.  The resulting
 setting can be queried via \verb'GrB_get', if desired.
 
-The JIT control setting can be also changed by GraphBLAS itself, based on
+%----------------------------------------
+\subsubsection{JIT error handling}
+%----------------------------------------
+
+The JIT control setting can be changed by GraphBLAS itself, based on
 following error conditions.  These changes affect all kernels, not just the
 kernel causing the error.  If any of these cases occur, the call to GraphBLAS
-will often return still return \verb'GrB_SUCCESS' because it can use its
-generic kernels instead.  It would return \verb'GrB_OUT_OF_MEMORY' for the last
-case below.  The error is also reported if the \verb'GxB_BURBLE' is enabled.
-If the JIT is disabled through any of these errors, it can be detected by
-\verb'GrB_get' to read the \verb'GxB_JIT_C_CONTROL' state.
+returns \verb'GxB_JIT_ERROR', unless GraphBLAS runs out of memory, in which
+case it returns \verb'GrB_OUT_OF_MEMORY' instead.  If the JIT is disabled
+through any of these errors, it can be detected by \verb'GrB_get' to read the
+\verb'GxB_JIT_C_CONTROL' state.
 
 \begin{itemize}
 
@@ -8285,6 +8289,12 @@ set to \verb'GxB_JIT_PAUSE'.  To solve this, try freeing up memory, use a
 larger system, or solve smaller problems.
 
 \end{itemize}
+
+As a result of this automatic change in the JIT control setting, after the
+first JIT error is returned, subsequent calls to GraphBLAS will likely succeed.
+GraphBLAS will use a generic kernel instead.  To re-enable the JIT for
+subsequent calls to GraphBLAS, the user application must reset the
+\verb'GxB_JIT_C_CONTROL' back to \verb'GxB_JIT_ON'.
 
 In many use cases of GraphBLAS (such as LAGraph), a function will create a type
 or operator, use it, and then free it just before returning.  It would be far
@@ -8386,50 +8396,6 @@ Normally the same version of cmake should be used to compile both GraphBLAS and
 the JIT kernels.  However, compiling GraphBLAS itself requires cmake v3.16 or
 later (v3.19 for some options), while compiling the JIT kernels only requires
 cmake v3.13 or later.
-
-%----------------------------------------
-\subsubsection{\sf GxB\_JIT\_ERROR\_FALLBACK}
-%----------------------------------------
-
-When GraphBLAS attemts to compiler a JIT kernel, it may encounter errors
-outside of its control, such as a syntax error in a user-provided operator.  If
-the compilation of a kernel or the loading of the compiled kernel fails, the
-default is to fallback to a generic kernel instead, since that is always able
-to compute the GraphBLAS operation.  If no other errors occur, GraphBLAS
-returns \verb'GrB_SUCCESS', even though the JIT failed.  This default action is
-suitable for use in production, since it allows the user application to
-continue.
-
-However, this default action can make it difficult for a developer to track
-down and debug the defintions of user-defined operators.  If the
-\verb'GxB_JIT_ERROR_FALLBACK' it set to false, then the fallback does not
-occur, and a \verb'GxB_JIT_ERROR' is returned instead.
-
-Repeated JIT failures with the same user-defined kernel would slow down an
-application significantly, so ability of the the JIT to load or compile kernels
-is removed if a JIT error occurs.  The new setting depends on the kind of error
-that occurred:
-
-    \begin{itemize}
-
-    \item For a compiler error, the new setting of \verb'GxB_JIT_C_CONTROL' is
-    \verb'GxB_JIT_LOAD'.  No new kernels will be compiled, but previously
-    compiled kernels can still be loaded.  Previously loaded kernels can still
-    be used.
-
-    \item If a kernel cannot be loaded, or another file I/O error occurs, the
-    new setting of \verb'GxB_JIT_C_CONTROL' is \verb'GxB_JIT_RUN'.  No new
-    kernels will be compiled, and previously compiled kernels will not be
-    loaded.  Previously loaded kernels can still be used.
-
-    \item For other errors (out of memory for example), the new setting of
-    \verb'GxB_JIT_C_CONTROL' is \verb'GxB_JIT_PAUSE'.  No new kernels will be
-    loaded or compiled, and previously loaded kernels will not be used.
-
-    \end{itemize}
-
-This change to the JIT control setting when an error occurs is not affected by
-the \verb'GxB_JIT_ERROR_FALLBACK' setting.
 
 %----------------------------------------
 \subsubsection{\sf GxB\_JIT\_ERROR\_LOG}
@@ -14536,6 +14502,16 @@ GraphBLAS folder.
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
+
+\item GzB XX, 2024: version 9.4.0    FIXME
+
+    \begin{itemize}
+    \item new operator and associated methods:
+        added the \verb'GxB_IndexBinaryOp'
+    \item JIT error-handling behavior changed:  if a compiler error occurs in
+        the JIT, \verb'GxB_JIT_ERROR' is now returned.  Previously, GraphBLAS
+        would fall back to a generic method if such an error occurred.
+    \end{itemize}
 
 \item Aug 12, 2024: version 9.3.1
 

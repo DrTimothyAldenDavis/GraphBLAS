@@ -139,10 +139,9 @@ GrB_Info GxB_Type_new
         { 
             // unable to determine the type size
             GrB_Type_free (&t) ;
-            // If the JIT fails, it returns GrB_NO_VALUE or GrB_JIT_ERROR,
-            // depending on the GxB_JIT_ERROR_FALLBACK setting.  Convert
-            // GrB_NO_VALUE to GrB_INVALID_VALUE (the size of the type is 0 and
-            // cannot be determined by the JIT).
+            // If the JIT fails, it returns GrB_NO_VALUE or GxB_JIT_ERROR,
+            // Convert GrB_NO_VALUE to GrB_INVALID_VALUE (the size of the type
+            // is 0 and cannot be determined by the JIT).
             return (info == GrB_NO_VALUE ? GrB_INVALID_VALUE : info) ;
         }
         t->size = sizeof_type ;

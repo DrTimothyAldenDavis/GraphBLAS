@@ -270,7 +270,6 @@ typedef enum            // more SuiteSparse extensions for GrB_Field:
     GxB_JIT_C_CMAKE_LIBS = 7031,     // CPU JIT C libraries when using cmake
     GxB_JIT_USE_CMAKE = 7032,        // CPU JIT: use cmake or direct compile
     GxB_JIT_ERROR_LOG = 7033,        // CPU JIT: error log file
-    GxB_JIT_ERROR_FALLBACK = 7049,   // CPU JIT: error fallback
 
     // GrB_get for GrB_Matrix:
     GxB_SPARSITY_STATUS = 7034,     // hyper, sparse, bitmap or full (1,2,4,8)
@@ -374,7 +373,7 @@ GrB_Info GrB_set (GrB_Global g, void *     value, GrB_Field f, size_t s) ;
 \verb'GxB_PRINT_1BASED'             & R/W  & \verb'int32_t'& matrices printed as 1-based or 0-based  \\
 \verb'GxB_JIT_C_CONTROL'            & R/W  & \verb'int32_t'& see Section~\ref{jit} \\
 \verb'GxB_JIT_USE_CMAKE'            & R/W  & \verb'int32_t'& " \\
-\verb'GxB_JIT_ERROR_FALLBACK'       & R/W  & \verb'int32_t'& " \\
+% \verb'GxB_JIT_ERROR_FALLBACK'     & R/W  & \verb'int32_t'& " \\
 \hline
 \verb'GxB_HYPER_SWITCH'             & R/W  & \verb'double' & global hypersparsity control. \newline
                                                                 See Section~\ref{hypersparse}. \\
