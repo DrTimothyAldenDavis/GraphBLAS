@@ -2956,7 +2956,7 @@ input.  It does nothing at all if passed a built-in index-unary operator.
 %===============================================================================
 \label{idxbinaryop}
 
-A index-binary operator is a scalar function of the following form:
+An index-binary operator is a scalar function of the following form:
 \[
 z=f(x,i_x,j_x,y,i_y,j_y,\Theta),
 \]
@@ -2974,7 +2974,7 @@ z=f(a_{ij},i,j,b_{ij},i,j,\Theta).
 When used as the multiplicative operator in a semiring, to compute
 $\bf C = A \oplus.\otimes B$, the operator is used as
 \[
-z=f(a_{ik},i,k,b_{kj},k,j,\Theta).
+z=f(a_{ik},i,k,b_{kj},k,j,\Theta)
 \]
 to compute an entry to be summed by the monoid of the semiring.
 
@@ -3023,6 +3023,7 @@ GraphBLAS name            & types (domains)  & $z=f(x,y)$    & description \\
 \end{tabular}
 }
 
+\vspace{0.2in}
 The following methods operate on the \verb'GzB_IndexBinaryOp' object:
 
 \vspace{0.1in}
@@ -3135,6 +3136,7 @@ is returned.
     GrB_Vector_new (&c, Tuple, nrows, 1)) ;
     GrB_mxv (c, NULL, NULL, Semiring, A, y, NULL) ; \end{verbatim}}
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GzB\_IndexBinaryOp\_wait:} wait for an index-binary operator}
 %-------------------------------------------------------------------------------
@@ -3185,7 +3187,7 @@ does nothing if passed a \verb'NULL' handle, or if \verb'op == NULL' on
 input.  No built-in index-binary operators exist, but if they did,
 the method does nothing at all if passed a built-in index-binary operator.
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GzB\_BinaryOp\_new\_IndexOp:} create a index-based binary operator}
 %-------------------------------------------------------------------------------
@@ -3222,7 +3224,7 @@ operator, and the value cannot be changed.  To change \verb'Theta', the binary
 operator must be freed, and any semiring that would like to use the new value
 of \verb'Theta' must also be recreated.
 
-An example of its use is given in Section\ref{idxbinop_new_named}.
+An example of its use is given in Section~\ref{idxbinop_new_named}.
 
 \newpage
 %===============================================================================
@@ -4925,7 +4927,7 @@ returned by \verb'GrB_Vector_nvals' after the matrix is constructed).  All
 entries in the sparsity pattern of \verb'C' are identical, and equal to the
 input scalar value.
 
-\newpage
+% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_setElement:}   add an entry to a matrix}
 %-------------------------------------------------------------------------------
@@ -8725,7 +8727,7 @@ called \verb'SuiteSparse/GrB8.0.0'.  When GraphBLAS starts,
 exists, and initializes the cache path with that value instead of using the
 default.
 
-{\bf Restrictions:} the cache path is santized for security reasons.  No spaces
+{\bf Restrictions:} the cache path is sanitized for security reasons.  No spaces
 are permitted.  Backslashes are converted into forward slashes.  It can contain
 only charactors in the following list:
 
@@ -11280,7 +11282,7 @@ name appears in the function prototypes, but the specific function name is used
 when describing each variation.  When discussing features that apply to all
 versions, the simple name \verb'GrB_apply' is used.
 
-\newpage
+% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_apply:} apply a unary operator to a vector}
 %-------------------------------------------------------------------------------
@@ -11309,7 +11311,7 @@ type as the \verb'ztype' of the unary operator.  The final step is ${\bf w
 \langle m \rangle  = w \odot t}$, as described in Section~\ref{accummask},
 except that all the terms are column vectors instead of matrices.
 
-\newpage
+% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_apply:} apply a unary operator to a matrix}
 %-------------------------------------------------------------------------------
@@ -11361,7 +11363,7 @@ as an efficient and direct interface to the accumulator/mask function for
 both built-in and user-defined types.  However, it is only available for
 matrices, not vectors.
 
-\newpage
+% \newpage
 %===============================================================================
 \subsubsection{{\sf GrB\_Vector\_apply\_BinaryOp1st:} apply a binary operator to a vector; 1st scalar binding}
 %===============================================================================
@@ -11393,9 +11395,9 @@ The \verb'op' can be any binary operator except that it cannot be a
 user-defined \verb'GrB_BinaryOp' created by \verb'GzB_BinaryOp_new_IndexOp'.
 For backward compatibility with prior versions of SuiteSparse:GraphBLAS,
 built-in index-based binary operators such as \verb'GxB_FIRSTI_INT32' may be
-used, however.  These operators are translated internally into their equivalent
-index-unary operators.
+used, however.  The equivalent index-unary operators are used in their place.
 
+\newpage
 %===============================================================================
 \subsubsection{{\sf GrB\_Vector\_apply\_BinaryOp2nd:} apply a binary operator to a vector; 2nd scalar binding}
 %===============================================================================
@@ -11427,10 +11429,9 @@ The \verb'op' can be any binary operator except that it cannot be a
 user-defined \verb'GrB_BinaryOp' created by \verb'GzB_BinaryOp_new_IndexOp'.
 For backward compatibility with prior versions of SuiteSparse:GraphBLAS,
 built-in index-based binary operators such as \verb'GxB_FIRSTI_INT32' may be
-used, however.  These operators are translated internally into their equivalent
-index-unary operators.
+used, however.  The equivalent index-unary operators are used in their place.
 
-\newpage
+% \newpage
 %===============================================================================
 \subsubsection{{\sf GrB\_Vector\_apply\_IndexOp:} apply an index-unary operator to a vector}
 %===============================================================================
@@ -11457,6 +11458,7 @@ The scalar \verb'y' can be a non-opaque C scalar corresponding to a built-in
 type, a \verb'void *' for user-defined types, or a \verb'GrB_Scalar'.
 It is otherwise identical to \verb'GrB_Vector_apply'.
 
+% \newpage
 %===============================================================================
 \subsubsection{{\sf GrB\_Matrix\_apply\_BinaryOp1st:} apply a binary operator to a matrix; 1st scalar binding}
 %===============================================================================
@@ -11488,10 +11490,9 @@ The \verb'op' can be any binary operator except that it cannot be a
 user-defined \verb'GrB_BinaryOp' created by \verb'GzB_BinaryOp_new_IndexOp'.
 For backward compatibility with prior versions of SuiteSparse:GraphBLAS,
 built-in index-based binary operators such as \verb'GxB_FIRSTI_INT32' may be
-used, however.  These operators are translated internally into their equivalent
-index-unary operators.
+used, however.  The equivalent index-unary operators are used in their place.
 
-\newpage
+% \newpage
 %===============================================================================
 \subsubsection{{\sf GrB\_Matrix\_apply\_BinaryOp2nd:} apply a binary operator to a matrix; 2nd scalar binding}
 %===============================================================================
@@ -11523,8 +11524,7 @@ The \verb'op' can be any binary operator except that it cannot be a
 user-defined \verb'GrB_BinaryOp' created by \verb'GzB_BinaryOp_new_IndexOp'.
 For backward compatibility with prior versions of SuiteSparse:GraphBLAS,
 built-in index-based binary operators such as \verb'GxB_FIRSTI_INT32' may be
-used, however.  These operators are translated internally into their equivalent
-index-unary operators.
+used, however.  The equivalent index-unary operators are used in their place.
 
 %===============================================================================
 \subsubsection{{\sf GrB\_Matrix\_apply\_IndexOp:} apply an index-unary operator to a matrix}
@@ -12051,7 +12051,7 @@ to print their matrices and vectors as one-based.  To enable 1-based printing,
 use \verb'GrB_set (GrB_GLOBAL, true, GxB_PRINT_1BASED)'.  Printing is done as zero-based by
 default.
 
-\newpage
+% \newpage
 %===============================================================================
 \subsection{{\sf GxB\_fprint:} Print a GraphBLAS object to a file} %============
 %===============================================================================
@@ -12175,6 +12175,7 @@ For example,
 \verb'GrB_IndexUnaryOp_fprint (GrB_TRIL, "tril", GxB_COMPLETE, f)' prints
 the \verb'GrB_TRIL' index-unary operator to the file \verb'f'.
 
+\newpage
 %===============================================================================
 \subsection{{\sf GzB\_IndexBinaryOp\_fprint:} Print a {\sf GrB\_IndexBinaryOp}}
 %===============================================================================
@@ -12191,7 +12192,6 @@ GrB_Info GzB_IndexBinaryOp_fprint   // print and check a GzB_IndexBinaryOp
 ) ;
 \end{verbatim} } \end{mdframed}
 
-\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Monoid\_fprint:} Print a {\sf GrB\_Monoid}}
 %===============================================================================
@@ -12235,6 +12235,7 @@ For example,
 \verb'GxB_COMPLETE, f)'
 prints the predefined \verb'GxB_PLUS_TIMES_FP64' semiring to the file \verb'f'.
 
+\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Descriptor\_fprint:} Print a {\sf GrB\_Descriptor}}
 %===============================================================================
@@ -12295,6 +12296,7 @@ For example, \verb'GxB_Matrix_fprint (A, "my matrix", GxB_SHORT, f)'
 prints about 30 entries from the matrix \verb'A' to the file \verb'f'.
 
 
+\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Vector\_fprint:} Print a {\sf GrB\_Vector}}
 %===============================================================================
@@ -12314,7 +12316,6 @@ GrB_Info GxB_Vector_fprint          // print and check a GrB_Vector
 For example, \verb'GxB_Vector_fprint (v, "my vector", GxB_SHORT, f)'
 prints about 30 entries from the vector \verb'v' to the file \verb'f'.
 
-\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Scalar\_fprint:} Print a {\sf GrB\_Scalar}}
 %===============================================================================
