@@ -1,5 +1,5 @@
 function codegen_uop_identity
-%CODEGEN_UNOP_IDENTITY create identity functions
+%CODEGEN_UOP_IDENTITY create identity functions
 %
 % The 'identity' operator is unique: it is used for typecasting, and all 13*13
 % pairs of functions are generated.
@@ -108,4 +108,5 @@ for code1 = 1:ntypes
         codegen_uop_method (uop, func, ctype, atype) ;
     end
 end
+
 
