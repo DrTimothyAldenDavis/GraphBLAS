@@ -1,4 +1,4 @@
-GzB XX, 2024: version 9.4.0     FIXME
+Oct 15, 2024: version 9.4.0 (BETA)  FIXME
 
     * new operator and associated methods: added the GxB_IndexBinaryOp
     * JIT error-handling behavior changed:  if a compiler error occurs in the
