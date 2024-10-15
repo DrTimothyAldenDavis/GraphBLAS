@@ -6,7 +6,7 @@ function grbcov_testmake (what)
 %
 % See also: grbcover_edit, grbmake
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (ispc)

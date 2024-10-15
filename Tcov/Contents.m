@@ -1,7 +1,5 @@
 % GraphBLAS/Tcov/Contents.m:
 %
-% FIXME: check Contents.m
-%
 % grbcov - compile, run, and evaluate test coverage
 %
 % grbcov_testmake - compile ../Test/* for statement coverage testing
@@ -10,5 +8,5 @@
 % grbshow         - create a test coverage report in tmp_cover/
 % grbmake         - compile the GraphBLAS library for statement coverage testing
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
