@@ -235,9 +235,10 @@ logstat ('test224'    ,t, j4  , f1  ) ; % test unpack/pack
 
 % 1 to 10 seconds, no Werk, debug_on
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
+logstat ('test191'    ,t, j4  , f1  ) ; % test split
+logstat ('test191b'   ,t, j0  , f0  ) ; % test split
 logstat ('test150'    ,t, j0  , f0  ) ; % mxm zombies, typecasting (dot3,saxpy)
 logstat ('test240'    ,t, j4  , f1  ) ; % test dot4, saxpy4, and saxpy5
-%ogstat ('test240'    ,s, j4  , f1  ) ; % test dot4, saxpy4, and saxpy5 (1 task)
 logstat ('test237'    ,t, j40 , f10 ) ; % test GrB_mxm (saxpy4)
 logstat ('test237'    ,s, j40 , f10 ) ; % test GrB_mxm (saxpy4) (1 task)
 logstat ('test184'    ,t, j4  , f1  ) ; % special cases: mxm, transpose, build
@@ -269,7 +270,6 @@ logstat ('test160'    ,s, j0  , f1  ) ; % test A*B, single threaded
 
 % 10 to 100 seconds, no Werk, debug_off
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
-%ogstat ('test186'    ,t, j4  , f1  ) ; % saxpy, all formats (slice_balanced)
 logstat ('test192'    ,t, j4  , f1  ) ; % test C<C,struct>=scalar
 logstat ('test181'    ,s, j4  , f1  ) ; % transpose with explicit zeros in mask
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
@@ -285,7 +285,6 @@ logstat ('test76'     ,s, j4  , f1  ) ; % GxB_resize (single threaded)
 logstat ('test01'     ,t, j4  , f1  ) ; % error handling
 logstat ('test228'    ,t, j4  , f1  ) ; % test serialize/deserialize
 logstat ('test104'    ,t, j4  , f1  ) ; % export/import
-%ogstat ('test284'    ,t, j420, f110) ; % semirings w/ index binary ops
 logstat ('test284'    ,t, j40 , f11 ) ; % semirings w/ index binary ops
 
 % 10 to 100 seconds, no Werk, debug_on
@@ -293,8 +292,6 @@ hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 logstat ('test180'    ,s, j4  , f1  ) ; % test assign and subassign (1 thread)
 logstat ('test188'    ,t, j4  , f1  ) ; % test concat
 logstat ('test151b'   ,t, j4  , f1  ) ; % test bshift operator
-save test191_start GraphBLAS_grbcov
-logstat ('test191'    ,t, j40 , f10 ) ; % test split
 logstat ('test14'     ,t, j4  , f1  ) ; % GrB_reduce
 logstat ('test14b'    ,t, j4  , f0  ) ; % GrB_reduce
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
