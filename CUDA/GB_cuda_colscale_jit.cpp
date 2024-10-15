@@ -48,5 +48,5 @@ GrB_Info GB_cuda_colscale_jit
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, A, D, stream, gridsz, blocksz, binaryop->theta)) ;
+    return (GB_jit_kernel (C, A, D, stream, gridsz, blocksz)) ;
 }
