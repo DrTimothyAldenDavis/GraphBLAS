@@ -1,7 +1,5 @@
 FUTURE plans for GraphBLAS:
 
-    GrB_IndexBinaryOp : very important for many graph algorithms
-
     JIT package: don't just check 1st line of GraphBLAS.h when deciding to
         unpack the src in user cache folder. Use a crc test.
 
