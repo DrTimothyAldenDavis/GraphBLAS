@@ -1,5 +1,5 @@
 function count = grbcover_edit (infiles, count, outdir)
-%GBCOVER_EDIT create a version of GraphBLAS for statement coverage tests
+%GRBCOVER_EDIT create a version of GraphBLAS for statement coverage tests
 %
 % Usage:
 % count = grbcover_edit (infiles, count)
@@ -147,4 +147,5 @@ for k = 1:nfiles
 end
 
 fprintf ('\n') ;
+
 

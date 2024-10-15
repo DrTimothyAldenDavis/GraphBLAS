@@ -1,5 +1,5 @@
 function testmake (what)
-%MAKE compiles the test interface to GraphBLAS
+%TESTMAKE compiles the test interface to GraphBLAS
 % and dynamically links it with the libraries in ../build/libgraphblas.
 %
 % This @GrB interface to GraphBLAS is meant for testing and development,
@@ -226,5 +226,6 @@ if (ispc)
     cd ../../Test
     pwd
 end
+
 
 

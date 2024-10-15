@@ -1,5 +1,5 @@
 function test251b(tasks)
-%TEST251b test dot4 for plus-pair semirings
+%TEST251B test dot4 for plus-pair semirings
 % GB_AxB_dot4 computes C+=A'*B when C is dense.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -29,4 +29,5 @@ test251 (tasks) ;
 
 fprintf ('\n') ;
 fprintf ('test251b: all tests passed\n') ;
+
 

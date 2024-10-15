@@ -1,5 +1,5 @@
 function grbcov_testmake (what)
-%GBCOV_TESTMAKE compile ../Test/* for statement coverage testing
+%GRBCOV_TESTMAKE compile ../Test/* for statement coverage testing
 %
 % This function compiles just the mexFunctions in ../Test.
 % It does not compile the GraphBLAS library itself.
@@ -195,4 +195,5 @@ for k = 1:length (mexfunctions)
 end
 
 fprintf (']\n') ;
+
 

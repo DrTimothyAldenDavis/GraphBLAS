@@ -1,5 +1,5 @@
 function test188b(tasks)
-%TEST188b test concat
+%TEST188B test concat
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -22,3 +22,4 @@ if (isempty (tasks))
 end
 
 test188 (tasks) ;
+

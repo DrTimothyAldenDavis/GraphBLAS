@@ -1,5 +1,5 @@
 function grbshow
-%GBSHOW create a test coverage report in tmp_cover/
+%GRBSHOW create a test coverage report in tmp_cover/
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -65,5 +65,6 @@ for k = 1:nfiles
     fclose (f_input) ;
 
 end
+
 
 

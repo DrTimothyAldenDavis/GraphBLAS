@@ -1,5 +1,5 @@
 function test75b
-%TEST75B GrB_mxm and GrB_vxm on all semirings
+%TEST75B GrB_mxm and GrB_vxm on all semirings (shorter test than test75)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -303,4 +303,5 @@ for k1 = 1:length(semirings)
 end
 
 fprintf ('\ntest75b: all tests passed\n') ;
+
 

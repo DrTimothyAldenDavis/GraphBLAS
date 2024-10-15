@@ -1,5 +1,5 @@
 function test154b(tasks)
-%TEST154 test GrB_apply with scalar binding
+%TEST154B test GrB_apply with scalar binding
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -16,4 +16,5 @@ if (isempty (tasks))
 end
 
 test154 (tasks) ;
+
 

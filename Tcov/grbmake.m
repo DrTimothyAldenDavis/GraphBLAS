@@ -1,5 +1,5 @@
 function grbmake
-%GBMAKE compile the GraphBLAS library for statement coverage testing
+%GRBMAKE compile the GraphBLAS library for statement coverage testing
 %
 % This function compiles ../Source to create the
 % libgraphblas_tcov.so (or *.dylib) library, inserting code code for statement
@@ -72,4 +72,5 @@ if (need_rename)
 else
     system (sprintf ('make -j%d', feature ('numcores'))) ;
 end
+
 

@@ -1,5 +1,5 @@
 function test142b(tasks)
-%TEST142b test GrB_assign for dense matrices
+%TEST142B test GrB_assign for dense matrices
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -19,3 +19,4 @@ if (isempty (tasks))
 end
 
 test142 (tasks) ;
+

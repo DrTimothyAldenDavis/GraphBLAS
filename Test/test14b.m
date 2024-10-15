@@ -1,5 +1,5 @@
 function test14b(tasks)
-%TEST14b test GrB_reduce
+%TEST14B test GrB_reduce
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -38,4 +38,5 @@ if (isempty (tasks))
 end
 
 test14 (tasks) ;
+
 

@@ -1,5 +1,5 @@
 function test238b(tasks)
-%TEST238b test GrB_mxm (dot4 and dot2)
+%TEST238B test GrB_mxm (dot4 and dot2)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -19,4 +19,5 @@ end
 test238 (tasks) ;
 
 fprintf ('\ntest238: all tests passed\n') ;
+
 
