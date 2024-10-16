@@ -2554,10 +2554,10 @@ void mexFunction
         //----------------------------------------------------------------------
 
         OK (GxB_Type_new (&Tuple, sizeof (tuple_bool), "tuple_bool", BOOL_K)) ;
-        OK (GzB_IndexBinaryOp_new2 (&Iop,
+        OK (GzB_IndexBinaryOp_new (&Iop,
             (GzB_index_binary_function) make_bool,
             Tuple, GrB_BOOL, GrB_BOOL, GrB_BOOL, "make_bool", MAKE_BOOL)) ;
-        OK (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
+        OK (GzB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
         tuple_bool id ;
         memset (&id, 0, sizeof (tuple_bool)) ;
         id.k = INT64_MAX ;
@@ -2626,10 +2626,10 @@ void mexFunction
         //----------------------------------------------------------------------
 
         OK (GxB_Type_new (&Tuple, sizeof (tuple_int8), "tuple_int8", INT8_K)) ;
-        OK (GzB_IndexBinaryOp_new2 (&Iop,
+        OK (GzB_IndexBinaryOp_new (&Iop,
             (GzB_index_binary_function) make_int8,
             Tuple, GrB_INT8, GrB_BOOL, GrB_BOOL, "make_int8", MAKE_INT8)) ;
-        OK (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
+        OK (GzB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
         tuple_int8 id ;
         memset (&id, 0, sizeof (tuple_int8)) ;
         id.k = INT64_MAX ;
@@ -2699,10 +2699,10 @@ void mexFunction
 
         OK (GxB_Type_new (&Tuple, sizeof (tuple_int16),
             "tuple_int16", INT16_K)) ;
-        OK (GzB_IndexBinaryOp_new2 (&Iop,
+        OK (GzB_IndexBinaryOp_new (&Iop,
             (GzB_index_binary_function) make_int16,
             Tuple, GrB_INT16, GrB_BOOL, GrB_BOOL, "make_int16", MAKE_INT16)) ;
-        OK (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
+        OK (GzB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
         tuple_int16 id ;
         memset (&id, 0, sizeof (tuple_int16)) ;
         id.k = INT64_MAX ;
@@ -2772,10 +2772,10 @@ void mexFunction
 
         OK (GxB_Type_new (&Tuple, sizeof (tuple_int32),
             "tuple_int32", INT32_K)) ;
-        OK (GzB_IndexBinaryOp_new2 (&Iop,
+        OK (GzB_IndexBinaryOp_new (&Iop,
             (GzB_index_binary_function) make_int32,
             Tuple, GrB_INT32, GrB_BOOL, GrB_BOOL, "make_int32", MAKE_INT32)) ;
-        OK (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
+        OK (GzB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
         tuple_int32 id ;
         memset (&id, 0, sizeof (tuple_int32)) ;
         id.k = INT64_MAX ;
@@ -2845,10 +2845,10 @@ void mexFunction
 
         OK (GxB_Type_new (&Tuple, sizeof (tuple_int64),
             "tuple_int64", INT64_K)) ;
-        OK (GzB_IndexBinaryOp_new2 (&Iop,
+        OK (GzB_IndexBinaryOp_new (&Iop,
             (GzB_index_binary_function) make_int64,
             Tuple, GrB_INT64, GrB_BOOL, GrB_BOOL, "make_int64", MAKE_INT64)) ;
-        OK (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
+        OK (GzB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
         tuple_int64 id ;
         memset (&id, 0, sizeof (tuple_int64)) ;
         id.k = INT64_MAX ;
@@ -2918,10 +2918,10 @@ void mexFunction
 
         OK (GxB_Type_new (&Tuple, sizeof (tuple_uint8),
             "tuple_uint8", UINT8_K)) ;
-        OK (GzB_IndexBinaryOp_new2 (&Iop,
+        OK (GzB_IndexBinaryOp_new (&Iop,
             (GzB_index_binary_function) make_uint8,
             Tuple, GrB_UINT8, GrB_BOOL, GrB_BOOL, "make_uint8", MAKE_UINT8)) ;
-        OK (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
+        OK (GzB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
         tuple_uint8 id ;
         memset (&id, 0, sizeof (tuple_uint8)) ;
         id.k = INT64_MAX ;
@@ -2991,10 +2991,10 @@ void mexFunction
 
         OK (GxB_Type_new (&Tuple, sizeof (tuple_uint16),
             "tuple_uint16", UINT16_K)) ;
-        OK (GzB_IndexBinaryOp_new2 (&Iop,
+        OK (GzB_IndexBinaryOp_new (&Iop,
             (GzB_index_binary_function) make_uint16,
             Tuple, GrB_UINT16, GrB_BOOL, GrB_BOOL, "make_uint16", MAKE_UINT16));
-        OK (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
+        OK (GzB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
         tuple_uint16 id ;
         memset (&id, 0, sizeof (tuple_uint16)) ;
         id.k = INT64_MAX ;
@@ -3064,10 +3064,10 @@ void mexFunction
 
         OK (GxB_Type_new (&Tuple, sizeof (tuple_uint32),
             "tuple_uint32", UINT32_K)) ;
-        OK (GzB_IndexBinaryOp_new2 (&Iop,
+        OK (GzB_IndexBinaryOp_new (&Iop,
             (GzB_index_binary_function) make_uint32,
             Tuple, GrB_UINT32, GrB_BOOL, GrB_BOOL, "make_uint32", MAKE_UINT32));
-        OK (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
+        OK (GzB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
         tuple_uint32 id ;
         memset (&id, 0, sizeof (tuple_uint32)) ;
         id.k = INT64_MAX ;
@@ -3137,10 +3137,10 @@ void mexFunction
 
         OK (GxB_Type_new (&Tuple, sizeof (tuple_uint64),
             "tuple_uint64", UINT64_K)) ;
-        OK (GzB_IndexBinaryOp_new2 (&Iop,
+        OK (GzB_IndexBinaryOp_new (&Iop,
             (GzB_index_binary_function) make_uint64,
             Tuple, GrB_UINT64, GrB_BOOL, GrB_BOOL, "make_uint64", MAKE_UINT64));
-        OK (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
+        OK (GzB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
         tuple_uint64 id ;
         memset (&id, 0, sizeof (tuple_uint64)) ;
         id.k = INT64_MAX ;
@@ -3209,10 +3209,10 @@ void mexFunction
         //----------------------------------------------------------------------
 
         OK (GxB_Type_new (&Tuple, sizeof (tuple_fp32), "tuple_fp32", FP32_K)) ;
-        OK (GzB_IndexBinaryOp_new2 (&Iop,
+        OK (GzB_IndexBinaryOp_new (&Iop,
             (GzB_index_binary_function) make_fp32,
             Tuple, GrB_FP32, GrB_BOOL, GrB_BOOL, "make_fp32", MAKE_FP32)) ;
-        OK (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
+        OK (GzB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
         tuple_fp32 id ;
         memset (&id, 0, sizeof (tuple_fp32)) ;
         id.k = INT64_MAX ;
@@ -3281,10 +3281,10 @@ void mexFunction
         //----------------------------------------------------------------------
 
         OK (GxB_Type_new (&Tuple, sizeof (tuple_fp64), "tuple_fp64", FP64_K)) ;
-        OK (GzB_IndexBinaryOp_new2 (&Iop,
+        OK (GzB_IndexBinaryOp_new (&Iop,
             (GzB_index_binary_function) make_fp64,
             Tuple, GrB_FP64, GrB_BOOL, GrB_BOOL, "make_fp64", MAKE_FP64)) ;
-        OK (GzB_BinaryOp_IndexOp_new (&Bop, Iop, Theta)) ;
+        OK (GzB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
         tuple_fp64 id ;
         memset (&id, 0, sizeof (tuple_fp64)) ;
         id.k = INT64_MAX ;

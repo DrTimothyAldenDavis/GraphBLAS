@@ -10,8 +10,7 @@ __global__ void GB_cuda_colscale_kernel
 (
     GrB_Matrix C,
     GrB_Matrix A,
-    GrB_Matrix D,
-    const void *theta
+    GrB_Matrix D
 )
 {
 
@@ -98,7 +97,7 @@ GB_JIT_CUDA_KERNEL_COLSCALE_PROTO (GB_jit_kernel)
     dim3 grid (gridsz) ;
     dim3 block (blocksz) ;
     
-    GB_cuda_colscale_kernel <<<grid, block, 0, stream>>> (C, A, D, theta) ;
+    GB_cuda_colscale_kernel <<<grid, block, 0, stream>>> (C, A, D) ;
 
     return (GrB_SUCCESS) ;
 }

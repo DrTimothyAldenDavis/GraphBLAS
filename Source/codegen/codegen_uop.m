@@ -1,5 +1,5 @@
 function codegen_uop
-%CODEGEN_UNOP create functions for all unary operators
+%CODEGEN_UOP create functions for all unary operators
 %
 % This function creates all files of the form GB_uop__*.[ch],
 % and the include file GB_uop__include.h.
@@ -410,4 +410,5 @@ codegen_uop_method ('isfinite', 'isfinite (xarg)'     , 'bool', 'double') ;
 codegen_uop_method ('isfinite', 'GB_cisfinitef (xarg)', 'bool', 'GxB_FC32_t') ;
 codegen_uop_method ('isfinite', 'GB_cisfinite (xarg)' , 'bool', 'GxB_FC64_t') ;
 fprintf ('\n') ;
+
 

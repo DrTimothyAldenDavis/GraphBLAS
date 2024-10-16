@@ -77,85 +77,6 @@
 // The ANY_PAIR semirings appear in Source/GB_AxB__any_pair_iso.c and
 // cannot be disabled.
 
-// In this version of SuiteSparse:GraphBLAS, some of the fast hard-coded
-// semirings have been disabled below.  They still work, but are now slower
-// unless the JIT is used. These semirings are likely not needed by any
-// application, and disabling them here saves compile time and reduces the size
-// of the compiled library.  Hard-coded semirings removed:
-
-//  (1) *_IS* semirings are removed.
-//  (2) semirings with DIV, RDIV, MINUS, RMINUS and ANY multiplicative
-//      operators are removed.  ANY still appears as a monoid for many fast
-//      hard-coded semirings, just not as a multiplicative operator.
-//  (3) MIN, MAX, and TIMES monoids with the PAIR, LAND, LOR and LXOR
-//      multiplicative operators are removed.
-//  (4) PLUS monoids with LAND, LOR, and LXOR multiplicative ops.
-//  (5) MAX_MAX, MIN_MIN, semirings are removed.
-//  (5) ANY monoids with the EQ, NE, GE, LE, GT, LT, LAND, LOR, LXOR, MAX, MIN,
-//      PLUS and TIMES operators.
-//  (6) boolean semirings with non-boolean inputs removed
-//      (EQ_LT_FP32 for example), and boolean inputs with comparators
-//      (GE, GT, LE, LT)
-//  (7) positional semirings with PLUS and TIMES monoid removed.
-//  (8) some complex semirings removed.
-//  (9) All INT16 and UINT16 types and operators are removed.
-
-// With the above semirings removed, the remaining 398 semirings are:
-
-//  25 boolean semirings
-//
-//      monoid  multiply ops
-//      EQ:     EQ (=LXNOR), LAND, LOR, LXOR (=NE), FIRST, SECOND
-//      LAND:   EQ (=LXNOR), LAND, LOR, LXOR (=NE), FIRST, SECOND
-//      LOR:    EQ (=LXNOR), LAND, LOR, LXOR (=NE), FIRST, SECOND
-//      LXOR:   EQ (=LXNOR), LAND, LOR, LXOR (=NE), FIRST, SECOND, PAIR.
-//
-//              note: EQ_BOOL and LXNOR are the same operator, and
-//                    NE_BOOL and LXOR  are the same operator.
-//
-//  100 semirings with MIN/MAX monoids (10 kinds, 10 real types each):
-//
-//      monoid  multiply ops
-//      MAX:    MIN, PLUS, TIMES, FIRST, SECOND
-//      MIN:    MAX, PLUS, TIMES, FIRST, SECOND
-//
-//  70 semirings with PLUS monoids (10 real types each):
-//  60 semirings with TIMES monoids (10 real types each):
-//
-//      monoid  multiply ops
-//      PLUS:   MIN, MAX, PLUS, TIMES, FIRST, SECOND, PAIR
-//      TIMES:  MIN, MAX, PLUS, TIMES, FIRST, SECOND
-//
-//  10 semirings for 2 complex types (PLUS and TIMES monoids only):
-//
-//      monoid  multiply ops
-//      PLUS:  TIMES, FIRST, SECOND
-//      TIMES: FIRST, SECOND
-//
-//  33 semirings enabled with the ANY monoid:
-//
-//      ANY:   FIRST, SECOND, PAIR (with bool, 10 real types)
-//
-//  64 bitwise semirings: for 4 unsigned integer types:
-//
-//      (BOR, BAND, BXOR, BXNOR) x (BOR, BAND, BXOR, BXNOR)
-//
-//  36 positional semirings:
-//
-//      monoids: (MIN, MAX, ANY) x
-//      mult:    (FIRSTI, FIRSTI1, FIRSTJ, FIRSTJ1, SECONDJ, SECONDJ1) x
-//      types:   (int32, int64)
-//
-//  note:
-//      EQ_PAIR_BOOL, XNOR_PAIR_BOOL, LAND_PAIR_BOOL, LOR_PAIR_BOOL, are all
-//      the same as ANY_PAIR_BOOL.  For the other types, MAX_PAIR, MIN_PAIR,
-//      and TIMES_PAIR are the same as ANY_PAIR.  These are excluded from the
-//      list above, but are just as fast as ANY_PAIR.
-
-// These changes have no effect on the performance of binary operations such
-// as eWiseAdd, eWiseMult, or the unary GrB_apply to GrB_reduce.  They only
-// affect GrB_mxm, GrB_mxv, and GrB_vxm.
-
 // To renable the fast versions of these semirings, simply comment out the
 // specific "#define GxB_NO..." statements below, and recompile this library.
 
@@ -168,9 +89,6 @@
 
 // They also disable the hard-coded functions for GrB_eWiseAdd, GrB_eWiseMult,
 // GrB_reduce, GrB_*_build, GrB_apply, and GrB_transpose for this type.
-
-// If disabled, the types still work just fine, but operations on them will be
-// slower unless the JIT is used (which is on by default).
 
 // #define GxB_NO_BOOL      1
 // #define GxB_NO_FP32      1
@@ -193,9 +111,6 @@
 // These disable all unary operators for GrB_apply.  These options have no
 // effect on GrB_mxm, GrB_vxm, GrB_mxv, GrB_eWiseAdd, GrB_eWiseMult,
 // GrB_reduce, or GrB_*_build.
-
-// Any disabled unary operators will still work just fine, but operations using
-// them will be slower.
 
 // #define GxB_NO_ABS       1
 // #define GxB_NO_AINV      1
@@ -265,9 +180,6 @@
 // They also disable the hard-coded functions for GrB_eWiseAdd, GrB_eWiseMult,
 // GrB_reduce, and GrB_*_build for this binary operator.
 
-// Any disabled binary operators will still work just fine, but operations
-// using them will be slower.
-
 // #define GxB_NO_FIRST     1
 // #define GxB_NO_SECOND    1
 // #define GxB_NO_PAIR      1
@@ -280,12 +192,12 @@
 // #define GxB_NO_TIMES     1
 // #define GxB_NO_DIV       1
 // #define GxB_NO_RDIV      1
-// #define GxB_NO_ISEQ      1
-// #define GxB_NO_ISNE      1
-// #define GxB_NO_ISGT      1
-// #define GxB_NO_ISGE      1
-// #define GxB_NO_ISLT      1
-// #define GxB_NO_ISLE      1
+   #define GxB_NO_ISEQ      1
+   #define GxB_NO_ISNE      1
+   #define GxB_NO_ISGT      1
+   #define GxB_NO_ISGE      1
+   #define GxB_NO_ISLT      1
+   #define GxB_NO_ISLE      1
 // #define GxB_NO_EQ        1
 // #define GxB_NO_NE        1
 // #define GxB_NO_GT        1
@@ -347,9 +259,6 @@
 // Note that some boolean operators do not appear.  GrB_MIN_BOOL and
 // GrB_TIMES_BOOL are renamed internally to GrB_LAND_BOOL, for example, so
 // uncommenting GxB_NO_LAND_BOOL disables all three operators.
-
-// Any disabled binary operators will still work just fine, but operations
-// using them will be slower.
 
 // also needed by GrB_reduce to vector
 // #define GxB_NO_FIRST_INT8    1
@@ -829,9 +738,6 @@
 // These options have no effect on GrB_eWiseAdd, GrB_eWiseMult,
 // GrB_*_build, or GrB_apply.  They do affect GrB_reduce to vector, which
 // converts the reduction of a vector into a matrix-vector multiplication.
-
-// Any disabled semirings will still work just fine, but operations using them
-// will be slower.
 
 //------------------------------------------------------------
 // semirings with the boolean EQ monoid (also called XNOR)
@@ -1745,49 +1651,49 @@
 //      monoid  multiply ops
 //      TIMES:  MIN, MAX, PLUS, TIMES, FIRST, SECOND
 
-// #define GxB_NO_TIMES_MIN_FP32        1
-// #define GxB_NO_TIMES_MIN_FP64        1
-// #define GxB_NO_TIMES_MIN_INT16       1
-// #define GxB_NO_TIMES_MIN_INT32       1
-// #define GxB_NO_TIMES_MIN_INT64       1
-// #define GxB_NO_TIMES_MIN_INT8        1
-// #define GxB_NO_TIMES_MIN_UINT16      1
-// #define GxB_NO_TIMES_MIN_UINT32      1
-// #define GxB_NO_TIMES_MIN_UINT64      1
-// #define GxB_NO_TIMES_MIN_UINT8       1
+   #define GxB_NO_TIMES_MIN_FP32        1
+   #define GxB_NO_TIMES_MIN_FP64        1
+   #define GxB_NO_TIMES_MIN_INT16       1
+   #define GxB_NO_TIMES_MIN_INT32       1
+   #define GxB_NO_TIMES_MIN_INT64       1
+   #define GxB_NO_TIMES_MIN_INT8        1
+   #define GxB_NO_TIMES_MIN_UINT16      1
+   #define GxB_NO_TIMES_MIN_UINT32      1
+   #define GxB_NO_TIMES_MIN_UINT64      1
+   #define GxB_NO_TIMES_MIN_UINT8       1
 
-// #define GxB_NO_TIMES_MAX_FP32        1
-// #define GxB_NO_TIMES_MAX_FP64        1
-// #define GxB_NO_TIMES_MAX_INT16       1
-// #define GxB_NO_TIMES_MAX_INT32       1
-// #define GxB_NO_TIMES_MAX_INT64       1
-// #define GxB_NO_TIMES_MAX_INT8        1
-// #define GxB_NO_TIMES_MAX_UINT16      1
-// #define GxB_NO_TIMES_MAX_UINT32      1
-// #define GxB_NO_TIMES_MAX_UINT64      1
-// #define GxB_NO_TIMES_MAX_UINT8       1
+   #define GxB_NO_TIMES_MAX_FP32        1
+   #define GxB_NO_TIMES_MAX_FP64        1
+   #define GxB_NO_TIMES_MAX_INT16       1
+   #define GxB_NO_TIMES_MAX_INT32       1
+   #define GxB_NO_TIMES_MAX_INT64       1
+   #define GxB_NO_TIMES_MAX_INT8        1
+   #define GxB_NO_TIMES_MAX_UINT16      1
+   #define GxB_NO_TIMES_MAX_UINT32      1
+   #define GxB_NO_TIMES_MAX_UINT64      1
+   #define GxB_NO_TIMES_MAX_UINT8       1
 
-// #define GxB_NO_TIMES_PLUS_FP32       1
-// #define GxB_NO_TIMES_PLUS_FP64       1
-// #define GxB_NO_TIMES_PLUS_INT16      1
-// #define GxB_NO_TIMES_PLUS_INT32      1
-// #define GxB_NO_TIMES_PLUS_INT64      1
-// #define GxB_NO_TIMES_PLUS_INT8       1
-// #define GxB_NO_TIMES_PLUS_UINT16     1
-// #define GxB_NO_TIMES_PLUS_UINT32     1
-// #define GxB_NO_TIMES_PLUS_UINT64     1
-// #define GxB_NO_TIMES_PLUS_UINT8      1
+   #define GxB_NO_TIMES_PLUS_FP32       1
+   #define GxB_NO_TIMES_PLUS_FP64       1
+   #define GxB_NO_TIMES_PLUS_INT16      1
+   #define GxB_NO_TIMES_PLUS_INT32      1
+   #define GxB_NO_TIMES_PLUS_INT64      1
+   #define GxB_NO_TIMES_PLUS_INT8       1
+   #define GxB_NO_TIMES_PLUS_UINT16     1
+   #define GxB_NO_TIMES_PLUS_UINT32     1
+   #define GxB_NO_TIMES_PLUS_UINT64     1
+   #define GxB_NO_TIMES_PLUS_UINT8      1
 
-// #define GxB_NO_TIMES_TIMES_FP32      1
-// #define GxB_NO_TIMES_TIMES_FP64      1
-// #define GxB_NO_TIMES_TIMES_INT16     1
-// #define GxB_NO_TIMES_TIMES_INT32     1
-// #define GxB_NO_TIMES_TIMES_INT64     1
-// #define GxB_NO_TIMES_TIMES_INT8      1
-// #define GxB_NO_TIMES_TIMES_UINT16    1
-// #define GxB_NO_TIMES_TIMES_UINT32    1
-// #define GxB_NO_TIMES_TIMES_UINT64    1
-// #define GxB_NO_TIMES_TIMES_UINT8     1
+   #define GxB_NO_TIMES_TIMES_FP32      1
+   #define GxB_NO_TIMES_TIMES_FP64      1
+   #define GxB_NO_TIMES_TIMES_INT16     1
+   #define GxB_NO_TIMES_TIMES_INT32     1
+   #define GxB_NO_TIMES_TIMES_INT64     1
+   #define GxB_NO_TIMES_TIMES_INT8      1
+   #define GxB_NO_TIMES_TIMES_UINT16    1
+   #define GxB_NO_TIMES_TIMES_UINT32    1
+   #define GxB_NO_TIMES_TIMES_UINT64    1
+   #define GxB_NO_TIMES_TIMES_UINT8     1
 
 // needed by GrB_reduce to vector
 // #define GxB_NO_TIMES_FIRST_FP32      1
@@ -2234,89 +2140,89 @@
 // bitwise semirings:
 //----------------------------------------
 
-//  64 bitwise semirings: for 4 unsigned integer types, all enabled below:
+//  64 bitwise semirings: for 4 unsigned integer types
 //
 //      (BOR, BAND, BXOR, BXNOR) x (BOR, BAND, BXOR, BXNOR)
 
-// #define GxB_NO_BOR_BOR_UINT8         1
-// #define GxB_NO_BOR_BOR_UINT16        1
-// #define GxB_NO_BOR_BOR_UINT32        1
-// #define GxB_NO_BOR_BOR_UINT64        1
+   #define GxB_NO_BOR_BOR_UINT8         1
+   #define GxB_NO_BOR_BOR_UINT16        1
+   #define GxB_NO_BOR_BOR_UINT32        1
+   #define GxB_NO_BOR_BOR_UINT64        1
 
-// #define GxB_NO_BOR_BAND_UINT8        1
-// #define GxB_NO_BOR_BAND_UINT16       1
-// #define GxB_NO_BOR_BAND_UINT32       1
-// #define GxB_NO_BOR_BAND_UINT64       1
+   #define GxB_NO_BOR_BAND_UINT8        1
+   #define GxB_NO_BOR_BAND_UINT16       1
+   #define GxB_NO_BOR_BAND_UINT32       1
+   #define GxB_NO_BOR_BAND_UINT64       1
 
-// #define GxB_NO_BOR_BXOR_UINT8        1
-// #define GxB_NO_BOR_BXOR_UINT16       1
-// #define GxB_NO_BOR_BXOR_UINT32       1
-// #define GxB_NO_BOR_BXOR_UINT64       1
+   #define GxB_NO_BOR_BXOR_UINT8        1
+   #define GxB_NO_BOR_BXOR_UINT16       1
+   #define GxB_NO_BOR_BXOR_UINT32       1
+   #define GxB_NO_BOR_BXOR_UINT64       1
 
-// #define GxB_NO_BOR_BXNOR_UINT8       1
-// #define GxB_NO_BOR_BXNOR_UINT16      1
-// #define GxB_NO_BOR_BXNOR_UINT32      1
-// #define GxB_NO_BOR_BXNOR_UINT64      1
+   #define GxB_NO_BOR_BXNOR_UINT8       1
+   #define GxB_NO_BOR_BXNOR_UINT16      1
+   #define GxB_NO_BOR_BXNOR_UINT32      1
+   #define GxB_NO_BOR_BXNOR_UINT64      1
 
-// #define GxB_NO_BAND_BOR_UINT8        1
-// #define GxB_NO_BAND_BOR_UINT16       1
-// #define GxB_NO_BAND_BOR_UINT32       1
-// #define GxB_NO_BAND_BOR_UINT64       1
+   #define GxB_NO_BAND_BOR_UINT8        1
+   #define GxB_NO_BAND_BOR_UINT16       1
+   #define GxB_NO_BAND_BOR_UINT32       1
+   #define GxB_NO_BAND_BOR_UINT64       1
 
-// #define GxB_NO_BAND_BAND_UINT8       1
-// #define GxB_NO_BAND_BAND_UINT16      1
-// #define GxB_NO_BAND_BAND_UINT32      1
-// #define GxB_NO_BAND_BAND_UINT64      1
+   #define GxB_NO_BAND_BAND_UINT8       1
+   #define GxB_NO_BAND_BAND_UINT16      1
+   #define GxB_NO_BAND_BAND_UINT32      1
+   #define GxB_NO_BAND_BAND_UINT64      1
 
-// #define GxB_NO_BAND_BXOR_UINT8       1
-// #define GxB_NO_BAND_BXOR_UINT16      1
-// #define GxB_NO_BAND_BXOR_UINT32      1
-// #define GxB_NO_BAND_BXOR_UINT64      1
+   #define GxB_NO_BAND_BXOR_UINT8       1
+   #define GxB_NO_BAND_BXOR_UINT16      1
+   #define GxB_NO_BAND_BXOR_UINT32      1
+   #define GxB_NO_BAND_BXOR_UINT64      1
 
-// #define GxB_NO_BAND_BXNOR_UINT8      1
-// #define GxB_NO_BAND_BXNOR_UINT16     1
-// #define GxB_NO_BAND_BXNOR_UINT32     1
-// #define GxB_NO_BAND_BXNOR_UINT64     1
+   #define GxB_NO_BAND_BXNOR_UINT8      1
+   #define GxB_NO_BAND_BXNOR_UINT16     1
+   #define GxB_NO_BAND_BXNOR_UINT32     1
+   #define GxB_NO_BAND_BXNOR_UINT64     1
 
-// #define GxB_NO_BXOR_BOR_UINT8        1
-// #define GxB_NO_BXOR_BOR_UINT16       1
-// #define GxB_NO_BXOR_BOR_UINT32       1
-// #define GxB_NO_BXOR_BOR_UINT64       1
+   #define GxB_NO_BXOR_BOR_UINT8        1
+   #define GxB_NO_BXOR_BOR_UINT16       1
+   #define GxB_NO_BXOR_BOR_UINT32       1
+   #define GxB_NO_BXOR_BOR_UINT64       1
 
-// #define GxB_NO_BXOR_BAND_UINT8       1
-// #define GxB_NO_BXOR_BAND_UINT16      1
-// #define GxB_NO_BXOR_BAND_UINT32      1
-// #define GxB_NO_BXOR_BAND_UINT64      1
+   #define GxB_NO_BXOR_BAND_UINT8       1
+   #define GxB_NO_BXOR_BAND_UINT16      1
+   #define GxB_NO_BXOR_BAND_UINT32      1
+   #define GxB_NO_BXOR_BAND_UINT64      1
 
-// #define GxB_NO_BXOR_BXOR_UINT8       1
-// #define GxB_NO_BXOR_BXOR_UINT16      1
-// #define GxB_NO_BXOR_BXOR_UINT32      1
-// #define GxB_NO_BXOR_BXOR_UINT64      1
+   #define GxB_NO_BXOR_BXOR_UINT8       1
+   #define GxB_NO_BXOR_BXOR_UINT16      1
+   #define GxB_NO_BXOR_BXOR_UINT32      1
+   #define GxB_NO_BXOR_BXOR_UINT64      1
 
-// #define GxB_NO_BXOR_BXNOR_UINT8      1
-// #define GxB_NO_BXOR_BXNOR_UINT16     1
-// #define GxB_NO_BXOR_BXNOR_UINT32     1
-// #define GxB_NO_BXOR_BXNOR_UINT64     1
+   #define GxB_NO_BXOR_BXNOR_UINT8      1
+   #define GxB_NO_BXOR_BXNOR_UINT16     1
+   #define GxB_NO_BXOR_BXNOR_UINT32     1
+   #define GxB_NO_BXOR_BXNOR_UINT64     1
 
-// #define GxB_NO_BXNOR_BOR_UINT8       1
-// #define GxB_NO_BXNOR_BOR_UINT16      1
-// #define GxB_NO_BXNOR_BOR_UINT32      1
-// #define GxB_NO_BXNOR_BOR_UINT64      1
+   #define GxB_NO_BXNOR_BOR_UINT8       1
+   #define GxB_NO_BXNOR_BOR_UINT16      1
+   #define GxB_NO_BXNOR_BOR_UINT32      1
+   #define GxB_NO_BXNOR_BOR_UINT64      1
 
-// #define GxB_NO_BXNOR_BAND_UINT8      1
-// #define GxB_NO_BXNOR_BAND_UINT16     1
-// #define GxB_NO_BXNOR_BAND_UINT32     1
-// #define GxB_NO_BXNOR_BAND_UINT64     1
+   #define GxB_NO_BXNOR_BAND_UINT8      1
+   #define GxB_NO_BXNOR_BAND_UINT16     1
+   #define GxB_NO_BXNOR_BAND_UINT32     1
+   #define GxB_NO_BXNOR_BAND_UINT64     1
 
-// #define GxB_NO_BXNOR_BXOR_UINT8      1
-// #define GxB_NO_BXNOR_BXOR_UINT16     1
-// #define GxB_NO_BXNOR_BXOR_UINT32     1
-// #define GxB_NO_BXNOR_BXOR_UINT64     1
+   #define GxB_NO_BXNOR_BXOR_UINT8      1
+   #define GxB_NO_BXNOR_BXOR_UINT16     1
+   #define GxB_NO_BXNOR_BXOR_UINT32     1
+   #define GxB_NO_BXNOR_BXOR_UINT64     1
 
-// #define GxB_NO_BXNOR_BXNOR_UINT8     1
-// #define GxB_NO_BXNOR_BXNOR_UINT16    1
-// #define GxB_NO_BXNOR_BXNOR_UINT32    1
-// #define GxB_NO_BXNOR_BXNOR_UINT64    1
+   #define GxB_NO_BXNOR_BXNOR_UINT8     1
+   #define GxB_NO_BXNOR_BXNOR_UINT16    1
+   #define GxB_NO_BXNOR_BXNOR_UINT32    1
+   #define GxB_NO_BXNOR_BXNOR_UINT64    1
 
 //----------------------------------------
 // semirings with positional multiplicative operators:

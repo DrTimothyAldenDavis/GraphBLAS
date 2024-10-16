@@ -11,8 +11,6 @@
 #include "GB_mex_errors.h"
 #include "../Source/get_set/GB_get_set.h"
 
-#define USAGE "GB_mex_test25"
-
 #define FREE_ALL ;
 #define GET_DEEP_COPY ;
 #define FREE_DEEP_COPY ;

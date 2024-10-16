@@ -245,11 +245,10 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
         if (nfound == 2)
         { 
-            // extract the GrB_NAME and GrB_EL_TYPE_STRING from the blob
+            // extract the GrB_NAME from the blob;
+            // GrB_EL_TYPE_STRING not needed
             char *user_name = (char *) (blob + s) ;
 //          char *eltype_string = (char *) (blob + ss [0] + 1) ;
-//          printf ("deserialize user_name [%s] eltype [%s]\n", user_name,
-//              eltype_string) ;
             GB_OK (GB_matvec_name_set (C, user_name, GrB_NAME)) ;
         }
     }

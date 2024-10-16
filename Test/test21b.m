@@ -1,7 +1,10 @@
 function test21b (fulltest)
 %TEST21B test GrB_assign
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% Future: prune this test (132 sec, lo cover);
+% (difficult to prune because of rand in innermost loops)
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin < 1)

@@ -244,8 +244,7 @@ GrB_Info GB_jit_kernel_colscale                                         \
     const GrB_Matrix D,                                                 \
     const int64_t *A_ek_slicing,                                        \
     const int A_ntasks,                                                 \
-    const int A_nthreads,                                               \
-    const void *theta                                                   \
+    const int A_nthreads                                                \
 )
 
 #define GB_JIT_KERNEL_CONCAT_BITMAP_PROTO(GB_jit_kernel_concat_bitmap)  \
@@ -412,8 +411,7 @@ GrB_Info GB_jit_kernel_rowscale                                         \
     GrB_Matrix C,                                                       \
     const GrB_Matrix D,                                                 \
     const GrB_Matrix B,                                                 \
-    const int nthreads,                                                 \
-    const void *theta                                                   \
+    const int nthreads                                                  \
 )
 
 #define GB_JIT_KERNEL_SELECT_BITMAP_PROTO(GB_jit_kernel_select_bitmap)  \
@@ -597,8 +595,7 @@ GrB_Info GB_jit_kernel_rowscale                                         \
     GrB_Matrix B,                                                       \
     cudaStream_t stream,                                                \
     int32_t gridsz,                                                     \
-    int32_t blocksz,                                                    \
-    const void *theta                                                   \
+    int32_t blocksz                                                     \
 )
 
 #define GB_JIT_CUDA_KERNEL_COLSCALE_PROTO(GB_jit_kernel_colscale)       \
@@ -609,8 +606,7 @@ GrB_Info GB_jit_kernel_colscale                                         \
     GrB_Matrix D,                                                       \
     cudaStream_t stream,                                                \
     int32_t gridsz,                                                     \
-    int32_t blocksz,                                                    \
-    const void *theta                                                   \
+    int32_t blocksz                                                     \
 )
 
 #define GB_JIT_CUDA_KERNEL_APPLY_BIND1ST_PROTO(GB_jit_kernel_apply_bind1st) \

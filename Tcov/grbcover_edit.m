@@ -1,5 +1,5 @@
 function count = grbcover_edit (infiles, count, outdir)
-%GBCOVER_EDIT create a version of GraphBLAS for statement coverage tests
+%GRBCOVER_EDIT create a version of GraphBLAS for statement coverage tests
 %
 % Usage:
 % count = grbcover_edit (infiles, count)
@@ -25,7 +25,7 @@ function count = grbcover_edit (infiles, count, outdir)
 %       default :     GB_cov[count]++ ; statement
 %
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (ispc)
@@ -147,4 +147,5 @@ for k = 1:nfiles
 end
 
 fprintf ('\n') ;
+
 

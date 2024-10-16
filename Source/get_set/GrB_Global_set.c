@@ -66,10 +66,10 @@ static GrB_Info GB_global_enum_set (int32_t value, int field)
             GB_jitifyer_set_use_cmake ((bool) value) ;
             break ;
 
-        case GxB_JIT_ERROR_FALLBACK : 
-
-            GB_jitifyer_set_error_fallback ((bool) value) ;
-            break ;
+//      case GxB_JIT_ERROR_FALLBACK :
+//
+//          GB_jitifyer_set_error_fallback ((bool) value) ;
+//          break ;
 
         case GxB_JIT_C_CONTROL : 
 

@@ -18,6 +18,7 @@
 
 #include "pending/GB_Pending.h"
 #include "GB.h"
+#include "get_set/GB_get_set.h"
 
 GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 (
@@ -488,6 +489,17 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             if (info != GrB_SUCCESS) return (info) ;
         }
         GBPR0 ("\n") ;
+    }
+
+    //--------------------------------------------------------------------------
+    // report the GrB_set name
+    //--------------------------------------------------------------------------
+
+    // name given by GrB_set
+    char *given_name = A->user_name ;
+    if (A->user_name_size > 0 && given_name != NULL)
+    { 
+        GBPR0 ("    %s given name: [%s]\n", kind, given_name) ;
     }
 
     //--------------------------------------------------------------------------

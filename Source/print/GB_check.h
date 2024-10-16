@@ -95,7 +95,8 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
     const GrB_Monoid monoid,    // GraphBLAS monoid to print and check
     const char *name,           // name of the monoid, optional
     int pr,                     // print level
-    FILE *f                     // file for output
+    FILE *f,                    // file for output
+    bool in_semiring            // if true, then called by GB_Semiring_check
 ) ;
 
 GrB_Info GB_Semiring_check          // check a GraphBLAS semiring

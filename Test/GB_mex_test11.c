@@ -12,8 +12,6 @@
 #include "../Source/jitifyer/GB_file.h"
 #include "../Source/jitifyer/GB_jitifyer.h"
 
-#define USAGE "GB_mex_test11"
-
 #define FREE_ALL ;
 #define GET_DEEP_COPY ;
 #define FREE_DEEP_COPY ;
@@ -260,11 +258,12 @@ if (jit_enabled)
 
     printf ("\n--------------------------- intentional compile errors:\n") ;
 
-    int error_fallback ;
-    OK (GxB_Global_Option_get_INT32 (GxB_JIT_ERROR_FALLBACK, &error_fallback)) ;
-    printf ("error_fallback: %d\n", error_fallback) ;
+//  int error_fallback ;
+//  OK (GxB_Global_Option_get_INT32 (GxB_JIT_ERROR_FALLBACK, &error_fallback)) ;
+//  printf ("error_fallback: %d\n", error_fallback) ;
 
-    expected = error_fallback ? GrB_INVALID_VALUE : GxB_JIT_ERROR ;
+//  expected = error_fallback ? GrB_INVALID_VALUE : GxB_JIT_ERROR ;
+    expected = GxB_JIT_ERROR ;
     ERR (GxB_Type_new (&MyType, 0, "mytype2", "garbage")) ;
     CHECK (MyType == NULL) ;
     printf ("\n-------------------------------------------------------\n\n") ;

@@ -1,5 +1,5 @@
 function codegen_aop_template (binop, bfunc, ifunc, ffunc, dfunc, fcfunc, dcfunc)
-%CODEGEN_ASSIGNOP_TEMPLATE create aop functions
+%CODEGEN_AOP_TEMPLATE create aop functions
 %
 % Generate functions for a binary operator, for all types, for assign/subassign
 
@@ -38,4 +38,5 @@ end
 if (~isempty (dcfunc))
     codegen_aop_method (binop, dcfunc, 'GxB_FC64_t') ;
 end
+
 

@@ -153,7 +153,7 @@
 //------------------------------------------------------------------------------
 
 #ifndef GRAPHBLAS_HAS_CUDA
-#define GRAPHBLAS_HAS_CUDA
+/* #undef GRAPHBLAS_HAS_CUDA */
 #endif
 
 //------------------------------------------------------------------------------
@@ -275,7 +275,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Month XXX, 2024"
+#define GxB_IMPLEMENTATION_DATE "Oct 15, 2024"
 #define GxB_IMPLEMENTATION_MAJOR 9
 #define GxB_IMPLEMENTATION_MINOR 4
 #define GxB_IMPLEMENTATION_SUB   0
@@ -1464,7 +1464,7 @@ typedef enum            // for global options or matrix options
     GxB_JIT_C_CMAKE_LIBS = 7031,     // CPU JIT C libraries when using cmake
     GxB_JIT_USE_CMAKE = 7032,        // CPU JIT: use cmake or direct compile
     GxB_JIT_ERROR_LOG = 7033,        // CPU JIT: error log file
-    GxB_JIT_ERROR_FALLBACK = 7049,   // CPU JIT: error fallback
+//  GxB_JIT_ERROR_FALLBACK = 7049,   // CPU JIT: error fallback
 
     GxB_JIT_CUDA_PREFACE = 7100,     // CUDA JIT C++ preface
 
@@ -1679,7 +1679,7 @@ typedef enum
     GzB_THETA_TYPE_CODE = 7050,     // for binary and index binary ops
     GzB_THETA_TYPE_STRING = 7051,
 
-    // GrB_BinaryOp only:
+    // GrB_BinaryOp or GrB_Semiring:
     GzB_THETA = 7052,               // to get the value of theta
 }
 GrB_Field ;
@@ -3001,20 +3001,8 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 // GzB_IndexBinaryOp: index binary operators
 //==============================================================================
 
-// GzB_IndexBinaryOp_new creates a user-defined index binary op; no name or defn
+// GzB_IndexBinaryOp_new creates a new user-defined index binary op
 GrB_Info GzB_IndexBinaryOp_new
-(
-    GzB_IndexBinaryOp *op,          // handle for the new index binary operator
-    GzB_index_binary_function function, // pointer to the index binary function
-    GrB_Type ztype,                 // type of output z
-    GrB_Type xtype,                 // type of input x
-    GrB_Type ytype,                 // type of input y
-    GrB_Type theta_type             // type of input theta
-) ;
-
-// GzB_IndexBinaryOp_new creates a user-defined index binary op; with a name
-// and defn
-GrB_Info GzB_IndexBinaryOp_new2
 (
     GzB_IndexBinaryOp *op,          // handle for the new index binary operator
     GzB_index_binary_function function, // pointer to the index binary function
@@ -3031,8 +3019,8 @@ GrB_Info GzB_IndexBinaryOp_free     // free a user-created index binary operator
     GzB_IndexBinaryOp *op           // handle of index binary operator to free
 ) ;
 
-// GzB_BinaryOp_IndexOp_new: create a new binary op from an index binary op
-GrB_Info GzB_BinaryOp_IndexOp_new
+// GzB_BinaryOp_new_IndexOp: create a new binary op from an index binary op
+GrB_Info GzB_BinaryOp_new_IndexOp
 (
     GrB_BinaryOp *binop,            // handle of binary op to create
     GzB_IndexBinaryOp idxbinop,     // based on this index binary op

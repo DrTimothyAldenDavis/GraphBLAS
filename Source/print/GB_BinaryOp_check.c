@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
+#include "get_set/GB_get_set.h"
 
 GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
 (
@@ -106,6 +107,13 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         return (GrB_INVALID_OBJECT) ;
     }
 
+    // name given by GrB_set, or 'GrB_*' name for built-in operators
+    const char *given_name = GB_op_name_get ((GB_Operator) op) ;
+    if (given_name != NULL)
+    { 
+        GBPR0 ("    BinaryOp given name: [%s]\n", given_name) ;
+    }
+
     info = GB_Type_check (op->ztype, "ztype", pr, f) ;
     ASSERT (info == GrB_SUCCESS) ;
     if (!op_is_pair)
@@ -136,17 +144,15 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         info = GB_Type_check (op->theta_type, "theta_type", pr, f) ;
         if (info != GrB_SUCCESS)
         { 
-GB_GOTCHA ; // binop has invalid theta type
             GBPR0 ("    BinaryOp has an invalid theta_type\n") ;
             return (GrB_INVALID_OBJECT) ;
         }
-        GBPR0 ("    theta: ") ;
-        info = GB_entry_check (op->theta_type, op->theta, pr, f) ;
-        if (info != GrB_SUCCESS)
+        if (pr != GxB_SILENT)
         { 
-GB_GOTCHA ; // binop has invalid theta
-            GBPR0 ("    BinaryOp has an invalid theta\n") ;
-            return (GrB_INVALID_OBJECT) ;
+            GBPR ("    theta: [ ") ;
+            info = GB_entry_check (op->theta_type, op->theta, pr, f) ;
+            if (info != GrB_SUCCESS) return (info) ;
+            GBPR ("]") ;
         }
         GBPR0 ("\n") ;
     }

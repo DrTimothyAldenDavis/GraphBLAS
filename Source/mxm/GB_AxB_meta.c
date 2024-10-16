@@ -112,12 +112,15 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
     bool allow_scale = true ;
-    if (semiring_in->multiply->binop_function == NULL &&
-        (op_is_first || op_is_second))
+    if ((semiring_in->multiply->binop_function == NULL &&
+        (op_is_first || op_is_second)) || GB_IS_INDEXBINARYOP_CODE (opcode))
     { 
         // GB_rowscale and GB_colscale do not handle the implicit FIRST
-        // operator for GB_reduce_to_vector.  They do handle any other
-        // positional operator (FIRSTI, FIRSTJ, SECONDI, SECONDJ, etc).
+        // operator for GB_reduce_to_vector (where all function pointers are
+        // NULL).  They do handle builtin index binary operator (FIRSTI,
+        // FIRSTJ, SECONDI, SECONDJ, etc), by converting the operation into
+        // GB_apply_op with a built-in unary POSITION* op.  They do not handle
+        // any user-defined index binary operators.
         allow_scale = false ;
     }
 

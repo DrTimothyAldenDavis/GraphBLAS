@@ -4,8 +4,7 @@ __global__ void GB_cuda_rowscale_kernel
 (
     GrB_Matrix C,
     GrB_Matrix D,
-    GrB_Matrix B,
-    const void *theta
+    GrB_Matrix B
 )
 {
     const GB_A_TYPE *__restrict__ Dx = (GB_A_TYPE *) D->x ;
@@ -62,7 +61,7 @@ GB_JIT_CUDA_KERNEL_ROWSCALE_PROTO (GB_jit_kernel)
     dim3 grid (gridsz) ;
     dim3 block (blocksz) ;
     
-    GB_cuda_rowscale_kernel <<<grid, block, 0, stream>>> (C, D, B, theta) ;
+    GB_cuda_rowscale_kernel <<<grid, block, 0, stream>>> (C, D, B) ;
 
     return (GrB_SUCCESS) ;
 }

@@ -9,8 +9,6 @@
 
 #include "get_set/GB_get_set.h"
 
-// FIXME: add GzB_THETA_TYPE_STRING
-
 GrB_Info GB_op_string_get
 (
     GB_Operator op,
@@ -58,6 +56,7 @@ GrB_Info GB_op_string_get
         case GrB_INP0_TYPE_STRING : type = op->xtype ; break ;
         case GrB_INP1_TYPE_STRING : type = op->ytype ; break ;
         case GrB_OUTP_TYPE_STRING : type = op->ztype ; break ;
+        case GzB_THETA_TYPE_STRING : type = op->theta_type ; break ;
 
         default : 
             return (GrB_INVALID_VALUE) ;

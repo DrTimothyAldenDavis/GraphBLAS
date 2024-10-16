@@ -13,6 +13,7 @@
 // GraphBLAS GrB_Type was created.
 
 #include "GB.h"
+#include "get_set/GB_get_set.h"
 
 GrB_Info GB_Type_check      // check a GraphBLAS Type
 (
@@ -27,7 +28,7 @@ GrB_Info GB_Type_check      // check a GraphBLAS Type
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBPR0 ("    GraphBLAS type: ") ;
+    GBPR0 ("    GraphBLAS Type: ") ;
     if (name != NULL) GBPR0 ("%s ", name) ;
 
     if (type == NULL)
@@ -76,6 +77,13 @@ GrB_Info GB_Type_check      // check a GraphBLAS Type
     { 
         GBPR0 ("    Type has an invalid name_len\n") ;
         return (GrB_INVALID_OBJECT) ;
+    }
+
+    // name given by GrB_set
+    char *given_name = type->user_name ;
+    if (type->user_name_size > 0 && given_name != NULL)
+    { 
+        GBPR0 ("    Type given name: [%s]\n", given_name) ;
     }
 
     if (type->defn != NULL)

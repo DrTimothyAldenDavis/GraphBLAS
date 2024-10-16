@@ -1,5 +1,5 @@
 function codegen_uop_method (uop, op, ztype, xtype)
-%CODEGEN_UNOP_METHOD create a function to compute C=uop(A)
+%CODEGEN_UOP_METHOD create a function to compute C=uop(A)
 %
 % codegen_uop_method (uop, op, ztype, xtype)
 %
@@ -85,4 +85,5 @@ system (cmd) ;
 system ('cat control.m4 Generator/GB_uop.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> ../../FactoryKernels/GB_uop__include.h') ;
 
 delete ('control.m4') ;
+
 

@@ -1,7 +1,9 @@
-XXX XX, 2024: version 9.4.0
+Oct 15, 2024: version 9.4.0 (BETA)  FIXME
 
-    * new operator: added the GxB_IndexBinaryOp
-    * new global option: added GxB_JIT_ERROR_FALLBACK
+    * new operator and associated methods: added the GxB_IndexBinaryOp
+    * JIT error-handling behavior changed:  if a compiler error occurs in the
+        JIT, GxB_JIT_ERROR is now returned.  Previously, GraphBLAS would fall
+        back to a generic method if such an error occurred.
 
 Aug 12, 2024: version 9.3.1
 

@@ -28,6 +28,6 @@ GrB_Info GxB_Monoid_fprint          // print and check a GrB_Monoid
     // print and check the object
     //--------------------------------------------------------------------------
 
-    return (GB_Monoid_check (monoid, name, pr, f)) ;
+    return (GB_Monoid_check (monoid, name, pr, f, false)) ;
 }
 

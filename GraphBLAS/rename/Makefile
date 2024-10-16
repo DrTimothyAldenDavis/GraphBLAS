@@ -2,7 +2,7 @@
 # GraphBLAS/GraphBLAS/rename/Makefile
 #-------------------------------------------------------------------------------
 
-# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
 #-------------------------------------------------------------------------------
@@ -21,6 +21,7 @@
 go:
 	nm -gD ../../build/libgraphblas.so | grep -v "GB__" > lib
 	grep " GrB_" lib > temp.h
+	grep " GzB_" lib >> temp.h
 	grep " GxB_" lib | grep -v Iterator >> temp.h
 	grep " GB_"  lib | grep -v Iterator >> temp.h
 	awk -f rename.awk < temp.h > temp2.h
@@ -33,6 +34,7 @@ go:
 mac:
 	nm -gA ../../build/libgraphblas.dylib | grep -v "GB__" > lib
 	grep " _GrB_" lib > temp.h
+	grep " _GzB_" lib >> temp.h
 	grep " _GxB_" lib | grep -v Iterator >> temp.h
 	grep " _GB_"  lib | grep -v Iterator >> temp.h
 	awk -f rename.awk < temp.h | sort > GB_rename.h

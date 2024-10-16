@@ -2,7 +2,7 @@
 # GraphBLAS/Tcov/Makefile
 #-------------------------------------------------------------------------------
 
-# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
 #-------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ clean:
 
 distclean: clean
 	$(RM) *.mex* tmp*/* errlog*.txt grbstat.mat fprint.txt
-	$(RM) libgraphblas_tcov.*
+	$(RM) libgraphblas_tcov.* log_GB_mex_test21.txt
 
 purge: distclean
 	$(RM) log.txt

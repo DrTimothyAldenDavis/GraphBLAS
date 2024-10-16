@@ -9,8 +9,6 @@
 
 #include "get_set/GB_get_set.h"
 
-// FIXME: add GzB_THETA_TYPE_STRING
-
 GrB_Info GB_op_size_get
 (
     GB_Operator op,
@@ -54,6 +52,10 @@ GrB_Info GB_op_size_get
 
         case GrB_OUTP_TYPE_STRING : 
             s = GB_type_name_get (op->ztype) ;
+            break ;
+
+        case GzB_THETA_TYPE_STRING : 
+            s = GB_type_name_get (op->theta_type) ;
             break ;
 
         default : 

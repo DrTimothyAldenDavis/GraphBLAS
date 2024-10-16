@@ -1,13 +1,13 @@
 function grbmake
-%GBMAKE compile the GraphBLAS library for statement coverage testing
+%GRBMAKE compile the GraphBLAS library for statement coverage testing
 %
 % This function compiles ../Source to create the
 % libgraphblas_tcov.so (or *.dylib) library, inserting code code for statement
 % coverage testing.  It does not compile the mexFunctions.
 %
-% See also: grbcover, grbcover_edit
+% See also: grbcov_testmake, grbcover_edit
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (ispc)
@@ -72,4 +72,5 @@ if (need_rename)
 else
     system (sprintf ('make -j%d', feature ('numcores'))) ;
 end
+
 

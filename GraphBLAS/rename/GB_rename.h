@@ -273,6 +273,7 @@
 #define GB_ctrunc GM_ctrunc
 #define GB_cumsum GM_cumsum
 #define GB_demacrofy_name GM_demacrofy_name
+#define GB_desc_name_get GM_desc_name_get
 #define GB_Descriptor_check GM_Descriptor_check
 #define GB_Descriptor_get GM_Descriptor_get
 #define GB_deserialize_from_blob GM_deserialize_from_blob
@@ -529,7 +530,6 @@
 #define GB_jitifyer_get_control GM_jitifyer_get_control
 #define GB_jitifyer_get_C_preface GM_jitifyer_get_C_preface
 #define GB_jitifyer_get_CUDA_preface GM_jitifyer_get_CUDA_preface
-#define GB_jitifyer_get_error_fallback GM_jitifyer_get_error_fallback
 #define GB_jitifyer_get_error_log GM_jitifyer_get_error_log
 #define GB_jitifyer_get_use_cmake GM_jitifyer_get_use_cmake
 #define GB_jitifyer_hash_encoding GM_jitifyer_hash_encoding
@@ -561,7 +561,6 @@
 #define GB_jitifyer_set_C_preface_worker GM_jitifyer_set_C_preface_worker
 #define GB_jitifyer_set_CUDA_preface GM_jitifyer_set_CUDA_preface
 #define GB_jitifyer_set_CUDA_preface_worker GM_jitifyer_set_CUDA_preface_worker
-#define GB_jitifyer_set_error_fallback GM_jitifyer_set_error_fallback
 #define GB_jitifyer_set_error_log GM_jitifyer_set_error_log
 #define GB_jitifyer_set_error_log_worker GM_jitifyer_set_error_log_worker
 #define GB_jitifyer_set_use_cmake GM_jitifyer_set_use_cmake
@@ -4907,3 +4906,18 @@
 #define GxB_Vector_unpack_Bitmap GxM_Vector_unpack_Bitmap
 #define GxB_Vector_unpack_CSC GxM_Vector_unpack_CSC
 #define GxB_Vector_unpack_Full GxM_Vector_unpack_Full
+#define GzB_BinaryOp_new_IndexOp GzM_BinaryOp_new_IndexOp
+#define GzB_IndexBinaryOp_error GzM_IndexBinaryOp_error
+#define GzB_IndexBinaryOp_fprint GzM_IndexBinaryOp_fprint
+#define GzB_IndexBinaryOp_free GzM_IndexBinaryOp_free
+#define GzB_IndexBinaryOp_get_INT32 GzM_IndexBinaryOp_get_INT32
+#define GzB_IndexBinaryOp_get_Scalar GzM_IndexBinaryOp_get_Scalar
+#define GzB_IndexBinaryOp_get_SIZE GzM_IndexBinaryOp_get_SIZE
+#define GzB_IndexBinaryOp_get_String GzM_IndexBinaryOp_get_String
+#define GzB_IndexBinaryOp_get_VOID GzM_IndexBinaryOp_get_VOID
+#define GzB_IndexBinaryOp_new GzM_IndexBinaryOp_new
+#define GzB_IndexBinaryOp_set_INT32 GzM_IndexBinaryOp_set_INT32
+#define GzB_IndexBinaryOp_set_Scalar GzM_IndexBinaryOp_set_Scalar
+#define GzB_IndexBinaryOp_set_String GzM_IndexBinaryOp_set_String
+#define GzB_IndexBinaryOp_set_VOID GzM_IndexBinaryOp_set_VOID
+#define GzB_IndexBinaryOp_wait GzM_IndexBinaryOp_wait

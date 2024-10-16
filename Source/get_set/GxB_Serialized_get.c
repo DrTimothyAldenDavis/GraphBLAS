@@ -112,7 +112,6 @@ static GrB_Info GB_blob_header_get
 
     // this should already be in the blob, but set it to null just in case
     type_name [GxB_MAX_NAME_LEN-1] = '\0' ;
-//  printf ("JIT C type name [%s]\n", type_name) ;
 
     //--------------------------------------------------------------------------
     // get the compressed block sizes from the blob for each array
@@ -188,8 +187,6 @@ static GrB_Info GB_blob_header_get
             // extract the GrB_NAME and GrB_EL_TYPE_STRING from the blob
             (*user_name) = (char *) (blob + s) ;
             (*eltype_string) = (char *) (blob + ss [0] + 1) ;
-//          printf ("deserialize user_name %lu:[%s] eltype %lu:[%s]\n",
-//              s, *user_name, ss [0] + 1, *eltype_string) ;
         }
     }
 

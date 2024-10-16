@@ -67,7 +67,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 
     if (GB_IS_INDEXBINARYOP_CODE (opcode))
     { 
-GB_GOTCHA ; // error: cannot pass index binop to apply
         // user-defined GzB_IndexBinaryOp not allowed here
         GB_ERROR (GrB_DOMAIN_MISMATCH, "%s",
             "User-defined GzB_IndexBinaryOps cannot be used in GrB_apply") ;

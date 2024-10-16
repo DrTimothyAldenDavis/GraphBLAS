@@ -378,7 +378,6 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     if (user_name != NULL)
     { 
         // write the GrB_NAME of the matrix (including the nul byte)
-//      printf ("serialize user_name %lu:[%s]\n", s, user_name) ;
         strcpy ((char *) (blob + s), user_name) ;
         s += user_name_len ;
     }
@@ -387,7 +386,6 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     if (eltype_string != NULL)
     { 
         // write the EL_TYPE_STRING of the matrix type (including the nul byte)
-//      printf ("serialize eltype_string %lu:[%s]\n", s, eltype_string) ;
         strcpy ((char *) (blob + s), eltype_string) ;
         s += eltype_string_len ;
     }
