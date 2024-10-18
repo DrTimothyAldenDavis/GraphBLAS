@@ -10,6 +10,14 @@ Steps:
     - Mark where things change
 */
 
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE_WORK (W) ;          \
+    GB_FREE_WORK (W_2) ;        \
+    GB_FREE_WORK (W_3) ;        \
+    GB_FREE_WORK (cnz) ;        \
+}
+
 #include "GB_cuda_ek_slice.cuh"
 #include "GB_cuda_cumsum.cuh"
 
@@ -41,25 +49,29 @@ __global__ void GB_cuda_select_sparse_phase1
     #if ( GB_DEPENDS_ON_J )
 
         for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
-                pfirst < anz ;
-                pfirst += gridDim.x << log2_chunk_size )
+                     pfirst < anz ;
+                     pfirst += gridDim.x << log2_chunk_size )
         {
             int64_t my_chunk_size, anvec1, kfirst, klast ;
             float slope ;
             GB_cuda_ek_slice_setup (Ap, anvec, anz, pfirst, chunk_size,
                 &kfirst, &klast, &my_chunk_size, &anvec1, &slope) ;
 
-            for (int64_t pdelta = threadIdx.x ; pdelta < my_chunk_size ; pdelta += blockDim.x)
+            for (int64_t pdelta = threadIdx.x ;
+                         pdelta < my_chunk_size ;
+                         pdelta += blockDim.x)
             {
                 int64_t pA ;
-                int64_t k = GB_cuda_ek_slice_entry (&pA, pdelta, pfirst, Ap, anvec1, kfirst, slope) ;
+                int64_t k = GB_cuda_ek_slice_entry (&pA, pdelta, pfirst, Ap,
+                    anvec1, kfirst, slope) ;
                 int64_t j = GBH_A (Ah, k) ;
 
                 #if ( GB_DEPENDS_ON_I )
-                int64_t i = GBI_A (Ai, pA, A->vlen) ;
+                int64_t i = Ai [pA] ;
                 #endif
 
-                GB_TEST_VALUE_OF_ENTRY (keep, pA) ;
+                // keep = fselect (A (i,j)), true if A(i,j) is kept, else false
+                GB_TEST_VALUE_OF_ENTRY (keep, pA) ; // FIXME: add Ax,i,j,y
                 Keep[pA] = keep;
             }
         }
@@ -72,7 +84,7 @@ __global__ void GB_cuda_select_sparse_phase1
         for (int64_t pA = tid; pA < anz; pA += nthreads)
         {
             #if ( GB_DEPENDS_ON_I )
-            int64_t i = GBI_A (Ai, pA, A->vlen) ;
+            int64_t i = Ai [pA] ;
             #endif
 
             GB_TEST_VALUE_OF_ENTRY (keep, pA) ;
@@ -107,19 +119,20 @@ __global__ void GB_cuda_select_sparse_phase2
     int nthreads = blockDim.x * gridDim.x ;
 
     for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
-        pfirst < anz ;
-        pfirst += gridDim.x << log2_chunk_size )
+                 pfirst < anz ;
+                 pfirst += gridDim.x << log2_chunk_size )
     {
         int64_t my_chunk_size, anvec1, kfirst, klast ;
         float slope ;
         GB_cuda_ek_slice_setup (Ap, anvec, anz, pfirst, chunk_size,
             &kfirst, &klast, &my_chunk_size, &anvec1, &slope) ;
 
-        for (int64_t pdelta = threadIdx.x ; pdelta < my_chunk_size ; pdelta += blockDim.x)
+        for (int64_t pdelta = threadIdx.x ;
+                     pdelta < my_chunk_size ;
+                     pdelta += blockDim.x)
         {
-            int64_t pA ;
-            int64_t kA = GB_cuda_ek_slice_entry (&pA, pdelta, pfirst, Ap, anvec1, kfirst, slope) ;
-            int64_t pC = Map [pA] ;     // Note: this is off-by-1 (see below).
+            int64_t pA = pfirst + pdelta ;
+            int64_t pC = Map [pA] ;     // Note: pC is off-by-1 (see below).
             if (Map [pA-1] < pC)
             {
                 // This entry is kept; Keep [pA] was 1 but the contents of the
@@ -127,49 +140,55 @@ __global__ void GB_cuda_select_sparse_phase2
                 // inclusive cumsum.  Keep [pA] (before being overwritten) is
                 // identical to the expression (Map [pA-1] < pC).
 
-                // Map is offset by 1 since it was computed as an inclusive cumsum,
-                // so decrement pC here to get the actual position in Ci,Cx.
+                // the A(i,j) is in the kA-th vector of A:
+                int64_t kA = GB_cuda_ek_slice_entry (&pA, pdelta, pfirst, Ap,
+                    anvec1, kfirst, slope) ;
+
+                // Map is offset by 1 since it was computed as an inclusive
+                // cumsum, so decrement pC here to get the actual position in
+                // Ci,Cx.
                 pC-- ;
-                Ci[pC] = GBI_A (Ai, pA, A->vlen) ;
-                Cx[pC] = Ax[pA] ;
-                Ak_keep[pC] = kA + 1 ;
+                Ci[pC] = Ai [pA] ;
+                // Cx[pC] = Ax[pA] ;
+                GB_SELECT_ENTRY (pC, pA) ;
+
+                // save the name of the vector kA that holds this entry in A,
+                // for the new position of this entry in C at pC.
+                Ak_keep[pC] = kA ;
             }
         }
 
         // Build the Delta over Ck_delta
         this_thread_block().sync();
 
-        __shared__ int8_t do_keep[blockDim.x] ;
-        
-        for (int64_t pdelta = threadIdx.x ; pdelta < my_chunk_size ; pdelta += blockDim.x)
+        for (int64_t pdelta = threadIdx.x ;
+                     pdelta < my_chunk_size ;
+                     pdelta += blockDim.x)
         {
             int64_t pA = pfirst + pdelta ;
             int64_t pC = Map[pA] ;
-            do_keep[pA] = (Ak_keep[pC] != Ak_keep[pC - 1]) ;
-
-        }
-        // No sync barrier needed; threads only look at their own entries
-        for (int64_t pdelta = threadIdx.x ; pdelta < my_chunk_size ; pdelta += blockDim.x)
-        {
-            int64_t pA = pfirst + pdelta ;
-            int64_t pC = Map[pA] ;
-            Ck_delta[pC] = do_keep[pA] ;
+            if (Map [pA-1] < pC)
+            {
+                pC-- ;
+                Ck_delta [pC] = (Ak_keep[pC] != Ak_keep[pC - 1]) ;
+            }
         }
     }
 }
 
+// HERE
+
 __global__ void GB_cuda_select_sparse_phase3
 (
     GrB_Matrix A,
-    int64_t *cnz_ptr,
+    int64_t cnz,
     int64_t *Ak_keep,
     int64_t *Ck_map,
     int64_t *Cp,
-    int64_t *Ch,
+    int64_t *Ch
 )
 {
     const int64_t *__restrict__ Ah = A->h;
-    int64_t cnz = *(cnz_ptr) ;
 
     int tid = blockIdx.x * blockDim.x + threadIdx.x ;
     int nthreads = blockDim.x * gridDim.x ;
@@ -196,26 +215,37 @@ extern "C"
 
 GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 {
-    ASSERT(GB_A_IS_HYPER);
 
-    GrB_Info ret = GrB_SUCCESS ;
+    //--------------------------------------------------------------------------
+    // check inputs and declare workspace
+    //--------------------------------------------------------------------------
+
+    int64_t *W = NULL, *W_2 = NULL, *W_3 = NULL,
+        *Ak_keep = NULL, *Ck_delta = NULL,
+        *Keep = NULL ;
+    size_t W_size = 0, W_2_size = 0, W_3_size = 0 ;
+    int64_t cnz = 0 ;
+
+    ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
 
     dim3 grid (gridsz) ;
     dim3 block (blocksz) ;
 
-    // Phase 1: Keep [p] = 1 if Ai,Ax [p] is kept, 0 otherwise; then cumsum
-    int64_t *W, *W_2, *Ak_keep, *Ck_delta, *Keep ;
-    int64_t *cnz ;
-    W = W_2 = Ak_keep = cnz = NULL ;
-    size_t W_size, W_2_size, cnz_size, Ak_keep_size ;
-    W = GB_MALLOC_WORK (A->nvals + 1, int64_t, &W_size) ;
-    cnz = GB_MALLOC_WORK (1, int64_t, &cnz_size);
+    //--------------------------------------------------------------------------
+    // phase 1: determine which entries of A to keep
+    //--------------------------------------------------------------------------
 
-    if (W == NULL || cnz == NULL) {
-        ret = GrB_OUT_OF_MEMORY ;
-        goto done;
+    // Phase 1: Keep [p] = 1 if Ai,Ax [p] is kept, 0 otherwise; then cumsum
+
+    W = GB_MALLOC_WORK (A->nvals + 1, int64_t, &W_size) ;
+    if (W == NULL)
+    {
+        // out of memory
+        GB_FREE_ALL ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
+    // shift by one, to define Keep [-1] as 0
     W [0] = 0;     // placeholder for easier end-condition
     Keep = W + 1 ;  // Keep has size A->nvals and starts at W [1]
 
@@ -224,20 +254,39 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-    // Keep = cumsum (Keep), in-place
+    //--------------------------------------------------------------------------
+    // phase1b: Map = cumsum (Keep)
+    //--------------------------------------------------------------------------
+
+    // in-place cumsum, overwriting Keep with its cumsum, then becomes Map
     GB_cuda_cumsum (Keep, Keep, A->nvals, stream, GB_CUDA_CUMSUM_INCLUSIVE) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-    (*cnz) = Keep[A->nvals - 1];
-    W_2 = GB_MALLOC_WORK ((*cnz) + 1, int64_t, &W_2_size) ;
-    Ak_keep = GB_MALLOC_WORK ((*cnz), int64_t, &Ak_keep_size) ;
-    if (W_2 == NULL || Ak_keep == NULL) {
-        ret = GrB_OUT_OF_MEMORY ;
-        goto done;
+    cnz = Keep[A->nvals - 1];        // total # of entries kept, for C
+
+    // allocate workspace
+    W_2 = GB_MALLOC_WORK (cnz + 1, int64_t, &W_2_size) ;
+    W_3 = GB_MALLOC_WORK (cnz + 1, int64_t, &W_3_size) ;
+    if (W_2 == NULL || W_3 == NULL)
+    {
+        // out of memory
+        GB_FREE_ALL ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
+
+    // shift by one: to define Ck_delta [-1] as zero
     W_2[0] = 0 ;
     Ck_delta = W_2 + 1 ;
+
+    // shift bye one: to define Ak_keep [-1] as -1
+    W_3[0] = -1 ;
+    Ak_keep = W_3 + 1 ;
+
     int64_t *Map = Keep ;   // Keep has been replaced with Map
+
+    //--------------------------------------------------------------------------
+    // phase 2:
+    //--------------------------------------------------------------------------
 
     // Phase 2: Build Ci, Cx, Ak_keep, and Ck_delta
     GB_cuda_select_sparse_phase2 <<<grid, block, 0, stream>>>
@@ -246,7 +295,8 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     CUDA_OK (cudaStreamSynchronize (stream)) ;
     // Cumsum over Ck_delta array -> Ck_map
     // Can reuse `Keep` to avoid a malloc
-    CUDA_OK (GB_cuda_cumsum (Keep, Ck_delta, (*cnz), stream, GB_CUDA_CUMSUM_INCLUSIVE)) ;
+    CUDA_OK (GB_cuda_cumsum (Keep, Ck_delta, cnz, stream,
+        GB_CUDA_CUMSUM_INCLUSIVE)) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
     int64_t *Ck_map = Keep;
 
@@ -255,14 +305,10 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
         (A, cnz, Ak_keep, Ck_map, Cp, Ch) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
     
+    // log the end of the last vector of C
     Cp[Ck_map[cnz - 1]] = cnz;
-    Ch[Ck_map[cnz - 1]] = GBH(A->h, Ck_delta[cnz - 1]);
-    // Done!
-done:
-    GB_FREE_WORK (W) ;
-    GB_FREE_WORK (W_2) ;
-    GB_FREE_WORK (Ak_keep) ;
-    GB_FREE_WORK (cnz) ;
 
-    return ret ;
+    GB_FREE_ALL ;
+    return (GrB_SUCCESS) ;
 }
+

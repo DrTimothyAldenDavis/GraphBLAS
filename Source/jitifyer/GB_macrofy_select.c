@@ -205,7 +205,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
     else
     { 
         // C and A are both non-iso
-        // this would need to typcase if A and C had different types
+        // this would need to typecast if A and C had different types
         ASSERT (!A_iso) ;
         fprintf (fp, " Cx [pC] = Ax [pA]\n") ;
     }
