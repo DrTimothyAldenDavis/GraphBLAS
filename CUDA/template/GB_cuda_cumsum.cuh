@@ -50,7 +50,7 @@ __host__ GrB_Info GB_cuda_cumsum             // compute the cumulative sum of an
             cub::DeviceScan::ExclusiveSum(d_temp_storage, temp_storage_bytes, in, out, n, stream) ;
     }
 
-    CU_TRY(cudaMalloc(&d_temp_storage, temp_storage_bytes));
+    CUDA_OK (cudaMalloc(&d_temp_storage, temp_storage_bytes)) ;
 
     // Run
     switch (type)
@@ -62,7 +62,7 @@ __host__ GrB_Info GB_cuda_cumsum             // compute the cumulative sum of an
             cub::DeviceScan::ExclusiveSum(d_temp_storage, temp_storage_bytes, in, out, n, stream) ;
     }
 
-    CU_TRY(cudaFree(d_temp_storage));
+    CUDA_OK (cudaFree(d_temp_storage)) ;
 
     return GrB_SUCCESS;
 }
