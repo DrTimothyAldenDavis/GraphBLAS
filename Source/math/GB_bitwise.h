@@ -244,8 +244,8 @@ inline uint64_t GB_bitset_uint64 (uint64_t x, uint64_t k)
 
 // bitclr (x,k) returns x modified by setting a bit from x to 0, whose position
 // is given by k.  If k is in the range 1 to bits, then k gives the position of
-// the bit to clear.  If k is outside the range 1 to GB_BITS, then z = x is
-// returned, unmodified.
+// the bit to clear.  If k is outside the range 1 to the # of bits in x, then z
+// = x is returned, unmodified.
 
 inline int8_t GB_bitclr_int8 (int8_t x, int8_t k)
 {
