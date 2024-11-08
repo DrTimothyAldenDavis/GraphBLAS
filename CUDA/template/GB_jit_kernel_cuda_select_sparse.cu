@@ -1,11 +1,13 @@
 using namespace cooperative_groups ;
 
-#define GB_FREE_ALL             \
+#define GB_FREE_WORKSPACE       \
 {                               \
     GB_FREE_WORK (W) ;          \
     GB_FREE_WORK (W_2) ;        \
     GB_FREE_WORK (W_3) ;        \
 }
+
+#define GB_FREE_ALL GB_FREE_WORKSPACE ;
 
 #include "GB_cuda_ek_slice.cuh"
 #include "GB_cuda_cumsum.cuh"
@@ -63,7 +65,7 @@ __global__ void GB_cuda_select_sparse_phase1
                 #endif
 
                 // keep = fselect (A (i,j)), true if A(i,j) is kept, else false
-                GB_TEST_VALUE_OF_ENTRY (keep, pA) ; // FIXME: add Ax,i,j,y
+                GB_TEST_VALUE_OF_ENTRY (keep, pA) ;
                 Keep[pA] = keep;
             }
         }
@@ -143,9 +145,6 @@ __global__ void GB_cuda_select_sparse_phase2
                 Ci [pC] = Ai [pA] ;
 
                 // Cx [pC] = Ax [pA] ;
-                // Q: In iso case, this just becomes
-                // #define GB_ISO_SELECT 1? I would expect
-                // Cx [0] = Ax [0]
                 GB_SELECT_ENTRY (pC, pA) ;
 
                 // save the name of the vector kA that holds this entry in A,
@@ -222,6 +221,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // get callback functions
     GB_free_memory_f GB_free_memory = my_callback->GB_free_memory_func ;
     GB_malloc_memory_f GB_malloc_memory = my_callback->GB_malloc_memory_func ;
+    GB_bix_alloc_f GB_bix_alloc = my_callback->GB_bix_alloc_func ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -254,7 +254,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     }
 
     // shift by one, to define Keep [-1] as 0
-    W [0] = 0;      // placeholder for easier end-condition
+    W [0] = 0 ;     // placeholder for easier end-condition
     Keep = W + 1 ;  // Keep has size A->nvals and starts at W [1]
 
     GB_cuda_select_sparse_phase1 <<<grid, block, 0, stream>>>
@@ -274,8 +274,14 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     int64_t *Map = Keep ;             // Keep has been replaced with Map
     cnz = Map [A->nvals - 1] ;        // total # of entries kept, for C
 
-    // Q: need to allocate space for Cx, Ci?
-    // If cnz = 0, just need to do Cp [0] = 0, then done?
+    if (cnz != 0) {
+        // Allocate Ci, Cx
+        GB_OK (GB_bix_alloc_f (C, cnz, GxB_HYPERSPARSE, false, true, GB_ISO_SELECT)) ;
+    } else {
+        // C is empty; no need to do anything
+        GB_FREE_WORKSPACE ;
+        return (GrB_SUCCESS) ;
+    }
 
     // allocate workspace
     W_2 = GB_MALLOC_WORK (cnz + 1, int64_t, &W_2_size) ;
@@ -302,7 +308,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 
     // Phase 2: Build Ci, Cx, Ak_keep, and Ck_delta
     GB_cuda_select_sparse_phase2 <<<grid, block, 0, stream>>>
-        (Map, A, Ak_keep, Ck_delta, Ci, Cx) ;
+        (Map, A, Ak_keep, Ck_delta, C->i, C->x) ;
     
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
@@ -317,21 +323,39 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     int64_t *Ck_map = Keep;
-    int64_t cnk = Ck_map [cnz - 1] ;
+    int64_t cnvec = Ck_map [cnz - 1] ;
 
-    // Q: Need to allocate space for Cp, Ch?
+    // Free existing Cp, Ch
+    C->p = GB_free_memory_f (&(C->p), C->p_size) ;
+    C->h = GB_free_memory_f (&(C->h), C->h_size) ;
+
+    // Allocate Cp, Ch, finalize matrix
+    bool ok = true ;
+    C->plen = cnvec ;
+    C->nvec = cnvec ;
+    C->nvec_nonempty = cnvec ;
+    C->nvals = cnz ;
+    C->p = GB_malloc_memory_f (C->plen + 1, sizeof(int64_t), &(C->p_size)) ;
+    C->h = GB_malloc_memory_f (C->plen, sizeof(int64_t), &(A->h_size)) ;
+    ok = ok && ((C->p != NULL) && (C->h != NULL)) ;
+    if (!ok)
+    {
+        info = GrB_OUT_OF_MEMORY ;
+        GB_FREE_ALL ;
+        return info ;
+    }
 
     //--------------------------------------------------------------------------
     // Phase 3: Build Cp and Ch
     //--------------------------------------------------------------------------
     GB_cuda_select_sparse_phase3 <<<grid, block, 0, stream>>>
-        (A, cnz, Ak_keep, Ck_map, Cp, Ch) ;
+        (A, cnz, Ak_keep, Ck_map, C->p, C->h) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
     
     // log the end of the last vector of C
-    Cp [Ck_map [cnz - 1]] = cnz;
+    C->p [cnvec] = cnz;
 
-    GB_FREE_ALL ;
+    GB_FREE_WORKSPACE ;
     return (GrB_SUCCESS) ;
 }
 
