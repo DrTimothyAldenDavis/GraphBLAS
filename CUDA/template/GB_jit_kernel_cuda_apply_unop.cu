@@ -39,9 +39,6 @@ __global__ void GB_cuda_apply_unop_kernel
 
     #define A_iso GB_A_ISO
 
-    int tid = blockDim.x * blockIdx.x + threadIdx.x ;
-    int nthreads = blockDim.x * gridDim.x ;
-
     #if ( GB_DEPENDS_ON_Y )
         // get thunk value (of type GB_Y_TYPE)
         GB_Y_TYPE thunk_value = * ((GB_Y_TYPE *) thunk) ;
@@ -49,6 +46,8 @@ __global__ void GB_cuda_apply_unop_kernel
 
     #if ( GB_A_IS_BITMAP || GB_A_IS_FULL )
         // bitmap/full case
+        int tid = blockDim.x * blockIdx.x + threadIdx.x ;
+        int nthreads = blockDim.x * gridDim.x ;
         for (int64_t p = tid ; p < anz ; p += nthreads)
         {
             if (!GBb_A (Ab, p)) { continue ; }
@@ -92,8 +91,10 @@ __global__ void GB_cuda_apply_unop_kernel
                     }
                 }
         #else
-            const int64_t avlen = A->vlen ;
             // can do normal method
+            const int64_t avlen = A->vlen ;
+            int tid = blockDim.x * blockIdx.x + threadIdx.x ;
+            int nthreads = blockDim.x * gridDim.x ;
             for (int64_t p = tid ; p < anz ; p += nthreads)
             {
                 #if ( GB_DEPENDS_ON_I )
