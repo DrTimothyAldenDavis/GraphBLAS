@@ -81,14 +81,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     GB_void cscalar [GB_VLA(zsize)] ;
     bool C_iso = GB_AxB_iso (cscalar, D, B, D->vdim, semiring, flipxy, true) ;
 
-    //--------------------------------------------------------------------------
-    // copy the pattern of B into C
-    //--------------------------------------------------------------------------
-
-    // allocate C->x but do not initialize it
-    GB_OK (GB_dup_worker (&C, C_iso, B, false, ztype)) ;
     info = GrB_NO_VALUE ;
-    ASSERT (C->type == ztype) ;
 
     //--------------------------------------------------------------------------
     // C = D*B, row scale, compute numerical values
@@ -96,6 +89,9 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
 
     if (GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode))
     {
+        // Copy the pattern of B into C. Allocates, but does not initialize C->x.
+        GB_OK (GB_dup_worker (&C, C_iso, B, false, ztype)) ;
+        ASSERT (C->type == ztype) ;
 
         //----------------------------------------------------------------------
         // apply a positional operator: convert C=D*B to C=op(B)
@@ -147,6 +143,9 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     }
     else if (C_iso)
     { 
+        // Copy the pattern of B into C. Allocates, but does not initialize C->x.
+        GB_OK (GB_dup_worker (&C, C_iso, B, false, ztype)) ;
+        ASSERT (C->type == ztype) ;
 
         //----------------------------------------------------------------------
         // via the iso kernel
@@ -168,6 +167,14 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         //----------------------------------------------------------------------
         // determine if the values are accessed
         //----------------------------------------------------------------------
+
+        // Do not dup B->i into C yet; if we use CUDA, we'll do it on the GPU
+        int64_t *tmp_Bi = B->i ;
+        B->i = NULL ;
+        GB_OK (GB_dup_worker (&C, C_iso, B, false, ztype)) ;
+        B->i = tmp_Bi ;
+        ASSERT (C->type == ztype) ;
+
 
         ASSERT (fmult != NULL) ;
         bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
@@ -207,6 +214,19 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         }
         #endif
 
+        // We are using the CPU. Finish the dup from B -> C
+        if (info == GrB_NO_VALUE)
+        {
+            // Copy in B->i
+            int64_t bnz = GB_nnz_held (B) ;
+            size_t isize = B->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+            int nthreads_max = GB_Context_nthreads_max ( ) ;
+
+            if (B->i != NULL)
+            { 
+                GB_memcpy (C->i, B->i, bnz * isize, nthreads_max) ;
+            }
+        }
         //----------------------------------------------------------------------
         // determine the number of threads to use
         //----------------------------------------------------------------------

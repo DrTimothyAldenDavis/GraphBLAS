@@ -19,8 +19,10 @@ __global__ void GB_cuda_colscale_kernel
     GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) C->x ;
 
     #if ( GB_A_IS_SPARSE || GB_A_IS_HYPER )
+    GB_Ap_TYPE *__restrict__ Cp = (GB_Ap_TYPE *) C->p ;
     const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;
         #if ( GB_A_IS_HYPER )
+        GB_Aj_TYPE *__restrict__ Ch = (int64_t *) C->h ;
         const GB_Aj_TYPE *__restrict__ Ah = (GB_Aj_TYPE *) A->h ;
         #endif
     #endif
@@ -31,16 +33,17 @@ __global__ void GB_cuda_colscale_kernel
 
     GB_A_NHELD (anz) ;
 
+    int nthreads = blockDim.x * gridDim.x ;
+    int tid = blockIdx.x * blockDim.x + threadIdx.x ;
+
     #if (GB_A_IS_BITMAP || GB_A_IS_FULL)
         const int64_t avlen = A->vlen ;
         // bitmap/full case
-        int nthreads_in_entire_grid = blockDim.x * gridDim.x ;
-        int tid = blockIdx.x * blockDim.x + threadIdx.x ;
-        for (int64_t p = tid ; p < anz ; p += nthreads_in_entire_grid)
+        for (int64_t p = tid ; p < anz ; p += nthreads)
         {
             if (!GBb_A (Ab, p)) continue ;
             // the pth entry in A is A(i,j) where i = p%avlen and j = p/avlen
-            int64_t col_idx = p / avlen ;
+            GB_Aj_TYPE col_idx = p / avlen ;
     //      int64_t row_idx = p % avlen ;
             GB_DECLAREB (djj) ;
             GB_GETB (djj, Dx, col_idx, ) ;
@@ -51,7 +54,19 @@ __global__ void GB_cuda_colscale_kernel
         }
 
     #else
-        const int64_t anvec = A->nvec ;
+        const GB_Aj_TYPE anvec = A->nvec ;
+        // Copy A->p, A->h to C->p, C->h here instead of using
+        // GB_dup_worker on the CPU, so A->p, A->h stay on the GPU
+        // if they were already there
+        for (GB_Aj_TYPE kA = tid ; kA < anvec ; kA += nthreads)
+        {
+            Cp [kA] = Ap [kA] ;
+            #if ( GB_A_IS_HYPER )
+            Ch [kA] = Ah [kA] ;
+            #endif
+        }
+        Cp [anvec] = Ap [anvec] ;
+
         // sparse/hypersparse case (cuda_ek_slice only works for sparse/hypersparse)
         for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
                     pfirst < anz ;
@@ -65,8 +80,8 @@ __global__ void GB_cuda_colscale_kernel
                 for (int64_t pdelta = threadIdx.x ; pdelta < my_chunk_size ; pdelta += blockDim.x)
                 {
                     int64_t p_final ;
-                    int64_t k = GB_cuda_ek_slice_entry (&p_final, pdelta, pfirst, Ap, anvec_sub1, kfirst, slope) ;
-                    int64_t j = GBh_A (Ah, k) ;
+                    GB_Aj_TYPE k = GB_cuda_ek_slice_entry (&p_final, pdelta, pfirst, Ap, anvec_sub1, kfirst, slope) ;
+                    GB_Aj_TYPE j = GBh_A (Ah, k) ;
 
                     GB_DECLAREB (djj) ;
                     GB_GETB (djj, Dx, j, ) ;

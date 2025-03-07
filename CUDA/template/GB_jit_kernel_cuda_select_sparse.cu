@@ -317,7 +317,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     
     GB_cuda_select_sparse_phase2 <<<grid, block, 0, stream>>>
         (Map, A, Ak_keep, (GB_Ci_TYPE *) C->i, (GB_C_TYPE *) C->x) ;
-    CUDA_OK (cudaGetLastError ( )) ;
+    // CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     //--------------------------------------------------------------------------
