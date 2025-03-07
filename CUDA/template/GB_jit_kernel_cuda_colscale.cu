@@ -43,7 +43,7 @@ __global__ void GB_cuda_colscale_kernel
         {
             if (!GBb_A (Ab, p)) continue ;
             // the pth entry in A is A(i,j) where i = p%avlen and j = p/avlen
-            GB_Aj_TYPE col_idx = p / avlen ;
+            int64_t col_idx = p / avlen ;
     //      int64_t row_idx = p % avlen ;
             GB_DECLAREB (djj) ;
             GB_GETB (djj, Dx, col_idx, ) ;
@@ -54,11 +54,11 @@ __global__ void GB_cuda_colscale_kernel
         }
 
     #else
-        const GB_Aj_TYPE anvec = A->nvec ;
+        const int64_t anvec = A->nvec ;
         // Copy A->p, A->h to C->p, C->h here instead of using
         // GB_dup_worker on the CPU, so A->p, A->h stay on the GPU
         // if they were already there
-        for (GB_Aj_TYPE kA = tid ; kA < anvec ; kA += nthreads)
+        for (int64_t kA = tid ; kA < anvec ; kA += nthreads)
         {
             Cp [kA] = Ap [kA] ;
             #if ( GB_A_IS_HYPER )
@@ -80,8 +80,8 @@ __global__ void GB_cuda_colscale_kernel
                 for (int64_t pdelta = threadIdx.x ; pdelta < my_chunk_size ; pdelta += blockDim.x)
                 {
                     int64_t p_final ;
-                    GB_Aj_TYPE k = GB_cuda_ek_slice_entry (&p_final, pdelta, pfirst, Ap, anvec_sub1, kfirst, slope) ;
-                    GB_Aj_TYPE j = GBh_A (Ah, k) ;
+                    int64_t k = GB_cuda_ek_slice_entry (&p_final, pdelta, pfirst, Ap, anvec_sub1, kfirst, slope) ;
+                    int64_t j = GBh_A (Ah, k) ;
 
                     GB_DECLAREB (djj) ;
                     GB_GETB (djj, Dx, j, ) ;

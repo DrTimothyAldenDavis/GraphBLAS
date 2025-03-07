@@ -180,6 +180,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
 
         // Do not dup A->p, A->h into C yet; if we use CUDA, we'll do it on the
         // GPU
+        // FIXME: Add flags to GB_dup_worker for which arrays to copy
         int64_t *tmp_Ap = A->p ;
         int64_t *tmp_Ah = A->h ;
         A->p = NULL ;

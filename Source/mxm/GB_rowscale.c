@@ -169,6 +169,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         //----------------------------------------------------------------------
 
         // Do not dup B->i into C yet; if we use CUDA, we'll do it on the GPU
+        // FIXME: Add flags to GB_dup_worker for which arrays to copy
         int64_t *tmp_Bi = B->i ;
         B->i = NULL ;
         GB_OK (GB_dup_worker (&C, C_iso, B, false, ztype)) ;
