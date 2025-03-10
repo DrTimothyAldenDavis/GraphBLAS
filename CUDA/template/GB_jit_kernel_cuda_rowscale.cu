@@ -18,7 +18,7 @@ __global__ void GB_cuda_rowscale_kernel
     #define B_iso GB_B_ISO
 
     #if ( GB_B_IS_SPARSE || GB_B_IS_HYPER )
-    GB_Bi_TYPE *__restrict__ Ci = (GB_Bi_TYPE *) C->i ;
+    GB_Ci_TYPE *__restrict__ Ci = (GB_Bi_TYPE *) C->i ;
     const GB_Bi_TYPE *__restrict__ Bi = (GB_Bi_TYPE *) B->i ;
     #endif
 

@@ -21,10 +21,10 @@ __global__ void GB_cuda_colscale_kernel
     GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) C->x ;
 
     #if ( GB_A_IS_SPARSE || GB_A_IS_HYPER )
-    GB_Ap_TYPE *__restrict__ Cp = (GB_Ap_TYPE *) C->p ;
+    GB_Cp_TYPE *__restrict__ Cp = (GB_Ap_TYPE *) C->p ;
     const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;
         #if ( GB_A_IS_HYPER )
-        GB_Aj_TYPE *__restrict__ Ch = (int64_t *) C->h ;
+        GB_Cj_TYPE *__restrict__ Ch = (int64_t *) C->h ;
         const GB_Aj_TYPE *__restrict__ Ah = (GB_Aj_TYPE *) A->h ;
         #endif
     #endif

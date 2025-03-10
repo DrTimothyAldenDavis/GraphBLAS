@@ -232,20 +232,32 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         if (info == GrB_NO_VALUE)
         {
             // copy A->p, A->h into C->p, C->h
-            size_t psize = A->p_is_32 ?
+            size_t A_psize = A->p_is_32 ?
                 sizeof (uint32_t) : sizeof (uint64_t) ;
-            size_t isize = A->i_is_32 ?
+            size_t A_isize = A->i_is_32 ?
                 sizeof (uint32_t) : sizeof (uint64_t) ;
+
             int64_t anvec = A->nvec ;
+            int64_t cnvec = C->nvec ;
+            ASSERT (cnvec == anvec) ;
+
             int nthreads_max = GB_Context_nthreads_max ( ) ;
 
             if (A->p != NULL)
             {
-                GB_memcpy (C->p, A->p, (anvec+1) * psize, nthreads_max) ;
+                size_t C_psize = C->p_is_32 ?
+                    sizeof (uint32_t) : sizeof (uint64_t) ;
+                
+                ASSERT (C_psize == A_psize) ;    
+                GB_memcpy (C->p, A->p, (anvec+1) * A_psize, nthreads_max) ;
             }
             if (A->h != NULL)
             {
-                GB_memcpy (C->h, A->h, anvec * isize, nthreads_max) ;
+                size_t C_isize = C->i_is_32 ?
+                    sizeof (uint32_t) : sizeof (uint64_t) ;
+
+                ASSERT (C_isize == A_isize) ;
+                GB_memcpy (C->h, A->h, anvec * A_isize, nthreads_max) ;
             }
         }
         //----------------------------------------------------------------------

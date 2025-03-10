@@ -219,13 +219,21 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         if (info == GrB_NO_VALUE)
         {
             // Copy in B->i
+            size_t B_isize = B->i_is_32 ?
+                sizeof (uint32_t) : sizeof (uint64_t) ;
+            size_t C_isize = C->i_is_32 ?
+                sizeof (uint32_t) : sizeof (uint64_t) ;
+
             int64_t bnz = GB_nnz_held (B) ;
-            size_t isize = B->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+            int64_t cnz = GB_nnz_held (C) ;
+            ASSERT (cnz == bnz) ;
+            
             int nthreads_max = GB_Context_nthreads_max ( ) ;
 
             if (B->i != NULL)
-            { 
-                GB_memcpy (C->i, B->i, bnz * isize, nthreads_max) ;
+            {
+                ASSERT (C_isize == B_isize) ;
+                GB_memcpy (C->i, B->i, bnz * B_isize, nthreads_max) ;
             }
         }
         //----------------------------------------------------------------------
