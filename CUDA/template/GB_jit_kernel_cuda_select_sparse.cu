@@ -56,7 +56,7 @@ __global__ void GB_cuda_select_sparse_phase1
         {
             int64_t my_chunk_size, anvec1, kfirst, klast ;
             float slope ;
-            GB_cuda_ek_slice_setup (Ap, anvec, anz, pfirst, chunk_size,
+            GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst, chunk_size,
                 &kfirst, &klast, &my_chunk_size, &anvec1, &slope) ;
 
             for (int64_t pdelta = threadIdx.x ;
@@ -64,7 +64,7 @@ __global__ void GB_cuda_select_sparse_phase1
                          pdelta += blockDim.x)
             {
                 int64_t pA ;
-                int64_t k = GB_cuda_ek_slice_entry (&pA, pdelta, pfirst, Ap,
+                int64_t k = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (&pA, pdelta, pfirst, Ap,
                     anvec1, kfirst, slope) ;
                 int64_t j = GBh_A (Ah, k) ;
 
@@ -122,7 +122,7 @@ __global__ void GB_cuda_select_sparse_phase2
     {
         int64_t my_chunk_size, anvec1, kfirst, klast ;
         float slope ;
-        GB_cuda_ek_slice_setup (Ap, anvec, anz, pfirst, chunk_size,
+        GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst, chunk_size,
             &kfirst, &klast, &my_chunk_size, &anvec1, &slope) ;
 
         for (int64_t pdelta = threadIdx.x ;
@@ -139,7 +139,7 @@ __global__ void GB_cuda_select_sparse_phase2
                 // identical to the expression (Map [pA-1] < pC).
 
                 // the A(i,j) is in the kA-th vector of A:
-                int64_t kA = GB_cuda_ek_slice_entry (&pA, pdelta, pfirst, Ap,
+                int64_t kA = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (&pA, pdelta, pfirst, Ap,
                     anvec1, kfirst, slope) ;
 
                 // Map is offset by 1 since it was computed as an inclusive
@@ -248,6 +248,11 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     dim3 grid (gridsz) ;
     dim3 block (blocksz) ;
 
+//  std::cout << std::endl << "--------start select sparse----" << std::endl ;
+    CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
+    CUDA_OK (cudaStreamSynchronize (stream)) ;  //FIXME: remove
+    CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
+
     //--------------------------------------------------------------------------
     // phase 1: determine which entries of A to keep
     //--------------------------------------------------------------------------
@@ -259,6 +264,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     {
         // out of memory
         GB_FREE_ALL ;
+//      std::cout << std::endl << "------malloc dies----" << std::endl ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -266,9 +272,16 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     W [0] = 0;      // placeholder for easier end-condition
     Keep = W + 1 ;  // Keep has size A->nvals and starts at W [1]
 
+//  std::cout << std::endl << "----------------------------------" << std::endl ;
+//  std::cout << "Grid size: " << gridsz ; //FIXME: remove
+//  std::cout << " Block size: " << blocksz << std::endl ; //FIXME: remove
+    CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
+    CUDA_OK (cudaStreamSynchronize (stream)) ;  //FIXME: remove
+    CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
+
     GB_cuda_select_sparse_phase1 <<<grid, block, 0, stream>>>
         (Keep, A, ythunk) ;
-    CUDA_OK (cudaGetLastError ( )) ;  // FIXME add after all kernel launches
+    CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     //--------------------------------------------------------------------------

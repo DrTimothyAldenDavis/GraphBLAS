@@ -113,7 +113,7 @@ void GB_macrofy_binop
             ASSERT (!is_monoid_or_build) ;
             if (is_kron)
             { 
-                fprintf (fp, " %s (&(z), ) &(x),ix,jx, &(y),iy,jy, theta)\n",
+                fprintf (fp, " %s (&(z), &(x),ix,jx, &(y),iy,jy, theta)\n",
                     op->name) ;
             }
             else
