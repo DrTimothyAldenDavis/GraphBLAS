@@ -6,6 +6,7 @@ __global__ void GB_cuda_apply_bind2nd_kernel
 (
     GB_void *Cx_out,
     GrB_Matrix A,
+    const bool do_iso_expansion,
     const GB_void *scalarx
 )
 {
@@ -19,11 +20,22 @@ __global__ void GB_cuda_apply_bind2nd_kernel
     
     GB_A_NHELD (nvals) ;
 
+    GB_C_TYPE iso_val ;
+    if (do_iso_expansion)
+    {
+        iso_val = Cx [0] ;
+    }
+
     int tid = blockDim.x * blockIdx.x + threadIdx.x;
     int nthreads = blockDim.x * gridDim.x ;
 
     for (int64_t p = tid ; p < nvals ; p += nthreads)
     {
+        if (do_iso_expansion)
+        {
+            Cx [p] = iso_val ;
+        }
+
         if (!GBb_A (Ab, p)) { continue ; }
         GB_DECLAREA (aij) ;
         GB_GETA (aij, Ax, p, false) ;
@@ -45,9 +57,15 @@ GB_JIT_CUDA_KERNEL_APPLY_BIND2ND_PROTO (GB_jit_kernel)
     GB_A_NHELD (nvals) ;
     if (nvals == 0) return (GrB_SUCCESS) ;
 
+    if (do_iso_expansion)
+    {
+        ASSERT (!A->iso) ;
+    }
+
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
-    GB_cuda_apply_bind2nd_kernel <<<grid, block, 0, stream>>> (Cx, A, scalarx) ;
+    GB_cuda_apply_bind2nd_kernel <<<grid, block, 0, stream>>> (Cx, A,
+        do_iso_expansion, scalarx) ;
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 

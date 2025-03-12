@@ -14,6 +14,7 @@ GrB_Info GB_cuda_apply_bind1st_jit
     const GrB_Type ctype,
     const GrB_BinaryOp binaryop,
     const GrB_Matrix B,
+    const bool do_iso_expansion,
     const GB_void *scalarx,
     // CUDA stream and launch parameters:
     cudaStream_t stream,
@@ -50,6 +51,6 @@ GrB_Info GB_cuda_apply_bind1st_jit
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (Cx, scalarx, B, stream, gridsz, blocksz,
-        &GB_callback)) ;
+    return (GB_jit_kernel (Cx, do_iso_expansion, scalarx, B, stream,
+        gridsz, blocksz, &GB_callback)) ;
 }

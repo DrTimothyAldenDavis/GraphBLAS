@@ -20,6 +20,7 @@ GrB_Info GB_cuda_apply_unop_jit
     const GB_Operator op,
     const bool flipij,
     const GrB_Matrix A,
+    const bool do_iso_expansion,
     const GB_void *ythunk,
     // CUDA stream and launch parameters:
     cudaStream_t stream,
@@ -35,6 +36,7 @@ GrB_Info GB_cuda_apply_bind1st_jit
     const GrB_Type ctype,
     const GrB_BinaryOp op,
     const GrB_Matrix A,
+    const bool do_iso_expansion,
     const GB_void *xscalar,
     // CUDA stream and launch parameters:
     cudaStream_t stream,
@@ -50,6 +52,7 @@ GrB_Info GB_cuda_apply_bind2nd_jit
     const GrB_Type ctype,
     const GrB_BinaryOp op,
     const GrB_Matrix A,
+    const bool do_iso_expansion,
     const GB_void *xscalar,
     // CUDA stream and launch parameters:
     cudaStream_t stream,

@@ -786,6 +786,7 @@ GrB_Info GB_jit_kernel_colscale                                         \
 GrB_Info GB_jit_kernel_apply_bind1st                                        \
 (                                                                           \
     GB_void *Cx,                                                            \
+    const bool do_iso_expansion,                                            \
     const GB_void *scalarx,                                                 \
     GrB_Matrix B,                                                           \
     cudaStream_t stream,                                                    \
@@ -799,6 +800,7 @@ GrB_Info GB_jit_kernel_apply_bind2nd                                        \
 (                                                                           \
     GB_void *Cx,                                                            \
     GrB_Matrix A,                                                           \
+    const bool do_iso_expansion,                                            \
     const GB_void *scalarx,                                                 \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
@@ -811,6 +813,7 @@ GrB_Info GB_jit_kernel_apply_unop                                           \
 (                                                                           \
     GB_void *Cx,                                                            \
     GrB_Matrix A,                                                           \
+    const bool do_iso_expansion,                                            \
     const GB_void *ythunk,                                                  \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \

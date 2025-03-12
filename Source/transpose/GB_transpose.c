@@ -992,7 +992,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     {
         if (C->iso)
         { 
-            // If C was constructed as iso; it needs to be expanded first,
+            // If C was constructed as iso, it needs to be expanded first,
             // but do not initialize the values.  These are computed by
             // GB_apply_op below.
             GB_OK (GB_convert_any_to_non_iso (C, false)) ;
@@ -1008,9 +1008,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
         if (C->iso)
         { 
-            // If C was constructed as iso; it needs to be expanded and
-            // initialized first.
-            GB_OK (GB_convert_any_to_non_iso (C, true)) ;
+            // If C was constructed as iso, it needs to be expanded
+            // and the values initialized to the iso value. The initialization
+            // is handled by GB_apply_op, so don't do it here.
+            GB_OK (GB_convert_any_to_non_iso (C, false)) ;
         }
 
         if (C->type == op->ztype)
