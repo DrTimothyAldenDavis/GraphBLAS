@@ -19,6 +19,7 @@ static GB_cuda_stream_pool pool ;
             pool.streams[device].pop_back () ;                      \
             cudaStreamDestroy (stream) ;                            \
         }                                                           \
+        delete pool.avail_streams[device] ;                         \
         device-- ;                                                  \
     }                                                               \
 }
