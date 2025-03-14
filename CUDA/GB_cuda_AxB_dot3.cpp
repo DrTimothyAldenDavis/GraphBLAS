@@ -16,12 +16,8 @@
 #undef  GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE                                   \
 {                                                           \
-    if (stream != nullptr)                                  \
-    {                                                       \
-        cudaStreamSynchronize (stream) ;                    \
-        cudaStreamDestroy (stream) ;                        \
-    }                                                       \
-    stream = nullptr ;                                      \
+    cudaStreamSynchronize (stream) ;                        \
+    GB_cuda_release_stream (&stream) ;                      \
 }
 
 #define GB_FREE_ALL         \
@@ -53,9 +49,8 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     // create the stream
     //--------------------------------------------------------------------------
 
-    // FIXME: pass in a stream instead, or checkout a stream
     cudaStream_t stream = nullptr ;
-    CUDA_OK (cudaStreamCreate (&stream)) ;
+    GB_cuda_grab_stream (&stream) ;
 
     GpuTimer kernel_timer;  // FIXME: delete this?
 

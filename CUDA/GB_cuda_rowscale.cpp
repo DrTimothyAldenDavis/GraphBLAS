@@ -3,12 +3,8 @@
 #undef  GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE                                   \
 {                                                           \
-    if (stream != nullptr)                                  \
-    {                                                       \
-        cudaStreamSynchronize (stream) ;                    \
-        cudaStreamDestroy (stream) ;                        \
-    }                                                       \
-    stream = nullptr ;                                      \
+    cudaStreamSynchronize (stream) ;                        \
+    GB_cuda_release_stream (&stream) ;                      \
 }
 
 #undef  GB_FREE_ALL
@@ -26,10 +22,10 @@ GrB_Info GB_cuda_rowscale
     const bool flipxy
 )
 {
-    GrB_Info info ;
-    // FIXME: use the stream pool
     cudaStream_t stream = nullptr ;
-    CUDA_OK (cudaStreamCreate (&stream)) ;
+    GB_cuda_grab_stream (&stream) ;
+
+    GrB_Info info ;
 
     // compute gridsz, blocksz, call GB_cuda_rowscale_jit
     GrB_Index bnz = GB_nnz_held (B) ;

@@ -19,7 +19,7 @@
 
 GrB_Info GB_cuda_init (void)
 {
-
+    int ret ;
     // get the GPU properties
     if (!GB_Global_gpu_count_set (true))
     {
@@ -65,6 +65,15 @@ GrB_Info GB_cuda_init (void)
     // FIXME: default device set to 1 to avoid hardware failure ...
     GB_cuda_set_device (0) ;            // make GPU 1 the default device
     GB_Context_gpu_id_set (NULL, 0) ;   // set GxB_CONTEXT_WORLD->gpu_id to 1
+
+    int streams_per_device = 2 ;
+    int nstreams = gpu_count * streams_per_device ;
+    ret = GB_cuda_init_stream_pool (nstreams) ;
+    if (ret)
+    {
+        printf ("GB_cuda_init line %d\n", __LINE__) ;
+        return (GxB_GPU_ERROR) ;
+    }
 
     // also check for jit cache, pre-load library of common kernels ...
     return (GrB_SUCCESS) ;

@@ -28,6 +28,10 @@ extern "C"
 #include <limits>
 #include <iostream>
 #include <cstdint>
+#include <thread>
+#include <condition_variable>
+#include <vector>
+
 #include <stdint.h>
 #include <stdio.h>
 

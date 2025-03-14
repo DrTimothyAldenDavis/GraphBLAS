@@ -4,12 +4,8 @@
 #undef  GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE                                   \
 {                                                           \
-    if (stream != nullptr)                                  \
-    {                                                       \
-        cudaStreamSynchronize (stream) ;                    \
-        cudaStreamDestroy (stream) ;                        \
-    }                                                       \
-    stream = nullptr ;                                      \
+    cudaStreamSynchronize (stream) ;                        \
+    GB_cuda_release_stream (&stream) ;                      \
 }
 
 #undef  GB_FREE_ALL
@@ -40,9 +36,8 @@ GrB_Info GB_cuda_select_sparse
     ASSERT (C != NULL && !(C->header_size == 0)) ;
     ASSERT (A != NULL && !(A->header_size == 0)) ;
 
-    // FIXME: use the stream pool
     cudaStream_t stream = nullptr ;
-    CUDA_OK (cudaStreamCreate (&stream)) ;
+    GB_cuda_grab_stream (&stream) ;
 
     GrB_Index anz = GB_nnz_held (A) ;
 

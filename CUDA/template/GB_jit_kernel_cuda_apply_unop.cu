@@ -124,6 +124,7 @@ GB_JIT_CUDA_KERNEL_APPLY_UNOP_PROTO (GB_jit_kernel)
 
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
+    printf ("passed here\n") ;
     GB_cuda_apply_unop_kernel <<<grid, block, 0, stream>>> (Cx, ythunk, A) ;
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
