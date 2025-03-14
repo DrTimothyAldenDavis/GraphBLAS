@@ -5,7 +5,7 @@
 #define GB_FREE_WORKSPACE                                   \
 {                                                           \
     cudaStreamSynchronize (stream) ;                        \
-    GB_cuda_release_stream (&stream) ;                      \
+    GB_cuda_release_stream (device, &stream) ;              \
 }
 
 #undef  GB_FREE_ALL
@@ -36,8 +36,11 @@ GrB_Info GB_cuda_select_sparse
     ASSERT (C != NULL && !(C->header_size == 0)) ;
     ASSERT (A != NULL && !(A->header_size == 0)) ;
 
+    int device ;
     cudaStream_t stream = nullptr ;
-    GB_cuda_grab_stream (&stream) ;
+
+    CUDA_OK (cudaGetDevice (&device)) ;
+    GB_cuda_grab_stream (device, &stream) ;
 
     GrB_Index anz = GB_nnz_held (A) ;
 

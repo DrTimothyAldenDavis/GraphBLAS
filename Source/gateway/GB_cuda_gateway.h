@@ -99,7 +99,7 @@ bool GB_cuda_get_device_count   // true if OK, false if failure
     int *gpu_count              // return # of GPUs in the system
 ) ;
 
-GrB_Info GB_cuda_init_stream_pool (int nstreams) ;
+GrB_Info GB_cuda_init_stream_pool (int ngpus, int nstreams_per_gpu) ;
 
 bool GB_cuda_warmup (int device) ;
 

@@ -20,7 +20,7 @@
 {                                                           \
     GB_FREE_MEMORY (&zscalar, zscalar_size) ;               \
     cudaStreamSynchronize (stream) ;                        \
-    GB_cuda_release_stream (&stream) ;                      \
+    GB_cuda_release_stream (device, &stream) ;              \
 }
 
 #define GB_FREE_ALL                                         \
@@ -58,8 +58,11 @@ GrB_Info GB_cuda_reduce_to_scalar
     // create the stream
     //--------------------------------------------------------------------------
 
+    int device ;
     cudaStream_t stream = nullptr ;
-    GB_cuda_grab_stream (&stream) ;
+
+    CUDA_OK (cudaGetDevice (&device)) ;
+    GB_cuda_grab_stream (device, &stream) ;
     
     //--------------------------------------------------------------------------
     // determine problem characteristics and allocate worksbace

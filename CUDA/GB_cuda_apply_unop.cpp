@@ -5,7 +5,7 @@
 {                                                           \
     GB_FREE_MEMORY (&ythunk_cuda, ythunk_cuda_size) ;       \
     cudaStreamSynchronize (stream) ;                        \
-    GB_cuda_release_stream (&stream) ;                      \
+    GB_cuda_release_stream (device, &stream) ;              \
 }
 
 #undef  GB_FREE_ALL
@@ -29,11 +29,14 @@ GrB_Info GB_cuda_apply_unop
     GB_void *ythunk_cuda = NULL ;
     size_t ythunk_cuda_size = 0 ;
 
+    int device ;
+    cudaStream_t stream = nullptr ;
+
     GrB_Index anz = GB_nnz_held (A) ;
     if (anz == 0) return (GrB_SUCCESS) ;
 
-    cudaStream_t stream ;
-    GB_cuda_grab_stream (&stream) ;
+    CUDA_OK (cudaGetDevice (&device)) ;
+    GB_cuda_grab_stream (device, &stream) ;
 
     // FIXME: make this a CUDA helper function
     if (ythunk != NULL && op != NULL && op->ytype != NULL)

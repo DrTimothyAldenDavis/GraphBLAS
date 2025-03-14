@@ -17,7 +17,7 @@
 #define GB_FREE_WORKSPACE                                   \
 {                                                           \
     cudaStreamSynchronize (stream) ;                        \
-    GB_cuda_release_stream (&stream) ;                      \
+    GB_cuda_release_stream (device, &stream) ;              \
 }
 
 #define GB_FREE_ALL         \
@@ -48,9 +48,6 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
     // create the stream
     //--------------------------------------------------------------------------
-
-    cudaStream_t stream = nullptr ;
-    GB_cuda_grab_stream (&stream) ;
 
     GpuTimer kernel_timer;  // FIXME: delete this?
 
@@ -91,11 +88,14 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     int device = -1;
-
+    cudaStream_t stream ;
+    
     // FIXME: control the GPU to use via the descriptor
     CUDA_OK (cudaSetDevice ( 0 )) ;
     CUDA_OK (cudaGetDevice (&device)) ;
     int number_of_sms = GB_Global_gpu_sm_get (0) ;
+
+    GB_cuda_grab_stream (device, &stream) ;
 
     //--------------------------------------------------------------------------
     // get M
