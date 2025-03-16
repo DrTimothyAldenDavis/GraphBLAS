@@ -63,9 +63,12 @@ GrB_Info GB_cuda_init_stream_pool (int ngpus, int nstreams_per_gpu)
         pool.avail_streams [device] = new std::condition_variable () ;
         GB_cuda_set_device (device) ;
 
-        cudaStream_t tmp ;
-        CUDA_OK (cudaStreamCreate (&tmp)) ;
-        pool.streams[device].push_back (tmp) ;
+        for (int stream = 0 ; stream < nstreams_per_gpu ; stream++)
+        {
+            cudaStream_t tmp ;
+            CUDA_OK (cudaStreamCreate (&tmp)) ;
+            pool.streams[device].push_back (tmp) ;
+        }
     }
 
     return GrB_SUCCESS ;
