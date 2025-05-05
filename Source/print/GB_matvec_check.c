@@ -38,11 +38,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     bool is_bitmap = GB_IS_BITMAP (A) ;
     bool is_sparse = GB_IS_SPARSE (A) ;
 
-    bool ignore_zombies = false ;
+    bool skip_zombie_checks = false ;
     if (pr > 5)
     {
         pr = pr - 6 ;
-        ignore_zombies = true ;
+        skip_zombie_checks = true ;
     }
     pr = GB_IMIN (pr, GxB_COMPLETE_VERBOSE) ;
     bool phantom = (is_full && (A->x == NULL || A->iso)) ;
@@ -165,9 +165,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     int64_t nvec_nonempty = GB_nvec_nonempty_get (A) ;
     int64_t actual_nvec_nonempty = GB_nvec_nonempty (A) ;
+    int64_t nnz_max = GB_nnz_max (A) ;
 
     #if GB_DEVELOPER
-    GBPR0 ("  max # entries: " GBd "\n", GB_nnz_max (A)) ;
+    GBPR0 ("  max # entries: " GBd "\n", nnz_max) ;
     GBPR0 ("  vlen: " GBd , A->vlen) ;
     GBPR0 ("  vdim: " GBd "\n", A->vlen) ;
     if (nvec_nonempty != -1)
@@ -546,6 +547,17 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
 
     //--------------------------------------------------------------------------
+    // check the # of entries
+    //--------------------------------------------------------------------------
+
+    if (!(A->iso) && anz > nnz_max)
+    {
+        GBPR0 ("\nentries: " GBd " max entries: " GBd " (invalid)\n",
+            anz, nnz_max) ;
+        return (GrB_INVALID_OBJECT) ;
+    }
+
+    //--------------------------------------------------------------------------
     // report the GrB_set name
     //--------------------------------------------------------------------------
 
@@ -595,17 +607,14 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         }
     }
 
-    if (!ignore_zombies && (A->nzombies > anz))
-    { 
-        GBPR0 ("  invalid number of zombies: " GBd " "
-            "must be >= 0 and <= # entries (" GBd ")\n", A->nzombies, anz) ;
-        return (GrB_INVALID_OBJECT) ;
-    }
-
-    if (A->jumbled && GB_is_shallow (A))
-    { 
-        GBPR0 ("  jumbled %s cannot contain readonly components\n", kind) ;
-        return (GrB_INVALID_OBJECT) ;
+    if (!skip_zombie_checks)
+    {
+        if (A->nzombies > anz)
+        { 
+            GBPR0 ("  invalid number of zombies: " GBd " "
+                "must be >= 0 and <= # entries (" GBd ")\n", A->nzombies, anz) ;
+            return (GrB_INVALID_OBJECT) ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -775,7 +784,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check the zombie count
     //--------------------------------------------------------------------------
 
-    if (!ignore_zombies && nzombies != A->nzombies)
+    if (!skip_zombie_checks && nzombies != A->nzombies)
     { 
         GBPR0 ("  invalid zombie count: " GBd " exist but"
             " A->nzombies = " GBd "\n", nzombies, A->nzombies) ;

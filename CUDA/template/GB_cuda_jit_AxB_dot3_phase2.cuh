@@ -58,10 +58,11 @@ __inline__ __device__ void blockBucketExclusiveSum
     BlockPrefixCallbackOp prefix_op (0) ;
 
     // Have the block iterate over segments of items
-    int64_t data = 0 ;
 
-    for (int block_id = 0 ; block_id < nblocks ; block_id += blocksize)
+    for (int block_id = 0 ; block_id <= nblocks ; block_id += threads_per_block)
     {
+        int64_t data = 0 ;
+
         // Load a segment of consecutive items that are blocked across threads
 
         int loc = block_id + threadIdx.x;
@@ -79,10 +80,6 @@ __inline__ __device__ void blockBucketExclusiveSum
         {
             Blockbucket [bucketId*(nblocks+1) + loc] = data ;
         }
-
-        // this_thread_block().sync();
-
-        data = 0 ;
     }
 }
 
@@ -104,27 +101,6 @@ __global__ void GB_cuda_AxB_dot3_phase2_kernel
                                     // across, ie size of vector for 1 bucket
 )
 {
-
-    this_thread_block().sync() ;    // delete this?
-
-    if (gridDim.x >= NBUCKETS)
-    {
-        // Cumulative sum across blocks for each bucket
-        if (blockIdx.x < NBUCKETS)
-        {
-            blockBucketExclusiveSum (blockIdx.x, Blockbucket, nblocks) ;
-        }
-    }
-    else
-    {
-        if (blockIdx.x == 0)
-        {
-            #pragma unroll
-            for (int b = 0 ; b < NBUCKETS ; b++)
-            {
-                blockBucketExclusiveSum (b, Blockbucket, nblocks) ;
-            }
-        }
-    }
+    blockBucketExclusiveSum (blockIdx.x, Blockbucket, nblocks) ;
 }
 

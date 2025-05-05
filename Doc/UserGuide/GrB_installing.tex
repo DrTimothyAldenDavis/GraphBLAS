@@ -66,68 +66,11 @@ a cache folder location on a file system that supports file locking.
 See Section~\ref{cache_path} for more details.
 
 %----------------------------------------
-\subsection{Quick Start for MATLAB/Octave}
+\subsection{Installing GraphBLAS for MATLAB/Octave}
 %----------------------------------------
 
-Before you try this, first be sure you have \verb'cmake' (v3.20 or later) and
-the OpenMP library installed.  See Section~\ref{mac_openmp} to install OpenMP
-on the Mac.
-
-Next, in the MATLAB/Octave Command Window, simply type:
-
-    {\small
-    \begin{verbatim}
-    cd GraphBLAS/GraphBLAS
-    graphblas_install
-    cd test
-    gbtest \end{verbatim} }
-
-This will use \verb'cmake' to compile the GraphBLAS library.  Add your
-\verb'GraphBLAS/GraphBLAS' folder to your path, by editting your
-\verb'startup.m' script for MATLAB (usually in your \verb'Documents/MATLAB'
-folder) or your \verb'~/.octaverc' file for Octave.  Add this line to either
-file:
-
-    {\small
-    \begin{verbatim}
-    addpath ('/home/me/GraphBLAS/GraphBLAS') ; \end{verbatim} }
-
-\noindent
-where \verb'/home/me/GraphBLAS' is the top-level folder containing your
-copy of GraphBLAS.
-
-The \verb'graphblas_install' MATLAB/Octave script may fail to run \verb'cmake'.
-If it does, it will print the following workaround, where the commands it
-tells you to use will differ depending on the platform:
-
-    {\small
-    \begin{verbatim}
-    Building GraphBLAS with cmake failed.  Try this outside of MATLAB:
-
-       cd /home/me/GraphBLAS/GraphBLAS/build
-       cmake  ..
-       cmake --build . --config Release -j40
-
-    Then do this inside MATLAB/Octave:
-
-        cd /home/me/GraphBLAS/GraphBLAS/@GrB/private
-        gbmake \end{verbatim} }
-
-\noindent
-where \verb'/home/me/GraphBLAS' is your copy of GraphBLAS.
-
-You cannot use a single copy of the GraphBLAS source distribution to use in
-both MATLAB and Octave on the same system at the same time.  The \verb'*.o'
-files in \verb'GraphBLAS/GraphBLAS/@GrB/private' compiled by
-\verb'graphblas_install.m' will conflict with each other.  To switch between
-MATLAB and Octave, use a second copy of the GraphBLAS source distribution, or
-do a clean installation (via \verb'make purge' in the
-\verb'GraphBLAS/GraphBLAS/@GrB/private' folder) and redo the above
-instructions.  There is no need to recompile the \verb'libgraphblas.so' (or
-\verb'dylib' on the Mac) since Octave uses
-\verb'GraphBLAS/build/libgraphblas.so' while MATLAB  uses
-\verb'GraphBLAS/GraphBLAS//build/libgraphblas_matlab.so'.
-Both MATLAB and Octave can share the same compiled JIT kernels.
+See the \verb'GraphBLAS/GraphBLAS/README.md' file for instructions on
+how to compiler the MATLAB/Octave interface on Linux/Mac/Windows.
 
 %----------------------------------------
 \subsection{More details}
@@ -257,27 +200,12 @@ will be found automatically:
     make CC=icc CXX=icpc \end{verbatim} }
 
 %----------------------------------------
-\subsubsection{MATLAB/Octave on the Mac (Apple Silicon based)}
+\subsubsection{On IBM Power}
 %----------------------------------------
 
-MATLAB on the Apple-Silicon-based Mac is now a native ARM64 application (as of
-R2023b).  GraphBLAS is not supported for earlier versions of MATLAB on Apple
-Silicon.
-For Octave, GraphBLAS is designed to use the \verb'brew' version of Octave.
-
-Note that when used inside MATLAB, GraphBLAS must use the same OpenMP library
-as MATLAB.  Similarly, when used in Octave, it must use the same OpenMP library
-as Octave.  Both cases are handled by the \verb'graphblas_install.m' script.
-
-Install Octave on the Mac with:
-
-    {\small
-    \begin{verbatim}
-    brew install octave
-    \end{verbatim} }
-
-\noindent
-Next,
+Do not use \verb'gcc' to compile GraphBLAS.  At least versions up to 14.2.0
+have a bug in the atomic capture on the IBM Power8 (see the comments in the
+\verb'Source/mxm/factory' folder).  Use \verb'clang' or \verb'xlc' instead.
 
 %----------------------------------------
 \subsubsection{On Microsoft Windows}

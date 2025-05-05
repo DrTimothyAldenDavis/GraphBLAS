@@ -1,3 +1,11 @@
+May 5, 2025: version 10.0.5
+
+    * revised cmake build system
+    * (64) bug fix: GrB_assign, C<M>+=A, method 08n, when A is full.
+        Caught by Gabe Gomez.
+    * (63) bug fix: GrB_mxm when using the masked dot-product
+        and the output matrix is iso-valued.
+
 Apr 10, 2025: version 10.0.3
 
     * upgrade xxHash to 0.8.3: contributed by Christoph Grueninger

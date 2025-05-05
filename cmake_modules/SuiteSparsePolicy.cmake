@@ -243,6 +243,13 @@ if ( INSIDE_SUITESPARSE )
     list ( APPEND CMAKE_BUILD_RPATH ${SUITESPARSE_LIBDIR} )
 endif ( )
 
+if ( APPLE )
+    # append /usr/local/lib to the install and build runpaths
+    message ( STATUS "Add to Mac rpath: " ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR} )
+    list ( APPEND CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR} )
+    list ( APPEND CMAKE_BUILD_RPATH   ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR} )
+endif ( )
+
 set ( SUITESPARSE_PKGFILEDIR ${SUITESPARSE_LIBDIR} CACHE STRING
     "Directory where CMake Config and pkg-config files will be installed" )
 
