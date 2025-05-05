@@ -34,7 +34,6 @@
 #define tile_sz 32 
 #define log2_tile_sz 5 
 #define shared_vector_size 256 
-#define blocksize  32
 #define threads_per_block 32
 
 //------------------------------------------------------------------------------
@@ -285,11 +284,11 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
             work_per_thread = 64 ;
         }
         int gridsz = GB_ICEIL (mnz, work_per_thread*blocksz) ;
-        dim3 grid_2 (gridsz) ;
+        dim3 grid_2dn (gridsz) ;
 
         // kernel_timer.Start();
 
-        GB_cuda_AxB_dot3_phase3_dndn_kernel <<grid_2, block, 0, stream>>
+        GB_cuda_AxB_dot3_phase3_dndn_kernel <<grid_2dn, block, 0, stream>>
             (C, M, A, B, theta) ;
 
     }
@@ -360,37 +359,50 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         // kernel_timer.Stop();
         // printf ("(GPU phase1 %12.6g ms )\n", kernel_timer.Elapsed()) ;
 
-#if 0
-        printf ("Blockbucket [%d] = {\n", NBUCKETS * number_of_blocks_1) ;
-        for (int b = 0 ; b < NBUCKETS ; b++)
-        {
-            for (int k = 0 ; k < number_of_blocks_1 ; k++)
-            {
-                printf ("  %ld,\n", Blockbucket [b * (number_of_blocks_1+1) + k]) ;
-            }
-        }
-        printf ("};\n") ;
-#endif
-
         //----------------------------------------------------------------------
         // phase2: cumsum across the Blockbuckets, propagate to thread level
         //----------------------------------------------------------------------
 
         // # of blocks for phase2:
-        // number_of_blocks_2 = ceil ((number_of_blocks_1+1) / threads_per_block)
-        int number_of_blocks_2 = ((number_of_blocks_1+1) + threads_per_block - 1) / threads_per_block ;
+//      // number_of_blocks_2 = ceil ((number_of_blocks_1+1) / threads_per_block)
+//      int number_of_blocks_2 = ((number_of_blocks_1) + threads_per_block - 1) / threads_per_block ;
 
 //      number_of_blocks_2 = 1 ;
-        printf ("number_of_blocks_2: %d\n", number_of_blocks_2) ;
-        dim3 grid_2 (number_of_blocks_2) ;
+//      printf ("number_of_blocks_2: %d\n", number_of_blocks_2) ;
+//      dim3 grid_2 (number_of_blocks_2) ;
+
+        // # of blocks for phase2: one threadblock per bucket
+        dim3 grid_2 (NBUCKETS) ;
 
         // kernel_timer.Start();
+
+#if 0
+        for (int b = 0 ; b < NBUCKETS ; b++)
+        {
+            printf ("\n\n=================== Bucket: %d\n", b) ;
+            for (int64_t tid = 0 ; tid <= number_of_blocks_1 ; tid++)
+            {
+                printf ("   %ld: %ld\n", tid, Blockbucket [b * (number_of_blocks_1+1) + tid]) ;
+            }
+        }
+#endif
 
         // printf ("Launching sparse phase2:\n") ;
         GB_cuda_AxB_dot3_phase2_kernel <<<grid_2, block, 0, stream>>>
             (Blockbucket, number_of_blocks_1) ;
         CUDA_OK (cudaGetLastError ( )) ;
         CUDA_OK (cudaStreamSynchronize (stream)) ;
+
+#if 0
+        for (int b = 0 ; b < NBUCKETS ; b++)
+        {
+            printf ("\n\n=================== Bucket after cumsum: %d\n", b) ;
+            for (int64_t tid = 0 ; tid <= number_of_blocks_1 ; tid++)
+            {
+                printf ("   %ld: %ld\n", tid, Blockbucket [b * (number_of_blocks_1+1) + tid]) ;
+            }
+        }
+#endif
 
         // get the total number of zombies in the zombie bucket
         int64_t s = Blockbucket [number_of_blocks_1] ;

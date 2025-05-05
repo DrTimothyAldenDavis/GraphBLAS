@@ -329,6 +329,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         return (GrB_OUT_OF_MEMORY) ;
     }
 
+    C->iso = C_iso ;
+
     //--------------------------------------------------------------------------
     // phase2: C<M> = A'*B, via masked dot product method and built-in semiring
     //--------------------------------------------------------------------------

@@ -218,8 +218,17 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                             uint64_t hf ;
                             // swap this task's hash entry into the hash table;
                             // does the following using an atomic capture:
+// FIXME: atomic capture fails with gcc 14.2.0 on the IBM Power8!
+// It works with clang 18.1.8 on the same system.
+// this works (with one thread):
                             // { hf = Hf [hash] ; Hf [hash] = i_mine ; }
+// this fails:
                             GB_ATOMIC_CAPTURE_UINT64 (hf, Hf [hash], i_mine) ;
+// this fails too:
+// for gcc:
+// __atomic_exchange (&(Hf [hash]), &i_mine, &hf, __ATOMIC_SEQ_CST) ;
+// this printf makes the GB_ATOMIC_CAPTURE work, if it is added!!
+// printf ("   Hf [%ld] = %ld, i = %ld, i_mine = %ld\n", hash, Hf [hash], i, i_mine) ;
                             if (hf == 0) break ;        // success
                             // i_mine has been inserted, but a prior entry was
                             // already there.  It needs to be replaced, so take
