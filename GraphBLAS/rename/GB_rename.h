@@ -390,6 +390,7 @@
 #define GB_Global_calloc_function_set GM_Global_calloc_function_set
 #define GB_Global_cpu_features_avx2 GM_Global_cpu_features_avx2
 #define GB_Global_cpu_features_avx512f GM_Global_cpu_features_avx512f
+#define GB_Global_cpu_features_rvv_1_0 GM_Global_cpu_features_rvv_1_0
 #define GB_Global_cpu_features_query GM_Global_cpu_features_query
 #define GB_Global_flush_get GM_Global_flush_get
 #define GB_Global_flush_set GM_Global_flush_set

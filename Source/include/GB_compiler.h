@@ -245,6 +245,16 @@
 
 #endif
 
+#if !defined ( GBRISCV64 )
+
+    #if defined(__riscv)
+    #define GBRISCV64 1
+    #else
+    #define GBRISCV64 0
+    #endif
+
+#endif
+
 //------------------------------------------------------------------------------
 // AVX2 and AVX512F support for the x86_64 architecture
 //------------------------------------------------------------------------------
@@ -304,6 +314,31 @@
     #endif
 #else
     #define GB_TARGET_AVX2
+#endif
+
+//------------------------------------------------------------------------------
+// RVV1.0 support for the RISC-V architecture
+//------------------------------------------------------------------------------
+
+#if GBRISCV64
+    #if GB_COMPILER_GCC
+    // TODO: add other compilers
+        #if __GNUC__ >= 13
+            #define GB_COMPILER_SUPPORTS_RVV1 1
+        #else
+            #define GB_COMPILER_SUPPORTS_RVV1 0
+        #endif
+    #endif
+#else
+    // non-RISC-V architecture
+    #define GB_COMPILER_SUPPORTS_RVV1 0
+#endif
+
+// prefix for function with target rvv1.0
+#if GB_COMPILER_SUPPORTS_RVV1
+        #define GB_TARGET_RVV1 __attribute__ ((target ("arch=rv64gcv")))
+#else
+    #define GB_TARGET_RVV1
 #endif
 
 //------------------------------------------------------------------------------

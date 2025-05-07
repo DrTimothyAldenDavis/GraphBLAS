@@ -17,14 +17,13 @@ __global__ void GB_cuda_AxB_dot3_phase2end_kernel
     // input, not modified:
     const int64_t *__restrict__ nanobuckets,  // array of size
                                               // NBUCKETS-blockDim.x-by-nblocks
-    const int64_t *__restrict__ blockbucket,  // global bucket count, of size
+    const int64_t *__restrict__ Blockbucket,  // global bucket count, of size
                                               // NBUCKETS*nblocks
     // output:
     const int64_t *__restrict__ bucketp,      // global bucket cumsum,
                                               // of size NBUCKETS+1
           int64_t *__restrict__ bucket,       // global buckets, of size
                                               // cnz == mnz
-    const int64_t *__restrict__ offset,       // global offsets for each bucket
     // inputs, not modified:
     const GrB_Matrix C,      // output matrix
     const int64_t cnz        // number of entries in C and M
@@ -67,7 +66,7 @@ __global__ void GB_cuda_AxB_dot3_phase2end_kernel
     for (int b = 0 ; b < NBUCKETS ; b++)
     {
         my_bucket [b] = nanobucket [b * blockDim.x]
-                      + blockbucket [b * gridDim.x + blockIdx.x]
+                      + Blockbucket [b * (gridDim.x+1) + blockIdx.x]
                       + bucketp [b] ;
     }
 

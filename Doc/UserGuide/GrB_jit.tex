@@ -39,8 +39,9 @@ cannot be determined and the \verb'GRAPHBLAS_CACHE_PATH' environment variable
 is not set, then JIT compilation is disabled and only PreJIT kernels can be
 used.  The optional environment variable, \verb'GRAPHBLAS_CACHE_PATH', is also
 read by \verb'GrB_init' when the user application runs.  The filesystem holding
-the cache folder must support file locking.  See Section~\ref{cache_path} for a
-description of the valid characters that can appear in the cache path.
+the cache folder must also support file locking.  See Section~\ref{cache_path}
+for a description of the valid characters that can appear in the cache path
+and for more suggestions about file locking.
 
 The user application can modify the location of the cache folder after calling
 \verb'GrB_init'.  It can also modify the C compiler and its flags, and can
@@ -329,6 +330,28 @@ only charactors in the following list:
 In addition, the second character in the string is allowed to be the colon
 character (\verb':') to allow for the use of Windows drive letters.  Any
 character outside of these rules is converted into an underscore (\verb'_').
+
+On distributed file systems that do not support file locking, sometimes the
+\verb'/tmp' directory is located on a file system that is not distributed, and
+is thus suitable to use for the GraphBLAS JIT cache.  In this case, try
+creating a symbolic link in your home file folder (for Linux or Mac):
+
+    {\small
+    \begin{verbatim}
+    cd
+    ln -s /tmp/me/.SuiteSparse \end{verbatim} }
+
+where \verb'me' is your user name.  Next, in your startup script
+(\verb'.bashrc' for example), add these commands:
+
+    {\small
+    \begin{verbatim}
+    mkdir /tmp/me
+    mkdir /tmp/me/.SuiteSparse \end{verbatim} }
+
+Then whenever you log into a system that has your home file folder on a
+distributed file system, the default \verb'~/.SuiteSparse' cache folder will be
+a symbolic link to a folder on a file system that does support file locking.
 
 %-------------------------------------------------------------------------------
 \subsection{Compilation options: {\sf GRAPHBLAS\_USE\_JIT} and {\sf GRAPHBLAS\_COMPACT}}

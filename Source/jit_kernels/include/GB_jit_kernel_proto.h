@@ -225,6 +225,7 @@ GrB_Info GB_jit_kernel_AxB_saxpy5                                       \
     const int64_t *restrict B_slice,                                    \
     bool cpu_has_avx2,                                                  \
     bool cpu_has_avx512f,                                               \
+    bool cpu_has_rvv1,                                                  \
     const void *theta,                                                  \
     const GB_callback_struct *restrict my_callback                      \
 )

@@ -11,7 +11,11 @@
 #include "GB_cuda.hpp"
 #define CU_OK(cudaMethod)                               \
 {                                                       \
-    if ((cudaMethod) != cudaSuccess) return (false) ;   \
+    if ((cudaMethod) != cudaSuccess)                    \
+    {                                                   \
+        printf ("cuda failed, file: %s, line: %d\n", __FILE__, __LINE__) ; \
+        return (false) ;   \
+    }   \
 }
 
 //------------------------------------------------------------------------------

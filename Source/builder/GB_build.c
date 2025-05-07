@@ -303,8 +303,8 @@ GrB_Info GB_build               // build matrix
         xtype,          // type of the X array
         true,           // burble is OK
         Werk,
-        I_is_32,        // if true, I is 32-bit; else 64-bit
-        J_is_32,        // if true, J is 32-bit; else 64-bit
+        C->is_csc ? I_is_32 : J_is_32,  // if true, I is 32-bit; else 64-bit
+        C->is_csc ? J_is_32 : I_is_32,  // if true, J is 32-bit; else 64-bit
         Tp_is_32, Tj_is_32, Ti_is_32    // integer sizes to create T
     )) ;
 

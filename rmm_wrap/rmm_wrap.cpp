@@ -385,6 +385,7 @@ int rmm_wrap_initialize_all_same
     catch (...)
     {
         // something failed; return an error state
+        printf ("rmm_wrap_initialize_all_same failed!\n") ;
         return (-1) ;
     }
 }

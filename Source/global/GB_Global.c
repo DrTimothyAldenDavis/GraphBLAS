@@ -133,6 +133,7 @@ typedef struct
 
     bool cpu_features_avx2 ;        // x86_64 with AVX2
     bool cpu_features_avx512f ;     // x86_64 with AVX512f
+    bool cpu_features_rvv_1_0 ;     // RISC-V with RVV1.0
 
     //--------------------------------------------------------------------------
     // integer control
@@ -226,6 +227,7 @@ static GB_Global_struct GB_Global =
     // CPU features
     .cpu_features_avx2 = false,         // x86_64 with AVX2
     .cpu_features_avx512f = false,      // x86_64 with AVX512f
+    .cpu_features_rvv_1_0 = false,      // RISC-V with RVV1.0
 
     // integer control
     .p_control = (int8_t) 32,
@@ -357,15 +359,47 @@ void GB_Global_cpu_features_query (void)
         #endif
 
     }
+    #elif GBRISCV64
+    {
+
+        //----------------------------------------------------------------------
+        // RISC-V architecture: see if RVV1.0 is supported
+        //----------------------------------------------------------------------
+
+        #if !defined ( GBNCPUFEAT )
+        {
+            // Google's cpu_features package is available: use run-time tests
+            RiscvFeatures features = GetRiscvInfo ().features ;
+            GB_Global.cpu_features_rvv_1_0 = (bool) (features.V) ;
+
+        }
+        #else
+        {
+            #if defined ( GBRVV )
+            {
+                // the build system asserts whether or not RVV1.0 is available
+                GB_Global.cpu_features_rvv_1_0 = (bool) (GBRVV) ;
+            }
+            #else
+            {
+                // RVV1.0 not available
+                GB_Global.cpu_features_rvv_1_0 = false ;
+            }
+            #endif
+        }
+        #endif
+
+    }
     #else
     {
 
         //----------------------------------------------------------------------
-        // not on the x86_64 architecture, so no AVX2 or AVX512F acceleration
+        // not on the x86_64 or RISC-V architecture, so no AVX2, AVX512F or RVV1.0 acceleration
         //----------------------------------------------------------------------
 
         GB_Global.cpu_features_avx2 = false ;
         GB_Global.cpu_features_avx512f = false ;
+        GB_Global.cpu_features_rvv_1_0 = false ;
 
     }
     #endif
@@ -379,6 +413,11 @@ bool GB_Global_cpu_features_avx2 (void)
 bool GB_Global_cpu_features_avx512f (void)
 { 
     return (GB_Global.cpu_features_avx512f) ;
+}
+
+bool GB_Global_cpu_features_rvv_1_0 (void)
+{ 
+    return (GB_Global.cpu_features_rvv_1_0) ;
 }
 
 //------------------------------------------------------------------------------

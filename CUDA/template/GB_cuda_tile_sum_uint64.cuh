@@ -26,6 +26,12 @@ __device__ __inline__ uint64_t GB_cuda_tile_sum_uint64
 {
 
     //--------------------------------------------------------------------------
+    // ensure the tile is ready
+    //--------------------------------------------------------------------------
+
+    tile.sync ( ) ;
+
+    //--------------------------------------------------------------------------
     // sum value on all threads to a single value
     //--------------------------------------------------------------------------
 
@@ -56,7 +62,7 @@ __device__ __inline__ uint64_t GB_cuda_tile_sum_uint64
     // Note that only thread 0 will have the full summation of all values in
     // the tile.  To broadcast it to all threads, use the following:
 
-    // value = tile.shfl (value, 0) ;
+//  value = tile.shfl (value, 0) ;
 
     return (value) ;
 }

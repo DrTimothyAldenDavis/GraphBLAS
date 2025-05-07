@@ -1,3 +1,31 @@
+May FIXME, 2025: version 10.1.0
+
+    * add support for RISC-V vectorization: contributed by Rodion Suvorov
+
+May 5, 2025: version 10.0.5
+
+    * revised cmake build system
+    * (64) bug fix: GrB_assign, C<M>+=A, method 08n, when A is full.
+        Caught by Gabe Gomez.
+    * (63) bug fix: GrB_mxm when using the masked dot-product
+        and the output matrix is iso-valued.
+
+Apr 10, 2025: version 10.0.3
+
+    * upgrade xxHash to 0.8.3: contributed by Christoph Grueninger
+    * upgrade cpu_features to 0.9.0: contributed by Christoph Grueninger
+    * Octave interface: revised for the recent MacOS (15.3.2), assuming that
+        both octave and OpenMP are installed via homebrew.
+    * (62) bug fix: GxB_Matrix_build*Vector when C is held by row and
+        I,J have different integer types; was broken.
+
+Mar 20, 2025: version 10.0.2
+
+    * performance:  improved the performance of GrB_setElement when many
+        entries are inserted into a matrix that is initially empty.
+    * (61) bug fix: GxB_Serialized_get_Scalar declared twice in GraphBLAS.h;
+        caught by Erik Welch.
+
 Mar 6, 2025: version 10.0.1
 
     * (60) bug fix: one of the GrB_mxm kernels (saxpy4) can hit a segfault for
