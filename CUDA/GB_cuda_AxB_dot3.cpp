@@ -16,8 +16,11 @@
 #undef  GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE                                   \
 {                                                           \
-    cudaStreamSynchronize (stream) ;                        \
-    GB_cuda_release_stream (device, &stream) ;              \
+    if (stream != nullptr)                                  \
+    {                                                       \
+        cudaStreamSynchronize (stream) ;                    \
+        GB_cuda_release_stream (device, &stream) ;          \
+    }                                                       \
 }
 
 #define GB_FREE_ALL         \
@@ -88,7 +91,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     int device = -1;
-    cudaStream_t stream ;
+    cudaStream_t stream = nullptr ;
     
     // FIXME: control the GPU to use via the descriptor
     CUDA_OK (cudaSetDevice ( 0 )) ;

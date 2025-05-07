@@ -19,8 +19,11 @@
 #define GB_FREE_WORKSPACE                                   \
 {                                                           \
     GB_FREE_MEMORY (&zscalar, zscalar_size) ;               \
-    cudaStreamSynchronize (stream) ;                        \
-    GB_cuda_release_stream (device, &stream) ;              \
+    if (stream != nullptr)                                  \
+    {                                                       \
+        cudaStreamSynchronize (stream) ;                    \
+        GB_cuda_release_stream (device, &stream) ;          \
+    }                                                       \
 }
 
 #define GB_FREE_ALL                                         \

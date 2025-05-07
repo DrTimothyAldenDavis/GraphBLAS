@@ -4,8 +4,11 @@
 #define GB_FREE_WORKSPACE                                   \
 {                                                           \
     GB_FREE_MEMORY (&ythunk_cuda, ythunk_cuda_size) ;       \
-    cudaStreamSynchronize (stream) ;                        \
-    GB_cuda_release_stream (device, &stream) ;              \
+    if (stream != nullptr)                                  \
+    {                                                       \
+        cudaStreamSynchronize (stream) ;                    \
+        GB_cuda_release_stream (device, &stream) ;          \
+    }                                                       \
 }
 
 #undef  GB_FREE_ALL

@@ -3,8 +3,11 @@
 #undef  GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE                                   \
 {                                                           \
-    cudaStreamSynchronize (stream) ;                        \
-    GB_cuda_release_stream (device, &stream) ;              \
+    if (stream != nullptr)                                  \
+    {                                                       \
+        cudaStreamSynchronize (stream) ;                    \
+        GB_cuda_release_stream (device, &stream) ;          \
+    }                                                       \
 }
 
 #undef  GB_FREE_ALL

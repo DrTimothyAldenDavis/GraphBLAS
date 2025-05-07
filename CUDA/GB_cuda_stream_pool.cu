@@ -26,7 +26,7 @@ static GB_cuda_stream_pool pool ;
 
 void GB_cuda_release_stream (int device, cudaStream_t *stream)
 {
-    if (stream == nullptr)
+    if (stream == nullptr || (*stream) == nullptr)
     {
         return ;
     }
