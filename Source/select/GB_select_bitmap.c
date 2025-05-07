@@ -83,12 +83,6 @@ GrB_Info GB_select_bitmap
         // Cx [0] = Ax [0] or (A->type) thunk
         GB_select_iso (C->x, opcode, athunk, A->x, asize) ;
     }
-    else
-    { 
-        // Cx [0:anz-1] = Ax [0:anz-1]
-        // Fixme for CUDA: do this on the GPU if appropriate
-        GB_memcpy (C->x, A->x, anz * asize, nthreads) ;
-    }
 
     //--------------------------------------------------------------------------
     // bitmap selector kernel
@@ -105,6 +99,11 @@ GrB_Info GB_select_bitmap
 
     if (info == GrB_NO_VALUE)
     {
+        if (!C_iso) {
+            // Cx [0:anz-1] = Ax [0:anz-1]
+            GB_memcpy (C->x, A->x, anz * asize, nthreads) ;
+        }
+        
         if (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode))
         { 
 
