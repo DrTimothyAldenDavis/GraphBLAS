@@ -66,6 +66,7 @@ GrB_Info GB_cuda_grab_stream (int device, cudaStream_t *stream)
         if (!pool.nstreams_avail[device])
         {
             // Pool is empty; create a stream
+            GB_cuda_set_device (device) ;
             CUDA_OK (cudaStreamCreate (stream)) ;
         }
         else
