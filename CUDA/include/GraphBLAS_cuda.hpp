@@ -29,6 +29,7 @@ extern "C"
 
 #endif
 
+#undef GRAPHBLAS_VANILLA
 #define GB_CUDA_FOLDER
 #include "GraphBLAS.h"
 #undef I

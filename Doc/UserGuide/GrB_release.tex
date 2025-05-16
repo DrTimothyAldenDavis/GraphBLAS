@@ -5,10 +5,17 @@
 
 \begin{itemize}
 
-\item May FIXME, 2025: version 10.1.0
+\item May 12, 2025: version 10.1.0
 
     \begin{itemize}
     \item add support for RISC-V vectorization: contributed by Rodion Suvorov
+    \item added \verb'GRAPHBLAS_VANILLA': compile-time flag that disables all
+        GxB methods.
+    \item gcc and the Power processor:  using gcc on the Power processor leads
+        to a failure in the OpenMP atomic capture intrinsic.  See
+        \verb'Source/mxm/factory/GB_AxB_saxpy3_symbolic_template.c.'  The cmake build
+        system has been revised so that it refuses to use gcc on a Power-based
+        system.  Use clang or the IBM xlc compiler instead.
     \end{itemize}
 
 \item May 5, 2025: version 10.0.5

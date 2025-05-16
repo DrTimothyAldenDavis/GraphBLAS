@@ -390,8 +390,8 @@
 #define GB_Global_calloc_function_set GM_Global_calloc_function_set
 #define GB_Global_cpu_features_avx2 GM_Global_cpu_features_avx2
 #define GB_Global_cpu_features_avx512f GM_Global_cpu_features_avx512f
-#define GB_Global_cpu_features_rvv_1_0 GM_Global_cpu_features_rvv_1_0
 #define GB_Global_cpu_features_query GM_Global_cpu_features_query
+#define GB_Global_cpu_features_rvv_1_0 GM_Global_cpu_features_rvv_1_0
 #define GB_Global_flush_get GM_Global_flush_get
 #define GB_Global_flush_set GM_Global_flush_set
 #define GB_Global_free_function_get GM_Global_free_function_get
@@ -865,6 +865,7 @@
 #define GB_JITpackage_352 GM_JITpackage_352
 #define GB_JITpackage_353 GM_JITpackage_353
 #define GB_JITpackage_354 GM_JITpackage_354
+#define GB_JITpackage_355 GM_JITpackage_355
 #define GB_JITpackage_35 GM_JITpackage_35
 #define GB_JITpackage_36 GM_JITpackage_36
 #define GB_JITpackage_37 GM_JITpackage_37

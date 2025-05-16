@@ -17,6 +17,7 @@
 #define GB_INTERFACE_H
 
 #define NHISTORICAL
+#undef GRAPHBLAS_VANILLA
 #include "GraphBLAS.h"
 #include "GB_helper.h"
 #include "mex.h"
