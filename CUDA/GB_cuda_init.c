@@ -62,8 +62,7 @@ GrB_Info GB_cuda_init (void)
         }
     }
 
-    int streams_per_gpu = 5 ;
-    ret = GB_cuda_init_stream_pool (gpu_count, streams_per_gpu) ;
+    ret = GB_cuda_stream_pool_init (gpu_count) ;
     if (ret)
     {
         printf ("GB_cuda_init line %d\n", __LINE__) ;

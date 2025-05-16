@@ -1,27 +1,29 @@
 #include "GB_cuda_stream_pool.hpp"
 
+#define STREAMS_PER_DEVICE 32
+
 struct GB_cuda_stream_pool
 {
-    std::mutex lock ;
-    std::vector<std::condition_variable*> avail_streams ;
-    std::vector<std::vector<cudaStream_t>> streams ;
+    std::vector<std::array<cudaStream_t, STREAMS_PER_DEVICE>> streams ;
+    std::vector<int> nstreams_avail;
 } ;
 
 static GB_cuda_stream_pool pool ;
 
 #undef GB_FREE_ALL
-#define GB_FREE_ALL                                                 \
-{                                                                   \
-    while (device >= 0) {                                           \
-        while (pool.streams[device].size ())                        \
-        {                                                           \
-            cudaStream_t stream = pool.streams[device].back () ;    \
-            pool.streams[device].pop_back () ;                      \
-            cudaStreamDestroy (stream) ;                            \
-        }                                                           \
-        delete pool.avail_streams[device] ;                         \
-        device-- ;                                                  \
-    }                                                               \
+#define GB_FREE_ALL                                     \
+{                                                       \
+    while (pool.streams.size())                         \
+    {                                                   \
+        auto curr = pool.streams.back() ;               \
+        int end = pool.nstreams_avail.back() - 1 ;      \
+        for (int idx = end; idx >= 0 ; idx--)           \
+        {                                               \
+            cudaStreamDestroy (curr[idx]) ;             \
+        }                                               \
+        pool.streams.pop_back() ;                       \
+        pool.nstreams_avail.pop_back() ;                \
+    }                                                   \
 }
 
 void GB_cuda_release_stream (int device, cudaStream_t *stream)
@@ -30,46 +32,75 @@ void GB_cuda_release_stream (int device, cudaStream_t *stream)
     {
         return ;
     }
-    // std::unique_lock uses RAII semantics; it locks the underlying
-    // mutex on declaration and unlocks when out-of-scope
-    std::unique_lock lock (pool.lock) ;
-    pool.streams[device].push_back (*stream) ;
-    pool.avail_streams[device]->notify_one () ;
 
+    ASSERT (device < pool.avail_streams.size()) ;
+
+    #pragma omp critical
+    {
+        if (pool.nstreams_avail[device] == STREAMS_PER_DEVICE)
+        {
+            // Pool is full; destroy the stream
+            cudaStreamDestroy (*stream) ;
+        }
+        else
+        {
+            // Check the stream back in; it's OK if the stream wasn't
+            // created at init time. Whatever stream was will be destroyed
+            // when it is checked back in.
+            size_t stream_idx = pool.nstreams_avail[device];
+            pool.streams[device][stream_idx] = (*stream) ;
+            pool.nstreams_avail[device]++ ;
+        }
+    }
     (*stream) = nullptr ;
 }
 
-void GB_cuda_grab_stream (int device, cudaStream_t *stream)
+GrB_Info GB_cuda_grab_stream (int device, cudaStream_t *stream)
 {
-    std::unique_lock lock (pool.lock) ;
-    // wait for a stream
-    while (!pool.streams[device].size ())
+    ASSERT (stream != nullptr) ;
+    ASSERT (device < pool.avail_streams.size()) ;
+    GrB_Info ret = GrB_SUCCESS ;
+
+    #pragma omp critical
     {
-        pool.avail_streams[device]->wait (lock) ;
+        if (!pool.nstreams_avail[device])
+        {
+            // Pool is empty; create a stream
+            CUDA_OK (cudaStreamCreate (stream)) ;
+        }
+        else
+        {
+            // Checkout a stream
+            size_t stream_idx = pool.nstreams_avail[device] - 1;
+            (*stream) = pool.streams[device][stream_idx];
+            pool.nstreams_avail[device]-- ;
+        }
     }
-    // stream is now available
-    (*stream) = pool.streams[device].back () ;
-    pool.streams[device].pop_back () ;
+    return ret ;
 }
 
-GrB_Info GB_cuda_init_stream_pool (int ngpus, int nstreams_per_gpu)
+GrB_Info GB_cuda_stream_pool_init (int ngpus)
 {
-    pool.streams.resize (ngpus) ;
-    // std::conditional_variable is not copy-able or assign-able, so
-    // need to have a vector of pointers to it to be able to resize
-    pool.avail_streams.resize (ngpus) ;
     for (int device = 0 ; device < ngpus ; device++)
     {
-        pool.avail_streams [device] = new std::condition_variable () ;
+        pool.nstreams_avail.push_back (0) ;
+        pool.streams.push_back (std::array<cudaStream_t, STREAMS_PER_DEVICE>()) ;
         GB_cuda_set_device (device) ;
 
-        for (int stream = 0 ; stream < nstreams_per_gpu ; stream++)
+        for (int stream = 0 ; stream < STREAMS_PER_DEVICE ; stream++)
         {
             cudaStream_t tmp ;
             CUDA_OK (cudaStreamCreate (&tmp)) ;
-            pool.streams[device].push_back (tmp) ;
+            pool.streams[device][stream] = tmp ;
+            pool.nstreams_avail[device]++ ;
         }
     }
 
+    return GrB_SUCCESS ;
+}
+
+GrB_Info GB_cuda_stream_pool_finalize ()
+{
+    GB_FREE_ALL ;
     return GrB_SUCCESS ;
 }
