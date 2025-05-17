@@ -33,7 +33,7 @@ void GB_cuda_release_stream (int device, cudaStream_t *stream)
         return ;
     }
 
-    ASSERT (device < pool.avail_streams.size()) ;
+    ASSERT (device < pool.streams.size()) ;
 
     #pragma omp critical
     {
@@ -58,7 +58,7 @@ void GB_cuda_release_stream (int device, cudaStream_t *stream)
 GrB_Info GB_cuda_grab_stream (int device, cudaStream_t *stream)
 {
     ASSERT (stream != nullptr) ;
-    ASSERT (device < pool.avail_streams.size()) ;
+    ASSERT (device < pool.streams.size()) ;
     GrB_Info ret = GrB_SUCCESS ;
 
     #pragma omp critical
