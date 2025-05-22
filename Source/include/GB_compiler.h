@@ -323,7 +323,7 @@
 #if GBRISCV64
     #if GB_COMPILER_GCC
     // TODO: add other compilers
-        #if __GNUC__ >= 13
+        #if __GNUC__ >= 14
             #define GB_COMPILER_SUPPORTS_RVV1 1
         #else
             #define GB_COMPILER_SUPPORTS_RVV1 0
@@ -336,7 +336,7 @@
 
 // prefix for function with target rvv1.0
 #if GB_COMPILER_SUPPORTS_RVV1
-        #define GB_TARGET_RVV1 __attribute__ ((target ("arch=rv64gcv")))
+        #define GB_TARGET_RVV1 __attribute__ ((target ("arch=+v")))
 #else
     #define GB_TARGET_RVV1
 #endif
