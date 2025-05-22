@@ -1,4 +1,4 @@
-May 20, 2025: version 10.1.0
+FIXME, 2025: version 10.1.0
 
     * add support for RISC-V vectorization: contributed by Rodion Suvorov
     * added GRAPHBLAS_VANILLA: compile-time flag that disables all GxB methods
@@ -17,6 +17,7 @@ May 20, 2025: version 10.1.0
         GxB_STDC_VERSION is set to 199001L to denote C90 (and no _Generic
         keyword is used).  See GraphBLAS/Demo/Include/graphblas_demo.h
         for an example usage.
+    * minor updates to build system
 
 May 5, 2025: version 10.0.5
 
