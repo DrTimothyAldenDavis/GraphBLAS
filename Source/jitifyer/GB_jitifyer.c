@@ -2612,7 +2612,8 @@ void GB_jitifyer_nvcc_compile
     "-DGB_JIT_RUNTIME=1  "              // nvcc flags
     // Fixme for CUDA: add GB_CUDA_INC here:
     "-I/usr/local/cuda/include -std=c++17 " 
-    " --gpu-architecture=sm_%d%d "      // major,minor
+    " --gpu-architecture=compute_%d%d"  // major,minor
+    " --gpu-code=sm_%d%d "              // major,minor
     " -fPIC " 
     // Fixme for CUDA: add GB_CUDA_FLAGS here:
     " -O3 "   // HACK Fixme for CUDA
@@ -2628,7 +2629,8 @@ void GB_jitifyer_nvcc_compile
     "nvcc "                             // compiler
     "-DGB_JIT_RUNTIME=1  "              // nvcc flags
     "-I/usr/local/cuda/include -std=c++17 "
-    " --gpu-architecture=sm_%d%d "      // major,minor
+    " --gpu-architecture=compute_%d%d"  // major,minor
+    " --gpu-code=sm_%d%d "              // major,minor
     " -shared "
     "-o '%s/lib/%02x/%s%s%s' "          // lib*.so output file
     "'%s/c/%02x/%s%s' "                 // *.o input file
@@ -2638,7 +2640,8 @@ void GB_jitifyer_nvcc_compile
     "%s %s%s%s\"",                      // error log file
 
     // compile:
-    (int) major, (int) minor,           // CUDA compute capabilitity
+    (int) major, (int) minor,           // CUDA compute_xy architecture
+    (int) major, (int) minor,           // CUDA sm_xy code
     GB_jit_cache_path,                  // include cache/src
     GB_jit_cache_path,                  // include cache/src/template
     GB_jit_cache_path,                  // include cache/src/include
@@ -2648,7 +2651,8 @@ void GB_jitifyer_nvcc_compile
     err_redirect, log_quote, GB_jit_error_log, log_quote,   // error log file
 
     // link:
-    (int) major, (int) minor,           // CUDA compute capabilitity
+    (int) major, (int) minor,           // CUDA compute_xy architecture
+    (int) major, (int) minor,           // CUDA sm_xy code
     GB_jit_cache_path, bucket,  
     GB_LIB_PREFIX, kernel_name, GB_LIB_SUFFIX,              // lib*.so file
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
