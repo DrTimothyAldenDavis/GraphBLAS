@@ -208,7 +208,9 @@ GB_jit_kcode ;
 struct GB_jit_encoding_struct
 {
     uint64_t code ;         // from GB_enumify_*
-    uint32_t kcode ;        // which kernel (a GB_jit_kcode)
+    uint8_t major ;         // for CUDA kernels only; zero for CPU kernels
+    uint8_t minor ;         // for CUDA kernels only; zero for CPU kernels
+    uint16_t kcode ;        // which kernel (a GB_jit_kcode)
     uint32_t suffix_len ;   // length of the suffix (0 for builtin)
 } ;
 
