@@ -23,8 +23,8 @@
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \
-    GB_FREE_MEMORY (&Cwork,    Cwork_size) ;      \
-    GB_FREE_MEMORY (&TaskList, TaskList_size) ;   \
+    GB_FREE_MEMORY (&Cwork,    Cwork_size) ;    \
+    GB_FREE_MEMORY (&TaskList, TaskList_size) ; \
 }
 
 #define GB_FREE_ALL                             \

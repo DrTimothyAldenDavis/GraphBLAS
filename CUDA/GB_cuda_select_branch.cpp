@@ -6,6 +6,13 @@ bool GB_cuda_select_branch
     const GrB_IndexUnaryOp op
 )
 {
+
+    int jit_control = GB_jitifyer_get_control ( ) ;
+    if (jit_control <= GxB_JIT_PAUSE)
+    { 
+        // JIT is off or paused
+        return (false) ;
+    }
     
     ASSERT (A != NULL && op != NULL) ;
 
