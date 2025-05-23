@@ -1057,6 +1057,20 @@ int GB_Global_gpu_sm_get (int device)
     return (GB_Global.gpu_properties [device].number_of_sms) ;
 }
 
+int GB_Global_gpu_compute_capability_major_get (int device)
+{
+    // get the compute-capability-major
+    GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
+    return (GB_Global.gpu_properties [device].compute_capability_major) ;
+}
+
+int GB_Global_gpu_compute_capability_minor_get (int device)
+{
+    // get the compute-capability-minor
+    GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
+    return (GB_Global.gpu_properties [device].compute_capability_minor) ;
+}
+
 bool GB_Global_gpu_device_pool_size_set (int device, size_t size)
 {
     GB_GPU_DEVICE_CHECK (false) ;   // fail if invalid GPU

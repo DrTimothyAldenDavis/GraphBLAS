@@ -2589,6 +2589,12 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     char *err_redirect = have_log ?  " 2>> " : " 2>&1 " ;
     char *log_quote = have_log ? "'" : "" ;
 
+    // FIXME: need to encodify this!
+    int device = 0 ;
+    GB_cuda_get_device (&device) ;  // FIXME: check error return
+    int major = GB_Global_gpu_compute_capability_major_get (device) ;
+    int minor = GB_Global_gpu_compute_capability_minor_get (device) ;
+
     GBURBLE ("(jit compiling cuda kernel: %s/c/%02x/%s.cu) ",
         GB_jit_cache_path, bucket, kernel_name) ;
 
@@ -2602,9 +2608,7 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     "-DGB_JIT_RUNTIME=1  "              // nvcc flags
     // Fixme for CUDA: add GB_CUDA_INC here:
     "-I/usr/local/cuda/include -std=c++17 " 
-    // Fixme for CUDA: use GB_CUDA_ARCHITECTURES here:
-    " -arch=sm_60 " // FIXME: use -arch=sm_%d%d with gpu_prop,
-    // FIXME: use -code=sm_%d%d also
+    " --gpu-architecture=sm_%d%d "      // major,minor
     " -fPIC " 
     // Fixme for CUDA: add GB_CUDA_FLAGS here:
     " -O3 "   // HACK Fixme for CUDA
@@ -2619,7 +2623,8 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     // link:
     "nvcc "                             // compiler
     "-DGB_JIT_RUNTIME=1  "              // nvcc flags
-    "-I/usr/local/cuda/include -std=c++17 -arch=sm_60 "
+    "-I/usr/local/cuda/include -std=c++17 "
+    " --gpu-architecture=sm_%d%d "      // major,minor
     " -shared "
     "-o '%s/lib/%02x/%s%s%s' "          // lib*.so output file
     "'%s/c/%02x/%s%s' "                 // *.o input file
@@ -2629,6 +2634,7 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     "%s %s%s%s\"",                      // error log file
 
     // compile:
+    major, minor,                       // CUDA compute capabilitity
     GB_jit_cache_path,                  // include cache/src
     GB_jit_cache_path,                  // include cache/src/template
     GB_jit_cache_path,                  // include cache/src/include
@@ -2638,6 +2644,7 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     err_redirect, log_quote, GB_jit_error_log, log_quote,   // error log file
 
     // link:
+    major, minor,                       // CUDA compute capabilitity
     GB_jit_cache_path, bucket,  
     GB_LIB_PREFIX, kernel_name, GB_LIB_SUFFIX,              // lib*.so file
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o input file

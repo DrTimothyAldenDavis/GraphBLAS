@@ -101,6 +101,8 @@ bool     GB_Global_gpu_device_max_pool_size_set (int device, size_t size) ;
 bool     GB_Global_gpu_device_memory_resource_set (int device, void *resource) ;
 void*    GB_Global_gpu_device_memory_resource_get (int device) ;
 bool     GB_Global_gpu_device_properties_get (int device) ;
+int      GB_Global_gpu_compute_capability_major_get (int device) ;
+int      GB_Global_gpu_compute_capability_minor_get (int device) ;
 
 void     GB_Global_timing_clear_all (void) ;
 void     GB_Global_timing_clear (int k) ;
