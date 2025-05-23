@@ -22,10 +22,10 @@
 // The suffix is used only for user-defined types and operators.
 //
 // For CUDA kernels, the major/minor compute capability is also encoded in the
-// name.  For example, if the target is sm_71, then the name will be one of:
+// name.  For example, if the target is sm_72, then the name will be one of:
 //
-//      namespace__kname__012345-71__suffix
-//      namespace__kname__012345-71
+//      namespace__kname__012345_72__suffix
+//      namespace__kname__012345_72
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
@@ -48,7 +48,7 @@ void GB_macrofy_name
         #if defined ( GRAPHBLAS_HAS_CUDA )
         if (encoding->kcode >= GB_JIT_CUDA_KERNEL)
         {
-            snprintf (kernel_name, GB_KLEN-1, "%s__%s__%0*" PRIx64 "-%d%d",
+            snprintf (kernel_name, GB_KLEN-1, "%s__%s__%0*" PRIx64 "_%d%d",
                 name_space, kname, method_code_digits, encoding->code,
                 (int) encoding->major, (int) encoding->minor) ;
         }
@@ -65,7 +65,7 @@ void GB_macrofy_name
         #if defined ( GRAPHBLAS_HAS_CUDA )
         if (encoding->kcode >= GB_JIT_CUDA_KERNEL)
         {
-            snprintf (kernel_name, GB_KLEN-1, "%s__%s__%0*" PRIx64 "-%d%d__%s",
+            snprintf (kernel_name, GB_KLEN-1, "%s__%s__%0*" PRIx64 "_%d%d__%s",
                 name_space, kname, method_code_digits, encoding->code,
                 (int) encoding->major, (int) encoding->minor, suffix) ;
         }

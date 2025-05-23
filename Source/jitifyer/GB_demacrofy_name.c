@@ -118,10 +118,10 @@ GrB_Info GB_demacrofy_name
     // parse the method_code_string
     //--------------------------------------------------------------------------
 
-    // If this is a CUDA kernel, the method_code_string has the form 012345-71,
-    // where 012345 is the method_code and 71 is the CUDA architecture.
-    // The sscanf will return the method_code and the CUDA architecture
-    // will be ignored.
+    // If this is a CUDA kernel, the method_code_string has the form 012345_72,
+    // where 012345 is the method_code and 72 denotes the sm_72 CUDA
+    // architecture.  The sscanf will return the method_code and the CUDA
+    // architecture will be ignored.
 
     uint64_t method_code_result = 0 ;
     if (sscanf (method_code_string, "%" SCNx64, &method_code_result) != 1)
