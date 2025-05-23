@@ -556,8 +556,10 @@ GrB_Info GB_jitifyer_init (void)
         }
 
         #undef IS
-        encoding->kcode = c ;
         encoding->code = method_code ;
+        encoding->major = 0 ;       // CUDA PreJIT kernels not yet supported
+        encoding->minor = 0 ;
+        encoding->kcode = c ;
         encoding->suffix_len = (int32_t) GB_STRLEN (suffix) ;
 
         //----------------------------------------------------------------------
@@ -1876,7 +1878,7 @@ GrB_Info GB_jitifyer_load2_worker
 
     char kernel_name [GB_KLEN] ;
     GB_macrofy_name (kernel_name, "GB_jit", kname, method_code_digits,
-        encoding->code, suffix) ;
+        encoding, suffix) ;
 
     //--------------------------------------------------------------------------
     // lock the kernel
@@ -2025,7 +2027,8 @@ GrB_Info GB_jitifyer_load_worker
         { 
             // create the preface
             GB_macrofy_preface (fp, kernel_name,
-                GB_jit_C_preface, GB_jit_CUDA_preface, kcode) ;
+                GB_jit_C_preface, GB_jit_CUDA_preface, kcode,
+                encoding->major, encoding->minor) ;
             // macrofy the kernel operators, types, and matrix formats
             GB_macrofy_family (fp, family, encoding->code, encoding->kcode,
                 semiring, monoid, op, type1, type2, type3) ;
@@ -2052,7 +2055,8 @@ GrB_Info GB_jitifyer_load_worker
         if (kcode >= GB_JIT_CUDA_KERNEL)
         {
             // use NVCC to directly compile the CUDA kernel
-            GB_jitifyer_nvcc_compile (kernel_name, bucket) ;
+            GB_jitifyer_nvcc_compile (kernel_name, bucket,
+                encoding->major, encoding->minor) ;
         }
         else if (GB_jit_use_cmake)
         { 
@@ -2579,7 +2583,13 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
 //
 // All other temporary files (including *.o object files) are removed.
 
-void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
+void GB_jitifyer_nvcc_compile
+(
+    char *kernel_name,
+    uint32_t bucket,
+    uint8_t major,
+    uint8_t minor
+)
 {
 
 #if defined ( GRAPHBLAS_HAS_CUDA ) && !defined ( NJIT )
@@ -2588,12 +2598,6 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     bool have_log = (GB_STRLEN (GB_jit_error_log) > 0) ;
     char *err_redirect = have_log ?  " 2>> " : " 2>&1 " ;
     char *log_quote = have_log ? "'" : "" ;
-
-    // FIXME: need to encodify this!
-    int device = 0 ;
-    GB_cuda_get_device (&device) ;  // FIXME: check error return
-    int major = GB_Global_gpu_compute_capability_major_get (device) ;
-    int minor = GB_Global_gpu_compute_capability_minor_get (device) ;
 
     GBURBLE ("(jit compiling cuda kernel: %s/c/%02x/%s.cu) ",
         GB_jit_cache_path, bucket, kernel_name) ;
@@ -2634,7 +2638,7 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     "%s %s%s%s\"",                      // error log file
 
     // compile:
-    major, minor,                       // CUDA compute capabilitity
+    (int) major, (int) minor,           // CUDA compute capabilitity
     GB_jit_cache_path,                  // include cache/src
     GB_jit_cache_path,                  // include cache/src/template
     GB_jit_cache_path,                  // include cache/src/include
@@ -2644,7 +2648,7 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     err_redirect, log_quote, GB_jit_error_log, log_quote,   // error log file
 
     // link:
-    major, minor,                       // CUDA compute capabilitity
+    (int) major, (int) minor,           // CUDA compute capabilitity
     GB_jit_cache_path, bucket,  
     GB_LIB_PREFIX, kernel_name, GB_LIB_SUFFIX,              // lib*.so file
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
