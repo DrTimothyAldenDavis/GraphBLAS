@@ -338,6 +338,9 @@ if ( BUILD_SHARED_LIBS )
         # Make sure compressed sources are built before library
         add_dependencies ( GraphBLAS GB_JITpackage )
     endif ( )
+
+    get_target_property ( CSTD GraphBLAS C_STANDARD )
+    message ( STATUS "GraphBLAS C standard: ${CSTD}" )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -384,6 +387,8 @@ if ( BUILD_STATIC_LIBS )
         add_dependencies ( GraphBLAS_static GB_JITpackage )
     endif ( )
 
+    get_target_property ( CSTD GraphBLAS_static C_STANDARD )
+    message ( STATUS "GraphBLAS C standard: ${CSTD}" )
 endif ( )
 
 #-------------------------------------------------------------------------------
