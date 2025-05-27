@@ -38,7 +38,7 @@ void mexFunction
     GrB_Type type = NULL ;
     int handling = 99 ;
     bool malloc_debug = GB_mx_get_global (true) ;
-    size_t xsize = 0 ;
+    uint64_t xsize = 0 ;
 
     //--------------------------------------------------------------------------
     // create a dense vector with pending work
@@ -67,7 +67,8 @@ void mexFunction
 
     OK (GxB_Vector_fprint (V, "V dense with pending work", 5, NULL)) ;
 
-    OK (GxB_Vector_unload (V, &X, &type, &n2, &xsize, &handling, NULL)) ;
+    OK (GxB_Vector_unload (V, (void **) &X, &type, &n2, &xsize, &handling,
+        NULL)) ;
 
     CHECK (type == GrB_FP64) ;
     CHECK (n == n2) ;
