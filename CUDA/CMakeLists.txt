@@ -58,8 +58,6 @@ target_include_directories ( GraphBLAS_CUDA PRIVATE
 
 set_target_properties ( GraphBLAS_CUDA PROPERTIES POSITION_INDEPENDENT_CODE ON )
 set_target_properties ( GraphBLAS_CUDA PROPERTIES CUDA_SEPARABLE_COMPILATION ON )
-# FIXME: use SUITESPARSE_CUDA_ARCHITECTURES
-set_target_properties ( GraphBLAS_CUDA PROPERTIES CUDA_ARCHITECTURES "52;75;80" )
 
 target_link_libraries ( GraphBLAS_CUDA PRIVATE CUDA::nvrtc CUDA::cudart_static CUDA::cuda_driver )
 
@@ -152,7 +150,6 @@ endif ( )
 # report
 #-------------------------------------------------------------------------------
 
-message ( STATUS "CMAKE_CUDA_ARCHITECTURES: ${CMAKE_CUDA_ARCHITECTURES} ")
 message ( STATUS "CMAKE_CUDA_COMPILER: ${CMAKE_CUDA_COMPILER} ")
 message ( STATUS "CMAKE_CUDA_FLAGS: ${CMAKE_CUDA_FLAGS} ")
 message ( STATUS "CMAKE_CUDA_FLAGS_RELEASE: ${CMAKE_CUDA_FLAGS_RELEASE} ")

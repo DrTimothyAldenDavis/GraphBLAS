@@ -7,29 +7,35 @@ The @GrB class provides an easy-to-use interface to SuiteSparse:GraphBLAS.
 This README.md file explains how to install it for use in MATLAB/Octave on
 Linux, Mac, or Windows.
 
-It can be a little complicated because MATLAB does not support the use of
-OpenMP inside compiled mexFunctions.  It also does not support using cmake to
-compile an external library from inside MATLAB.  GraphBLAS relies on both of
-these.
-
 --------------------------------------------------------------------------------
 # For Mac
 --------------------------------------------------------------------------------
 
-    You must first install the OpenMP library from brew.
-    First, install brew from https://brew.sh.  Next, install libomp with
+    This can be a little complicated for MATLAB because it does not support the
+    use of OpenMP inside compiled mexFunctions.  It doesn't seem to be a
+    problem when using Octave on the Mac.
+
+    First, install brew from https://brew.sh.
+
+    If using octave, you should use the octave available via homebrew:
+
+        brew install octave
+
+    For both MATLAB and Octave, must install the OpenMP library from brew
+    (this is likely installed by 'brew install octave'):
 
         brew install libomp
 
-    Add the following to your ~/.zshrc file:
+    Next, add the following to your ~/.zshrc file:
 
         export OpenMP_ROOT=$(brew --prefix)/opt/libomp
 
     Next, restart your terminal shell before continuing the steps in the
     section "For Linux/Mac" below.
 
-    HOWEVER, MATLAB on the Mac comes with its own copy of libomp.dylib,
-    typically
+    HOWEVER, this may fail on MATLAB.
+
+    MATLAB on the Mac comes with its own copy of libomp.dylib, typically
 
         /Applications/MATLAB_R2024b.app/bin/maca64/libomp.dylib
 
@@ -72,13 +78,14 @@ these.
         cd test
         gbtest
 
-    That should be enough.  However, the above script may fail on Linux to
-    compile the libgraphblas_matlab.so (for MATLAB) or libgraphblas.so (for
-    Octave), because of a cmake issue (where cmake cannot find its required
-    libraries when used with system('cmake ...') inside MATLAB.
+    That should be enough.  However, the above script may fail if the
+    graphblas_install script is unable to use "system ('cmake ...')" to
+    use cmake to build GraphBLAS.
 
-    If this happens, then you will need to first compile the GraphBLAS library
-    outside of MATLAB/Octave, instead of using the graphblas_install.m script.
+    If this happens, the script will print a set of commands you can type in
+    your system shell to first compile the GraphBLAS library outside of
+    MATLAB/Octave, instead of using the graphblas_install.m script.  Use those
+    instructions, or continue with the following (both should work OK):
 
     Suppose your copy of GraphBLAS is in /home/me/GraphBLAS.  For MATLAB on
     Linux/Mac, compile libgraphblas_matlab.so (.dylib on the Mac) with:
@@ -108,7 +115,10 @@ these.
 # For Windows
 --------------------------------------------------------------------------------
 
-    On Windows 10, on the Search bar type env and hit enter; (or you can
+    First try the above instructions for Linux/Mac to build GraphBLAS from
+    inside MATLAB.  If this doesn't work, try the following:
+
+    On Windows, on the Search bar type env and hit enter; (or you can
     right-click My Computer or This PC and select Properties, and then select
     Advanced System Settings).  Select "Edit the system environment variables",
     then "Environment Variables".  Under "System Variables" select "Path" and
