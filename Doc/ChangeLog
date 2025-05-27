@@ -18,6 +18,9 @@ FIXME, 2025: version 10.1.0
         keyword is used).  See GraphBLAS/Demo/Include/graphblas_demo.h
         for an example usage.
     * minor updates to build system
+    * iterator methods: revised so they do not conflict with the copy of
+        GraphBLAS v7.4.4 used inside MATLAB R2024b.  No effect on normal
+        C API, so no change in major SO number for this release.
 
 May 5, 2025: version 10.0.5
 

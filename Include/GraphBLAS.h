@@ -7096,7 +7096,7 @@ GrB_Info GxB_Iterator_new (GxB_Iterator *iterator) ;
 // GB_Iterator_attach: attach a row/col/entry iterator to a matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Iterator_attach
+GrB_Info GB(Iterator_attach)
 (
     GxB_Iterator iterator,      // iterator to attach to the matrix A
     GrB_Matrix A,               // matrix to attach
@@ -7108,7 +7108,7 @@ GrB_Info GB_Iterator_attach
 // GB_Iterator_rc_seek: seek a row/col iterator to a particular vector
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Iterator_rc_seek
+GrB_Info GB(Iterator_rc_seek)
 (
     GxB_Iterator iterator,
     GrB_Index j,
@@ -7119,7 +7119,7 @@ GrB_Info GB_Iterator_rc_seek
 // GB_Iterator_rc_bitmap_next: move a row/col iterator to next entry in bitmap
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Iterator_rc_bitmap_next (GxB_Iterator iterator) ;
+GrB_Info GB(Iterator_rc_bitmap_next)(GxB_Iterator iterator) ;
 
 //------------------------------------------------------------------------------
 // GB_Iterator_rc_knext: move a row/col iterator to the next vector
@@ -7161,7 +7161,7 @@ GrB_Info GB_Iterator_rc_bitmap_next (GxB_Iterator iterator) ;
             (iterator->A_sparsity <= GxB_BITMAP) ?                          \
             (                                                               \
                 /* matrix is bitmap */                                      \
-                GB_Iterator_rc_bitmap_next (iterator)                       \
+                GB(Iterator_rc_bitmap_next)(iterator)                       \
             )                                                               \
             :                                                               \
             (                                                               \
@@ -7189,7 +7189,7 @@ GrB_Info GB_Iterator_rc_bitmap_next (GxB_Iterator iterator) ;
         (iterator->A_sparsity == GxB_BITMAP) ?                              \
         (                                                                   \
             /* the matrix is in bitmap form */                              \
-            GB_Iterator_rc_bitmap_next (iterator)                           \
+            GB(Iterator_rc_bitmap_next)(iterator)                           \
         )                                                                   \
         :                                                                   \
         (                                                                   \
@@ -7278,7 +7278,7 @@ GrB_Info GxB_rowIterator_attach
 
 #define GxB_rowIterator_attach(iterator, A, desc)                           \
 (                                                                           \
-    GB_Iterator_attach (iterator, A, GxB_BY_ROW, desc)                      \
+    GB(Iterator_attach)(iterator, A, GxB_BY_ROW, desc)                      \
 )
 
 //------------------------------------------------------------------------------
@@ -7336,7 +7336,7 @@ GrB_Info GxB_rowIterator_seekRow (GxB_Iterator iterator, GrB_Index row) ;
 
 #define GxB_rowIterator_seekRow(iterator, row)                              \
 (                                                                           \
-    GB_Iterator_rc_seek (iterator, row, false)                              \
+    GB(Iterator_rc_seek)(iterator, row, false)                              \
 )
 
 //------------------------------------------------------------------------------
@@ -7355,7 +7355,7 @@ GrB_Info GxB_rowIterator_kseek (GxB_Iterator iterator, GrB_Index k) ;
 
 #define GxB_rowIterator_kseek(iterator, k)                                  \
 (                                                                           \
-    GB_Iterator_rc_seek (iterator, k, true)                                 \
+    GB(Iterator_rc_seek)(iterator, k, true)                                 \
 )
 
 //------------------------------------------------------------------------------
@@ -7464,7 +7464,7 @@ GrB_Info GxB_colIterator_attach
 ) ;
 #define GxB_colIterator_attach(iterator, A, desc)                           \
 (                                                                           \
-    GB_Iterator_attach (iterator, A, GxB_BY_COL, desc)                      \
+    GB(Iterator_attach)(iterator, A, GxB_BY_COL, desc)                      \
 )
 
 // GxB_colIterator_kount: return # of nonempty columns of the matrix
@@ -7478,14 +7478,14 @@ GrB_Index GxB_colIterator_kount (GxB_Iterator iterator) ;
 GrB_Info GxB_colIterator_seekCol (GxB_Iterator iterator, GrB_Index col) ;
 #define GxB_colIterator_seekCol(iterator, col)                              \
 (                                                                           \
-    GB_Iterator_rc_seek (iterator, col, false)                              \
+    GB(Iterator_rc_seek)(iterator, col, false)                              \
 )
 
 // GxB_colIterator_kseek: move a column iterator to kth non-empty column of A
 GrB_Info GxB_colIterator_kseek (GxB_Iterator iterator, GrB_Index k) ;
 #define GxB_colIterator_kseek(iterator, k)                                  \
 (                                                                           \
-    GB_Iterator_rc_seek (iterator, k, true)                                 \
+    GB(Iterator_rc_seek)(iterator, k, true)                                 \
 )
 
 // GxB_colIterator_nextCol: move a column iterator to first entry of next column
@@ -7743,7 +7743,7 @@ GrB_Index GxB_Vector_Iterator_getpmax (GxB_Iterator iterator) ;
 // Returns GrB_SUCCESS if the iterator is at an entry that exists in the
 // vector, or GxB_EXHAUSTED if the iterator is exhausted.
 
-GrB_Info GB_Vector_Iterator_bitmap_seek (GxB_Iterator iterator) ;
+GrB_Info GB(Vector_Iterator_bitmap_seek)(GxB_Iterator iterator) ;
 
 GrB_Info GxB_Vector_Iterator_seek (GxB_Iterator iterator, GrB_Index p) ;
 
@@ -7761,7 +7761,7 @@ GrB_Info GxB_Vector_Iterator_seek (GxB_Iterator iterator, GrB_Index p) ;
         iterator->p = q,                                                    \
         (iterator->A_sparsity == GxB_BITMAP) ?                              \
         (                                                                   \
-            GB_Vector_Iterator_bitmap_seek (iterator)                       \
+            GB(Vector_Iterator_bitmap_seek)(iterator)                       \
         )                                                                   \
         :                                                                   \
         (                                                                   \
@@ -7804,7 +7804,7 @@ GrB_Info GxB_Vector_Iterator_next (GxB_Iterator iterator) ;
         (iterator->A_sparsity == GxB_BITMAP) ?                              \
         (                                                                   \
             /* bitmap: seek to the next entry present in the bitmap */      \
-            GB_Vector_Iterator_bitmap_seek (iterator)                       \
+            GB(Vector_Iterator_bitmap_seek)(iterator)                       \
         )                                                                   \
         :                                                                   \
         (                                                                   \

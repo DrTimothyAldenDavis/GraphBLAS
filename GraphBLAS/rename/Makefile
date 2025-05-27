@@ -22,10 +22,14 @@ go:
 	nm -gD ../../build/libgraphblas.so | grep -v "GB__" > lib.txt
 	grep " GrB_" lib.txt > temp.h
 	grep " GxB_" lib.txt | grep -v Iterator >> temp.h
+	grep " GxB_Matrix_Iterator" lib.txt >> temp.h
+	grep " GxB_Vector_Iterator_attach" lib.txt >> temp.h
 	grep " GB_"  lib.txt | grep -v Iterator >> temp.h
 	awk -f rename.awk < temp.h > temp2.h
 	echo "#define GB_complex GM_complex" >> temp2.h
 	echo "#define GB_complexf GM_complexf" >> temp2.h
+	echo "#define GxB_Iterator_new GxM_Iterator_new" >> temp2.h
+	echo "#define GxB_Iterator_free GxM_Iterator_free" >> temp2.h
 	sort temp2.h > GB_rename.h
 	rm temp.h temp2.h lib.txt
 
@@ -34,7 +38,12 @@ mac:
 	nm -gA ../../build/libgraphblas.dylib | grep -v "GB__" > lib.txt
 	grep " _GrB_" lib.txt > temp.h
 	grep " _GxB_" lib.txt | grep -v Iterator >> temp.h
+	grep " _GxB_Matrix_Iterator" lib.txt >> temp.h
+	grep " _GxB_Vector_Iterator_attach" lib.txt >> temp.h
 	grep " _GB_"  lib.txt | grep -v Iterator >> temp.h
-	awk -f rename.awk < temp.h | sort > GB_rename.h
+	awk -f rename.awk < temp.h > temp2.h
+	echo "#define GxB_Iterator_new GxM_Iterator_new" >> temp2.h
+	echo "#define GxB_Iterator_free GxM_Iterator_free" >> temp2.h
+	sort temp2.h > GB_rename.h
 	rm temp.h lib.txt
 

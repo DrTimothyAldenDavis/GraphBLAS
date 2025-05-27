@@ -397,6 +397,8 @@
 #define GB_Global_free_function_get GM_Global_free_function_get
 #define GB_Global_free_function GM_Global_free_function
 #define GB_Global_free_function_set GM_Global_free_function_set
+#define GB_Global_gpu_compute_capability_major_get GM_Global_gpu_compute_capability_major_get
+#define GB_Global_gpu_compute_capability_minor_get GM_Global_gpu_compute_capability_minor_get
 #define GB_Global_gpu_count_get GM_Global_gpu_count_get
 #define GB_Global_gpu_count_set GM_Global_gpu_count_set
 #define GB_Global_gpu_device_max_pool_size_set GM_Global_gpu_device_max_pool_size_set
@@ -3468,6 +3470,8 @@
 #define GxB_ISNE_UINT32 GxM_ISNE_UINT32
 #define GxB_ISNE_UINT64 GxM_ISNE_UINT64
 #define GxB_ISNE_UINT8 GxM_ISNE_UINT8
+#define GxB_Iterator_free GxM_Iterator_free
+#define GxB_Iterator_new GxM_Iterator_new
 #define GxB_kron GxM_kron
 #define GxB_LAND_BOOL GxM_LAND_BOOL
 #define GxB_LAND_BOOL_MONOID GxM_LAND_BOOL_MONOID
@@ -3806,6 +3810,12 @@
 #define GxB_Matrix_import_HyperCSR GxM_Matrix_import_HyperCSR
 #define GxB_Matrix_iso GxM_Matrix_iso
 #define GxB_Matrix_isStoredElement GxM_Matrix_isStoredElement
+#define GxB_Matrix_Iterator_attach GxM_Matrix_Iterator_attach
+#define GxB_Matrix_Iterator_getIndex GxM_Matrix_Iterator_getIndex
+#define GxB_Matrix_Iterator_getp GxM_Matrix_Iterator_getp
+#define GxB_Matrix_Iterator_getpmax GxM_Matrix_Iterator_getpmax
+#define GxB_Matrix_Iterator_next GxM_Matrix_Iterator_next
+#define GxB_Matrix_Iterator_seek GxM_Matrix_Iterator_seek
 #define GxB_Matrix_memoryUsage GxM_Matrix_memoryUsage
 #define GxB_Matrix_Option_get_FP64 GxM_Matrix_Option_get_FP64
 #define GxB_Matrix_Option_get GxM_Matrix_Option_get
@@ -5071,6 +5081,7 @@
 #define GxB_Vector_import_Full GxM_Vector_import_Full
 #define GxB_Vector_iso GxM_Vector_iso
 #define GxB_Vector_isStoredElement GxM_Vector_isStoredElement
+#define GxB_Vector_Iterator_attach GxM_Vector_Iterator_attach
 #define GxB_Vector_load GxM_Vector_load
 #define GxB_Vector_memoryUsage GxM_Vector_memoryUsage
 #define GxB_Vector_Option_get_FP64 GxM_Vector_Option_get_FP64
