@@ -1,4 +1,4 @@
-FIXME, 2025: version 10.1.0
+June 1, 2025: version 10.1.0
 
     * add support for RISC-V vectorization: contributed by Rodion Suvorov
     * added GRAPHBLAS_VANILLA: compile-time flag that disables all GxB methods
