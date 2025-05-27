@@ -134,6 +134,18 @@ CPU_FEATURES_START_CPP_NAMESPACE
 #define ARM_HWCAP2_SHA2 (1UL << 3)
 #define ARM_HWCAP2_CRC32 (1UL << 4)
 
+// https://elixir.bootlin.com/linux/latest/source/arch/riscv/include/uapi/asm/hwcap.h
+#define RISCV_HWCAP_32 0x32
+#define RISCV_HWCAP_64 0x64
+#define RISCV_HWCAP_128 0x128
+#define RISCV_HWCAP_M (1UL << ('M' - 'A'))
+#define RISCV_HWCAP_A (1UL << ('A' - 'A'))
+#define RISCV_HWCAP_F (1UL << ('F' - 'A'))
+#define RISCV_HWCAP_D (1UL << ('D' - 'A'))
+#define RISCV_HWCAP_Q (1UL << ('Q' - 'A'))
+#define RISCV_HWCAP_C (1UL << ('C' - 'A'))
+#define RISCV_HWCAP_V (1UL << ('V' - 'A'))
+
 // http://elixir.free-electrons.com/linux/latest/source/arch/mips/include/uapi/asm/hwcap.h
 #define MIPS_HWCAP_R6 (1UL << 0)
 #define MIPS_HWCAP_MSA (1UL << 1)

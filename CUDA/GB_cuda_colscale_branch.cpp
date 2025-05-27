@@ -8,6 +8,14 @@ bool GB_cuda_colscale_branch
     const bool flipxy
 )
 {
+
+    int jit_control = GB_jitifyer_get_control ( ) ;
+    if (jit_control <= GxB_JIT_PAUSE)
+    { 
+        // JIT is off or paused
+        return (false) ;
+    }
+
     if (A->header_size == 0)
     {
         return false ;

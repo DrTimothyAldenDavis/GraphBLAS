@@ -14,6 +14,8 @@
 // definitions that modify GraphBLAS.h
 //------------------------------------------------------------------------------
 
+#undef GRAPHBLAS_VANILLA
+
 #include "include/GB_dev.h"
 #include "include/GB_compiler.h"
 #include "include/GB_warnings.h"

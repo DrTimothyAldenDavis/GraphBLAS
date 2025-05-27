@@ -23,6 +23,13 @@ bool GB_cuda_AxB_dot3_branch
 )
 {
 
+    int jit_control = GB_jitifyer_get_control ( ) ;
+    if (jit_control <= GxB_JIT_PAUSE)
+    { 
+        // JIT is off or paused
+        return (false) ;
+    }
+
     if (!GB_cuda_type_branch (A->type) ||
         !GB_cuda_type_branch (B->type) ||
         !GB_cuda_type_branch (semiring->multiply->xtype) ||

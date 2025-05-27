@@ -7,6 +7,14 @@ bool GB_cuda_apply_binop_branch
     const GrB_Matrix A
 )
 {
+
+    int jit_control = GB_jitifyer_get_control ( ) ;
+    if (jit_control <= GxB_JIT_PAUSE)
+    { 
+        // JIT is off or paused
+        return (false) ;
+    }
+
     if (op == NULL)
     {
         return false ;

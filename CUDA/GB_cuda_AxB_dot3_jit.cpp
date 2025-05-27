@@ -53,7 +53,7 @@ GrB_Info GB_cuda_AxB_dot3_jit
         GB_jit_mxm_family, "cuda_AxB_dot3",
         hash, &encoding, suffix, semiring, NULL,
         NULL, C->type, A->type, B->type) ;
-    if (info != GrB_SUCCESS) return (info) ;
+    if (info != GrB_SUCCESS) { printf ("cuda_AxB_dot3 failed %d\n", info) ; return (info) ; }
 
     //--------------------------------------------------------------------------
     // call the jit kernel and return result

@@ -163,6 +163,28 @@ if ( DEFINED GBAVX512F )
 endif ( )
 
 #-------------------------------------------------------------------------------
+# RISC-V
+#-------------------------------------------------------------------------------
+
+if ( DEFINED GBRISCV64 )
+    if ( GBRISCV64 )
+    # default: this is detected automatically, but can be set here also
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRISCV64=1 " )
+    else ( )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRISCV64=0 " )
+    endif ( )
+endif ( )
+
+if ( DEFINED GBRVV )
+    if ( GBRVV )
+    # default: this is detected automatically, but can be set here also
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRVV=1 " )
+    else ( )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRVV=0 " )
+    endif ( )
+endif ( )
+
+#-------------------------------------------------------------------------------
 # check compiler features
 #-------------------------------------------------------------------------------
 
@@ -316,6 +338,9 @@ if ( BUILD_SHARED_LIBS )
         # Make sure compressed sources are built before library
         add_dependencies ( GraphBLAS GB_JITpackage )
     endif ( )
+
+    get_target_property ( CSTD GraphBLAS C_STANDARD )
+    message ( STATUS "GraphBLAS C standard: ${CSTD}" )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -362,6 +387,8 @@ if ( BUILD_STATIC_LIBS )
         add_dependencies ( GraphBLAS_static GB_JITpackage )
     endif ( )
 
+    get_target_property ( CSTD GraphBLAS_static C_STANDARD )
+    message ( STATUS "GraphBLAS C standard: ${CSTD}" )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -577,24 +604,34 @@ if ( BUILD_SHARED_LIBS )
         ARCHIVE DESTINATION ${SUITESPARSE_LIBDIR}
         RUNTIME DESTINATION ${SUITESPARSE_BINDIR}
         PUBLIC_HEADER DESTINATION ${SUITESPARSE_INCLUDEDIR} )
+
+    # create (temporary) export target file during build
+    export ( EXPORT GraphBLASTargets
+        NAMESPACE SuiteSparse::
+        FILE ${CMAKE_CURRENT_BINARY_DIR}/GraphBLASTargets.cmake )
+
+    # install export target and config for find_package
+    install ( EXPORT GraphBLASTargets
+        NAMESPACE SuiteSparse::
+        DESTINATION ${SUITESPARSE_PKGFILEDIR}/cmake/GraphBLAS )
 endif ( )
 
 if ( BUILD_STATIC_LIBS )
     install ( TARGETS GraphBLAS_static
-        EXPORT GraphBLASTargets
+        EXPORT GraphBLASTargets_static
         ARCHIVE DESTINATION ${SUITESPARSE_LIBDIR}
         PUBLIC_HEADER DESTINATION ${SUITESPARSE_INCLUDEDIR} )
+
+    # create (temporary) export target file during build
+    export ( EXPORT GraphBLASTargets_static
+        NAMESPACE SuiteSparse::
+        FILE ${CMAKE_CURRENT_BINARY_DIR}/GraphBLASTargets_static.cmake )
+
+    # install export target and config for find_package
+    install ( EXPORT GraphBLASTargets_static
+        NAMESPACE SuiteSparse::
+        DESTINATION ${SUITESPARSE_PKGFILEDIR}/cmake/GraphBLAS )
 endif ( )
-
-# create (temporary) export target file during build
-export ( EXPORT GraphBLASTargets
-    NAMESPACE SuiteSparse::
-    FILE ${CMAKE_CURRENT_BINARY_DIR}/GraphBLASTargets.cmake )
-
-# install export target and config for find_package
-install ( EXPORT GraphBLASTargets
-    NAMESPACE SuiteSparse::
-    DESTINATION ${SUITESPARSE_PKGFILEDIR}/cmake/GraphBLAS )
 
 # generate config file to be used in common build tree
 set ( SUITESPARSE_IN_BUILD_TREE ON )

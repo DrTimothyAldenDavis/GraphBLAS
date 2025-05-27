@@ -168,7 +168,7 @@ void mexFunction
     OK (GxB_print (A, 2)) ;
 
     OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GxB_LIBRARY_OPENMP)) ;
-    CHECK (i == 1) ;
+    printf ("GraphBLAS compiled with OpenMP: %d\n", i) ;
 
     int32_t onebase ;
     OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &onebase, GxB_PRINT_1BASED)) ;

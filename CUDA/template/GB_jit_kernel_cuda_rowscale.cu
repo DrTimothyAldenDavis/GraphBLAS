@@ -27,7 +27,7 @@ __global__ void GB_cuda_rowscale_kernel
 
     GB_B_NHELD (bnz) ;
 
-    #if ( GB_A_IS_BITMAP || GB_A_IS_FULL )
+    #if ( GB_B_IS_BITMAP || GB_B_IS_FULL )
     const int64_t bvlen = B->vlen ;
     #endif
 

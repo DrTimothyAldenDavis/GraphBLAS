@@ -49,7 +49,7 @@ uint64_t GB_encodify_subref     // encode an subref problem
     // primary encoding of the problem
     //--------------------------------------------------------------------------
 
-    encoding->kcode = kcode ;
+    GB_encodify_kcode (encoding, kcode) ;
     GB_enumify_subref (&encoding->code,
         C, I_is_32, J_is_32, Ikind, Jkind, need_qsort, Ihead_is_32,
         I_has_duplicates, A) ;

@@ -8,6 +8,64 @@ This README.md file explains how to install it for use in MATLAB/Octave on
 Linux, Mac, or Windows.
 
 --------------------------------------------------------------------------------
+# For Mac
+--------------------------------------------------------------------------------
+
+    This can be a little complicated for MATLAB because it does not support the
+    use of OpenMP inside compiled mexFunctions.  It doesn't seem to be a
+    problem when using Octave on the Mac.
+
+    First, install brew from https://brew.sh.
+
+    If using octave, you should use the octave available via homebrew:
+
+        brew install octave
+
+    For both MATLAB and Octave, must install the OpenMP library from brew
+    (this is likely installed by 'brew install octave'):
+
+        brew install libomp
+
+    Next, add the following to your ~/.zshrc file:
+
+        export OpenMP_ROOT=$(brew --prefix)/opt/libomp
+
+    Next, restart your terminal shell before continuing the steps in the
+    section "For Linux/Mac" below.
+
+    HOWEVER, this may fail on MATLAB.
+
+    MATLAB on the Mac comes with its own copy of libomp.dylib, typically
+
+        /Applications/MATLAB_R2024b.app/bin/maca64/libomp.dylib
+
+    for R2024b (for example).  GraphBLAS is compiled against the brew
+    libomp.dylib but then linked with the above libomp.dylib inside MATLAB,
+    since GraphBLAS in MATLAB must use the same OpenMP library as the rest of
+    MATLAB.  However, this causes a link error on MacOSx 15.5 (Xcode 16.3),
+    since MATLAB R2024b ships with an older and incompatible version of libomp.
+    If you get the following error, you cannot use OpenMP in GraphBLAS on the
+    Mac:
+
+        Undefined symbols for architecture arm64:
+        "___kmpc_dispatch_deinit", referenced from: ...
+
+    There currently is no workaround for this issue, except to compile
+    GraphBLAS without OpenMP.  If you encounter this problem, replace the use
+    of "graphblas_install" in the instructions in the next section below with
+
+        graphblas_install ('-DGRAPHBLAS_USE_OPENMP=0')
+
+    GraphBLAS will be slower without OpenMP, but it will work.  This issue on
+    the Mac does not arise when using GraphBLAS outside of MATLAB.  Octave does
+    not have this issue since it relies on the brew-installed libomp.
+
+    This issue does not prohibit the use of OpenMP with GraphBLAS outside of
+    MATLAB, which uses the GraphBLAS/build/libgraphblas.dylib compiled library.
+    whereas MATLAB uses the GraphBLAS/GraphBLAS/build/libgraphblas_matlab.dylib
+    compiled library on the Mac.
+
+--------------------------------------------------------------------------------
 # For Linux/Mac
 --------------------------------------------------------------------------------
 
@@ -20,10 +78,14 @@ Linux, Mac, or Windows.
         cd test
         gbtest
 
-    That should be enough.  However, the above script may fail to compile the
-    libgraphblas_matlab.so (for MATLAB) or libgraphblas.so (for Octave).  If so,
-    then you will need to first compile the GraphBLAS library outside of
-    MATLAB/Octave.
+    That should be enough.  However, the above script may fail if the
+    graphblas_install script is unable to use "system ('cmake ...')" to
+    use cmake to build GraphBLAS.
+
+    If this happens, the script will print a set of commands you can type in
+    your system shell to first compile the GraphBLAS library outside of
+    MATLAB/Octave, instead of using the graphblas_install.m script.  Use those
+    instructions, or continue with the following (both should work OK):
 
     Suppose your copy of GraphBLAS is in /home/me/GraphBLAS.  For MATLAB on
     Linux/Mac, compile libgraphblas_matlab.so (.dylib on the Mac) with:
@@ -36,9 +98,9 @@ Linux, Mac, or Windows.
         cd /home/me/GraphBLAS
         make
 
-    If the 'make' command above fails, do this instead (assuming you are in the
-    /home/me/GraphBLAS/GraphBLAS folder for MATLAB, or /home/me/GraphBLAS for
-    Octave), outside of MATLAB/Octave:
+    If the 'make' command above fails, do the following instead (assuming you
+    are in the /home/me/GraphBLAS/GraphBLAS folder for MATLAB, or
+    /home/me/GraphBLAS for Octave), outside of MATLAB/Octave:
 
         cd build
         cmake  ..
@@ -53,7 +115,10 @@ Linux, Mac, or Windows.
 # For Windows
 --------------------------------------------------------------------------------
 
-    On Windows 10, on the Search bar type env and hit enter; (or you can
+    First try the above instructions for Linux/Mac to build GraphBLAS from
+    inside MATLAB.  If this doesn't work, try the following:
+
+    On Windows, on the Search bar type env and hit enter; (or you can
     right-click My Computer or This PC and select Properties, and then select
     Advanced System Settings).  Select "Edit the system environment variables",
     then "Environment Variables".  Under "System Variables" select "Path" and

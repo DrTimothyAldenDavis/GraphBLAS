@@ -44,6 +44,7 @@
     #include "src/impl_x86_freebsd.c"
     #include "src/impl_x86_linux_or_android.c"
     #include "src/impl_x86_windows.c"
+    #include "src/impl_riscv_linux.c"
     #if GBX86
         #if (defined(__apple__) || defined(__APPLE__) || defined(__MACH__))
         // needed for src/impl_x86_macos.c:

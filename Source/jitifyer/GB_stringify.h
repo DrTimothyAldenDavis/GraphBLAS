@@ -24,7 +24,9 @@ void GB_macrofy_preface
     char *kernel_name,      // name of the kernel
     char *C_preface,        // user-provided preface for CPU JIT kernels
     char *CUDA_preface,     // user-provided preface for CUDA JIT kernels
-    GB_jit_kcode kcode
+    GB_jit_kcode kcode,
+    uint8_t major,          // CUDA compute capability
+    uint8_t minor
 ) ;
 
 //------------------------------------------------------------------------------
@@ -41,7 +43,7 @@ void GB_macrofy_name
     const char *name_space, // namespace for the kernel_name
     const char *kname,      // kname for the kernel_name
     int method_code_digits, // # of hexadecimal digits printed
-    uint64_t method_code,   // enumify'd code of the kernel
+    GB_jit_encoding *encoding,  // encoding of the kernel
     const char *suffix      // suffix for the kernel_name (NULL if none)
 ) ;
 

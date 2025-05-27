@@ -22,14 +22,14 @@
 // GB_cuda_get_device: get the current GPU
 //------------------------------------------------------------------------------
 
-bool GB_cuda_get_device (int &device)
+bool GB_cuda_get_device (int *device)
 {
-    if (&device == NULL)
+    if (device == NULL)
     {
         // invalid inputs
         return (false) ;
     }
-    CU_OK (cudaGetDevice (&device)) ;
+    CU_OK (cudaGetDevice (device)) ;
     return (true) ;
 }
 

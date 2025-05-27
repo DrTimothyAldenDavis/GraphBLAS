@@ -18,6 +18,14 @@
 GrB_Info GrB_finalize ( )
 { 
     GB_jitifyer_finalize ( ) ;
+
+    #if defined ( GRAPHBLAS_HAS_CUDA )
+    {
+        // finalize the GPUs
+//      GB_OK (GB_cuda_finalize ( )) ;
+    }
+    #endif
+
     return (GrB_SUCCESS) ;
 }
 

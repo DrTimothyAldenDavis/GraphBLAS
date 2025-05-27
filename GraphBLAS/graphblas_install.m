@@ -86,6 +86,12 @@ fprintf (f, 'target_link_libraries ( graphblas_matlab PRIVATE %s )\n', ...
     openmp_library) ;
 fclose (f) ;
 
+% use the default system library for MATLAB on Linux
+ld_path = '' ;
+if (~have_octave && isunix && ~ismac)
+    ld_path = 'LD_LIBRARY_PATH=;' ;
+end
+
 % build the GraphBLAS library
 threads = maxNumCompThreads * 2 ;
 
@@ -102,11 +108,11 @@ try
 
     % cmd1: configure with cmake
     build_folder = pwd ;
-    cmd1 = sprintf ('cmake %s ..', cmake_options) ;
+    cmd1 = sprintf ('%s cmake %s ..', ld_path, cmake_options) ;
 
     % build the GraphBLAS library
-
-    cmd2 = sprintf ('cmake --build . --config Release -j%d', threads) ;
+    cmd2 = sprintf ('%s cmake --build . --config Release -j%d', ...
+        ld_path, threads) ;
 
     % execute cmd1: configure with cmake
     clear mex
