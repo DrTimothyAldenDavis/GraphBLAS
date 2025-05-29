@@ -25,6 +25,7 @@ GrB_Info GB_cuda_apply_unop
     const GB_Operator op,
     const bool flipij,
     const GrB_Matrix A,
+    const bool do_iso_expansion,
     const GB_void *ythunk
 )
 {
@@ -61,7 +62,7 @@ GrB_Info GB_cuda_apply_unop
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
 
     GB_OK (GB_cuda_apply_unop_jit (Cx, ctype, op, flipij, A,
-        ythunk_cuda, stream, gridsz, BLOCK_SIZE)) ;
+        do_iso_expansion, ythunk_cuda, stream, gridsz, BLOCK_SIZE)) ;
 
     GB_FREE_WORKSPACE ;
     return GrB_SUCCESS ;

@@ -10,6 +10,7 @@ using namespace cooperative_groups ;
 __global__ void GB_cuda_apply_unop_kernel
 (
     GB_void *Cx_out,
+    const bool do_iso_expansion,
     const GB_void *thunk,
     GrB_Matrix A
 )
@@ -46,6 +47,12 @@ __global__ void GB_cuda_apply_unop_kernel
         GB_Y_TYPE thunk_value = * ((GB_Y_TYPE *) thunk) ;
     #endif
 
+    GB_C_TYPE iso_val ;
+    if (do_iso_expansion)
+    {
+        iso_val = Cx [0] ;
+    }
+
     #if ( GB_A_IS_BITMAP || GB_A_IS_FULL )
         // bitmap/full case
         int tid = blockDim.x * blockIdx.x + threadIdx.x ;
@@ -61,6 +68,11 @@ __global__ void GB_cuda_apply_unop_kernel
             #if ( GB_DEPENDS_ON_J )
             int64_t col_idx = p / A->vlen ;
             #endif
+            
+            if (do_iso_expansion)
+            {
+                Cx [p] = iso_val ;
+            }
 
             GB_UNOP (Cx, p, Ax, p, A_iso, row_idx, col_idx, thunk_value) ;
         }
@@ -84,6 +96,11 @@ __global__ void GB_cuda_apply_unop_kernel
                         int64_t k = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (&p_final, pdelta, pfirst, Ap, anvec_sub1, kfirst, slope) ;
                         int64_t col_idx = GBh_A (Ah, k) ;
                         
+                        if (do_iso_expansion)
+                        {
+                            Cx [p] = iso_val ;
+                        }
+
                         #if ( GB_DEPENDS_ON_I )
                         int64_t row_idx = GBi_A (Ai, p_final, A->vlen) ;
                         #endif
@@ -122,9 +139,15 @@ GB_JIT_CUDA_KERNEL_APPLY_UNOP_PROTO (GB_jit_kernel)
     GB_A_NHELD (anz) ;
     if (anz == 0) return (GrB_SUCCESS) ;
 
+    if (do_iso_expansion)
+    {
+        ASSERT (!A->iso) ;
+    }
+
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
-    GB_cuda_apply_unop_kernel <<<grid, block, 0, stream>>> (Cx, ythunk, A) ;
+    GB_cuda_apply_unop_kernel <<<grid, block, 0, stream>>> (Cx, 
+        do_iso_expansion, ythunk, A) ;
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 

@@ -24,6 +24,7 @@ GrB_Info GB_cuda_apply_binop
     const GrB_Type ctype,
     const GrB_BinaryOp op,
     const GrB_Matrix A,
+    const bool do_iso_expansion,
     const GB_void *scalarx,
     const bool bind1st
 )
@@ -68,12 +69,12 @@ GrB_Info GB_cuda_apply_binop
     if (bind1st)
     {
         GB_OK (GB_cuda_apply_bind1st_jit (Cx, ctype, op, A, 
-            scalarx_cuda, stream, gridsz, BLOCK_SIZE)) ;
+            do_iso_expansion, scalarx_cuda, stream, gridsz, BLOCK_SIZE)) ;
     }
     else
     {
         GB_OK (GB_cuda_apply_bind2nd_jit (Cx, ctype, op, A,
-            scalarx_cuda, stream, gridsz, BLOCK_SIZE)) ;
+            do_iso_expansion, scalarx_cuda, stream, gridsz, BLOCK_SIZE)) ;
     }
 
     GB_FREE_WORKSPACE ;

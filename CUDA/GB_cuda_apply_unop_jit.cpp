@@ -15,6 +15,7 @@ GrB_Info GB_cuda_apply_unop_jit
     const GB_Operator op,
     const bool flipij,
     const GrB_Matrix A,
+    const bool do_iso_expansion,
     const GB_void *ythunk,
     // CUDA stream and launch parameters:
     cudaStream_t stream,
@@ -51,6 +52,6 @@ GrB_Info GB_cuda_apply_unop_jit
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (Cx, A, ythunk, stream, gridsz, blocksz,
-        &GB_callback)) ;
+    return (GB_jit_kernel (Cx, A, do_iso_expansion, ythunk, stream, gridsz,
+        blocksz, &GB_callback)) ;
 }

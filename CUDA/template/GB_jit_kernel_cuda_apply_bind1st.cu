@@ -5,6 +5,7 @@ using namespace cooperative_groups ;
 __global__ void GB_cuda_apply_bind1st_kernel
 (
     GB_void *Cx_out,
+    const bool do_iso_expansion,
     const GB_void *scalarx,
     GrB_Matrix B
 )
@@ -19,11 +20,22 @@ __global__ void GB_cuda_apply_bind1st_kernel
     
     GB_B_NHELD (nvals) ;
 
+    GB_C_TYPE iso_val ;
+    if (do_iso_expansion)
+    {
+        iso_val = Cx [0] ;
+    }
+
     int tid = blockDim.x * blockIdx.x + threadIdx.x;
     int nthreads = blockDim.x * gridDim.x ;
 
     for (int64_t p = tid ; p < nvals ; p += nthreads)
     {
+        if (do_iso_expansion)
+        {
+            Cx [p] = iso_val ;
+        }
+
         if (!GBb_B (Bb, p)) { continue ; }
         GB_DECLAREB (bij) ;
         GB_GETB (bij, Bx, p, false) ;
@@ -45,9 +57,15 @@ GB_JIT_CUDA_KERNEL_APPLY_BIND1ST_PROTO (GB_jit_kernel)
     GB_B_NHELD (nvals) ;
     if (nvals == 0) return (GrB_SUCCESS) ;
     
+    if (do_iso_expansion)
+    {
+        ASSERT (!B->iso) ;
+    }
+    
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
-    GB_cuda_apply_bind1st_kernel <<<grid, block, 0, stream>>> (Cx, scalarx, B) ;
+    GB_cuda_apply_bind1st_kernel <<<grid, block, 0, stream>>> (Cx,
+        do_iso_expansion, scalarx, B) ;
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 

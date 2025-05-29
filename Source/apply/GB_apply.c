@@ -295,7 +295,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
             { 
                 // expand C to non-iso; initialize C->x unless the op
                 // is positional
-                info = GB_convert_any_to_non_iso (C, !op_is_positional) ;
+                info = GB_convert_any_to_non_iso (C, false) ;
             }
             if (info == GrB_SUCCESS)
             { 

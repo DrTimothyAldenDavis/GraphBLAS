@@ -62,13 +62,25 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     //--------------------------------------------------------------------------
 
     // A->x is not const since the operator might be applied in-place, if
-    // C is aliased to C.
+    // A is aliased to C.
 
     GB_void *Ax = (GB_void *) A->x ;        // A->x has type A->type
     const int8_t *Ab = A->b ;               // only if A is bitmap
     const GrB_Type Atype = A->type ;        // type of A->x
     const int64_t anz = GB_nnz_held (A) ;   // size of A->x and Cx
     #define GB_A_IS_BITMAP (Ab != NULL)
+    bool do_iso_expansion = false ;
+
+    if ((C_code_iso == GB_NON_ISO) &&
+        (Cx == Ax) &&
+        !GB_OPCODE_IS_POSITIONAL (op_in->opcode))
+    {
+        // We should have already realloc'd C->x using
+        // GB_convert_any_to_non_iso
+        ASSERT (!A->iso) ;
+        // Expand the iso value to all of C->x
+        do_iso_expansion = true ;
+    }
 
     //--------------------------------------------------------------------------
     // determine the maximum number of threads to use
@@ -186,9 +198,11 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         if (GB_cuda_apply_unop_branch (ctype, A, op))
         {
             info = GB_cuda_apply_unop (Cx, ctype, op, flipij, A,
-                (GB_void *) &thunk) ;
+                false, (GB_void *) &thunk) ;
         }
         #endif
+
+        // No iso expansion needed as this is a non-user positional op
 
         //----------------------------------------------------------------------
         // positional op via the CPU factory kernel
@@ -411,9 +425,17 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         #if defined ( GRAPHBLAS_HAS_CUDA )
         if (GB_cuda_apply_unop_branch (ctype, A, op))
         {
-            info = GB_cuda_apply_unop (Cx, ctype, op, flipij, A, NULL) ;
+            info = GB_cuda_apply_unop (Cx, ctype, op, flipij, A,
+                do_iso_expansion, NULL) ;
         }
         #endif
+
+        if ((info == GrB_NO_VALUE) && do_iso_expansion)
+        {
+            // This will just do the GB_iso_expand, since C->x
+            // has already been realloc'd to the right size
+            GB_convert_any_to_non_iso (A, true) ;
+        }
 
         //----------------------------------------------------------------------
         // unary op via the factory kernel
@@ -556,9 +578,14 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             if (GB_cuda_apply_binop_branch (ctype, (GrB_BinaryOp) op, A))
             {
                 info = GB_cuda_apply_binop (Cx, ctype, (GrB_BinaryOp) op, A,
-                    scalarx, true) ;
+                    do_iso_expansion, scalarx, true) ;
             }
             #endif
+
+            if ((info == GrB_NO_VALUE) && do_iso_expansion)
+            {
+                GB_convert_any_to_non_iso (A, true) ;
+            }
 
             //------------------------------------------------------------------
             // binary op (bind 1st) via the CPU factory kernel
@@ -622,9 +649,14 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             if (GB_cuda_apply_binop_branch (ctype, (GrB_BinaryOp) op, A))
             {
                 info = GB_cuda_apply_binop (Cx, ctype, (GrB_BinaryOp) op, A,
-                scalarx, false) ;
+                    do_iso_expansion, scalarx, false) ;
             }
             #endif
+
+            if ((info == GrB_NO_VALUE) && do_iso_expansion)
+            {
+                GB_convert_any_to_non_iso (A, true) ;
+            }
 
             //------------------------------------------------------------------
             // binary op (bind 2nd) via the CPU factory kernel
@@ -758,9 +790,15 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         #if defined ( GRAPHBLAS_HAS_CUDA )
         if (GB_cuda_apply_unop_branch (ctype, A, op))
         {
-            info = GB_cuda_apply_unop (Cx, ctype, op, flipij, A, ythunk) ;
+            info = GB_cuda_apply_unop (Cx, ctype, op, flipij, A,
+                do_iso_expansion, ythunk) ;
         }
         #endif
+
+        if ((info == GrB_NO_VALUE) && do_iso_expansion)
+        {
+            GB_convert_any_to_non_iso (A, true) ;
+        }
 
         //----------------------------------------------------------------------
         // user-defined index-unary op via the JIT or PreJIT kernel
