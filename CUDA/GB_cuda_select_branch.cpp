@@ -40,8 +40,12 @@ bool GB_cuda_select_branch
         ok = ok && (GB_cuda_type_branch (op->ztype)) ;
     }
 
-    ok = ok && (op->hash != UINT64_MAX) ;
+    double work = GB_nnz_held (A) ;
+    int gpu_count = GB_ngpus_to_use (work) ;
 
+    ok = ok && (op->hash != UINT64_MAX) ;
+    ok = ok && (gpu_count > 0);
+    
     return ok ;
 }
 
