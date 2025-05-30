@@ -44,6 +44,7 @@ bool GB_cuda_apply_unop_branch
     int gpu_count = GB_ngpus_to_use (work) ;
 
     ok = ok && (op->hash != UINT64_MAX) ;
+    ok = ok && (gpu_count > 0);
 
     return ok ;
 }
