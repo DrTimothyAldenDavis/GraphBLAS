@@ -26,6 +26,10 @@
 //
 //      namespace__kname__012345_72__suffix
 //      namespace__kname__012345_72
+//
+// where kname also always prefaced with the string "cuda_".  The filename
+// suffix (.c for CPU kernels, or .cu for CUDA kernels) is part of the
+// kernel_name.
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
@@ -61,7 +65,7 @@ void GB_macrofy_name
     }
     else
     { 
-        // kernel uses at least one built-in types and/or operator
+        // kernel uses at least one user-defined type and/or operator
         #if defined ( GRAPHBLAS_HAS_CUDA )
         if (encoding->kcode >= GB_JIT_CUDA_KERNEL)
         {
