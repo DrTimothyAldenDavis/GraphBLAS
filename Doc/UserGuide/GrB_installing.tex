@@ -200,18 +200,6 @@ will be found automatically:
     make CC=icc CXX=icpc \end{verbatim} }
 
 %----------------------------------------
-\subsubsection{On IBM Power or IBM System/390}
-%----------------------------------------
-
-You cannot use use \verb'gcc' to compile GraphBLAS on the Power or s390
-architectures.  At least gcc versions up to 14.2.0 have a bug in the atomic
-capture on the IBM Power8 (see the comments in the \verb'Source/mxm/factory'
-folder).  The bug also occurs on the s390 architecture.  The cmake build script
-will report a fatal error if gcc is attempted to be used on these systems.  Use
-\verb'clang', \verb'ibm-clang', or \verb'xlc' instead.  Those compilers are
-able to correctly compile GraphBLAS on those systems.
-
-%----------------------------------------
 \subsubsection{On Microsoft Windows}
 \label{sec:windows}
 %----------------------------------------
