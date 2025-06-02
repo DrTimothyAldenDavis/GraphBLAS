@@ -279,6 +279,11 @@ void GB_jitifyer_sanitize (char *string, size_t len)
 
 GrB_Info GB_jitifyer_init (void)
 { 
+    #if defined ( GRAPHBLAS_HAS_CUDA )
+    int device = -1 ;
+    GB_cuda_get_device (&device) ;
+    printf ("JIT init, device %d\n", device) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // initialize the JIT control
