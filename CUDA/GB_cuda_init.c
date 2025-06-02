@@ -63,8 +63,8 @@ GrB_Info GB_cuda_init (void)
     }
 
     // FIXME: default device set to 1 to avoid hardware failure ...
-    GB_cuda_set_device (1) ;            // make GPU 1 the default device
-    GB_Context_gpu_id_set (NULL, 1) ;   // set GxB_CONTEXT_WORLD->gpu_id to 1
+    GB_cuda_set_device (0) ;            // make GPU 1 the default device
+    GB_Context_gpu_id_set (NULL, 0) ;   // set GxB_CONTEXT_WORLD->gpu_id to 1
 
     // also check for jit cache, pre-load library of common kernels ...
     return (GrB_SUCCESS) ;
