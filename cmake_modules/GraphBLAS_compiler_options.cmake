@@ -35,8 +35,7 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" )
     if ( CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc|s390)" )
         set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGCC_PPC_BUG " )
         # Because of a bug in the gcc compiler itself, gcc must be used with
-        # caution to compile GraphBLAS for the Power or s390x architectures;
-        # see GraphBLAS User Guide for details.
+        # caution to compile GraphBLAS for the Power or s390x architectures.
     endif ( )
 elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" )
     # options for icc: also needs -std=c11
