@@ -48,10 +48,6 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
     // get M, A, B, and C
     //--------------------------------------------------------------------------
 
-// #ifdef GCC_PPC_BUG
-    double t = GB_OPENMP_GET_WTIME ;
-// #endif
-
     GB_Cp_DECLARE (Cp, ) ; GB_Cp_PTR (Cp, C) ;
     const int64_t cvlen = C->vlen ;
 
@@ -191,7 +187,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
 
                 }
                 else if (!M_in_place)
-                {
+                { 
 
                     //----------------------------------------------------------
                     // phase1: fine hash task, C<M>=A*B or C<!M>=A*B (parallel)
