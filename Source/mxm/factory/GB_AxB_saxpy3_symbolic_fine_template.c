@@ -88,9 +88,9 @@
             // Because of this failure, gcc must be used with caution when
             // compiling GraphBLAS on the Power or s390 processor.  It cannot
             // use the GB_ATOMIC_CAPTURE_UINT64 defined in
-            // Source/omp/include/GB_atomics.h.  The cmake script has been
-            // modified accordingly, to add -DGCC_PPC_BUG for the workaround
-            // above.
+            // Source/omp/include/GB_atomics.h.  If GraphBLAS is compiled with
+            // gcc on the Power or s390x systems, GCC_PPC_BUG is #defined to
+            // avoid this bug.
 
             if (hf == 0) break ;        // success
             // i_mine has been inserted, but a prior entry was

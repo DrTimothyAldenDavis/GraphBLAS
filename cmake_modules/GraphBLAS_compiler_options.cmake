@@ -32,11 +32,6 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 4.9 )
         message ( FATAL_ERROR "gcc version must be at least 4.9" )
     endif ( )
-    if ( CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc|s390)" )
-        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGCC_PPC_BUG " )
-        # Because of a bug in the gcc compiler itself, gcc must be used with
-        # caution to compile GraphBLAS for the Power or s390x architectures.
-    endif ( )
 elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" )
     # options for icc: also needs -std=c11
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -diag-disable 10397,15552 " )
