@@ -208,7 +208,7 @@ int get_current_device(void)
 
 int rmm_wrap_initialize     // returns -1 on error, 0 on success
 (
-    uint32_t device_id,     // 2, 5, or 7
+    uint32_t device_id,     // GPU device id, for cudaSetDevice
     RMM_MODE mode,          // TODO: describe. Should we default this?
     size_t init_pool_size,  // TODO: describe. Should we default this?
     size_t max_pool_size,   // TODO: describe. Should we default this?
@@ -234,6 +234,8 @@ int rmm_wrap_initialize     // returns -1 on error, 0 on success
             // failed to create the alloc_map
             return (-1) ;
         }
+
+        RMM_WRAP_CHECK_CUDA (cudaSetDevice (device_id)) ;
 
         // create the RMM wrap handle and save it as a global pointer.
         rmm_wrap_context [device_id] = new RMM_Wrap_Handle() ;
