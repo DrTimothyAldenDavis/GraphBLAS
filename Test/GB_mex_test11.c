@@ -574,25 +574,12 @@ if (jit_enabled)
     // GB_file tests
     //--------------------------------------------------------------------------
 
-if (jit_enabled)
-{
-    printf ("JIT enabled:\n") ;
-
-    bool ok = GB_file_mkdir (NULL) ;
-    CHECK (!ok) ;
-    ok = GB_file_unlock_and_close (NULL, NULL) ;
-    CHECK (!ok) ;
-    FILE *fp = NULL ;
-    int fd = -1 ;
-    ok = GB_file_unlock_and_close (&fp, &fd) ;
-    CHECK (!ok) ;
-
-    ok = GB_file_open_and_lock (NULL, NULL, NULL) ;
-    CHECK (!ok) ;
-
-    ok = GB_file_open_and_lock ("/nopermission", &fp, &fd) ;
-    CHECK (!ok) ;
-}
+    if (jit_enabled)
+    {
+        printf ("JIT enabled:\n") ;
+        bool ok = GB_file_mkdir (NULL) ;
+        CHECK (!ok) ;
+    }
 
     //--------------------------------------------------------------------------
     // GxB_Context

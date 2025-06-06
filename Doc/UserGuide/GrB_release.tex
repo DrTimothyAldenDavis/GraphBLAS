@@ -5,12 +5,16 @@
 
 \begin{itemize}
 
-\item June 2, 2025: version 10.1.1
+\item June 7, 2025: version 10.1.1
 
     \begin{itemize}
     \item gcc can now be used the Power or s390:  workaround added;
         see \verb'Source/mxm/factory/GB_AxB_saxpy3_symbolic_fine_template.c.'
 	This resolves the issue found in v10.1.0.
+    \item OpenMP usage: replace \verb'omp critical' with lock/unlock.
+    \item MATLAB: added method for getting/setting the JIT cache path.
+    \item JIT file lock/unlock: removed; if multiple user processes use
+        GraphBLAS at the same time, each must set their own unique JIT cache.
     \end{itemize}
 
 \item June 1, 2025: version 10.1.0

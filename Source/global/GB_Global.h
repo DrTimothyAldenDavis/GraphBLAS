@@ -138,5 +138,10 @@ void     GB_Global_j_control_set (int8_t j_control) ;
 int8_t   GB_Global_j_control_get (void) ;
 void     GB_Global_i_control_set (int8_t i_control) ;
 int8_t   GB_Global_i_control_get (void) ;
+
+void     GB_Global_lock_init (void) ;
+void     GB_Global_lock_destroy (void) ;
+void     GB_Global_lock_set (int k) ;
+void     GB_Global_lock_unset (int k) ;
 #endif
 
