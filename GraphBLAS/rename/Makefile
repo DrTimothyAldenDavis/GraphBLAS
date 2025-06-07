@@ -14,9 +14,9 @@
 # built-in libmwgraphblas.so (v3.3.3) in MATLAB R2021a and later.
 
 # GxB_*Iterator* methods are #define'd as both macros and functions in
-# GraphBLAS.h, so they are not renamed.  Functions with "GB__" in their name
-# are renamed using macros internally, and so they do not need to be renamed
-# with GB_rename.h.
+# GraphBLAS.h, so they are handled differently.  Functions with "GB__" in their
+# name are renamed using macros internally, and so they do not need to be
+# renamed with GB_rename.h.
 
 go:
 	nm -gD ../../build/libgraphblas.so | grep -v "GB__" > lib.txt
