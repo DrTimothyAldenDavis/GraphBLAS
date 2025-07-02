@@ -1,4 +1,4 @@
-June 7, 2025: version 10.1.1
+July 25, 2025: version 10.1.1
 
     * gcc can now be used the Power or s390:  workaround added;
         see Source/mxm/factory/GB_AxB_saxpy3_symbolic_fine_template.c.
