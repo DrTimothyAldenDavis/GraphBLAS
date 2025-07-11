@@ -25,6 +25,11 @@ bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
         return (false) ;
     }
 
+    if (monoid->hash == UINT64_MAX)
+    {
+        return false ;
+    }
+
     if (!GB_cuda_type_branch (A->type) ||
         !GB_cuda_type_branch (monoid->op->ztype))
     {

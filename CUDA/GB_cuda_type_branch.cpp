@@ -10,6 +10,12 @@
 // The CUDA kernels require that the type sizes are 1, 2, or a multiple of 4
 // bytes.  All built-in types pass this rule.
 
+// This method does not check type->hash.  If it is UINT64_MAX, then it cannot
+// be JIT'd, but this is accounted for by checking the relevant higher-level
+// op, monoid, or semiring.  Those will have a hash of UINT64_MAX if any of
+// their consituient parts (the types and ops in a semiring for example) have a
+// hash of UINT64_MAX.
+
 #include "GB_cuda.hpp"
 
 bool GB_cuda_type_branch            // return true if the type is OK on GPU

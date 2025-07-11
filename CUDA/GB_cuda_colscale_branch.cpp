@@ -16,6 +16,11 @@ bool GB_cuda_colscale_branch
         return (false) ;
     }
 
+    if (semiring->hash == UINT64_MAX)
+    {
+        return false ;
+    }
+
     if (A->header_size == 0)
     {
         return false ;

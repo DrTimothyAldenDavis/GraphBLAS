@@ -333,6 +333,12 @@ character outside of these rules is converted into an underscore (\verb'_').
 If your run multiple user applications that each use the same version of
 GraphBLAS, then each of your applications must set their own unique JIT cache
 path.  Only one user application at a time may use the default JIT cache path.
+Prior versions of SuiteSparse:GraphBLAS used file locking to try to allow the
+sharing of the JIT cache, but this came with performance issues, and limits the
+cache folder to file systems that support file locking.  Those constraints are
+now removed in this version of GraphBLAS.  Instead, it is now the
+responsibility of the user application to ensure each one uses their own cache,
+if the user runs multiple applications simultaneously.
 
 %-------------------------------------------------------------------------------
 \subsection{Compilation options: {\sf GRAPHBLAS\_USE\_JIT} and {\sf GRAPHBLAS\_COMPACT}}

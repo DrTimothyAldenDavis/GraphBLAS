@@ -35,7 +35,8 @@ void GB_cuda_release_stream (int device, cudaStream_t *stream)
 
     ASSERT (device < pool.streams.size()) ;
 
-    #pragma omp critical
+    GB_OPENMP_LOCK_SET (4)
+//  #pragma omp critical
     {
         if (pool.nstreams_avail[device] == STREAMS_PER_DEVICE)
         {
@@ -52,6 +53,7 @@ void GB_cuda_release_stream (int device, cudaStream_t *stream)
             pool.nstreams_avail[device]++ ;
         }
     }
+    GB_OPENMP_LOCK_UNSET (4)
     (*stream) = nullptr ;
 }
 
@@ -60,14 +62,16 @@ GrB_Info GB_cuda_grab_stream (int device, cudaStream_t *stream)
     ASSERT (stream != nullptr) ;
     ASSERT (device < pool.streams.size()) ;
     GrB_Info ret = GrB_SUCCESS ;
+    cudaError_t cuda_error1 = cudaSuccess ;
 
-    #pragma omp critical
+    GB_OPENMP_LOCK_SET (4)
+//  #pragma omp critical
     {
         if (!pool.nstreams_avail[device])
         {
             // Pool is empty; create a stream
             GB_cuda_set_device (device) ;
-            CUDA_OK (cudaStreamCreate (stream)) ;
+            cuda_error1 = cudaStreamCreate (stream) ;
         }
         else
         {
@@ -77,6 +81,8 @@ GrB_Info GB_cuda_grab_stream (int device, cudaStream_t *stream)
             pool.nstreams_avail[device]-- ;
         }
     }
+    GB_OPENMP_LOCK_UNSET (4)
+    CUDA_OK (cuda_error1) ;
     return ret ;
 }
 

@@ -30,6 +30,11 @@ bool GB_cuda_AxB_dot3_branch
         return (false) ;
     }
 
+    if (semiring->hash == UINT64_MAX)
+    {
+        return false ;
+    }
+
     if (!GB_cuda_type_branch (A->type) ||
         !GB_cuda_type_branch (B->type) ||
         !GB_cuda_type_branch (semiring->multiply->xtype) ||
@@ -55,14 +60,11 @@ bool GB_cuda_AxB_dot3_branch
     GBURBLE (" work:%g GPUs:%d ", work, ngpus_to_use) ;
     if (ngpus_to_use > 0)
     {
-        // FIXME: or do this in GB_AxB_dot3_cuda
-        // int gpu_id = GB_Context_gpu_id_get ( ) ;
-        // cudaSetDevice (gpu_id) ;
+        // FIXME: determine which GPU from the context object
         return true ;
     }
     else
     {
-//      std::cout << "Not using cuda path for dot3." <<  std::endl;
         return false ;
     }
 }

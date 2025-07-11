@@ -56,13 +56,10 @@ have to continually be recompiled.  By default the folder is
 \verb'~/.SuiteSparse/GrBX.Y.Z' on Linux/Mac, where \verb'X.Y.Z' is the version
 of GraphBLAS you have.  On Windows, the location is determined by your
 \verb'LOCALAPPDATA' environment variable, where the folder is
-\verb'SuiteSparse/GrBX.Y.Z' inside that location.  File locking is required,
-so if the file system does not support file locking, the JIT will not work and
-performance will suffer (the \verb'make demos' will fail since it tests this
-condition).  If this occurs, try making your \verb'SuiteSparse' cache folder
-a link to another a location on another file system that supports file locking,
-or set an environment variable, \verb'GRAPHBLAS_CACHE_PATH', to point to your
-a cache folder location on a file system that supports file locking.
+\verb'SuiteSparse/GrBX.Y.Z' inside that location.
+
+In SuiteSparse:GraphBLAS v10.1.1 and later, the file system
+that holds the cache no longer needs to suppose file locking.
 See Section~\ref{cache_path} for more details.
 
 %----------------------------------------

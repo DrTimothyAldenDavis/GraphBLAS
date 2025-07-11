@@ -15,7 +15,7 @@ bool GB_cuda_apply_unop_branch
         return (false) ;
     }
 
-    if (op == NULL)
+    if (op == NULL || op->hash == UINT64_MAX)
     {
         return false ;
     }
@@ -42,9 +42,6 @@ bool GB_cuda_apply_unop_branch
     
     double work = GB_nnz_held (A) ;
     int gpu_count = GB_ngpus_to_use (work) ;
-
-    ok = ok && (op->hash != UINT64_MAX) ;
     ok = ok && (gpu_count > 0);
-
     return ok ;
 }

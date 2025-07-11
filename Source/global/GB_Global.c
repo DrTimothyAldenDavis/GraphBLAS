@@ -155,7 +155,7 @@ typedef struct
     // OpenMP locks
     //--------------------------------------------------------------------------
 
-    #define GB_GLOBAL_NLOCKS 4
+    #define GB_GLOBAL_NLOCKS 8
     GB_OPENMP_LOCK_T lock [GB_GLOBAL_NLOCKS] ;
     bool lock_is_created [GB_GLOBAL_NLOCKS] ;
 }
