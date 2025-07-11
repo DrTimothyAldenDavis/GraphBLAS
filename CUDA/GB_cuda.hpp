@@ -28,6 +28,10 @@ extern "C"
 #include <limits>
 #include <iostream>
 #include <cstdint>
+#include <thread>
+#include <array>
+#include <vector>
+
 #include <stdint.h>
 #include <stdio.h>
 

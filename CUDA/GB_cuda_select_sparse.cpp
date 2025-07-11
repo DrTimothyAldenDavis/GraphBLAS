@@ -7,9 +7,8 @@
     if (stream != nullptr)                                  \
     {                                                       \
         cudaStreamSynchronize (stream) ;                    \
-        cudaStreamDestroy (stream) ;                        \
+        GB_cuda_release_stream (device, &stream) ;          \
     }                                                       \
-    stream = nullptr ;                                      \
 }
 
 #undef  GB_FREE_ALL
@@ -40,9 +39,11 @@ GrB_Info GB_cuda_select_sparse
     ASSERT (C != NULL && !(C->header_size == 0)) ;
     ASSERT (A != NULL && !(A->header_size == 0)) ;
 
-    // FIXME: use the stream pool
+    int device ;
     cudaStream_t stream = nullptr ;
-    CUDA_OK (cudaStreamCreate (&stream)) ;
+
+    CUDA_OK (cudaGetDevice (&device)) ;
+    GB_cuda_grab_stream (device, &stream) ;
 
     GrB_Index anz = GB_nnz_held (A) ;
 

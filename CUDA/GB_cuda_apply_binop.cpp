@@ -7,9 +7,8 @@
     if (stream != nullptr)                                  \
     {                                                       \
         cudaStreamSynchronize (stream) ;                    \
-        cudaStreamDestroy (stream) ;                        \
+        GB_cuda_release_stream (device, &stream) ;          \
     }                                                       \
-    stream = nullptr ;                                      \
 }
 
 #undef  GB_FREE_ALL
@@ -32,9 +31,11 @@ GrB_Info GB_cuda_apply_binop
     GB_void *scalarx_cuda = NULL ;
     size_t scalarx_cuda_size = 0 ;
 
-    // FIXME: use the stream pool
+    int device ;
     cudaStream_t stream = nullptr ;
-    CUDA_OK (cudaStreamCreate (&stream)) ;
+
+    CUDA_OK (cudaGetDevice (&device)) ;
+    GB_cuda_grab_stream (device, &stream) ;
 
     ASSERT (scalarx != NULL) ;
     // make a copy of scalarx to ensure it's not on the CPU stack

@@ -19,7 +19,7 @@
 
 GrB_Info GB_cuda_init (void)
 {
-
+    GrB_Info info ;
     // get the GPU properties
     if (!GB_Global_gpu_count_set (true))
     {
@@ -60,6 +60,13 @@ GrB_Info GB_cuda_init (void)
             printf ("GB_cuda_init line %d\n", __LINE__) ;
             return (GxB_GPU_ERROR) ;
         }
+    }
+
+    info = GB_cuda_stream_pool_init (gpu_count) ;
+    if (info != GrB_SUCCESS)
+    {
+        printf ("GB_cuda_init line %d\n", __LINE__) ;
+        return info ;
     }
 
     // FIXME: default device set to 1 to avoid hardware failure ...

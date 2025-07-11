@@ -11,6 +11,7 @@
 #define GB_CUDA_AXB_H
 
 #include "GB_cuda.hpp"
+#include "GB_cuda_stream_pool.hpp"
 
 GrB_Info GB_cuda_AxB_dot3_jit
 (

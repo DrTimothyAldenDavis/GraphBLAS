@@ -22,9 +22,8 @@
     if (stream != nullptr)                                  \
     {                                                       \
         cudaStreamSynchronize (stream) ;                    \
-        cudaStreamDestroy (stream) ;                        \
+        GB_cuda_release_stream (device, &stream) ;          \
     }                                                       \
-    stream = nullptr ;                                      \
 }
 
 #define GB_FREE_ALL                                         \
@@ -62,10 +61,12 @@ GrB_Info GB_cuda_reduce_to_scalar
     // create the stream
     //--------------------------------------------------------------------------
 
-    // FIXME: use the stream pool
+    int device ;
     cudaStream_t stream = nullptr ;
-    CUDA_OK (cudaStreamCreate (&stream)) ;
 
+    CUDA_OK (cudaGetDevice (&device)) ;
+    GB_cuda_grab_stream (device, &stream) ;
+    
     //--------------------------------------------------------------------------
     // determine problem characteristics and allocate worksbace
     //--------------------------------------------------------------------------
