@@ -163,7 +163,10 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     GB_macrofy_type (fp, "Z", "_", ztype_name) ;
     GB_macrofy_type (fp, "X", "_", xtype_name) ;
     GB_macrofy_type (fp, "Y", "_", ytype_name) ;
-    GB_macrofy_type (fp, "THETA", "_", theta_type_name) ;
+    if (GB_IS_INDEXBINARYOP_CODE (opcode))
+    {
+        GB_macrofy_type (fp, "THETA", "_", theta_type_name) ;
+    }
 
     //--------------------------------------------------------------------------
     // construct macros for the binary operator
