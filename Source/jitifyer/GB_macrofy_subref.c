@@ -98,7 +98,7 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     // construct the typedefs
     //--------------------------------------------------------------------------
 
-    GB_macrofy_typedefs (fp, ctype, NULL, NULL, NULL, NULL, NULL) ;
+    GB_macrofy_typedefs (fp, ctype, NULL, NULL, NULL, NULL, NULL, NULL) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for C and A

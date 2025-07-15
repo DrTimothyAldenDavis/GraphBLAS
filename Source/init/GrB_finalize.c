@@ -26,6 +26,8 @@ GrB_Info GrB_finalize ( )
     }
     #endif
 
+    GB_Global_lock_destroy ( ) ;
+
     return (GrB_SUCCESS) ;
 }
 

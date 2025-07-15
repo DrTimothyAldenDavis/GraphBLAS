@@ -355,8 +355,6 @@
 #define GB_file_dlopen GM_file_dlopen
 #define GB_file_dlsym GM_file_dlsym
 #define GB_file_mkdir GM_file_mkdir
-#define GB_file_open_and_lock GM_file_open_and_lock
-#define GB_file_unlock_and_close GM_file_unlock_and_close
 #define GB_flip_binop GM_flip_binop
 #define GB_free_memory GM_free_memory
 #define GB_frexpef GM_frexpef
@@ -423,6 +421,10 @@
 #define GB_Global_is_csc_set GM_Global_is_csc_set
 #define GB_Global_j_control_get GM_Global_j_control_get
 #define GB_Global_j_control_set GM_Global_j_control_set
+#define GB_Global_lock_destroy GM_Global_lock_destroy
+#define GB_Global_lock_init GM_Global_lock_init
+#define GB_Global_lock_set GM_Global_lock_set
+#define GB_Global_lock_unset GM_Global_lock_unset
 #define GB_Global_make_persistent GM_Global_make_persistent
 #define GB_Global_malloc_debug_count_decrement GM_Global_malloc_debug_count_decrement
 #define GB_Global_malloc_debug_count_set GM_Global_malloc_debug_count_set

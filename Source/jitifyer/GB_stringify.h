@@ -930,7 +930,8 @@ void GB_macrofy_typedefs
     GrB_Type btype,
     GrB_Type xtype,
     GrB_Type ytype,
-    GrB_Type ztype
+    GrB_Type ztype,
+    GrB_Type theta_type
 ) ;
 
 void GB_macrofy_type

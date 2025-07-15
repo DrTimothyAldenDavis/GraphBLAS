@@ -10,6 +10,7 @@
 #define GB_CUDA_SELECT_H
 
 #include "GB_cuda.hpp"
+#include "GB_cuda_stream_pool.hpp"
 #include "select/GB_select_iso.h"
 
 GrB_Info GB_cuda_select_bitmap_jit

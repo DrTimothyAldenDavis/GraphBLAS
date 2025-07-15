@@ -16,6 +16,11 @@ bool GB_cuda_rowscale_branch
         return (false) ;
     }
 
+    if (semiring->hash == UINT64_MAX)
+    {
+        return false ;
+    }
+
     if (D->header_size == 0)
     {
         return false ;
@@ -31,5 +36,9 @@ bool GB_cuda_rowscale_branch
     {
         return false;
     }
-    return true;
+
+    double work = GB_nnz_held (B) ;
+    int gpu_count = GB_ngpus_to_use (work) ;
+    
+    return (gpu_count > 0);
 }

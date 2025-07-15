@@ -150,7 +150,8 @@ GrB_Info GrB_Global_set_Scalar
     // set the field
     //--------------------------------------------------------------------------
 
-    #pragma omp critical (GB_global_get_set)
+//  #pragma omp critical (GB_global_get_set)
+    GB_OPENMP_LOCK_SET (0)
     {
         double dvalue = 0 ;
         int32_t ivalue = 0 ;
@@ -195,6 +196,7 @@ GrB_Info GrB_Global_set_Scalar
                 break ;
         }
     }
+    GB_OPENMP_LOCK_UNSET (0)
 
     return ((info == GrB_NO_VALUE) ? GrB_EMPTY_OBJECT : info) ;
 }
@@ -224,7 +226,8 @@ GrB_Info GrB_Global_set_String
     // get the field
     //--------------------------------------------------------------------------
 
-    #pragma omp critical (GB_global_get_set)
+//  #pragma omp critical (GB_global_get_set)
+    GB_OPENMP_LOCK_SET (0)
     {
         switch ((int) field)
         {
@@ -280,6 +283,7 @@ GrB_Info GrB_Global_set_String
                 break ;
         }
     }
+    GB_OPENMP_LOCK_UNSET (0)
 
     return (info) ;
 }
@@ -308,10 +312,12 @@ GrB_Info GrB_Global_set_INT32
     // set the field
     //--------------------------------------------------------------------------
 
-    #pragma omp critical (GB_global_get_set)
+//  #pragma omp critical (GB_global_get_set)
+    GB_OPENMP_LOCK_SET (0)
     {
         info = GB_global_enum_set (value, field) ;
     }
+    GB_OPENMP_LOCK_UNSET (0)
 
     return (info) ;
 }
@@ -343,7 +349,8 @@ GrB_Info GrB_Global_set_VOID
     // set the field
     //--------------------------------------------------------------------------
 
-    #pragma omp critical (GB_global_get_set)
+//  #pragma omp critical (GB_global_get_set)
+    GB_OPENMP_LOCK_SET (0)
     {
         switch ((int) field)
         {
@@ -403,6 +410,7 @@ GrB_Info GrB_Global_set_VOID
                 break ;
         }
     }
+    GB_OPENMP_LOCK_UNSET (0)
 
     #pragma omp flush
     return (info) ;
