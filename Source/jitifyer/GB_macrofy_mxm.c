@@ -129,7 +129,7 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
             (ccode == 0) ? NULL : ctype,
             (acode == 0) ? NULL : atype,
             (bcode == 0) ? NULL : btype,
-            xtype, ytype, ztype) ;
+            xtype, ytype, ztype, mult->theta_type) ;
     }
 
     //--------------------------------------------------------------------------
@@ -143,6 +143,9 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     fprintf (fp, "\n// monoid:\n") ;
     const char *u_expr, *g_expr ;
     GB_macrofy_type (fp, "Z", "_", (zcode == 0) ? "GB_void" : ztype->name) ;
+    char *theta_type_name = (mult->theta_type == NULL) ?
+        "void" : mult->theta_type->name ;
+    GB_macrofy_type (fp, "THETA", "_", theta_type_name) ;
     GB_macrofy_monoid (fp, C_iso, monoid, is_positional, &u_expr, &g_expr) ;
 
     //--------------------------------------------------------------------------
