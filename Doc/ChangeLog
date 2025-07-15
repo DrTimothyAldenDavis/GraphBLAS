@@ -7,6 +7,7 @@ July 25, 2025: version 10.1.1
     * MATLAB: added method for getting/setting the JIT cache path.
     * JIT file lock/unlock: removed; if multiple user processes use
         GraphBLAS at the same time, each must set their own unique JIT cache.
+    * (65) bug fix: theta type definitions for user-defined index binary ops
 
 June 1, 2025: version 10.1.0
 
