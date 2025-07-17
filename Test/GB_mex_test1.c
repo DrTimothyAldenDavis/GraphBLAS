@@ -36,7 +36,7 @@ bool select_nothing (uint64_t i, uint64_t j, const void *x, const void *thunk)
     return (false) ;
 }
 
-typedef int16_t user_int ;
+typedef int16_t gb_user_int16 ;
 
 void mexFunction
 (
@@ -780,12 +780,12 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Type user_type = NULL ;
-    OK (GxB_Type_new (&user_type, sizeof (user_int), "user_int",
-        "typedef int16_t user_int ;")) ;
+    OK (GxB_Type_new (&user_type, sizeof (gb_user_int16), "gb_user_int16",
+        "typedef int16_t gb_user_int16 ;")) ;
     OK (GrB_Type_wait_(user_type, GrB_MATERIALIZE)) ;
     OK (GrB_Matrix_new (&A, user_type, 10, 10)) ;
     OK (GrB_Matrix_new (&B, GrB_INT16, 10, 10)) ;
-    user_int value ;
+    gb_user_int16 value ;
     for (int i = 0 ; i < 10 ; i++)
     {
         value = (int64_t) i ;
@@ -1178,8 +1178,8 @@ void mexFunction
     // setElement typecast
     //--------------------------------------------------------------------------
 
-    OK (GxB_Type_new (&user_type, sizeof (user_int), "user_int",
-        "typedef int16_t user_int ;")) ;
+    OK (GxB_Type_new (&user_type, sizeof (gb_user_int16), "gb_user_int16",
+        "typedef int16_t gb_user_int16 ;")) ;
     OK (GrB_Matrix_new (&A, user_type, 10, 10)) ;
 
     expected = GrB_DOMAIN_MISMATCH ;

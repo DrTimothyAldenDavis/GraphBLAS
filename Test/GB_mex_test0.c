@@ -69,7 +69,7 @@
 #define G1 GxB_SUMMARY
 #define G0 GxB_SILENT
 
-typedef int16_t user_int ;
+typedef int16_t gb_user_int16 ;
 
 void f1 (double *z, const uint32_t *x) ;
 void f2 (int32_t *z, const uint8_t *x, const int16_t *y) ;
@@ -1037,8 +1037,8 @@ void mexFunction
     printf ("build udt:\n") ;
     OK (GrB_Vector_free_(&v)) ;
     GrB_Type user_type = NULL ;
-    OK (GxB_Type_new (&user_type, sizeof (user_int), "user_int",
-        "typedef int16_t user_int ;")) ;
+    OK (GxB_Type_new (&user_type, sizeof (gb_user_int16), "gb_user_int16",
+        "typedef int16_t gb_user_int16 ;")) ;
     OK (GrB_Vector_new (&v, user_type, 10)) ;
     info = GrB_Vector_build_UDT (v, I, (void *) X, 5, GrB_PLUS_FP64) ;
     GrB_Vector_error (&err, v) ;

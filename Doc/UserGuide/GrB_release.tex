@@ -16,7 +16,7 @@
     \item JIT file lock/unlock: removed; if multiple user processes use
         GraphBLAS at the same time, each must set their own unique JIT cache.
     \item (65) bug fix: theta type definitions for user-defined index
-        binary ops.
+        binary ops were incorrectly typedef'd in the JIT kernels.
     \end{itemize}
 
 \item June 1, 2025: version 10.1.0
