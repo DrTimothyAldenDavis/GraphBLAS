@@ -3,11 +3,7 @@
 #undef  GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE                                   \
 {                                                           \
-    if (stream != nullptr)                                  \
-    {                                                       \
-        cudaStreamSynchronize (stream) ;                    \
-        GB_cuda_release_stream (device, &stream) ;          \
-    }                                                       \
+    GB_cuda_release_stream (&stream) ;                      \
 }
 
 #undef  GB_FREE_ALL
@@ -27,11 +23,8 @@ GrB_Info GB_cuda_select_bitmap
 {
     GrB_Info info ;
 
-    int device ;
     cudaStream_t stream = nullptr ;
-
-    CUDA_OK (cudaGetDevice (&device)) ;
-    GB_cuda_grab_stream (device, &stream) ;
+    GB_OK (GB_cuda_acquire_stream (&stream)) ;
 
     GrB_Index anz = GB_nnz_held (A) ;
 

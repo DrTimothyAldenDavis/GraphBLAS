@@ -99,7 +99,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     printf ("dot3 using cuda device %d\n", device) ;
     int number_of_sms = GB_Global_gpu_sm_get (0) ;
 
-    GB_cuda_grab_stream (device, &stream) ;
+    GB_OK (GB_cuda_acquire_stream (&stream)) ;
 
     //--------------------------------------------------------------------------
     // get M
