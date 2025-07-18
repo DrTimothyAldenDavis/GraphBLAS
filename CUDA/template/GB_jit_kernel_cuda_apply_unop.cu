@@ -36,7 +36,7 @@ __global__ void GB_cuda_apply_unop_kernel
     #if ( GB_A_IS_BITMAP )
     const int8_t *__restrict__ Ab = (int8_t *) A->b ;
     #endif
-    
+
     GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) Cx_out;
 
     #define A_iso GB_A_ISO
@@ -47,29 +47,32 @@ __global__ void GB_cuda_apply_unop_kernel
     #endif
 
     #if ( GB_A_IS_BITMAP || GB_A_IS_FULL )
+
         // bitmap/full case
         int tid = blockDim.x * blockIdx.x + threadIdx.x ;
         int nthreads = blockDim.x * gridDim.x ;
+        #if ( GB_DEPENDS_ON_I ) || ( GB_DEPENDS_ON_J )
+        const int64_t avlen = A->vlen ;
+        #endif
         for (int64_t p = tid ; p < anz ; p += nthreads)
         {
             if (!GBb_A (Ab, p)) { continue ; }
-
             #if ( GB_DEPENDS_ON_I )
-            int64_t row_idx = p % A->vlen ;
+            int64_t row_idx = p % avlen ;
             #endif
-
             #if ( GB_DEPENDS_ON_J )
-            int64_t col_idx = p / A->vlen ;
+            int64_t col_idx = p / avlen ;
             #endif
-
             GB_UNOP (Cx, p, Ax, p, A_iso, row_idx, col_idx, thunk_value) ;
         }
+
     #else
+
         // sparse/hypersparse case
         #if ( GB_DEPENDS_ON_J )
             const int64_t anvec = A->nvec ;
             // need to do ek_slice method
-            for (int64_t pfirst = blockIdx.x << log2_chunk_size ; 
+            for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
                         pfirst < anz ;
                         pfirst += gridDim.x << log2_chunk_size )
                 {
@@ -77,33 +80,27 @@ __global__ void GB_cuda_apply_unop_kernel
                     float slope ;
                     GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst, chunk_size,
                         &kfirst, &klast, &my_chunk_size, &anvec_sub1, &slope) ;
-
                     for (int64_t pdelta = threadIdx.x ; pdelta < my_chunk_size ; pdelta += blockDim.x)
                     {
-                        int64_t p_final ;
-                        int64_t k = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (&p_final, pdelta, pfirst, Ap, anvec_sub1, kfirst, slope) ;
+                        int64_t p ;
+                        int64_t k = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (&p, pdelta, pfirst, Ap, anvec_sub1, kfirst, slope) ;
                         int64_t col_idx = GBh_A (Ah, k) ;
-                        
                         #if ( GB_DEPENDS_ON_I )
-                        int64_t row_idx = GBi_A (Ai, p_final, A->vlen) ;
+                        int64_t row_idx = Ai [p] ;
                         #endif
-
-                        GB_UNOP (Cx, p_final, Ax, p_final, 
-                            A_iso, row_idx, col_idx, thunk_value) ;
+                        GB_UNOP (Cx, p, Ax, p, A_iso, row_idx, col_idx, thunk_value) ;
                     }
                 }
         #else
             // can do normal method
-            const int64_t avlen = A->vlen ;
             int tid = blockDim.x * blockIdx.x + threadIdx.x ;
             int nthreads = blockDim.x * gridDim.x ;
             for (int64_t p = tid ; p < anz ; p += nthreads)
             {
                 #if ( GB_DEPENDS_ON_I )
-                int64_t row_idx = GBi_A (Ai, p, avlen) ;
+                int64_t row_idx = Ai [p] ;
                 #endif
-
-                GB_UNOP (Cx, p, Ax, p, A_iso, row_idx, /* col_idx */, thunk_value) ;  
+                GB_UNOP (Cx, p, Ax, p, A_iso, row_idx, /* col_idx unused */, thunk_value) ;
             }
         #endif
     #endif
