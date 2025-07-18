@@ -1,13 +1,10 @@
 #include "GB_cuda_select.hpp"
 
-#undef  GB_FREE_WORKSPACE
-#define GB_FREE_WORKSPACE                                   \
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL                                         \
 {                                                           \
     GB_cuda_release_stream (&stream) ;                      \
 }
-
-#undef  GB_FREE_ALL
-#define GB_FREE_ALL GB_FREE_WORKSPACE
 
 #define BLOCK_SIZE 512
 #define LOG2_BLOCK_SIZE 9
@@ -35,6 +32,6 @@ GrB_Info GB_cuda_select_bitmap
     GB_OK (GB_cuda_select_bitmap_jit (C, A,
         flipij, ythunk, op, stream, gridsz, BLOCK_SIZE)) ;
 
-    GB_FREE_WORKSPACE ;
+    GB_OK (GB_cuda_release_stream (&stream)) ;
     return GrB_SUCCESS ;
 }

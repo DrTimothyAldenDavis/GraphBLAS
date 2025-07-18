@@ -1,17 +1,11 @@
 
 #include "GB_cuda_select.hpp"
 
-#undef  GB_FREE_WORKSPACE
-#define GB_FREE_WORKSPACE                                   \
-{                                                           \
-    GB_cuda_release_stream (&stream) ;                      \
-}
-
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL         \
-{                           \
-    GB_phybix_free (C) ;    \
-    GB_FREE_WORKSPACE ;     \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_phybix_free (C) ;                    \
+    GB_cuda_release_stream (&stream) ;      \
 }
 
 #define BLOCK_SIZE 512
@@ -71,7 +65,7 @@ GrB_Info GB_cuda_select_sparse
     GB_OK (GB_cuda_select_sparse_jit (C, A,
         flipij, ythunk, op, stream, gridsz, BLOCK_SIZE)) ;
 
-    GB_FREE_WORKSPACE ;
+    GB_OK (GB_cuda_release_stream (&stream)) ;
 
     ASSERT (C->x != NULL) ;
 
