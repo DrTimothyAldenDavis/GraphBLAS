@@ -22,7 +22,6 @@ GrB_Info GrB_finalize ( )
     #if defined ( GRAPHBLAS_HAS_CUDA )
     {
         // finalize the GPUs
-        // FIXME: uncomment this
 //      GB_OK (GB_cuda_finalize ( )) ;
     }
     #endif

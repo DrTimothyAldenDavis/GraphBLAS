@@ -70,7 +70,7 @@
 #                       This will require SUITESPARSE_C_TO_FORTRAN to be
 #                       defined explicitly, if the defaults are not appropriate
 #                       for your system.
-#                       Default: ON
+#                       Default: OFF
 #
 #   SUITESPARSE_PKGFILEDIR: Directory where CMake Config and pkg-config files
 #                       will be installed.  By default, CMake Config files will
@@ -286,7 +286,7 @@ endif ( )
 #-------------------------------------------------------------------------------
 
 include ( CheckLanguage )
-option ( SUITESPARSE_USE_FORTRAN "ON (default): use Fortran. OFF: do not use Fortran" ON )
+option ( SUITESPARSE_USE_FORTRAN "ON: use Fortran. OFF (default): do not use Fortran" OFF )
 if ( SUITESPARSE_USE_FORTRAN )
     check_language ( Fortran )
     if ( CMAKE_Fortran_COMPILER )
