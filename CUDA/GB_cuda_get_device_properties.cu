@@ -8,6 +8,9 @@
 
 //------------------------------------------------------------------------------
 
+// These functions are not to be called by any *.cu method.  Instead,
+// they are to be solely used by C functions in GraphBLAS/Source.
+
 #include "GB_cuda.hpp"
 #define CU_OK(cudaMethod)                               \
 {                                                       \

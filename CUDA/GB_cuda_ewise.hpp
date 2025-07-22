@@ -10,7 +10,6 @@
 #define GB_CUDA_EWISE_H
 
 #include "GB_cuda.hpp"
-#include "GB_cuda_stream_pool.hpp"
 
 GrB_Info GB_cuda_rowscale_jit
 (

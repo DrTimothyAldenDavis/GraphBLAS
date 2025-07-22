@@ -70,7 +70,22 @@
 #                       This will require SUITESPARSE_C_TO_FORTRAN to be
 #                       defined explicitly, if the defaults are not appropriate
 #                       for your system.
-#                       Default: ON
+#                       Default: OFF
+#
+#       This setting was ON by default in SuiteSparse 7.10.0 and earlier.
+#       Note that Fortran is now disabled by default, with the default setting
+#       of SUITESPARSE_USE_FORTRAN changed from ON to OFF.  If the icx compiler
+#       and the Intel MKL BLAS are available but ifx is not, then loading the
+#       GNU Fortran compiler causes the cmake FindBLAS to link the Intel MKL
+#       against libgomp, but at the same time cmake links the application with
+#       libiomp.  Including two OpenMP libraries, libiomp and libgomp, in one
+#       application can cause serious performance issues.  To avoid this issue,
+#       SUITESPARSE_USE_FORTRAN has been set to OFF.  This has little impact on
+#       SuiteSparse (it disables the AMD Fortran routines, and removes the
+#       Fortran interface to UMFPACK).  If you wish to use those features,
+#       re-enable the SUITESPARSE_USE_FORTRAN, but be sure to use either gcc
+#       and gfortran together, or icx and ifx together.  Do not mix-and-match
+#       the compilers.
 #
 #   SUITESPARSE_PKGFILEDIR: Directory where CMake Config and pkg-config files
 #                       will be installed.  By default, CMake Config files will
@@ -286,7 +301,7 @@ endif ( )
 #-------------------------------------------------------------------------------
 
 include ( CheckLanguage )
-option ( SUITESPARSE_USE_FORTRAN "ON (default): use Fortran. OFF: do not use Fortran" ON )
+option ( SUITESPARSE_USE_FORTRAN "ON: use Fortran. OFF (default): do not use Fortran" OFF )
 if ( SUITESPARSE_USE_FORTRAN )
     check_language ( Fortran )
     if ( CMAKE_Fortran_COMPILER )

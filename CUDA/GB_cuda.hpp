@@ -86,5 +86,12 @@ void GB_cuda_upscale_identity
     GrB_Monoid monoid               // input: monoid to upscale
 ) ;
 
+//------------------------------------------------------------------------------
+// stream pool
+//------------------------------------------------------------------------------
+
+GrB_Info GB_cuda_acquire_stream (cudaStream_t *stream) ;
+GrB_Info GB_cuda_release_stream (cudaStream_t *stream) ;
+
 #endif
 

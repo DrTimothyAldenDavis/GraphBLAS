@@ -4,15 +4,14 @@
 #define GB_FREE_WORKSPACE                                   \
 {                                                           \
     GB_FREE_MEMORY (&ythunk_cuda, ythunk_cuda_size) ;       \
-    if (stream != nullptr)                                  \
-    {                                                       \
-        cudaStreamSynchronize (stream) ;                    \
-        GB_cuda_release_stream (device, &stream) ;          \
-    }                                                       \
 }
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL GB_FREE_WORKSPACE
+#define GB_FREE_ALL                                         \
+{                                                           \
+    GB_FREE_WORKSPACE                                       \
+    GB_cuda_release_stream (&stream) ;                      \
+}
 
 #define BLOCK_SIZE 512
 #define LOG2_BLOCK_SIZE 9
@@ -32,14 +31,13 @@ GrB_Info GB_cuda_apply_unop
     GB_void *ythunk_cuda = NULL ;
     size_t ythunk_cuda_size = 0 ;
 
-    int device ;
     cudaStream_t stream = nullptr ;
 
     GrB_Index anz = GB_nnz_held (A) ;
     if (anz == 0) return (GrB_SUCCESS) ;
 
-    CUDA_OK (cudaGetDevice (&device)) ;
-    GB_cuda_grab_stream (device, &stream) ;
+    // get a stream on the current device
+    GB_OK (GB_cuda_acquire_stream (&stream)) ;
 
     // FIXME: make this a CUDA helper function
     if (ythunk != NULL && op != NULL && op->ytype != NULL)
@@ -50,7 +48,7 @@ GrB_Info GB_cuda_apply_unop
             &ythunk_cuda_size) ;
         if (ythunk_cuda == NULL)
         {
-            GB_FREE_WORKSPACE ;
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
         memcpy (ythunk_cuda, ythunk, op->ytype->size) ;
@@ -65,5 +63,7 @@ GrB_Info GB_cuda_apply_unop
         ythunk_cuda, stream, gridsz, BLOCK_SIZE)) ;
 
     GB_FREE_WORKSPACE ;
+    GB_OK (GB_cuda_release_stream (&stream)) ;
     return GrB_SUCCESS ;
 }
+

@@ -11,7 +11,6 @@
 #define GB_CUDA_REDUCE_H
 
 #include "GB_cuda.hpp"
-#include "GB_cuda_stream_pool.hpp"
 
 GrB_Info GB_cuda_reduce_to_scalar_jit   // z = reduce_to_scalar (A) via CUDA JIT
 (

@@ -13,20 +13,11 @@
 // and B can have any sparsity format.  C is computed as sparse or hypersparse,
 // with the same format as M.
 
-#undef  GB_FREE_WORKSPACE
-#define GB_FREE_WORKSPACE                                   \
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL                                         \
 {                                                           \
-    if (stream != nullptr)                                  \
-    {                                                       \
-        cudaStreamSynchronize (stream) ;                    \
-        GB_cuda_release_stream (device, &stream) ;          \
-    }                                                       \
-}
-
-#define GB_FREE_ALL         \
-{                           \
-    GB_FREE_WORKSPACE ;     \
-    GB_phybix_free (C) ;    \
+    GB_phybix_free (C) ;                                    \
+    GB_cuda_release_stream (&stream) ;                      \
 }
 
 #include "GB_cuda_AxB.hpp"
@@ -92,14 +83,14 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
 
     int device = -1;
     cudaStream_t stream = nullptr ;
-    
-    // FIXME: control the GPU to use via the descriptor
+
+    // FIXME: control the GPU to use via the context
 //  CUDA_OK (cudaSetDevice ( 0 )) ;
     CUDA_OK (cudaGetDevice (&device)) ;     // FIXME
     printf ("dot3 using cuda device %d\n", device) ;
     int number_of_sms = GB_Global_gpu_sm_get (0) ;
 
-    GB_cuda_grab_stream (device, &stream) ;
+    GB_OK (GB_cuda_acquire_stream (&stream)) ;
 
     //--------------------------------------------------------------------------
     // get M
@@ -239,7 +230,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C result from dot3 cuda A'*B", GB0) ;
-    GB_FREE_WORKSPACE ;
+    GB_OK (GB_cuda_release_stream (&stream)) ;
     return GrB_SUCCESS;
 }
 
