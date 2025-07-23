@@ -44,6 +44,7 @@ endif ( )
   set ( GRAPHBLAS_USE_CUDA OFF )    # turn CUDA off in production
 # set ( GRAPHBLAS_USE_CUDA ON )     # use this for CUDA development only
 
+set ( SUITESPARSE_USE_FORTRAN OFF )
 include ( SuiteSparsePolicy )
 
 if ( NOT GRAPHBLAS_BUILD_STATIC_LIBS AND BUILD_SHARED_LIBS )

@@ -416,7 +416,7 @@ string must not be freed or modified.
     info = GrB_some_method_here (C, ...) ;
     if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))
     {
-        char *err ;
+        const char *err ;
         GrB_error (&err, C) ;
         printf ("info: %d error: %s\n", info, err) ;
     } \end{verbatim}}
