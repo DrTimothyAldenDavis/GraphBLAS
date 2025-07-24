@@ -81,7 +81,9 @@
 #       issued; this is NOT recommended, but it might be OK.  In that case,
 #       ensure that you are linking with just one OpenMP library.  If this
 #       occurs, disable the use of Fortran by setting SUITESPARSE_USE_FORTRAN
-#       to OFF, or use a suite of C/C++/Fortran compilers with the same ID.
+#       to OFF, use a suite of C/C++/Fortran compilers with the same ID,
+#       or ensure that all your compiled libraries link against a single
+#       OpenMP library.
 #
 #   SUITESPARSE_PKGFILEDIR: Directory where CMake Config and pkg-config files
 #                       will be installed.  By default, CMake Config files will
@@ -322,7 +324,7 @@ if ( SUITESPARSE_USE_FORTRAN )
                 " it has the same compiler ID as the C/C++ compilers."
                 "  Use a compatible Fortran compiler, or set SUITESPARSE_USE_FORTRAN to OFF." )
             else ( )
-                # for other case: just issue a warning and hope it works.
+                # other cases: just issue a warning and hope it works.
                 message ( WARNING "Warning: Using Fortran with SuiteSparse requires that "
                 " it has the same compiler ID as the C/C++ compilers."
                 "  Use a compatible Fortran compiler, or set SUITESPARSE_USE_FORTRAN to OFF." )
