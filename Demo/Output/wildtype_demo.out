@@ -1,27 +1,37 @@
  [ GxB_Type_new 
-   5.24e-06 sec ]
+   1.41e-06 sec ]
     GraphBLAS Type: WildType user-defined: [wildtype] size: 192
     typedef struct { double stuff [4][4] ; char whatstuff [64] ; } wildtype ;
 WildType size: 192
     GraphBLAS Type: WildType user-defined: [wildtype] size: 192
     Type given name: [WildType]
     typedef struct { double stuff [4][4] ; char whatstuff [64] ; } wildtype ;
-(convert ints 32/32 to 64/64, time: 3.1637e-06) 
+
 a wildtype scalar: scalar1 [this is from scalar1]
        0.0        1.0        2.0        3.0 
      100.0      101.0      102.0      103.0 
      200.0      201.0      202.0      203.0 
      300.0      301.0      302.0      303.0 
-(iso wait:C (setElement:to non-iso) 0 zombies, 1 pending) (build 32/32 time: 5.80074e-06) (convert ints 32/32 to 64/64, time: 2.24216e-06) (jit: compile and load) (jit compile:)
-sh -c "/usr/bin/gcc -DGB_JIT_RUNTIME=1  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp -I'/home/davis/.SuiteSparse/GrB10.0.0/src' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/template' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/include'  -o '/home/davis/.SuiteSparse/GrB10.0.0/c/5b/GB_jit__iso_expand__01002ee0eef__wildtype.o' -c '/home/davis/.SuiteSparse/GrB10.0.0/c/5b/GB_jit__iso_expand__01002ee0eef__wildtype.c'   2>&1   ; /usr/bin/gcc  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp  -shared  -o '/home/davis/.SuiteSparse/GrB10.0.0/lib/5b/libGB_jit__iso_expand__01002ee0eef__wildtype.so' '/home/davis/.SuiteSparse/GrB10.0.0/c/5b/GB_jit__iso_expand__01002ee0eef__wildtype.o'  -lm -ldl -lgomp -lpthread   2>&1  "
-(convert ints 32/32 to 64/64, time: 4.99608e-06)  [ GrB_transpose (wait:A 0 zombies, 2 pending) (build, 1 threads) (jit: compile and load) (jit compile:)
-sh -c "/usr/bin/gcc -DGB_JIT_RUNTIME=1  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp -I'/home/davis/.SuiteSparse/GrB10.0.0/src' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/template' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/include'  -o '/home/davis/.SuiteSparse/GrB10.0.0/c/35/GB_jit__build__a90eeeee__wildtype.o' -c '/home/davis/.SuiteSparse/GrB10.0.0/c/35/GB_jit__build__a90eeeee__wildtype.c'   2>&1   ; /usr/bin/gcc  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp  -shared  -o '/home/davis/.SuiteSparse/GrB10.0.0/lib/35/libGB_jit__build__a90eeeee__wildtype.so' '/home/davis/.SuiteSparse/GrB10.0.0/c/35/GB_jit__build__a90eeeee__wildtype.o'  -lm -ldl -lgomp -lpthread   2>&1  "
-(build 32/32 time: 0.0503795) (convert ints 32/32 to 64/64, time: 5.36721e-06) add:(H<.>=H+H) (jit: compile and load) (jit compile:)
-sh -c "/usr/bin/gcc -DGB_JIT_RUNTIME=1  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp -I'/home/davis/.SuiteSparse/GrB10.0.0/src' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/template' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/include'  -o '/home/davis/.SuiteSparse/GrB10.0.0/c/ba/GB_jit__add__00010e0e0eee00__wildtype.o' -c '/home/davis/.SuiteSparse/GrB10.0.0/c/ba/GB_jit__add__00010e0e0eee00__wildtype.c'   2>&1   ; /usr/bin/gcc  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp  -shared  -o '/home/davis/.SuiteSparse/GrB10.0.0/lib/ba/libGB_jit__add__00010e0e0eee00__wildtype.so' '/home/davis/.SuiteSparse/GrB10.0.0/c/ba/GB_jit__add__00010e0e0eee00__wildtype.o'  -lm -ldl -lgomp -lpthread   2>&1  "
-(hyper to sparse) (transpose) (builder transpose) (jit: compile and load) (jit compile:)
-sh -c "/usr/bin/gcc -DGB_JIT_RUNTIME=1  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp -I'/home/davis/.SuiteSparse/GrB10.0.0/src' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/template' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/include'  -o '/home/davis/.SuiteSparse/GrB10.0.0/c/94/GB_jit__build__290eeeee__wildtype.o' -c '/home/davis/.SuiteSparse/GrB10.0.0/c/94/GB_jit__build__290eeeee__wildtype.c'   2>&1   ; /usr/bin/gcc  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp  -shared  -o '/home/davis/.SuiteSparse/GrB10.0.0/lib/94/libGB_jit__build__290eeeee__wildtype.so' '/home/davis/.SuiteSparse/GrB10.0.0/c/94/GB_jit__build__290eeeee__wildtype.o'  -lm -ldl -lgomp -lpthread   2>&1  "
-(build 64/64 time: 0.0508151) (hyper to sparse) 
-   0.207 sec ]
+(jit: cpu load)  [ GrB_transpose (wait:A 0 zombies, 3 pending) (wait: build pending tuples) (build, 1 threads) 
+    GraphBLAS BinaryOp: 2nd_UDT (generated 2nd): z=wildtype(x,y)
+    BinaryOp given name: []
+    GraphBLAS Type: ztype user-defined: [wildtype] size: 192
+    Type given name: [WildType]
+    typedef struct { double stuff [4][4] ; char whatstuff [64] ; } wildtype ;
+    GraphBLAS Type: ytype user-defined: [wildtype] size: 192
+    Type given name: [WildType]
+    typedef struct { double stuff [4][4] ; char whatstuff [64] ; } wildtype ;
+(jit: cpu load) (wait: no prior entries; transplant) (hyper to sparse) (transpose) (builder transpose) 
+    GraphBLAS BinaryOp: 2nd_UDT (generated 2nd): z=wildtype(x,y)
+    BinaryOp given name: []
+    GraphBLAS Type: ztype user-defined: [wildtype] size: 192
+    Type given name: [WildType]
+    typedef struct { double stuff [4][4] ; char whatstuff [64] ; } wildtype ;
+    GraphBLAS Type: ytype user-defined: [wildtype] size: 192
+    Type given name: [WildType]
+    typedef struct { double stuff [4][4] ; char whatstuff [64] ; } wildtype ;
+(hyper to sparse) 
+   0.000178 sec ]
 
 a wildtype scalar: got scalar2 = C(7,2) [this is A(2,7)]
        0.0        1.0        2.0        3.0 
@@ -80,13 +90,13 @@ void wildmult (wildtype *z, const wildtype *x, const wildtype *y)
    char *pdst = z->whatstuff ;                                         
    while ((*pdst++ = *psrc++)) ;                                       
 }
-(convert ints 32/32 to 64/64, time: 4.48665e-06) 
+
 a wildtype scalar: scalar2 [here is scalar2]
        0.5        1.5        2.5        3.5 
       -0.5        0.5        1.5        2.5 
       -1.5       -0.5        0.5        1.5 
       -2.5       -1.5       -0.5        0.5 
-(iso wait:C (setElement:to non-iso) 0 zombies, 1 pending) (build 32/32 time: 7.86409e-06) (convert ints 32/32 to 64/64, time: 3.42587e-06) 
+
 a wildtype scalar: scalar_identity for the monoid [identity]
        0.0        0.0        0.0        0.0 
        0.0        0.0        0.0        0.0 
@@ -151,8 +161,8 @@ multiplication C=A*B InTheWild semiring:
 
 Printing the matrix with GxB_Matrix_fprint:
 
-  10x10 GraphBLAS wildtype matrix, sparse by row, ints: 64/64
-  input A, 3 entries, memory: 920 bytes
+  10x10 GraphBLAS wildtype matrix, sparse by row, ints: 32/32/32
+  input A, 3 entries, memory: 872 bytes
 
     (2,4) [user-defined value]
     (2,7) [user-defined value]
@@ -160,7 +170,7 @@ Printing the matrix with GxB_Matrix_fprint:
 
 matrix type given name: [WildType]
  [ GrB_Matrix_nvals 
-   1.52e-06 sec ]
+   5.91e-07 sec ]
 
 ============= printing the WildType matrix: input A (10-by-10 with 3 entries)
 
@@ -192,22 +202,30 @@ a wildtype scalar:  [this is A(3,7)]
 
 Printing the matrix with GxB_Matrix_fprint:
 
-  10x10 GraphBLAS wildtype matrix, hypersparse by row, ints: 64/64
-  input B, 1 entry, memory: 52.5 KB
-  pending tuples: 2 max pending: 256 zombies: 0
-
-    (7,2) [user-defined value]
+  10x10 GraphBLAS wildtype matrix, hypersparse by row, ints: 32/32/32
+  input B, no entries, memory: 50.5 KB
+  pending tuples: 3 max pending: 256 zombies: 0
   pending tuples:
     GraphBLAS Type:  user-defined: [wildtype] size: 192
     Type given name: [WildType]
     typedef struct { double stuff [4][4] ; char whatstuff [64] ; } wildtype ;
+    row: 7 col: 2 [user-defined value]
     row: 7 col: 5 [user-defined value]
     row: 4 col: 2 [user-defined value]
   pending operator: implicit 2nd
 
 matrix type given name: [WildType]
- [ GrB_Matrix_nvals (wait:A 0 zombies, 2 pending) (build, 1 threads) (build 32/32 time: 1.33016e-05) (convert ints 32/32 to 64/64, time: 3.21213e-06) add:(H<.>=H+H) (hyper to sparse) 
-   0.00016 sec ]
+ [ GrB_Matrix_nvals (wait:A 0 zombies, 3 pending) (wait: build pending tuples) (build, 1 threads) 
+    GraphBLAS BinaryOp: 2nd_UDT (generated 2nd): z=wildtype(x,y)
+    BinaryOp given name: []
+    GraphBLAS Type: ztype user-defined: [wildtype] size: 192
+    Type given name: [WildType]
+    typedef struct { double stuff [4][4] ; char whatstuff [64] ; } wildtype ;
+    GraphBLAS Type: ytype user-defined: [wildtype] size: 192
+    Type given name: [WildType]
+    typedef struct { double stuff [4][4] ; char whatstuff [64] ; } wildtype ;
+(wait: no prior entries; transplant) (hyper to sparse) 
+   4.03e-05 sec ]
 
 ============= printing the WildType matrix: input B (10-by-10 with 3 entries)
 
@@ -236,15 +254,13 @@ a wildtype scalar:  [here is B(7,5)]
       -2.5       -1.5       -0.5        0.5 
 
 ============= that was the WildType matrix input B
- [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3 bnz: 3) axbwork 8 (intensity: 1.14 workspace/(nnz(A)+nnz(B)): 1.43) (nthreads 1 coarse: 1) (sparse saxpy) (jit: compile and load) (jit compile:)
-sh -c "/usr/bin/gcc -DGB_JIT_RUNTIME=1  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp -I'/home/davis/.SuiteSparse/GrB10.0.0/src' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/template' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/include'  -o '/home/davis/.SuiteSparse/GrB10.0.0/c/0a/GB_jit__AxB_saxpy3__0100eee0eee45__wildadd_wildmult.o' -c '/home/davis/.SuiteSparse/GrB10.0.0/c/0a/GB_jit__AxB_saxpy3__0100eee0eee45__wildadd_wildmult.c'   2>&1   ; /usr/bin/gcc  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp  -shared  -o '/home/davis/.SuiteSparse/GrB10.0.0/lib/0a/libGB_jit__AxB_saxpy3__0100eee0eee45__wildadd_wildmult.so' '/home/davis/.SuiteSparse/GrB10.0.0/c/0a/GB_jit__AxB_saxpy3__0100eee0eee45__wildadd_wildmult.o'  -lm -ldl -lgomp -lpthread   2>&1  "
-
-   0.34 sec ]
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3 bnz: 3) axbwork 8 (intensity: 1.14 workspace/(nnz(A)+nnz(B)): 1.43) (nthreads 1 coarse: 1) (sparse saxpy) (jit: cpu load) 
+   0.000116 sec ]
 
 Printing the matrix with GxB_Matrix_fprint:
 
-  10x10 GraphBLAS wildtype matrix, sparse by row, ints: 64/64
-  output C, 4 entries, memory: 1.1 KB
+  10x10 GraphBLAS wildtype matrix, sparse by row, ints: 32/32/32
+  output C, 4 entries, memory: 1.0 KB
 
     (2,2) [user-defined value]
     (2,5) [user-defined value]
@@ -253,7 +269,7 @@ Printing the matrix with GxB_Matrix_fprint:
 
 matrix type given name: [WildType]
  [ GrB_Matrix_nvals 
-   7.12e-08 sec ]
+   4.4e-08 sec ]
 
 ============= printing the WildType matrix: output C (10-by-10 with 4 entries)
 
@@ -292,11 +308,11 @@ a wildtype scalar:  [this was multiplied]
 ============= that was the WildType matrix output C
 
 ------ C<M>=C*C'----------------------------------------
-(convert ints 32/32 to 64/64, time: 2.50107e-06) 
+
 The mask matrix M:
 
-  10x10 GraphBLAS bool matrix, hypersparse by row, ints: 64/64
-  M, no entries, memory: 4.4 KB
+  10x10 GraphBLAS bool matrix, hypersparse by row, ints: 32/32/32
+  M, no entries, memory: 2.4 KB
   iso value:   1
   pending tuples: 4 max pending: 256 zombies: 0
   pending tuples:
@@ -307,15 +323,13 @@ The mask matrix M:
     row: 3 col: 3 
   pending operator: implicit 2nd
 
- [ GrB_mxm (iso wait:M 0 zombies, 4 pending) (iso build, 1 threads) (build 32/32 time: 7.91205e-06) (hyper to sparse) (convert ints 32/32 to 64/64, time: 1.05193e-06) C<M>=A'*B, masked_dot_product (dot3) (S{S} = S'*S) nthreads 1 ntasks 1 (jit: compile and load) (jit compile:)
-sh -c "/usr/bin/gcc -DGB_JIT_RUNTIME=1  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp -I'/home/davis/.SuiteSparse/GrB10.0.0/src' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/template' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/include'  -o '/home/davis/.SuiteSparse/GrB10.0.0/c/38/GB_jit__AxB_dot3__0100eee2eee55__wildadd_wildmult.o' -c '/home/davis/.SuiteSparse/GrB10.0.0/c/38/GB_jit__AxB_dot3__0100eee2eee55__wildadd_wildmult.c'   2>&1   ; /usr/bin/gcc  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp  -shared  -o '/home/davis/.SuiteSparse/GrB10.0.0/lib/38/libGB_jit__AxB_dot3__0100eee2eee55__wildadd_wildmult.so' '/home/davis/.SuiteSparse/GrB10.0.0/c/38/GB_jit__AxB_dot3__0100eee2eee55__wildadd_wildmult.o'  -lm -ldl -lgomp -lpthread   2>&1  "
-
-   0.156 sec ]
+ [ GrB_mxm (iso wait:M 0 zombies, 4 pending) (wait: build pending tuples) (iso build, 1 threads) (wait: no prior entries; transplant) (hyper to sparse) C<M>=A'*B, masked_dot_product (dot3) (S{S} = S'*S) nthreads 1 ntasks 1 (jit: cpu load) 
+   8.83e-05 sec ]
 
 Printing the matrix with GxB_Matrix_fprint:
 
-  10x10 GraphBLAS wildtype matrix, sparse by row, ints: 64/64
-  output C, 4 entries, memory: 1.3 KB
+  10x10 GraphBLAS wildtype matrix, sparse by row, ints: 32/32/32
+  output C, 4 entries, memory: 1.2 KB
 
     (2,2) [user-defined value]
     (2,3) [user-defined value]
@@ -324,7 +338,7 @@ Printing the matrix with GxB_Matrix_fprint:
 
 matrix type given name: [WildType]
  [ GrB_Matrix_nvals 
-   8.89e-08 sec ]
+   3.5e-08 sec ]
 
 ============= printing the WildType matrix: output C (10-by-10 with 4 entries)
 
@@ -361,10 +375,8 @@ a wildtype scalar:  [this was added]
 -13424304.0 -2565388.0  6850828.0 16267044.0 
 
 ============= that was the WildType matrix output C
- [ GrB_reduce (jit: compile and load) (jit compile:)
-sh -c "/usr/bin/gcc -DGB_JIT_RUNTIME=1  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp -I'/home/davis/.SuiteSparse/GrB10.0.0/src' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/template' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/include'  -o '/home/davis/.SuiteSparse/GrB10.0.0/c/5c/GB_jit__reduce__00ee1__wildadd.o' -c '/home/davis/.SuiteSparse/GrB10.0.0/c/5c/GB_jit__reduce__00ee1__wildadd.c'   2>&1   ; /usr/bin/gcc  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp  -shared  -o '/home/davis/.SuiteSparse/GrB10.0.0/lib/5c/libGB_jit__reduce__00ee1__wildadd.so' '/home/davis/.SuiteSparse/GrB10.0.0/c/5c/GB_jit__reduce__00ee1__wildadd.o'  -lm -ldl -lgomp -lpthread   2>&1  "
-
-   0.0681 sec ]
+ [ GrB_reduce (jit: cpu load) 
+   3.42e-05 sec ]
 
 a wildtype scalar: sum (first time) [this was added]
  -111773.5      269.5    93412.5   583455.5 
@@ -372,17 +384,15 @@ a wildtype scalar: sum (first time) [this was added]
 -92402621.5  2801413.5 85075148.5 622622583.5 
 -149241466.8   471094.8 130123106.2 959972867.8 
  [ GrB_reduce 
-   2.65e-06 sec ]
+   2.98e-07 sec ]
 
 a wildtype scalar: sum (again) [this was added]
  -111773.5      269.5    93412.5   583455.5 
 -49510798.5   271594.5 43367587.5 319487980.5 
 -92402621.5  2801413.5 85075148.5 622622583.5 
 -149241466.8   471094.8 130123106.2 959972867.8 
- [ GrB_set (transpose) (in-place transpose) (transpose) (1-thread bucket transpose) (jit: compile and load) (jit compile:)
-sh -c "/usr/bin/gcc -DGB_JIT_RUNTIME=1  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp -I'/home/davis/.SuiteSparse/GrB10.0.0/src' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/template' -I'/home/davis/.SuiteSparse/GrB10.0.0/src/include'  -o '/home/davis/.SuiteSparse/GrB10.0.0/c/fe/GB_jit__trans_unop__04802ee0ee5__wildtype.o' -c '/home/davis/.SuiteSparse/GrB10.0.0/c/fe/GB_jit__trans_unop__04802ee0ee5__wildtype.c'   2>&1   ; /usr/bin/gcc  -Wundef  -Wno-strict-aliasing  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -fPIC  -fopenmp  -shared  -o '/home/davis/.SuiteSparse/GrB10.0.0/lib/fe/libGB_jit__trans_unop__04802ee0ee5__wildtype.so' '/home/davis/.SuiteSparse/GrB10.0.0/c/fe/GB_jit__trans_unop__04802ee0ee5__wildtype.o'  -lm -ldl -lgomp -lpthread   2>&1  "
-
-   0.0649 sec ]
+ [ GrB_set (transpose to set orientation) (transpose) (1-thread bucket transpose) (jit: cpu load) 
+   4.15e-05 sec ]
 
 C is now stored by column, but it looks just the same to the
 GraphBLAS user application.  The difference is opaque, in the
@@ -390,8 +400,8 @@ internal data structure.
 
 Printing the matrix with GxB_Matrix_fprint:
 
-  10x10 GraphBLAS wildtype matrix, sparse by col, ints: 64/64
-  output C, 4 entries, memory: 1.1 KB
+  10x10 GraphBLAS wildtype matrix, sparse by col, ints: 32/32/32
+  output C, 4 entries, memory: 1.0 KB
 
     (2,2) [user-defined value]
     (3,2) [user-defined value]
@@ -400,7 +410,7 @@ Printing the matrix with GxB_Matrix_fprint:
 
 matrix type given name: [WildType]
  [ GrB_Matrix_nvals 
-   8.2e-08 sec ]
+   2.6e-08 sec ]
 
 ============= printing the WildType matrix: output C (10-by-10 with 4 entries)
 
@@ -437,37 +447,37 @@ a wildtype scalar:  [this was added]
 -13424304.0 -2565388.0  6850828.0 16267044.0 
 
 ============= that was the WildType matrix output C
-(convert ints 32/32 to 64/64, time: 2.65799e-06) 
+
 Printing the matrix with GxB_Matrix_fprint:
 
-  10x10 GraphBLAS float matrix, hypersparse by row, ints: 64/64
+  10x10 GraphBLAS float matrix, hypersparse by row, ints: 32/32/32
   D, no entries, memory: 256 bytes
 
 matrix type given name: [GrB_FP32]
 
 The matrix D is not wild enough to print.
-(convert ints 32/32 to 64/64, time: 4.31621e-06)  [ GrB_apply (shallow-op) 
-   1.88e-05 sec ]
+ [ GrB_apply (shallow-op) 
+   7.61e-06 sec ]
 
-  10x10 GraphBLAS int64_t matrix, sparse by row, ints: 64/64
-  E (positional i), 3 entries, memory: 368 bytes
+  10x10 GraphBLAS int64_t matrix, sparse by row, ints: 32/32/32
+  E (positional i), 3 entries, memory: 320 bytes
 
     (2,4)   2
     (2,7)   2
     (3,7)   3
 
  [ GrB_apply (shallow-op) 
-   4.14e-06 sec ]
+   3.48e-06 sec ]
 
-  10x10 GraphBLAS int64_t matrix, sparse by row, ints: 64/64
-  E (positional j), 3 entries, memory: 368 bytes
+  10x10 GraphBLAS int64_t matrix, sparse by row, ints: 32/32/32
+  E (positional j), 3 entries, memory: 320 bytes
 
     (2,4)   4
     (2,7)   7
     (3,7)   7
 
  [ GrB_eWiseAdd 
-   8.19e-06 sec ]
+   5.29e-06 sec ]
 
 This is supposed to fail, as a demo of GrB_error:
 GraphBLAS error: GrB_DOMAIN_MISMATCH
