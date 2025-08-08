@@ -290,7 +290,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 
     // in-place cumsum, overwriting Keep with its cumsum, then becomes Map
     GB_OK (GB_cuda_cumsum (Keep, Keep, A->nvals, stream,
-        GB_CUDA_CUMSUM_INCLUSIVE)) ;
+        GB_CUDA_CUMSUM_INCLUSIVE, my_callback)) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     int64_t *Map = Keep ;             // Keep has been replaced with Map
@@ -348,7 +348,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 
     // Phase 3b: Ck_map = cumsum (Ck_delta)
     GB_OK (GB_cuda_cumsum (Keep, Ck_delta, cnz, stream,
-        GB_CUDA_CUMSUM_INCLUSIVE)) ;
+        GB_CUDA_CUMSUM_INCLUSIVE, my_callback)) ;
 
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 

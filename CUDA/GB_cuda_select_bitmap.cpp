@@ -20,6 +20,8 @@ GrB_Info GB_cuda_select_bitmap
 {
     GrB_Info info ;
 
+    GBURBLE (" (select bitmap on cuda)") ;
+
     cudaStream_t stream = nullptr ;
     GB_OK (GB_cuda_acquire_stream (&stream)) ;
 

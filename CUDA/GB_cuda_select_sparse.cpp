@@ -29,6 +29,8 @@ GrB_Info GB_cuda_select_sparse
     ASSERT (C != NULL && !(C->header_size == 0)) ;
     ASSERT (A != NULL && !(A->header_size == 0)) ;
 
+    GBURBLE ("(select sparse on cuda) ") ;
+
     cudaStream_t stream = nullptr ;
     GB_OK (GB_cuda_acquire_stream (&stream)) ;
 
