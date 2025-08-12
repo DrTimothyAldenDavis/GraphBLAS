@@ -84,9 +84,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     int device = -1;
     cudaStream_t stream = nullptr ;
 
-    // FIXME: control the GPU to use via the context
-//  CUDA_OK (cudaSetDevice ( 0 )) ;
-    CUDA_OK (cudaGetDevice (&device)) ;     // FIXME
+    CUDA_OK (cudaGetDevice (&device)) ;     // FIXME: use the Context
     printf ("dot3 using cuda device %d\n", device) ;
     int number_of_sms = GB_Global_gpu_sm_get (0) ;
 

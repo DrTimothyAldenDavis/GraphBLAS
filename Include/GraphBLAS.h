@@ -1,4 +1,4 @@
-// SuiteSparse:GraphBLAS 10.1.1
+// SuiteSparse:GraphBLAS 10.2.0
 //------------------------------------------------------------------------------
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
@@ -286,10 +286,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "July 25, 2025"
+#define GxB_IMPLEMENTATION_DATE "FIXME, 2025"
 #define GxB_IMPLEMENTATION_MAJOR 10
-#define GxB_IMPLEMENTATION_MINOR 1
-#define GxB_IMPLEMENTATION_SUB   1
+#define GxB_IMPLEMENTATION_MINOR 2
+#define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "Dec 22, 2023"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 1
@@ -405,7 +405,7 @@ typedef enum    // GrB_Info
     GrB_EMPTY_OBJECT = -106,        // an object does not contain a value
     #ifndef GRAPHBLAS_VANILLA
     GxB_JIT_ERROR = -7001,          // JIT compiler/loader error
-    GxB_GPU_ERROR = -7002,          // GPU error (future; not yet in production)
+    GxB_GPU_ERROR = -7002,          // GPU error
     GxB_OUTPUT_IS_READONLY = -7003, // output matrix has readonly components
     #endif
 
@@ -436,7 +436,6 @@ typedef enum    // GrB_Mode
     GrB_NONBLOCKING = 0,        // methods may return with pending computations
     GrB_BLOCKING = 1,           // no computations are ever left pending
     #ifndef GRAPHBLAS_VANILLA
-    //  DRAFT: in progress, do not use:
     GxB_NONBLOCKING_GPU = 7099, // non-blocking mode, allow use of GPU(s)
     GxB_BLOCKING_GPU = 7098,    // blocking mode, allow use of GPU(s)
     #endif
@@ -554,8 +553,9 @@ typedef struct GB_Scalar_opaque *GxB_Scalar ;       // use GrB_Scalar
 #define GxB_NTHREADS 7086
 #define GxB_CHUNK 7087
 
-// GPU control (DRAFT: in progress, do not use)
-#define GxB_GPU_ID 7088
+// GPU control
+#define GxB_GPU_IDS 7101
+#define GxB_NGPUS 7102
 #endif
 
 typedef enum    // GrB_Desc_Field ;
@@ -1611,7 +1611,9 @@ typedef enum    // GxB_Option_Field ;
 
     GxB_GLOBAL_NTHREADS = GxB_NTHREADS,  // max number of threads to use
     GxB_GLOBAL_CHUNK = GxB_CHUNK,        // chunk size for small problems.
-    GxB_GLOBAL_GPU_ID = GxB_GPU_ID,      // which GPU to use (DRAFT)
+    GxB_GLOBAL_NGPUS = GxB_NGPUS,        // # of GPU(s) to use
+    GxB_GLOBAL_GPU_IDS = GxB_GPU_IDS,    // list of GPU(s) to use
+    GxB_NGPUS_MAX = 7103,                // max # of GPU(s) in the system
 
     GxB_BURBLE = 7019,               // diagnostic output
     GxB_PRINTF = 7020,               // printf function diagnostic output
@@ -1742,8 +1744,9 @@ typedef enum    // GxB_Context_Field
     GxB_CONTEXT_CHUNK = GxB_CHUNK,   // chunk size for small problems.
                     // If < 1, then the default is used.
 
-    // GPU control (DRAFT: in progress, do not use)
-    GxB_CONTEXT_GPU_ID      = GxB_GPU_ID,
+    // GPU control
+    GxB_CONTEXT_NGPUS = GxB_NGPUS,        // # of GPU(s) to use
+    GxB_CONTEXT_GPU_IDS = GxB_GPU_IDS,    // list of GPU(s) to use
 }
 GxB_Context_Field ;
 #endif

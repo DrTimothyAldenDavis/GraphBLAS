@@ -241,9 +241,9 @@
 #define GB_Context_chunk_set GM_Context_chunk_set
 #define GB_Context_disengage GM_Context_disengage
 #define GB_Context_engage GM_Context_engage
-#define GB_Context_gpu_id_get GM_Context_gpu_id_get
-#define GB_Context_gpu_id GM_Context_gpu_id
-#define GB_Context_gpu_id_set GM_Context_gpu_id_set
+#define GB_Context_gpu_ids_get GM_Context_gpu_ids_get
+#define GB_Context_gpu_ids GM_Context_gpu_ids
+#define GB_Context_gpu_ids_set GM_Context_gpu_ids_set
 #define GB_Context_nthreads_max_get GM_Context_nthreads_max_get
 #define GB_Context_nthreads_max GM_Context_nthreads_max
 #define GB_Context_nthreads_max_set GM_Context_nthreads_max_set

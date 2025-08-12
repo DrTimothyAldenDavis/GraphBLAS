@@ -1039,7 +1039,12 @@ struct GB_Context_opaque GB_OPAQUE (CONTEXT_WORLD) =
     // revised by GxB_Context_get/set:
     (double) GB_CHUNK_DEFAULT,      // chunk
     1,                              // nthreads_max
-    -1,                             // gpu_id
+    0,                              // int32_t ngpus
+    // uint8_t gpu_ids [GB_MAX_NGPUS]:
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 } ;
 
 GxB_Context GxB_CONTEXT_WORLD = & GB_OPAQUE (CONTEXT_WORLD) ;
