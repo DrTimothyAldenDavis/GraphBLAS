@@ -21,8 +21,12 @@ __global__ void GB_cuda_select_bitmap_kernel
 {
     int8_t *Cb_out = C->b ;
 
-    #if ( GB_DEPENDS_ON_X )
+    #if ( GB_DEPENDS_ON_X || !GB_ISO_SELECT )
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
+    #endif
+
+    #if ( !GB_ISO_SELECT )
+    GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) C->x ;
     #endif
 
     #if ( GB_A_IS_BITMAP )
@@ -41,6 +45,10 @@ __global__ void GB_cuda_select_bitmap_kernel
     int nthreads = blockDim.x * gridDim.x ;
     for (int64_t p = tid ; p < anz ; p += nthreads)
     {
+        #if ( !GB_ISO_SELECT )
+        Cx [p] = Ax [p] ;
+        #endif
+
         Cb_out [p] = 0 ;
         if (!GBb_A (Ab, p)) { continue; }
 
