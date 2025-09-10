@@ -469,7 +469,7 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     int val_list ;          // how to use the value list, X
 } ;
 
-#define GB_MAX_NGPUS 64
+#define GB_MAX_NGPUS 1024
 
 struct GB_Context_opaque    // content of GxB_Context
 {
@@ -485,7 +485,7 @@ struct GB_Context_opaque    // content of GxB_Context
     // GPU(s):
     int32_t ngpus ;         // # of GPUs available to use in this context
                             // (in range 0 to GB_MAX_NGPUS)
-    uint8_t gpu_ids [GB_MAX_NGPUS] ;  // using GPUs gpu_ids [0..ngpus-1],
+    uint16_t gpu_ids [GB_MAX_NGPUS] ;   // using GPUs gpu_ids [0..ngpus-1],
                             // or no GPU if ngpus == 0.
 } ;
 
