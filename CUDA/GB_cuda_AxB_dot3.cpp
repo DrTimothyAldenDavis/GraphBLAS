@@ -17,7 +17,7 @@
 #define GB_FREE_ALL                                         \
 {                                                           \
     GB_phybix_free (C) ;                                    \
-    GB_cuda_release_stream (&stream) ;                      \
+    GB_cuda_stream_pool_release (&stream) ;                      \
 }
 
 #include "GB_cuda_AxB.hpp"
@@ -88,7 +88,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     printf ("dot3 using cuda device %d\n", device) ;
     int number_of_sms = GB_Global_gpu_sm_get (0) ;
 
-    GB_OK (GB_cuda_acquire_stream (&stream)) ;
+    GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
 
     //--------------------------------------------------------------------------
     // get M
@@ -228,7 +228,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C result from dot3 cuda A'*B", GB0) ;
-    GB_OK (GB_cuda_release_stream (&stream)) ;
+    GB_OK (GB_cuda_stream_pool_release (&stream)) ;
     return GrB_SUCCESS;
 }
 

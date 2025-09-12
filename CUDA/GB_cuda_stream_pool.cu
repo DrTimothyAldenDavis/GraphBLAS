@@ -15,10 +15,10 @@ static GB_cuda_stream_pool pool ;   // a global variable limited to this file
 #define GB_FREE_ALL ;
 
 //------------------------------------------------------------------------------
-// GB_cuda_release_stream
+// GB_cuda_stream_pool_release
 //------------------------------------------------------------------------------
 
-GrB_Info GB_cuda_release_stream (cudaStream_t *stream)
+GrB_Info GB_cuda_stream_pool_release (cudaStream_t *stream)
 {
 
     //--------------------------------------------------------------------------
@@ -34,6 +34,9 @@ GrB_Info GB_cuda_release_stream (cudaStream_t *stream)
     int device = 0 ;
     CUDA_OK (cudaGetDevice (&device)) ;
     CUDA_OK (cudaStreamSynchronize (*stream)) ;
+
+    // FIXME:  assert that device == return value from
+    // cudaStreamGetDevice.
 
     ASSERT (device < pool.streams.size()) ;
     cudaError_t cuda_error1 = cudaSuccess ;
@@ -71,10 +74,10 @@ GrB_Info GB_cuda_release_stream (cudaStream_t *stream)
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_acquire_stream
+// GB_cuda_stream_pool_acquire
 //------------------------------------------------------------------------------
 
-GrB_Info GB_cuda_acquire_stream (cudaStream_t *stream)
+GrB_Info GB_cuda_stream_pool_acquire (cudaStream_t *stream)
 {
 
     //--------------------------------------------------------------------------
