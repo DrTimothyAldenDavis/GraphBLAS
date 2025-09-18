@@ -214,7 +214,6 @@
 #define GB_clog1p GM_clog1p
 #define GB_clog2f GM_clog2f
 #define GB_clog2 GM_clog2
-#define GB_code_check GM_code_check
 #define GB_code_name_get GM_code_name_get
 #define GB_code_size GM_code_size
 #define GB_code_string GM_code_string

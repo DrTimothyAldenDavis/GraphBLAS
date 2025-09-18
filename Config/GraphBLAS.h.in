@@ -1635,6 +1635,12 @@ typedef enum    // GxB_Option_Field ;
     GxB_JIT_ERROR_LOG = 7033,        // CPU JIT: error log file
 
     GxB_JIT_CUDA_PREFACE = 7100,     // CUDA JIT C++ preface
+
+    //------------------------------------------------------------
+    // GrB_get / GrB_set for GrB_Type only:
+    //------------------------------------------------------------
+
+    GxB_PRINT_FUNCTION = 7104,       // to print a user-defined type
     #endif
 
 } GxB_Option_Field ;
@@ -6451,6 +6457,16 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
     (object, GB_STR(object), pr, f)
 #define GxB_print(object,pr) GxB_fprint(object,pr,NULL)
 #endif
+
+typedef int64_t (*GxB_print_function)
+(
+    // output:
+    char *string,           // value is printed to the string
+    // input:
+    size_t string_size,     // size of the string array
+    const void *value,      // value to print
+    int verbose             // if >0, print verbosely; else tersely
+) ;
 
 #endif
 

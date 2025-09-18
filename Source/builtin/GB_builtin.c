@@ -42,7 +42,8 @@
         sizeof (ctype),             /* sizeof the type */                   \
         GB_ ## type ## _code,       /* type code */                         \
         0, name,                    /* name_len and name */                 \
-        NULL, 0, 0                  /* defn, alloc, hash */                 \
+        NULL, 0, 0,                 /* defn, alloc, hash */                 \
+        NULL                        /* print function (user-defn types) */  \
     } ;                                                                     \
     GrB_Type prefix ## _ ## type = & GB_OPAQUE (type)
 

@@ -1,3 +1,8 @@
+TODO, version 10.2.0
+
+    * initial CUDA kernels available
+    * printing of user-defined types: get/set with GxB_PRINT_FUNCTION
+
 July 25, 2025: version 10.1.1
 
     * gcc can now be used the Power or s390:  workaround added;

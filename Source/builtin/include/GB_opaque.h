@@ -374,6 +374,7 @@ struct GB_Type_opaque       // content of GrB_Type
     size_t defn_size ;      // allocated size of the definition
     uint64_t hash ;         // if 0, type is builtin.
                             // if UINT64_MAX, the type cannot be JIT'd.
+    GxB_print_function print_function ; // for printing user-defined types
 } ;
 
 struct GB_UnaryOp_opaque    // content of GrB_UnaryOp
