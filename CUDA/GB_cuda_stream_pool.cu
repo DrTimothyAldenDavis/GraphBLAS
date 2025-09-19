@@ -132,7 +132,7 @@ GrB_Info GB_cuda_stream_pool_init (void)
 {
     // get the current device
     int original_device = 0 ;
-    CUDA_OK (cudaGetDevice (&original_device) ;
+    CUDA_OK (cudaGetDevice (&original_device)) ;
     #undef  GB_FREE_ALL
     #define GB_FREE_ALL cudaSetDevice (original_device) ;
 

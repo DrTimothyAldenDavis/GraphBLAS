@@ -1,216 +1,257 @@
+//------------------------------------------------------------------------------
+// GraphBLAS/CUDA/template/GB_jit_kernel_cuda_select_sparse_NEW
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 using namespace cooperative_groups ;
 
 #include "GB_cuda_ek_slice.cuh"
 #include "GB_cuda_cumsum.cuh"
 
-#define GB_FREE_WORKSPACE                   \
-{                                           \
-    GB_FREE_MEMORY (&W, W_size) ;           \
-    GB_FREE_MEMORY (&W_2, W_2_size) ;       \
-    GB_FREE_MEMORY (&W_3, W_3_size) ;       \
+#define GB_FREE_WORKSPACE                               \
+{                                                       \
+    GB_FREE_MEMORY (&Ak, Ak_size) ;                     \
+    GB_FREE_MEMORY (&W_1, W_1_size) ;                   \
+    GB_FREE_MEMORY (&W_2, W_2_size) ;                   \
 }
 
-#undef GB_FREE_ALL
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_FREE_WORKSPACE ;
 
 #define chunk_size 1024
 #define log2_chunk_size 10
 
 //------------------------------------------------------------------------------
-// GB_cuda_select_sparse_phase1: construct Keep array
+// GB_cuda_select_sparse_phase1_NEW: construct Ak, and first phase for Map
 //------------------------------------------------------------------------------
 
-// Compute Keep array
-__global__ void GB_cuda_select_sparse_phase1
+__global__ void GB_cuda_select_sparse_phase1_NEW
 (
-    int64_t *Keep,
+    // outputs
+    GB_Ap_TYPE *Ak,     // size nvals(A)
+    GB_Ap_TYPE *Map,    // size nvals(A)
+    // inputs, not modified
     GrB_Matrix A,
     const void *ythunk
 )
 {
+
+    //--------------------------------------------------------------------------
+    // get A and ythunk
+    //--------------------------------------------------------------------------
+
     #if ( GB_DEPENDS_ON_I )
     const GB_Ai_SIGNED_TYPE *__restrict__ Ai = (GB_Ai_SIGNED_TYPE *) A->i ;
     #endif
-
-    #if ( GB_DEPENDS_ON_J )
-        #if ( GB_A_IS_HYPER )
-        const GB_Aj_TYPE *__restrict__ Ah = (GB_Aj_TYPE *) A->h ;
-        #endif
-    const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;
+    #if ( GB_DEPENDS_ON_J) && ( GB_A_IS_HYPER )
+    const GB_Aj_TYPE *__restrict__ Ah = (GB_Aj_TYPE *) A->h ;
     #endif
-
+    const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;
     #if ( GB_DEPENDS_ON_X )
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
     #endif
-
     #if ( GB_DEPENDS_ON_Y )
     const GB_Y_TYPE y = * ((GB_Y_TYPE *) ythunk) ;
     #endif
     GB_A_NHELD (anz) ;
 
-    #if ( GB_DEPENDS_ON_J )
-        const int64_t anvec = A->nvec ;
-        for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
-                     pfirst < anz ;
-                     pfirst += gridDim.x << log2_chunk_size )
-        {
-            int64_t my_chunk_size, anvec1, kfirst, klast ;
-            float slope ;
-            GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst, chunk_size,
-                &kfirst, &klast, &my_chunk_size, &anvec1, &slope) ;
+    // workspace for each threadblock
+    __shared__ GB_Ap_TYPE Local_Map [chunk_size+1] ;
 
-            for (int64_t pdelta = threadIdx.x ;
-                         pdelta < my_chunk_size ;
-                         pdelta += blockDim.x)
-            {
-                int64_t pA ;    // pA = pfirst + pdelta
-                int64_t k = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (&pA, pdelta, pfirst, Ap,
-                    anvec1, kfirst, slope) ;
-                int64_t j = GBh_A (Ah, k) ;
-                // Ak [pA] = k ;        // save the kth vector containing the pA-th entry
-
-                #if ( GB_DEPENDS_ON_I )
-                int64_t i = Ai [pA] ;
-                #endif
-
-                // keep = fselect (A (i,j)), true if A(i,j) is kept, else false
-                GB_TEST_VALUE_OF_ENTRY (keep, pA) ;
-                // FIXME: do not save in Keep array: make it threadlocal,
-                // of size my_chunk_size
-                Keep [pA] = keep ;
-            }
-
-            // HERE: do a cub::BlockScan on this threadblock's threadlocal Keep
-        }
-    #else
-        int tid = blockIdx.x * blockDim.x + threadIdx.x ;
-        int nthreads = blockDim.x * gridDim.x ;
-
-        for (int64_t pA = tid; pA < anz; pA += nthreads)
-        {
-            #if ( GB_DEPENDS_ON_I )
-            int64_t i = Ai [pA] ;
-            #endif
-
-            GB_TEST_VALUE_OF_ENTRY (keep, pA) ;
-            Keep [pA] = keep ;
-        }
-
-    #endif
-}
-
-//------------------------------------------------------------------------------
-// GB_cuda_select_sparse_phase2:
-//------------------------------------------------------------------------------
-
-__global__ void GB_cuda_select_sparse_phase2
-(
-    int64_t *Map,
-    GrB_Matrix A,
-    int64_t *Ak_keep,
-    GB_Ci_TYPE *Ci,
-    GB_C_TYPE *Cx
-)
-{
-    const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;
-    const GB_Ai_TYPE *__restrict__ Ai = (GB_Ai_TYPE *) A->i ;
-    #if (!GB_ISO_SELECT)
-    const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
-    #endif
-    GB_A_NHELD (anz) ;
+    //--------------------------------------------------------------------------
+    // compute Ak, and each local block of Map
+    //--------------------------------------------------------------------------
 
     const int64_t anvec = A->nvec ;
-
     for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
                  pfirst < anz ;
                  pfirst += gridDim.x << log2_chunk_size )
     {
+
+        //----------------------------------------------------------------------
+        // determine the chunk for this threadblock and its slope
+        //----------------------------------------------------------------------
+
         int64_t my_chunk_size, anvec1, kfirst, klast ;
         float slope ;
         GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst, chunk_size,
             &kfirst, &klast, &my_chunk_size, &anvec1, &slope) ;
 
+        //----------------------------------------------------------------------
+        // find the kth vector that contains each entry pA = pfirst:plast-1
+        //----------------------------------------------------------------------
+
         for (int64_t pdelta = threadIdx.x ;
                      pdelta < my_chunk_size ;
                      pdelta += blockDim.x)
         {
-            int64_t pA = pfirst + pdelta ;
-            int64_t pC = Map [pA] ;     // Note: pC is off-by-1 (see below).
-            if (Map [pA-1] < pC)
-            {
-                // This entry is kept; Keep [pA] was 1 but the contents of the
-                // Keep has been overwritten by the Map array using an
-                // inclusive cumsum.  Keep [pA] (before being overwritten) is
-                // identical to the expression (Map [pA-1] < pC).
 
-                // the A(i,j) is in the kA-th vector of A:
-                int64_t kA = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (&pA, pdelta, pfirst, Ap,
-                    anvec1, kfirst, slope) ;
+            //------------------------------------------------------------------
+            // determine the kth vector that contains the pA-th entry
+            //------------------------------------------------------------------
 
-                // Map is offset by 1 since it was computed as an inclusive
-                // cumsum, so decrement pC here to get the actual position in
-                // Ci,Cx.
-                pC-- ;
-                Ci [pC] = Ai [pA] ;
+            int64_t pA ;    // pA = pfirst + pdelta
+            int64_t k = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (&pA, pdelta,
+                pfirst, Ap, anvec1, kfirst, slope) ;
 
-                // Cx [pC] = Ax [pA] ;
-                GB_SELECT_ENTRY (Cx, pC, Ax, pA) ;
+            //------------------------------------------------------------------
+            // save the vector index k, and determine if this entry is kept 
+            //------------------------------------------------------------------
 
-                // save the name of the vector kA that holds this entry in A,
-                // for the new position of this entry in C at pC.
-                Ak_keep [pC] = kA ;
-            }
+            Ak [pA] = k ;
+            #if ( GB_DEPENDS_ON_J )
+            int64_t j = GBh_A (Ah, k) ;
+            #endif
+            #if ( GB_DEPENDS_ON_I )
+            int64_t i = Ai [pA] ;
+            #endif
+            // keep = fselect (A (i,j)), 1 if A(i,j) is kept, else 0
+            GB_TEST_VALUE_OF_ENTRY (keep, pA) ;
+            Local_Map [pdelta] = keep ;
         }
+
+        this_thread_block ( ).sync ( ) ;
+        // HERE: do a cub::BlockScan on threadblock's Local_Map
+        // where Local_Map [i] = sum (Local_Map [0:i]), so that
+        // Local_Map [0] = 1 if the first entry is kept, 0 otherwise,
+        // and Local_Map [my_chunk_size-1] = total # entries kept in this block
+        this_thread_block ( ).sync ( ) ;
+
+        //----------------------------------------------------------------------
+        // save the Local_Map in Map [pfirst:plast-1]
+        //----------------------------------------------------------------------
+
+        for (int64_t pdelta = threadIdx.x ;
+                     pdelta < my_chunk_size ;
+                     pdelta += blockDim.x)
+        {
+            Map [pfirst + pdelta] = Local_Map [pdelta] ;
+        }
+
+        this_thread_block ( ).sync ( ) ;
     }
 }
 
-__global__ void GB_cuda_select_sparse_phase3
+//------------------------------------------------------------------------------
+// GB_cuda_select_sparse_phase3_NEW: finalize Map and construct Ci, Cx, Ak_Keep
+//------------------------------------------------------------------------------
+
+__global__ void GB_cuda_select_sparse_phase3_NEW
 (
-    int64_t anz,
-    int64_t *Map,
-    int64_t *Ak_keep,
-    int64_t *Ck_delta
+    // input/outputs
+    GrB_Matrix C,           // construct C->i and C->x
+    GB_Ap_TYPE *Ak_Keep,    // size nvals(C)
+    // inputs, not modified
+    GB_Ap_TYPE *GlobalSum,  // size # threadblocks
+    GB_Ap_TYPE *Map,        // size nvals(A)
+    GB_Ap_TYPE *Ak,         // size nvals(A)
+    GrB_Matrix A,
+    const void *ythunk
 )
 {
+
+    //--------------------------------------------------------------------------
+    // get C->i and C->x, shifting down by one to account for 1-based Map
+    //--------------------------------------------------------------------------
+
+    // in this method, the index pC = Map [pA] is 1-based, so decrement Ci, Cx,
+    // and Ak_Keep to account for this.
+
+    GB_Ci_TYPE *Ci = C->i ; Ci-- ;
+    #if !GB_ISO_SELECT
+    GB_C_TYPE  *Cx = C->x ; Cx-- ;
+    #endif
+    Ak_Keep-- ;
+
+    //--------------------------------------------------------------------------
+    // select the entries and copy them into Ci, Cx; construct Ak_Keep
+    //--------------------------------------------------------------------------
+
     int tid = blockIdx.x * blockDim.x + threadIdx.x ;
     int nthreads = blockDim.x * gridDim.x ;
 
-    for (int64_t pA = tid; pA < anz; pA += nthreads)
+    for (int64_t pA = tid ; pA < anz ; pA += nthreads)
     {
-        int64_t pC = Map [pA] ;
+        // get the position pC in C of the pA-th entry in A
+        GB_Ap_TYPE pC   = Map [pA] + GlobalSum [this thread block] ;
+        GB_Ap_TYPE pC_1 = Map [pA-1] + GlobalSum [thread block with pA-1] ;
+
         if (Map [pA-1] < pC)
         {
-            pC-- ;
-            Ck_delta [pC] = (Ak_keep [pC] != Ak_keep [pC - 1]) ;
+            // This entry is kept; it appears in a new position pC as compared
+            // to the entry Map [pA-1] immediately to its left.  Map contains
+            // 1-based indices since it was computed as an inclusive cumsum, so
+            // Ci, Cx, and Ak_Keep have been shifted by one above.
+            Ci [pC] = Ai [pA] ;
+            // Cx [pC] = Ax [pA] ;
+            GB_SELECT_ENTRY (Cx, pC, Ax, pA) ;
+            // save the name of the vector kA that holds this entry in A,
+            // for the new position of this entry in C at pC.
+            Ak_Keep [pC] = Ak [pA] ;
         }
     }
 }
 
-__global__ void GB_cuda_select_sparse_phase4
+//------------------------------------------------------------------------------
+// GB_cuda_select_sparse_phase4_NEW: construct each block of Ck_Delta
+//------------------------------------------------------------------------------
+
+__global__ void GB_cuda_select_sparse_phase4_NEW
 (
-    GrB_Matrix A,
-    int64_t cnz,
-    int64_t *Ak_keep,
-    int64_t *Ck_map,
-    GB_Cp_TYPE *Cp,
-    GB_Cj_TYPE *Ch
+    // outputs
+    GB_Cp_TYPE *Ck_Delta,   // size nvals(C)
+    // inputs, not modified
+    GB_Ap_TYPE *Ak_Keep,    // size nvals(C)
+    int64_t cnz             // cnz = nvals(C)
 )
 {
-    #if ( GB_A_IS_HYPER ) 
-    const GB_Aj_TYPE *__restrict__ Ah = (GB_Aj_TYPE *) A->h;
-    #endif
 
-    int tid = blockIdx.x * blockDim.x + threadIdx.x ;
-    int nthreads = blockDim.x * gridDim.x ;
+    //--------------------------------------------------------------------------
+    // workspace for each threadblock
+    //--------------------------------------------------------------------------
 
-    for (int64_t pC = tid; pC < cnz; pC += nthreads)
+    __shared__ GB_Cp_TYPE Local_Ck_Delta [chunk_size+1] ;
+
+    //--------------------------------------------------------------------------
+    // construct Ck_Delta and then cumsum each block
+    //--------------------------------------------------------------------------
+
+    for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
+                 pfirst < cnz ;
+                 pfirst += gridDim.x << log2_chunk_size )
     {
-        if (Ck_map [pC] != Ck_map [pC - 1])
+
+        //---------------------------------------------------------------------
+        // get the part of Ak_Keep and Ck_Delta this threadblock works on
+        //---------------------------------------------------------------------
+
+        // this threadblock works on Ak_Keep [pfirst:plast-1] and
+        // Ck_Delta [pfirst:plast-1]
+
+        int64_t plast = pfirst + chunk_size ;
+        plast = GB_IMIN (plast, cnz) ;
+        int64_t my_chunk_size = plast - pfirst ;
+
+        //---------------------------------------------------------------------
+        // determine which entries of Ak_Keep start new vectors in C
+        //---------------------------------------------------------------------
+
+        for (int64_t pdelta = threadIdx.x ;
+                     pdelta < my_chunk_size ;
+                     pdelta += blockDim.x)
         {
-            int64_t kA = Ak_keep [pC] ;
-            Cp [Ck_map[pC] - 1] = pC ;
-            Ch [Ck_map[pC] - 1] = GBh_A (Ah, kA) ;
+            int64_t pC = pfirst + pdelta ;
+            GB_Ap_TYPE kA = Ak_Keep [pC] ;
+            Local_Ck_Delta [pdelta] = (Ak_Keep [pC-1] < kA) ;
         }
+
+        this_thread_block ( ).sync ( ) ;
+        // HERE: do a cub::BlockScan on threadblock's Local_Ck_Delta
+        this_thread_block ( ).sync ( ) ;
     }
 }
 
@@ -239,169 +280,152 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     #endif
 
     //--------------------------------------------------------------------------
-    // check inputs and declare workspace
+    // declare workspace
     //--------------------------------------------------------------------------
+
     GrB_Info info ;
-    int64_t *W = NULL, *W_2 = NULL, *W_3 = NULL,
-        *Ak_keep = NULL, *Ck_delta = NULL,
-        *Keep = NULL ;
-    size_t W_size = 0, W_2_size = 0, W_3_size = 0 ;
+
+    // workspaces of size nvals(A)
+    GB_Ap_TYPE *Ak = NULL ;         size_t Ak_size = 0 ;
+    void *W_1 = NULL ;              size_t W_1_size = 0 ;
+    // workspace of size nvals(C)
+    void *W_2 = NULL ;              size_t W_2_size = 0 ;
+
     int64_t cnz = 0 ;
+    GB_A_NHELD (anz) ;
 
     ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
 
     dim3 grid (gridsz) ;        // = min (ceil (nnz(A)/512), 256*(#sms))
     dim3 block (blocksz) ;      // = 512
 
-//  std::cout << std::endl << "--------start select sparse----" << std::endl ;
-    CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
-    CUDA_OK (cudaStreamSynchronize (stream)) ;  //FIXME: remove
-    CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
-
     //--------------------------------------------------------------------------
     // phase 1: determine which entries of A to keep
     //--------------------------------------------------------------------------
 
-    // Phase 1: Keep [p] = 1 if Ai,Ax [p] is kept, 0 otherwise; then cumsum
+    // This phase constructs Ak [0..anz-1], where Ak [pA] = k if the pA-th
+    // entry is in the kth vector of A.  It also is the first phase in
+    // constructing Map [0..anz-1], where Map [pA] = pC if the pA-th entry
+    // of A is the pC-th entry of C.
 
-    W = (int64_t *) GB_MALLOC_MEMORY (A->nvals + 1, sizeof (int64_t), &W_size) ;
-    if (W == NULL)
+    Ak = (GB_Ap_TYPE *) GB_MALLOC_MEMORY (anz+1, sizeof (GB_Ap_TYPE),
+        &Ak_size) ;
+    size_t w1 = GB_IMAX (sizeof (GB_Ap_TYPE), sizeof (GB_Cp_TYPE)) ;
+    W_1 = (void *) GB_MALLOC_MEMORY (anz+1, w1, &W_1_size) ;
+    if (Ak == NULL || W_1 == NULL)
     {
         // out of memory
         GB_FREE_ALL ;
-//      std::cout << std::endl << "------malloc dies----" << std::endl ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    // shift by one, to define Keep [-1] as 0
-    W [0] = 0;      // placeholder for easier end-condition
-    Keep = W + 1 ;  // Keep has size A->nvals and starts at W [1]
+    // shift by one: to define Map [-1] as 0
+    GB_Ap_TYPE *Map = ((GB_Ap_TYPE *) W_1) + 1 ;
+    Map [-1] = 0 ;
 
-//  std::cout << std::endl << "----------------------------------" << std::endl ;
-//  std::cout << "Grid size: " << gridsz ; //FIXME: remove
-//  std::cout << " Block size: " << blocksz << std::endl ; //FIXME: remove
-    CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
-    CUDA_OK (cudaStreamSynchronize (stream)) ;  //FIXME: remove
-    CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
-
-    // KERNEL LAUNCH 1
-    GB_cuda_select_sparse_phase1 <<<grid, block, 0, stream>>>
-        (Keep, A, ythunk) ;
+    GB_cuda_select_sparse_phase1_NEW <<<grid, block, 0, stream>>>
+        (Ak, Map, A, ythunk) ;
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     //--------------------------------------------------------------------------
-    // phase1b: Map = cumsum (Keep)
+    // phase 2: sum up the entries in each block (on the CPU) and allocate C
     //--------------------------------------------------------------------------
 
-    // in-place cumsum, overwriting Keep with its cumsum, then becomes Map
-    // KERNEL LAUNCH 2,3
-    GB_OK (GB_cuda_cumsum (Keep, Keep, A->nvals, stream,
-        GB_CUDA_CUMSUM_INCLUSIVE, my_callback)) ;
-    CUDA_OK (cudaStreamSynchronize (stream)) ;
+    // declare GlobalSum [0.. #threadblocks-1] ... malloc it?
 
-    int64_t *Map = Keep ;             // Keep has been replaced with Map
-    cnz = Map [A->nvals - 1] ;        // total # of entries kept, for C
+    int64_t blockid = 0 ;
+    int64_t c = 0 ;
+    for (int64_t plast = blocksz - 1 ; plast < anz - 1 ; plast += blocksz)
+    {
+        // get the # of entries found by this threadblock
+        c += Map [plast] ;
+        GlobalSum [blockid++] = c ;
+    }
+
+    // add the # of entries in the last block
+    c += Map [anz-1] ;
+    GlobalSum [blockid] = c ;
+
+    int64_t cnz = c ;               // total # of entries kept, for C
 
     GB_OK (GB_bix_alloc (C, cnz, GxB_HYPERSPARSE, false, true, GB_ISO_SELECT)) ;
     C->nvals = cnz ;
 
-    if (cnz == 0) {
+    if (cnz == 0)
+    {
         // C is empty; nothing more to do
-//      printf ("C is empty, iso %d\n", C->iso) ;
         GB_FREE_WORKSPACE ;
         return (GrB_SUCCESS) ;
     }
 
     // allocate workspace
-    W_2 = (int64_t *) GB_MALLOC_MEMORY (cnz + 1, sizeof (int64_t), &W_2_size) ;
-    W_3 = (int64_t *) GB_MALLOC_MEMORY (cnz + 1, sizeof (int64_t), &W_3_size) ;
-    if (W_2 == NULL || W_3 == NULL)
+    W_2 = (GB_Ap_TYPE *) GB_MALLOC_MEMORY (cnz + 1, sizeof (GB_Ap_TYPE),
+        &W_2_size) ;
+    if (W_2 == NULL)
     {
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    // shift by one: to define Ck_delta [-1] as 0
-    W_2 [0] = 0 ;
-    Ck_delta = W_2 + 1 ;
-
-    // shift by one: to define Ak_keep [-1] as -1
-    W_3 [0] = -1 ;
-    Ak_keep = W_3 + 1 ;
+    // shift Ak_Keep by one
+    GB_Ap_TYPE *Ak_Keep = ((GB_Ap_TYPE *) W_2) + 1 ;
+    Ak_Keep [-1] = 0 ;
 
     //--------------------------------------------------------------------------
-    // Phase 2: Build Ci, Cx, and Ak_keep
+    // phase 3: finalize the Map and construct Ci, Cx, and Ak_keep
     //--------------------------------------------------------------------------
-    
-    // KERNEL LAUNCH 4
-    GB_cuda_select_sparse_phase2 <<<grid, block, 0, stream>>>
-        (Map, A, Ak_keep, (GB_Ci_TYPE *) C->i, (GB_C_TYPE *) C->x) ;
+
+    GB_cuda_select_sparse_phase3_NEW <<<grid, block, 0, stream>>>
+        (C, Ak_Keep, Map, Ak, A, ythunk) ;
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
+    // Map no longer needed
+
     //--------------------------------------------------------------------------
-    // phase 3:
+    // phase 4: construct Ck_Delta and its local cumulative sum
     //--------------------------------------------------------------------------
 
-    // Phase 3a: Build Ck_delta
-    // KERNEL LAUNCH 5
-    GB_cuda_select_sparse_phase3 <<<grid, block, 0, stream>>>
-        (A->nvals, Map, Ak_keep, Ck_delta) ;
+    GB_Cp_TYPE *Ck_Delta = ((GB_Cp_TYPE *) W_1) + 1 ;
+    Ck_Delta [-1] = 0 ;
+
+    // Ck_Delta [pC] = 1 if the pC-th entry is the first in its vector of C, or
+    // 0 otherwise.  Next, the each threadblock computes the cumulative sum of
+    // its part of Ck_Delta.
+
+    GB_cuda_select_sparse_phase4_NEW <<<grid, block, 0, stream>>>
+        (Ck_Delta, Ak_Keep) ;
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-    // Cumsum over Ck_delta array to get Ck_map
-    // Can reuse `Keep` to avoid a malloc
+    // Ak_Keep no longer needed
 
-    // Phase 3b: Ck_map = cumsum (Ck_delta)
-    // KERNEL LAUNCH 6,7
-    GB_OK (GB_cuda_cumsum (Keep, Ck_delta, cnz, stream,
-        GB_CUDA_CUMSUM_INCLUSIVE, my_callback)) ;
+    //--------------------------------------------------------------------------
+    // phase 5: construct global cumsum of Ck_Delta on the CPU
+    //--------------------------------------------------------------------------
 
-    CUDA_OK (cudaStreamSynchronize (stream)) ;
+    // declare GlobalSum [0.. #threadblocks-1]
 
-    int64_t *Ck_map = Keep;
-    int64_t cnvec = Ck_map [cnz - 1] ;
-
-    // The caller has already allocated C->p, C->h for
-    // a user-returnable empty hypersparse matrix.
-    // Free them here before updating.
-    GB_FREE_MEMORY (&(C->p), C->p_size) ;
-    GB_FREE_MEMORY (&(C->h), C->h_size) ;
-
-    // Allocate Cp, Ch, finalize matrix 
-    C->plen = cnvec ;
-    C->nvec = cnvec ;
-    C->nvec_nonempty = cnvec ;  // FIXME
-    C->nvals = cnz ;
-    C->p = (GB_Cp_TYPE *) GB_MALLOC_MEMORY (C->plen + 1, sizeof (GB_Cp_TYPE),
-        &(C->p_size)) ;
-    C->h = (GB_Cj_TYPE *) GB_MALLOC_MEMORY (C->plen, sizeof (GB_Cj_TYPE),
-        &(C->h_size)) ;
-    if (C->p == NULL || C->h == NULL)
+    blockid = 0 ;
+    c = 0 ;
+    for (int64_t plast = blocksz - 1 ; plast < cnz - 1 ; plast += blocksz)
     {
-        // The contents of C will be freed with GB_phybix_free()
-        // in the caller (GB_cuda_select_sparse()) upon returning
-        // an error.
-        GB_FREE_ALL ;
-        return (GrB_OUT_OF_MEMORY) ;
+        // get the # of entries found by this threadblock
+        c += Ck_Delta [plast] ;
+        GlobalSum [blockid++] = c ;
     }
-    GB_Cp_TYPE *Cp = (GB_Cp_TYPE *) C->p ;
+
+    // add the # of entries in the last block
+    c += Ck_Delta [cnz-1] ;
+    GlobalSum [blockid] = c ;
 
     //--------------------------------------------------------------------------
-    // Phase 3: Build Cp and Ch
+    // phase 6: construct Ck_Map
     //--------------------------------------------------------------------------
-    // KERNEL LAUNCH 8
-    GB_cuda_select_sparse_phase4 <<<grid, block, 0, stream>>>
-        (A, cnz, Ak_keep, Ck_map, Cp, (GB_Cj_TYPE *) C->h) ;
-    CUDA_OK (cudaGetLastError ( )) ;
-    CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-    // log the end of the last vector of C
-    // FIXME: isn't this just Cp [cnvec] = cnz?
-    Cp [Ck_map [cnz - 1]] = cnz;
+
 
     GB_FREE_ALL ;
     return (GrB_SUCCESS) ;
