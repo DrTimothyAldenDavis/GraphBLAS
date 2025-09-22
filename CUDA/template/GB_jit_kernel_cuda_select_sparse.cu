@@ -10,7 +10,6 @@
 using namespace cooperative_groups ;
 
 #include "GB_cuda_ek_slice.cuh"
-#include "GB_cuda_cumsum.cuh"
 
 #define GB_FREE_WORKSPACE               \
 {                                       \
@@ -35,7 +34,7 @@ __global__ void GB_cuda_select_sparse_phase1_NEW
     // outputs
     GB_Aj_TYPE *Ak,     // size anz, values in range 0 to max # vectors in A
     GB_Ap_TYPE *Map,    // size anz, values in range 0 to anz-1
-    int64_t *GlobalSum, // size # threadblocks
+    int64_t *GlobalSum, // size # threadblocks + 1
     // inputs, not modified
     GrB_Matrix A,
     const void *ythunk
@@ -63,7 +62,7 @@ __global__ void GB_cuda_select_sparse_phase1_NEW
     GB_A_NHELD (anz) ;
 
     // workspace for each chunk
-    __shared__ GB_Ap_TYPE Local_Map [CHUNK_SIZE+1] ;
+    __shared__ GB_Ap_TYPE Local_Map [CHUNK_SIZE] ;
 
     //--------------------------------------------------------------------------
     // compute Ak, and each local chunk of Map
@@ -95,9 +94,8 @@ __global__ void GB_cuda_select_sparse_phase1_NEW
             // determine the kth vector that contains the pA-th entry
             //------------------------------------------------------------------
 
-            int64_t pA ;    // pA = pfirst + pdelta
-            int64_t kA = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (&pA, pdelta,
-                pfirst, Ap, anvec1, kfirst, slope) ;
+            int64_t pA = pfirst + pdelta ;
+            int64_t kA = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (pA, pdelta, Ap, anvec1, kfirst, slope) ;
 
             //------------------------------------------------------------------
             // save the vector index kA, and determine if this entry is kept
@@ -122,7 +120,8 @@ __global__ void GB_cuda_select_sparse_phase1_NEW
         }
 
         this_thread_block ( ).sync ( ) ;
-        // do a cub::BlockScan on threadblock's Local_Map [0..CHUNK_SIZE-1],
+        // do a cub::BlockScan::InclusiveSum on threadblock's
+        // Local_Map [0..CHUNK_SIZE-1],
         // where Local_Map [i] = sum (Local_Map [0:i]), so that
         // Local_Map [0] = 1 if the first entry is kept, 0 otherwise,
         // and Local_Map [CHUNK_SIZE-1] = total # entries kept in this block
@@ -139,12 +138,13 @@ __global__ void GB_cuda_select_sparse_phase1_NEW
             Map [pfirst + pdelta] = Local_Map [pdelta] ;
         }
 
-FIXME:  the chunk size is 1024 but the threadblock is smaller
-
         // last thread writes the sum of the whole threadblock to global
+        // FIXME: which thread should do this work?
         if (threadIdx.x == blockDim.x - 1)
         {
-            GlobalSum [pfirst >> LOG2_CHUNK_SIZE] = Local_Map [CHUNK_SIZE-1] ;
+            // FIXME: should the outer loop just iterate over the chunks?
+            int64_t chunk_id = pfirst >> LOG2_CHUNK_SIZE ;
+            GlobalSum [chunk_id] = Local_Map [CHUNK_SIZE-1] ;
         }
 
         this_thread_block ( ).sync ( ) ;
@@ -159,9 +159,9 @@ __global__ void GB_cuda_select_sparse_phase3_NEW
 (
     // input/outputs
     GrB_Matrix C,           // construct C->i and C->x
-    GB_Aj_TYPE *Ak_Keep,    // size cnz
+    GB_Aj_TYPE *Ak_Keep,    // size cnz+1
     // inputs, not modified
-    int64_t *GlobalSum,     // size # threadblocks
+    int64_t *GlobalSum,     // size # threadblocks + 1
     GB_Ap_TYPE *Map,        // size anz
     GB_Aj_TYPE *Ak,         // size anz
     GrB_Matrix A,
@@ -181,37 +181,47 @@ __global__ void GB_cuda_select_sparse_phase3_NEW
     GB_C_TYPE  *Cx = C->x ; Cx-- ;
     #endif
     Ak_Keep-- ;
+    GB_A_NHELD (anz) ;
 
     //--------------------------------------------------------------------------
     // select the entries and copy them into Ci, Cx; construct Ak_Keep
     //--------------------------------------------------------------------------
 
-FIXME: use a double loop, one over all the chunks, and the other over the entries in a chunk;
-    same loop as phase1
-
-    int tid = blockIdx.x * blockDim.x + threadIdx.x ;
-    int nthreads = blockDim.x * gridDim.x ;
-
-    for (int64_t pA = tid ; pA < anz ; pA += nthreads)
+    for (int64_t pfirst = blockIdx.x << LOG2_CHUNK_SIZE ;
+                 pfirst < anz ;
+                 pfirst += gridDim.x << LOG2_CHUNK_SIZE )
     {
-        // get the position pC in C of the pA-th entry in A
-        GB_Ap_TYPE pC   = Map [pA] + GlobalSum [this thread block] ;            FIXME
-        GB_Ap_TYPE pC_1 = Map [pA-1] + GlobalSum [thread block with pA-1] ;         FIXME
 
-        if (Map [pA-1] < pC)
+        int64_t plast = pfirst + CHUNK_SIZE ;
+        plast = GB_IMIN (plast, anz) ;
+        int64_t my_chunk_size = plast - pfirst ;
+
+        // FIXME: should the outer loop just iterate over the chunks?
+        int64_t chunk_id = pfirst >> LOG2_CHUNK_SIZE ;
+
+        for (int64_t pdelta = threadIdx.x ;
+                     pdelta < my_chunk_size ;
+                     pdelta += blockDim.x)
         {
-            // This entry is kept; it appears in a new position pC as compared
-            // to the entry Map [pA-1] immediately to its left.  Map contains
-            // 1-based indices since it was computed as an inclusive cumsum, so
-            // Ci, Cx, and Ak_Keep have been shifted by one above.
-            Ci [pC] = Ai [pA] ;
-            // Cx [pC] = Ax [pA] ;
-            GB_SELECT_ENTRY (Cx, pC, Ax, pA) ;
-            // save the index of the kA-th vector kA that holds this entry in
-            // A, for the new position of this entry in C at pC.
-            Ak_Keep [pC] = Ak [pA] ;
+            int64_t pA = pfirst + pdelta ;
+
+            // get the position pC in C of the pA-th entry in A
+            GB_Ap_TYPE pC  = Map [pA  ] + GlobalSum [chunk_id] ;
+            GB_Ap_TYPE pC1 = Map [pA-1] + GlobalSum [chunk_id + ((pdelta == 0) ? -1 : 0)] ;
+            if (pC1 < pC)
+            {
+                // This entry is kept; it appears in a new position pC as compared
+                // to the entry Map [pA-1] immediately to its left.  Map contains
+                // 1-based indices since it was computed as an inclusive cumsum, so
+                // Ci, Cx, and Ak_Keep have been shifted by one above.
+                Ci [pC] = Ai [pA] ;
+                // Cx [pC] = Ax [pA] ;
+                GB_SELECT_ENTRY (Cx, pC, Ax, pA) ;
+                // save the index of the kA-th vector kA that holds this entry in
+                // A, for the new position of this entry in C at pC.
+                Ak_Keep [pC] = Ak [pA] ;
+            }
         }
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -222,7 +232,7 @@ __global__ void GB_cuda_select_sparse_phase4_NEW
 (
     // outputs
     GB_Cj_TYPE *Ck_Delta,   // size cnz
-    int64_t *GlobalSum,     // size # threadblocks
+    int64_t *GlobalSum,     // size # threadblocks + 1
     // inputs, not modified
     GB_Aj_TYPE *Ak_Keep,    // size cnz
     int64_t cnz
@@ -233,7 +243,7 @@ __global__ void GB_cuda_select_sparse_phase4_NEW
     // workspace for each threadblock
     //--------------------------------------------------------------------------
 
-    __shared__ GB_Cj_TYPE Local_Ck_Delta [CHUNK_SIZE+1] ;
+    __shared__ GB_Cj_TYPE Local_Ck_Delta [CHUNK_SIZE] ;
 
     //--------------------------------------------------------------------------
     // construct Ck_Delta and then cumsum each block
@@ -274,7 +284,8 @@ __global__ void GB_cuda_select_sparse_phase4_NEW
         }
 
         this_thread_block ( ).sync ( ) ;
-        // do a cub::BlockScan on threadblock's Local_Ck_Delta [0..
+        // do a cub::BlockScan::InclusiveSum on threadblock's
+        // Local_Ck_Delta [0..CHUNK_SIZE-1]
         this_thread_block ( ).sync ( ) ;
 
         //----------------------------------------------------------------------
@@ -288,12 +299,13 @@ __global__ void GB_cuda_select_sparse_phase4_NEW
             Ck_Delta [pfirst + pdelta] = Local_Ck_Delta [pdelta] ;
         }
 
-FIXME:  the chunk size is 1024 but the threadblock is smaller
-
         // last thread writes the sum of the whole threadblock to global
+        // FIXME: which thread should do this work?
         if (threadIdx.x == blockDim.x - 1)
         {
-            GlobalSum [pfirst >> LOG2_CHUNK_SIZE] = Local_Ck_Delta [CHUNK_SIZE-1] ;
+            // FIXME: should the outer loop just iterate over the chunks?
+            int64_t chunk_id = pfirst >> LOG2_CHUNK_SIZE ;
+            GlobalSum [chunk_id] = Local_Ck_Delta [CHUNK_SIZE-1] ;
         }
 
         this_thread_block ( ).sync ( ) ;
@@ -309,40 +321,68 @@ __global__ void GB_cuda_select_sparse_phase6_NEW
     // outputs
     GrB_Matrix C,           // Cp and Ch are constructed
     // inputs, not modified
-    GB_Cj_TYPE *Ck_Delta,   // size cnz
-    int64_t *GlobalSum,     // size # threadblocks
-    GB_Aj_TYPE *Ak_Keep,    // size cnz
+    GB_Cj_TYPE *Ck_Delta,   // size cnz + 1
+    int64_t *GlobalSum,     // size # threadblocks + 1
+    GB_Aj_TYPE *Ak_Keep,    // size cnz + 1
     GrB_Matrix A
 )
 {
 
+    // Cp and Ch use 1-based indexing below, so decrement them by 1
+    GB_Cp_TYPE *Cp = C->p ; Cp-- ;
+    GB_Cj_TYPE *Ch = C->h ; Ch-- ;
     int64_t cnz = C->nvals ;
 
     #if ( GB_A_IS_HYPER )
     const GB_Aj_TYPE *__restrict__ Ah = (GB_Aj_TYPE *) A->h ;
     #endif
 
-FIXME: no need to compute Ck_map.  Instead, use the double loop above,
-outer loop iterates over chunks, inner loop over the entries, and Ck_Map is
-constructed on the fly, from Ck_Delta and GlobalSum
+    //--------------------------------------------------------------------------
+    // determine the start of each vector in C
+    //--------------------------------------------------------------------------
 
-    int tid = blockIdx.x * blockDim.x + threadIdx.x ;
-    int nthreads = blockDim.x * gridDim.x ;
-
-    for (int64_t pC = tid; pC < cnz; pC += nthreads)
+    for (int64_t pfirst = blockIdx.x << LOG2_CHUNK_SIZE ;
+                 pfirst < cnz ;
+                 pfirst += gridDim.x << LOG2_CHUNK_SIZE )
     {
-        if (Ck_map [pC] != Ck_map [pC - 1])
+
+        int64_t plast = pfirst + CHUNK_SIZE ;
+        plast = GB_IMIN (plast, cnz) ;
+        int64_t my_chunk_size = plast - pfirst ;
+
+        // FIXME: should the outer loop just iterate over the chunks?
+        int64_t chunk_id = pfirst >> LOG2_CHUNK_SIZE ;
+
+        for (int64_t pdelta = threadIdx.x ;
+                     pdelta < my_chunk_size ;
+                     pdelta += blockDim.x)
         {
-            int64_t kA = Ak_keep [pC] ;
-            Cp [Ck_map[pC] - 1] = pC ;
-            Ch [Ck_map[pC] - 1] = GBh_A (Ah, kA) ;
+
+            int64_t pC = pfirst + pdelta ;
+
+            // compute Ck_Map [pC] and Ck_Map [pC-1]
+            GB_Cj_TYPE ck_map_pC  = Ck_Delta [pC  ] + GlobalSum [chunk_id] ;
+            GB_Cj_TYPE ck_map_pC1 = Ck_Delta [pC-1] + GlobalSum [chunk_id + ((pdelta == 0) ? -1 : 0)] ;
+
+            if (ck_map_pC != ck_map_pC1)
+            {
+                // this is the start of a new vector in C
+                // note that ck_map_pC is 1-based
+                int64_t kA = Ak_keep [pC] ;
+                Cp [ck_map_pC] = pC ;
+                Ch [ck_map_pC] = GBh_A (Ah, kA) ;
+            }
         }
     }
 
-FIXME: last thread or last chunk needs to compute Cp [cnvec] = cnz
-
+    // finalize the last vector of C
+    if (threadIdx.x == 0 && blockIdx.x == 0)
+    {
+        // C->nvec is 0-based, so increment Cp to undo the Cp-- done above
+        Cp++ ;
+        Cp [C->nvec] = cnz ;
+    }
 }
-
 
 //------------------------------------------------------------------------------
 // select sparse, host method
@@ -374,12 +414,12 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 
     GrB_Info info ;
 
-    // workspaces of size anz+1
+    // workspaces of size anz+2
     void *W_0 = NULL ; size_t W_0_size = 0 ;
     void *W_1 = NULL ; size_t W_1_size = 0 ;
-    // workspace of size gridsz+1
+    // workspace of size gridsz+4
     void *W_2 = NULL ; size_t W_2_size = 0 ;
-    // workspace of size cnz+1, where cnz <= anz
+    // workspace of size cnz+2, where cnz <= anz
     void *W_3 = NULL ; size_t W_3_size = 0 ;
 
     GB_A_NHELD (anz) ;          // # of entries in A
@@ -400,9 +440,9 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // of A is the pC-th entry of C.
 
     size_t w0 = GB_IMAX (sizeof (GB_Aj_TYPE), sizeof (GB_Cj_TYPE)) ;
-    W_0 = (void *) GB_MALLOC_MEMORY (anz+1, w0, &W_0_size) ;
-    W_1 = (void *) GB_MALLOC_MEMORY (anz+1, sizeof (Gp_Ap_TYPE), &W_1_size) ;
-    W_2 = (void *) GB_MALLOC_MEMORY (gridsz+1, sizeof (int64_t), &W_2_size) ;
+    W_0 = (void *) GB_MALLOC_MEMORY (anz+2, w0, &W_0_size) ;
+    W_1 = (void *) GB_MALLOC_MEMORY (anz+2, sizeof (Gp_Ap_TYPE), &W_1_size) ;
+    W_2 = (void *) GB_MALLOC_MEMORY (gridsz+4, sizeof (int64_t), &W_2_size) ;
     if (W_0 == NULL || W_1 == NULL || W_2 == NULL)
     {
         // out of memory
@@ -410,15 +450,16 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    // use W_0 workspace for Ak
-    GB_Aj_TYPE *Ak = (GB_Aj_TYPE *) W_0 ;
+    // use W_0 [1..anz] as workspace for Ak [0..anz-1]
+    GB_Aj_TYPE *Ak = (GB_Aj_TYPE *) W_0 + 1 ;
 
     // use W_1 workspace for Map, and shift by one to define Map [-1] as 0
     GB_Ap_TYPE *Map = ((GB_Ap_TYPE *) W_1) + 1 ;
     Map [-1] = 0 ;
 
-    // GlobalSum [0 .. #threadblocks]
-    int64_t *GlobalSum = (int64_t *) W_2 ;
+    // GlobalSum [-1 .. #threadblocks] of size (#threadblocks+2)
+    int64_t *GlobalSum = (int64_t *) W_2 - 1 ;
+    GlobalSum [-1] = 0 ;
 
     GB_cuda_select_sparse_phase1_NEW <<<grid, block, 0, stream>>>
         (Ak, Map, GlobalSum, A, ythunk) ;
@@ -452,8 +493,8 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
         return (GrB_SUCCESS) ;
     }
 
-    // allocate workspace of size cnz+1
-    W_3 = (void *) GB_MALLOC_MEMORY (cnz + 1, sizeof (GB_Aj_TYPE), &W_3_size) ;
+    // allocate workspace of size cnz+2
+    W_3 = (void *) GB_MALLOC_MEMORY (cnz + 2, sizeof (GB_Aj_TYPE), &W_3_size) ;
     if (W_3 == NULL)
     {
         // out of memory
@@ -539,7 +580,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     //--------------------------------------------------------------------------
 
     GB_cuda_select_sparse_phase6_NEW <<<grid, block, 0, stream>>>
-        (C, Ck_Delta, GlobalSum, Ak_Keep, A) ;
+        (C, Ck_Delta, GlobalSum, A) ;
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 

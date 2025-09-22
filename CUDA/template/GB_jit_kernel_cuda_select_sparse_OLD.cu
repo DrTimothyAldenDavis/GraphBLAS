@@ -63,9 +63,8 @@ __global__ void GB_cuda_select_sparse_phase1
                          pdelta < my_chunk_size ;
                          pdelta += blockDim.x)
             {
-                int64_t pA ;    // pA = pfirst + pdelta
-                int64_t k = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (&pA, pdelta, pfirst, Ap,
-                    anvec1, kfirst, slope) ;
+                int64_t pA = pfirst + pdelta ;
+                int64_t k = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (pA, pdelta, Ap, anvec1, kfirst, slope) ;
                 int64_t j = GBh_A (Ah, k) ;
                 // Ak [pA] = k ;        // save the kth vector containing the pA-th entry
 
@@ -144,8 +143,7 @@ __global__ void GB_cuda_select_sparse_phase2
                 // identical to the expression (Map [pA-1] < pC).
 
                 // the A(i,j) is in the kA-th vector of A:
-                int64_t kA = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (&pA, pdelta, pfirst, Ap,
-                    anvec1, kfirst, slope) ;
+                int64_t kA = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (pA, pdelta, Ap, anvec1, kfirst, slope) ;
 
                 // Map is offset by 1 since it was computed as an inclusive
                 // cumsum, so decrement pC here to get the actual position in
