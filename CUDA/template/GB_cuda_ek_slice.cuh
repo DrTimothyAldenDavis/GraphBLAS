@@ -185,7 +185,7 @@ template <typename T> __device__ int64_t GB_cuda_ek_slice_entry
 
     // look for p in Ap, where p is in range pfirst:plast-1
     // where pfirst >= 0 and plast < anz
-    int64_t p = pfirst + pdelta ;
+    int64_t p = pfirst + pdelta ;   // FIXME do this in the caller, not here
     (*p_handle) = p ;
 
     // linear-time search for the k value of the pth entry
