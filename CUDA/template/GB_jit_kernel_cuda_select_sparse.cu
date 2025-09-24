@@ -133,6 +133,13 @@ __global__ void GB_cuda_select_sparse_phase1
         // where Local_Map [i] = sum (Local_Map [0:i]), so that
         // Local_Map [0] = 1 if the first entry is kept, 0 otherwise,
         // and Local_Map [CHUNK_SIZE-1] = total # entries kept in this block
+        if (threadIdx.x == 0)
+        {
+            for (int i = 1 ; i < CHUNK_SIZE ; i++)
+            {
+                Local_Map [i] += Local_Map [i-1] ;
+            }
+        }
         this_thread_block ( ).sync ( ) ;
 
         //----------------------------------------------------------------------
@@ -312,6 +319,13 @@ __global__ void GB_cuda_select_sparse_phase4
         this_thread_block ( ).sync ( ) ;
         // FIXME: do a cub::BlockScan::InclusiveSum on threadblock's
         // Local_Ck_Delta [0..CHUNK_SIZE-1]
+        if (threadIdx.x == 0)
+        {
+            for (int i = 1 ; i < CHUNK_SIZE ; i++)
+            {
+                Local_Ck_Delta [i] += Local_Ck_Delta [i-1] ;
+            }
+        }
         this_thread_block ( ).sync ( ) ;
 
         //----------------------------------------------------------------------
