@@ -36,7 +36,9 @@ GrB_Info GB_cuda_select_sparse_jit
 
     void *dl_function ;
     GrB_Info info = GB_jitifyer_load (&dl_function,
-        GB_jit_select_family, "cuda_select_sparse_OLD",
+        GB_jit_select_family,
+            "cuda_select_sparse",           // new method
+//          "cuda_select_sparse_OLD",       // Vidith's method
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) op, A->type, NULL, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;
