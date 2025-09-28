@@ -7,23 +7,66 @@
 
 //------------------------------------------------------------------------------
 
+// C = select (A) kernel on the GPU.  The input matrix A may be jumbled; if
+// so, and if C is not empty, then C->jumbled is set below.  The algorithm
+// breaks down into 6 phases, 2 on the CPU and 4 on the GPU:
+//
+// phase1 (GPU): all entries in A are scanned, to determine if they are kept.
+//      This phase constructs Ak, so that (Ai,Ak,Ax) is a triplet form of the
+//      input matrix.  It also constructs a Map array, which tells each entry
+//      in A where it needs to appear in C (after a cumulative sum).  Time
+//      taken is O(nnz(A) + (nnz(A)/chunksize)*log2(nvec(A))), where the latter
+//      is due to GB_cuda_ek_slice_setup.
+//
+// phase2 (CPU): a cumulative sum of the # of entries kept in each chunk of A.
+//      Time taken is O(nnz(A)/chunksize).  This work could also be done on
+//      the GPU, if there are many chunks.
+//
+// phase3 (GPU): entries to keep are copied from A into C, and Ck1 is
+//      constructed, where Ck1 [pC] = kA if the pC-th entry of C comes from the
+//      kA-th vector of A.  This is the same as Ck0.  Time taken is O(nnz(A)).
+//
+// phase4 (GPU): determine where each vector of C starts in Ci,Cx, by computing
+//      Ck_Delta and its cumulative sum (per chunk of C); also computes the
+//      ChunkSum, which tells how many vectors start in any given chunk of C.
+//      Time taken is O(nnz(C)), where nnz(C) <= nnz(A).
+//
+// phase5 (CPU): a cumulative sum of the # of vectors that start in each chunk
+//      of C.  Time taken is O(nnz(C)/chunksize).  This work could also be done
+//      on the GPU, if there are many chunks.
+//
+// phase6 (GPU): construct Cp and Ch, from Ck_Delta, Ck, and Ck0.
+//      Time taken is O(nnz(C)).
+//
+// Each phase is described with a small example below.  Currently, phase2 and
+// phase5 are single-threaded, but can easily be done in parallel on either the
+// CPU (using GB_cumsum) or on the GPU with a device-wide cumulative sum.
+
 using namespace cooperative_groups ;
 
 #include "GB_cuda_ek_slice.cuh"
 
-#define GB_FREE_WORKSPACE               \
-{                                       \
-    GB_FREE_MEMORY (&W_0, W_0_size) ;   \
-    GB_FREE_MEMORY (&W_1, W_1_size) ;   \
-    GB_FREE_MEMORY (&W_2, W_2_size) ;   \
-    GB_FREE_MEMORY (&W_3, W_3_size) ;   \
+#define GB_FREE_WORKSPACE                               \
+{                                                       \
+    if (W_0 != NULL) { cudaFree (W_0) ; W_0 = NULL ; }  \
+    if (W_1 != NULL) { cudaFree (W_1) ; W_1 = NULL ; }  \
+    GB_FREE_MEMORY (&W_2, W_2_size) ;                   \
+    if (W_3 != NULL) { cudaFree (W_3) ; W_3 = NULL ; }  \
 }
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_FREE_WORKSPACE ;
 
-#define CHUNK_SIZE 1024
-#define LOG2_CHUNK_SIZE 10
+// The chunk size is assumed to be < UINT16_MAX (65535), so that the cumsums
+// can be done in uint16_t workspace array.  If the chunk size exceeds this
+// value, then the uint16_t types below must be replaced with a larger type.
+#define CHUNK_SIZE          GB_CUDA_SELECT_SPARSE_CHUNKSIZE
+#define LOG2_CHUNK_SIZE     GB_CUDA_SELECT_SPARSE_CHUNKSIZE_LOG2
+#define BLOCKDIM            GB_CUDA_SELECT_SPARSE_BLOCKDIM
+
+// the # of items per thread must be an integer, so the chunk size must be a
+// multiple of blockdim (the # of threads in each threadblock):
+#define ITEMS_PER_THREAD    (CHUNK_SIZE / BLOCKDIM)
 
 //------------------------------------------------------------------------------
 // GB_cuda_select_sparse_phase1: determine which entries in A to keep
@@ -32,9 +75,10 @@ using namespace cooperative_groups ;
 __global__ void GB_cuda_select_sparse_phase1
 (
     // outputs:
-    GB_Aj_TYPE *Ak,     // size anz, values in range 0 to max # vectors in A
-    GB_Ap_TYPE *Map,    // size anz, values in range 0 to anz-1
-    int64_t *ChunkSum,  // size # threadblocks + 1
+    GB_Aj_SIGNED_TYPE *Ak,  // size anz, in Ak [0..anz-1], and values in range
+                            // 0 to the # of vectors in A
+    uint16_t *Map,          // size anz+1, in Map [-1..anz-1]
+    int64_t *ChunkSum,      // size nchunks_in_A+1, ChunkSum [-1..nchunks_in_A]
     // inputs, not modified:
     GrB_Matrix A,
     const void *ythunk,
@@ -63,14 +107,27 @@ __global__ void GB_cuda_select_sparse_phase1
     #endif
 
     // workspace for each chunk
-    __shared__ GB_Ap_TYPE Local_Map [CHUNK_SIZE] ;
+    __shared__ uint16_t Local_Map [CHUNK_SIZE] ;
+
+#if 0
+    // 16-bit cumulative blockscan for a single chunk on one threadblock:
+    using BlockLoad  = cub::BlockLoad <uint16_t*, BLOCKDIM, ITEMS_PER_THREAD> ;
+    using BlockScan  = cub::BlockScan <uint16_t , BLOCKDIM, cub::BLOCK_SCAN_WARP_SCANS> ;
+    using BlockStore = cub::BlockStore<uint16_t , BLOCKDIM, ITEMS_PER_THREAD> ;
+    __shared__ union
+    {
+        typename BlockLoad::TempStorage load ;
+        typename BlockScan::TempStorage scan ;
+        typename BlockStore::TempStorage store ;
+    } W ;
+#endif
 
     //--------------------------------------------------------------------------
     // compute Ak, and each local chunk of Map
     //--------------------------------------------------------------------------
 
-    // Each threadblock (with blocksz = 512 threads) does an entire chunk (of
-    // size CHUNK_SIZE = 1024).
+    // Each threadblock (with 512 threads) does an entire chunk (of size
+    // CHUNK_SIZE = 1024).  This geometry is defined in GB_cuda_geometry.hpp.
 
     for (int64_t chunk = blockIdx.x ;
                  chunk < nchunks_in_A ;
@@ -127,6 +184,32 @@ __global__ void GB_cuda_select_sparse_phase1
             Local_Map [pdelta] = 0 ;
         }
 
+        //----------------------------------------------------------------------
+        // inclusive cumulative sum of Local_Map
+        //----------------------------------------------------------------------
+
+        // Map [pfirst..pfirst+CHUNK_SIZE-1] = inclusive cumsum of Local_Map:
+        // for (int i = 1 ; i < CHUNK_SIZE ; i++)
+        //      Local_Map [i] += Local_Map [i-1] ;
+        // Map [pfirst + 0:CHUNK_SIZE-1] = Local_Map [0:CHUNK_SIZE-1]
+
+#if 0
+        this_thread_block ( ).sync ( ) ;
+        uint16_t t [ITEMS_PER_THREAD] ;
+
+        // each thread loads its data from Local_Map (in shared memory)
+        BlockLoad (W.load).Load (Local_Map, t, CHUNK_SIZE) ;
+        this_thread_block ( ).sync ( ) ;
+
+        // inclusive sum of data from Local_Map
+        BlockScan (W.scan).InclusiveSum (t, t) ;
+        this_thread_block ( ).sync ( ) ;
+
+        // each thread saves its data into Map (in global memory)
+        BlockStore (W.store).Store (Map + pfirst, t, CHUNK_SIZE) ;
+        this_thread_block ( ).sync ( ) ;
+
+#else
         this_thread_block ( ).sync ( ) ;
         // FIXME: do a cub::BlockScan::InclusiveSum on threadblock's
         // Local_Map [0..CHUNK_SIZE-1],
@@ -152,6 +235,7 @@ __global__ void GB_cuda_select_sparse_phase1
         {
             Map [pfirst + pdelta] = Local_Map [pdelta] ;
         }
+#endif
 
         //----------------------------------------------------------------------
         // save the # of entries kept in this chunk
@@ -162,24 +246,30 @@ __global__ void GB_cuda_select_sparse_phase1
             ChunkSum [chunk] = Local_Map [CHUNK_SIZE-1] ;
         }
     }
+
+    if (threadIdx.x == 0 && blockIdx.x == 0)
+    {
+        Map [-1] = 0 ;  // sentinel value required for phase3; this also sets
+        // Ck_Delta [-1] = 0 as a sentinal value required for phase6.
+    }
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_select_sparse_phase3: construct Ci, Cx, Ck
+// GB_cuda_select_sparse_phase3: construct Ci, Cx, Ck1
 //------------------------------------------------------------------------------
 
 __global__ void GB_cuda_select_sparse_phase3
 (
     // outputs:
     GrB_Matrix C,           // construct C->i and C->x
-    GB_Aj_TYPE *Ck,         // size cnz+1
+    GB_Aj_SIGNED_TYPE *Ck1, // size cnz+1, in Ck1 [0..cnz]
     // inputs, not modified:
     GrB_Matrix A,
-    int64_t *ChunkSum,      // size # threadblocks + 1
-    GB_Ap_TYPE *Map,        // size anz
-    GB_Aj_TYPE *Ak,         // size anz
+    int64_t *ChunkSum,      // size nchunks_in_A+1, ChunkSum [-1..nchunks_in_A]
+    uint16_t *Map,          // size anz+1, in Map [-1..anz-1]
+    GB_Aj_SIGNED_TYPE *Ak,  // size anz, in Ak [0..anz-1]
     int64_t anz,            // # of entries in A
-    int64_t nchunks_in_A         // # of chunks in A
+    int64_t nchunks_in_A    // # of chunks in A
 )
 {
 
@@ -187,27 +277,26 @@ __global__ void GB_cuda_select_sparse_phase3
     // get C->i and C->x, shifting down by one to account for 1-based Map
     //--------------------------------------------------------------------------
 
-    // in this method, the index pC = Map [pA] is 1-based, so decrement Ci, Cx,
-    // to account for this.  Ck is already 1-based.
+    // in this method, the index pC = Map [pA] + ChunkSum [chunk] is 1-based,
+    // so decrement Ci, Cx, to account for this.  Ck1 is already 1-based, and
+    // appears in Ck1 [0..cnz] with Ck1 [0] = -1 set below.
 
-    GB_Ci_TYPE *Ci = C->i ; Ci-- ;
+    GB_Ci_TYPE *__restrict__ Ci = (GB_Ci_TYPE *) C->i ; Ci-- ;
     #if !GB_ISO_SELECT
-    GB_C_TYPE  *Cx = C->x ; Cx-- ;
+    GB_C_TYPE  *__restrict__ Cx = (GB_C_TYPE  *) C->x ; Cx-- ;
     #endif
 
     //--------------------------------------------------------------------------
     // get A
     //--------------------------------------------------------------------------
 
-    #if ( GB_DEPENDS_ON_I )
     const GB_Ai_SIGNED_TYPE *__restrict__ Ai = (GB_Ai_SIGNED_TYPE *) A->i ;
-    #endif
-    #if ( GB_DEPENDS_ON_X )
+    #if !GB_ISO_SELECT
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
     #endif
 
     //--------------------------------------------------------------------------
-    // select the entries and copy them into Ci, Cx; construct Ck
+    // select the entries and copy them into Ci, Cx; construct Ck1
     //--------------------------------------------------------------------------
 
     for (int64_t chunk = blockIdx.x ;
@@ -242,15 +331,21 @@ __global__ void GB_cuda_select_sparse_phase3
                 // This entry is kept; it appears in a new position pC as
                 // compared to the entry Map [pA-1] immediately to its left.
                 // Map contains 1-based indices since it was computed as an
-                // inclusive cumsum, so Ci, Cx, and Ck have been shifted by one
-                // above.
+                // inclusive cumsum, so Ci and Cx have been shifted by one
+                // above.  Ck1 is already set up to access as 1-based.  pC is a
+                // 1-based index, and pA is 0-based.
                 Ci [pC] = Ai [pA] ;
                 // Cx [pC] = Ax [pA] ;
                 GB_SELECT_ENTRY (Cx, pC, Ax, pA) ;
                 // save the index of the kA-th vector kA that holds this entry
-                Ck [pC] = Ak [pA] ;
+                Ck1 [pC] = Ak [pA] ;
             }
         }
+    }
+
+    if (threadIdx.x == 0 && blockIdx.x == 0)
+    {
+        Ck1 [0] = -1 ;  // sentinel value required for phase4 (Ck0 [-1] = -1)
     }
 }
 
@@ -261,10 +356,10 @@ __global__ void GB_cuda_select_sparse_phase3
 __global__ void GB_cuda_select_sparse_phase4
 (
     // outputs:
-    GB_Cj_TYPE *Ck_Delta,   // size cnz
-    int64_t *ChunkSum,      // size nchunks_in_C+2
+    uint16_t *Ck_Delta, // size cnz+1, in Ck_Delta [-1..cnz-1]
+    int64_t *ChunkSum,  // size nchunks_in_C+1, in ChunkSum [-1..nchunks_in_C]
     // inputs, not modified:
-    GB_Aj_TYPE *Ck,         // size cnz+1
+    GB_Aj_SIGNED_TYPE *Ck0, // size cnz+1, in Ck0 [-1..cnz-1]
     int64_t cnz,
     int64_t nchunks_in_C
 )
@@ -274,7 +369,7 @@ __global__ void GB_cuda_select_sparse_phase4
     // workspace for each threadblock
     //--------------------------------------------------------------------------
 
-    __shared__ GB_Cj_TYPE Local_Ck_Delta [CHUNK_SIZE] ;
+    __shared__ uint16_t Local_Ck_Delta [CHUNK_SIZE] ;
 
     //--------------------------------------------------------------------------
     // construct Ck_Delta and then cumsum each block
@@ -286,11 +381,11 @@ __global__ void GB_cuda_select_sparse_phase4
     {
 
         //----------------------------------------------------------------------
-        // get the chunk of Ck and Ck_Delta this threadblock works on
+        // get the chunk of Ck0 and Ck_Delta this threadblock works on
         //----------------------------------------------------------------------
 
-        // this threadblock works on Ck [pfirst:plast-1] and
-        // Ck_Delta [pfirst:plast-1]
+        // this threadblock works on Ck0 [pfirst:plast-1] and
+        // Ck_Delta [pfirst:plast-1], where Ck0 uses 0-based indices
 
         int64_t pfirst = chunk << LOG2_CHUNK_SIZE ;
         int64_t plast = pfirst + CHUNK_SIZE ;
@@ -298,15 +393,16 @@ __global__ void GB_cuda_select_sparse_phase4
         int64_t my_chunk_size = plast - pfirst ;
 
         //----------------------------------------------------------------------
-        // determine which entries of Ck start new vectors in C
+        // determine which entries of Ck0 start new vectors in C
         //----------------------------------------------------------------------
 
         int64_t pdelta = threadIdx.x ;
         for ( ; pdelta < my_chunk_size ;
                 pdelta += blockDim.x)
         {
+            // pC is a 0-based index, in range 0 to cnz-1
             int64_t pC = pfirst + pdelta ;
-            Local_Ck_Delta [pdelta] = (Ck [pC-1] < Ck [pC]) ;
+            Local_Ck_Delta [pdelta] = (Ck0 [pC-1] < Ck0 [pC]) ;
         }
 
         // clear the unused part of the Local_Ck_Delta
@@ -345,6 +441,8 @@ __global__ void GB_cuda_select_sparse_phase4
             ChunkSum [chunk] = Local_Ck_Delta [CHUNK_SIZE-1] ;
         }
     }
+
+    // no need to set Ck_Delta [-1] = 0; already done in phase1
 }
 
 //------------------------------------------------------------------------------
@@ -354,13 +452,13 @@ __global__ void GB_cuda_select_sparse_phase4
 __global__ void GB_cuda_select_sparse_phase6
 (
     // outputs:
-    GrB_Matrix C,           // Cp and Ch are constructed
+    GrB_Matrix C,       // Cp and Ch are constructed
     // inputs, not modified
-    GB_Cj_TYPE *Ck_Delta,   // size cnz + 1
-    int64_t *ChunkSum,      // size # threadblocks + 1
-    GB_Aj_TYPE *Ck,         // size cnz + 1
+    uint16_t *Ck_Delta, // size cnz+1, in Ck_Delta [-1..cnz-1]
+    int64_t *ChunkSum,  // size nchunks_in_C+1, in ChunkSum [-1..nchunks_in_C]
+    GB_Aj_SIGNED_TYPE *Ck0,     // size cnz+1, in Ck0 [-1..cnz-1]
     #if ( GB_A_IS_HYPER )
-    GrB_Matrix A,
+    GrB_Matrix A,               // A->h is required if A is hypersparse
     #endif
     int64_t cnz,
     int64_t nchunks_in_C
@@ -372,8 +470,8 @@ __global__ void GB_cuda_select_sparse_phase6
     //--------------------------------------------------------------------------
 
     // Cp and Ch use 1-based indexing below, so decrement them by 1
-    GB_Cp_TYPE *Cp = C->p ; Cp-- ;
-    GB_Cj_TYPE *Ch = C->h ; Ch-- ;
+    GB_Cp_TYPE *__restrict__ Cp = (GB_Cp_TYPE *) C->p ; Cp-- ;
+    GB_Cj_TYPE *__restrict__ Ch = (GB_Cj_TYPE *) C->h ; Ch-- ;
     #if ( GB_A_IS_HYPER )
     const GB_Aj_TYPE *__restrict__ Ah = (GB_Aj_TYPE *) A->h ;
     #endif
@@ -406,14 +504,15 @@ __global__ void GB_cuda_select_sparse_phase6
         {
             int64_t pC = pfirst + pdelta ;
             // get the vector kC that contains the pC-th entry of C
-            GB_Cj_TYPE kC = Ck_Delta [pC  ] + ChunkSum [chunk] ;
+            GB_Cj_SIGNED_TYPE kC = Ck_Delta [pC  ] + ChunkSum [chunk] ;
             // get the vector k0 that contains the (pC-1)-st entry of C
-            GB_Cj_TYPE k0 = Ck_Delta [pC-1] + ChunkSum [chunk - (pdelta == 0)] ;
+            GB_Cj_SIGNED_TYPE k0 = Ck_Delta [pC-1] + ChunkSum [chunk -
+                (pdelta == 0)] ;
             if (k0 < kC)
             {
-                // The pC-th entry  is the start of a vector kC in C;
+                // The pC-th entry is the start of a vector kC in C;
                 // note that kC is 1-based, so Cp and Ch are decremented above.
-                int64_t kA = Ck [pC] ;
+                int64_t kA = Ck0 [pC] ;
                 Cp [kC] = pC ;
                 Ch [kC] = GBh_A (Ah, kA) ;
             }
@@ -477,8 +576,8 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 
     ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
 
-    dim3 grid (gridsz) ;        // = min (ceil (nnz(A)/512), 256*(#sms))
-    dim3 block (blocksz) ;      // = 512
+    dim3 grid (gridsz) ;        // = min (ceil (anz/CHUNK_SIZE), 256*(#sms))
+    dim3 block (BLOCKDIM) ;
 
     //--------------------------------------------------------------------------
     // phase 1: allocate workspace and determine which entries of A to keep
@@ -509,10 +608,13 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // [-1] with Map [0].  Since A has entries equal to 0 or 1, fkeep(aij) is
     // simply aij, held in the Ax array:
 
+    // inputs:
     // Ax:     [ 1 1 1 0|1 0 0 0|0 1 0 1|1 0 1 1|1 1|- -] (- denotes empty)
+    // output:
     // Map:  0 [ 1 2 3 3|1 1 1 1|0 1 1 2|1 1 2 3|1 2 2 2] (note the padding)
     // Ak:     [ 0 0 0 1|1 1 2 3|3 4 4 5|5 5 5 6|6 6 - -] (see col list above
 
+    // output:
     // ChunkSum [-1..nchunks_in_A] is the # of entries kept in each chunk, with
     // ChunkSum [-1] = 0 and ChunkSum [nchunks_in_A] = 0 for now:
     //       0 [       3       1       2       3       2] 0
@@ -523,12 +625,19 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // If A is hypersparse by column, then Ak [pA] = kA holds the value kA if
     // the entry is in the kA-th nonempty column of A, which is column Ah [kA].
 
-    size_t w0 = GB_IMAX (sizeof (GB_Aj_TYPE), sizeof (GB_Cj_TYPE)) ;
-    W_0 = (void *) GB_MALLOC_MEMORY (anz+2, w0, &W_0_size) ;
-    W_1 = (void *) GB_MALLOC_MEMORY (anz+2 + CHUNK_SIZE,
-        sizeof (Gp_Ap_TYPE), &W_1_size) ;
+    size_t w0 = GB_IMAX (sizeof (GB_Aj_SIGNED_TYPE),
+                         sizeof (GB_Cj_SIGNED_TYPE)) ;
+
+    // The W_2 workspace is used only for ChunkSum, and must be accessible on
+    // both the GPU and CPU, so the RMM memory manager is used.  All other
+    // workspaces (W_0, W_1, and W_3) exist only on the GPU, so cudaMalloc can
+    // be used for them.
     W_2 = (void *) GB_MALLOC_MEMORY (nchunks_in_A+2, sizeof (int64_t),
         &W_2_size) ;
+    W_0_size = (anz+2) * w0 ;
+    cudaMalloc (&W_0, (size_t) W_0_size) ;
+    W_1_size = (anz+2 + CHUNK_SIZE) * sizeof (uint16_t) ;
+    cudaMalloc (&W_1, (size_t) W_1_size) ;
     if (W_0 == NULL || W_1 == NULL || W_2 == NULL)
     {
         // out of memory
@@ -536,16 +645,17 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    // use W_0 [1..anz] as workspace for Ak [0..anz-1]
-    GB_Aj_TYPE *Ak = (GB_Aj_TYPE *) W_0 ;
+    // use W_0 [0..anz-1] as workspace for Ak [0..anz-1]
+    GB_Aj_SIGNED_TYPE *Ak = (GB_Aj_SIGNED_TYPE *) W_0 ;
 
     // use W_1 workspace for Map, and shift by one to define Map [-1] as 0
-    GB_Ap_TYPE *Map = ((GB_Ap_TYPE *) W_1) + 1 ;
-    Map [-1] = 0 ;
+    // (which is set in the phase1 kernel launch below).
+    uint16_t *Map = ((uint16_t *) W_1) + 1 ;
 
-    // ChunkSum [-1 .. nchunks_in_A-1] of size nchunks_in_A+1
-    int64_t *ChunkSum = (int64_t *) W_2 - 1 ;
-    ChunkSum [-1] = 0 ;
+    // ChunkSum [-1 .. nchunks_in_A] of size nchunks_in_A+2
+    // FIXME: ChunkSum could have type GB_Ap_TYPE
+    int64_t *ChunkSum = (int64_t *) W_2 + 1 ;
+    ChunkSum [-1] = 0 ;     // sentinel value required for phase3 and phase6
 
     // KERNEL LAUNCH 1: phase1
     GB_cuda_select_sparse_phase1 <<<grid, block, 0, stream>>>
@@ -564,8 +674,10 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // This phase computes an exclusive cumulative sum:
     //       0 [       0       3       4       6       9]    11
 
+    // FIXME: do this on the GPU?  Or in parallel on the CPU?
+    // FIXME: if on the CPU, use GB_cumsum.c (need both int32_t and int64_t)
+
     // overwrite ChunkSum [0..gridsdz] with its cumulative sum
-    int64_t cnz = 0 ;
     for (int64_t chunk = 0 ; chunk < nchunks_in_A ; chunk++)
     {
         // get the # of entries found by this threadblock
@@ -578,7 +690,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     ChunkSum [nchunks_in_A] = cnz ;
 
     //--------------------------------------------------------------------------
-    // phase 3: allocate C and construct Ci, Cx, and Ck
+    // phase 3: allocate C and construct Ci, Cx, and Ck1
     //--------------------------------------------------------------------------
 
     // allocate the C matrix as hypersparse, with cnz entries
@@ -591,8 +703,13 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
         return (GrB_SUCCESS) ;
     }
 
+    // This kernel tolerates A in a jumbled state, for all operators.
+    // TODO: GB_select does a wait on A, but this can be delayed.
+    C->jumbled = A->jumbled ;
+
     // allocate workspace of size cnz+2
-    W_3 = (void *) GB_MALLOC_MEMORY (cnz + 2, sizeof (GB_Aj_TYPE), &W_3_size) ;
+    W_3_size = (cnz + 2) * sizeof (GB_Aj_SIGNED_TYPE) ;
+    cudaMalloc (&W_3, (size_t) W_3_size) ;
     if (W_3 == NULL)
     {
         // out of memory
@@ -600,16 +717,20 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    // use W_3 as workspace for Ck, always accessed with 1-based indices
-    GB_Aj_TYPE *Ck = ((GB_Aj_TYPE *) W_3) ;
-    Ck [0] = -1 ;
+    // use W_3 as workspace for Ck0 and Ck1, which are the same array, but Ck0
+    // is accessed with 0-based indices (in range 0:cnz-1) and Ck1 uses 1-based
+    // indices (in range 1:cnz).  That is, Ck0 [0] is the same as Ck1 [1].  The
+    // first entry (Ck1 [0] and Ck0 [-1]) is a sentinel value (-1), set in the
+    // phase3 kernel launch below.
+    GB_Aj_SIGNED_TYPE *Ck0 = ((GB_Aj_SIGNED_TYPE *) W_3) + 1 ;
+    GB_Aj_SIGNED_TYPE *Ck1 = ((GB_Aj_SIGNED_TYPE *) W_3) ;
 
     // The position where the pA-th entry in A appears in C is given by pC =
     // Map [pA] + ChunkSum [chunk], where pC is a 1-based index.  If this
     // position differs from the position of the (pA-1)st entry in A, then the
     // entry is kept, and is copied from A into C in phase3.
 
-    // Ck [pC] = kA = Ak [pA] if the entry in C is in the vector of C that
+    // Ck1 [pC] = kA = Ak [pA] if the entry in C is in the vector of C that
     // corresponds to the kA-th vector of A.
 
     // On output, where "|" reflects the chunks of A, not C, and spaces are
@@ -626,7 +747,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // output, with gaps denoting entries not in C:
     // Ci:     [ 0 1 2  |5      |  1   2|7   9 3|7 9 ]
     // Cx:     [ 1 1 1  |1      |  1   1|1   1 1|1 1 ]
-    // Ck:  -1 [ 0 0 0  |1      |  4   5|5   5 6|6 6 ]
+    // Ck1: -1 [ 0 0 0  |1      |  4   5|5   5 6|6 6 ]
     //           ^       ^         ^   ^       ^---------start of vectors in C
 
     // Note that k=2 and k=3 in C are empty vectors since no entries in the 2nd
@@ -634,13 +755,14 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 
     // KERNEL LAUNCH 2: phase3
     GB_cuda_select_sparse_phase3 <<<grid, block, 0, stream>>>
-        (/* outputs: */ C, Ck,
+        (/* outputs: */ C, Ck1,
          /* inputs: */  A, ChunkSum, Map, Ak, anz, nchunks_in_A) ;
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-    // Ak (in W_0) no longer needed; reused below for Ck_Delta
-    // Map (in W_1) no longer needed
+    // Ak (in W_0) no longer needed, and W_0 is no longer needed, so free it
+    cudaFree (W_0) ; W_0 = NULL ;
+    // Map (in W_1) no longer needed; reused below for Ck_Delta
 
     //--------------------------------------------------------------------------
     // phase 4: construct Ck_Delta and its local cumulative sum
@@ -650,9 +772,10 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // 0 otherwise.  Then each threadblock computes the inclusive cumulative
     // sum of its chunk of Ck_Delta, overwriting Ck_Delta with its cumulative
     // sum.  Note the spaces (for illustration above) are removed here.
+    // The index pC is 0-based in phase 4.
 
     // input:
-    // Ck:  -1 [ 0 0 0 1|4 5 5 5|6 6 6 ]
+    // Ck0: -1 [ 0 0 0 1|4 5 5 5|6 6 6 ]
     //           ^     ^ ^ ^     ^---------start of vectors in C
     // output:
     // Ck_Delta as 0/1:
@@ -665,22 +788,25 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // # of chunks in C:
     int64_t nchunks_in_C = (cnz + CHUNK_SIZE - 1) >> LOG2_CHUNK_SIZE ;
 
-    // using W_0 as workspace for Ck_Delta
-    GB_Cj_TYPE *Ck_Delta = ((GB_Cj_TYPE *) W_0) + 1 ;
-    Ck_Delta [-1] = 0 ;
+    // using W_1 [-1..cnz-1] as workspace for Ck_Delta, which is accessed
+    // with 0-based indices, using Ck_Delta [-1..cnz-1] where cnz <= anz.
+    // Note that W_1 [-1] is already set to zero in phase1 (Map [-1] = 0),
+    // and thus Ck_Delta [-1] is already equal to 0, as required.
+    uint16_t *Ck_Delta = ((uint16_t *) W_1) + 1 ;
 
     // KERNEL LAUNCH 3: phase4
     GB_cuda_select_sparse_phase4 <<<grid, block, 0, stream>>>
         (/* outputs: */ Ck_Delta, ChunkSum,
-         /* inputs: */  Ck, cnz, nchunks_in_C) ;
+         /* inputs: */  Ck0, cnz, nchunks_in_C) ;
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
-
-    // Ck (in W_3) no longer needed
 
     //--------------------------------------------------------------------------
     // phase 5: construct global cumsum of Ck_Delta on the CPU
     //--------------------------------------------------------------------------
+
+    // FIXME: do this on the GPU?  Or in parallel on the CPU?
+    // FIXME: if on the CPU, use GB_cumsum.c (need both int32_t and int64_t)
 
     // overwrite ChunkSum [0..nchunks_in_C] with its cumulative sum
     int64_t cnvec = 0 ;
@@ -727,17 +853,26 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     }
 
     // input:
+    // Ck0: -1 [ 0 0 0 1|4 5 5 5|6 6 6 ]
+    //           ^-----^-^-^-----^------^----- start of vectors in C
+    //           |     | | |     |      |
+    // pC is:    0 1 2 3 4 5 6 7 8 9 10 11  (pC is 0-based in phase6)
+
     // Ck_Delta as inclusive cumsum, per chunk of C:
     //       0 [ 1 1 1 2|1 2 2 2|1 1 1 ]
     // ChunkSum of C:
     //       0 [       2|      2|    1 ]
 
-    // KERNEL LAUNCH 5: phase6
+    // output:
+    // Cp:   [ 0 3 4 5 8 11 ] of size cnvec+1
+    // Ch:   [ 0 1 4 5 6    ] of size cnvec
+
+    // KERNEL LAUNCH 4: phase6
     GB_cuda_select_sparse_phase6 <<<grid, block, 0, stream>>>
         (/* outputs are C->p and C->h: */ C,
-         /* inputs: */ Ck_Delta, ChunkSum,
+         /* inputs: */ Ck_Delta, ChunkSum, Ck0,
          #if ( GB_A_IS_HYPER )
-         A,
+         A,               // A->h is required if A is hypersparse
          #endif
          cnz, nchunks_in_C) ;
     CUDA_OK (cudaGetLastError ( )) ;

@@ -5,19 +5,16 @@
 #define GB_FREE_ALL                         \
 {                                           \
     GB_phybix_free (C) ;                    \
-    GB_cuda_stream_pool_release (&stream) ;      \
+    GB_cuda_stream_pool_release (&stream) ; \
 }
-
-#define BLOCK_SIZE 512
-#define LOG2_BLOCK_SIZE 9
 
 GrB_Info GB_cuda_select_sparse
 (
-    GrB_Matrix C,
+    GrB_Matrix C,               // C is jumbled if A is jumbled
     const bool C_iso,
     const GrB_IndexUnaryOp op,
     const bool flipij,
-    const GrB_Matrix A,
+    const GrB_Matrix A,         // A can be jumbled, in all cases
     const GB_void *athunk,
     const GB_void *ythunk,
     GB_Werk Werk
@@ -34,10 +31,10 @@ GrB_Info GB_cuda_select_sparse
     cudaStream_t stream = nullptr ;
     GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
 
-    GrB_Index anz = GB_nnz_held (A) ;
+    int64_t anz = GB_nnz_held (A) ;
 
     int32_t number_of_sms = GB_Global_gpu_sm_get (0) ;
-    int64_t raw_gridsz = GB_ICEIL (anz, BLOCK_SIZE) ;
+    int64_t raw_gridsz = GB_ICEIL (anz, GB_CUDA_SELECT_SPARSE_CHUNKSIZE) ;
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     gridsz = std::max (gridsz, 1) ;
 
@@ -55,7 +52,6 @@ GrB_Info GB_cuda_select_sparse
         csparsity, A->hyper_switch, /* C->plen: revised later: */ 1,
         Cp_is_32, Cj_is_32, Ci_is_32)) ;
 
-    C->jumbled = A->jumbled ;
     C->iso = C_iso ;
 
     CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
@@ -65,7 +61,7 @@ GrB_Info GB_cuda_select_sparse
     CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
 
     GB_OK (GB_cuda_select_sparse_jit (C, A,
-        flipij, ythunk, op, stream, gridsz, BLOCK_SIZE)) ;
+        flipij, ythunk, op, stream, gridsz)) ;
 
     GB_OK (GB_cuda_stream_pool_release (&stream)) ;
 
