@@ -2740,6 +2740,16 @@ typedef enum    // GxB_Print_Level
     GxB_COMPLETE_VERBOSE = 5  // GxB_COMPLETE but with "%.15g" for doubles
 }
 GxB_Print_Level ;
+
+typedef int64_t (*GxB_print_function)
+(
+    // output:
+    char *string,           // value is printed to the string
+    // input:
+    size_t string_size,     // size of the string array
+    const void *value,      // value to print
+    int verbose             // if >0, print verbosely; else tersely
+) ;
 #endif
 
 //==============================================================================
@@ -6457,16 +6467,6 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
     (object, GB_STR(object), pr, f)
 #define GxB_print(object,pr) GxB_fprint(object,pr,NULL)
 #endif
-
-typedef int64_t (*GxB_print_function)
-(
-    // output:
-    char *string,           // value is printed to the string
-    // input:
-    size_t string_size,     // size of the string array
-    const void *value,      // value to print
-    int verbose             // if >0, print verbosely; else tersely
-) ;
 
 #endif
 
