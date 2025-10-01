@@ -45,6 +45,7 @@
 using namespace cooperative_groups ;
 
 #include "GB_cuda_ek_slice.cuh"
+#include "omp.h"
 
 #define GB_FREE_WORKSPACE                               \
 {                                                       \
@@ -542,6 +543,7 @@ extern "C"
 
 GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 {
+    double t = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // get callback functions
@@ -664,6 +666,10 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
+    t = omp_get_wtime ( ) - t ;
+    printf ("\nselect sparse phase1: %g sec\n", t) ;
+    t = omp_get_wtime ( ) ;
+
     //--------------------------------------------------------------------------
     // phase 2: sum up the entries in each block (on the CPU)
     //--------------------------------------------------------------------------
@@ -688,6 +694,10 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
         cnz += s ;
     }
     ChunkSum [nchunks_in_A] = cnz ;
+
+    t = omp_get_wtime ( ) - t ;
+    printf ("select sparse phase2: %g sec\n", t) ;
+    t = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // phase 3: allocate C and construct Ci, Cx, and Ck1
@@ -764,6 +774,10 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     cudaFree (W_0) ; W_0 = NULL ;
     // Map (in W_1) no longer needed; reused below for Ck_Delta
 
+    t = omp_get_wtime ( ) - t ;
+    printf ("select sparse phase3: %g sec\n", t) ;
+    t = omp_get_wtime ( ) ;
+
     //--------------------------------------------------------------------------
     // phase 4: construct Ck_Delta and its local cumulative sum
     //--------------------------------------------------------------------------
@@ -801,6 +815,10 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
+    t = omp_get_wtime ( ) - t ;
+    printf ("select sparse phase4: %g sec\n", t) ;
+    t = omp_get_wtime ( ) ;
+
     //--------------------------------------------------------------------------
     // phase 5: construct global cumsum of Ck_Delta on the CPU
     //--------------------------------------------------------------------------
@@ -826,6 +844,10 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // ChunkSum of C, after the cumsum, where ChunkSum [nchunks_in_C] = 5
     // are the final number of nonempty vectors of C:
     //       0 [       0|      2|    4 ]  5
+
+    t = omp_get_wtime ( ) - t ;
+    printf ("select sparse phase5: %g sec\n", t) ;
+    t = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // phase 6: construct Cp and Ch
@@ -877,6 +899,9 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
          cnz, nchunks_in_C) ;
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
+
+    t = omp_get_wtime ( ) - t ;
+    printf ("select sparse phase6: %g sec\n", t) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

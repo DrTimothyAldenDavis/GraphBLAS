@@ -72,6 +72,7 @@ extern "C"
     #include "include/GB_callback.h"
     #include "include/GB_hyper_hash_lookup.h"
     #include "include/GB_ok.h"
+    #include "include/GB_omp_kernels.h"
 }
 
 #include "GB_cuda_error.hpp"
