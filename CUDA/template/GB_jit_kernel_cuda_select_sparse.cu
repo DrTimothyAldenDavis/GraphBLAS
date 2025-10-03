@@ -71,6 +71,39 @@ using namespace cooperative_groups ;
 
 #define Int uint16_t
 
+__global__ void ExampleKernel(int *d_data, int num_items)
+{
+    // Specialize BlockLoad, BlockStore, and BlockScan for a 1D block of 128 threads, 4 ints per thread
+    using BlockLoad = cub::BlockLoad<int*, 128, 4>  ;
+    using BlockStore = cub::BlockStore<int, 128, 4> ;
+    using BlockScan = cub::BlockScan<int, 128>                            ;
+
+    // Allocate aliased shared memory for BlockLoad, BlockStore, and BlockScan
+    __shared__ union {
+        typename BlockLoad::TempStorage     load;
+        typename BlockScan::TempStorage     scan;
+        typename BlockStore::TempStorage    store;
+    } temp_storage;
+
+    // Have the block iterate over segments of items
+    for (int block_offset = 0; block_offset < num_items; block_offset += 128 * 4)
+    {
+        // Load a segment of consecutive items that are blocked across threads
+        int thread_data[4];
+        BlockLoad(temp_storage.load).Load(d_data + block_offset, thread_data);
+        __syncthreads();
+
+        // Collectively compute the block-wide inclusive prefix sum
+        BlockScan(temp_storage.scan).InclusiveSum(
+            thread_data, thread_data);
+        __syncthreads();
+
+        // Store scanned items to output segment
+        BlockStore(temp_storage.store).Store(d_data + block_offset, thread_data);
+        __syncthreads();
+    }
+}
+
 //------------------------------------------------------------------------------
 // GB_cuda_select_sparse_phase1: determine which entries in A to keep
 //------------------------------------------------------------------------------
@@ -205,7 +238,7 @@ __global__ void GB_cuda_select_sparse_phase1
         Int t [ITEMS_PER_THREAD] ;
 
         // each thread loads its data from Local_Map (in shared memory)
-        BlockLoad (W.load).Load ((Int *) Local_Map, t) ;
+        BlockLoad (W.load).Load (Local_Map, t) ;
         this_thread_block ( ).sync ( ) ;
 
         // inclusive sum of data from Local_Map
@@ -439,7 +472,7 @@ __global__ void GB_cuda_select_sparse_phase4
         Int t [ITEMS_PER_THREAD] ;
 
         // each thread loads its data from Local_Ck_Delta (in shared memory)
-        BlockLoad (W.load).Load ((Int *) Local_Ck_Delta, t) ;
+        BlockLoad (W.load).Load (Local_Ck_Delta, t) ;
         this_thread_block ( ).sync ( ) ;
 
         // inclusive sum of data from Local_Ck_Delta
