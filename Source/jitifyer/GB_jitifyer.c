@@ -2581,6 +2581,7 @@ void GB_jitifyer_nvcc_compile
     // compile:
     "sh -c \""                          // execute with POSIX shell
     // Fixme for CUDA: use GB_CUDA_COMPILER here:
+    "nvcc --version ; "
     "nvcc "                             // compiler command
     "-forward-unknown-to-host-compiler "
     "-DGB_JIT_RUNTIME=1  "              // nvcc flags

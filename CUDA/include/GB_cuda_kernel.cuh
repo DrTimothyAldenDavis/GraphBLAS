@@ -23,7 +23,8 @@
 #include <cstdint>
 #include <cmath>
 #include <stdio.h>
-#include <cub/block/block_scan.cuh>
+// #include <cub/block/block_scan.cuh>
+#include <cub/cub.cuh>
 #include <cooperative_groups.h>
 using namespace cooperative_groups ;
 
