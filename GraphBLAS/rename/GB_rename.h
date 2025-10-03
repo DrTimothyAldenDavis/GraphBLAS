@@ -871,6 +871,10 @@
 #define GB_JITpackage_353 GM_JITpackage_353
 #define GB_JITpackage_354 GM_JITpackage_354
 #define GB_JITpackage_355 GM_JITpackage_355
+#define GB_JITpackage_356 GM_JITpackage_356
+#define GB_JITpackage_357 GM_JITpackage_357
+#define GB_JITpackage_358 GM_JITpackage_358
+#define GB_JITpackage_359 GM_JITpackage_359
 #define GB_JITpackage_35 GM_JITpackage_35
 #define GB_JITpackage_36 GM_JITpackage_36
 #define GB_JITpackage_37 GM_JITpackage_37
@@ -1269,6 +1273,7 @@
 #define GB_subassign_24 GM_subassign_24
 #define GB_subassign_25 GM_subassign_25
 #define GB_subassign_26 GM_subassign_26
+#define GB_subassign_27 GM_subassign_27
 #define GB_subassigner GM_subassigner
 #define GB_subassigner_method GM_subassigner_method
 #define GB_subassign GM_subassign
