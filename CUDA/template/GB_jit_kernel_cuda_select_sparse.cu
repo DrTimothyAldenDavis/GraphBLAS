@@ -247,8 +247,19 @@ __global__ void GB_cuda_select_sparse_phase1
 
         // each thread loads its data from Local_Map (in shared memory)
 //      BlockLoad (W.load).Load (Local_Map, t) ;
-        t [0] = Local_Map [2 * threadIdx.x] ;
-        t [1] = Local_Map [2 * threadIdx.x + 1] ;
+//      t [0] = Local_Map [2 * threadIdx.x] ;
+//      t [1] = Local_Map [2 * threadIdx.x + 1] ;
+
+        #if (ITEMS_PER_THREAD == 1)
+        t [0] = Local_Map [threadIdx.x] ;
+        #else
+        #pragma unroll
+        for (int kk = 0 ; kk < ITEMS_PER_THREAD ; kk++)
+        {
+            t [kk] = Local_Map [ITEMS_PER_THREAD * threadIdx.x + kk] ;
+        }
+        #endif
+
         this_thread_block ( ).sync ( ) ;
 
         // inclusive sum of data from Local_Map
@@ -258,10 +269,21 @@ __global__ void GB_cuda_select_sparse_phase1
 
         // each thread saves its data into Map (in global memory)
 //      BlockStore (W.store).Store (Map + pfirst, t) ;
-        Map [pfirst + 2 * threadIdx.x    ] = t [0] ;
-        Map [pfirst + 2 * threadIdx.x + 1] = t [1] ;
+//      Map [pfirst + 2 * threadIdx.x    ] = t [0] ;
+//      Map [pfirst + 2 * threadIdx.x + 1] = t [1] ;
 
-        this_thread_block ( ).sync ( ) ;
+        #if (ITEMS_PER_THREAD == 1)
+        Map [pfirst + threadIdx.x] = t [0] ;
+        #else
+        #pragma unroll
+        for (int kk = 0 ; kk < ITEMS_PER_THREAD ; kk++)
+        {
+            Map [pfirst + ITEMS_PER_THREAD * threadIdx.x + kk] = t [kk] ;
+        }
+        #endif
+
+
+//      this_thread_block ( ).sync ( ) ;
 
 #else
         this_thread_block ( ).sync ( ) ;
@@ -488,8 +510,17 @@ __global__ void GB_cuda_select_sparse_phase4
 
         // each thread loads its data from Local_Ck_Delta (in shared memory)
 //      BlockLoad (W.load).Load (Local_Ck_Delta, t) ;
-        t [0] = Local_Ck_Delta [2 * threadIdx.x] ;
-        t [1] = Local_Ck_Delta [2 * threadIdx.x + 1] ;
+//      t [0] = Local_Ck_Delta [2 * threadIdx.x] ;
+//      t [1] = Local_Ck_Delta [2 * threadIdx.x + 1] ;
+        #if (ITEMS_PER_THREAD == 1)
+        t [0] = Local_Ck_Delta [threadIdx.x] ;
+        #else
+        #pragma unroll
+        for (int kk = 0 ; kk < ITEMS_PER_THREAD ; kk++)
+        {
+            t [kk] = Local_Ck_Delta [ITEMS_PER_THREAD * threadIdx.x + kk] ;
+        }
+        #endif
         this_thread_block ( ).sync ( ) ;
 
         // inclusive sum of data from Local_Ck_Delta
@@ -499,9 +530,19 @@ __global__ void GB_cuda_select_sparse_phase4
 
         // each thread saves its data into Ck_Delta (in global memory)
 //      BlockStore (W.store).Store (Ck_Delta + pfirst, t) ;
-        Ck_Delta [pfirst + 2 * threadIdx.x    ] = t [0] ;
-        Ck_Delta [pfirst + 2 * threadIdx.x + 1] = t [1] ;
-        this_thread_block ( ).sync ( ) ;
+//      Ck_Delta [pfirst + 2 * threadIdx.x    ] = t [0] ;
+//      Ck_Delta [pfirst + 2 * threadIdx.x + 1] = t [1] ;
+
+        #if (ITEMS_PER_THREAD == 1)
+        Ck_Delta [pfirst + threadIdx.x] = t [0] ;
+        #else
+        #pragma unroll
+        for (int kk = 0 ; kk < ITEMS_PER_THREAD ; kk++)
+        {
+            Ck_Delta [pfirst + ITEMS_PER_THREAD * threadIdx.x + kk] = t [kk] ;
+        }
+        #endif
+//      this_thread_block ( ).sync ( ) ;
 
 #else
         this_thread_block ( ).sync ( ) ;
