@@ -71,16 +71,19 @@ using namespace cooperative_groups ;
 
 #define Int uint16_t
 
+// typedef int crud [4] ;
+// typedef crud *more_crud ;
+
 __global__ void ExampleKernel(int *d_data, int num_items)
 {
     // Specialize BlockLoad, BlockStore, and BlockScan for a 1D block of 128 threads, 4 ints per thread
-    using BlockLoad = cub::BlockLoad<int*, 128, 4>  ;
+//  using BlockLoad = cub::BlockLoad<int*, 128, 4>  ;
     using BlockStore = cub::BlockStore<int, 128, 4> ;
     using BlockScan = cub::BlockScan<int, 128>                            ;
 
     // Allocate aliased shared memory for BlockLoad, BlockStore, and BlockScan
     __shared__ union {
-        typename BlockLoad::TempStorage     load;
+//      typename BlockLoad::TempStorage     load;
         typename BlockScan::TempStorage     scan;
         typename BlockStore::TempStorage    store;
     } temp_storage;
@@ -90,7 +93,12 @@ __global__ void ExampleKernel(int *d_data, int num_items)
     {
         // Load a segment of consecutive items that are blocked across threads
         int thread_data[4];
-        BlockLoad(temp_storage.load).Load(d_data + block_offset, thread_data);
+        int *p = d_data + block_offset ;
+//      BlockLoad(temp_storage.load).Load(p, thread_data);
+        thread_data [0] = p [0] ;
+        thread_data [1] = p [1] ;
+        thread_data [2] = p [2] ;
+        thread_data [3] = p [3] ;
         __syncthreads();
 
         // Collectively compute the block-wide inclusive prefix sum
@@ -150,14 +158,14 @@ __global__ void GB_cuda_select_sparse_phase1
 
 #if 1
     // 16-bit cumulative blockscan for a single chunk on one threadblock:
-    using BlockLoad  = cub::BlockLoad <Int*, BLOCKDIM, ITEMS_PER_THREAD> ;
+//  using BlockLoad  = cub::BlockLoad <Int*, BLOCKDIM, ITEMS_PER_THREAD> ;
     using BlockScan  = cub::BlockScan <Int , BLOCKDIM, cub::BLOCK_SCAN_WARP_SCANS> ;
-    using BlockStore = cub::BlockStore<Int , BLOCKDIM, ITEMS_PER_THREAD> ;
+//  using BlockStore = cub::BlockStore<Int , BLOCKDIM, ITEMS_PER_THREAD> ;
     __shared__ union
     {
-        typename BlockLoad::TempStorage load ;
+//      typename BlockLoad::TempStorage load ;
         typename BlockScan::TempStorage scan ;
-        typename BlockStore::TempStorage store ;
+//      typename BlockStore::TempStorage store ;
     } W ;
 #endif
 
@@ -238,15 +246,21 @@ __global__ void GB_cuda_select_sparse_phase1
         Int t [ITEMS_PER_THREAD] ;
 
         // each thread loads its data from Local_Map (in shared memory)
-        BlockLoad (W.load).Load (Local_Map, t) ;
+//      BlockLoad (W.load).Load (Local_Map, t) ;
+        t [0] = Local_Map [2 * threadIdx.x] ;
+        t [1] = Local_Map [2 * threadIdx.x + 1] ;
         this_thread_block ( ).sync ( ) ;
 
         // inclusive sum of data from Local_Map
-        BlockScan (W.scan).InclusiveSum (t, t) ;
+        Int block_aggregate ;
+        BlockScan (W.scan).InclusiveSum (t, t, block_aggregate) ;
         this_thread_block ( ).sync ( ) ;
 
         // each thread saves its data into Map (in global memory)
-        BlockStore (W.store).Store (Map + pfirst, t) ;
+//      BlockStore (W.store).Store (Map + pfirst, t) ;
+        Map [pfirst + 2 * threadIdx.x    ] = t [0] ;
+        Map [pfirst + 2 * threadIdx.x + 1] = t [1] ;
+
         this_thread_block ( ).sync ( ) ;
 
 #else
@@ -283,7 +297,8 @@ __global__ void GB_cuda_select_sparse_phase1
 
         if (threadIdx.x == blockDim.x - 1)
         {
-            ChunkSum [chunk] = Local_Map [CHUNK_SIZE-1] ;
+//          ChunkSum [chunk] = Local_Map [CHUNK_SIZE-1] ;
+            ChunkSum [chunk] = block_aggregate ;
         }
     }
 
@@ -413,14 +428,14 @@ __global__ void GB_cuda_select_sparse_phase4
 
 #if 1
     // 16-bit cumulative blockscan for a single chunk on one threadblock:
-    using BlockLoad  = cub::BlockLoad <Int*, BLOCKDIM, ITEMS_PER_THREAD> ;
+//  using BlockLoad  = cub::BlockLoad <Int*, BLOCKDIM, ITEMS_PER_THREAD> ;
     using BlockScan  = cub::BlockScan <Int , BLOCKDIM, cub::BLOCK_SCAN_WARP_SCANS> ;
-    using BlockStore = cub::BlockStore<Int , BLOCKDIM, ITEMS_PER_THREAD> ;
+//  using BlockStore = cub::BlockStore<Int , BLOCKDIM, ITEMS_PER_THREAD> ;
     __shared__ union
     {
-        typename BlockLoad::TempStorage load ;
+//      typename BlockLoad::TempStorage load ;
         typename BlockScan::TempStorage scan ;
-        typename BlockStore::TempStorage store ;
+//      typename BlockStore::TempStorage store ;
     } W ;
 #endif
 
@@ -472,15 +487,20 @@ __global__ void GB_cuda_select_sparse_phase4
         Int t [ITEMS_PER_THREAD] ;
 
         // each thread loads its data from Local_Ck_Delta (in shared memory)
-        BlockLoad (W.load).Load (Local_Ck_Delta, t) ;
+//      BlockLoad (W.load).Load (Local_Ck_Delta, t) ;
+        t [0] = Local_Ck_Delta [2 * threadIdx.x] ;
+        t [1] = Local_Ck_Delta [2 * threadIdx.x + 1] ;
         this_thread_block ( ).sync ( ) ;
 
         // inclusive sum of data from Local_Ck_Delta
-        BlockScan (W.scan).InclusiveSum (t, t) ;
+        Int block_aggregate ;
+        BlockScan (W.scan).InclusiveSum (t, t, block_aggregate) ;
         this_thread_block ( ).sync ( ) ;
 
         // each thread saves its data into Ck_Delta (in global memory)
-        BlockStore (W.store).Store (Ck_Delta + pfirst, t) ;
+//      BlockStore (W.store).Store (Ck_Delta + pfirst, t) ;
+        Ck_Delta [pfirst + 2 * threadIdx.x    ] = t [0] ;
+        Ck_Delta [pfirst + 2 * threadIdx.x + 1] = t [1] ;
         this_thread_block ( ).sync ( ) ;
 
 #else
@@ -511,7 +531,8 @@ __global__ void GB_cuda_select_sparse_phase4
         // last thread writes the sum of the whole threadblock to global
         if (threadIdx.x == blockDim.x - 1)
         {
-            ChunkSum [chunk] = Local_Ck_Delta [CHUNK_SIZE-1] ;
+//          ChunkSum [chunk] = Local_Ck_Delta [CHUNK_SIZE-1] ;
+            ChunkSum [chunk] = block_aggregate ;
         }
     }
 
