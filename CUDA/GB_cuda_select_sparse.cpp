@@ -27,6 +27,12 @@ GrB_Info GB_cuda_select_sparse
     ASSERT (A != NULL && !(A->header_size == 0)) ;
 
     GBURBLE ("(select sparse on cuda) ") ;
+    printf ("\nblockdim1: %d chunksize1: %d\n", 
+        GB_CUDA_SELECT_SPARSE_BLOCKDIM1,
+        GB_CUDA_SELECT_SPARSE_CHUNKSIZE1) ;
+    printf ("blockdim2: %d chunksize2: %d\n", 
+        GB_CUDA_SELECT_SPARSE_BLOCKDIM2,
+        GB_CUDA_SELECT_SPARSE_CHUNKSIZE2) ;
 
     cudaStream_t stream = nullptr ;
     GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
@@ -34,7 +40,7 @@ GrB_Info GB_cuda_select_sparse
     int64_t anz = GB_nnz_held (A) ;
 
     int32_t number_of_sms = GB_Global_gpu_sm_get (0) ;
-    int64_t raw_gridsz = GB_ICEIL (anz, GB_CUDA_SELECT_SPARSE_CHUNKSIZE) ;
+    int64_t raw_gridsz = GB_ICEIL (anz, GB_CUDA_SELECT_SPARSE_CHUNKSIZE1) ;
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     gridsz = std::max (gridsz, 1) ;
 

@@ -47,6 +47,17 @@ using namespace cooperative_groups ;
 #include "GB_cuda_ek_slice.cuh"
 #include "omp.h"
 
+#if 1
+
+#define GB_FREE_WORKSPACE                               \
+{                                                       \
+    GB_FREE_MEMORY (&W_0, W_0_size) ;                   \
+    GB_FREE_MEMORY (&W_1, W_1_size) ;                   \
+    GB_FREE_MEMORY (&W_2, W_2_size) ;                   \
+    GB_FREE_MEMORY (&W_3, W_3_size) ;                   \
+}
+#else
+
 #define GB_FREE_WORKSPACE                               \
 {                                                       \
     if (W_0 != NULL) { cudaFree (W_0) ; W_0 = NULL ; }  \
@@ -55,19 +66,26 @@ using namespace cooperative_groups ;
     if (W_3 != NULL) { cudaFree (W_3) ; W_3 = NULL ; }  \
 }
 
+#endif
+
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_FREE_WORKSPACE ;
 
 // The chunk size is assumed to be < UINT16_MAX (65535), so that the cumsums
 // can be done in Int workspace array.  If the chunk size exceeds this
 // value, then the Int types below must be replaced with a larger type.
-#define CHUNK_SIZE          GB_CUDA_SELECT_SPARSE_CHUNKSIZE
-#define LOG2_CHUNK_SIZE     GB_CUDA_SELECT_SPARSE_CHUNKSIZE_LOG2
-#define BLOCKDIM            GB_CUDA_SELECT_SPARSE_BLOCKDIM
+#define CHUNKSIZE1         GB_CUDA_SELECT_SPARSE_CHUNKSIZE1
+#define LOG2_CHUNKSIZE1    GB_CUDA_SELECT_SPARSE_CHUNKSIZE1_LOG2
+#define BLOCKDIM1           GB_CUDA_SELECT_SPARSE_BLOCKDIM1
+
+#define CHUNKSIZE2         GB_CUDA_SELECT_SPARSE_CHUNKSIZE2
+#define LOG2_CHUNKSIZE2    GB_CUDA_SELECT_SPARSE_CHUNKSIZE2_LOG2
+#define BLOCKDIM2           GB_CUDA_SELECT_SPARSE_BLOCKDIM2
 
 // the # of items per thread must be an integer, so the chunk size must be a
 // multiple of blockdim (the # of threads in each threadblock):
-#define ITEMS_PER_THREAD    (CHUNK_SIZE / BLOCKDIM)
+#define ITEMS_PER_THREAD1    (CHUNKSIZE1 / BLOCKDIM1)
+#define ITEMS_PER_THREAD2    (CHUNKSIZE2 / BLOCKDIM2)
 
 #define Int uint16_t
 
@@ -154,13 +172,13 @@ __global__ void GB_cuda_select_sparse_phase1
     // workspace for each chunk
     //--------------------------------------------------------------------------
 
-    __shared__ Int Local_Map [CHUNK_SIZE] ;
+    __shared__ Int Local_Map [CHUNKSIZE1] ;
 
 #if 1
     // 16-bit cumulative blockscan for a single chunk on one threadblock:
-//  using BlockLoad  = cub::BlockLoad <Int*, BLOCKDIM, ITEMS_PER_THREAD> ;
-    using BlockScan  = cub::BlockScan <Int , BLOCKDIM, cub::BLOCK_SCAN_WARP_SCANS> ;
-//  using BlockStore = cub::BlockStore<Int , BLOCKDIM, ITEMS_PER_THREAD> ;
+//  using BlockLoad  = cub::BlockLoad <Int*, BLOCKDIM1, ITEMS_PER_THREAD1> ;
+    using BlockScan  = cub::BlockScan <Int , BLOCKDIM1, cub::BLOCK_SCAN_WARP_SCANS> ;
+//  using BlockStore = cub::BlockStore<Int , BLOCKDIM1, ITEMS_PER_THREAD1> ;
     __shared__ union
     {
 //      typename BlockLoad::TempStorage load ;
@@ -173,9 +191,6 @@ __global__ void GB_cuda_select_sparse_phase1
     // compute Ak, and each local chunk of Map
     //--------------------------------------------------------------------------
 
-    // Each threadblock (with 512 threads) does an entire chunk (of size
-    // CHUNK_SIZE = 1024).  This geometry is defined in GB_cuda_geometry.hpp.
-
     for (int64_t chunk = blockIdx.x ;
                  chunk < nchunks_in_A ;
                  chunk += gridDim.x)
@@ -185,11 +200,11 @@ __global__ void GB_cuda_select_sparse_phase1
         // determine the chunk and its slope
         //----------------------------------------------------------------------
 
-        int64_t pfirst = chunk << LOG2_CHUNK_SIZE ;
+        int64_t pfirst = chunk << LOG2_CHUNKSIZE1 ;
         int64_t my_chunk_size, anvec1, kfirst, klast ;
         float slope ;
-        GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst, CHUNK_SIZE,
-            &kfirst, &klast, &my_chunk_size, &anvec1, &slope) ;
+        GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst,
+            CHUNKSIZE1, &kfirst, &klast, &my_chunk_size, &anvec1, &slope) ;
 
         //----------------------------------------------------------------------
         // find the kth vector that contains each entry pA = pfirst:plast-1
@@ -225,7 +240,7 @@ __global__ void GB_cuda_select_sparse_phase1
         }
 
         // clear the unused part of the Local_Map
-        for ( ; pdelta < CHUNK_SIZE ;
+        for ( ; pdelta < CHUNKSIZE1 ;
                 pdelta += blockDim.x)
         {
             Local_Map [pdelta] = 0 ;
@@ -235,28 +250,28 @@ __global__ void GB_cuda_select_sparse_phase1
         // inclusive cumulative sum of Local_Map
         //----------------------------------------------------------------------
 
-        // Map [pfirst..pfirst+CHUNK_SIZE-1] = inclusive cumsum of Local_Map:
-        // for (int i = 1 ; i < CHUNK_SIZE ; i++)
+        // Map [pfirst..pfirst+CHUNKSIZE1-1] = inclusive cumsum of Local_Map:
+        // for (int i = 1 ; i < CHUNKSIZE1 ; i++)
         //      Local_Map [i] += Local_Map [i-1] ;
-        // Map [pfirst + 0:CHUNK_SIZE-1] = Local_Map [0:CHUNK_SIZE-1]
+        // Map [pfirst + 0:CHUNKSIZE1-1] = Local_Map [0:CHUNKSIZE1-1]
 
 #if 1
 
         this_thread_block ( ).sync ( ) ;
-        Int t [ITEMS_PER_THREAD] ;
+        Int t [ITEMS_PER_THREAD1] ;
 
         // each thread loads its data from Local_Map (in shared memory)
 //      BlockLoad (W.load).Load (Local_Map, t) ;
 //      t [0] = Local_Map [2 * threadIdx.x] ;
 //      t [1] = Local_Map [2 * threadIdx.x + 1] ;
 
-        #if (ITEMS_PER_THREAD == 1)
+        #if (ITEMS_PER_THREAD1 == 1)
         t [0] = Local_Map [threadIdx.x] ;
         #else
         #pragma unroll
-        for (int kk = 0 ; kk < ITEMS_PER_THREAD ; kk++)
+        for (int kk = 0 ; kk < ITEMS_PER_THREAD1 ; kk++)
         {
-            t [kk] = Local_Map [ITEMS_PER_THREAD * threadIdx.x + kk] ;
+            t [kk] = Local_Map [ITEMS_PER_THREAD1 * threadIdx.x + kk] ;
         }
         #endif
 
@@ -272,13 +287,13 @@ __global__ void GB_cuda_select_sparse_phase1
 //      Map [pfirst + 2 * threadIdx.x    ] = t [0] ;
 //      Map [pfirst + 2 * threadIdx.x + 1] = t [1] ;
 
-        #if (ITEMS_PER_THREAD == 1)
+        #if (ITEMS_PER_THREAD1 == 1)
         Map [pfirst + threadIdx.x] = t [0] ;
         #else
         #pragma unroll
-        for (int kk = 0 ; kk < ITEMS_PER_THREAD ; kk++)
+        for (int kk = 0 ; kk < ITEMS_PER_THREAD1 ; kk++)
         {
-            Map [pfirst + ITEMS_PER_THREAD * threadIdx.x + kk] = t [kk] ;
+            Map [pfirst + ITEMS_PER_THREAD1 * threadIdx.x + kk] = t [kk] ;
         }
         #endif
 
@@ -288,13 +303,13 @@ __global__ void GB_cuda_select_sparse_phase1
 #else
         this_thread_block ( ).sync ( ) ;
         // FIXME: do a cub::BlockScan::InclusiveSum on threadblock's
-        // Local_Map [0..CHUNK_SIZE-1],
+        // Local_Map [0..CHUNKSIZE1-1],
         // where Local_Map [i] = sum (Local_Map [0:i]), so that
         // Local_Map [0] = 1 if the first entry is kept, 0 otherwise,
-        // and Local_Map [CHUNK_SIZE-1] = total # entries kept in this block
+        // and Local_Map [CHUNKSIZE1-1] = total # entries kept in this block
         if (threadIdx.x == 0)
         {
-            for (int i = 1 ; i < CHUNK_SIZE ; i++)
+            for (int i = 1 ; i < CHUNKSIZE1 ; i++)
             {
                 Local_Map [i] += Local_Map [i-1] ;
             }
@@ -302,11 +317,11 @@ __global__ void GB_cuda_select_sparse_phase1
         this_thread_block ( ).sync ( ) ;
 
         //----------------------------------------------------------------------
-        // save the Local_Map in Map [pfirst..pfirst+CHUNK_SIZE-1]
+        // save the Local_Map in Map [pfirst..pfirst+CHUNKSIZE1-1]
         //----------------------------------------------------------------------
 
         for (pdelta = threadIdx.x ;
-             pdelta < CHUNK_SIZE ;
+             pdelta < CHUNKSIZE1 ;
              pdelta += blockDim.x)
         {
             Map [pfirst + pdelta] = Local_Map [pdelta] ;
@@ -319,7 +334,7 @@ __global__ void GB_cuda_select_sparse_phase1
 
         if (threadIdx.x == blockDim.x - 1)
         {
-//          ChunkSum [chunk] = Local_Map [CHUNK_SIZE-1] ;
+//          ChunkSum [chunk] = Local_Map [CHUNKSIZE1-1] ;
             ChunkSum [chunk] = block_aggregate ;
         }
     }
@@ -385,8 +400,8 @@ __global__ void GB_cuda_select_sparse_phase3
         // get the chunk of A; entries in pA = pfirst:plast-1
         //----------------------------------------------------------------------
 
-        int64_t pfirst = chunk << LOG2_CHUNK_SIZE ;
-        int64_t plast = pfirst + CHUNK_SIZE ;
+        int64_t pfirst = chunk << LOG2_CHUNKSIZE1 ;
+        int64_t plast = pfirst + CHUNKSIZE1 ;
         plast = GB_IMIN (plast, anz) ;
         int64_t my_chunk_size = plast - pfirst ;
 
@@ -446,13 +461,13 @@ __global__ void GB_cuda_select_sparse_phase4
     // workspace for each threadblock
     //--------------------------------------------------------------------------
 
-    __shared__ Int Local_Ck_Delta [CHUNK_SIZE] ;
+    __shared__ Int Local_Ck_Delta [CHUNKSIZE2] ;
 
 #if 1
     // 16-bit cumulative blockscan for a single chunk on one threadblock:
-//  using BlockLoad  = cub::BlockLoad <Int*, BLOCKDIM, ITEMS_PER_THREAD> ;
-    using BlockScan  = cub::BlockScan <Int , BLOCKDIM, cub::BLOCK_SCAN_WARP_SCANS> ;
-//  using BlockStore = cub::BlockStore<Int , BLOCKDIM, ITEMS_PER_THREAD> ;
+//  using BlockLoad  = cub::BlockLoad <Int*, BLOCKDIM2, ITEMS_PER_THREAD1> ;
+    using BlockScan  = cub::BlockScan <Int , BLOCKDIM2, cub::BLOCK_SCAN_WARP_SCANS> ;
+//  using BlockStore = cub::BlockStore<Int , BLOCKDIM2, ITEMS_PER_THREAD1> ;
     __shared__ union
     {
 //      typename BlockLoad::TempStorage load ;
@@ -477,8 +492,8 @@ __global__ void GB_cuda_select_sparse_phase4
         // this threadblock works on Ck0 [pfirst:plast-1] and
         // Ck_Delta [pfirst:plast-1], where Ck0 uses 0-based indices
 
-        int64_t pfirst = chunk << LOG2_CHUNK_SIZE ;
-        int64_t plast = pfirst + CHUNK_SIZE ;
+        int64_t pfirst = chunk << LOG2_CHUNKSIZE2 ;
+        int64_t plast = pfirst + CHUNKSIZE2 ;
         plast = GB_IMIN (plast, cnz) ;
         int64_t my_chunk_size = plast - pfirst ;
 
@@ -496,7 +511,7 @@ __global__ void GB_cuda_select_sparse_phase4
         }
 
         // clear the unused part of the Local_Ck_Delta
-        for ( ; pdelta < CHUNK_SIZE ;
+        for ( ; pdelta < CHUNKSIZE2 ;
                 pdelta += blockDim.x)
         {
             Local_Ck_Delta [pdelta] = 0 ;
@@ -506,19 +521,19 @@ __global__ void GB_cuda_select_sparse_phase4
 
         // FIXME: make this a device function (same as phase1)
         this_thread_block ( ).sync ( ) ;
-        Int t [ITEMS_PER_THREAD] ;
+        Int t [ITEMS_PER_THREAD2] ;
 
         // each thread loads its data from Local_Ck_Delta (in shared memory)
 //      BlockLoad (W.load).Load (Local_Ck_Delta, t) ;
 //      t [0] = Local_Ck_Delta [2 * threadIdx.x] ;
 //      t [1] = Local_Ck_Delta [2 * threadIdx.x + 1] ;
-        #if (ITEMS_PER_THREAD == 1)
+        #if (ITEMS_PER_THREAD2 == 1)
         t [0] = Local_Ck_Delta [threadIdx.x] ;
         #else
         #pragma unroll
-        for (int kk = 0 ; kk < ITEMS_PER_THREAD ; kk++)
+        for (int kk = 0 ; kk < ITEMS_PER_THREAD2 ; kk++)
         {
-            t [kk] = Local_Ck_Delta [ITEMS_PER_THREAD * threadIdx.x + kk] ;
+            t [kk] = Local_Ck_Delta [ITEMS_PER_THREAD2 * threadIdx.x + kk] ;
         }
         #endif
         this_thread_block ( ).sync ( ) ;
@@ -533,13 +548,13 @@ __global__ void GB_cuda_select_sparse_phase4
 //      Ck_Delta [pfirst + 2 * threadIdx.x    ] = t [0] ;
 //      Ck_Delta [pfirst + 2 * threadIdx.x + 1] = t [1] ;
 
-        #if (ITEMS_PER_THREAD == 1)
+        #if (ITEMS_PER_THREAD2 == 1)
         Ck_Delta [pfirst + threadIdx.x] = t [0] ;
         #else
         #pragma unroll
-        for (int kk = 0 ; kk < ITEMS_PER_THREAD ; kk++)
+        for (int kk = 0 ; kk < ITEMS_PER_THREAD2 ; kk++)
         {
-            Ck_Delta [pfirst + ITEMS_PER_THREAD * threadIdx.x + kk] = t [kk] ;
+            Ck_Delta [pfirst + ITEMS_PER_THREAD2 * threadIdx.x + kk] = t [kk] ;
         }
         #endif
 //      this_thread_block ( ).sync ( ) ;
@@ -547,10 +562,10 @@ __global__ void GB_cuda_select_sparse_phase4
 #else
         this_thread_block ( ).sync ( ) ;
         // FIXME: do a cub::BlockScan::InclusiveSum on threadblock's
-        // Local_Ck_Delta [0..CHUNK_SIZE-1]
+        // Local_Ck_Delta [0..CHUNKSIZE2-1]
         if (threadIdx.x == 0)
         {
-            for (int i = 1 ; i < CHUNK_SIZE ; i++)
+            for (int i = 1 ; i < CHUNKSIZE2 ; i++)
             {
                 Local_Ck_Delta [i] += Local_Ck_Delta [i-1] ;
             }
@@ -562,7 +577,7 @@ __global__ void GB_cuda_select_sparse_phase4
         //----------------------------------------------------------------------
 
         for (pdelta = threadIdx.x ;
-             pdelta < CHUNK_SIZE ;
+             pdelta < CHUNKSIZE2 ;
              pdelta += blockDim.x)
         {
             Ck_Delta [pfirst + pdelta] = Local_Ck_Delta [pdelta] ;
@@ -572,7 +587,7 @@ __global__ void GB_cuda_select_sparse_phase4
         // last thread writes the sum of the whole threadblock to global
         if (threadIdx.x == blockDim.x - 1)
         {
-//          ChunkSum [chunk] = Local_Ck_Delta [CHUNK_SIZE-1] ;
+//          ChunkSum [chunk] = Local_Ck_Delta [CHUNKSIZE2-1] ;
             ChunkSum [chunk] = block_aggregate ;
         }
     }
@@ -624,8 +639,8 @@ __global__ void GB_cuda_select_sparse_phase6
         // get this chunk of C
         //----------------------------------------------------------------------
 
-        int64_t pfirst = chunk << LOG2_CHUNK_SIZE ;
-        int64_t plast = pfirst + CHUNK_SIZE ;
+        int64_t pfirst = chunk << LOG2_CHUNKSIZE2 ;
+        int64_t plast = pfirst + CHUNKSIZE2 ;
         plast = GB_IMIN (plast, cnz) ;
         int64_t my_chunk_size = plast - pfirst ;
 
@@ -700,7 +715,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // workspaces of size anz+2
     void *W_0 = NULL ; size_t W_0_size = 0 ;
     void *W_1 = NULL ; size_t W_1_size = 0 ;
-    // workspace of size nchunks_in_A+1
+    // workspace of size max (nchunks_in_A, nchunks_in_C)+1
     void *W_2 = NULL ; size_t W_2_size = 0 ;
     // workspace of size cnz+2, where cnz <= anz
     void *W_3 = NULL ; size_t W_3_size = 0 ;
@@ -708,12 +723,16 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     GB_A_NHELD (anz) ;          // # of entries in A
     int64_t cnz = 0 ;           // # of entries in C (which is <= anz)
     // # of chunks in A:
-    int64_t nchunks_in_A = (anz + CHUNK_SIZE - 1) >> LOG2_CHUNK_SIZE ;
+    int64_t nchunks_in_A = (anz + CHUNKSIZE1 - 1) >> LOG2_CHUNKSIZE1 ;
+    // max # of chunks in C (revised below):
+    int64_t nchunks_in_C = (anz + CHUNKSIZE2 - 1) >> LOG2_CHUNKSIZE2 ;
+    int64_t nchunks_max = GB_IMAX (nchunks_in_A, nchunks_in_C) ;
 
     ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
 
-    dim3 grid (gridsz) ;        // = min (ceil (anz/CHUNK_SIZE), 256*(#sms))
-    dim3 block (BLOCKDIM) ;
+    dim3 grid (gridsz) ;        // = min (ceil (anz/CHUNKSIZE1), 256*(#sms))
+    dim3 block1 (BLOCKDIM1) ;
+    dim3 block2 (BLOCKDIM2) ;
 
     //--------------------------------------------------------------------------
     // phase 1: allocate workspace and determine which entries of A to keep
@@ -727,7 +746,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // that it contains an integral number of chunks.
 
     // Example:  suppose the select operator fkeep(aij) keeps nonzero entries
-    // in A, with the following input.  Suppose the CHUNK_SIZE is 4, for this
+    // in A, with the following input.  Suppose the CHUNKSIZE1 is 4, for this
     // diagram (it is 1024 as #define'd above), as delineated by "|" in the
     // diagram.  The matrix A is 10 by 7 with 18 entries, held by column in
     // sparse form (Ah is NULL, and the kth vector is simply column k of A).
@@ -768,12 +787,18 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // both the GPU and CPU, so the RMM memory manager is used.  All other
     // workspaces (W_0, W_1, and W_3) exist only on the GPU, so cudaMalloc can
     // be used for them.
-    W_2 = (void *) GB_MALLOC_MEMORY (nchunks_in_A+2, sizeof (int64_t),
+    W_2 = (void *) GB_MALLOC_MEMORY (nchunks_max+2, sizeof (int64_t),
         &W_2_size) ;
+    #if 1
+    W_0 = (void *) GB_MALLOC_MEMORY (anz+2, w0, &W_0_size) ;
+    W_1 = (void *) GB_MALLOC_MEMORY (anz+2 + CHUNKSIZE1, sizeof (Int),
+        &W_1_size) ;
+    #else
     W_0_size = (anz+2) * w0 ;
     cudaMalloc (&W_0, (size_t) W_0_size) ;
-    W_1_size = (anz+2 + CHUNK_SIZE) * sizeof (Int) ;
+    W_1_size = (anz+2 + CHUNKSIZE1) * sizeof (Int) ;
     cudaMalloc (&W_1, (size_t) W_1_size) ;
+    #endif
     if (W_0 == NULL || W_1 == NULL || W_2 == NULL)
     {
         // out of memory
@@ -788,13 +813,13 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // (which is set in the phase1 kernel launch below).
     Int *Map = ((Int *) W_1) + 1 ;
 
-    // ChunkSum [-1 .. nchunks_in_A] of size nchunks_in_A+2
+    // ChunkSum [-1 .. nchunks_in_*] of size nchunks_max+2
     // FIXME: ChunkSum could have type GB_Ap_TYPE
     int64_t *ChunkSum = (int64_t *) W_2 + 1 ;
     ChunkSum [-1] = 0 ;     // sentinel value required for phase3 and phase6
 
     // KERNEL LAUNCH 1: phase1
-    GB_cuda_select_sparse_phase1 <<<grid, block, 0, stream>>>
+    GB_cuda_select_sparse_phase1 <<<grid, block1, 0, stream>>>
         (/* outputs: */ Ak, Map, ChunkSum,
          /* inputs: */  A, ythunk, anz, nchunks_in_A) ;
     CUDA_OK (cudaGetLastError ( )) ;
@@ -805,7 +830,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     t = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
-    // phase 2: sum up the entries in each block (on the CPU)
+    // phase 2: sum up the entries in each chunk (on the CPU)
     //--------------------------------------------------------------------------
 
     // At the start of phase2, ChunkSum [-1..nchunks_in_A] holds the # of
@@ -852,8 +877,13 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     C->jumbled = A->jumbled ;
 
     // allocate workspace of size cnz+2
+    #if 1
+    W_3 = (void *) GB_MALLOC_MEMORY (cnz+2, sizeof (GB_Aj_SIGNED_TYPE),
+        &W_3_size) ;
+    #else
     W_3_size = (cnz + 2) * sizeof (GB_Aj_SIGNED_TYPE) ;
     cudaMalloc (&W_3, (size_t) W_3_size) ;
+    #endif
     if (W_3 == NULL)
     {
         // out of memory
@@ -898,14 +928,18 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // and 3rd columns of A were kept.
 
     // KERNEL LAUNCH 2: phase3
-    GB_cuda_select_sparse_phase3 <<<grid, block, 0, stream>>>
+    GB_cuda_select_sparse_phase3 <<<grid, block1, 0, stream>>>
         (/* outputs: */ C, Ck1,
          /* inputs: */  A, ChunkSum, Map, Ak, anz, nchunks_in_A) ;
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     // Ak (in W_0) no longer needed, and W_0 is no longer needed, so free it
+    #if 1
+    GB_FREE_MEMORY (&W_0, W_0_size) ;
+    #else
     cudaFree (W_0) ; W_0 = NULL ;
+    #endif
     // Map (in W_1) no longer needed; reused below for Ck_Delta
 
     t = omp_get_wtime ( ) - t ;
@@ -934,7 +968,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     //       0 [       2|      2|    1 ]
 
     // # of chunks in C:
-    int64_t nchunks_in_C = (cnz + CHUNK_SIZE - 1) >> LOG2_CHUNK_SIZE ;
+    nchunks_in_C = (cnz + CHUNKSIZE2 - 1) >> LOG2_CHUNKSIZE2 ;
 
     // using W_1 [-1..cnz-1] as workspace for Ck_Delta, which is accessed
     // with 0-based indices, using Ck_Delta [-1..cnz-1] where cnz <= anz.
@@ -943,7 +977,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     Int *Ck_Delta = ((Int *) W_1) + 1 ;
 
     // KERNEL LAUNCH 3: phase4
-    GB_cuda_select_sparse_phase4 <<<grid, block, 0, stream>>>
+    GB_cuda_select_sparse_phase4 <<<grid, block2, 0, stream>>>
         (/* outputs: */ Ck_Delta, ChunkSum,
          /* inputs: */  Ck0, cnz, nchunks_in_C) ;
     CUDA_OK (cudaGetLastError ( )) ;
@@ -1024,7 +1058,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // Ch:   [ 0 1 4 5 6    ] of size cnvec
 
     // KERNEL LAUNCH 4: phase6
-    GB_cuda_select_sparse_phase6 <<<grid, block, 0, stream>>>
+    GB_cuda_select_sparse_phase6 <<<grid, block2, 0, stream>>>
         (/* outputs are C->p and C->h: */ C,
          /* inputs: */ Ck_Delta, ChunkSum, Ck0,
          #if ( GB_A_IS_HYPER )
