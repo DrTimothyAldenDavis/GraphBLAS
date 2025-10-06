@@ -139,8 +139,8 @@ __global__ void GB_cuda_select_sparse_phase1
     // outputs:
     GB_Aj_SIGNED_TYPE *Ak,  // size anz, in Ak [0..anz-1], and values in range
                             // 0 to the # of vectors in A
-    Int *Map,          // size anz+1, in Map [-1..anz-1]
-    int64_t *ChunkSum,      // size nchunks_in_A+1, ChunkSum [-1..nchunks_in_A]
+    Int *Map,               // size anz+1, in Map [-1..anz-1]
+    GB_Ap_TYPE *ChunkSum,   // size nchunks_in_A+1, ChunkSum [-1..nchunks_in_A]
     // inputs, not modified:
     GrB_Matrix A,
     const void *ythunk,
@@ -334,7 +334,6 @@ __global__ void GB_cuda_select_sparse_phase1
 
         if (threadIdx.x == blockDim.x - 1)
         {
-//          ChunkSum [chunk] = Local_Map [CHUNKSIZE1-1] ;
             ChunkSum [chunk] = block_aggregate ;
         }
     }
@@ -357,8 +356,8 @@ __global__ void GB_cuda_select_sparse_phase3
     GB_Aj_SIGNED_TYPE *Ck1, // size cnz+1, in Ck1 [0..cnz]
     // inputs, not modified:
     GrB_Matrix A,
-    int64_t *ChunkSum,      // size nchunks_in_A+1, ChunkSum [-1..nchunks_in_A]
-    Int *Map,          // size anz+1, in Map [-1..anz-1]
+    GB_Ap_TYPE *ChunkSum,   // size nchunks_in_A+1, ChunkSum [-1..nchunks_in_A]
+    Int *Map,               // size anz+1, in Map [-1..anz-1]
     GB_Aj_SIGNED_TYPE *Ak,  // size anz, in Ak [0..anz-1]
     int64_t anz,            // # of entries in A
     int64_t nchunks_in_A    // # of chunks in A
@@ -448,8 +447,8 @@ __global__ void GB_cuda_select_sparse_phase3
 __global__ void GB_cuda_select_sparse_phase4
 (
     // outputs:
-    Int *Ck_Delta, // size cnz+1, in Ck_Delta [-1..cnz-1]
-    int64_t *ChunkSum,  // size nchunks_in_C+1, in ChunkSum [-1..nchunks_in_C]
+    Int *Ck_Delta,          // size cnz+1, in Ck_Delta [-1..cnz-1]
+    GB_Ap_TYPE *ChunkSum,   // in ChunkSum [-1..nchunks_in_C]
     // inputs, not modified:
     GB_Aj_SIGNED_TYPE *Ck0, // size cnz+1, in Ck0 [-1..cnz-1]
     int64_t cnz,
@@ -587,7 +586,6 @@ __global__ void GB_cuda_select_sparse_phase4
         // last thread writes the sum of the whole threadblock to global
         if (threadIdx.x == blockDim.x - 1)
         {
-//          ChunkSum [chunk] = Local_Ck_Delta [CHUNKSIZE2-1] ;
             ChunkSum [chunk] = block_aggregate ;
         }
     }
@@ -602,13 +600,13 @@ __global__ void GB_cuda_select_sparse_phase4
 __global__ void GB_cuda_select_sparse_phase6
 (
     // outputs:
-    GrB_Matrix C,       // Cp and Ch are constructed
+    GrB_Matrix C,           // Cp and Ch are constructed
     // inputs, not modified
-    Int *Ck_Delta, // size cnz+1, in Ck_Delta [-1..cnz-1]
-    int64_t *ChunkSum,  // size nchunks_in_C+1, in ChunkSum [-1..nchunks_in_C]
-    GB_Aj_SIGNED_TYPE *Ck0,     // size cnz+1, in Ck0 [-1..cnz-1]
+    Int *Ck_Delta,          // size cnz+1, in Ck_Delta [-1..cnz-1]
+    GB_Ap_TYPE *ChunkSum,   // in ChunkSum [-1..nchunks_in_C]
+    GB_Aj_SIGNED_TYPE *Ck0, // size cnz+1, in Ck0 [-1..cnz-1]
     #if ( GB_A_IS_HYPER )
-    GrB_Matrix A,               // A->h is required if A is hypersparse
+    GrB_Matrix A,           // A->h is required if A is hypersparse
     #endif
     int64_t cnz,
     int64_t nchunks_in_C
@@ -787,7 +785,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // both the GPU and CPU, so the RMM memory manager is used.  All other
     // workspaces (W_0, W_1, and W_3) exist only on the GPU, so cudaMalloc can
     // be used for them.
-    W_2 = (void *) GB_MALLOC_MEMORY (nchunks_max+2, sizeof (int64_t),
+    W_2 = (void *) GB_MALLOC_MEMORY (nchunks_max+2, sizeof (GB_Ap_TYPE),
         &W_2_size) ;
     #if 1
     W_0 = (void *) GB_MALLOC_MEMORY (anz+2, w0, &W_0_size) ;
@@ -814,8 +812,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     Int *Map = ((Int *) W_1) + 1 ;
 
     // ChunkSum [-1 .. nchunks_in_*] of size nchunks_max+2
-    // FIXME: ChunkSum could have type GB_Ap_TYPE
-    int64_t *ChunkSum = (int64_t *) W_2 + 1 ;
+    GB_Ap_TYPE *ChunkSum = (GB_Ap_TYPE *) W_2 + 1 ;
     ChunkSum [-1] = 0 ;     // sentinel value required for phase3 and phase6
 
     // KERNEL LAUNCH 1: phase1
