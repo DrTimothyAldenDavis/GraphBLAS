@@ -325,24 +325,21 @@ the user application control over this is particularly important when using the
 \verb'GxB_*serialize' and \verb'GxB_Container' methods described in Section
 \ref{serialize_deserialize} and \ref{container}, since they require the user
 application and GraphBLAS to use the same memory manager.
-\verb'user_calloc_func' and \verb'user_realloc_func' are optional, and
-may be \verb'NULL'.  If \verb'NULL', then the \verb'user_malloc_func' is
-relied on instead, for all memory allocations.
-These functions can only be set once, when GraphBLAS starts.
-They can be queried using \verb'GrB_get' (see
-Section~\ref{get_set_global}).
-Either
-\verb'GrB_init' or \verb'GxB_init' must be called before any other GraphBLAS
-operation, but not both.  The functions passed to \verb'GxB_init' must be
-thread-safe.
-The following usage is identical to \verb'GrB_init(mode)':
+\verb'user_calloc_func' and \verb'user_realloc_func' are optional, and may be
+\verb'NULL'.  If \verb'NULL', then the \verb'user_malloc_func' is relied on
+instead, for all memory allocations.  These functions can only be set once,
+when GraphBLAS starts.  They can be queried using \verb'GrB_get' (see
+Section~\ref{get_set_global}).  Either \verb'GrB_init' or \verb'GxB_init' must
+be called before any other GraphBLAS operation, but not both.  The functions
+passed to \verb'GxB_init' must be thread-safe.  The following usage is
+identical to \verb'GrB_init(mode)':
 
     {\footnotesize
     \begin{verbatim}
     GxB_init (mode, malloc, calloc, realloc, free) ; \end{verbatim}}
 
 If a GPU mode is used, the memory manager functions are ignored, and
-the RMM versions are used instead.
+the Rapids Memory Manager (RMM) versions are used instead.
 
 %===============================================================================
 \subsection{{\sf GrB\_Info:} status code returned by GraphBLAS} %===============

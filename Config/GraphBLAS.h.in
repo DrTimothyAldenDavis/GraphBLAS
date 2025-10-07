@@ -1610,7 +1610,7 @@ typedef enum    // GxB_Option_Field ;
     //------------------------------------------------------------
 
     GxB_GLOBAL_NTHREADS = GxB_NTHREADS,  // max number of threads to use
-    GxB_GLOBAL_CHUNK = GxB_CHUNK,        // chunk size for small problems.
+    GxB_GLOBAL_CHUNK = GxB_CHUNK,        // chunk size for small problems
     GxB_GLOBAL_NGPUS = GxB_NGPUS,        // # of GPU(s) to use
     GxB_GLOBAL_GPU_IDS = GxB_GPU_IDS,    // list of GPU(s) to use
     GxB_NGPUS_MAX = 7103,                // max # of GPU(s) in the system
@@ -3002,8 +3002,8 @@ GrB_Info GrB_Type_new           // create a new GraphBLAS type
 //          "typedef struct { float x [4][4] ; int color ; } myquaternion ;") ;
 //
 // The type_name and type_defn are both null-terminated strings.  The two
-// strings are required for best performance in the JIT (both on the CPU and
-// GPU).  User defined types created by GrB_Type_new will not work with a JIT.
+// strings are required for best performance in the JIT.  User defined types
+// created by GrB_Type_new will not work with a JIT.
 //
 // At most GxB_MAX_NAME_LEN characters are accessed in type_name; characters
 // beyond that limit are silently ignored.

@@ -130,6 +130,9 @@ int GB_Context_nthreads_max_get (GxB_Context Context)
 // GB_Context_nthreads_max: get max # of threads from the current Context
 int GB_Context_nthreads_max (void)
 { 
+    // This method is used by most GraphBLAS functions to determine the # of
+    // threads to use.  If a Context is engaged, it uses the engaged context.
+    // Otherwise, it uses the default GxB_CONTEXT_WORLD.
     return (GB_Context_nthreads_max_get (GB_CONTEXT_THREAD)) ;
 }
 
@@ -175,6 +178,9 @@ double GB_Context_chunk_get (GxB_Context Context)
 // GB_Context_chunk: get chunk from the Context of this user thread
 double GB_Context_chunk (void)
 { 
+    // This method is used by most GraphBLAS functions to determine the chunk
+    // parameter.  If a Context is engaged, it uses the engaged context.
+    // Otherwise, it uses the default GxB_CONTEXT_WORLD.
     return (GB_Context_chunk_get (GB_CONTEXT_THREAD)) ;
 }
 
@@ -234,6 +240,10 @@ int32_t GB_Context_gpu_ids              // return # of GPUs to use
     int32_t gpu_ids [GB_MAX_NGPUS]      // list of GPU ids to use
 )
 { 
+    // FIXME: use this in all CUDA kernels
+    // This method is used by most GraphBLAS functions to determine the
+    // gpu(s) to use.  If a Context is engaged, it uses the engaged context.
+    // Otherwise, it uses the default GxB_CONTEXT_WORLD.
     return (GB_Context_gpu_ids_get (GB_CONTEXT_THREAD, gpu_ids)) ;
 }
 

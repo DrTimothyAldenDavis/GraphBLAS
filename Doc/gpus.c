@@ -93,7 +93,7 @@
 
 //------------------------------------------------------------------------------
 
-    get/set: tell a matrix where to live
+    get/set: tell a matrix where to live: draft (not yet implememented)
 
     // set the list of GPUs to be [3 0 2], for a specific matrix
     GrB_Matrix A ;

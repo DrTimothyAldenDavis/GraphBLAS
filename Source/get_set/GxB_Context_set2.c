@@ -41,8 +41,8 @@ GrB_Info GxB_Context_set_Scalar
     switch ((int) field)
     {
 
-        case GxB_CONTEXT_NTHREADS : 
         case GxB_CONTEXT_NGPUS : 
+        case GxB_CONTEXT_NTHREADS : 
             info = GrB_Scalar_extractElement_INT32 (&ivalue, scalar) ;
             break ;
 

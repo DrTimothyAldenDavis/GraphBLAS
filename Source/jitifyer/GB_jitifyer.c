@@ -72,7 +72,7 @@ static size_t   GB_jit_C_link_flags_allocated = 0 ;
 static char    *GB_jit_C_libraries = NULL ;
 static size_t   GB_jit_C_libraries_allocated = 0 ;
 
-// libraries to link against when using cmake: 
+// libraries to link against when using cmake:
 static char    *GB_jit_C_cmake_libs = NULL ;
 static size_t   GB_jit_C_cmake_libs_allocated = 0 ;
 
@@ -282,7 +282,7 @@ GrB_Info GB_jitifyer_init (void)
     #if defined ( GRAPHBLAS_HAS_CUDA )
     int device = -1 ;
     GB_cuda_get_device (&device) ;
-    printf ("JIT init, device %d\n", device) ;
+    printf ("JIT init, device %d\n", device) ;  // for CUDA only
     #endif
 
     //--------------------------------------------------------------------------

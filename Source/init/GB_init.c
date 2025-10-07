@@ -211,7 +211,6 @@ GrB_Info GB_init            // start up GraphBLAS
 //  GB_Global_hack_set (2,2) ;  // HACK Fixme for CUDA: force the GPU never to be used
     #endif
 
-//  printf ("init: _OPENMP = %d\n", _OPENMP) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -52,7 +52,11 @@ GrB_Info GxB_Context_new            // create a new Context
     int32_t ngpus = GB_Context_gpu_ids_get (NULL, gpu_ids) ;
     GrB_Info info = GB_Context_gpu_ids_set (Context, gpu_ids, ngpus) ;
     if (info != GrB_SUCCESS)
-    { 
+    {
+        // This "cannot" fail since the global settings have already been
+        // checked, so the inputs to the call to GB_Context_gpu_ids_set will
+        // always be valid.  As a result, the test coverage cannot test this
+        // case.
         GxB_Context_free (&Context) ;
         return (info) ;
     }

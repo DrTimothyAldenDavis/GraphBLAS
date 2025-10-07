@@ -1062,21 +1062,21 @@ GrB_Info GB_assign_prep
 if (C==M && !GB_any_aliased (C, A) && Mask_struct && !Mask_comp && whole_C_matrix)
 {
     // C<C,struct> = A or scalar, with or without accum
-    printf ("\nGOTCHA hack1 accum: %d, scalar: %d\n", accum != NULL,
+    printf ("\nhack1 accum: %d, scalar: %d\n", accum != NULL,
         scalar_expansion) ;
     // abort ( ) ;
 }
 if (C==A && !GB_any_aliased (C, M) && Mask_struct && !Mask_comp && whole_C_matrix)
 {
     // C<A,struct> = A
-    printf ("\nGOTCHA hack2 accum: %d, scalar: %d\n", accum != NULL, scalar_expansion) ;
+    printf ("\nhack2 accum: %d, scalar: %d\n", accum != NULL, scalar_expansion) ;
     // abort ( ) ;
 }
 if (C==A && !GB_any_aliased (C, M) && Mask_struct && Mask_comp && whole_C_matrix)
 {
     // C<not A,struct> = A
     // only in LAGr_MaximumMatching.c:848
-    printf ("\nGOTCHA hack3 accum: %d, scalar: %d\n", accum != NULL, scalar_expansion) ;
+    printf ("\nhack3 accum: %d, scalar: %d\n", accum != NULL, scalar_expansion) ;
     // abort ( ) ;
 }
 #endif
