@@ -394,15 +394,16 @@ For example, \verb'GxB_Scalar_fprint (s, "my scalar", GxB_SHORT, f)'
 prints a short description of the scalar \verb's' to the file \verb'f'.
 
 %===============================================================================
+\newpage
 \subsection{Printing user-defined types}
 \label{fprint_user}
 %===============================================================================
 
-SuiteSparse:GraphBLAS v10.2.0 adds a feature that allows these methods to
-print the values of user-defined types.  The \verb'GrB_Type_set_VOID'
-and \verb'GrB_Type_get_VOID' can be used to set/get a pointer to a function
-that prints a single scalar value of that type.  The function, provided
-by the user application, must have the following signature:
+SuiteSparse:GraphBLAS v10.2.0 adds a feature that allows these methods to print
+the values of user-defined types.  \verb'GrB_Type_set_VOID' and
+\verb'GrB_Type_get_VOID' can be used to set/get a pointer to a function that
+prints a single scalar value of that type.  The function, provided by the user
+application, must have the signature shown below.
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
@@ -418,7 +419,7 @@ typedef int64_t (*GxB_print_function)
 ) ;
 \end{verbatim} } \end{mdframed}
 
-This function is called for each entry to be printed.  It is given a character
+It is called for each entry to be printed.  It is given a character
 \verb'string' of size \verb'string_size', to which the value should be printed.
 The value is provided as a \verb'void * value' parameter; its size is the size
 of the given type.  The last parameter \verb'int verbose' is optional.  If

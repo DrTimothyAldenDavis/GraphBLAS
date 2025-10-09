@@ -554,8 +554,8 @@ typedef struct GB_Scalar_opaque *GxB_Scalar ;       // use GrB_Scalar
 #define GxB_CHUNK 7087
 
 // GPU control
-#define GxB_GPU_IDS 7101    /* FIXME: new gpu control */
-#define GxB_NGPUS 7102      /* FIXME: new gpu control */
+#define GxB_GPU_IDS 7101
+#define GxB_NGPUS 7102
 #endif
 
 typedef enum    // GrB_Desc_Field ;
@@ -1610,10 +1610,10 @@ typedef enum    // GxB_Option_Field ;
     //------------------------------------------------------------
 
     GxB_GLOBAL_NTHREADS = GxB_NTHREADS,  // max number of threads to use
-    GxB_GLOBAL_CHUNK = GxB_CHUNK,        // chunk size for small problems.
-    GxB_GLOBAL_NGPUS = GxB_NGPUS,        // # of GPU(s) to use  FIXME: new gpu control
-    GxB_GLOBAL_GPU_IDS = GxB_GPU_IDS,    // list of GPU(s) to use   FIXME: new gpu control
-    GxB_NGPUS_MAX = 7103,                // max # of GPU(s) in the system   FIXME: new gpu control
+    GxB_GLOBAL_CHUNK = GxB_CHUNK,        // chunk size for small problems
+    GxB_GLOBAL_NGPUS = GxB_NGPUS,        // # of GPU(s) to use
+    GxB_GLOBAL_GPU_IDS = GxB_GPU_IDS,    // list of GPU(s) to use
+    GxB_NGPUS_MAX = 7103,                // max # of GPU(s) in the system
 
     GxB_BURBLE = 7019,               // diagnostic output
     GxB_PRINTF = 7020,               // printf function diagnostic output
@@ -1751,8 +1751,8 @@ typedef enum    // GxB_Context_Field
                     // If < 1, then the default is used.
 
     // GPU control
-    GxB_CONTEXT_NGPUS = GxB_NGPUS,        // # of GPU(s) to use         FIXME: new gpu control
-    GxB_CONTEXT_GPU_IDS = GxB_GPU_IDS,    // list of GPU(s) to use      FIXME: new gpu control
+    GxB_CONTEXT_NGPUS = GxB_NGPUS,        // # of GPU(s) to use
+    GxB_CONTEXT_GPU_IDS = GxB_GPU_IDS,    // list of GPU(s) to use
 }
 GxB_Context_Field ;
 #endif

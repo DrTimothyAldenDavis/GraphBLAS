@@ -36,9 +36,13 @@
     int32_t ngpus_max ;
     GrB_get (GrB_GLOBAL, &ngpus_max, GxB_NGPUS_MAX) ;
 
-    // set the list of GPUs to use to ids 0 to 3
+    // set the list of GPUs to use to ids 0 to 3 (context)
     int32_t ngpus = 4 ;
     GrB_set (Context, ngpus, GxB_NGPUS) ;
+
+    // set the list of GPUs to use to ids 0 to 3 (global)
+    int32_t ngpus = 4 ;
+    GrB_set (GrB_GLOBAL, ngpus, GxB_NGPUS) ;
 
     // set the list of GPUs to be [3 0 2], for this context
     int32_t gpu_ids [3] = {3, 0, 2} ;
