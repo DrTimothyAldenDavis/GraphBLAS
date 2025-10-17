@@ -76,11 +76,11 @@ using namespace cooperative_groups ;
 // value, then the Int types below must be replaced with a larger type.
 #define CHUNKSIZE1         GB_CUDA_SELECT_SPARSE_CHUNKSIZE1
 #define LOG2_CHUNKSIZE1    GB_CUDA_SELECT_SPARSE_CHUNKSIZE1_LOG2
-#define BLOCKDIM1           GB_CUDA_SELECT_SPARSE_BLOCKDIM1
+#define BLOCKDIM1          GB_CUDA_SELECT_SPARSE_BLOCKDIM1
 
 #define CHUNKSIZE2         GB_CUDA_SELECT_SPARSE_CHUNKSIZE2
 #define LOG2_CHUNKSIZE2    GB_CUDA_SELECT_SPARSE_CHUNKSIZE2_LOG2
-#define BLOCKDIM2           GB_CUDA_SELECT_SPARSE_BLOCKDIM2
+#define BLOCKDIM2          GB_CUDA_SELECT_SPARSE_BLOCKDIM2
 
 // the # of items per thread must be an integer, so the chunk size must be a
 // multiple of blockdim (the # of threads in each threadblock):
@@ -89,19 +89,37 @@ using namespace cooperative_groups ;
 
 #define Int uint16_t
 
+#include <cub/cub.cuh>   // or equivalently <cub/block/block_load.cuh>
+
+__global__ void ExampleKernel0(int *d_data) // , ...)
+{
+    // Specialize BlockLoad for a 1D block of 128 threads owning 4 integer items each
+    using BlockLoad = cub::BlockLoad<int, 128, 4, cub::BLOCK_LOAD_WARP_TRANSPOSE>;
+
+    // Allocate shared memory for BlockLoad
+    __shared__ typename BlockLoad::TempStorage temp_storage;
+
+    // Load a segment of consecutive items that are blocked across threads
+    int thread_data[4];
+    BlockLoad(temp_storage).Load(d_data, thread_data);
+    // does this:
+    // thread_data [0] = d_data [ ... ]
+}
+
 // typedef int crud [4] ;
 // typedef crud *more_crud ;
 
-__global__ void ExampleKernel(int *d_data, int num_items)
+__global__ void ExampleKernel2(int *d_data, int num_items)
 {
     // Specialize BlockLoad, BlockStore, and BlockScan for a 1D block of 128 threads, 4 ints per thread
 //  using BlockLoad = cub::BlockLoad<int*, 128, 4>  ;
+    using BlockLoad = cub::BlockLoad<int, 128, 4>  ;
     using BlockStore = cub::BlockStore<int, 128, 4> ;
     using BlockScan = cub::BlockScan<int, 128>                            ;
 
     // Allocate aliased shared memory for BlockLoad, BlockStore, and BlockScan
     __shared__ union {
-//      typename BlockLoad::TempStorage     load;
+        typename BlockLoad::TempStorage     load;
         typename BlockScan::TempStorage     scan;
         typename BlockStore::TempStorage    store;
     } temp_storage;
@@ -112,11 +130,11 @@ __global__ void ExampleKernel(int *d_data, int num_items)
         // Load a segment of consecutive items that are blocked across threads
         int thread_data[4];
         int *p = d_data + block_offset ;
-//      BlockLoad(temp_storage.load).Load(p, thread_data);
-        thread_data [0] = p [0] ;
-        thread_data [1] = p [1] ;
-        thread_data [2] = p [2] ;
-        thread_data [3] = p [3] ;
+        BlockLoad(temp_storage.load).Load(p, thread_data);
+//      thread_data [0] = p [0] ;
+//      thread_data [1] = p [1] ;
+//      thread_data [2] = p [2] ;
+//      thread_data [3] = p [3] ;
         __syncthreads();
 
         // Collectively compute the block-wide inclusive prefix sum
@@ -176,14 +194,14 @@ __global__ void GB_cuda_select_sparse_phase1
 
 #if 1
     // 16-bit cumulative blockscan for a single chunk on one threadblock:
-//  using BlockLoad  = cub::BlockLoad <Int*, BLOCKDIM1, ITEMS_PER_THREAD1> ;
-    using BlockScan  = cub::BlockScan <Int , BLOCKDIM1, cub::BLOCK_SCAN_WARP_SCANS> ;
-//  using BlockStore = cub::BlockStore<Int , BLOCKDIM1, ITEMS_PER_THREAD1> ;
+    using BlockLoad  = cub::BlockLoad <Int, BLOCKDIM1, ITEMS_PER_THREAD1> ;
+    using BlockScan  = cub::BlockScan <Int, BLOCKDIM1, cub::BLOCK_SCAN_WARP_SCANS> ;
+    using BlockStore = cub::BlockStore<Int, BLOCKDIM1, ITEMS_PER_THREAD1> ;
     __shared__ union
     {
-//      typename BlockLoad::TempStorage load ;
+        typename BlockLoad::TempStorage load ;
         typename BlockScan::TempStorage scan ;
-//      typename BlockStore::TempStorage store ;
+        typename BlockStore::TempStorage store ;
     } W ;
 #endif
 
@@ -193,7 +211,7 @@ __global__ void GB_cuda_select_sparse_phase1
 
     for (int64_t chunk = blockIdx.x ;
                  chunk < nchunks_in_A ;
-                 chunk += gridDim.x)
+                 chunk += gridDim.x)        // "grid-stride" loop
     {
 
         //----------------------------------------------------------------------
@@ -212,7 +230,7 @@ __global__ void GB_cuda_select_sparse_phase1
 
         int64_t pdelta = threadIdx.x ;
         for ( ; pdelta < my_chunk_size ;
-                pdelta += blockDim.x)
+                pdelta += blockDim.x)       // "block-stride" loop
         {
 
             //------------------------------------------------------------------
@@ -261,18 +279,18 @@ __global__ void GB_cuda_select_sparse_phase1
         Int t [ITEMS_PER_THREAD1] ;
 
         // each thread loads its data from Local_Map (in shared memory)
-//      BlockLoad (W.load).Load (Local_Map, t) ;
-//      t [0] = Local_Map [2 * threadIdx.x] ;
-//      t [1] = Local_Map [2 * threadIdx.x + 1] ;
-
-        #if (ITEMS_PER_THREAD1 == 1)
-        t [0] = Local_Map [threadIdx.x] ;
+        #if 1
+        BlockLoad (W.load).Load (Local_Map, t) ;
         #else
-        #pragma unroll
-        for (int kk = 0 ; kk < ITEMS_PER_THREAD1 ; kk++)
-        {
-            t [kk] = Local_Map [ITEMS_PER_THREAD1 * threadIdx.x + kk] ;
-        }
+            #if (ITEMS_PER_THREAD1 == 1)
+            t [0] = Local_Map [threadIdx.x] ;
+            #else
+            #pragma unroll
+            for (int kk = 0 ; kk < ITEMS_PER_THREAD1 ; kk++)
+            {
+                t [kk] = Local_Map [ITEMS_PER_THREAD1 * threadIdx.x + kk] ;
+            }
+            #endif
         #endif
 
         this_thread_block ( ).sync ( ) ;
@@ -283,22 +301,19 @@ __global__ void GB_cuda_select_sparse_phase1
         this_thread_block ( ).sync ( ) ;
 
         // each thread saves its data into Map (in global memory)
-//      BlockStore (W.store).Store (Map + pfirst, t) ;
-//      Map [pfirst + 2 * threadIdx.x    ] = t [0] ;
-//      Map [pfirst + 2 * threadIdx.x + 1] = t [1] ;
-
-        #if (ITEMS_PER_THREAD1 == 1)
-        Map [pfirst + threadIdx.x] = t [0] ;
+        #if 1
+        BlockStore (W.store).Store (Map + pfirst, t) ;
         #else
-        #pragma unroll
-        for (int kk = 0 ; kk < ITEMS_PER_THREAD1 ; kk++)
-        {
-            Map [pfirst + ITEMS_PER_THREAD1 * threadIdx.x + kk] = t [kk] ;
-        }
+            #if (ITEMS_PER_THREAD1 == 1)
+            Map [pfirst + threadIdx.x] = t [0] ;
+            #else
+            #pragma unroll
+            for (int kk = 0 ; kk < ITEMS_PER_THREAD1 ; kk++)
+            {
+                Map [pfirst + ITEMS_PER_THREAD1 * threadIdx.x + kk] = t [kk] ;
+            }
+            #endif
         #endif
-
-
-//      this_thread_block ( ).sync ( ) ;
 
 #else
         this_thread_block ( ).sync ( ) ;
@@ -334,6 +349,8 @@ __global__ void GB_cuda_select_sparse_phase1
 
         if (threadIdx.x == blockDim.x - 1)
         {
+            // or try this:
+//          ChunkSum [chunk] = tt [ITEMS_PER_THREAD1-1] ;   // in last thread
             ChunkSum [chunk] = block_aggregate ;
         }
     }
@@ -524,8 +541,6 @@ __global__ void GB_cuda_select_sparse_phase4
 
         // each thread loads its data from Local_Ck_Delta (in shared memory)
 //      BlockLoad (W.load).Load (Local_Ck_Delta, t) ;
-//      t [0] = Local_Ck_Delta [2 * threadIdx.x] ;
-//      t [1] = Local_Ck_Delta [2 * threadIdx.x + 1] ;
         #if (ITEMS_PER_THREAD2 == 1)
         t [0] = Local_Ck_Delta [threadIdx.x] ;
         #else
@@ -544,9 +559,6 @@ __global__ void GB_cuda_select_sparse_phase4
 
         // each thread saves its data into Ck_Delta (in global memory)
 //      BlockStore (W.store).Store (Ck_Delta + pfirst, t) ;
-//      Ck_Delta [pfirst + 2 * threadIdx.x    ] = t [0] ;
-//      Ck_Delta [pfirst + 2 * threadIdx.x + 1] = t [1] ;
-
         #if (ITEMS_PER_THREAD2 == 1)
         Ck_Delta [pfirst + threadIdx.x] = t [0] ;
         #else
@@ -556,7 +568,6 @@ __global__ void GB_cuda_select_sparse_phase4
             Ck_Delta [pfirst + ITEMS_PER_THREAD2 * threadIdx.x + kk] = t [kk] ;
         }
         #endif
-//      this_thread_block ( ).sync ( ) ;
 
 #else
         this_thread_block ( ).sync ( ) ;
