@@ -385,10 +385,10 @@ __global__ void GB_cuda_select_sparse_phase4
     __shared__ Int Local_Ck_Delta [CHUNKSIZE2] ;
 
     // cub::Block* workspace:
-    using BlockLoad  = cub::BlockLoad  <Int, BLOCKDIM2, ITEMS_PER_THREAD1> ;
+    using BlockLoad  = cub::BlockLoad  <Int, BLOCKDIM2, ITEMS_PER_THREAD2> ;
     using BlockScan  = cub::BlockScan  <Int, BLOCKDIM2,
                                              cub::BLOCK_SCAN_WARP_SCANS> ;
-    using BlockStore = cub::BlockStore <Int, BLOCKDIM2, ITEMS_PER_THREAD1> ;
+    using BlockStore = cub::BlockStore <Int, BLOCKDIM2, ITEMS_PER_THREAD2> ;
     __shared__ union
     {
         typename BlockLoad::TempStorage load ;
@@ -445,17 +445,13 @@ __global__ void GB_cuda_select_sparse_phase4
         Int t [ITEMS_PER_THREAD2] ;
 
         // each thread loads its data from Local_Ck_Delta (in shared memory):
-//      BlockLoad (W.load).Load (Local_Ck_Delta, t) ;
-        // FIXME: use BlockLoad instead
-        #if (ITEMS_PER_THREAD2 == 1)
-        t [0] = Local_Ck_Delta [threadIdx.x] ;
-        #else
-        #pragma unroll
-        for (int kk = 0 ; kk < ITEMS_PER_THREAD2 ; kk++)
-        {
-            t [kk] = Local_Ck_Delta [ITEMS_PER_THREAD2 * threadIdx.x + kk] ;
-        }
-        #endif
+        /*
+            for (int k = 0 ; k < ITEMS_PER_THREAD2 ; k++)
+            {
+                t [k] = Local_Ck_Delta [ITEMS_PER_THREAD2 * threadIdx.x + k] ;
+            }
+        */
+        BlockLoad (W.load).Load (Local_Ck_Delta, t) ;
         this_thread_block ( ).sync ( ) ;
 
         // inclusive sum of data from Local_Ck_Delta,
@@ -464,18 +460,14 @@ __global__ void GB_cuda_select_sparse_phase4
         BlockScan (W.scan).InclusiveSum (t, t, block_aggregate) ;
         this_thread_block ( ).sync ( ) ;
 
-        // each thread saves its data into Ck_Delta (in global memory)
-        // FIXME: use BlockStore instead:
-//      BlockStore (W.store).Store (Ck_Delta + pfirst, t) ;
-        #if (ITEMS_PER_THREAD2 == 1)
-        Ck_Delta [pfirst + threadIdx.x] = t [0] ;
-        #else
-        #pragma unroll
-        for (int kk = 0 ; kk < ITEMS_PER_THREAD2 ; kk++)
-        {
-            Ck_Delta [pfirst + ITEMS_PER_THREAD2 * threadIdx.x + kk] = t [kk] ;
-        }
-        #endif
+        // each thread saves its data into Ck_Delta (in global memory):
+        /*
+            for (int k = 0 ; k < ITEMS_PER_THREAD2 ; k++)
+            {
+                Ck_Delta [pfirst + ITEMS_PER_THREAD2 * threadIdx.x + k] = t [k];
+            }
+        */
+        BlockStore (W.store).Store (Ck_Delta + pfirst, t) ;
 
         // last thread writes the sum of the whole threadblock to global
         if (threadIdx.x == blockDim.x - 1)
