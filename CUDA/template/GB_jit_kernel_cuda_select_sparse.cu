@@ -268,80 +268,45 @@ __global__ void GB_cuda_select_sparse_phase1
         // inclusive cumulative sum of Local_Map
         //----------------------------------------------------------------------
 
-        // Map [pfirst..pfirst+CHUNKSIZE1-1] = inclusive cumsum of Local_Map:
-        // for (int i = 1 ; i < CHUNKSIZE1 ; i++)
-        //      Local_Map [i] += Local_Map [i-1] ;
-        // Map [pfirst + 0:CHUNKSIZE1-1] = Local_Map [0:CHUNKSIZE1-1]
+        // Map [pfirst..pfirst+CHUNKSIZE1-1] = inclusive cumsum of Local_Map,
+        // where Local_Map [i] = sum (Local_Map [0:i]):
 
-#if 1
-
-        this_thread_block ( ).sync ( ) ;
-        Int t [ITEMS_PER_THREAD1] ;
-
-        // each thread loads its data from Local_Map (in shared memory)
-        #if 1
-        BlockLoad (W.load).Load (Local_Map, t) ;
-        #else
-            #if (ITEMS_PER_THREAD1 == 1)
-            t [0] = Local_Map [threadIdx.x] ;
-            #else
-            #pragma unroll
-            for (int kk = 0 ; kk < ITEMS_PER_THREAD1 ; kk++)
-            {
-                t [kk] = Local_Map [ITEMS_PER_THREAD1 * threadIdx.x + kk] ;
-            }
-            #endif
-        #endif
-
-        this_thread_block ( ).sync ( ) ;
-
-        // inclusive sum of data from Local_Map
-        Int block_aggregate ;
-        BlockScan (W.scan).InclusiveSum (t, t, block_aggregate) ;
-        this_thread_block ( ).sync ( ) ;
-
-        // each thread saves its data into Map (in global memory)
-        #if 1
-        BlockStore (W.store).Store (Map + pfirst, t) ;
-        #else
-            #if (ITEMS_PER_THREAD1 == 1)
-            Map [pfirst + threadIdx.x] = t [0] ;
-            #else
-            #pragma unroll
-            for (int kk = 0 ; kk < ITEMS_PER_THREAD1 ; kk++)
-            {
-                Map [pfirst + ITEMS_PER_THREAD1 * threadIdx.x + kk] = t [kk] ;
-            }
-            #endif
-        #endif
-
-#else
-        this_thread_block ( ).sync ( ) ;
-        // FIXME: do a cub::BlockScan::InclusiveSum on threadblock's
-        // Local_Map [0..CHUNKSIZE1-1],
-        // where Local_Map [i] = sum (Local_Map [0:i]), so that
-        // Local_Map [0] = 1 if the first entry is kept, 0 otherwise,
-        // and Local_Map [CHUNKSIZE1-1] = total # entries kept in this block
-        if (threadIdx.x == 0)
-        {
+        /*
             for (int i = 1 ; i < CHUNKSIZE1 ; i++)
             {
                 Local_Map [i] += Local_Map [i-1] ;
             }
-        }
+            Map [pfirst + 0:CHUNKSIZE1-1] = Local_Map [0:CHUNKSIZE1-1]
+            block_aggregate = Local_Map [CHUNKSIZE1-1]
+        */
+
+        this_thread_block ( ).sync ( ) ;
+        Int t [ITEMS_PER_THREAD1] ;
+
+        // each thread loads its data from Local_Map (in shared memory):
+        /*
+            for (int k = 0 ; k < ITEMS_PER_THREAD1 ; k++)
+            {
+                t [k] = Local_Map [ITEMS_PER_THREAD1 * threadIdx.x + k] ;
+            }
+        */
+        BlockLoad (W.load).Load (Local_Map, t) ;
         this_thread_block ( ).sync ( ) ;
 
-        //----------------------------------------------------------------------
-        // save the Local_Map in Map [pfirst..pfirst+CHUNKSIZE1-1]
-        //----------------------------------------------------------------------
+        // inclusive sum of data from Local_Map:
+        Int block_aggregate ;
+        BlockScan (W.scan).InclusiveSum (t, t, block_aggregate) ;
+        this_thread_block ( ).sync ( ) ;
 
-        for (pdelta = threadIdx.x ;
-             pdelta < CHUNKSIZE1 ;
-             pdelta += blockDim.x)
-        {
-            Map [pfirst + pdelta] = Local_Map [pdelta] ;
+        // each thread saves its data into Map (in global memory):
+        BlockStore (W.store).Store (Map + pfirst, t) ;
+        /*
+            for (int k = 0 ; k < ITEMS_PER_THREAD1 ; k++)
+            {
+                Map [pfirst + ITEMS_PER_THREAD1 * threadIdx.x + k] = t [k] ;
+            }
         }
-#endif
+        */
 
         //----------------------------------------------------------------------
         // save the # of entries kept in this chunk
@@ -533,14 +498,16 @@ __global__ void GB_cuda_select_sparse_phase4
             Local_Ck_Delta [pdelta] = 0 ;
         }
 
-#if 1
+        //----------------------------------------------------------------------
+        // inclusive sum of Local_Ck_Delta
+        //----------------------------------------------------------------------
 
-        // FIXME: make this a device function (same as phase1)
         this_thread_block ( ).sync ( ) ;
         Int t [ITEMS_PER_THREAD2] ;
 
-        // each thread loads its data from Local_Ck_Delta (in shared memory)
+        // each thread loads its data from Local_Ck_Delta (in shared memory):
 //      BlockLoad (W.load).Load (Local_Ck_Delta, t) ;
+        // FIXME: use this:
         #if (ITEMS_PER_THREAD2 == 1)
         t [0] = Local_Ck_Delta [threadIdx.x] ;
         #else
@@ -558,6 +525,7 @@ __global__ void GB_cuda_select_sparse_phase4
         this_thread_block ( ).sync ( ) ;
 
         // each thread saves its data into Ck_Delta (in global memory)
+        // FIXME: use this:
 //      BlockStore (W.store).Store (Ck_Delta + pfirst, t) ;
         #if (ITEMS_PER_THREAD2 == 1)
         Ck_Delta [pfirst + threadIdx.x] = t [0] ;
@@ -568,31 +536,6 @@ __global__ void GB_cuda_select_sparse_phase4
             Ck_Delta [pfirst + ITEMS_PER_THREAD2 * threadIdx.x + kk] = t [kk] ;
         }
         #endif
-
-#else
-        this_thread_block ( ).sync ( ) ;
-        // FIXME: do a cub::BlockScan::InclusiveSum on threadblock's
-        // Local_Ck_Delta [0..CHUNKSIZE2-1]
-        if (threadIdx.x == 0)
-        {
-            for (int i = 1 ; i < CHUNKSIZE2 ; i++)
-            {
-                Local_Ck_Delta [i] += Local_Ck_Delta [i-1] ;
-            }
-        }
-        this_thread_block ( ).sync ( ) ;
-
-        //----------------------------------------------------------------------
-        // save the Local_Ck_Delta in Ck_Delta [pfirst:plast-1]
-        //----------------------------------------------------------------------
-
-        for (pdelta = threadIdx.x ;
-             pdelta < CHUNKSIZE2 ;
-             pdelta += blockDim.x)
-        {
-            Ck_Delta [pfirst + pdelta] = Local_Ck_Delta [pdelta] ;
-        }
-#endif
 
         // last thread writes the sum of the whole threadblock to global
         if (threadIdx.x == blockDim.x - 1)
@@ -1029,9 +972,8 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // phase 6: construct Cp and Ch
     //--------------------------------------------------------------------------
 
-    // The caller has already allocated C->p, C->h for
-    // a user-returnable empty hypersparse matrix.
-    // Free them here before updating.
+    // The caller has already allocated C->p, C->h for a user-returnable empty
+    // hypersparse matrix.  Free them here before reallocating them.
     GB_FREE_MEMORY (&(C->p), C->p_size) ;
     GB_FREE_MEMORY (&(C->h), C->h_size) ;
 
