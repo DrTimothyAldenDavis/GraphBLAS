@@ -202,7 +202,6 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
         //----------------------------------------------------------------------
         // FUTURE::: C<C,s> += x   C == M, update all values, C_replace ignored
-        // FUTURE::: C<C,s> += A   C == M, C_replace ignored
         // FUTURE::: C<C,s> = A    C == M, C_replace ignored
         //----------------------------------------------------------------------
 
