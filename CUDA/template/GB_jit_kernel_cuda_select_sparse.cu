@@ -90,7 +90,7 @@ using namespace cooperative_groups ;
 __global__ void GB_cuda_select_sparse_phase1
 (
     // outputs:
-    #ifdef Ak_SAVE
+    #if Ak_SAVE
     GB_Aj_SIGNED_TYPE *Ak,  // size anz, in Ak [0..anz-1], and values in range
                             // 0 to the # of vectors in A
     #endif
@@ -719,8 +719,10 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
         return (GrB_OUT_OF_MEMORY) ;
     }
 
+    #if Ak_SAVE
     // use W_0 [0..anz-1] as workspace for Ak [0..anz-1]
     GB_Aj_SIGNED_TYPE *Ak = (GB_Aj_SIGNED_TYPE *) W_0 ;
+    #endif
 
     // use W_1 workspace for Map, and shift by one to define Map [-1] as 0
     // (which is set in the phase1 kernel launch below).
