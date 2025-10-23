@@ -13,8 +13,8 @@ using namespace cooperative_groups ;
 #undef GB_FREE_ALL
 #define GB_FREE_ALL GB_FREE_WORKSPACE ;
 
-#define chunk_size      GB_CUDA_SELECT_SPARSE_CHUNKSIZE
-#define log2_chunk_size GB_CUDA_SELECT_SPARSE_CHUNKSIZE_LOG2
+#define chunk_size      GB_CUDA_SELECT_SPARSE_CHUNKSIZE1
+#define log2_chunk_size GB_CUDA_SELECT_SPARSE_CHUNKSIZE1_LOG2
 
 //------------------------------------------------------------------------------
 // GB_cuda_select_sparse_phase1: construct Keep array
@@ -249,7 +249,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
 
     dim3 grid (gridsz) ;        // = min (ceil (nnz(A)/chunk_size), 256*(#sms))
-    dim3 block (GB_CUDA_SELECT_SPARSE_BLOCKDIM) ;
+    dim3 block (GB_CUDA_SELECT_SPARSE_BLOCKDIM1) ;
 
 //  std::cout << std::endl << "--------start select sparse----" << std::endl ;
     CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
