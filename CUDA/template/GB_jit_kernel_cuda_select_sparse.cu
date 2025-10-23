@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #define TIMING /* FIXME:remove */
+#define Ak_SAVE 0
 
 // C = select (A) kernel on the GPU.  The input matrix A may be jumbled; if
 // so, and if C is not empty, then C->jumbled is set below.  The algorithm
@@ -89,8 +90,10 @@ using namespace cooperative_groups ;
 __global__ void GB_cuda_select_sparse_phase1
 (
     // outputs:
+    #ifdef Ak_SAVE
     GB_Aj_SIGNED_TYPE *Ak,  // size anz, in Ak [0..anz-1], and values in range
                             // 0 to the # of vectors in A
+    #endif
     Int *Map,               // size anz+1, in Map [-1..anz-1]
     GB_Ap_TYPE *ChunkSum,   // size nchunks_in_A+1, ChunkSum [-1..nchunks_in_A]
     // inputs, not modified:
@@ -105,8 +108,10 @@ __global__ void GB_cuda_select_sparse_phase1
     // get A and ythunk
     //--------------------------------------------------------------------------
 
+    #if ( Ak_SAVE ) || ( GB_DEPENDS_ON_J )
     const int64_t anvec = A->nvec ;
     const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;
+    #endif
     #if ( GB_DEPENDS_ON_I )
     const GB_Ai_SIGNED_TYPE *__restrict__ Ai = (GB_Ai_SIGNED_TYPE *) A->i ;
     #endif
@@ -152,13 +157,20 @@ __global__ void GB_cuda_select_sparse_phase1
         //----------------------------------------------------------------------
 
         int64_t pfirst = chunk << LOG2_CHUNKSIZE1 ;
-        int64_t my_chunk_size, anvec1, kfirst, klast ;
+        int64_t my_chunk_size ;
+        #if ( Ak_SAVE ) || ( GB_DEPENDS_ON_J )
+        int64_t anvec1, kfirst, klast ;
         float slope ;
         GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst,
             CHUNKSIZE1, &kfirst, &klast, &my_chunk_size, &anvec1, &slope) ;
+        #else
+        int64_t plast = pfirst + CHUNKSIZE1 ;
+        plast = GB_IMIN (plast, anz) ;
+        my_chunk_size = plast - pfirst ;
+        #endif
 
         //----------------------------------------------------------------------
-        // find the kth vector that contains each entry pA = pfirst:plast-1
+        // find the kA-th vector that contains each entry pA = pfirst:plast-1
         //----------------------------------------------------------------------
 
         int64_t pdelta = threadIdx.x ;
@@ -167,19 +179,23 @@ __global__ void GB_cuda_select_sparse_phase1
         {
 
             //------------------------------------------------------------------
-            // determine the kth vector that contains the pA-th entry
+            // determine the kA-th vector that contains the pA-th entry
             //------------------------------------------------------------------
 
             int64_t pA = pfirst + pdelta ;
+            #if ( Ak_SAVE ) || ( GB_DEPENDS_ON_J )
             int64_t kA = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (pA, pdelta, Ap,
                 anvec1, kfirst, slope) ;
+            #endif
 
             //------------------------------------------------------------------
             // save the vector index kA, and determine if this entry is kept
             //------------------------------------------------------------------
 
+            #if Ak_SAVE
             // FIXME: try recomputing Ak, not saving it
             Ak [pA] = kA ;
+            #endif
             #if ( GB_DEPENDS_ON_J )
             int64_t j = GBh_A (Ah, kA) ;
             #endif
@@ -276,7 +292,9 @@ __global__ void GB_cuda_select_sparse_phase3
     GrB_Matrix A,
     GB_Ap_TYPE *ChunkSum,   // size nchunks_in_A+1, ChunkSum [-1..nchunks_in_A]
     Int *Map,               // size anz+1, in Map [-1..anz-1]
+    #if Ak_SAVE
     GB_Aj_SIGNED_TYPE *Ak,  // size anz, in Ak [0..anz-1]
+    #endif
     int64_t anz,            // # of entries in A
     int64_t nchunks_in_A    // # of chunks in A
 )
@@ -299,6 +317,10 @@ __global__ void GB_cuda_select_sparse_phase3
     // get A
     //--------------------------------------------------------------------------
 
+    #if ( !Ak_SAVE )
+    const int64_t anvec = A->nvec ;
+    const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;
+    #endif
     const GB_Ai_SIGNED_TYPE *__restrict__ Ai = (GB_Ai_SIGNED_TYPE *) A->i ;
     #if !GB_ISO_SELECT
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
@@ -318,9 +340,17 @@ __global__ void GB_cuda_select_sparse_phase3
         //----------------------------------------------------------------------
 
         int64_t pfirst = chunk << LOG2_CHUNKSIZE1 ;
+        int64_t my_chunk_size ;
+        #if !Ak_SAVE
+        int64_t anvec1, kfirst, klast ;
+        float slope ;
+        GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst,
+            CHUNKSIZE1, &kfirst, &klast, &my_chunk_size, &anvec1, &slope) ;
+        #else
         int64_t plast = pfirst + CHUNKSIZE1 ;
         plast = GB_IMIN (plast, anz) ;
-        int64_t my_chunk_size = plast - pfirst ;
+        my_chunk_size = plast - pfirst ;
+        #endif
 
         //----------------------------------------------------------------------
         // move the entries in this chunk of A into Ci and Cx
@@ -347,7 +377,13 @@ __global__ void GB_cuda_select_sparse_phase3
                 // Cx [pC] = Ax [pA] ;
                 GB_SELECT_ENTRY (Cx, pC, Ax, pA) ;
                 // save the index of the kA-th vector kA that holds this entry
+                #if Ak_SAVE
                 Ck1 [pC] = Ak [pA] ;
+                #else
+                int64_t kA = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (pA, pdelta, Ap,
+                    anvec1, kfirst, slope) ;
+                Ck1 [pC] = kA ;
+                #endif
             }
         }
     }
@@ -671,10 +707,12 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // workspaces (W_0, W_1, and W_3) exist only on the GPU, so cudaMalloc
     // could be used for them.  However, the RMM memory manager gives better
     // performance than cudaMalloc.
+    #if Ak_SAVE
     W_0 = GB_MALLOC_MEMORY (anz+2, sizeof (GB_Aj_SIGNED_TYPE), &W_0_size) ;
+    #endif
     W_1 = GB_MALLOC_MEMORY (anz+2 + CHUNKSIZE1, sizeof (Int), &W_1_size) ;
     W_2 = GB_MALLOC_MEMORY (nchunks_max+2, sizeof (GB_Ap_TYPE), &W_2_size) ;
-    if (W_0 == NULL || W_1 == NULL || W_2 == NULL)
+    if ((Ak_SAVE && W_0 == NULL) || W_1 == NULL || W_2 == NULL)
     {
         // out of memory
         GB_FREE_ALL ;
@@ -694,7 +732,11 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 
     // KERNEL LAUNCH 1: phase1
     GB_cuda_select_sparse_phase1 <<<grid, block1, 0, stream>>>
-        (/* outputs: */ Ak, Map, ChunkSum,
+        (/* outputs: */
+            #if Ak_SAVE
+            Ak,
+            #endif
+            Map, ChunkSum,
          /* inputs: */  A, ythunk, anz, nchunks_in_A) ;
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
@@ -802,7 +844,11 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // KERNEL LAUNCH 2: phase3
     GB_cuda_select_sparse_phase3 <<<grid, block1, 0, stream>>>
         (/* outputs: */ C, Ck1,
-         /* inputs: */  A, ChunkSum, Map, Ak, anz, nchunks_in_A) ;
+         /* inputs: */  A, ChunkSum, Map,
+            #if Ak_SAVE
+            Ak,
+            #endif
+            anz, nchunks_in_A) ;
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
