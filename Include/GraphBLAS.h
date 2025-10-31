@@ -286,7 +286,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "FIXME, 2025"
+#define GxB_IMPLEMENTATION_DATE "Nov 1, 2025"
 #define GxB_IMPLEMENTATION_MAJOR 10
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -6604,8 +6604,8 @@ GrB_Info prefix ## Matrix_import ## suffix                                  \
     GrB_Type type,          /* type of matrix to create */                  \
     GrB_Index nrows,        /* number of rows of the matrix */              \
     GrB_Index ncols,        /* number of columns of the matrix */           \
-    const GrB_Index *Ap,    /* pointers for CSR, CSC, col indices for COO */\
-    const GrB_Index *Ai,    /* row indices for CSR, CSC */                  \
+    const GrB_Index *Ap,    /* pointers for CSR,CSC; row indices for COO   */\
+    const GrB_Index *Ai,    /* row indices for CSR; col indices for COO,CSR*/\
     const ctype *Ax,        /* values */                                    \
     GrB_Index Ap_len,       /* number of entries in Ap (not # of bytes) */  \
     GrB_Index Ai_len,       /* number of entries in Ai (not # of bytes) */  \
@@ -6629,8 +6629,8 @@ GB_DECLARE_14 (GrB_, void)
 #define GB_DECLARE(prefix,suffix,type)                                      \
 GrB_Info prefix ## Matrix_export ## suffix                                  \
 (                                                                           \
-    GrB_Index *Ap,          /* pointers for CSR, CSC, col indices for COO */\
-    GrB_Index *Ai,          /* col indices for CSR/COO, row indices for CSC*/\
+    GrB_Index *Ap,          /* pointers for CSR,CSC; row indices for COO    */\
+    GrB_Index *Ai,          /* row indices for CSC; col indices for COO,CSR */\
     type *Ax,               /* values (must match the type of A) */         \
     GrB_Index *Ap_len,      /* number of entries in Ap (not # of bytes) */  \
     GrB_Index *Ai_len,      /* number of entries in Ai (not # of bytes) */  \

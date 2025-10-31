@@ -1055,7 +1055,7 @@ GrB_Info GB_assign_prep
         else
         { 
             // finish any computations in C, but leave it jumbled
-            // FIXME:: keep zombies in C, and avoid making a copy of C
+            // FUTURE:: keep zombies in C, and avoid making a copy of C
             GBURBLE ("(%sC alias: duplicate) ", C->iso ? "iso " : "") ;
 
 #if 0

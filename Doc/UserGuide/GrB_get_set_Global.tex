@@ -269,7 +269,13 @@ package manager (Linux, conda-forge, spack, brew, vcpkg, etc).
 %-------------------------------------------------------------------------------
 \label{gpu_parallelism}
 
-FIXME: describe how to use the GPU(s) in GraphBLAS.
+% TODO: decide how to use get/set for the GPU(s) in GraphBLAS.
+
+GPU kernels are under development but are not yet available for production use.
+Once they are available, the get/set options will be able to control which
+GPU(s) to use for any given call to GraphBLAS, via the \verb'GxB_Context'
+object.  The current interface described in GraphBLAS.h is tentative and
+may change when released for production use.
 
 %-------------------------------------------------------------------------------
 \subsubsection{Other global options}

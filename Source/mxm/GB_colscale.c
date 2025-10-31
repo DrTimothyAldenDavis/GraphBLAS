@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: allow C=C*D to be done without making a copy of C
+// FUTURE: allow C=C*D to be done without making a copy of C
 
 #include "mxm/GB_mxm.h"
 #include "binaryop/GB_binop.h"
