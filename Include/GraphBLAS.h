@@ -6605,7 +6605,7 @@ GrB_Info prefix ## Matrix_import ## suffix                                  \
     GrB_Index nrows,        /* number of rows of the matrix */              \
     GrB_Index ncols,        /* number of columns of the matrix */           \
     const GrB_Index *Ap,    /* pointers for CSR,CSC; row indices for COO   */\
-    const GrB_Index *Ai,    /* row indices for CSR; col indices for COO,CSR*/\
+    const GrB_Index *Ai,    /* row indices for CSC; col indices for COO,CSR*/\
     const ctype *Ax,        /* values */                                    \
     GrB_Index Ap_len,       /* number of entries in Ap (not # of bytes) */  \
     GrB_Index Ai_len,       /* number of entries in Ai (not # of bytes) */  \
