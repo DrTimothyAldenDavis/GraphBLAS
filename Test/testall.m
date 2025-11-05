@@ -123,6 +123,7 @@ set_malloc_debug (mdebug, 1) ;
 logstat ('test300'    ,t, J0   , F0   ) ; % print function for a type
 logstat ('test301'    ,t, J40  , F11  ) ; % assign method27, C<C,struct>+=A
 logstat ('test302'    ,t, J0   , F0   ) ; % GPU controls
+logstat ('test155'    ,t, J40  , F10  , [0 2 4]) ; % setElement, removeElement
 
 % < 1 second: debug_off
 set_malloc_debug (mdebug, 0) ;
@@ -142,7 +143,6 @@ logstat ('test247'    ,t, J40  , F10  ) ; % GrB_mxm: fine Hash method
 logstat ('test109'    ,t, J4040, F1100) ; % terminal monoid with user-defn type
 logstat ('test138'    ,s, J40  , F10  ) ; % assign, coarse-only in IxJ slice
 logstat ('test172'    ,t, J40  , F10  ) ; % eWiseMult with M bitmap/full
-logstat ('test155'    ,t, J40  , F10  , [0 2 4]) ; % setElement, removeElement
 logstat ('test174'    ,t, J40  , F10  ) ; % GrB_assign C<A>=A
 logstat ('test203'    ,t, J4   , F1   ) ; % iso subref
 logstat ('test213'    ,t, J40  , F10  ) ; % iso assign (method 05d)

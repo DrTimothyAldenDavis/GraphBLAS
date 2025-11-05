@@ -1,3 +1,11 @@
+Nov 10, 2025, version 10.3.0
+
+    * GrB_(Matrix,Vector,Scalar)_dup:  pending work is now left unfinished;
+        any pending work in the input matrix will appear in the copy.  In
+        v10.2.0 and earlier, all pending work in the input matrix was finished
+        first.  To obtain the older behavior, simply call GrB_*_wait on the
+        input matrix before calling GrB_*_dup.
+
 Nov 1, 2025, version 10.2.0
 
     * printing of user-defined types: get/set with GxB_PRINT_FUNCTION
