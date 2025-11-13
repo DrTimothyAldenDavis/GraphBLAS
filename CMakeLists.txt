@@ -41,8 +41,8 @@ if ( NOT BUILD_SHARED_LIBS )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-  set ( GRAPHBLAS_USE_CUDA OFF )    # turn CUDA off in production
-# set ( GRAPHBLAS_USE_CUDA ON )     # use this for CUDA development only
+# set ( GRAPHBLAS_USE_CUDA OFF )    # turn CUDA off in production
+  set ( GRAPHBLAS_USE_CUDA ON )     # use this for CUDA development only
 
 include ( SuiteSparsePolicy )
 
@@ -62,7 +62,8 @@ if ( SUITESPARSE_HAS_CUDA AND GRAPHBLAS_USE_CUDA )
     # FOR NOW: do not compile FactoryKernels when developing the CUDA kernels
     set ( GRAPHBLAS_COMPACT ON )
     message ( STATUS "GraphBLAS CUDA JIT: enabled")
-    enable_language ( CUDA )
+    set ( CMAKE_CXX_STANDARD 17 )
+    enable_language ( CXX CUDA )
     set ( GRAPHBLAS_HAS_CUDA ON )
 else ( )
     message ( STATUS "GraphBLAS CUDA JIT: disabled")
@@ -76,16 +77,23 @@ endif ( )
 
 include ( GraphBLAS_JIT_paths )
 
+#-------------------------------------------------------------------------------
+# CUDA and RMM_WRAP
+#-------------------------------------------------------------------------------
+
 if ( GRAPHBLAS_HAS_CUDA )
     # with CUDA and RMM
-    add_subdirectory ( CUDA )
-    set ( GB_CUDA GraphBLAS_CUDA  ${CUDA_LIBRARIES} )
+    cmake_policy ( SET CMP0135 NEW )    # URL download timestamp policy
+    set ( CMAKE_CUDA_FLAGS "-cudart=static -lineinfo " )
+    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fPIC " )
+    message ( STATUS "C++ flags for CUDA: ${CMAKE_CXX_FLAGS}" )
+    message ( STATUS "CUDA include dirs:  ${CUDA_INCLUDE_DIRS}" )
+    message ( STATUS "CUDA libraries:     ${CUDA_LIBRARIES}" )
+    set ( GB_CUDA ${CUDA_LIBRARIES} )
     set ( GB_RMM RMM_wrap ${CUDA_LIBRARIES} )
     add_subdirectory ( rmm_wrap )
-    include_directories ( "rmm_wrap" ${CUDA_INCLUDE_DIRS}
-        "/usr/local/cuda/include/cub" )
-    link_directories ( "CUDA" "${CUDA_LIBRARIES}"
-        "/usr/local/cuda/lib64/stubs" "rmm_wrap" "/usr/local/cuda/lib64" )
+    include_directories ( "rmm_wrap" "CUDA/include" "CUDA" ${CUDA_INCLUDE_DIRS} )
+    link_directories ( "CUDA" "rmm_wrap" "${CUDA_LIBRARIES}" )
 else ( )
     # without CUDA and RMM
     set ( CMAKE_RMM_FLAG " " )
@@ -100,13 +108,22 @@ endif ( )
 option ( GRAPHBLAS_USE_OPENMP "ON: Use OpenMP in GraphBLAS if available.  OFF: Do not use OpenMP.  (Default: SUITESPARSE_USE_OPENMP)" ${SUITESPARSE_USE_OPENMP} )
 if ( GRAPHBLAS_USE_OPENMP )
     if ( CMAKE_VERSION VERSION_LESS 3.24 )
-        find_package ( OpenMP COMPONENTS C )
+        if ( GRAPHBLAS_HAS_CUDA )
+            find_package ( OpenMP COMPONENTS C CXX )
+        else ( )
+            find_package ( OpenMP COMPONENTS C )
+        endif ( )
     else ( )
-        find_package ( OpenMP COMPONENTS C GLOBAL )
+        if ( GRAPHBLAS_HAS_CUDA )
+            find_package ( OpenMP COMPONENTS C CXX GLOBAL )
+        else ( )
+            find_package ( OpenMP COMPONENTS C GLOBAL )
+        endif ( )
     endif ( )
 else ( )
     # OpenMP has been disabled.
     set ( OpenMP_C_FOUND OFF )
+    set ( OpenMP_CXX_FOUND OFF )
 endif ( )
 
 if ( GRAPHBLAS_USE_OPENMP AND OpenMP_C_FOUND )
@@ -278,7 +295,12 @@ include ( GraphBLAS_compiler_options )
 # dynamic graphblas library properties
 #-------------------------------------------------------------------------------
 
-file ( GLOB GRAPHBLAS_SOURCES "PreJIT/*.c" "Config/*.c" "Source/*/*.c" )
+if ( GRAPHBLAS_HAS_CUDA )
+    file ( GLOB GRAPHBLAS_SOURCES "PreJIT/*.c" "Config/*.c" "Source/*/*.c"
+        "CUDA/*.cu" "CUDA/*.c" "CUDA/*.cpp" )
+else ( )
+    file ( GLOB GRAPHBLAS_SOURCES "PreJIT/*.c" "Config/*.c" "Source/*/*.c" )
+endif ( )
 
 if ( NOT GRAPHBLAS_COMPACT )
     # compile the FactoryKernels
@@ -315,6 +337,13 @@ if ( BUILD_SHARED_LIBS )
         PUBLIC_HEADER "Include/GraphBLAS.h"
         WINDOWS_EXPORT_ALL_SYMBOLS ON )
 
+    if ( GRAPHBLAS_HAS_CUDA )
+        set_target_properties ( GraphBLAS PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON )
+        set_target_properties ( GraphBLAS PROPERTIES CUDA_SEPARABLE_COMPILATION ON )
+    endif ( )
+
     if ( ${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.25" )
         set_target_properties ( GraphBLAS PROPERTIES EXPORT_NO_SYSTEM ON )
     endif ( )
@@ -323,8 +352,7 @@ if ( BUILD_SHARED_LIBS )
         INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Include>
                   $<INSTALL_INTERFACE:${SUITESPARSE_INCLUDEDIR}> )
 
-    if ( SUITESPARSE_HAS_CUDA AND GRAPHBLAS_USE_CUDA )
-        add_dependencies ( GraphBLAS GraphBLAS_CUDA )
+    if ( GRAPHBLAS_HAS_CUDA )
         add_dependencies ( GraphBLAS RMM_wrap )
         target_compile_definitions ( GraphBLAS PRIVATE "GRAPHBLAS_HAS_CUDA" )
     endif ( )
@@ -357,6 +385,13 @@ if ( BUILD_STATIC_LIBS )
         C_STANDARD_REQUIRED ON
         PUBLIC_HEADER "Include/GraphBLAS.h" )
 
+    if ( GRAPHBLAS_HAS_CUDA )
+        set_target_properties ( GraphBLAS_static PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON )
+        set_target_properties ( GraphBLAS_static PROPERTIES CUDA_SEPARABLE_COMPILATION ON )
+    endif ( )
+
     if ( MSVC OR ("${CMAKE_C_SIMULATE_ID}" STREQUAL "MSVC") )
         set_target_properties ( GraphBLAS_static PROPERTIES
             OUTPUT_NAME graphblas_static )
@@ -370,9 +405,7 @@ if ( BUILD_STATIC_LIBS )
         INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Include>
                   $<INSTALL_INTERFACE:${SUITESPARSE_INCLUDEDIR}> )
 
-    if ( SUITESPARSE_HAS_CUDA AND GRAPHBLAS_USE_CUDA )
-        add_dependencies ( GraphBLAS_static GraphBLAS_CUDA )
-        set ( GRAPHBLAS_STATIC_MODULES "${GRAPHBLAS_STATIC_MODULES} GraphBLAS_CUDA" )
+    if ( GRAPHBLAS_HAS_CUDA )
         add_dependencies ( GraphBLAS_static RMM_wrap )
         target_compile_definitions ( GraphBLAS_static PRIVATE "GRAPHBLAS_HAS_CUDA" )
     endif ( )
@@ -468,10 +501,9 @@ if ( LIBATOMIC_REQUIRED )
 endif ( )
 
 #-------------------------------------------------------------------------------
-# add the OpenMP, IPP, CUDA, BLAS, etc libraries
+# get the current library list, before linking with OpenMP, CUDA and rmm
 #-------------------------------------------------------------------------------
 
-# get the current library list, before linking with OpenMP, CUDA and rmm
 if ( BUILD_SHARED_LIBS )
     get_target_property ( GB_CMAKE_LIBRARIES GraphBLAS LINK_LIBRARIES )
 else ( )
@@ -481,16 +513,26 @@ if ( NOT GB_CMAKE_LIBRARIES )
     set ( GB_CMAKE_LIBRARIES "" )
 endif ( )
 
+#-------------------------------------------------------------------------------
+# add the OpenMP, IPP, CUDA, BLAS, etc libraries
+#-------------------------------------------------------------------------------
+
 if ( GRAPHBLAS_HAS_OPENMP )
     message ( STATUS "CMAKE OpenMP libraries:    ${OpenMP_C_LIBRARIES}" )
     message ( STATUS "CMAKE OpenMP include:      ${OpenMP_C_INCLUDE_DIRS}" )
     list ( APPEND GB_CMAKE_LIBRARIES ${OpenMP_C_LIBRARIES} )
     if ( BUILD_SHARED_LIBS )
         target_link_libraries ( GraphBLAS PRIVATE OpenMP::OpenMP_C )
+        if ( GRAPHBLAS_HAS_CUDA )
+            target_link_libraries ( GraphBLAS PRIVATE OpenMP::OpenMP_CXX )
+        endif ( )
     endif ( )
     if ( BUILD_STATIC_LIBS )
         list ( APPEND GRAPHBLAS_STATIC_LIBS ${OpenMP_C_LIBRARIES} )
         target_link_libraries ( GraphBLAS_static PRIVATE OpenMP::OpenMP_C )
+        if ( GRAPHBLAS_HAS_CUDA )
+            target_link_libraries ( GraphBLAS_static PRIVATE OpenMP::OpenMP_CXX )
+        endif ( )
     endif ( )
     message ( STATUS "CMAKE OpenMP C flags:      ${OpenMP_C_FLAGS}" )
     set ( GB_OPENMP_C_FLAGS "${OpenMP_C_FLAGS}" )
@@ -517,12 +559,32 @@ else ( )
     set ( GB_OPENMP_C_FLAGS "" )
 endif ( )
 
-if ( SUITESPARSE_HAS_CUDA AND GRAPHBLAS_USE_CUDA )
+#-------------------------------------------------------------------------------
+# link CUDA libraries
+#-------------------------------------------------------------------------------
+
+if ( GRAPHBLAS_HAS_CUDA )
     if ( BUILD_SHARED_LIBS )
         target_link_libraries ( GraphBLAS PRIVATE ${GB_CUDA} ${GB_RMM} )
+        target_link_libraries ( GraphBLAS PRIVATE CUDA::nvrtc CUDA::cudart_static CUDA::cuda_driver )
+        if ( TARGET CUDA::nvToolsExt )
+            target_link_libraries ( GraphBLAS PRIVATE CUDA::nvToolsExt )
+        endif ( )
+        if ( TARGET CUDA::nvtx3 )
+            target_link_libraries ( GraphBLAS PRIVATE CUDA::nvtx3 )
+            target_compile_definitions ( GraphBLAS PRIVATE GBNVTX )
+        endif ( )
     endif ( )
     if ( BUILD_STATIC_LIBS )
         target_link_libraries ( GraphBLAS_static PUBLIC ${GB_CUDA} ${GB_RMM} )
+        target_link_libraries ( GraphBLAS_static PRIVATE CUDA::nvrtc CUDA::cudart_static CUDA::cuda_driver )
+        if ( TARGET CUDA::nvToolsExt )
+            target_link_libraries ( GraphBLAS_static PRIVATE CUDA::nvToolsExt )
+        endif ( )
+        if ( TARGET CUDA::nvtx3 )
+            target_link_libraries ( GraphBLAS_static PRIVATE CUDA::nvtx3 )
+            target_compile_definitions ( GraphBLAS_static PRIVATE GBNVTX )
+        endif ( )
     endif ( )
 endif ( )
 
@@ -583,6 +645,11 @@ if ( SUITESPARSE_DEMOS )
         target_link_libraries ( wathen_demo PUBLIC OpenMP::OpenMP_C )
         target_link_libraries ( context_demo PUBLIC OpenMP::OpenMP_C )
         target_link_libraries ( grow_demo PUBLIC OpenMP::OpenMP_C )
+        if ( GRAPHBLAS_HAS_CUDA )
+            target_link_libraries ( wathen_demo PUBLIC OpenMP::OpenMP_CXX )
+            target_link_libraries ( context_demo PUBLIC OpenMP::OpenMP_CXX )
+            target_link_libraries ( grow_demo PUBLIC OpenMP::OpenMP_CXX )
+        endif ( )
     endif ( )
 
 else ( )
