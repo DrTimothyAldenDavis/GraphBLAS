@@ -283,6 +283,20 @@ include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     Source/type
     Source/wait
     Source/werk
+    # include all CUDA/* folders that have include/ or template/ subfolders:
+    CUDA
+    CUDA/apply
+    CUDA/cumsum
+    CUDA/device
+    CUDA/include
+    CUDA/init
+    CUDA/matrix
+    CUDA/monoid
+    CUDA/mxm
+    CUDA/reduce
+    CUDA/select
+    CUDA/slice
+    CUDA/type
     )
 
 #-------------------------------------------------------------------------------
@@ -297,7 +311,8 @@ include ( GraphBLAS_compiler_options )
 
 if ( GRAPHBLAS_HAS_CUDA )
     file ( GLOB GRAPHBLAS_SOURCES "PreJIT/*.c" "Config/*.c" "Source/*/*.c"
-        "CUDA/*.cu" "CUDA/*.c" "CUDA/*.cpp" )
+        "CUDA/*/*.cu" "CUDA/*/*.c" "CUDA/*/*.cpp"
+        )
 else ( )
     file ( GLOB GRAPHBLAS_SOURCES "PreJIT/*.c" "Config/*.c" "Source/*/*.c" )
 endif ( )
