@@ -50,8 +50,8 @@ typedef struct
     std::shared_ptr<rmm::mr::device_memory_resource>   resource;
     std::shared_ptr<std::pmr::memory_resource>         host_resource;
     std::shared_ptr<alloc_map>                         size_map ;
-    std::shared_ptr<cuda_stream_pool>                  stream_pool;
-    cudaStream_t                                       main_stream;
+//  std::shared_ptr<cuda_stream_pool>                  stream_pool;
+//  cudaStream_t                                       main_stream;
 }
 RMM_Wrap_Handle ;
 
@@ -144,6 +144,7 @@ inline auto make_and_set_managed_pool
     return resource;
 }
 
+#if 0
 inline std::shared_ptr<rmm::cuda_stream_pool> make_and_set_cuda_stream_pool
 (
     std::size_t num_streams
@@ -151,6 +152,7 @@ inline std::shared_ptr<rmm::cuda_stream_pool> make_and_set_cuda_stream_pool
 {
     return std::make_shared<rmm::cuda_stream_pool>(num_streams);
 }
+#endif
 
 //------------------------------------------------------------------------------
 // rmm_wrap_is_initialized: determine if rmm_wrap_context exists
@@ -179,7 +181,7 @@ void rmm_wrap_finalize (void)
         {
             for (int device_id = 0; device_id < devices.size(); ++device_id)
             {
-                RMM_WRAP_CHECK_CUDA(cudaStreamDestroy(rmm_wrap_context[device_id]->main_stream));
+//              RMM_WRAP_CHECK_CUDA(cudaStreamDestroy(rmm_wrap_context[device_id]->main_stream));
                 delete rmm_wrap_context[device_id];
             }
             delete rmm_wrap_context ;
@@ -214,8 +216,8 @@ int rmm_wrap_initialize     // returns -1 on error, 0 on success
     uint32_t device_id,     // GPU device id, for cudaSetDevice
     RMM_MODE mode,          // TODO: describe. Should we default this?
     size_t init_pool_size,  // TODO: describe. Should we default this?
-    size_t max_pool_size,   // TODO: describe. Should we default this?
-    size_t stream_pool_size // TODO: describe. Should we default this?
+    size_t max_pool_size    // TODO: describe. Should we default this?
+//  , size_t stream_pool_size // TODO: describe. Should we default this?
 )
 {
     
@@ -231,12 +233,14 @@ int rmm_wrap_initialize     // returns -1 on error, 0 on success
             return (-1) ;
         }
 
+#if 0
         if(stream_pool_size <= 0)
         {
             // std::cout << "Stream pool size must be >=0" << std::endl;
             // failed to create the alloc_map
             return (-1) ;
         }
+#endif
 
         RMM_WRAP_CHECK_CUDA (cudaSetDevice (device_id)) ;
 
@@ -251,10 +255,12 @@ int rmm_wrap_initialize     // returns -1 on error, 0 on success
         // Construct a resource that uses a coalescing best-fit pool allocator
         //----------------------------------------------------------------------
 
+#if 0
         // Set CUDA stream pool
         // std::cout << "Creating rmm_wrap stream pool" << std::endl;
         rmm_wrap_context[device_id]->stream_pool = make_and_set_cuda_stream_pool(stream_pool_size);
         RMM_WRAP_CHECK_CUDA(cudaStreamCreate(&(rmm_wrap_context[device_id]->main_stream)));
+#endif
 
         if (mode == rmm_wrap_host )
         {
@@ -320,8 +326,8 @@ int rmm_wrap_initialize_all_same
 (
     RMM_MODE mode,              // TODO: describe. Should we default this?
     size_t init_pool_size,      // TODO: describe. Should we default this?
-    size_t max_pool_size,       // TODO: describe. Should we default this?
-    size_t stream_pool_size     // TODO: describe. Should we default this?
+    size_t max_pool_size        // TODO: describe. Should we default this?
+//  , size_t stream_pool_size     // TODO: describe. Should we default this?
 )
 {
     try
@@ -389,7 +395,7 @@ int rmm_wrap_initialize_all_same
             rmm_wrap_context[i] = NULL;
             uint32_t device_id = devices[i];
             // std::cout << "Creating rmm_wrap_context for device_id " << device_id << std::endl;
-            int ret = rmm_wrap_initialize(device_id, mode, init_pool_size, max_pool_size, stream_pool_size);
+            int ret = rmm_wrap_initialize(device_id, mode, init_pool_size, max_pool_size ) ; // , stream_pool_size);
             if(ret < 0) {
                 return ret;
             }

@@ -49,7 +49,7 @@ GrB_Info GB_cuda_init (void)
             // of the work.  Alternatively, move GB_cuda_init here (if so,
             // ensure that it doesn't depend on any other initializations
             // below).
-            256 * 1000000L, 1024 * 100000000L, 1) ; // FIXME: ask the GPU(s)
+            256 * 1000000L, 1024 * 100000000L /*, 1 */) ; // FIXME: ask the GPU(s)
     }
 
     // warm up the GPUs
