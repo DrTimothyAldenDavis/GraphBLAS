@@ -82,10 +82,12 @@ void *rmm_wrap_calloc (size_t n, size_t size) ;
 void *rmm_wrap_realloc (void *p, size_t newsize) ;
 void  rmm_wrap_free (void *p) ;
 
+#if 0
 // Get streams from context (based on current device_id):
 void* rmm_wrap_get_next_stream_from_pool(void);
 void* rmm_wrap_get_stream_from_pool(size_t stream_id);
 void* rmm_wrap_get_main_stream(void);
+#endif
 
 #ifdef __cplusplus
 }

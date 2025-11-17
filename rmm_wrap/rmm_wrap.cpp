@@ -169,6 +169,8 @@ bool rmm_wrap_is_initialized (void)
 // the rmm_wrap_context:  the memory resource (host or device) and the
 // alloc_map.
 
+// FIXME: GraphBLAS currently does not call this method ...
+
 void rmm_wrap_finalize (void)
 {
     try
@@ -403,6 +405,7 @@ int rmm_wrap_initialize_all_same
     }
 }
 
+#if 0
 //------------------------------------------------------------------------------
 // rmm_wrap_get_next_stream_from_pool: return the next available stream from
 // the pool Output is cudaStream_t
@@ -434,6 +437,8 @@ void* rmm_wrap_get_main_stream(void)
     // FIXME: check for errors
     return rmm_wrap_context[get_current_device()]->main_stream;
 }
+#endif
+
 //------------------------------------------------------------------------------
 // rmm_wrap_malloc: malloc-equivalent method using RMM
 //------------------------------------------------------------------------------
