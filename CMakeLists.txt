@@ -112,12 +112,16 @@ if ( GRAPHBLAS_HAS_CUDA )
         message ( STATUS "cloning rmm branch-21.10" )
         execute_process (
             COMMAND git clone "https://github.com/rapidsai/rmm" --branch branch-21.10 --recursive rmm
+#           COMMAND git clone "https://github.com/rapidsai/rmm" --branch branch-25.10 --recursive rmm
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
     endif()
 
     set ( RMM_WRAP_INCLUDES ${PROJECT_BINARY_DIR}
         ${CMAKE_CURRENT_BINARY_DIR}/external_includes/spdlog/include
+# for v21.10:
         ${CMAKE_CURRENT_BINARY_DIR}/external_includes/rmm/include
+# for v25.10:
+#       ${CMAKE_CURRENT_BINARY_DIR}/external_includes/rmm/cpp/include
         ${CUDA_INCLUDE_DIRS} )
 
 else ( )
@@ -336,8 +340,10 @@ include ( GraphBLAS_compiler_options )
 #-------------------------------------------------------------------------------
 
 if ( GRAPHBLAS_HAS_CUDA )
-    file ( GLOB GRAPHBLAS_SOURCES "PreJIT/*.c" "Config/*.c" "Source/*/*.c"
-        "CUDA/*/*.cu" "CUDA/*/*.c" "CUDA/*/*.cpp" "rmm_wrap/rmm_wrap.cpp" )
+    file ( GLOB GRAPHBLAS_SOURCES
+        "rmm_wrap/rmm_wrap.cpp"
+        "CUDA/*/*.cu" "CUDA/*/*.c" "CUDA/*/*.cpp"
+        "PreJIT/*.c" "Config/*.c" "Source/*/*.c" )
 else ( )
     file ( GLOB GRAPHBLAS_SOURCES "PreJIT/*.c" "Config/*.c" "Source/*/*.c" )
 endif ( )
@@ -405,6 +411,8 @@ if ( BUILD_SHARED_LIBS )
     if ( GRAPHBLAS_HAS_CUDA )
         target_compile_definitions ( GraphBLAS PRIVATE "GRAPHBLAS_HAS_CUDA" )
         target_include_directories ( GraphBLAS PRIVATE "${RMM_WRAP_INCLUDES}" )
+# required for rmm 25.10:
+#       target_compile_definitions ( GraphBLAS PRIVATE "LIBCUDACXX_ENABLE_EXPERIMENTAL_MEMORY_RESOURCE" )
     endif ( )
 
     if ( WIN32 )
@@ -458,6 +466,8 @@ if ( BUILD_STATIC_LIBS )
 
     if ( GRAPHBLAS_HAS_CUDA )
         target_compile_definitions ( GraphBLAS_static PRIVATE "GRAPHBLAS_HAS_CUDA" )
+# required for rmm 25.10:
+#       target_compile_definitions ( GraphBLAS_static PRIVATE "LIBCUDACXX_ENABLE_EXPERIMENTAL_MEMORY_RESOURCE" )
         target_include_directories ( GraphBLAS_static PRIVATE "${RMM_WRAP_INCLUDES}" )
     endif ( )
 
