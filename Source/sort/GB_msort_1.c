@@ -64,7 +64,7 @@ GrB_Info GB_msort_1     // sort array A of size 1-by-n
 
     int nthreads = GB_nthreads (n, GB_MSORT_BASECASE, nthreads_max) ;
 
-#if 1
+#if 0
     // HACK: to test GB_bitonic:
     if (A0_is_32)
     {
