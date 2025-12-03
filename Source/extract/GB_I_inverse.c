@@ -36,7 +36,6 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     int64_t avlen,              // length of the vectors of A
     // outputs:
     GrB_Matrix *R_handle,       // R = inverse (I)
-    int64_t *p_nduplicates,     // number of duplicate entries in I
     GB_Werk Werk
 )
 {
@@ -48,7 +47,6 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     GrB_Info info = GrB_SUCCESS ;
     GrB_Matrix R = NULL ;
     GB_MDECL (W, , u) ; size_t W_size = 0 ;
-    (*p_nduplicates) = 0 ;
     (*R_handle) = NULL ;
     GB_IDECL (I, const, u) ; GB_IPTR (I, I_is_32) ;
 
@@ -143,7 +141,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
 
     // R is hypersparse; convert to sparse if possible
     ASSERT (GB_IS_HYPERSPARSE (R)) ;
-    int64_t nduplicates = (nI - R->nvec) ;
+    // if needed, the # of duplicates in I is (nI - R->nvec)
     if (rvdim < 32 * R->nvec)
     { 
         // R is rvdim-by-rvlen in hypersparse CSR format.  Determine if it
@@ -215,7 +213,6 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    (*p_nduplicates) = nduplicates ;
     GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (R, "R = I_inverse matrix", GB2) ;
     (*R_handle) = R ;

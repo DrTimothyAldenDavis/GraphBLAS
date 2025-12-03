@@ -186,7 +186,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     void *Ap_end   = NULL ; size_t Ap_end_size = 0 ;
     uint64_t *Cwork = NULL ; size_t Cwork_size = 0 ;
     GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
-    int64_t Cnvec = 0, nI = 0, nJ, Icolon [3], Cnvec_nonempty, ndupl ;
+    int64_t Cnvec = 0, nI = 0, nJ, Icolon [3], Cnvec_nonempty ;
     bool post_sort, need_qsort, Cp_is_32, Cj_is_32, Ci_is_32 ;
     int Ikind, ntasks, nthreads ;
     GrB_Matrix R = NULL ;
@@ -222,7 +222,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     GB_OK (GB_subref_slice (
         // computed by phase1:
         &TaskList, &TaskList_size, &ntasks, &nthreads, &post_sort,
-        &R, &ndupl, &Cwork, &Cwork_size,
+        &R, &Cwork, &Cwork_size,
         // computed by phase0:
         Ap_start, Ap_end, Cnvec, need_qsort, Ikind, nI, Icolon,
         // original input:
@@ -236,7 +236,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         // computed by phase2:
         &Cp, &Cp_is_32, &Cp_size, &Cnvec_nonempty,
         // computed by phase1:
-        TaskList, ntasks, nthreads, R, ndupl > 0, &Cwork, Cwork_size,
+        TaskList, ntasks, nthreads, R, &Cwork, Cwork_size,
         // computed by phase0:
         Ap_start, Ap_end, Cnvec, need_qsort, Ikind, nI, Icolon, nJ,
         // original input:
@@ -252,7 +252,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         // from phase2:
         &Cp, Cp_is_32, Cp_size, Cnvec_nonempty,
         // from phase1:
-        TaskList, ntasks, nthreads, post_sort, R, ndupl,
+        TaskList, ntasks, nthreads, post_sort, R,
         // from phase0:
         &Ch, Cj_is_32, Ci_is_32, Ch_size, Ap_start, Ap_end, Cnvec, need_qsort,
         Ikind, nI, Icolon, nJ,

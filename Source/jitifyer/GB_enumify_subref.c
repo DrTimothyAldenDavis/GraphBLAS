@@ -25,7 +25,6 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
     int Jkind,              // ditto, or 0 if not used
     bool need_qsort,        // true if qsort needs to be called
     GrB_Matrix R,
-    bool I_has_duplicates,  // true if I has duplicate entries
     // A matrix:
     GrB_Matrix A
 )
@@ -52,7 +51,6 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
     GB_enumify_sparsity (&rsparsity, R_sparsity) ;
 
     int needqsort = (need_qsort) ? 1 : 0 ;
-    int ihasdupl = (I_has_duplicates) ? 1 : 0 ;
 
     int i_is_32 = (I_is_32) ? 1 : 0 ;
     int j_is_32 = (J_is_32) ? 1 : 0 ;
@@ -92,10 +90,10 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
                 GB_LSHIFT (aj_is_32   , 17) |  // 0 to 1       1
                 GB_LSHIFT (ai_is_32   , 16) |  // 0 to 1       1
 
-                // need_qsort, I_has_duplicates, I and J bits (1 hex digit)
+                // need_qsort, I and J bits (1 hex digit)
                 GB_LSHIFT (i_is_32    , 15) |  // 0 to 1       1
                 GB_LSHIFT (j_is_32    , 14) |  // 0 to 1       1
-                GB_LSHIFT (ihasdupl   , 13) |  // 0 to 1       1
+                // 13: unused
                 GB_LSHIFT (needqsort  , 12) |  // 0 to 1       1
 
                 // Ikind, Jkind (1 hex digit)

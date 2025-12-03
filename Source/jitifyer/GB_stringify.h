@@ -1671,7 +1671,6 @@ uint64_t GB_encodify_subref     // encode an subref problem
     int Jkind,              // ditto, or 0 if not used
     bool need_qsort,        // true if qsort needs to be called
     const GrB_Matrix R,     // R = inverse (I), if needed
-    bool I_has_duplicates,  // true if I has duplicate entries
     // A matrix:
     GrB_Matrix A
 ) ;
@@ -1689,7 +1688,6 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
     int Jkind,              // ditto, or 0 if not used
     bool need_qsort,        // true if qsort needs to be called
     const GrB_Matrix R,     // R = inverse (I), if needed
-    bool I_has_duplicates,  // true if I has duplicate entries
     // A matrix:
     GrB_Matrix A
 ) ;
@@ -1713,7 +1711,6 @@ GrB_Info GB_subref_sparse_jit
     const int nthreads,                 // # of threads to use
     const bool post_sort,               // true if post-sort needed
     const GrB_Matrix R,                 // R = inverse (I), if needed
-    const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
     const void *Ap_start,
     const void *Ap_end,

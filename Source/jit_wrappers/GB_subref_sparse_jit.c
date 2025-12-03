@@ -22,7 +22,6 @@ GrB_Info GB_subref_sparse_jit
     const int nthreads,                 // # of threads to use
     const bool post_sort,               // true if post-sort needed
     const GrB_Matrix R,                 // R = inverse (I), if needed
-    const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
     const void *Ap_start,
     const void *Ap_end,
@@ -45,7 +44,7 @@ GrB_Info GB_subref_sparse_jit
     char *suffix ;
     uint64_t hash = GB_encodify_subref (&encoding, &suffix,
         GB_JIT_KERNEL_SUBREF_SPARSE, C, I_is_32, false, Ikind, 0,
-        need_qsort, R, I_has_duplicates, A) ;
+        need_qsort, R, A) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

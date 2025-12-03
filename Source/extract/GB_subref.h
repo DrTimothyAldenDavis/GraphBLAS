@@ -66,7 +66,6 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     int64_t avlen,              // length of the vectors of A
     // outputs:
     GrB_Matrix *R_handle,       // R = inverse (I)
-    int64_t *p_nduplicates,     // number of duplicate entries in I
     GB_Werk Werk
 ) ;
 
@@ -79,7 +78,6 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     int *p_nthreads,            // # of threads for subref operation
     bool *p_post_sort,          // true if a final post-sort is needed
     GrB_Matrix *R_handle,       // R = inverse (I), if needed
-    int64_t *p_nduplicates,     // # of duplicates, if R computed
     uint64_t **p_Cwork,         // workspace of size max(2,C->nvec+1)
     size_t *p_Cwork_size,
     // from phase0:
@@ -111,7 +109,6 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     const int ntasks,                   // # of tasks
     const int nthreads,                 // # of threads to use
     const GrB_Matrix R,                 // R = inverse (I), if needed
-    const bool I_has_duplicates,        // true if I has duplicates
     uint64_t **p_Cwork,                 // workspace of size max(2,C->nvec+1)
     size_t Cwork_size,
     // analysis from phase0:
@@ -145,7 +142,6 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     const int nthreads,                         // # of threads to use
     const bool post_sort,               // true if post-sort needed
     const GrB_Matrix R,                 // R = inverse (I), if needed
-    const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
     void **Ch_handle,
     const bool Cj_is_32,        // if true, C->h is 32-bit; else 64-bit

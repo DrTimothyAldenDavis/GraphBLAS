@@ -5,7 +5,7 @@
 
 \begin{itemize}
 
-\item FIXME version 10.3.0
+\item Dec 3, 2025: version 10.3.0
 
     \begin{itemize}
     \item \verb'GrB_extract': performance improvement for \verb'C=A(I,J)' when
@@ -14,11 +14,12 @@
     \item \verb'GrB_(Matrix,Vector,Scalar)_dup':  pending work is now left
         unfinished; any pending work in the input matrix will appear in the
         copy.  In v10.2.0 and earlier, all pending work in the input matrix was
-        finished first.  To obtain the older behavior, simply call
-        \verb'GrB_*_wait' on the input matrix before calling \verb'GrB_*_dup'.
+        finished first.  To obtain the behavior in v10.2.0 and earlier, simply
+        call \verb'GrB_*_wait' on the input matrix before calling
+        \verb'GrB_*_dup'.
     \end{itemize}
 
-\item Nov 1, version 10.2.0
+\item Nov 1, 2025: version 10.2.0
 
     \begin{itemize}
     \item printing of user-defined types: get/set with

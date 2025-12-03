@@ -39,10 +39,10 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     bool Aj_is_32    = GB_RSHIFT (method_code, 17, 1) ;
     bool Ai_is_32    = GB_RSHIFT (method_code, 16, 1) ;
 
-    // need_qsort, I_has_duplicates, I and J bits (1 hex digit)
+    // need_qsort, I and J bits (1 hex digit)
     bool I_is_32     = GB_RSHIFT (method_code, 15, 1) ;
     bool J_is_32     = GB_RSHIFT (method_code, 14, 1) ;
-    int ihasdupl     = GB_RSHIFT (method_code, 13, 1) ;
+    // 13: unused
     int needqsort    = GB_RSHIFT (method_code, 12, 1) ;
 
     // Ikind, Jkind (1 hex digit)
@@ -78,12 +78,11 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
         // C and A are sparse/hypersparse
         // Jkind not needed for sparse subsref
         fprintf (fp, "#define GB_NEED_QSORT %d\n", needqsort) ;
-        fprintf (fp, "#define GB_I_HAS_DUPLICATES %d\n", ihasdupl) ;
     }
     else
     { 
         // C and A are bitmap/full
-        // need_qsort, I_has_duplicates not needed for bitmap subsref
+        // need_qsort not needed for bitmap subsref
         fprintf (fp, "#define GB_J_KIND ") ;
         switch (Jkind)
         {

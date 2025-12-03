@@ -28,7 +28,6 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     const int nthreads,                         // # of threads to use
     const bool post_sort,               // true if post-sort needed
     const GrB_Matrix R,                 // R = inverse (I), if needed
-    const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
     void **Ch_handle,
     const bool Cj_is_32,        // if true, C->h is 32-bit; else 64-bit
@@ -170,7 +169,6 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     #define GB_PHASE_2_OF_2
     #define GB_I_KIND Ikind
     #define GB_NEED_QSORT need_qsort
-    #define GB_I_HAS_DUPLICATES I_has_duplicates
 
     if (symbolic)
     { 
@@ -273,8 +271,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
 
         // using the JIT kernel
         info = GB_subref_sparse_jit (C, TaskList, ntasks, nthreads, post_sort,
-            R, I_has_duplicates, Ap_start, Ap_end,
-            need_qsort, Ikind, nI, Icolon, A, I, I_is_32) ;
+            R, Ap_start, Ap_end, need_qsort, Ikind, nI, Icolon, A, I, I_is_32) ;
 
         if (info == GrB_NO_VALUE)
         { 

@@ -17,7 +17,12 @@
 //      iso:       C = A(I,J), extracting the pattern only, not the values
 //      numeric:   C = A(I,J), extracting the pattern and values
 
-#define GB_for_each_inew_in_I_inverse_hash(pR)                          \
+// The matrix R holds the "inverse" of I, which is not actually an inverse
+// since I can have duplicates.  If i = I [k1] = I [k2] = I [k3], then the
+// column indices in R(i,:) are {k1, k2, k3}.  R is held by row, and is either
+// sparse or hypersparse.
+
+#define GB_for_each_inew_in_I_inverse_hash(i,pR)                        \
         int64_t pR, pR_end ;                                            \
         if (R_is_hyper)                                                 \
         {                                                               \
@@ -92,8 +97,6 @@
         int64_t pI     = 0 ;
         int64_t pI_end = nI ;
         int64_t ilen   = nI ;
-
-//      printf ("task %d of %d, k: %ld %ld (%d)\n", taskid, ntasks, kfirst, klast, fine_task) ;
 
         //----------------------------------------------------------------------
         // compute all vectors C(:,kfirst:klast) for this task
@@ -207,7 +210,7 @@
             { 
                 // determine the method based on A(*,kA) and I
                 method = GB_subref_method (alen, avlen, GB_I_KIND, nI,
-                    GB_NEED_QSORT, iinc, GB_I_HAS_DUPLICATES) ;
+                    GB_NEED_QSORT, iinc) ;
             }
 
             //------------------------------------------------------------------
@@ -533,10 +536,8 @@
                 case 10 : // I unsorted, and C needs qsort, duplicates OK
                 //--------------------------------------------------------------
 
-                    // Time: with one thread: 2x slower, probably
-                    // because of the qsort.  Good speedup however.  This used
-                    // if qsort is needed but ndupl == 0.  Try a method that
-                    // needs qsort, but no duplicates?
+                    // Time: with one thread: 2x slower, probably because of
+                    // the qsort.  Good speedup however.
 
                     // Case 10 works well when I has many entries and A(:,kA)
                     // has few entries. C(:,kC) must be sorted after this pass.
@@ -551,7 +552,7 @@
                         #endif
                         // traverse R(i,:) for all indices inew where
                         // i == I [inew] or where i is from a colon expression
-                        GB_for_each_inew_in_I_inverse_hash (pR)
+                        GB_for_each_inew_in_I_inverse_hash (i,pR)
                         { 
                             int64_t inew = GB_IGET (Ri, pR) ; // inew = Ri [pR]
                             ASSERT (inew >= 0 && inew < nI) ;
@@ -585,7 +586,7 @@
                     break ;
 
                 //--------------------------------------------------------------
-                case 11 : // I not contiguous, with duplicates. No qsort needed
+                case 11 : // I not contiguous, duplicates OK. No qsort needed
                 //--------------------------------------------------------------
 
                     // Case 11 works well when I has many entries and A(:,kA)
@@ -603,46 +604,10 @@
                         #endif
                         // traverse R(i,:) for all indices inew where
                         // i == I [inew] or where i is from a colon expression
-                        GB_for_each_inew_in_I_inverse_hash (pR)
+                        GB_for_each_inew_in_I_inverse_hash (i,pR)
                         { 
                             int64_t inew = GB_IGET (Ri, pR) ; // inew = Ri [pR]
                             ASSERT (inew >= 0 && inew < nI) ;
-                            ASSERT (i == GB_IJLIST (I, inew, GB_I_KIND,Icolon));
-                            #if defined ( GB_ANALYSIS_PHASE )
-                            clen++ ;
-                            #else
-                            GB_ISET (Ci, pC, inew) ;  // Ci [pC] = inew ;
-                            GB_COPY_ENTRY (pC, pA + k) ;
-                            pC++ ;
-                            #endif
-                        }
-                    }
-
-                    #if defined ( GB_PHASE_2_OF_2 )
-                    ASSERT (pC == pC_end) ;
-                    #endif
-                    break ;
-
-                //--------------------------------------------------------------
-                case 12 : // I not contiguous, no duplicates.  No qsort needed.
-                //--------------------------------------------------------------
-
-                    // Identical to Case 11 ... FIXME: remove; use case 11
-
-                    ASSERT (GB_I_KIND == GB_LIST && !GB_I_HAS_DUPLICATES)
-                    for (int64_t k = 0 ; k < alen ; k++)
-                    {
-                        // A(i,kA) present, look it up in R(i,:)
-                        int64_t i = GB_IGET (Ai, pA + k) ;
-                        #if defined ( GB_SYMBOLIC )
-                        i = GB_UNZOMBIE (i) ;
-                        #endif
-                        // traverse R(i,:) for all indices inew where
-                        // i == I [inew] or where i is from a colon expression;
-                        // R(i,:) has 0 or 1 entries.
-                        GB_for_each_inew_in_I_inverse_hash (pR)
-                        { 
-                            int64_t inew = GB_IGET (Ri, pR) ; // inew = Ri [pR]
                             ASSERT (i == GB_IJLIST (I, inew, GB_I_KIND,Icolon));
                             #if defined ( GB_ANALYSIS_PHASE )
                             clen++ ;

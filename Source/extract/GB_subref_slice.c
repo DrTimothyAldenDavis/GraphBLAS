@@ -53,7 +53,6 @@
     (*p_nthreads     ) = nthreads ;         \
     (*p_post_sort    ) = post_sort ;        \
     (*R_handle       ) = R ;                \
-    (*p_nduplicates  ) = nduplicates ;      \
     (*p_Cwork        ) = Cwork ;            \
     (*p_Cwork_size   ) = Cwork_size ;       \
 }
@@ -69,7 +68,6 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     int *p_nthreads,            // # of threads for subref operation
     bool *p_post_sort,          // true if a final post-sort is needed
     GrB_Matrix *R_handle,       // R = inverse (I), if needed
-    int64_t *p_nduplicates,     // # of duplicates, if R computed
     uint64_t **p_Cwork,         // workspace of size max(2,C->nvec+1)
     size_t *p_Cwork_size,
     // from phase0:
@@ -99,7 +97,6 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;
     ASSERT (p_post_sort != NULL) ;
-    ASSERT (p_nduplicates != NULL) ;
     ASSERT (p_Cwork != NULL) ;
     ASSERT (p_Cwork_size != NULL) ;
     ASSERT (R_handle != NULL) ;
@@ -111,7 +108,6 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     (*p_TaskList_size) = 0 ;
     (*p_Cwork) = NULL ;
     (*p_Cwork_size) = 0 ;
-    (*p_nduplicates) = 0 ;
 
     uint64_t *restrict Cwork = NULL ; size_t Cwork_size = 0 ;
     GB_WERK_DECLARE (Coarse, int64_t) ;     // size ntasks1+1
@@ -219,10 +215,9 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     // invert I if required
     //--------------------------------------------------------------------------
 
-    int64_t nduplicates = 0 ;
     if (need_I_inverse)
     { 
-        GB_OK (GB_I_inverse (I, I_is_32, nI, avlen, &R, &nduplicates, Werk)) ;
+        GB_OK (GB_I_inverse (I, I_is_32, nI, avlen, &R, Werk)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -259,8 +254,6 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine
     //--------------------------------------------------------------------------
-
-    bool I_has_duplicates = (nduplicates > 0) ;
 
     for (int t = 0 ; t < ntasks1 ; t++)
     {
@@ -369,7 +362,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
                 int64_t alen = pA_end - pA ;      // nnz (A (imin:imax,j))
 
                 int method = GB_subref_method (alen, avlen, Ikind, nI,
-                    need_qsort, iinc, I_has_duplicates) ;
+                    need_qsort, iinc) ;
 
                 if (method == 10)
                 { 

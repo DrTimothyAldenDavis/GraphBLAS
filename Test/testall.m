@@ -120,6 +120,7 @@ F100 = {4,4,0,0} ;
 
 % < 1 second: debug_on
 set_malloc_debug (mdebug, 1) ;
+logstat ('test303'    ,t, J404 , F110 ) ; % C=A(I,J), method 6
 logstat ('test300'    ,t, J0   , F0   ) ; % print function for a type
 logstat ('test301'    ,t, J40  , F11  ) ; % assign method27, C<C,struct>+=A
 logstat ('test302'    ,t, J0   , F0   ) ; % GPU controls

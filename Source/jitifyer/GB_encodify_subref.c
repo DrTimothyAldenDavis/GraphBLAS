@@ -27,7 +27,6 @@ uint64_t GB_encodify_subref     // encode an subref problem
     int Jkind,              // ditto, or 0 if not used
     bool need_qsort,        // true if qsort needs to be called
     GrB_Matrix R,
-    bool I_has_duplicates,  // true if I has duplicate entries
     // A matrix:
     GrB_Matrix A
 )
@@ -51,8 +50,7 @@ uint64_t GB_encodify_subref     // encode an subref problem
 
     GB_encodify_kcode (encoding, kcode) ;
     GB_enumify_subref (&encoding->code,
-        C, I_is_32, J_is_32, Ikind, Jkind, need_qsort,
-        R, I_has_duplicates, A) ;
+        C, I_is_32, J_is_32, Ikind, Jkind, need_qsort, R, A) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length

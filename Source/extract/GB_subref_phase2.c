@@ -27,7 +27,6 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     const int ntasks,                   // # of tasks
     const int nthreads,                 // # of threads to use
     const GrB_Matrix R,                 // R = inverse (I), if needed
-    const bool I_has_duplicates,        // true if I has duplicates
     uint64_t **p_Cwork,                 // workspace of size max(2,C->nvec+1)
     size_t Cwork_size,
     // analysis from phase0:
@@ -126,7 +125,6 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
 
     #define GB_I_KIND Ikind
     #define GB_NEED_QSORT need_qsort
-    #define GB_I_HAS_DUPLICATES I_has_duplicates
 
     #define GB_ANALYSIS_PHASE
     if (symbolic)
