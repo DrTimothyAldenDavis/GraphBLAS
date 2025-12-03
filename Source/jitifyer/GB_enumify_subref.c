@@ -24,7 +24,7 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
     int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
     int Jkind,              // ditto, or 0 if not used
     bool need_qsort,        // true if qsort needs to be called
-    bool Ihead_is_32,       // if true, Ihead/Inext 32-bit; else 64
+    GrB_Matrix R,
     bool I_has_duplicates,  // true if I has duplicate entries
     // A matrix:
     GrB_Matrix A
@@ -45,9 +45,11 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
 
     int C_sparsity = GB_sparsity (C) ;
     int A_sparsity = GB_sparsity (A) ;
-    int csparsity, asparsity ;
+    int R_sparsity = GB_sparsity (R) ;
+    int csparsity, asparsity, rsparsity ;
     GB_enumify_sparsity (&csparsity, C_sparsity) ;
     GB_enumify_sparsity (&asparsity, A_sparsity) ;
+    GB_enumify_sparsity (&rsparsity, R_sparsity) ;
 
     int needqsort = (need_qsort) ? 1 : 0 ;
     int ihasdupl = (I_has_duplicates) ? 1 : 0 ;
@@ -63,19 +65,25 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
     int aj_is_32 = (A->j_is_32) ? 1 : 0 ;
     int ai_is_32 = (A->i_is_32) ? 1 : 0 ;
 
-    int ihead_is_32 = (Ihead_is_32) ? 1 : 0 ;
+    int rp_is_32 = (R != NULL && R->p_is_32) ? 1 : 0 ;
+    int rj_is_32 = (R != NULL && R->j_is_32) ? 1 : 0 ;
+    int ri_is_32 = (R != NULL && R->i_is_32) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // construct the subref method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 23 (6 hex digits)
+    // total method_code bits: 28 (7 hex digits)
 
     (*method_code) =
                                                // range        bits
-                // C, A integer sizes (2 hex digits)
-                GB_LSHIFT (ihead_is_32, 22) |  // 0 to 1       1
+                // R integer sizes and sparsity
+                GB_LSHIFT (rp_is_32   , 27) |  // 0 to 1       1
+                GB_LSHIFT (rj_is_32   , 26) |  // 0 to 1       1
+                GB_LSHIFT (ri_is_32   , 25) |  // 0 to 1       1
+                GB_LSHIFT (rsparsity  , 23) |  // 0 to 3       2
 
+                // C, A integer sizes (2 hex digits)
                 GB_LSHIFT (cp_is_32   , 21) |  // 0 to 1       1
                 GB_LSHIFT (cj_is_32   , 20) |  // 0 to 1       1
                 GB_LSHIFT (ci_is_32   , 19) |  // 0 to 1       1

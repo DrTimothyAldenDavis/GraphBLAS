@@ -17,11 +17,31 @@
 //      iso:       C = A(I,J), extracting the pattern only, not the values
 //      numeric:   C = A(I,J), extracting the pattern and values
 
-// to iterate across all entries in a bucket:
-#define GB_for_each_index_in_bucket(inew,i,nI,Ihead,Inext)  \
-    for (uint64_t inew = GB_IGET (Ihead, i) ;               \
-                  inew < nI ;                               \
-                  inew = GB_IGET (Inext, inew))
+#define GB_for_each_inew_in_I_inverse_hash(pR)                          \
+        int64_t pR, pR_end ;                                            \
+        if (R_is_hyper)                                                 \
+        {                                                               \
+            /* R(i,:) is the kth vector in the hypersparse matrix R; */ \
+            /* find k so that i = Rh [k] using the R->Y hyper_hash, */  \
+            /* and set pR = Rp [k] and pR_end = Rp [k+1]. */            \
+            GB_hyper_hash_lookup (Rp_is_32, Rj_is_32,                   \
+                Rh, rnvec, Rp, R_Yp, R_Yi, R_Yx, R_hash_bits,           \
+                i, &pR, &pR_end) ;                                      \
+        }                                                               \
+        else                                                            \
+        {                                                               \
+            /* R(i,:) is the ith vector in the sparse matrix R */       \
+            pR = GB_IGET (Rp, i) ;          /* pR = Rp [i] */           \
+            pR_end = GB_IGET (Rp, i+1) ;    /* pR_end = Rp [i+1] */     \
+        }                                                               \
+        /* for each entry in the row R(i,:) */                          \
+        for ( ; pR < pR_end ; pR++)
+        #if 0
+        {
+            // get R(i,inew); this is the index i = I [inew]
+            int64_t inew = GB_IGET (Ri, pR) ;        // inew = Ri [pR]
+        }
+        #endif
 
 //------------------------------------------------------------------------------
 
@@ -72,6 +92,8 @@
         int64_t pI     = 0 ;
         int64_t pI_end = nI ;
         int64_t ilen   = nI ;
+
+//      printf ("task %d of %d, k: %ld %ld (%d)\n", taskid, ntasks, kfirst, klast, fine_task) ;
 
         //----------------------------------------------------------------------
         // compute all vectors C(:,kfirst:klast) for this task
@@ -185,7 +207,7 @@
             { 
                 // determine the method based on A(*,kA) and I
                 method = GB_subref_method (alen, avlen, GB_I_KIND, nI,
-                    (Ihead != NULL), GB_NEED_QSORT, iinc, GB_I_HAS_DUPLICATES) ;
+                    GB_NEED_QSORT, iinc, GB_I_HAS_DUPLICATES) ;
             }
 
             //------------------------------------------------------------------
@@ -355,12 +377,10 @@
                     // properties.  For a fine task, A(:,kA) has not been
                     // sliced; I has been sliced instead.
 
-                    // If the I bucket inverse has not been created, this
-                    // method is the only option.  Alternatively, if nI =
-                    // length (I) is << nnz (A (:,kA)), then scanning I and
-                    // doing a binary search of A (:,kA) is faster than doing a
-                    // linear-time search of A(:,kA) and a lookup into the I
-                    // bucket inverse.
+                    // If nI = length (I) is << nnz (A (:,kA)), then scanning I
+                    // and doing a binary search of A (:,kA) is faster than
+                    // doing a linear-time scan of A(:,kA) and a lookup into
+                    // R for each row index i in A(:,kA).
 
                     // The vector of C is constructed in sorted order, so no
                     // sort is needed.
@@ -524,15 +544,16 @@
                     ASSERT (GB_I_KIND == GB_LIST) ;
                     for (int64_t k = 0 ; k < alen ; k++)
                     {
-                        // A(i,kA) present, look it up in the I inverse buckets
+                        // A(i,kA) present, look it up in R(i,:)
                         int64_t i = GB_IGET (Ai, pA + k) ;
                         #if defined ( GB_SYMBOLIC )
                         i = GB_UNZOMBIE (i) ;
                         #endif
-                        // traverse bucket i for all indices inew where
+                        // traverse R(i,:) for all indices inew where
                         // i == I [inew] or where i is from a colon expression
-                        GB_for_each_index_in_bucket (inew, i, nI, Ihead, Inext)
+                        GB_for_each_inew_in_I_inverse_hash (pR)
                         { 
+                            int64_t inew = GB_IGET (Ri, pR) ; // inew = Ri [pR]
                             ASSERT (inew >= 0 && inew < nI) ;
                             ASSERT (i == GB_IJLIST (I, inew, GB_I_KIND,Icolon));
                             #if defined ( GB_ANALYSIS_PHASE )
@@ -575,15 +596,16 @@
                     ASSERT (GB_I_KIND == GB_LIST) ;
                     for (int64_t k = 0 ; k < alen ; k++)
                     {
-                        // A(i,kA) present, look it up in the I inverse buckets
+                        // A(i,kA) present, look it up in R(i,:)
                         int64_t i = GB_IGET (Ai, pA + k) ;
                         #if defined ( GB_SYMBOLIC )
                         i = GB_UNZOMBIE (i) ;
                         #endif
-                        // traverse bucket i for all indices inew where
+                        // traverse R(i,:) for all indices inew where
                         // i == I [inew] or where i is from a colon expression
-                        GB_for_each_index_in_bucket (inew, i, nI, Ihead, Inext)
+                        GB_for_each_inew_in_I_inverse_hash (pR)
                         { 
+                            int64_t inew = GB_IGET (Ri, pR) ; // inew = Ri [pR]
                             ASSERT (inew >= 0 && inew < nI) ;
                             ASSERT (i == GB_IJLIST (I, inew, GB_I_KIND,Icolon));
                             #if defined ( GB_ANALYSIS_PHASE )
@@ -605,23 +627,22 @@
                 case 12 : // I not contiguous, no duplicates.  No qsort needed.
                 //--------------------------------------------------------------
 
-                    // Identical to Case 11, except GB_for_each_index_in_bucket
-                    // just needs to iterate 0 or 1 times.  Works well when I
-                    // has many entries and A(:,kA) has few entries.
+                    // Identical to Case 11 ... FIXME: remove; use case 11
 
                     ASSERT (GB_I_KIND == GB_LIST && !GB_I_HAS_DUPLICATES)
                     for (int64_t k = 0 ; k < alen ; k++)
                     {
-                        // A(i,kA) present, look it up in the I inverse buckets
+                        // A(i,kA) present, look it up in R(i,:)
                         int64_t i = GB_IGET (Ai, pA + k) ;
                         #if defined ( GB_SYMBOLIC )
                         i = GB_UNZOMBIE (i) ;
                         #endif
-                        // bucket i has at most one index inew such that
-                        // i == I [inew]
-                        uint64_t inew = GB_IGET (Ihead, i) ;
-                        if (inew < nI)
+                        // traverse R(i,:) for all indices inew where
+                        // i == I [inew] or where i is from a colon expression;
+                        // R(i,:) has 0 or 1 entries.
+                        GB_for_each_inew_in_I_inverse_hash (pR)
                         { 
+                            int64_t inew = GB_IGET (Ri, pR) ; // inew = Ri [pR]
                             ASSERT (i == GB_IJLIST (I, inew, GB_I_KIND,Icolon));
                             #if defined ( GB_ANALYSIS_PHASE )
                             clen++ ;
@@ -708,7 +729,7 @@
     #endif
 }
 
-#undef GB_for_each_index_in_bucket
+#undef GB_for_each_inew_in_I_inverse_hash
 #undef GB_COPY_RANGE
 #undef GB_COPY_ENTRY
 #undef GB_SYMBOLIC

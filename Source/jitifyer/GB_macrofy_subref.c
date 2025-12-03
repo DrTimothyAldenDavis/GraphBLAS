@@ -24,9 +24,13 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     // extract the subref method_code
     //--------------------------------------------------------------------------
 
-    // C, A integer sizes (2 hex digits)
-    bool Ihead_is_32 = GB_RSHIFT (method_code, 22, 1) ;
+    // R integer sizes and sparsity
+    bool Rp_is_32    = GB_RSHIFT (method_code, 27, 1) ;
+    bool Rj_is_32    = GB_RSHIFT (method_code, 26, 1) ;
+    bool Ri_is_32    = GB_RSHIFT (method_code, 25, 1) ;
+    int rsparsity    = GB_RSHIFT (method_code, 23, 2) ;
 
+    // C, A integer sizes (2 hex digits)
     bool Cp_is_32    = GB_RSHIFT (method_code, 21, 1) ;
     bool Cj_is_32    = GB_RSHIFT (method_code, 20, 1) ;
     bool Ci_is_32    = GB_RSHIFT (method_code, 19, 1) ;
@@ -92,8 +96,6 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
         fprintf (fp, "#define GB_J_TYPE uint%d_t\n", J_is_32 ? 32 : 64) ;
     }
 
-    fprintf (fp, "#define GB_IHEAD_TYPE uint%d_t\n", Ihead_is_32 ? 32 : 64) ;
-
     //--------------------------------------------------------------------------
     // construct the typedefs
     //--------------------------------------------------------------------------
@@ -101,7 +103,7 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     GB_macrofy_typedefs (fp, ctype, NULL, NULL, NULL, NULL, NULL, NULL) ;
 
     //--------------------------------------------------------------------------
-    // construct the macros for C and A
+    // construct the macros for C, A, and R
     //--------------------------------------------------------------------------
 
     GB_macrofy_sparsity (fp, "C", csparsity) ;
@@ -114,6 +116,11 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     GB_macrofy_nvals (fp, "A", asparsity, false) ;
     GB_macrofy_type (fp, "A", "_", atype->name) ;
     GB_macrofy_bits (fp, "A", Ap_is_32, Aj_is_32, Ai_is_32) ;
+
+    // R is always GrB_UINT64, and iso-valued (its values are not used)
+    GB_macrofy_sparsity (fp, "R", rsparsity) ;
+    GB_macrofy_nvals (fp, "R", rsparsity, false) ;
+    GB_macrofy_bits (fp, "R", Rp_is_32, Rj_is_32, Ri_is_32) ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions

@@ -52,7 +52,11 @@ GrB_Info GB_bitonic
                 int64_t ileft = ((ipair & ~mask) << 1) | (ipair & mask) ;
                 int64_t iright = ileft | j ;
                 // ensure that A [iright] is in the range A [0..n-1]
-                if (iright >= n) { /* oops++ ; */ continue ; }
+                if (iright >= n)
+                {
+                    /* oops++ ; */
+                    continue ;
+                }
                 // if desc is true, swap descending, else swap ascending
                 bool desc = (((ileft & k) != 0) == dir) ;
                 int aleft  = A [ileft] ;

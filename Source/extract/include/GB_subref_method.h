@@ -24,7 +24,6 @@ static inline int GB_subref_method  // return the method to use (1 to 12)
     const int64_t avlen,            // A->vlen
     const int Ikind,                // GB_ALL, GB_RANGE, GB_STRIDE, or GB_LIST
     const int64_t nI,               // length of I
-    const bool I_inverse_ok,        // true if I is invertable
     const bool need_qsort,          // true if C(:,k) requires sorting
     const int64_t iinc,             // increment for GB_STRIDE
     const bool I_has_duplicates     // true if duplicates in I
@@ -68,8 +67,7 @@ static inline int GB_subref_method  // return the method to use (1 to 12)
         // Case 5: C (:,k) = A (ibegin:iend,j)
         method = 5 ;
     }
-    else if ((Ikind == GB_LIST && !I_inverse_ok) ||  // must do Case 6
-        (64 * nI < ajnz))    // Case 6 faster
+    else if (64 * nI < ajnz)    // Case 6 faster in this case
     { 
         // Case 6: nI not large; binary search of A(:,j) for each i in I
         method = 6 ;
@@ -92,9 +90,9 @@ static inline int GB_subref_method  // return the method to use (1 to 12)
             method = 9 ;
         }
     }
-    else // Ikind == GB_LIST, and I inverse buckets will be used
+    else // Ikind == GB_LIST, and R = inverse(I) will be used
     {
-        // construct the I inverse buckets
+        // construct the R matrix
         if (need_qsort)
         { 
             // Case 10: nI large, need qsort
@@ -139,7 +137,6 @@ static inline int64_t GB_subref_work   // return the work for a subref method
     const int64_t avlen,            // A->vlen
     const int Ikind,                // GB_ALL, GB_RANGE, GB_STRIDE, or GB_LIST
     const int64_t nI,               // length of I
-    const bool I_inverse_ok,        // true if I is invertable
     const bool need_qsort,          // true if C(:,k) requires sorting
     const int64_t iinc              // increment for GB_STRIDE
 )
@@ -158,7 +155,7 @@ static inline int64_t GB_subref_work   // return the work for a subref method
 
     const bool I_has_duplicates = false ;   // not yet known
 
-    int method = GB_subref_method (ajnz, avlen, Ikind, nI, I_inverse_ok,
+    int method = GB_subref_method (ajnz, avlen, Ikind, nI,
         need_qsort, iinc, I_has_duplicates) ;
 
     //--------------------------------------------------------------------------
