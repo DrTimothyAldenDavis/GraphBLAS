@@ -1670,8 +1670,7 @@ uint64_t GB_encodify_subref     // encode an subref problem
     int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
     int Jkind,              // ditto, or 0 if not used
     bool need_qsort,        // true if qsort needs to be called
-    bool Ihead_is_32,       // if true, Ihead/Inext 32-bit; else 64
-    bool I_has_duplicates,  // true if I has duplicate entries
+    const GrB_Matrix R,     // R = inverse (I), if needed
     // A matrix:
     GrB_Matrix A
 ) ;
@@ -1688,8 +1687,7 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
     int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
     int Jkind,              // ditto, or 0 if not used
     bool need_qsort,        // true if qsort needs to be called
-    bool Ihead_is_32,       // if true, Ihead/Inext 32-bit; else 64
-    bool I_has_duplicates,  // true if I has duplicate entries
+    const GrB_Matrix R,     // R = inverse (I), if needed
     // A matrix:
     GrB_Matrix A
 ) ;
@@ -1712,10 +1710,7 @@ GrB_Info GB_subref_sparse_jit
     const int ntasks,                   // # of tasks
     const int nthreads,                 // # of threads to use
     const bool post_sort,               // true if post-sort needed
-    const void *Ihead,                  // for I inverse buckets, size A->vlen
-    const void *Inext,                  // for I inverse buckets, size nI
-    const bool Ihead_is_32,             // if true, Ihead/Inext 32-bit; else 64
-    const bool I_has_duplicates,        // true if I has duplicates
+    const GrB_Matrix R,                 // R = inverse (I), if needed
     // from phase0:
     const void *Ap_start,
     const void *Ap_end,
