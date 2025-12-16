@@ -740,11 +740,11 @@ void * GB_Global_malloc_function (size_t size)
     }
     else
     {
-        GB_OPENMP_LOCK_SET (2)   // protect malloc that is not thread-safe
+        GB_OPENMP_LOCK_SET (2)   // for non-thread-safe malloc
         {
             p = GB_Global.malloc_function (size) ;
         }
-        GB_OPENMP_LOCK_UNSET (2) // protect malloc that is not thread-safe
+        GB_OPENMP_LOCK_UNSET (2) // for non-thread-safe malloc
     }
     GB_Global_memtable_add (p, size) ;
     return (p) ;
@@ -795,11 +795,11 @@ void * GB_Global_realloc_function (void *p, size_t size)
     }
     else
     {
-        GB_OPENMP_LOCK_SET (2)   // protect malloc that is not thread-safe
+        GB_OPENMP_LOCK_SET (2)   // for non-thread-safe malloc
         {
             pnew = GB_Global.realloc_function (p, size) ;
         }
-        GB_OPENMP_LOCK_UNSET (2) // protect malloc that is not thread-safe
+        GB_OPENMP_LOCK_UNSET (2) // for non-thread-safe malloc
     }
     if (pnew != NULL)
     {
@@ -831,11 +831,11 @@ void GB_Global_free_function (void *p)
     }
     else
     {
-        GB_OPENMP_LOCK_SET (2)   // protect malloc that is not thread-safe
+        GB_OPENMP_LOCK_SET (2)   // for non-thread-safe malloc
         {
             GB_Global.free_function (p) ;
         }
-        GB_OPENMP_LOCK_UNSET (2) // protect malloc that is not thread-safe
+        GB_OPENMP_LOCK_UNSET (2) // for non-thread-safe malloc
     }
     GB_Global_memtable_remove (p) ;
 }

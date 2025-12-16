@@ -18,6 +18,13 @@
 //  GxB_Global_Option_set_CHAR          strings
 //  GxB_Global_Option_set_FUNCTION      function pointers (as void *)
 
+// NOTE: This method is not recommended.  use GrB_Global_set_* or GrB_set
+// instead.  The GxB_Global_Option_get_CHAR returns strings as pointers to
+// memory owned by GraphBLAS.  A subsequent call to GxB_Global_Option_set
+// GrB_set or can modify and reallocate those strings, invalidating the return
+// value of GxB_Global_get_CHAR.  GrB_get is different; it makes a copy of the
+// string, returning in memory owned by the caller.
+
 #include "GB.h"
 #include "jitifyer/GB_jitifyer.h"
 
@@ -553,16 +560,6 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 GB_jitifyer_set_use_cmake ((bool) value) ;
             }
             break ;
-
-//      case GxB_JIT_ERROR_FALLBACK :
-//
-//          {
-//              va_start (ap, field) ;
-//              int value = va_arg (ap, int) ;
-//              va_end (ap) ;
-//              GB_jitifyer_set_error_fallback ((bool) value) ;
-//          }
-//          break ;
 
         case GxB_JIT_C_CONTROL : 
 

@@ -17,6 +17,13 @@
 //  GxB_Global_Option_get_CHAR          strings
 //  GxB_Global_Option_get_FUNCTION      function pointers (as void **)
 
+// NOTE: This method is not recommended.  use GrB_Global_get_* or GrB_get
+// instead.  The GxB_Global_Option_get_CHAR returns strings as pointers to
+// memory owned by GraphBLAS.  A subsequent call to GxB_Global_Option_set
+// GrB_set or can modify and reallocate those strings, invalidating the return
+// value of GxB_Global_get_CHAR.  GrB_get is different; it makes a copy of the
+// string, returning in memory owned by the caller.
+
 #include "GB.h"
 #include "jitifyer/GB_jitifyer.h"
 
