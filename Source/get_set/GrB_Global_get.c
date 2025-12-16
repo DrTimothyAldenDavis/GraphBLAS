@@ -192,7 +192,7 @@ GrB_Info GrB_Global_get_Scalar
 
     info = GrB_NO_VALUE ;
 
-    GB_OPENMP_LOCK_SET (0)
+    GB_OPENMP_LOCK_SET (0)      // global get (enum)
     {
         int32_t i ;
         info = GB_global_enum_get (&i, field) ;
@@ -393,7 +393,7 @@ GrB_Info GrB_Global_get_String
 
     GrB_Info info = GrB_NO_VALUE ;
 
-    GB_OPENMP_LOCK_SET (0)
+    GB_OPENMP_LOCK_SET (0)      // global get (string)
     {
         const char *s ;
         info = GB_global_string_get (&s, field) ;
@@ -402,7 +402,7 @@ GrB_Info GrB_Global_get_String
             strcpy (value, s) ;
         }
     }
-    GB_OPENMP_LOCK_UNSET (0)
+    GB_OPENMP_LOCK_UNSET (0)    // global get (string)
 
     #pragma omp flush
     return (info) ;
@@ -434,11 +434,11 @@ GrB_Info GrB_Global_get_INT32
 
     GrB_Info info = GrB_NO_VALUE ;
 
-    GB_OPENMP_LOCK_SET (0)
+    GB_OPENMP_LOCK_SET (0)      // global get (enum)
     {
         info = GB_global_enum_get (value, field) ;
     }
-    GB_OPENMP_LOCK_UNSET (0)
+    GB_OPENMP_LOCK_UNSET (0)    // global get (enum)
 
     return (info) ;
 }
@@ -471,7 +471,7 @@ GrB_Info GrB_Global_get_SIZE
     const char *s ;
     GrB_Info info = GrB_NO_VALUE ;
 
-    GB_OPENMP_LOCK_SET (0)
+    GB_OPENMP_LOCK_SET (0)      // global get (string)
     {
         info = GB_global_string_get (&s, field) ;
         if (info == GrB_SUCCESS)
@@ -516,7 +516,7 @@ GrB_Info GrB_Global_get_SIZE
             }
         }
     }
-    GB_OPENMP_LOCK_UNSET (0)
+    GB_OPENMP_LOCK_UNSET (0)        // global get (string)
 
     #pragma omp flush
     return (info) ;
@@ -548,7 +548,7 @@ GrB_Info GrB_Global_get_VOID
 
     GrB_Info info = GrB_NO_VALUE ;
 
-    GB_OPENMP_LOCK_SET (0)
+    GB_OPENMP_LOCK_SET (0)      // global get (void)
     {
         switch (field)
         {
@@ -619,7 +619,7 @@ GrB_Info GrB_Global_get_VOID
                 info = GrB_INVALID_VALUE ;
         }
     }
-    GB_OPENMP_LOCK_UNSET (0)
+    GB_OPENMP_LOCK_UNSET (0)      // global get (void)
 
     #pragma omp flush
     return (info) ;

@@ -21,12 +21,13 @@ typedef GB_JIT_KERNEL_USER_TYPE_PROTO ((*GB_user_type_f)) ;
 // static objects:  hash table, strings, and status
 //------------------------------------------------------------------------------
 
-// The hash table is static and shared by all threads of the user application.
-// It is only visible inside this file.  It starts out empty (NULL).  Its size
-// is either zero (at the beginning), or a power of two (of size
-// GB_JITIFIER_INITIAL_SIZE or more).
+// The hash table is a global variable and is shared by all threads of the user
+// application.  It is only visible inside this file.  It starts out empty
+// (NULL).  Its size is either zero (at the beginning), or a power of two (of
+// size GB_JITIFIER_INITIAL_SIZE or more).
 
-// The strings are used to create filenames and JIT compilation commands.
+// The strings are also global variables, and are used for filenames,
+// directories, and JIT compilation commands, flags, and settings.
 
 #ifdef GBCOVER
 // use a smaller JIT table size during test coverage
@@ -827,11 +828,11 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
 int GB_jitifyer_get_control (void)
 {
     int control ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // get JIT control (int)
     { 
         control = GB_jit_control ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // get JIT control (int)
     return (control) ;
 }
 
@@ -841,7 +842,7 @@ int GB_jitifyer_get_control (void)
 
 void GB_jitifyer_set_control (int control)
 { 
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // set JIT control (int)
     {
         control = GB_IMAX (control, (int) GxB_JIT_OFF) ;
         #ifndef NJIT
@@ -860,7 +861,7 @@ void GB_jitifyer_set_control (int control)
             GB_jitifyer_table_free (false) ;
         }
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // get JIT control (int)
 }
 
 //------------------------------------------------------------------------------
@@ -914,11 +915,11 @@ GrB_Info GB_jitifyer_alloc_space (void)
 const char *GB_jitifyer_get_cache_path (void)
 { 
     const char *s ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT get (string pointer)
     {
         s = GB_jit_cache_path ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT get (string pointer)
     return (s) ;
 }
 
@@ -948,11 +949,11 @@ GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path)
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT set (string)
     {
         info = GB_jitifyer_set_cache_path_worker (new_cache_path) ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT set (string)
     return (info) ;
 }
 
@@ -983,11 +984,11 @@ GrB_Info GB_jitifyer_set_cache_path_worker (const char *new_cache_path)
 const char *GB_jitifyer_get_error_log (void)
 { 
     const char *s ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT get (string pointer)
     {
         s = GB_jit_error_log ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT get (string pointer)
     return (s) ;
 }
 
@@ -1006,12 +1007,12 @@ GrB_Info GB_jitifyer_set_error_log (const char *new_error_log)
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT set (string)
     {
         info = GB_jitifyer_set_error_log_worker
             ((new_error_log == NULL) ? "" : new_error_log) ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT set (string)
     return (info) ;
 }
 
@@ -1037,11 +1038,11 @@ GrB_Info GB_jitifyer_set_error_log_worker (const char *new_error_log)
 const char *GB_jitifyer_get_C_compiler (void)
 { 
     const char *s ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT get (string pointer)
     {
         s = GB_jit_C_compiler ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT get (string pointer)
     return (s) ;
 }
 
@@ -1066,11 +1067,11 @@ GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler)
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT set (string)
     {
         info = GB_jitifyer_set_C_compiler_worker (new_C_compiler) ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT set (string)
     return (info) ;
 }
 
@@ -1095,11 +1096,11 @@ GrB_Info GB_jitifyer_set_C_compiler_worker (const char *new_C_compiler)
 const char *GB_jitifyer_get_C_flags (void)
 { 
     const char *s ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT get (string pointer)
     {
         s = GB_jit_C_flags ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT get (string pointer)
     return (s) ;
 }
 
@@ -1124,11 +1125,11 @@ GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags)
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT set (string)
     {
         info = GB_jitifyer_set_C_flags_worker (new_C_flags) ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT set (string)
     return (info) ;
 }
 
@@ -1153,11 +1154,11 @@ GrB_Info GB_jitifyer_set_C_flags_worker (const char *new_C_flags)
 const char *GB_jitifyer_get_C_link_flags (void)
 { 
     const char *s ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT get (string pointer)
     {
         s = GB_jit_C_link_flags ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT get (string pointer)
     return (s) ;
 }
 
@@ -1182,11 +1183,11 @@ GrB_Info GB_jitifyer_set_C_link_flags (const char *new_C_link_flags)
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT set (string)
     {
         info = GB_jitifyer_set_C_link_flags_worker (new_C_link_flags) ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT set (string)
     return (info) ;
 }
 
@@ -1211,11 +1212,11 @@ GrB_Info GB_jitifyer_set_C_link_flags_worker (const char *new_C_link_flags)
 const char *GB_jitifyer_get_C_libraries (void)
 { 
     const char *s ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT get (string pointer)
     {
         s = GB_jit_C_libraries ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT get (string pointer)
     return (s) ;
 }
 
@@ -1240,11 +1241,11 @@ GrB_Info GB_jitifyer_set_C_libraries (const char *new_C_libraries)
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT set (string)
     {
         info = GB_jitifyer_set_C_libraries_worker (new_C_libraries) ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT set (string)
     return (info) ;
 }
 
@@ -1269,11 +1270,11 @@ GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries)
 bool GB_jitifyer_get_use_cmake (void)
 { 
     bool use_cmake ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT get (bool)
     {
         use_cmake = GB_jit_use_cmake ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT get (bool)
     return (use_cmake) ;
 }
 
@@ -1283,7 +1284,7 @@ bool GB_jitifyer_get_use_cmake (void)
 
 void GB_jitifyer_set_use_cmake (bool use_cmake)
 { 
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT set (bool)
     {
         #if defined (_MSC_VER)
         // Windows requires cmake
@@ -1296,7 +1297,7 @@ void GB_jitifyer_set_use_cmake (bool use_cmake)
         GB_jit_use_cmake = use_cmake ;
         #endif
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT set (bool)
 }
 
 //------------------------------------------------------------------------------
@@ -1306,11 +1307,11 @@ void GB_jitifyer_set_use_cmake (bool use_cmake)
 const char *GB_jitifyer_get_C_cmake_libs (void)
 { 
     const char *s ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT get (string pointer)
     {
         s = GB_jit_C_cmake_libs ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT get (string pointer)
     return (s) ;
 }
 
@@ -1335,11 +1336,11 @@ GrB_Info GB_jitifyer_set_C_cmake_libs (const char *new_cmake_libs)
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT set (string)
     {
         info = GB_jitifyer_set_C_cmake_libs_worker (new_cmake_libs) ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT set (string)
     return (info) ;
 }
 
@@ -1364,11 +1365,11 @@ GrB_Info GB_jitifyer_set_C_cmake_libs_worker (const char *new_cmake_libs)
 const char *GB_jitifyer_get_C_preface (void)
 { 
     const char *s ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT get (string pointer)
     {
         s = GB_jit_C_preface ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT get (string pointer)
     return (s) ;
 }
 
@@ -1393,11 +1394,11 @@ GrB_Info GB_jitifyer_set_C_preface (const char *new_C_preface)
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT set (string)
     {
         info = GB_jitifyer_set_C_preface_worker (new_C_preface) ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT set (string)
     return (info) ;
 }
 
@@ -1421,11 +1422,11 @@ GrB_Info GB_jitifyer_set_C_preface_worker (const char *new_C_preface)
 const char *GB_jitifyer_get_CUDA_preface (void)
 { 
     const char *s ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT get (string pointer)
     {
         s = GB_jit_CUDA_preface ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT get (string pointer)
     return (s) ;
 }
 
@@ -1450,11 +1451,11 @@ GrB_Info GB_jitifyer_set_CUDA_preface (const char *new_CUDA_preface)
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT set (string)
     {
         info = GB_jitifyer_set_CUDA_preface_worker (new_CUDA_preface) ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT set (string)
     return (info) ;
 }
 
@@ -1663,12 +1664,12 @@ GrB_Info GB_jitifyer_load
     // do the rest inside a critical section
     //--------------------------------------------------------------------------
 
-    GB_OPENMP_LOCK_SET (1)
+    GB_OPENMP_LOCK_SET (1)      // JIT compile/load
     { 
         info = GB_jitifyer_load2_worker (dl_function, family, kname, hash,
             encoding, suffix, semiring, monoid, op, type1, type2, type3) ;
     }
-    GB_OPENMP_LOCK_UNSET (1)
+    GB_OPENMP_LOCK_UNSET (1)    // JIT compile/load
 
     return (info) ;
 }

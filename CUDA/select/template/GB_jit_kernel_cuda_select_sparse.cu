@@ -195,7 +195,7 @@ __global__ void GB_cuda_select_sparse_phase1
             //------------------------------------------------------------------
 
             #if Ak_SAVE
-            // FIXME: try recomputing Ak, not saving it
+            // save kA for future use (this is now disabled)
             Ak [pA] = kA ;
             #endif
             #if ( GB_DEPENDS_ON_J )
@@ -761,8 +761,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // This phase computes an exclusive cumulative sum:
     //       0 [       0       3       4       6       9]    11
 
-    // FIXME: do this on the GPU?  Or in parallel on the CPU?
-    // FIXME: if on the CPU, use GB_cumsum.c (need both int32_t and int64_t)
+    // This is best done in a single thread on the CPU.
 
     // overwrite ChunkSum [0..gridsdz] with its cumulative sum
     for (int64_t chunk = 0 ; chunk < nchunks_in_A ; chunk++)
@@ -914,8 +913,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // phase 5: construct global cumsum of Ck_Delta on the CPU
     //--------------------------------------------------------------------------
 
-    // FIXME: do this on the GPU?  Or in parallel on the CPU?
-    // FIXME: if on the CPU, use GB_cumsum.c (need both int32_t and int64_t)
+    // This is done on a single thread on the CPU.
 
     // overwrite ChunkSum [0..nchunks_in_C] with its cumulative sum
     int64_t cnvec = 0 ;
