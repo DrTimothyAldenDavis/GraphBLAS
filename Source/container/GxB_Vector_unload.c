@@ -19,16 +19,18 @@
 // NULL).  It type is not changed.  If on input V was in the full data format,
 // then no mallocs/frees are performed.
 
-// If readonly is returned as true, then V was created as a "shallow" vector
-// by GxB_Vector_load.  Its numerical content, V->x = (*X), was "shallow" and
-// thus treated as readonly by GraphBLAS.  Its allocation/deallocation is the
-// responsibility of the user application that created V via GxB_Vector_load.
+// If handling is returned as GxB_IS_READONLY, then V was created as a
+// "shallow" vector by GxB_Vector_load.  Its numerical content, V->x = (*X),
+// was "shallow" and thus treated as readonly by GraphBLAS.  Its
+// allocation/deallocation is the responsibility of the user application that
+// created V via GxB_Vector_load.
 
 // On output, *X is a pointer to the numerical contents of V.  If V had length
 // zero on input, *X may be returned as a NULL pointer (which is not an error).
 
-// This method removes X from the debug memtable, since X is being returned
-// to the user application.
+// If malloc debugging is enabled (which is never used in production), this
+// method removes X from the debug memtable, since X is being returned to the
+// user application.
 
 #include "GB_container.h"
 #define GB_FREE_ALL ;

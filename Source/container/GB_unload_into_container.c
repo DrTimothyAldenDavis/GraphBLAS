@@ -122,8 +122,7 @@ GrB_Info GB_unload_into_container   // GrB_Matrix -> GxB_Container
     A->plen = -1 ;
     A->vlen = 0 ;
     A->vdim = 0 ;
-//  A->nvec_nonempty = 0 ;
-    GB_nvec_nonempty_set (A, 0) ;
+    GB_nvec_nonempty_set (A, 0) ;       // atomic: A->nvec_nonempty = 0
     A->p_is_32 = false ;
     A->j_is_32 = false ;
     A->i_is_32 = false ;
