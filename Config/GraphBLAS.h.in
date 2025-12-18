@@ -8011,6 +8011,23 @@ GB_DECLARE (GxB_Iterator     )
 #endif
 
 //==============================================================================
+// GxB_atfork_* methods: handling the POSIX fork()
+//==============================================================================
+
+// If a process using GraphBLAS calls the POSIX fork() method, the new child
+// must restrict itself to using only async-signal-safe methods.  See
+// https://man7.org/linux/man-pages/man7/signal-safety.7.html .  The child
+// cannot use malloc/free, nor can it use OpenMP.
+
+// These methods are suitable for passing to pthread_atfork
+// (see https://man7.org/linux/man-pages/man3/pthread_atfork.3.html ), or for
+// non-POSIX systems such as Windows, they can be directly called.
+
+void GxB_atfork_prepare (void) ;    // the parent must call this before fork()
+void GxB_atfork_parent (void) ;     // the parent must call this after fork()
+void GxB_atfork_child (void) ;      // the child must call this after fork()
+
+//==============================================================================
 //=== Historical methods =======================================================
 //==============================================================================
 

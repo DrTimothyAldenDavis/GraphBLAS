@@ -143,5 +143,6 @@ void     GB_Global_lock_init (void) ;
 void     GB_Global_lock_destroy (void) ;
 void     GB_Global_lock_set (int k) ;
 void     GB_Global_lock_unset (int k) ;
+void     GB_Global_lock_wipe (void) ;
 #endif
 

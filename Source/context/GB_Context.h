@@ -39,6 +39,8 @@ GrB_Info GB_Context_gpu_ids_set
     int32_t ngpus                       // # of GPUs to use
 ) ;
 
+void GB_Context_disable (void) ;        // disable all Context methods
+
 #endif
 
 

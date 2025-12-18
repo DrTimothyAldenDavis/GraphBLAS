@@ -1,4 +1,4 @@
-// SuiteSparse:GraphBLAS 10.3.0
+// SuiteSparse:GraphBLAS 10.4.0
 //------------------------------------------------------------------------------
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
@@ -286,9 +286,9 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Dec 3, 2025"
+#define GxB_IMPLEMENTATION_DATE "FIXME, 2025"
 #define GxB_IMPLEMENTATION_MAJOR 10
-#define GxB_IMPLEMENTATION_MINOR 3
+#define GxB_IMPLEMENTATION_MINOR 4
 #define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "Dec 22, 2023"
 #define GxB_SPEC_MAJOR 2
@@ -8009,6 +8009,23 @@ GB_DECLARE (GxB_Iterator     )
 
 #endif
 #endif
+
+//==============================================================================
+// GxB_atfork_* methods: handling the POSIX fork()
+//==============================================================================
+
+// If a process using GraphBLAS calls the POSIX fork() method, the new child
+// must restrict itself to using only async-signal-safe methods.  See
+// https://man7.org/linux/man-pages/man7/signal-safety.7.html .  The child
+// cannot use malloc/free, nor can it use OpenMP.
+
+// These methods are suitable for passing to pthread_atfork
+// (see https://man7.org/linux/man-pages/man3/pthread_atfork.3.html ), or for
+// non-POSIX systems such as Windows, they can be directly called.
+
+void GxB_atfork_prepare (void) ;    // the parent must call this before fork()
+void GxB_atfork_parent (void) ;     // the parent must call this after fork()
+void GxB_atfork_child (void) ;      // the child must call this after fork()
 
 //==============================================================================
 //=== Historical methods =======================================================

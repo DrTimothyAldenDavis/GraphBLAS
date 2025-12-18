@@ -1239,3 +1239,10 @@ void GB_Global_lock_unset (int k)
     #endif
 }
 
+void GB_Global_lock_wipe (void)
+{
+    // disable (but do not destroy) all locks
+    memset (GB_Global.lock, 0, GB_GLOBAL_NLOCKS * sizeof (GB_OPENMP_LOCK_T)) ;
+    memset (GB_Global.lock_is_created, 0, GB_GLOBAL_NLOCKS * sizeof (bool)) ;
+}
+
