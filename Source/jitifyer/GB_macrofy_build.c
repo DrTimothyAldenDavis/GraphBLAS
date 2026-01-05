@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: add the iso case (needed for CUDA).  GB_BLD_COPY and GB_BLD_DUP
+// become empty.  Add GB_J_TYPE
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 

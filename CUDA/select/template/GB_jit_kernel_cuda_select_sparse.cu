@@ -258,7 +258,6 @@ __global__ void GB_cuda_select_sparse_phase1
             {
                 Map [pfirst + ITEMS_PER_THREAD1 * threadIdx.x + k] = t [k] ;
             }
-        }
         */
         BlockStore (W.store).Store (Map + pfirst, t) ;
 
@@ -763,7 +762,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 
     // This is best done in a single thread on the CPU.
 
-    // overwrite ChunkSum [0..gridsdz] with its cumulative sum
+    // overwrite ChunkSum [0..gridsz] with its cumulative sum
     for (int64_t chunk = 0 ; chunk < nchunks_in_A ; chunk++)
     {
         // get the # of entries found by this threadblock
