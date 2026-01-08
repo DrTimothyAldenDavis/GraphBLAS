@@ -151,16 +151,17 @@ __global__ void GB_cuda_select_sparse_phase1
 
     for (int64_t chunk = blockIdx.x ;
                  chunk < nchunks_in_A ;
-                 chunk += gridDim.x)        // "grid-stride" loop
+                 chunk += gridDim.x)        // grid-stride loop
     {
 
         //----------------------------------------------------------------------
-        // determine the chunk and its slope
+        // determine the chunk
         //----------------------------------------------------------------------
 
         int64_t pfirst = chunk << LOG2_CHUNKSIZE1 ;
         int64_t my_chunk_size ;
         #if ( Ak_SAVE ) || ( GB_DEPENDS_ON_J )
+        // detemine the slope, for computing Ak and j
         int64_t anvec1, kfirst, klast ;
         float slope ;
         GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst,
@@ -172,40 +173,45 @@ __global__ void GB_cuda_select_sparse_phase1
         #endif
 
         //----------------------------------------------------------------------
-        // find the kA-th vector that contains each entry pA = pfirst:plast-1
+        // find the kA-th vector that contains each entry p = pfirst:plast-1
         //----------------------------------------------------------------------
 
         int64_t pdelta = threadIdx.x ;
         for ( ; pdelta < my_chunk_size ;
-                pdelta += blockDim.x)       // "block-stride" loop
+                pdelta += blockDim.x)       // block-stride loop
         {
 
             //------------------------------------------------------------------
-            // determine the kA-th vector that contains the pA-th entry
+            // this thread works on the p-th entry
             //------------------------------------------------------------------
 
-            int64_t pA = pfirst + pdelta ;
+            int64_t p = pfirst + pdelta ;
+
+            //------------------------------------------------------------------
+            // determine if the p-th entry is kept
+            //------------------------------------------------------------------
+
             #if ( Ak_SAVE ) || ( GB_DEPENDS_ON_J )
-            int64_t kA = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (pA, pdelta, Ap,
+            int64_t kA = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (p, pdelta, Ap,
                 anvec1, kfirst, slope) ;
             #endif
-
-            //------------------------------------------------------------------
-            // save the vector index kA, and determine if this entry is kept
-            //------------------------------------------------------------------
-
             #if Ak_SAVE
             // save kA for future use (this is now disabled)
-            Ak [pA] = kA ;
+            Ak [p] = kA ;
             #endif
             #if ( GB_DEPENDS_ON_J )
             int64_t j = GBh_A (Ah, kA) ;
             #endif
             #if ( GB_DEPENDS_ON_I )
-            int64_t i = Ai [pA] ;
+            int64_t i = Ai [p] ;
             #endif
             // keep = fselect (A (i,j)), 1 if A(i,j) is kept, else 0
-            GB_TEST_VALUE_OF_ENTRY (keep, pA) ;
+            GB_TEST_VALUE_OF_ENTRY (keep, p) ;
+
+            //------------------------------------------------------------------
+            // save the result in Local_Map, cumsum'd below
+            //------------------------------------------------------------------
+
             Local_Map [pdelta] = keep ;
         }
 

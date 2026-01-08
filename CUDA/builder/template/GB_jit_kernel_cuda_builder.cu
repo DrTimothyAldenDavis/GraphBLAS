@@ -45,18 +45,27 @@ GB_key_t ;
 // GB_cuda_builder_phase1:
 //------------------------------------------------------------------------------
 
+// phase1 loads the (I,J,X) tuples into the (Key,Sx) workspace, and checks the
+// indices (I,J) to ensure they are in range.  It sets the global (*ok) scalar
+// to true if all indices are in range, or false if any index is out of range.
+// The CPU builder also returns the first invalid indices for the error message
+// returned to the user application; this kernel does do that.
+
+// TODO: phase1 could also check if the (I,J) indices are already in sorted
+// order.
+
 __global__ void GB_cuda_builder_phase1
 (
     // output
     GB_key_t *Key,      // size nvals+1: Key [-1...nvals-1]
     GB_Sx_TYPE *Sx,     // size nvals+1: Sx  [-1...nvals-1], NULL for iso case
-    GrB_Info *info,     // GrB_SUCCESS or GrB_INVALID_INDEX
+    bool *ok,           // if true: (I,J) are valid; false: (I,J) out of range
     // input
     GB_I_TYPE *I,       // size nvals
     GB_J_TYPE *J,       // size nvals, NULL if C is a vector
     GB_Sx_TYPE *X,      // size nvals, NULL for iso case
-    int64_t vlen,       // dimension of C
-    int64_t vdim,       // 
+    int64_t vlen,       // vector-length dimension of C (for I indices)
+    int64_t vdim,       // vector-dim dimension of C (for J indices)
     int64_t nvals       // # of tuples in (I,J,X)
 )
 {
@@ -65,7 +74,7 @@ __global__ void GB_cuda_builder_phase1
     // load the (I,J) tuples into the Key workspace
     //--------------------------------------------------------------------------
 
-    bool ok = true ;
+    bool my_ok = true ;
 
     for (int64_t p = blockIdx.x * blockDim.x + threadIdx.x ;
                  p < nvals ;
@@ -79,7 +88,7 @@ __global__ void GB_cuda_builder_phase1
         #endif
 
         // check if the indices are in range
-        ok = ok
+        my_ok = my_ok
             #if GB_IS_MATRIX
             && (j >= 0 && j < vdim)
             #endif 
@@ -101,8 +110,12 @@ __global__ void GB_cuda_builder_phase1
     // check if all indices are in range
     //--------------------------------------------------------------------------
 
-    // TODO: reduce "ok" across the threadblock and then use an atomic AND into
-    // global memory
+    this_thread_block ( ).sync ( ) ;
+
+    // TODO: reduce "my_ok" across the threadblock and then use an atomic AND
+    // into global memory, into (*ok)
+
+    this_thread_block ( ).sync ( ) ;
 
     //--------------------------------------------------------------------------
     // return result
@@ -118,8 +131,6 @@ __global__ void GB_cuda_builder_phase1
         #if !GB_ISO_BUILD
         memset (Sx [-1], 0, sizeof (GB_Sx_TYPE)) ;  // Sx [-1] = 0 (not used)
         #endif
-        // return the status
-        (*info) = ok ? GrB_SUCCESS : GrB_INVALID_INDEX ;
     }
 }
 
@@ -127,7 +138,9 @@ __global__ void GB_cuda_builder_phase1
 // GB_cuda_builder_phase3
 //------------------------------------------------------------------------------
 
-// compare with CUDA/select phase1
+// phase3 looks for duplicates in the sorted Key array.  It constructs a Map
+// array which tells each entry in (Key,Sx) where it appears in C, after a
+// cumulative sum.  It is nearly identical to CUDA/select phase1.
 
 __global__ void GB_cuda_builder_phase3
 (
@@ -143,7 +156,7 @@ __global__ void GB_cuda_builder_phase3
 {
 
     //--------------------------------------------------------------------------
-    // workspace for each threadblock (see CUDA/select_sparse)
+    // workspace for each threadblock (IDENTICAL to select/phase1)
     //--------------------------------------------------------------------------
 
     __shared__ Int Local_Map [CHUNKSIZE1] ;
@@ -165,7 +178,7 @@ __global__ void GB_cuda_builder_phase3
     //--------------------------------------------------------------------------
 
     for (int64_t chunk = blockIdx.x ;
-                 chunk < nchunks_in_IJX ;
+                 chunk < nchunks_in_IJX ;   // DIFFERS from select/phase1
                  chunk += gridDim.x)        // grid-stride loop
     {
 
@@ -174,9 +187,14 @@ __global__ void GB_cuda_builder_phase3
         //----------------------------------------------------------------------
 
         int64_t pfirst = chunk << LOG2_CHUNKSIZE1 ;
+        int64_t my_chunk_size ;
+        #if 0
+        #else
+        // this computation is just the 2nd #if case of select/phase1:
         int64_t plast = pfirst + CHUNKSIZE1 ;
         plast = GB_IMIN (plast, anz) ;
-        int64_t my_chunk_size = plast - pfirst ;
+        my_chunk_size = plast - pfirst ;
+        #endif
 
         //----------------------------------------------------------------------
         // determine the first unique tuple in each sequence of duplicates
@@ -187,7 +205,17 @@ __global__ void GB_cuda_builder_phase3
                 pdelta += blockDim.x)       // block-stride loop
         {
 
+            //------------------------------------------------------------------
+            // this thread works on the p-th entry
+            //------------------------------------------------------------------
+
             int64_t p = pfirst + pdelta ;
+
+            //------------------------------------------------------------------
+            // determine if the p-th entry is kept
+            //------------------------------------------------------------------
+
+            // this phase DIFFERS from select/phase1
 
             // get the indices
             GB_KEY_TYPE iprev = Key [p-1].i ;
@@ -196,14 +224,23 @@ __global__ void GB_cuda_builder_phase3
             GB_KEY_TYPE jprev = Key [p-1].j ;
             GB_KEY_TYPE j     = Key [p  ].j ;
             #endif
-
-            // Local_Map [pdelta] = 1 if (i,j) is unique, 0 if duplicate
-            Local_Map [pdelta] = (i != iprev)
+            // keep = 1 if (i,j) is unique, 0 if duplicate
+            bool keep = (i != iprev)
                 #if GB_IS_MATRIX
                 || (j != jprev)
                 #endif
                 ;
+
+            //------------------------------------------------------------------
+            // save the result in Local_Map, cumsum'd below
+            //------------------------------------------------------------------
+
+            Local_Map [pdelta] = keep ;
         }
+
+        //----------------------------------------------------------------------
+        // the remainder is IDENTICAL to select/phase1:
+        //----------------------------------------------------------------------
 
         // clear the unused part of the Local_Map
         for ( ; pdelta < CHUNKSIZE1 ;
@@ -278,51 +315,68 @@ __global__ void GB_cuda_builder_phase3
 //------------------------------------------------------------------------------
 // OUTLINE
 
-/*
+/*  Example, assuming a chunksize of 4, with 14 tuples and 3 duplicates
+    marked with (*).  The first entry of each set of duplicates is marked
+    with (^)
 
-    for (k = 0 to nnz-1)
-    {
-        S.j [k] = J [k] ;
-        S.i [k] = I [k] ;
-        S.k [k] = k ;
-        also check if already sorted?
-        check if indices are out of bounds
-    }
+    J:         [ 0 1 0 0 | 0 1 1 1 | 2 2 4 1 | 4 4 ]
+    I:         [ 0 3 1 2 | 1 4 5 5 | 3 4 3 5 | 0 1 ]
+    status:          ^     *   ^ *         *
 
-    S.j: [ 0 1 0 0 0 1 1 1 1 2  2  2  4  4 ..   ]
-    S.i: [ 0 3 1 2 3 4 5 5 7 3  4  5  0  1 ...  ]
-    S.k: [ 0 1 2 3 4 5 6 7 8 10 11 12 13 14 ... ]
+    builder/phase1 loads the (I,J,X) tuples into (Key,Sx) and ensures the
+    indices are in range.  builder/phase2 sorts them in (Key,Sx) has sorted
+    tuples:
 
-    if (not sorted)
-    {
-        sort S using CUB (radix)
-    }
+    output of builder/phase2 (Sx values not shown):
+    Key.j:  -1 [ 0 0 0 0 | 1 1 1 1 | 1 2 2 4 | 4 4 ]
+    Key.i:  -1 [ 0 1 1 2 | 3 4 5 5 | 5 3 4 0 | 1 3 ]
+    status:        ^ *         ^ *   *
 
-    now S has sorted tuples, all in valid range
+    builder/phase3 determines which entries are the first in a sequence of
+    duplicates (output: Map), and which entries are the first in their
+    respective vectors (output: JDelta).  The output after builder/phase3 is
+    shown below, where LMap = Local_Map (a temporary shared array in each
+    threadblock of phase3).  Map is the local cumsum of LMap.  Note the padding
+    of LMap, Map, LJDelta, and JDelta.  Any given sequence of duplicates can
+    span across the chunks (the (1,5) entry does so).
 
-    S.j: [ 0 0 0 0 1 1 1 1 1 2 2 2 4 4 ..   ]
-    S.i: [ 0 1 1 2 3 4 5 5 7 3 4 5 0 1 ...
-    S.k: [ 0 2         6 7                  ]
-            X[2]
+    LJDelta is 1 if the entry is the first in its vector (a leading entry), held
+    in a temporary shared array in each threadblock.  It is computed from Key.j
+    only and is not affected by the presence of duplicates.  JDelta is the local
+    cumsum of LJDelta.  The (@) denotes the leading entry of each vector in C.
+
+    inputs:
+    Key.j:  -1 [ 0 0 0 0 | 1 1 1 1 | 1 2 2 4 | 4 4 ]
+    Key.i:  -1 [ 0 1 1 2 | 3 4 5 5 | 5 3 4 0 | 1 3 ]
+    status:        ^ *         ^ *   *
+    output:
+    LMap:      [ 1 1 0 1 | 1 1 1 0 | 0 1 1 1 | 1 1 - - ]
+    Map:     0 [ 1 2 2 3 | 1 2 3 3 | 0 1 2 3 | 1 2 2 2 ]
+    LJDelta: 0 [ 1 0 0 0 | 1 0 0 0 | 0 1 0 1 | 0 0 0 0 ]
+    JDelta:  0 [ 1 1 1 1 | 1 1 1 1 | 0 1 1 2 | 0 0 0 0 ]
+                 @         @           @   @           <---start of vectors in C
+
+    ChunkSum [-1..nchunks_in_IXJ] is the # of non-duplicates to be kept in each
+    chunk, with ChunkSum [-1] = 0 and ChunkSum [nchunks_in_IJX] = 0 for now.
+    This matrix will have 11 total entries, which is the total sum of ChunkSum:
+             0 [       3 |       3 |       3 |       2 ] 0
+
+    JDeltaSum [-1..nchunks_in_IXJ] is the # of leading entries in each chunk,
+    with JDeltaSum [-1] = 0.  This matrix has 4 unique values of J (0, 1, 2,
+    and 4), which is the total sum of JDeltaSum:
+             0 [       1 |       1 |       2 |       0 ] 0
+
+    builder/phase4 allocates the output Cp, Ch, Ci, and Cx arrays and then
+    moves the data from (Key,Sx) into (Cp,Ch,Ci,Cx), applying the dup operator
+    to "sum" up the values of the duplicates as it does so.  Each sequence of
+    duplicates is a handled by a single thread in a single threadblock.  This
+    assumes there are not many duplicates for each entry.
 
 
-    find all duplicates: First(k) = 1 if this is not a duplicate or the First
-    in a series of dupls
 
-    S.j: [ 0 0 0 0 1 1 1 1 1 2 2 2 4 4 ..   ]
-    S.i: [ 0 1 1 2 3 4 5 5 7 3 4 5 0 1 ...
-    S.k: [ 0 2 4       6 7                  ]
-    First[ 1 1 0 1 1 1 1 0 ...
 
-    allocate the output Ci and Cx arrays, and temporary Cj array
 
-    move data and sum up all duplicates:
 
-        each set of duplicates must be handled by a single thread in a
-        single threadblock; assume not too many duplicates for each entry
-        This phase moves the data from S into Cj, Ci, and Cx.
-        S.j cannot be used for Cj because the data is shifted if duplicates
-        appear.
 
         Need to do a global cumsum of First to know where to move the data
 
@@ -373,8 +427,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
     //--------------------------------------------------------------------------
     // declare workspace
     //--------------------------------------------------------------------------
-
-    GrB_Info info ;
 
     void *W_0 = NULL ; size_t W_0_size = 0 ;    // workspace of size nvals+1
     void *W_1 = NULL ; size_t W_1_size = 0 ;    // workspace of size nvals+1
@@ -428,16 +480,15 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
     // TODO: check for valid indices could be skipped if this method knows its
     // I,J inputs are already valid.
 
-    int64_t vlen = C->vlen ;
-    int64_t vdim = C->vdim ;
+    bool ok = true ;
 
     GB_cuda_builder_phase1 <<<grid, block1, 0, stream>>>
-        (Key, Sx, &info, I, J, X, vlen, vdim, nvals) ;
+        (Key, Sx, &ok, I, J, X, (int64_t) C->vlen, (int64_t) C->vdim, nvals) ;
 
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-    GB_OK (info) ;
+    GB_OK (ok ? GrB_SUCCESS : GrB_INVALID_INDEX) ;
 
     //--------------------------------------------------------------------------
     // phase2: CUB radix sort of (Key,Sx)
