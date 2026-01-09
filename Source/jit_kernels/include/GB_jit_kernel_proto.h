@@ -840,18 +840,35 @@ GrB_Info GB_jit_kernel_select_sparse                                        \
     const GB_callback_struct *restrict my_callback                          \
 )
 
-#define GB_JIT_CUDA_KERNEL_DOT3_PROTO(GB_jit_kernel_AxB_dot3)           \
-GrB_Info GB_jit_kernel_AxB_dot3                                         \
-(                                                                       \
-    GrB_Matrix C,                                                       \
-    const GrB_Matrix M,                                                 \
-    const GrB_Matrix A,                                                 \
-    const GrB_Matrix B,                                                 \
-    cudaStream_t stream,                                                \
-    int device,                                                         \
-    int number_of_sms,                                                  \
-    const void *theta,                                                  \
-    const GB_callback_struct *restrict my_callback                      \
+#define GB_JIT_CUDA_KERNEL_DOT3_PROTO(GB_jit_kernel_AxB_dot3)               \
+GrB_Info GB_jit_kernel_AxB_dot3                                             \
+(                                                                           \
+    GrB_Matrix C,                                                           \
+    const GrB_Matrix M,                                                     \
+    const GrB_Matrix A,                                                     \
+    const GrB_Matrix B,                                                     \
+    cudaStream_t stream,                                                    \
+    int device,                                                             \
+    int number_of_sms,                                                      \
+    const void *theta,                                                      \
+    const GB_callback_struct *restrict my_callback                          \
+)
+
+#define GB_JIT_CUDA_KERNEL_PROTO(GB_jit_kernel_builder)                     \
+GrB_Info GB_jit_kernel_builder                                              \
+(                                                                           \
+    GrB_Matrix *Thandle,    /* matrix to build */                           \
+    const GrB_Type ttype,   /* type of T (matches GB_Tx_TYPE) */            \
+    const int64_t vlen,     /* length of each vector of T */                \
+    const int64_t vdim,     /* # of vectors in T */                         \
+    const bool is_csc,      /* true if T is CSC, false if CSR */            \
+    const GB_void *I,       /* row indices of type GB_I_TYPE */             \
+    const GB_void *J,       /* column indices of type GB_J_TYPE */          \
+    const GB_void *X,       /* values of type GB_X_TYPE */                  \
+    const int64_t nvals,    /* # of tuples in (I,J,X) */                    \
+    cudaStream_t stream,                                                    \
+    int32_t gridsz,                                                         \
+    const GB_callback_struct *restrict my_callback                          \
 )
 
 //------------------------------------------------------------------------------

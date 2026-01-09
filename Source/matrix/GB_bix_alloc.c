@@ -19,7 +19,7 @@
 
 #include "GB.h"
 
-// The prototype is in Source/callback:
+// The prototype is in Source/callback/GB_callbacks.h:
 //
 //  GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x in a matrix
 //  (

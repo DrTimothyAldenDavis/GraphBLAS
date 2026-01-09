@@ -10,14 +10,6 @@
 #ifndef GB_MATRIX_H
 #define GB_MATRIX_H
 
-typedef enum                    // input parameter to GB_new and GB_new_bix
-{
-    GB_ph_calloc,               // 0: calloc A->p, malloc A->h if hypersparse
-    GB_ph_malloc,               // 1: malloc A->p, malloc A->h if hypersparse
-    GB_ph_null                  // 2: do not allocate A->p or A->h
-}
-GB_ph_code ;
-
 GrB_Info GB_Matrix_new          // create a new matrix with no entries
 (
     GrB_Matrix *A,              // handle of matrix to create
@@ -43,6 +35,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     bool i_is_32                // if true, A->i is 32 bit; 64 bit otherwise
 ) ;
 
+/*
 GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
 (
     GrB_Matrix *Ahandle,        // output matrix to create
@@ -63,6 +56,7 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     bool j_is_32,               // if true, A->h and A->Y are 32 bit; else 64
     bool i_is_32                // if true, A->i is 32 bit; 64 bit otherwise
 ) ;
+*/
 
 GrB_Info GB_ix_realloc      // reallocate space in a matrix
 (
@@ -95,10 +89,12 @@ void GB_phybix_free             // free all content of a matrix
     GrB_Matrix A                // matrix with content to free
 ) ;
 
+/*
 void GB_Matrix_free             // free a matrix
 (
     GrB_Matrix *Ahandle         // handle of matrix to free
 ) ;
+*/
 
 GrB_Info GB_shallow_copy    // create a purely shallow matrix
 (

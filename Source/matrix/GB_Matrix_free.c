@@ -13,10 +13,16 @@
 
 #include "GB.h"
 
+// prototype is in Source/callbacks/GB_callbacks.h
+
+#if 0
 void GB_Matrix_free             // free a matrix
 (
     GrB_Matrix *Ahandle         // handle of matrix to free
 )
+#endif
+
+GB_CALLBACK_MATRIX_FREE_PROTO (GB_Matrix_free)
 {
     if (Ahandle != NULL)
     {

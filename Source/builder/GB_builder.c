@@ -1558,7 +1558,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                         /* zwork = f (xwork, ywork) */                  \
                         GB_void zwork [GB_VLA(zsize)] ;                 \
                         fdup (zwork, xwork, ywork) ;                    \
-                        /* Tx [tnz-1] = (ttype) zwork */                \
+                        /* Tx [p] = (ttype) zwork */                    \
                         cast_Z_to_T (Tx +((p)*tsize), zwork, zsize) ;   \
                     }
 

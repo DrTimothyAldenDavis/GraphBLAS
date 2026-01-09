@@ -79,4 +79,5 @@ extern "C"
 #include "include/GB_cuda_error.hpp"
 #include "include/GB_cuda_atomics.cuh"
 #include "include/GB_cuda_timer.hpp"
+#include "include/GB_cuda_cub_support.cuh"
 

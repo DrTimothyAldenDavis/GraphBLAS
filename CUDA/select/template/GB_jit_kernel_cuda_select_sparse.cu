@@ -134,16 +134,7 @@ __global__ void GB_cuda_select_sparse_phase1
     __shared__ Int Local_Map [CHUNKSIZE1] ;
 
     // cub::Block* workspace:
-    using BlockLoad  = cub::BlockLoad  <Int, BLOCKDIM1, ITEMS_PER_THREAD1> ;
-    using BlockScan  = cub::BlockScan  <Int, BLOCKDIM1,
-                                             cub::BLOCK_SCAN_WARP_SCANS> ;
-    using BlockStore = cub::BlockStore <Int, BLOCKDIM1, ITEMS_PER_THREAD1> ;
-    __shared__ union
-    {
-        typename BlockLoad::TempStorage load ;
-        typename BlockScan::TempStorage scan ;
-        typename BlockStore::TempStorage store ;
-    } W ;
+    GB_CUB_BLOCK_WORKSPACE (W, Int, BLOCKDIM1, ITEMS_PER_THREAD1) ;
 
     //--------------------------------------------------------------------------
     // compute Ak, and each local chunk of Map
@@ -428,16 +419,7 @@ __global__ void GB_cuda_select_sparse_phase4
     __shared__ Int Local_Ck_Delta [CHUNKSIZE2] ;
 
     // cub::Block* workspace:
-    using BlockLoad  = cub::BlockLoad  <Int, BLOCKDIM2, ITEMS_PER_THREAD2> ;
-    using BlockScan  = cub::BlockScan  <Int, BLOCKDIM2,
-                                             cub::BLOCK_SCAN_WARP_SCANS> ;
-    using BlockStore = cub::BlockStore <Int, BLOCKDIM2, ITEMS_PER_THREAD2> ;
-    __shared__ union
-    {
-        typename BlockLoad::TempStorage load ;
-        typename BlockScan::TempStorage scan ;
-        typename BlockStore::TempStorage store ;
-    } W ;
+    GB_CUB_BLOCK_WORKSPACE (W, Int, BLOCKDIM2, ITEMS_PER_THREAD2) ;
 
     //--------------------------------------------------------------------------
     // construct Ck_Delta and then cumsum each block

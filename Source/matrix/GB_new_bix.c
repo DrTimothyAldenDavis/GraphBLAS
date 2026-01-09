@@ -30,6 +30,9 @@
 
 #include "GB.h"
 
+// The prototype is in Source/callback/GB_callbacks.h:
+
+#if 0
 GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
 (
     GrB_Matrix *Ahandle,        // output matrix to create
@@ -50,6 +53,9 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     bool j_is_32,               // if true, A->h and A->Y are 32 bit; else 64
     bool i_is_32                // if true, A->i is 32 bit; 64 bit otherwise
 )
+#endif
+
+GB_CALLBACK_NEW_BIX_PROTO (GB_new_bix)
 {
 
     //--------------------------------------------------------------------------

@@ -64,6 +64,7 @@
 #include "include/GB_prefix.h"
 #include "include/GB_defaults.h"
 #include "include/GB_rand.h"
+#include "include/GB_ph_code.h"
 
 #ifdef GB_JIT_KERNEL
 
