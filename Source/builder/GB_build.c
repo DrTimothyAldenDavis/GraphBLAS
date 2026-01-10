@@ -254,6 +254,8 @@ GrB_Info GB_build               // build matrix
     GB_phybix_free (C) ;
 
     //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
     // build the matrix T
     //--------------------------------------------------------------------------
 
@@ -262,6 +264,8 @@ GrB_Info GB_build               // build matrix
     bool Tp_is_32, Tj_is_32, Ti_is_32 ;
     GB_determine_pji_is_32 (&Tp_is_32, &Tj_is_32, &Ti_is_32,
         GxB_HYPERSPARSE, nvals, C->vlen, C->vdim, Werk) ;
+
+    // CUDA branch here
 
     // T is always built as hypersparse.  Its type is the same as the z output
     // of the z=dup(x,y) operator if dup is present, or xtype if dup is NULL.
