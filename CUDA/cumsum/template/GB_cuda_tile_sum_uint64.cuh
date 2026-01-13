@@ -20,7 +20,7 @@
 
 __device__ __inline__ uint64_t GB_cuda_tile_sum_uint64
 (
-    thread_block_tile<tile_sz> tile,
+    thread_block_tile<GB_CUDA_TILE_SIZE> tile,
     uint64_t value
 )
 {
@@ -35,7 +35,7 @@ __device__ __inline__ uint64_t GB_cuda_tile_sum_uint64
     // sum value on all threads to a single value
     //--------------------------------------------------------------------------
 
-    #if (tile_sz == 32)
+    #if (GB_CUDA_TILE_SIZE == 32)
     {
         // this is the typical case
         value += tile.shfl_down (value, 16) ;
@@ -46,9 +46,10 @@ __device__ __inline__ uint64_t GB_cuda_tile_sum_uint64
     }
     #else
     {
-        // tile_sz is less than 32 (either 1, 2, 4, 8, or 16)
+        // GB_CUDA_TILE_SIZE is less than 32 (either 1, 2, 4, 8, or 16);
+        // this code is currently unused
         #pragma unroll
-        for (int offset = tile_sz >> 1 ; offset > 0 ; offset >>= 1)
+        for (int offset = GB_CUDA_TILE_SIZE >> 1 ; offset > 0 ; offset >>= 1)
         {
             value += tile.shfl_down (value, offset) ;
         }

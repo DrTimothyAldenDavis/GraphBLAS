@@ -2,9 +2,6 @@
 
 using namespace cooperative_groups ;
 
-#define tile_sz 32
-#define log2_tile_sz 5
-
 #include "template/GB_cuda_tile_sum_uint64.cuh"
 #include "template/GB_cuda_threadblock_sum_uint64.cuh"
 

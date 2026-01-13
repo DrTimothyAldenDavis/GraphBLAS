@@ -13,6 +13,10 @@
 #ifndef GB_CUDA_GEOMETRY_H
 #define GB_CUDA_GEOMETRY_H
 
+// tile geometry for reductions (used in many kernels)
+#define GB_CUDA_TILE_SIZE 32
+#define GB_CUDA_LOG2_TILE_SIZE 5
+
 // select sparse CUDA kernel
 #define GB_CUDA_SELECT_SPARSE_BLOCKDIM1 512
 #define GB_CUDA_SELECT_SPARSE_BLOCKDIM1_LOG2 9

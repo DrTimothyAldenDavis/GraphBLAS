@@ -31,8 +31,6 @@
 // with GB_cuda_ek_slice_setup, for example.
 #define chunk_size 128
 #define log2_chunk_size 7
-#define tile_sz 32 
-#define log2_tile_sz 5 
 #define shared_vector_size 256 
 #define threads_per_block 32
 
