@@ -258,7 +258,15 @@ bool GB_cuda_AxB_dot3_branch
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy               // if true, do z=fmult(b,a) vs fmult(a,b)
-);
+) ;
+
+bool GB_cuda_builder_branch
+(
+    const GrB_Matrix C,
+    const GrB_BinaryOp dup,
+    const GrB_Type xtype,
+    const uint64_t nvals
+) ;
 
 #endif
 
