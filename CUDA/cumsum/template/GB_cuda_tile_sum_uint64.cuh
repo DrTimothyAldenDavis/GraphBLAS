@@ -11,6 +11,9 @@
 // See template/GB_cuda_tile_reduce_ztype.cuh for a description of
 // tile.shfl_down.
 
+// NOTE: this method is currently in the cumsum/template folder, but it does
+// a simple summation, not a cumsum.
+
 //------------------------------------------------------------------------------
 // GB_cuda_tile_sum_uint64: reduce a uint64_t value across a single warp
 //------------------------------------------------------------------------------

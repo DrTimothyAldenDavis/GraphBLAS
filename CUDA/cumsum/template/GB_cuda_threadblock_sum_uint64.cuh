@@ -17,6 +17,9 @@
 // tiled_partition<GB_CUDA_TILE_SIZE>(g) ensures each tile is synchronized,
 // which is sufficient for the following call to GB_cuda_tile_sum_uint64.
 
+// NOTE: this method is currently in the cumsum/template folder, but it does
+// a simple summation, not a cumsum.
+
 __inline__ __device__ uint64_t GB_cuda_threadblock_sum_uint64
 (
     uint64_t val

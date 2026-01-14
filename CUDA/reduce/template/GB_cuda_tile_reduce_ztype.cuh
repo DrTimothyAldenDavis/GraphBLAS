@@ -30,13 +30,14 @@
 //          dest = (the value of src on thread tid+offset)
 //      }
 //
-// Where tid ranges from 0 to the GB_CUDA_TILE_SIZE-1, which is the warp size of 32
-// (the size of the tile, given by tile.num_threads() and also the #define'd
-// value GB_CUDA_TILE_SIZE), minus one.  If tid+offset >= GB_CUDA_TILE_SIZE for the ith thread,
-// then nothing happens for that thread, and the thread is inactive.
+// Where tid ranges from 0 to the GB_CUDA_TILE_SIZE-1, which is the warp size
+// of 32 (the size of the tile, given by tile.num_threads() and also the
+// #define'd value GB_CUDA_TILE_SIZE), minus one.  If tid+offset >=
+// GB_CUDA_TILE_SIZE for the ith thread, then nothing happens for that thread,
+// and the thread is inactive.
 //
-// Restrictions:  GB_CUDA_TILE_SIZE must be a power of 2, and it must be 32 or less for
-// tile.shfl_down().  The type T must be trivially-copyable (that is
+// Restrictions:  GB_CUDA_TILE_SIZE must be a power of 2, and it must be 32 or
+// less for tile.shfl_down().  The type T must be trivially-copyable (that is
 // is_trivially_copyable<T>::value must be true), and sizeof (T) <= 32 must
 // hold (that is, the size of T must be 32 bytes or less).  The 32-byte limit
 // is handled by GB_cuda_shfl_down_large_ztype, which uses repeated calls to
