@@ -25,6 +25,10 @@
     GB_FREE_WORKSPACE ;                     \
 }
 
+using namespace cooperative_groups ;
+#include "template/GB_cuda_tile_and_bool.cuh"
+#include "template/GB_cuda_threadblock_and_bool.cuh"
+
 //------------------------------------------------------------------------------
 // typedefs and geometry
 //------------------------------------------------------------------------------
@@ -64,7 +68,7 @@ __global__ void GB_cuda_builder_phase1
 (
     // output
     GB_key_t *Key_in,   // size nvals+1: Key_in [-1...nvals-1]
-    bool *ok,           // if true: (I,J) are valid; false: (I,J) out of range
+    uint32_t *ok,       // if true: (I,J) are valid; false: (I,J) out of range
     // input
     const GB_I_TYPE *I, // size nvals
     #if GB_IS_MATRIX
@@ -111,20 +115,14 @@ __global__ void GB_cuda_builder_phase1
     // check if all indices are in range
     //--------------------------------------------------------------------------
 
-    this_thread_block ( ).sync ( ) ;
-
-    // TODO: reduce "my_ok" across the threadblock and then use an atomic AND
-    // into global memory, into (*ok)
-
-    this_thread_block ( ).sync ( ) ;
-
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
-
-    if (threadIdx.x == 0 && blockIdx.x == 0)
+    // reduce my_ok for all threads in this threadblock, to ok_threadblock
+    uint32_t ok_threadblock = (uint32_t) GB_cuda_threadblock_and_bool (my_ok) ;
+    if (threadIdx.x == 0)
     {
-        // TODO: do atomic AND into (*ok) here
+        // Thread 0 of each threadblock uses an atomic to update the single
+        // (*ok) result.  CUDA cannot do atomics on a single byte, so use
+        // times on uint32_t.
+        GB_cuda_atomic_times <uint32_t> (ok, ok_threadblock) ;
     }
 }
 
@@ -584,7 +582,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
     // shift by one so Key_in [-1...nvals-1] can be used
     GB_key_t *Key_in = ((GB_key_t *) W_0) + 1 ;
 
-    bool ok = true ;
+    uint32_t ok = 1 ;
 
     GB_cuda_builder_phase1 <<<grid, block1, 0, stream>>>
         (/* outputs: */ Key_in, &ok,
