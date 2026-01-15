@@ -95,6 +95,7 @@
 // format C is returned in.
 
 // The input arrays I, J, and X are not modified.
+#define GB_DEBUG
 
 #define GB_FREE_ALL GrB_Matrix_free (&T) ;
 #include "builder/GB_build.h"
@@ -223,7 +224,7 @@ GrB_Info GB_build               // build matrix
                 "not supported as dup op\n", dup->name) ;
         }
 
-        ASSERT_BINARYOP_OK (dup, "dup for assembling duplicates", GB0) ;
+        ASSERT_BINARYOP_OK (dup, "dup for assembling duplicates", GB5) ;
 
         // check types of dup
         if (dup->xtype != dup->ztype || dup->ytype != dup->ztype)
@@ -255,7 +256,7 @@ GrB_Info GB_build               // build matrix
     GB_phybix_free (C) ;
 
     //--------------------------------------------------------------------------
-    // build the matrix T
+    // determine the type and 32/64-bit integer sizes of T
     //--------------------------------------------------------------------------
 
     GrB_Type ttype = (discard_duplicates) ? xtype : dup->ztype ;
@@ -266,12 +267,15 @@ GrB_Info GB_build               // build matrix
     GB_determine_pji_is_32 (&Tp_is_32, &Tj_is_32, &Ti_is_32,
         GxB_HYPERSPARSE, nvals, C->vlen, C->vdim, Werk) ;
 
-    info = GrB_NO_VALUE ;
+    //--------------------------------------------------------------------------
+    // build the matrix T on the GPU if possible
+    //--------------------------------------------------------------------------
 
-#if 0
+    info = GrB_NO_VALUE ;
     #if defined ( GRAPHBLAS_HAS_CUDA )
     if (GB_cuda_builder_branch (C, dup2, xtype, nvals))
     {
+        // Build the matrix on the GPU.
         // TODO: should be able to construct T with C->type
         info = GB_cuda_builder (
             &T,                     // create T using a dynamic header
@@ -300,7 +304,10 @@ GrB_Info GB_build               // build matrix
         }
     }
     #endif
-#endif
+
+    //--------------------------------------------------------------------------
+    // build the matrix T on the CPU if the GPU didn't build it
+    //--------------------------------------------------------------------------
 
     if (info == GrB_NO_VALUE)
     {
@@ -353,6 +360,11 @@ GrB_Info GB_build               // build matrix
 
     }
 
+    if (info == GrB_SUCCESS)
+    {
+        ASSERT_MATRIX_OK (T, "T built", GB5) ;
+    }
+
     //--------------------------------------------------------------------------
     // return an error if any duplicates found when they were not expected
     //--------------------------------------------------------------------------
@@ -361,11 +373,11 @@ GrB_Info GB_build               // build matrix
     if (dup == NULL && nvals != tnvals)
     { 
         // T has been successfully built by ignoring the duplicate values, via
-        // the implicit SECOND dup operator.  If the # of entries in T does not
-        // match nvals, then duplicates have been detected.  In the v2.0 C API,
-        // this is an error condition.  If the user application wants the C
-        // matrix returned with duplicates discarded, use dup = GxB_IGNORE_DUP
-        // instead.
+        // the implicit SECOND dup operator constructed by GB_binop_second.  If
+        // the # of entries in T does not match nvals, then duplicates have
+        // been detected.  In the v2.0 C API, this is an error condition.  If
+        // the user application wants the C matrix returned with duplicates
+        // discarded, use dup = GxB_IGNORE_DUP instead.
         GB_FREE_ALL ;
         GB_ERROR (GrB_INVALID_VALUE, "Duplicates appear (" GBd ") but dup "
             "is NULL", ((int64_t) nvals) - tnvals) ;

@@ -10,11 +10,6 @@
 #ifndef GB_CONVERT_H
 #define GB_CONVERT_H
 
-// these parameters define the hyper_switch needed to ensure matrix stays
-// either always hypersparse, or never hypersparse.
-#define GB_ALWAYS_HYPER (1.0)
-#define GB_NEVER_HYPER  (-1.0)
-
 // determine the sparsity_control for a matrix
 int GB_sparsity_control     // revised sparsity_control
 (

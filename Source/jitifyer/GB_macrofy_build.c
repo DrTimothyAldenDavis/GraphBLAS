@@ -235,12 +235,13 @@ void GB_macrofy_build           // construct all macros for GB_build
     }
 
     //--------------------------------------------------------------------------
-    // iso, is_matrix
+    // iso, is_matrix, duplicates
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// type of build:\n") ;
     fprintf (fp, "#define GB_BUILD_MATRIX %d\n", is_mat) ;
     fprintf (fp, "#define GB_ISO_BUILD %d\n", iso) ;
+    fprintf (fp, "#define GB_NO_DUPLICATES %d\n", no_dupl) ;
 
     //--------------------------------------------------------------------------
     // 32/64 integer arrays
@@ -255,11 +256,15 @@ void GB_macrofy_build           // construct all macros for GB_build
     fprintf (fp, "#define GB_Ti_BITS %d\n", Ti_is_32 ? 32 : 64) ;
     fprintf (fp, "#define GB_I_TYPE  %s\n", I_is_32  ? "uint32_t":"uint64_t") ;
     fprintf (fp, "#define GB_J_TYPE  %s\n", J_is_32  ? "uint32_t":"uint64_t") ;
+
+    // K array for CPU kernels only:
     fprintf (fp, "#define GB_K_TYPE  %s\n", K_is_32  ? "uint32_t":"uint64_t") ;
     fprintf (fp, "#define GB_K_WORK(k) %s\n", K_is_null ? "k" : "K_work [k]") ;
     fprintf (fp, "#define GB_K_IS_NULL %d\n", K_is_null) ;
-    fprintf (fp, "#define GB_KEY_TYPE %s\n",Key_is_32? "uint32_t":"uint64_t") ;
-    fprintf (fp, "#define GB_NO_DUPLICATES %d\n", no_dupl) ;
+
+    // Key type for CUDA kernels only:
+    fprintf (fp, "#define GB_KEY_TYPE %s\n", Key_is_32 ? "uint32_t":"uint64_t");
+    fprintf (fp, "#define GB_KEY_BITS %d\n", Key_is_32 ? 32 : 64) ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions

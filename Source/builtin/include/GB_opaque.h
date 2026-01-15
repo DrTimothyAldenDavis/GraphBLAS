@@ -535,6 +535,11 @@ typedef struct GB_Pending_struct *GB_Pending ;
 // true if A is sparse (but not hypersparse)
 #define GB_IS_SPARSE(A) ((A) != NULL && ((A)->h == NULL) && (A)->p != NULL)
 
+// these parameters define the hyper_switch needed to ensure matrix stays
+// either always hypersparse, or never hypersparse.
+#define GB_ALWAYS_HYPER (1.0)
+#define GB_NEVER_HYPER  (-1.0)
+
 struct GB_Scalar_opaque     // content of GrB_Scalar: 1-by-1 standard CSC matrix
 {
     #include "include/GB_Matrix_content.h"

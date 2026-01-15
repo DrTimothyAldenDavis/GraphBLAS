@@ -278,25 +278,25 @@ void GX_p_slice                 /* slice Ap, 32-bit or 64-bit */            \
 )
 
 #define GB_CALLBACK_NEW_BIX_PROTO(GX_new_bix)                               \
-GrB_Info GX_new_bix             /* create a new matrix, incl. A->b, A->i, A->x */   \
-(                                                                                   \
-    GrB_Matrix *Ahandle,        /* output matrix to create */                       \
-    const GrB_Type type,        /* type of output matrix */                         \
-    const int64_t vlen,         /* length of each vector */                         \
-    const int64_t vdim,         /* number of vectors */                             \
-    const GB_ph_code Ap_option, /* allocate A->p and A->h, or leave NULL */         \
-    const bool is_csc,          /* true if CSC, false if CSR */                     \
-    const int sparsity,         /* hyper, sparse, bitmap, full, or auto */          \
-    const bool bitmap_calloc,   /* if true, calloc A->b, otherwise use malloc */    \
-    const float hyper_switch,   /* A->hyper_switch, unless auto */                  \
-    const int64_t plen,         /* size of A->p and A->h, if hypersparse */         \
-    const int64_t nzmax,        /* number of nonzeros the matrix must hold; */      \
-                                /* ignored if A is iso and full */                  \
-    const bool numeric,         /* if true, allocate A->x, else A->x is NULL */     \
-    const bool A_iso,           /* if true, allocate A as iso */                    \
-    bool p_is_32,               /* if true, A->p is 32 bit; 64 bit otherwise */     \
-    bool j_is_32,               /* if true, A->h and A->Y are 32 bit; else 64 */    \
-    bool i_is_32                /* if true, A->i is 32 bit; 64 bit otherwise */     \
+GrB_Info GX_new_bix     /* create a new matrix, incl. A->b, A->i, A->x */   \
+(                                                                           \
+    GrB_Matrix *Ahandle,        /* output matrix to create */               \
+    const GrB_Type type,        /* type of output matrix */                 \
+    const int64_t vlen,         /* length of each vector */                 \
+    const int64_t vdim,         /* number of vectors */                     \
+    const GB_ph_code Ap_option, /* allocate A->p and A->h, or leave NULL */ \
+    const bool is_csc,          /* true if CSC, false if CSR */             \
+    const int sparsity,         /* hyper, sparse, bitmap, full, or auto */  \
+    const bool bitmap_calloc,   /* if true, calloc A->b, else use malloc */ \
+    const float hyper_switch,   /* A->hyper_switch, unless auto */          \
+    const int64_t plen,         /* size of A->p and A->h, if hypersparse */ \
+    const int64_t nzmax,        /* # of nonzeros the matrix must hold; */   \
+                                /* ignored if A is iso and full */          \
+    const bool numeric,         /* if true, allocate A->x, else it's NULL */\
+    const bool A_iso,           /* if true, allocate A as iso */            \
+    bool p_is_32,               /* if true, A->p is 32 bit; else 64 */      \
+    bool j_is_32,               /* if true, A->h, A->Y are 32 bit else 64 */\
+    bool i_is_32                /* if true, A->i is 32 bit; else 64 */      \
 )
 
 #define GB_CALLBACK_MATRIX_FREE_PROTO(GX_Matrix_free)                       \
