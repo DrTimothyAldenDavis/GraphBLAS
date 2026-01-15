@@ -1349,8 +1349,10 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
                 // T and Sx are iso; set iso value and delete duplicates
                 memcpy (Tx, Sx, tsize) ;
-                #define GB_ISO_BUILD
+                #define GB_ISO_BUILD 1
                 #include "builder/template/GB_bld_template.c"
+                #undef  GB_ISO_BUILD
+                #define GB_ISO_BUILD 0
                 info = GrB_SUCCESS ;
 
             }

@@ -1818,39 +1818,39 @@ GrB_Info GB_jitifyer_load2_worker
     {
         case GB_jit_apply_family  : 
             op1 = op ;
-            method_code_digits = 12 ;
+            method_code_digits = 12 ;   // see GB_enumify_apply
             break ;
 
         case GB_jit_assign_family : 
             op1 = op ;
-            method_code_digits = 16 ;
+            method_code_digits = 16 ;   // see GB_enumify_assign
             break ;
 
         case GB_jit_build_family  : 
             op1 = op ;
-            method_code_digits = 8 ;
+            method_code_digits = 10 ;   // see GB_enumify_build
             break ;
 
         case GB_jit_ewise_family  : 
             op1 = op ;
-            method_code_digits = 15 ;
+            method_code_digits = 15 ;   // see GB_enumify_ewise
             break ;
 
         case GB_jit_mxm_family    : 
             monoid = semiring->add ;
             op1 = (GB_Operator) semiring->add->op ;
             op2 = (GB_Operator) semiring->multiply ;
-            method_code_digits = 16 ;
+            method_code_digits = 16 ;   // see GB_enumify_mxm
             break ;
 
         case GB_jit_reduce_family : 
             op1 = (GB_Operator) monoid->op ;
-            method_code_digits = 5 ;
+            method_code_digits = 5 ;    // see GB_enumify_reduce
             break ;
 
         case GB_jit_select_family : 
             op1 = op ;
-            method_code_digits = 9 ;
+            method_code_digits = 9 ;    // see GB_enumify_select
             break ;
 
         case GB_jit_user_type_family : 
@@ -1863,15 +1863,15 @@ GrB_Info GB_jitifyer_load2_worker
             break ;
 
         case GB_jit_masker_family  : 
-            method_code_digits = 8 ;
+            method_code_digits = 8 ;    // see GB_enumify_masker
             break ;
 
         case GB_jit_subref_family  : 
-            method_code_digits = 7 ;
+            method_code_digits = 7 ;    // see GB_enumify_subref
             break ;
 
         case GB_jit_sort_family  : 
-            method_code_digits = 5 ;
+            method_code_digits = 5 ;    // see GB_enumify_sort
             break ;
 
         default: ;

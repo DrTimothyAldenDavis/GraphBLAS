@@ -193,7 +193,10 @@ typedef enum
 
     // select methods:
     GB_JIT_CUDA_KERNEL_SELECT_BITMAP = 1035,
-    GB_JIT_CUDA_KERNEL_SELECT_SPARSE = 1036
+    GB_JIT_CUDA_KERNEL_SELECT_SPARSE = 1036,
+
+    // build:
+    GB_JIT_CUDA_KERNEL_BUILD = 1037
 
 }
 GB_jit_kcode ;

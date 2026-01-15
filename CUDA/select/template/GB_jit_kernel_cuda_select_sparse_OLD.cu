@@ -1,3 +1,5 @@
+// FIXME: prior version and now unused. Will be deleted
+
 using namespace cooperative_groups ;
 
 #include "template/GB_cuda_ek_slice.cuh"

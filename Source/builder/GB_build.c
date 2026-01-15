@@ -202,6 +202,7 @@ GrB_Info GB_build               // build matrix
         // discard all duplicates
         //----------------------------------------------------------------------
 
+        // This operator will be replaced by z=SECOND(x,y), by GB_binop_second
         dup2 = NULL ;
 
     }
@@ -254,10 +255,10 @@ GrB_Info GB_build               // build matrix
     GB_phybix_free (C) ;
 
     //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
     // build the matrix T
     //--------------------------------------------------------------------------
+
+    GrB_Type ttype = (discard_duplicates) ? xtype : dup->ztype ;
 
     // Determine the Tp_is_32, Tj_is_32, and Ti_is_32 settings for the new
     // matrix, assuming that nvals is not reduced by a massive # of duplicates.
@@ -265,52 +266,92 @@ GrB_Info GB_build               // build matrix
     GB_determine_pji_is_32 (&Tp_is_32, &Tj_is_32, &Ti_is_32,
         GxB_HYPERSPARSE, nvals, C->vlen, C->vdim, Werk) ;
 
-    // CUDA branch here
+    info = GrB_NO_VALUE ;
 
-    // T is always built as hypersparse.  Its type is the same as the z output
-    // of the z=dup(x,y) operator if dup is present, or xtype if dup is NULL.
-    // If C->type differs from T->type, it is typecasted by
-    // GB_transplant_conform.
+#if 0
+    #if defined ( GRAPHBLAS_HAS_CUDA )
+    if (GB_cuda_builder_branch (C, dup2, xtype, nvals))
+    {
+        // TODO: should be able to construct T with C->type
+        info = GB_cuda_builder (
+            &T,                     // create T using a dynamic header
+            ttype,                  // the type of T
+            C->vlen,                // T->vlen = C->vlen
+            C->vdim,                // T->vdim = C->vdim
+            C->is_csc,              // T has the same CSR/CSC format as C
+            is_matrix,              // true if T is a GrB_Matrix
+            C->is_csc ? I : J,      // size nvals
+            C->is_csc ? J : I,      // size nvals, or NULL for vector
+            (const GB_void *) X,    // values, size nvals or 1 if iso
+            X_iso,                  // true if X is iso
+            nvals,                  // number of tuples
+            dup2,                   // op to assemble duplicates (may be NULL)
+            xtype,                  // type of the X array
+            true,                   // burble is OK
+            C->is_csc ? I_is_32 : J_is_32,  // if true, I is 32-bit; else 64-bit
+            C->is_csc ? J_is_32 : I_is_32,  // if true, J is 32-bit; else 64-bit
+            Tp_is_32, Tj_is_32, Ti_is_32    // integer sizes to create T
+            ) ;
+        if (!(info == GrB_NO_VALUE || info == GrB_SUCCESS))
+        {
+            // out-of-memory, JIT error, or other error occurred
+            GB_FREE_ALL ;
+            return (info) ;
+        }
+    }
+    #endif
+#endif
 
-    // I, J, and X must be treated as readonly, so GB_builder is not allowed
-    // to transplant them into T->x.
+    if (info == GrB_NO_VALUE)
+    {
 
-    void *no_I_work = NULL ; size_t I_work_size = 0 ;
-    void *no_J_work = NULL ; size_t J_work_size = 0 ;
-    GB_void *no_X_work = NULL ; size_t X_work_size = 0 ;
+        // T is always built as hypersparse.  Its type is the same as the z
+        // output of the z=dup(x,y) operator if dup is present, or xtype if dup
+        // is NULL.  If C->type differs from T->type, it is typecasted by
+        // GB_transplant_conform.
 
-    GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
-    GrB_Type ttype = (discard_duplicates) ? xtype : dup->ztype ;
+        // TODO: should be able to construct T with C->type
 
-    GB_OK (GB_builder (
-        T,              // create T using a static header
-        ttype,          // the type of T
-        C->vlen,        // T->vlen = C->vlen
-        C->vdim,        // T->vdim = C->vdim
-        C->is_csc,      // T has the same CSR/CSC format as C
-        &no_I_work,     // I_work_handle, not used here
-        &I_work_size,
-        &no_J_work,     // J_work_handle, not used here
-        &J_work_size,
-        &no_X_work,     // X_work_handle, not used here
-        &X_work_size,
-        false,          // known_sorted: not yet known
-        false,          // known_no_duplicates: not yet known
-        0,              // I_work, J_work, and X_work not used here
-        is_matrix,      // true if T is a GrB_Matrix
-        C->is_csc ? I : J,  // size nvals
-        C->is_csc ? J : I,  // size nvals, or NULL for vector
-        (const GB_void *) X,                // values, size nvals or 1 if iso
-        X_iso,          // true if X is iso
-        nvals,          // number of tuples
-        dup2,           // operator to assemble duplicates (may be NULL)
-        xtype,          // type of the X array
-        true,           // burble is OK
-        Werk,
-        C->is_csc ? I_is_32 : J_is_32,  // if true, I is 32-bit; else 64-bit
-        C->is_csc ? J_is_32 : I_is_32,  // if true, J is 32-bit; else 64-bit
-        Tp_is_32, Tj_is_32, Ti_is_32    // integer sizes to create T
-    )) ;
+        // I, J, and X must be treated as readonly, so GB_builder is not
+        // allowed to transplant them into T->x.
+
+        void *no_I_work = NULL ; size_t I_work_size = 0 ;
+        void *no_J_work = NULL ; size_t J_work_size = 0 ;
+        GB_void *no_X_work = NULL ; size_t X_work_size = 0 ;
+
+        GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+
+        GB_OK (GB_builder (
+            T,                      // create T using a static header
+            ttype,                  // the type of T
+            C->vlen,                // T->vlen = C->vlen
+            C->vdim,                // T->vdim = C->vdim
+            C->is_csc,              // T has the same CSR/CSC format as C
+            &no_I_work,             // I_work_handle, not used here
+            &I_work_size,
+            &no_J_work,             // J_work_handle, not used here
+            &J_work_size,
+            &no_X_work,             // X_work_handle, not used here
+            &X_work_size,
+            false,                  // known_sorted: not yet known
+            false,                  // known_no_duplicates: not yet known
+            0,                      // I_work, J_work, and X_work not used here
+            is_matrix,              // true if T is a GrB_Matrix
+            C->is_csc ? I : J,      // size nvals
+            C->is_csc ? J : I,      // size nvals, or NULL for vector
+            (const GB_void *) X,    // values, size nvals or 1 if iso
+            X_iso,                  // true if X is iso
+            nvals,                  // number of tuples
+            dup2,                   // op to assemble duplicates (may be NULL)
+            xtype,                  // type of the X array
+            true,                   // burble is OK
+            Werk,
+            C->is_csc ? I_is_32 : J_is_32,  // if true, I is 32-bit; else 64-bit
+            C->is_csc ? J_is_32 : I_is_32,  // if true, J is 32-bit; else 64-bit
+            Tp_is_32, Tj_is_32, Ti_is_32    // integer sizes to create T
+        )) ;
+
+    }
 
     //--------------------------------------------------------------------------
     // return an error if any duplicates found when they were not expected
@@ -331,7 +372,7 @@ GrB_Info GB_build               // build matrix
     }
 
     //--------------------------------------------------------------------------
-    // determine if T is iso, for non-iso build
+    // determine if T can be converted to iso, for non-iso build
     //--------------------------------------------------------------------------
 
     // GxB_Matrix_build_Scalar and GxB_Vector_build_Scalar always build an iso
@@ -343,6 +384,7 @@ GrB_Info GB_build               // build matrix
     // has no zombies or pending tuples, so GB_all_entries_are_iso does not
     // need to handle those cases.  T->x [0] is the new iso value of T.
 
+    // TODO: move this into CUDA kernel
     if (!X_iso && GB_all_entries_are_iso (T))
     { 
         // All entries in T are the same; convert T to iso
@@ -354,6 +396,8 @@ GrB_Info GB_build               // build matrix
     //--------------------------------------------------------------------------
     // transplant and typecast T into C, conform C, and free T
     //--------------------------------------------------------------------------
+
+    // TODO: the typecast should be done earlier
 
     ASSERT (GB_IS_HYPERSPARSE (T)) ;
     ASSERT (!GB_ZOMBIES (T)) ;

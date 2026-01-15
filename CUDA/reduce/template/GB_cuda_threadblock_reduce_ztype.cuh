@@ -35,7 +35,7 @@ __inline__ __device__ GB_Z_TYPE GB_cuda_threadblock_reduce_ztype
     int lane = threadIdx.x & (GB_CUDA_TILE_SIZE-1) ;
     // tile_id: is the id for a single tile, each with GB_CUDA_TILE_SIZE
     // threads in it.
-    int tile_id = threadIdx.x >> GB_LOG2_TILE_SIZE ;
+    int tile_id = threadIdx.x >> GB_CUDA_LOG2_TILE_SIZE ;
 
     // Each tile performs partial reduction
     val = GB_cuda_tile_reduce_ztype (tile, val) ;
@@ -59,7 +59,7 @@ __inline__ __device__ GB_Z_TYPE GB_cuda_threadblock_reduce_ztype
     {
         GB_DECLARE_IDENTITY_CONST (zid) ;   // const GB_Z_TYPE zid = identity ;
         // read from shared memory only if that tile existed
-        val = (threadIdx.x < (blockDim.x >> GB_LOG2_TILE_SIZE)) ?
+        val = (threadIdx.x < (blockDim.x >> GB_CUDA_LOG2_TILE_SIZE)) ?
             shared [lane] : zid ;
         val = GB_cuda_tile_reduce_ztype (tile, val) ;
     }

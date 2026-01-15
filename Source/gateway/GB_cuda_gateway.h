@@ -268,5 +268,31 @@ bool GB_cuda_builder_branch
     const uint64_t nvals
 ) ;
 
+GrB_Info GB_cuda_builder            // build a matrix from tuples
+(
+    GrB_Matrix *Thandle,            // matrix to build, dynamic header
+    const GrB_Type ttype,           // type of output matrix T
+    const int64_t vlen,             // length of each vector of T
+    const int64_t vdim,             // number of vectors in T
+    const bool is_csc,              // true if T is CSC, false if CSR
+    const bool is_matrix,           // true if T a GrB_Matrix, false if vector
+    const GB_void *restrict I,      // original indices, size nvals
+    const GB_void *restrict J,      // original indices, size nvals
+    const GB_void *restrict X,      // array of values of tuples, size nvals,
+                                    // or size 1 if X is iso
+    const bool X_iso,               // true if X is iso
+    const int64_t nvals,            // number of tuples
+    GrB_BinaryOp dup,               // binary function to assemble duplicates,
+                                    // if NULL use the SECOND operator to
+                                    // keep the most recent duplicate.
+    const GrB_Type xtype,           // the type of X
+    bool do_burble,                 // if true, then burble is allowed
+    bool I_is_32,       // true if I is 32 bit, false if 64
+    bool J_is_32,       // true if J is 32 bit, false if 64
+    bool Tp_is_32,      // true if T->p is built as 32 bit, false if 64
+    bool Tj_is_32,      // true if T->h is built as 32 bit, false if 64
+    bool Ti_is_32       // true if T->i is built as 32 bit, false if 64
+) ;
+
 #endif
 

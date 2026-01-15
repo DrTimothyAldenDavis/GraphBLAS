@@ -20,10 +20,16 @@ void GB_enumify_build           // enumerate a GB_build problem
     GrB_BinaryOp dup,           // operator for duplicates
     GrB_Type ttype,             // type of Tx
     GrB_Type stype,             // type of Sx
+    bool is_matrix,             // if true, J is NULL, else non-NULL
+    bool iso_build,             // if true, Tx and Sx are iso
+    bool Tp_is_32,              // if true, Tp is uint32_t, else uint64_t
+    bool Tj_is_32,              // if true, Tj is uint32_t, else uint64_t
     bool Ti_is_32,              // if true, Ti is uint32_t, else uint64_t
-    bool I_is_32,               // if true, I_work is uint32_t else uint64_t
+    bool I_is_32,               // if true, I is uint32_t else uint64_t
+    bool J_is_32,               // if true, J is uint32_t else uint64_t
     bool K_is_32,               // if true, K_work is uint32_t else uint64_t
     bool K_is_null,             // if true, K_work is NULL
+    bool Key_is_32,             // if true, GB_key_t is uint32_t else uint64_t
     bool no_duplicates          // if true, no duplicates appear
 )
 {
@@ -39,16 +45,23 @@ void GB_enumify_build           // enumerate a GB_build problem
     GB_Type_code zcode = dup->ztype->code ;
     GB_Type_code tcode = ttype->code ;
     GB_Type_code scode = stype->code ;
+
     if (xcode == GB_BOOL_code)
     { 
         // rename the operator
         dup_opcode = GB_boolean_rename (dup_opcode) ;
     }
 
+    int iso       = (iso_build) ? 1 : 0 ;
+    int is_mat    = (is_matrix) ? 1 : 0 ;
+    int tp_is_32  = (Tp_is_32)  ? 1 : 0 ;
+    int tj_is_32  = (Tj_is_32)  ? 1 : 0 ;
     int ti_is_32  = (Ti_is_32)  ? 1 : 0 ;
     int i_is_32   = (I_is_32)   ? 1 : 0 ;
+    int j_is_32   = (J_is_32)   ? 1 : 0 ;
     int k_is_32   = (K_is_32)   ? 1 : 0 ;
     int k_is_null = (K_is_null) ? 1 : 0 ;
+    int key_is_32 = (Key_is_32) ? 1 : 0 ;
     int no_dupl   = (no_duplicates) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
@@ -61,19 +74,24 @@ void GB_enumify_build           // enumerate a GB_build problem
     // construct the method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 31 (8 hex digits)
+    // total method_code bits: 37 (10 hex digits)
 
     (*method_code) =
                                                // range        bits
-                // 32/64 bit (1 hex digit)
+                // 32/64 bit (3 hex digits)
+                GB_LSHIFT (key_is_32  , 36) |  // 0 to 1       1
+                GB_LSHIFT (is_mat     , 35) |  // 0 to 1       1
+                GB_LSHIFT (j_is_32    , 34) |  // 0 to 1       1
+                GB_LSHIFT (tp_is_32   , 33) |  // 0 to 1       1
+                GB_LSHIFT (tj_is_32   , 32) |  // 0 to 1       1
                 GB_LSHIFT (ti_is_32   , 31) |  // 0 to 1       1
                 GB_LSHIFT (i_is_32    , 30) |  // 0 to 1       1
                 GB_LSHIFT (k_is_32    , 29) |  // 0 to 1       1
                 GB_LSHIFT (k_is_null  , 28) |  // 0 to 1       1
 
-                // dup, z = f(x,y) (6 hex digits)
+                // dup, z = f(x,y), and iso flag (5 hex digits)
                 GB_LSHIFT (no_dupl    , 27) |  // 0 to 1       1
-                // 1 bit unused here
+                GB_LSHIFT (iso        , 26) |  // 0 to 1       1
                 GB_LSHIFT (dup_code   , 20) |  // 0 to 52      6
                 GB_LSHIFT (zcode      , 16) |  // 0 to 14      4
                 GB_LSHIFT (xcode      , 12) |  // 0 to 14      4

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/template/GB_jit_kernel_cuda_select_sparse
+// GraphBLAS/CUDA/template/GB_jit_kernel_cuda_select_sparse.cu
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

@@ -1245,10 +1245,16 @@ uint64_t GB_encodify_build      // encode an build problem
     const GrB_BinaryOp dup,     // operator for summing up duplicates
     const GrB_Type ttype,       // type of Tx array
     const GrB_Type stype,       // type of Sx array
+    bool is_matrix,             // if true, J is NULL, else non-NULL
+    bool iso_build,             // if true, Tx and Sx are iso
+    bool Tp_is_32,              // if true, Tp is uint32_t, else uint64_t
+    bool Tj_is_32,              // if true, Tj is uint32_t, else uint64_t
     bool Ti_is_32,              // if true, Ti is uint32_t, else uint64_t
-    bool I_is_32,               // if true, I_work is uint32_t else uint64_t
+    bool I_is_32,               // if true, I is uint32_t else uint64_t
+    bool J_is_32,               // if true, J is uint32_t else uint64_t
     bool K_is_32,               // if true, K_work is uint32_t else uint64_t
     bool K_is_null,             // if true, K_work is NULL
+    bool Key_is_32,             // if true, GB_key_t is uint32_t else uint64_t
     bool no_duplicates          // if true, no duplicates appear
 ) ;
 
@@ -1260,10 +1266,16 @@ void GB_enumify_build           // enumerate a GB_build problem
     GrB_BinaryOp dup,           // operator for duplicates
     GrB_Type ttype,             // type of Tx
     GrB_Type stype,             // type of Sx
+    bool is_matrix,             // if true, J is NULL, else non-NULL
+    bool iso_build,             // if true, Tx and Sx are iso
+    bool Tp_is_32,              // if true, Tp is uint32_t, else uint64_t
+    bool Tj_is_32,              // if true, Tj is uint32_t, else uint64_t
     bool Ti_is_32,              // if true, Ti is uint32_t, else uint64_t
-    bool I_is_32,               // if true, I_work is uint32_t else uint64_t
+    bool I_is_32,               // if true, I is uint32_t else uint64_t
+    bool J_is_32,               // if true, J is uint32_t else uint64_t
     bool K_is_32,               // if true, K_work is uint32_t else uint64_t
     bool K_is_null,             // if true, K_work is NULL
+    bool Key_is_32,             // if true, GB_key_t is uint32_t else uint64_t
     bool no_duplicates          // if true, no duplicates appear
 ) ;
 

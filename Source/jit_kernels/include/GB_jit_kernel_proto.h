@@ -854,7 +854,7 @@ GrB_Info GB_jit_kernel_AxB_dot3                                             \
     const GB_callback_struct *restrict my_callback                          \
 )
 
-#define GB_JIT_CUDA_KERNEL_PROTO(GB_jit_kernel_builder)                     \
+#define GB_JIT_CUDA_KERNEL_BUILDER_PROTO(GB_jit_kernel_builder)             \
 GrB_Info GB_jit_kernel_builder                                              \
 (                                                                           \
     GrB_Matrix *Thandle,    /* matrix to build */                           \
@@ -862,9 +862,9 @@ GrB_Info GB_jit_kernel_builder                                              \
     const int64_t vlen,     /* length of each vector of T */                \
     const int64_t vdim,     /* # of vectors in T */                         \
     const bool is_csc,      /* true if T is CSC, false if CSR */            \
-    const GB_void *I,       /* row indices of type GB_I_TYPE */             \
-    const GB_void *J,       /* column indices of type GB_J_TYPE */          \
-    const GB_void *X,       /* values of type GB_X_TYPE */                  \
+    const GB_void *I_input, /* row indices of type GB_I_TYPE */             \
+    const GB_void *J_input, /* column indices of type GB_J_TYPE */          \
+    const GB_void *X_input, /* values of type GB_Sx_TYPE */                 \
     const int64_t nvals,    /* # of tuples in (I,J,X) */                    \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \

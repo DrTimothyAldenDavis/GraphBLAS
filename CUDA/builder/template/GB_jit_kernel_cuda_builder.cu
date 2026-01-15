@@ -33,11 +33,13 @@ using namespace cooperative_groups ;
 // typedefs and geometry
 //------------------------------------------------------------------------------
 
+// FIXME: Add to encode: GB_KEY_TYPE
+
 // GB_key_t: sorting key type for CUB radix sort
 typedef struct
 {
     GB_KEY_TYPE i ;     // GB_KEY_TYPE is uint32_t or uint64_t
-    #if GB_IS_MATRIX
+    #if GB_MATRIX_BUILD
     GB_KEY_TYPE j ;     // vectors have i only; matrices have i,j
     #endif
 }
@@ -70,9 +72,9 @@ __global__ void GB_cuda_builder_phase1
     GB_key_t *Key_in,   // size nvals+1: Key_in [-1...nvals-1]
     uint32_t *ok,       // if true: (I,J) are valid; false: (I,J) out of range
     // input
-    const GB_I_TYPE *I, // size nvals
-    #if GB_IS_MATRIX
-    const GB_J_TYPE *J, // size nvals, NULL if C is a vector
+    const GB_I_TYPE *__restrict__ I, // size nvals
+    #if GB_MATRIX_BUILD
+    const GB_J_TYPE *__restrict__ J, // size nvals, NULL if C is a vector
     #endif
     int64_t vlen,       // vector-length dimension of C (for I indices)
     int64_t vdim,       // vector-dim dimension of C (for J indices)
@@ -93,20 +95,20 @@ __global__ void GB_cuda_builder_phase1
 
         // get the indices
         GB_I_TYPE i = I [p] ;
-        #if GB_IS_MATRIX
+        #if GB_MATRIX_BUILD
         GB_J_TYPE j = J [p] ;
         #endif
 
         // check if the indices are in range
         my_ok = my_ok
-            #if GB_IS_MATRIX
+            #if GB_MATRIX_BUILD
             && (j >= 0 && j < vdim)
             #endif 
             && (i >= 0 && i < vlen) ;
 
         // load the indices into the Key_in workspace
         Key_in [p].i = (GB_KEY_TYPE) i ;
-        #if GB_IS_MATRIX
+        #if GB_MATRIX_BUILD
         Key_in [p].j = (GB_KEY_TYPE) j ;
         #endif
     }
@@ -145,7 +147,7 @@ __global__ void GB_cuda_builder_phase3
     Int *Map,               // size nvals+1, in Map [-1...nvals-1]
     GB_Tp_TYPE *ChunkSum,   // size nchunks+1,
                             // in ChunkSum [-1..nchunks]
-    #if GB_IS_MATRIX
+    #if GB_MATRIX_BUILD
     Int *JDelta,            // size nvals+1, in JDelta [-1..nvals-1]
     GB_Tp_TYPE *JDeltaSum,  // size nchunks+1
     #endif
@@ -161,13 +163,13 @@ __global__ void GB_cuda_builder_phase3
     //--------------------------------------------------------------------------
 
     __shared__ Int Local_Map [CHUNKSIZE] ;
-    #if GB_IS_MATRIX
+    #if GB_MATRIX_BUILD
     __shared__ Int Local_JDelta [CHUNKSIZE] ;
     #endif
 
     // cub::Block* workspace:
     GB_CUB_BLOCK_WORKSPACE (W, Int, BLOCKDIM, ITEMS_PER_THREAD) ;
-    #if GB_IS_MATRIX
+    #if GB_MATRIX_BUILD
     GB_CUB_BLOCK_WORKSPACE (Z, Int, BLOCKDIM, ITEMS_PER_THREAD) ;
     #endif
 
@@ -179,7 +181,7 @@ __global__ void GB_cuda_builder_phase3
     if (threadIdx.x == 0 && blockIdx.x == 0)
     {
         Key_out [-1].i = GB_KEY_INFINITY ;
-        #if GB_IS_MATRIX
+        #if GB_MATRIX_BUILD
         Key_out [-1].j = GB_KEY_INFINITY ;
         #endif
     }
@@ -229,19 +231,19 @@ __global__ void GB_cuda_builder_phase3
             // get the indices
             GB_KEY_TYPE iprev = Key_out [p-1].i ;
             GB_KEY_TYPE i     = Key_out [p  ].i ;
-            #if GB_IS_MATRIX
+            #if GB_MATRIX_BUILD
             GB_KEY_TYPE jprev = Key_out [p-1].j ;
             GB_KEY_TYPE j     = Key_out [p  ].j ;
             bool leading = (j != jprev) ;
             #endif
             // keep = 1 if (i,j) is unique, 0 if duplicate
             bool keep = (i != iprev)
-                #if GB_IS_MATRIX
+                #if GB_MATRIX_BUILD
                 || leading
                 #endif
                 ;
             Local_Map [pdelta] = keep ;         // 1 if 1st in seq of dupls
-            #if GB_IS_MATRIX
+            #if GB_MATRIX_BUILD
             Local_JDelta [pdelta] = leading ;   // 1 if leading entry of vector
             #endif
         }
@@ -255,7 +257,7 @@ __global__ void GB_cuda_builder_phase3
                 pdelta += blockDim.x)
         {
             Local_Map [pdelta] = 0 ;
-            #if GB_IS_MATRIX
+            #if GB_MATRIX_BUILD
             Local_JDelta [pdelta] = 0 ;
             #endif
         }
@@ -288,7 +290,7 @@ __global__ void GB_cuda_builder_phase3
 
         this_thread_block ( ).sync ( ) ;
         Int t [ITEMS_PER_THREAD] ;
-        #if GB_IS_MATRIX
+        #if GB_MATRIX_BUILD
         Int s [ITEMS_PER_THREAD] ;
         #endif
 
@@ -301,7 +303,7 @@ __global__ void GB_cuda_builder_phase3
             }
         */
         BlockLoad (W.load).Load (Local_Map, t) ;
-        #if GB_IS_MATRIX
+        #if GB_MATRIX_BUILD
         BlockLoad (Z.load).Load (Local_JDelta, s) ;
         #endif
         this_thread_block ( ).sync ( ) ;
@@ -309,7 +311,7 @@ __global__ void GB_cuda_builder_phase3
         // inclusive sum of data from t, where t [i] = sum (t [0:i])
         Int t_block_aggregate ;
         BlockScan (W.scan).InclusiveSum (t, t, t_block_aggregate) ;
-        #if GB_IS_MATRIX
+        #if GB_MATRIX_BUILD
         // inclusive sum of data from s, where s [i] = sum (s [0:i])
         Int s_block_aggregate ;
         BlockScan (Z.scan).InclusiveSum (s, s, s_block_aggregate) ;
@@ -325,7 +327,7 @@ __global__ void GB_cuda_builder_phase3
             }
         */
         BlockStore (W.store).Store (Map + pfirst, t) ;
-        #if GB_IS_MATRIX
+        #if GB_MATRIX_BUILD
         BlockStore (Z.store).Store (JDelta + pfirst, s) ;
         #endif
 
@@ -333,7 +335,7 @@ __global__ void GB_cuda_builder_phase3
         if (threadIdx.x == blockDim.x - 1)
         {
             ChunkSum  [chunk] = t_block_aggregate ;
-            #if GB_IS_MATRIX
+            #if GB_MATRIX_BUILD
             JDeltaSum [chunk] = s_block_aggregate ;
             #endif
         }
@@ -346,7 +348,7 @@ __global__ void GB_cuda_builder_phase3
     if (threadIdx.x == 0 && blockIdx.x == 0)
     {
         Map [-1] = 0 ;
-        #if GB_IS_MATRIX
+        #if GB_MATRIX_BUILD
         JDelta [-1] = 0 ;
         #endif
     }
@@ -369,12 +371,12 @@ __global__ void GB_cuda_builder_phase5
     Int *Map,               // size nvals+1, in Map [-1...nvals-1]
     GB_Tp_TYPE *ChunkSum,   // size nchunks+1,
                             // in ChunkSum [-1..nchunks]
-    #if GB_IS_MATRIX
+    #if GB_MATRIX_BUILD
     Int *JDelta,            // size nvals+1, in JDelta [-1..nvals-1]
     GB_Tp_TYPE *JDeltaSum,  // size nchunks+1
     #endif
     GB_key_t *Key_out,      // size nvals+1: Key_out [-1 ... nvals-1]
-    GB_X_TYPE *Sx,          // size nvals+1: Sx  [-1 ... nvals-1]
+    GB_Sx_TYPE *Sx,         // size nvals+1: Sx  [-1 ... nvals-1]
     int64_t nvals,          // # of tuples in (I,J,X)
     int64_t nchunks
 )
@@ -384,13 +386,13 @@ __global__ void GB_cuda_builder_phase5
     // get T->p, T->h, T->i, and T->x, shifting down by 1 since Map is 1-based
     //--------------------------------------------------------------------------
 
-    GB_Tp_TYPE *__restrict__ Tp = (GB_Tp_TYPE) T->p ; Tp-- ;
-    #if GB_IS_MATRIX
-    GB_Tj_TYPE *__restrict__ Th = (GB_Tj_TYPE) T->h ; Th-- ;
+    GB_Tp_TYPE *__restrict__ Tp = (GB_Tp_TYPE *) T->p ; Tp-- ;
+    #if GB_MATRIX_BUILD
+    GB_Tj_TYPE *__restrict__ Th = (GB_Tj_TYPE *) T->h ; Th-- ;
     #endif
-    GB_Ti_TYPE *__restrict__ Ti = (GB_Ti_TYPE) T->i ; Ti-- ;
+    GB_Ti_TYPE *__restrict__ Ti = (GB_Ti_TYPE *) T->i ; Ti-- ;
     #if !GB_ISO_BUILD
-    GB_Tx_TYPE *__restrict__ Tx = (GB_Tx_TYPE) T->x ; Tx-- ;
+    GB_Tx_TYPE *__restrict__ Tx = (GB_Tx_TYPE *) T->x ; Tx-- ;
     #endif
 
     // TODO: if no duplicates have been found, Map and ChunkSum are not
@@ -467,7 +469,7 @@ __global__ void GB_cuda_builder_phase5
             // construct Tp and Th, if T is a matrix (skip if T is a vector)
             //------------------------------------------------------------------
 
-            #if GB_IS_MATRIX
+            #if GB_MATRIX_BUILD
             GB_Tp_TYPE kT = JDelta [p  ] + JDeltaSum [chunk] ;
             GB_Tp_TYPE k0 = JDelta [p-1] + JDeltaSum [chunk - (pdelta == 0)] ;
             if (k0 < kT)
@@ -488,7 +490,7 @@ __global__ void GB_cuda_builder_phase5
     {
         // T->nvec is 0-based, so increment Tp to undo the Tp-- done above
         Tp++ ;
-        #if GB_IS_MATRIX
+        #if GB_MATRIX_BUILD
         Tp [T->nvec] = T->nvals ;
         #else
         Tp [0] = 0 ;
@@ -521,6 +523,14 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
     GB_GET_CALLBACK (GB_new_bix) ;
     GB_GET_CALLBACK (GB_Matrix_free) ;
     #endif
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
+    GB_I_TYPE  *__restrict__ I = (GB_I_TYPE  *) I_input ;
+    GB_J_TYPE  *__restrict__ J = (GB_J_TYPE  *) J_input ;
+    GB_Sx_TYPE *__restrict__ X = (GB_Sx_TYPE *) X_input ;
 
     //--------------------------------------------------------------------------
     // declare workspace
@@ -587,7 +597,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
     GB_cuda_builder_phase1 <<<grid, block1, 0, stream>>>
         (/* outputs: */ Key_in, &ok,
          /* inputs: */ I,
-            #if GB_IS_MATRIX
+            #if GB_MATRIX_BUILD
             J,
             #endif
             vlen, vdim, nvals) ;
@@ -638,7 +648,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
     // allocate Key_out, Sx, and CUB temporary workspace
     W_1 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_key_t), &W_1_size) ;
     #if !GB_ISO_BUILD
-    W_2 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_X_TYPE), &W_2_size) ;
+    W_2 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_Sx_TYPE), &W_2_size) ;
     #endif
     W_3 = GB_MALLOC_MEMORY (W_3_size+1, 1, &W_3_size) ;
 
@@ -651,7 +661,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
 
     // shift by one so Key_out [-1...nvals-1], etc can be used
     GB_key_t *Key_out = ((GB_key_t   *) W_1) + 1 ;
-    GB_X_TYPE *Sx     = ((GB_X_TYPE  *) W_2) + 1 ;
+    GB_Sx_TYPE *Sx    = ((GB_Sx_TYPE *) W_2) + 1 ;
 
     // sort (Key_in,X) to get (Key_out,Sx)
     #if GB_ISO_BUILD
@@ -674,7 +684,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
     //--------------------------------------------------------------------------
     // phase3: look for duplicates (compare with phase1 of CUDA/select)
     //--------------------------------------------------------------------------
-
 
     // builder/phase3 determines which entries are the first in a sequence of
     // duplicates (output: Map), and which entries are the first in their
@@ -715,7 +724,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
     W_5 = GB_MALLOC_MEMORY (nchunks+2, sizeof (GB_Tp_TYPE), &W_5_size) ;
 
     // allocate JDelta, JDeltaSum: for cumsum of leading entries of vectors of C
-    #if GB_IS_MATRIX
+    #if GB_MATRIX_BUILD
     W_6 = GB_MALLOC_MEMORY (nvals+1, sizeof (Int), &W_6_size) ;
     W_7 = GB_MALLOC_MEMORY (nchunks+2, sizeof (GB_Tp_TYPE), &W_7_size) ;
     #endif
@@ -723,14 +732,14 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
     // shift by one so Map [-1...nvals-1], etc can be used
     Int *Map              = ((Int        *) W_4) + 1 ;
     GB_Tp_TYPE *ChunkSum  = ((GB_Tp_TYPE *) W_5) + 1 ;
-    #if GB_IS_MATRIX
+    #if GB_MATRIX_BUILD
     Int *JDelta           = ((Int        *) W_6) + 1 ;
     GB_Tp_TYPE *JDeltaSum = ((GB_Tp_TYPE *) W_7) + 1 ;
     #endif
 
     GB_cuda_builder_phase3 <<<grid, block1, 0, stream>>>
         ( /* outputs: */ Map, ChunkSum,
-            #if GB_IS_MATRIX
+            #if GB_MATRIX_BUILD
             JDelta, JDeltaSum,
             #endif
           /* inputs: */ Key_out, nvals, nchunks) ;
@@ -759,7 +768,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
     //            0 [       0 |       1 |       2 |       4 ] 4
 
     ChunkSum [-1] = 0 ;         // sentinel value
-    #if GB_IS_MATRIX
+    #if GB_MATRIX_BUILD
     JDeltaSum [-1] = 0 ;        // sentinel value
     #endif
 
@@ -774,7 +783,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
         tnz += t ;
 
         // get the # of leading entries found in this chunk
-        #if GB_IS_MATRIX
+        #if GB_MATRIX_BUILD
         int64_t s = JDeltaSum [chunk] ;
         // overwrite the entry with the cumulative sum, so that the new
         // JDeltaSum [chunk] = original JDeltaSum [0..chunk-1]
@@ -783,7 +792,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
         #endif
     }
     ChunkSum  [nchunks] = tnz ;
-    #if GB_IS_MATRIX
+    #if GB_MATRIX_BUILD
     JDeltaSum [nchunks] = tnvec ;
     #else
     tnvec = 1 ;
@@ -835,7 +844,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
     // allocate the T matrix as hypersparse, with tnz entries and tnvec vectors
     GB_OK (GB_new_bix (&T, ttype, vlen, vdim,
         (tnz == 0) ? GB_ph_calloc : GB_ph_malloc, is_csc,
-        #if GB_IS_MATRIX
+        #if GB_MATRIX_BUILD
         GxB_HYPERSPARSE, GB_ALWAYS_HYPER,
         #else
         GxB_SPARSE, GB_NEVER_HYPER,
@@ -850,7 +859,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
     GB_cuda_builder_phase5 <<<grid, block1, 0, stream>>>
         (/* outputs: */ T,
          /* inputs: */  Map, ChunkSum,
-            #if GB_IS_MATRIX
+            #if GB_MATRIX_BUILD
             JDelta, JDeltaSum,
             #endif
             Key_out, Sx, nvals, nchunks) ;
