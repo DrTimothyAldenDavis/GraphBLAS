@@ -2576,7 +2576,7 @@ void GB_jitifyer_nvcc_compile
     // compile:
     "sh -c \""                          // execute with POSIX shell
     // FIXME for CUDA: use GB_CUDA_COMPILER here:
-    "nvcc --version ; "
+//  "nvcc --version ; "
     "nvcc "                             // compiler command
     "-forward-unknown-to-host-compiler "
     "-DGB_JIT_RUNTIME=1  "              // nvcc flags
@@ -2586,7 +2586,7 @@ void GB_jitifyer_nvcc_compile
     " --gpu-code=sm_%d%d "              // major,minor
     " -fPIC " 
     // FIXME for CUDA: add GB_CUDA_FLAGS here:
-    " -O3 "   // HACK FIXME for CUDA
+    " -g " // " -O3 "   // HACK FIXME for CUDA
     " -Wno-deprecated-gpu-targets "
     "-I'%s/src' "                       // include source directory
     "-I'%s/src/template' "

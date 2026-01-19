@@ -95,7 +95,8 @@
 // format C is returned in.
 
 // The input arrays I, J, and X are not modified.
-#define GB_DEBUG
+
+#define GB_DEBUG    /* FIXME */
 
 #define GB_FREE_ALL GrB_Matrix_free (&T) ;
 #include "builder/GB_build.h"
@@ -357,13 +358,9 @@ GrB_Info GB_build               // build matrix
             C->is_csc ? J_is_32 : I_is_32,  // if true, J is 32-bit; else 64-bit
             Tp_is_32, Tj_is_32, Ti_is_32    // integer sizes to create T
         )) ;
-
     }
 
-    if (info == GrB_SUCCESS)
-    {
-        ASSERT_MATRIX_OK (T, "T built", GB5) ;
-    }
+    ASSERT_MATRIX_OK (T, "T built", GB5) ;
 
     //--------------------------------------------------------------------------
     // return an error if any duplicates found when they were not expected
