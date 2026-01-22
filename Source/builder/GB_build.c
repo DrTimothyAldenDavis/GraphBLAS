@@ -225,7 +225,7 @@ GrB_Info GB_build               // build matrix
                 "not supported as dup op\n", dup->name) ;
         }
 
-        ASSERT_BINARYOP_OK (dup, "dup for assembling duplicates", GB5) ;
+        ASSERT_BINARYOP_OK (dup, "dup for assembling duplicates", GB0) ;
 
         // check types of dup
         if (dup->xtype != dup->ztype || dup->ytype != dup->ztype)
@@ -360,7 +360,7 @@ GrB_Info GB_build               // build matrix
         )) ;
     }
 
-    ASSERT_MATRIX_OK (T, "T built", GB5) ;
+    ASSERT_MATRIX_OK (T, "T built", GB0) ;
 
     //--------------------------------------------------------------------------
     // return an error if any duplicates found when they were not expected
