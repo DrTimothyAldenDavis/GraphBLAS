@@ -758,6 +758,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     // shift by one so Key_in [-1...nvals-1] can be used
     GB_key_t *Key_in = ((GB_key_t *) W_0) + 1 ;
+    printf ("W_0: %p Key_in %p difference: %lu\n",
+        W_0, Key_in, (uint64_t) (Key_in - ((GB_key_t *) W_0))) ;
 
     #if 1
     #if GB_BUILD_MATRIX
@@ -776,6 +778,31 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     (*bad) = 0 ;
     (*ok) = 1 ;
 
+    // HACK: do phase1 on the CPU
+    bool my_ok = true ;
+    uint64_t my_bad = 0 ;
+    for (int64_t p = 0 ; p < nvals ; p ++)
+    {
+        // get the indices
+        GB_I_TYPE i = I [p] ;
+        #if GB_BUILD_MATRIX
+        GB_J_TYPE j = J [p] ;
+        #endif
+        // check if the indices are in range
+        my_ok = my_ok
+            #if GB_BUILD_MATRIX
+            && (j < vdim)
+            #endif 
+            && (i < vlen) ;
+        my_bad += (!my_ok) ;
+        // load the indices into Key_in [p]
+        GB_KEY_LOAD (Key_in, p, i, j) ;
+    }
+    (*bad) = my_bad ;
+    (*ok) = (*bad == 0) ;
+    printf ("phase1 CPU, ok: %lu, bad: %lu\n", *ok, *bad) ;
+
+#if 1
     GB_cuda_builder_phase1 <<<grid, block1, 0, stream>>>
         (/* outputs: */ Key_in, ok, bad,
          /* inputs: */ I,
@@ -783,6 +810,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             J,
             #endif
             vlen, vdim, nvals) ;
+#endif
 
     cudaError_t err1 = cudaGetLastError ( ) ;
     printf ("phase1 cuda error %d\n", err1) ;

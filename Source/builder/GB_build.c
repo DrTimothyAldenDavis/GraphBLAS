@@ -360,7 +360,7 @@ GrB_Info GB_build               // build matrix
         )) ;
     }
 
-    ASSERT_MATRIX_OK (T, "T built", GB0) ;
+    ASSERT_MATRIX_OK (T, "T built", GB5) ;
 
     //--------------------------------------------------------------------------
     // return an error if any duplicates found when they were not expected
