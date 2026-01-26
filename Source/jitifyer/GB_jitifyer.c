@@ -2587,6 +2587,10 @@ void GB_jitifyer_nvcc_compile
     " -fPIC " 
     // FIXME for CUDA: add GB_CUDA_FLAGS here:
     " -g " // " -O3 "   // HACK FIXME for CUDA
+    " --device-debug "          // HACK FIXME
+    " --generate-line-info "            // HACK FIXME
+    " --source-in-ptx "         // HACK FIXME
+    " --ptxas-options=-v "          // HACK FIXME
     " -Wno-deprecated-gpu-targets "
     "-I'%s/src' "                       // include source directory
     "-I'%s/src/template' "

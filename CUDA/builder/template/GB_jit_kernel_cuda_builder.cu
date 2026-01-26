@@ -194,7 +194,7 @@ __global__ void GB_cuda_builder_phase1
         my_bad += (!my_ok) ;
 
         // load the indices into Key_in [p]
-        GB_KEY_LOAD (Key_in, p, i, j) ;
+        // GB_KEY_LOAD (Key_in, p, i, j) ;
     }
 
     //--------------------------------------------------------------------------
@@ -728,6 +728,10 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     dim3 grid (gridsz) ;        // = min (ceil (nvals/CHUNKSIZE), 256*(#sms))
     dim3 block1 (BLOCKDIM) ;
 
+    cudaStream_t mystream, mystream3 ;
+    CUDA_OK (cudaStreamCreate (&mystream)) ;
+    CUDA_OK (cudaStreamCreate (&mystream3)) ;
+
     //--------------------------------------------------------------------------
     // phase1: load the Key_in workspace and check if indices are in range
     //--------------------------------------------------------------------------
@@ -802,8 +806,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     (*ok) = (*bad == 0) ;
     printf ("phase1 CPU, ok: %lu, bad: %lu\n", *ok, *bad) ;
 
-#if 1
-    GB_cuda_builder_phase1 <<<grid, block1, 0, stream>>>
+#if 0
+    GB_cuda_builder_phase1 <<<grid, block1, 0, mystream>>>
         (/* outputs: */ Key_in, ok, bad,
          /* inputs: */ I,
             #if GB_BUILD_MATRIX
@@ -815,7 +819,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     cudaError_t err1 = cudaGetLastError ( ) ;
     printf ("phase1 cuda error %d\n", err1) ;
     CUDA_OK (err1) ;
-    CUDA_OK (cudaStreamSynchronize (stream)) ;
+    CUDA_OK (cudaStreamSynchronize (mystream)) ;
     (*ok) = (*bad == 0) ;
     printf ("phase1 sync, ok: %lu, bad: %lu\n", *ok, *bad) ;
 
@@ -887,7 +891,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         GB_key_decomposer { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
-        stream)) ;
+        mystream)) ;
     #else
     CUDA_OK (cub::DeviceRadixSort::SortPairs (
         /* temp storage: */ W_3, W_3_size,
@@ -896,11 +900,11 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         GB_key_decomposer { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
-        stream)) ;
+        mystream)) ;
     #endif
 
     CUDA_OK (cudaGetLastError ( )) ;
-    CUDA_OK (cudaStreamSynchronize (stream)) ;
+    CUDA_OK (cudaStreamSynchronize (mystream)) ;
 
     // allocate workspace for CUB radix sort
     W_3 = GB_MALLOC_MEMORY (W_3_size+1, 1, &W_3_size) ;
@@ -921,7 +925,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         GB_key_decomposer { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
-        stream)) ;
+        mystream)) ;
     #else
     CUDA_OK (cub::DeviceRadixSort::SortPairs (
         /* temp storage: */ W_3, W_3_size,
@@ -930,11 +934,11 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         GB_key_decomposer { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
-        stream)) ;
+        mystream)) ;
     #endif
 
     CUDA_OK (cudaGetLastError ( )) ;
-    CUDA_OK (cudaStreamSynchronize (stream)) ;
+    CUDA_OK (cudaStreamSynchronize (mystream)) ;
 
     // Key_in and CUB workspace no longer needed
 //  GB_FREE_MEMORY (&W_0, W_0_size) ;
@@ -1019,7 +1023,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     #endif
     #endif
 
-    GB_cuda_builder_phase3 <<<grid, block1, 0, stream>>>
+    printf ("do phase 3: gridsz %ld, blockdim %ld\n",
+        (int64_t) gridsz, (int64_t) BLOCKDIM) ;
+    GB_cuda_builder_phase3 <<<grid, block1, 0, mystream3>>>
         ( /* outputs: */ Map, ChunkSum,
             #if GB_BUILD_MATRIX
             JDelta, JDeltaSum,
@@ -1027,7 +1033,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
           /* inputs: */ Key_out, nvals, nchunks) ;
 
     CUDA_OK (cudaGetLastError ( )) ;
-    CUDA_OK (cudaStreamSynchronize (stream)) ;
+    CUDA_OK (cudaStreamSynchronize (mystream3)) ;
 
     #if GB_BUILD_MATRIX
     #if 1
@@ -1186,7 +1192,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     printf ("did phase5 new_bix: T->nvec = %ld\n", T->nvec) ;
 
     // construct Tp, Th, Ti, and Tx, summing up duplicates
-    GB_cuda_builder_phase5 <<<grid, block1, 0, stream>>>
+    GB_cuda_builder_phase5 <<<grid, block1, 0, mystream>>>
         (/* outputs: */ T,
          /* inputs: */  Map, ChunkSum,
             #if GB_BUILD_MATRIX
@@ -1195,7 +1201,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             Key_out, Sx, nvals, nchunks) ;
 
     CUDA_OK (cudaGetLastError ( )) ;
-    CUDA_OK (cudaStreamSynchronize (stream)) ;
+    CUDA_OK (cudaStreamSynchronize (mystream)) ;
 
     #if 1
     GB_Tp_TYPE *__restrict__ Tp = (GB_Tp_TYPE *) T->p ;
@@ -1216,6 +1222,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         printf ("\n") ;
     }
     #endif
+
+//  CUDA_OK (cudaStreamDestroy (mystream)) ;
+//  CUDA_OK (cudaStreamDestroy (mystream3)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result
