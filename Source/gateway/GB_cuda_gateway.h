@@ -265,7 +265,16 @@ bool GB_cuda_builder_branch
     const GrB_Matrix C,
     const GrB_BinaryOp dup,
     const GrB_Type xtype,
+    const void *I,
+    const void *J,
+    const void *X,
     const uint64_t nvals
+) ;
+
+bool GB_cuda_pointer_ok
+(
+    const void *p,
+    const char *name
 ) ;
 
 GrB_Info GB_cuda_builder            // build a matrix from tuples

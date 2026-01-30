@@ -15,6 +15,9 @@ bool GB_cuda_builder_branch
     const GrB_Matrix C,
     const GrB_BinaryOp dup,
     const GrB_Type xtype,
+    const void *I,
+    const void *J,
+    const void *X,
     const uint64_t nvals
 )
 {
@@ -39,6 +42,14 @@ bool GB_cuda_builder_branch
         // static header, it cannot be done on the GPU.  However, if GraphBLAS
         // is compiled to use CUDA, there should be no static headers anyway,
         // so this is likely dead code.  Just a sanity check.
+        return (false) ;
+    }
+
+    if (!GB_cuda_pointer_ok (I, "I") ||
+        !GB_cuda_pointer_ok (J, "J") ||
+        !GB_cuda_pointer_ok (X, "X"))
+    {
+        printf ("%s: (I,J,X) pointers not accessible by the GPU\n", __FILE__) ;
         return (false) ;
     }
 

@@ -274,7 +274,7 @@ GrB_Info GB_build               // build matrix
 
     info = GrB_NO_VALUE ;
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    if (GB_cuda_builder_branch (C, dup2, xtype, nvals))
+    if (GB_cuda_builder_branch (C, dup2, xtype, I, J, X, nvals))
     {
         // Build the matrix on the GPU.
         // TODO: should be able to construct T with C->type

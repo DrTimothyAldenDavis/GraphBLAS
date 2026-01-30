@@ -121,6 +121,16 @@ else ( )
 
 endif ( )
 
+if ( GRAPHBLAS_HAS_CUDA )
+    set ( GB_CUDA_COMPILER  "${CMAKE_CUDA_COMPILER}" )
+    set ( GB_CUDA_FLAGS     "${CMAKE_CUDA_FLAGS} " )
+    # FIXME: do I need this?
+    #   message ( STATUS "CUDA toolkit ver: " ${CUDAToolkit_VERSION} )
+    set ( GB_CUDA_INC_DIRS ${CUDAToolkit_INCLUDE_DIRS} )
+    set ( GB_CUDA_INC ${CUDAToolkit_INCLUDE_DIRS} )
+    list ( TRANSFORM GB_CUDA_INC PREPEND " -I" )
+endif ( )
+
 if ( GRAPHBLAS_USE_JIT OR GRAPHBLAS_HAS_CUDA )
     message ( STATUS "------------------------------------------------------------------------" )
     message ( STATUS "JIT configuration:" )
@@ -137,6 +147,12 @@ if ( GRAPHBLAS_USE_JIT OR GRAPHBLAS_HAS_CUDA )
     message ( STATUS "JIT openmp dirs ${GB_OMP_INC_DIRS}" )
     message ( STATUS "JIT libraries:  ${GB_C_LIBRARIES}" )
     message ( STATUS "JIT cmake libs: ${GB_CMAKE_LIBRARIES}" )
+    if ( GRAPHBLAS_HAS_CUDA )
+        message ( STATUS "JIT CUDA compiler: ${GB_CUDA_COMPILER}" )
+        message ( STATUS "JIT CUDA flags:    ${GB_CUDA_FLAGS}" )
+        message ( STATUS "JIT CUDA include:  ${GB_CUDA_INC}" )
+        message ( STATUS "JIT CUDA inc dirs: ${GB_CUDA_INC_DIRS}" )
+    endif ( )
 endif ( )
 
 # create the JIT cache directories

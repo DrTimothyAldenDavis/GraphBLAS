@@ -35,6 +35,8 @@ using namespace cooperative_groups ;
 
 #include <cuda/std/tuple>
 
+#define ABORT(msg) { printf ("Abort! line %d, %s\n", __LINE__, msg) ; fflush (stdout) ; abort ( ) ; }
+
 //------------------------------------------------------------------------------
 // typedefs
 //------------------------------------------------------------------------------
@@ -55,6 +57,7 @@ using namespace cooperative_groups ;
             uint32_t i1 = (uint32_t) (Key_out [p] & 0xFFFFFFFF) ;
         #define GB_KEY_UNLOAD_J(Key_out,p,j1)                           \
             uint32_t j1 = (uint32_t) (Key_out [p] >> 32) ;
+
 #else
 
         // FIXME: this decomposer object doesn't work:
@@ -194,7 +197,7 @@ __global__ void GB_cuda_builder_phase1
         my_bad += (!my_ok) ;
 
         // load the indices into Key_in [p]
-        // GB_KEY_LOAD (Key_in, p, i, j) ;
+        GB_KEY_LOAD (Key_in, p, i, j) ;
     }
 
     //--------------------------------------------------------------------------
@@ -269,14 +272,18 @@ __global__ void GB_cuda_builder_phase3
     #endif
 
     //--------------------------------------------------------------------------
-    // fill in the sentinal values for Key_out
+    // the first thread of the threadblock fills in the sentinal values
     //--------------------------------------------------------------------------
 
     if (threadIdx.x == 0 && blockIdx.x == 0)
     {
         memset (&(Key_out [-1]), 0xFF, sizeof (GB_key_t)) ;
+        Map [-1] = 0 ;
         ChunkSum [-1] = 0 ;
+        #if GB_BUILD_MATRIX
+        JDelta [-1] = 0 ;
         JDeltaSum [-1] = 0 ;
+        #endif
     }
 
     // this_thread_block ( ).sync ( ) ; not needed since the thread that wrote
@@ -369,22 +376,47 @@ __global__ void GB_cuda_builder_phase3
         // of Local_JDelta, where Local_JDelta [i] = sum (Local_JDelta [0:i])
         // is computed.
 
+        this_thread_block ( ).sync ( ) ;
+        Int t_block_aggregate ;
+        Int s_block_aggregate ;
+
+#if 1
+
         // This entire phase computes the following:
-        /*
+        if (threadIdx.x == blockDim.x - 1)
+        {
+
+            // construct Map and ChunkSum
             for (int i = 1 ; i < CHUNKSIZE ; i++)
             {
-                Local_Map    [i] += Local_Map [i-1] ;
+                Local_Map [i] += Local_Map [i-1] ;
+            }
+            for (int i = 0 ; i < CHUNKSIZE ; i++)
+            {
+                Map [pfirst + i] = Local_Map [i] ;
+            }
+            t_block_aggregate = Local_Map [CHUNKSIZE-1] ;
+            ChunkSum [chunk] = t_block_aggregate ;
+
+            // construct JDelta and JDeltaSum
+            #if GB_BUILD_MATRIX
+            for (int i = 1 ; i < CHUNKSIZE ; i++)
+            {
                 Local_JDelta [i] += Local_JDelta [i-1] ;
             }
-            Map    [pfirst + 0:CHUNKSIZE-1] = Local_Map    [0:CHUNKSIZE-1]
-            JDelta [pfirst + 0:CHUNKSIZE-1] = Local_JDelta [0:CHUNKSIZE-1]
-            t_block_aggregate = Local_Map    [CHUNKSIZE-1]
-            s_block_aggregate = Local_JDelta [CHUNKSIZE-1]
-            ChunkSum  [chunk] = t_block_aggregate ;
+            for (int i = 0 ; i < CHUNKSIZE ; i++)
+            {
+                JDelta [pfirst + i] = Local_JDelta [i] ;
+            }
+            s_block_aggregate = Local_JDelta [CHUNKSIZE-1] ;
+            printf ("chunk: %d, s_block_agg %d\n",
+                (int) chunk, (int) s_block_aggregate) ;
             JDeltaSum [chunk] = s_block_aggregate ;
-        */
+            #endif
+        }
 
-        this_thread_block ( ).sync ( ) ;
+#else
+
         Int t [ITEMS_PER_THREAD] ;
         #if GB_BUILD_MATRIX
         Int s [ITEMS_PER_THREAD] ;
@@ -413,6 +445,7 @@ __global__ void GB_cuda_builder_phase3
                 s [k] = Local_JDelta [ITEMS_PER_THREAD * threadIdx.x + k] ;
             }
         */
+
         BlockLoad (W.load).Load (Local_Map, t) ;
         #if GB_BUILD_MATRIX
         this_thread_block ( ).sync ( ) ;
@@ -439,11 +472,14 @@ __global__ void GB_cuda_builder_phase3
                 Jdelta [pfirst + ITEMS_PER_THREAD * threadIdx.x + k] = s [k] ;
             }
         */
+
         BlockStore (W.store).Store (Map + pfirst, t) ;
         #if GB_BUILD_MATRIX
         this_thread_block ( ).sync ( ) ;
         BlockStore (Z.store).Store (JDelta + pfirst, s) ;
         #endif
+
+        this_thread_block ( ).sync ( ) ;
 
         // finally, the aggregate sums are written to ChunkSum and JDeltaSum
         if (threadIdx.x == blockDim.x - 1)
@@ -457,6 +493,10 @@ __global__ void GB_cuda_builder_phase3
             JDeltaSum [chunk] = s_block_aggregate ;
             #endif
         }
+#endif
+
+        this_thread_block ( ).sync ( ) ;
+
     }
 
     //--------------------------------------------------------------------------
@@ -465,6 +505,7 @@ __global__ void GB_cuda_builder_phase3
 
     // this_thread_block ( ).sync ( ) ;
 
+#if 0
     if (threadIdx.x == 0 && blockIdx.x == 0)
     {
         Map [-1] = 0 ;
@@ -472,6 +513,8 @@ __global__ void GB_cuda_builder_phase3
         JDelta [-1] = 0 ;
         #endif
     }
+#endif
+
 }
 
 //------------------------------------------------------------------------------
@@ -765,6 +808,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     printf ("W_0: %p Key_in %p difference: %lu\n",
         W_0, Key_in, (uint64_t) (Key_in - ((GB_key_t *) W_0))) ;
 
+    printf ("\n\n============================== builder phase 1\n\n") ;
     #if 1
     #if GB_BUILD_MATRIX
     for (int64_t p = 0 ; p < nvals ; p++)
@@ -782,7 +826,22 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     (*bad) = 0 ;
     (*ok) = 1 ;
 
-    // HACK: do phase1 on the CPU
+    GB_cuda_builder_phase1 <<<grid, block1, 0, mystream>>>
+        (/* outputs: */ Key_in, ok, bad,
+         /* inputs: */ I,
+            #if GB_BUILD_MATRIX
+            J,
+            #endif
+            vlen, vdim, nvals) ;
+
+    cudaError_t err1 = cudaGetLastError ( ) ;
+    printf ("phase1 cuda error %d\n", err1) ;
+    CUDA_OK (err1) ;
+    CUDA_OK (cudaStreamSynchronize (mystream)) ;
+    (*ok) = (*bad == 0) ;
+    printf ("phase1 sync, ok: %lu, bad: %lu\n", *ok, *bad) ;
+
+    // HACK: repeat phase1 on the CPU
     bool my_ok = true ;
     uint64_t my_bad = 0 ;
     for (int64_t p = 0 ; p < nvals ; p ++)
@@ -800,28 +859,15 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             && (i < vlen) ;
         my_bad += (!my_ok) ;
         // load the indices into Key_in [p]
-        GB_KEY_LOAD (Key_in, p, i, j) ;
+        uint64_t key = (uint64_t) i ;
+        #if GB_BUILD_MATRIX
+        key = (((uint64_t) (j)) << 32) | key ;
+        #endif
+        if (Key_in [p] != key) ABORT ("phase 1 failed\n") ;
     }
     (*bad) = my_bad ;
     (*ok) = (*bad == 0) ;
     printf ("phase1 CPU, ok: %lu, bad: %lu\n", *ok, *bad) ;
-
-#if 0
-    GB_cuda_builder_phase1 <<<grid, block1, 0, mystream>>>
-        (/* outputs: */ Key_in, ok, bad,
-         /* inputs: */ I,
-            #if GB_BUILD_MATRIX
-            J,
-            #endif
-            vlen, vdim, nvals) ;
-#endif
-
-    cudaError_t err1 = cudaGetLastError ( ) ;
-    printf ("phase1 cuda error %d\n", err1) ;
-    CUDA_OK (err1) ;
-    CUDA_OK (cudaStreamSynchronize (mystream)) ;
-    (*ok) = (*bad == 0) ;
-    printf ("phase1 sync, ok: %lu, bad: %lu\n", *ok, *bad) ;
 
     // after the CUDA kernel launch is done, check if the (I,J) indices are OK
     GB_OK ((*ok) ? GrB_SUCCESS : GrB_INVALID_INDEX) ;
@@ -862,6 +908,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // TODO: phase2 could be skipped if phase1 detects (I,J) are already sorted
     // in phase1, or if it knows (I,J) are already sorted on input.  In this
     // case, Key_out = Key_in can be done instead of allocating Key_out.
+
+    printf ("\n\n============================== builder phase 2\n\n") ;
 
     // printf ("nvals %ld, iso: %d\n", nvals, GB_ISO_BUILD) ;
 
@@ -960,6 +1008,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // phase3: look for duplicates (compare with phase1 of CUDA/select)
     //--------------------------------------------------------------------------
 
+    printf ("\n\n============================== builder phase 3\n\n") ;
+
     // builder/phase3 determines which entries are the first in a sequence of
     // duplicates (output: Map), and which entries are the first in their
     // respective vectors (output: JDelta).  The output after builder/phase3 is
@@ -995,12 +1045,12 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     //            0 [       1 |       1 |       2 |       0 ] 0
 
     // allocate Map and ChunkSum: for cumsum of 1st entries in sequence of dupls
-    W_4 = GB_MALLOC_MEMORY (nvals+1, sizeof (Int), &W_4_size) ;
+    W_4 = GB_MALLOC_MEMORY (nvals+1 + CHUNKSIZE, sizeof (Int), &W_4_size) ;
     W_5 = GB_MALLOC_MEMORY (nchunks+2, sizeof (GB_Tp_TYPE), &W_5_size) ;
 
     // allocate JDelta, JDeltaSum: for cumsum of leading entries of vectors of C
     #if GB_BUILD_MATRIX
-    W_6 = GB_MALLOC_MEMORY (nvals+1, sizeof (Int), &W_6_size) ;
+    W_6 = GB_MALLOC_MEMORY (nvals+1 + CHUNKSIZE, sizeof (Int), &W_6_size) ;
     W_7 = GB_MALLOC_MEMORY (nchunks+2, sizeof (GB_Tp_TYPE), &W_7_size) ;
     #endif
 
@@ -1018,7 +1068,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     for (int64_t p = 0 ; p < nvals ; p++)
     {
         GB_KEY_UNLOAD (Key_out, p, i, j) ;
-        printf ("\nKey_out [%ld] = (%ld, %ld)\n", p, (int64_t) i, (int64_t) j) ;
+        printf ("Key_out [%ld] = (%ld, %ld), chunk: %ld\n",
+            p, (int64_t) i, (int64_t) j, p / CHUNKSIZE) ;
     }
     #endif
     #endif
@@ -1041,7 +1092,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     for (int64_t p = -1 ; p < nvals ; p++)
     {
         GB_KEY_UNLOAD (Key_out, p, i, j) ;
-        printf ("\nKey_out [%ld] = (%ld, %ld)\n", p, (int64_t) i, (int64_t) j) ;
+        printf ("\nKey_out [%ld] = (%ld, %ld), chunk: %ld\n",
+            p, (int64_t) i, (int64_t) j, p / CHUNKSIZE) ;
         printf ("    Map [%ld] = %d\n", p, Map [p]) ;
         printf ("    JDelta [%ld] = %d\n", p, JDelta [p]) ;
     }
@@ -1049,18 +1101,24 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     #if 1
     printf ("Chunks after phase3:\n") ;
+    bool ok2 = true ;
     for (int64_t chunk = 0 ; chunk < nchunks ; chunk++)
     {
         printf ("ChunkSum [%ld] = %ld,  JDeltaSum [%ld] = %ld\n",
             chunk, (int64_t) ChunkSum [chunk],
             chunk, (int64_t) JDeltaSum [chunk]) ;
+        ok2 = ok2 && (ChunkSum [chunk] <= CHUNKSIZE)
+                && (JDeltaSum [chunk] <= CHUNKSIZE) ;
     }
+    if (!ok2) ABORT ("chunks are bad!\n") ;
     #endif
     #endif
 
     //--------------------------------------------------------------------------
     // phase4: sum up the unique entries in each chunk (on the CPU)
     //--------------------------------------------------------------------------
+
+    printf ("\n\n============================== builder phase 4\n\n") ;
 
     // compare with phase2 of CUDA/select
 
@@ -1114,9 +1172,13 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     printf ("Chunks after phase4:\n") ;
     for (int64_t chunk = -1 ; chunk <= nchunks ; chunk++)
     {
-        printf ("ChunkSum [%ld] = %ld,  JDeltaSum [%ld] = %ld\n",
-            chunk, (int64_t) ChunkSum [chunk],
+        printf ("ChunkSum [%ld] = %ld",
+            chunk, (int64_t) ChunkSum [chunk]) ;
+        #if GB_BUILD_MATRIX
+        printf (", JDeltaSum [%ld] = %ld\n",
             chunk, (int64_t) JDeltaSum [chunk]) ;
+        #endif
+        printf ("\n") ;
     }
     #endif
 
@@ -1125,6 +1187,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     //--------------------------------------------------------------------------
 
     // compare with phase3 of CUDA/select
+
+    printf ("\n\n============================== builder phase 5\n\n") ;
 
     // builder/phase5 allocates the output T matrix (including T->p, T->h,
     // T->i, and T->x arrays), then moves the data from (Key_out,Sx) into
@@ -1208,7 +1272,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     #if GB_BUILD_MATRIX
     GB_Tj_TYPE *__restrict__ Th = (GB_Tj_TYPE *) T->h ;
     #endif
-    for (int k = 0 ; k <= T->nvec ; k++)
+    for (int k = 0 ; k <= std::min (nvals, T->nvec) ; k++)
     {
         int64_t p = Tp [k] ;
         printf ("Tp [%d] = %ld,     ", k, p) ;

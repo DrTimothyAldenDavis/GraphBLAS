@@ -2575,23 +2575,21 @@ void GB_jitifyer_nvcc_compile
 
     // compile:
     "sh -c \""                          // execute with POSIX shell
-    // FIXME for CUDA: use GB_CUDA_COMPILER here:
-//  "nvcc --version ; "
-    "nvcc "                             // compiler command
+    " %s "                              // nvcc compiler command
     "-forward-unknown-to-host-compiler "
-    "-DGB_JIT_RUNTIME=1  "              // nvcc flags
-    // FIXME for CUDA: add GB_CUDA_INC here:
-    "-I/usr/local/cuda/include -std=c++17 " 
+    "-DGB_JIT_RUNTIME=1 "
+    " %s "                              // -I includes for nvcc
+    " -std=c++17 " 
     " --gpu-architecture=compute_%d%d"  // major,minor
     " --gpu-code=sm_%d%d "              // major,minor
     " -fPIC " 
-    // FIXME for CUDA: add GB_CUDA_FLAGS here:
     " -g " // " -O3 "   // HACK FIXME for CUDA
-    " --device-debug "          // HACK FIXME
-    " --generate-line-info "            // HACK FIXME
-    " --source-in-ptx "         // HACK FIXME
-    " --ptxas-options=-v "          // HACK FIXME
+//  " --device-debug "          // HACK FIXME
+//  " --generate-line-info "            // HACK FIXME
+//  " --source-in-ptx "         // HACK FIXME
+//  " --ptxas-options=-v "          // HACK FIXME
     " -Wno-deprecated-gpu-targets "
+//  " %s "                              // nvcc flags
     "-I'%s/src' "                       // include source directory
     "-I'%s/src/template' "
     "-I'%s/src/include' "
@@ -2601,23 +2599,28 @@ void GB_jitifyer_nvcc_compile
     "%s %s%s%s ; "                      // error log file
 
     // link:
-    "nvcc "                             // compiler
-    "-DGB_JIT_RUNTIME=1  "              // nvcc flags
-    "-I/usr/local/cuda/include -std=c++17 "
+    " %s "                              // nvcc compiler command
+    "-DGB_JIT_RUNTIME=1 "
+    " %s "                              // -I includes for nvcc
+    " -std=c++17 " 
     " -Wno-deprecated-gpu-targets "
+//  " %s "                              // nvcc flags FIXME
     " --gpu-architecture=compute_%d%d"  // major,minor
     " --gpu-code=sm_%d%d "              // major,minor
     " -shared "
     "-o '%s/lib/%02x/%s%s%s' "          // lib*.so output file
     "'%s/c/%02x/%s%s' "                 // *.o input file
-    " -cudart shared "
+    " -cudart=shared "
 //  "%s "                               // libraries to link with (any?)
     "%s "                               // burble stdout
     "%s %s%s%s\"",                      // error log file
 
     // compile:
+    GB_CUDA_COMPILER,                   // nvcc compiler FIXME use get/set
+    GB_CUDA_INC,                        // nvcc compiler -I includes FIXME use get/set
     (int) major, (int) minor,           // CUDA compute_xy architecture
     (int) major, (int) minor,           // CUDA sm_xy code
+//  GB_CUDA_FLAGS,                      // nvcc compiler flags FIXME use get/set
     GB_jit_cache_path,                  // include cache/src
     GB_jit_cache_path,                  // include cache/src/template
     GB_jit_cache_path,                  // include cache/src/include
@@ -2627,6 +2630,9 @@ void GB_jitifyer_nvcc_compile
     err_redirect, log_quote, GB_jit_error_log, log_quote,   // error log file
 
     // link:
+    GB_CUDA_COMPILER,                   // nvcc compiler FIXME use get/set
+    GB_CUDA_INC,                        // nvcc compiler -I includes FIXME use get/set
+//  GB_CUDA_FLAGS,                      // nvcc compiler flags FIXME use get/set
     (int) major, (int) minor,           // CUDA compute_xy architecture
     (int) major, (int) minor,           // CUDA sm_xy code
     GB_jit_cache_path, bucket,  
