@@ -408,7 +408,7 @@ GrB_Info GB_build               // build matrix
 
     // TODO: the typecast should be done earlier
 
-    ASSERT (GB_IS_HYPERSPARSE (T)) ;
+    ASSERT (GB_IMPLIES (T->vdim > 1, GB_IS_HYPERSPARSE (T))) ;
     ASSERT (!GB_ZOMBIES (T)) ;
     ASSERT (!GB_JUMBLED (T)) ;
     ASSERT (!GB_PENDING (T)) ;

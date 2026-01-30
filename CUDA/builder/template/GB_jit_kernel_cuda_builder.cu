@@ -630,7 +630,7 @@ __global__ void GB_cuda_builder_phase5
                 #if !GB_ISO_BUILD
                 GB_BLD_COPY (Tx, pT, Sx, p) ; // Tx [pT] = Sx [p]
 
-                #if !GB_DUP_IS_FIRST
+                #if !defined (GB_DUP_IS_FIRST)
                 // Sum up all duplicate entries, in order.  This can cross over
                 // into subsequent chunks of (Key_out,Sx).  Warp divergence is
                 // expected, but it should be OK since only a modest O(1)
