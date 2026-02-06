@@ -95,34 +95,76 @@ if ( GRAPHBLAS_HAS_CUDA )
 
     include_directories ( "rmm_wrap" "CUDA/include" "CUDA" ${CUDA_INCLUDE_DIRS} )
 
-    set ( EXTERNAL_INCLUDES_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
+    include ( FetchContent )
+    FetchContent_Declare ( rmm
+        GIT_REPOSITORY "https://github.com/rapidsai/rmm"
+        GIT_TAG branch-21.10
+        OVERRIDE_FIND_PACKAGE )
+    FetchContent_MakeAvailable ( rmm )
 
-    if ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY} )
-        file ( MAKE_DIRECTORY ${EXTERNAL_INCLUDES_DIRECTORY} )
-    endif ( )
+    find_package ( rmm REQUIRED )
 
-    if ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/spdlog )
-        message ( STATUS "cloning spdlog v1.10.0" )
-        execute_process (
-            COMMAND git clone "https://github.com/gabime/spdlog" --branch v1.10.0 --recursive spdlog
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
-    endif ( )
+        message ( STATUS "RMM :    " ${rmm_FOUND} )
+        message ( STATUS "RMM ver: " ${rmm_VERSION} )
+        message ( STATUS "RMM inc: " ${rmm_INCLUDE_DIRS} )
+        message ( STATUS "RMM lib: " ${rmm_LIBRARY_DIR} )
 
-    if ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/rmm )
-        message ( STATUS "cloning rmm branch-21.10" )
-        execute_process (
-            COMMAND git clone "https://github.com/rapidsai/rmm" --branch branch-21.10 --recursive rmm
+        message ( STATUS "RMM ver: " ${RMM_VERSION} )
+        message ( STATUS "RMM inc: " ${RMM_INCLUDE_DIRS} )
+        message ( STATUS "RMM lib: " ${RMM_LIBRARY_DIR} )
+
+
+        message ( STATUS "RMM bin: " ${RMM_BINARY_DIR} )
+        message ( STATUS "RMM src: " ${RMM_SOURCE_DIR} )
+
+        message ( STATUS "spdlog bin: " ${spdlog_BINARY_DIR} )
+        message ( STATUS "spdlog src: " ${spdlog_SOURCE_DIR} )
+
+#   set ( EXTERNAL_INCLUDES_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
+
+#   if ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY} )
+#       file ( MAKE_DIRECTORY ${EXTERNAL_INCLUDES_DIRECTORY} )
+#   endif ( )
+
+#   if ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/spdlog )
+#       message ( STATUS "cloning spdlog v1.10.0" )
+#       execute_process (
+#           COMMAND git clone "https://github.com/gabime/spdlog" --branch v1.10.0 --recursive spdlog
+#           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
+#   endif ( )
+
+#   if ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/rmm )
+#       message ( STATUS "cloning rmm branch-21.10" )
+#       execute_process (
+#           COMMAND git clone "https://github.com/rapidsai/rmm" --branch branch-21.10 --recursive rmm
 #           COMMAND git clone "https://github.com/rapidsai/rmm" --branch branch-25.10 --recursive rmm
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
-    endif()
+#           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
+#   endif()
 
-    set ( RMM_WRAP_INCLUDES ${PROJECT_BINARY_DIR}
-        ${CMAKE_CURRENT_BINARY_DIR}/external_includes/spdlog/include
-# for v21.10:
-        ${CMAKE_CURRENT_BINARY_DIR}/external_includes/rmm/include
-# for v25.10:
-#       ${CMAKE_CURRENT_BINARY_DIR}/external_includes/rmm/cpp/include
-        ${CUDA_INCLUDE_DIRS} )
+#     set ( RMM_WRAP_INCLUDES ${PROJECT_BINARY_DIR}
+#         ${PROJECT_SOURCE_DIR}/external_includes/spdlog/include
+# #       ${CMAKE_CURRENT_BINARY_DIR}/external_includes/spdlog/include
+#         ${PROJECT_SOURCE_DIR}/external_includes/rmm/include
+# # for v21.10:
+# #       ${CMAKE_CURRENT_BINARY_DIR}/external_includes/rmm/include
+# # for v25.10:
+# #       ${CMAKE_CURRENT_BINARY_DIR}/external_includes/rmm/cpp/include
+#         ${CUDA_INCLUDE_DIRS} )
+
+#     set ( RMM_WRAP_INCLUDES ${PROJECT_BINARY_DIR}
+#         ${PROJECT_SOURCE_DIR}/external_includes/spdlog/include
+# #       ${CMAKE_CURRENT_BINARY_DIR}/external_includes/spdlog/include
+#         ${PROJECT_SOURCE_DIR}/external_includes/rmm/include
+# # for v21.10:
+# #       ${CMAKE_CURRENT_BINARY_DIR}/external_includes/rmm/include
+# # for v25.10:
+# #       ${CMAKE_CURRENT_BINARY_DIR}/external_includes/rmm/cpp/include
+#         ${CUDA_INCLUDE_DIRS} )
+
+      set ( RMM_WRAP_INCLUDES ${PROJECT_BINARY_DIR}
+          ${RMM_SOURCE_DIR}/include
+          ${spdlog_SOURCE_DIR}/include
+          ${CUDA_INCLUDE_DIRS} )
 
 else ( )
 
@@ -869,17 +911,17 @@ include ( GraphBLAS_PreJIT )
 # set ( DUMP true )
 
 if ( DUMP )
-    message("====")
-    message("Begin dumping all CMake variables in alphabetic order")
-    message("====")
+    message ( STATUS "====" )
+    message ( STATUS "Begin dumping all CMake variables in alphabetic order" )
+    message ( STATUS "====" )
     get_cmake_property ( _variableNames VARIABLES )
     list ( SORT _variableNames )
     foreach ( _variableName ${_variableNames} )
         message ( STATUS "${_variableName}=${${_variableName}}" )
     endforeach ( )
-    message("====")
-    message("End dumping all CMake variables in alphabetic order")
-    message("====")
+    message ( STATUS "====" )
+    message ( STATUS "End dumping all CMake variables in alphabetic order" )
+    message ( STATUS "====" )
 endif ( )
 
 #-------------------------------------------------------------------------------
