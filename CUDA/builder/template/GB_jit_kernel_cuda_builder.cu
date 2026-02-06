@@ -204,6 +204,8 @@ __global__ void GB_cuda_builder_phase1
     // check if all indices are in range
     //--------------------------------------------------------------------------
 
+    // FIXME add this check back in
+
 #if 0
     my_bad = GB_cuda_threadblock_sum_uint64 (my_bad) ;
     if (threadIdx.x == 0)
@@ -267,9 +269,12 @@ __global__ void GB_cuda_builder_phase3
 
     // cub::Block* workspace:
     GB_CUB_BLOCK_WORKSPACE (W, Int, BLOCKDIM, ITEMS_PER_THREAD) ;
+
+#if 0
     #if GB_BUILD_MATRIX
     GB_CUB_BLOCK_WORKSPACE (Z, Int, BLOCKDIM, ITEMS_PER_THREAD) ;
     #endif
+#endif
 
     //--------------------------------------------------------------------------
     // the first thread of the threadblock fills in the sentinal values
@@ -378,9 +383,11 @@ __global__ void GB_cuda_builder_phase3
 
         this_thread_block ( ).sync ( ) ;
         Int t_block_aggregate ;
+        #if GB_BUILD_MATRIX
         Int s_block_aggregate ;
+        #endif
 
-#if 1
+#if 0
 
         // This entire phase computes the following:
         if (threadIdx.x == blockDim.x - 1)
@@ -415,7 +422,48 @@ __global__ void GB_cuda_builder_phase3
             #endif
         }
 
-#else
+#endif
+
+        //------------------------------------------------------------
+        // try this version
+        //------------------------------------------------------------
+
+        Int t [ITEMS_PER_THREAD] ;
+
+        BlockLoad (W.load).Load (Local_Map, t) ;
+        this_thread_block ( ).sync ( ) ;
+        BlockScan (W.scan).InclusiveSum (t, t, t_block_aggregate) ;
+        this_thread_block ( ).sync ( ) ;
+        BlockStore (W.store).Store (Map + pfirst, t) ;
+        this_thread_block ( ).sync ( ) ;
+
+        #if GB_BUILD_MATRIX
+        BlockLoad (W.load).Load (Local_JDelta, t) ;
+        this_thread_block ( ).sync ( ) ;
+        BlockScan (W.scan).InclusiveSum (t, t, s_block_aggregate) ;
+        this_thread_block ( ).sync ( ) ;
+        BlockStore (W.store).Store (JDelta + pfirst, t) ;
+        this_thread_block ( ).sync ( ) ;
+        #endif
+
+        // finally, the aggregate sums are written to ChunkSum and JDeltaSum
+        if (threadIdx.x == blockDim.x - 1)
+        {
+            #if 0
+            printf ("phase3, set chunk: %ld: %d, %d\n", chunk,
+                t_block_aggregate, s_block_aggregate);
+            #endif
+            ChunkSum  [chunk] = t_block_aggregate ;
+            #if GB_BUILD_MATRIX
+            JDeltaSum [chunk] = s_block_aggregate ;
+            #endif
+        }
+
+#if 0
+
+        //------------------------------------------------------------
+        // broken
+        //------------------------------------------------------------
 
         Int t [ITEMS_PER_THREAD] ;
         #if GB_BUILD_MATRIX
@@ -493,28 +541,12 @@ __global__ void GB_cuda_builder_phase3
             JDeltaSum [chunk] = s_block_aggregate ;
             #endif
         }
+
 #endif
 
         this_thread_block ( ).sync ( ) ;
 
     }
-
-    //--------------------------------------------------------------------------
-    // assign Map and JDelta sentinel values
-    //--------------------------------------------------------------------------
-
-    // this_thread_block ( ).sync ( ) ;
-
-#if 0
-    if (threadIdx.x == 0 && blockIdx.x == 0)
-    {
-        Map [-1] = 0 ;
-        #if GB_BUILD_MATRIX
-        JDelta [-1] = 0 ;
-        #endif
-    }
-#endif
-
 }
 
 //------------------------------------------------------------------------------
