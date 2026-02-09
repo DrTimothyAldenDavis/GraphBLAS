@@ -2584,10 +2584,10 @@ void GB_jitifyer_nvcc_compile
     " --gpu-code=sm_%d%d "              // major,minor
     " -fPIC " 
     " -g " // " -O3 "   // HACK FIXME for CUDA
-//  " --device-debug "          // HACK FIXME
-//  " --generate-line-info "            // HACK FIXME
-//  " --source-in-ptx "         // HACK FIXME
-//  " --ptxas-options=-v "          // HACK FIXME
+    " --device-debug "          // HACK FIXME
+    " --generate-line-info "            // HACK FIXME
+    " --source-in-ptx "         // HACK FIXME
+    " --ptxas-options=-v "          // HACK FIXME
     " -Wno-deprecated-gpu-targets "
 //  " %s "                              // nvcc flags
     "-I'%s/src' "                       // include source directory
