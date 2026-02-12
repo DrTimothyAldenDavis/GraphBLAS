@@ -166,11 +166,11 @@ __global__ void GB_cuda_builder_phase1
     uint64_t *bad,      // count of # of invalid tuples (zero on input)
     // input
     const GB_I_TYPE *__restrict__ I, // size nvals
+    int64_t vlen,       // vector-length dimension of C (for I indices)
     #if GB_BUILD_MATRIX
     const GB_J_TYPE *__restrict__ J, // size nvals, NULL if C is a vector
-    #endif
-    int64_t vlen,       // vector-length dimension of C (for I indices)
     int64_t vdim,       // vector-dim dimension of C (for J indices)
+    #endif
     int64_t nvals       // # of tuples in (I,J,X)
 )
 {
@@ -179,9 +179,6 @@ __global__ void GB_cuda_builder_phase1
     // load the (I,J) tuples into the Key_in workspace
     //--------------------------------------------------------------------------
 
-    #if 0
-    bool my_ok = true ;
-    #endif
     uint64_t my_bad = 0 ;
 
     for (int64_t p = blockIdx.x * blockDim.x + threadIdx.x ;
@@ -319,6 +316,7 @@ __global__ void GB_cuda_builder_phase3
             GB_KEY_UNLOAD (Key_out, p-1, iprev, jprev) ;
             GB_KEY_UNLOAD (Key_out, p,   i,     j    ) ;
             #if GB_BUILD_MATRIX
+            // leading is true if this is the first entry in vector j
             bool leading = (j != jprev) ;
             #endif
             // keep = 1 if (i,j) is unique, 0 if duplicate
@@ -696,10 +694,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     dim3 grid (gridsz) ;        // = min (ceil (nvals/CHUNKSIZE), 256*(#sms))
     dim3 block1 (BLOCKDIM) ;
 
-    cudaStream_t mystream, mystream3 ;
-    CUDA_OK (cudaStreamCreate (&mystream)) ;
-    CUDA_OK (cudaStreamCreate (&mystream3)) ;
-
     //--------------------------------------------------------------------------
     // phase1: load the Key_in workspace and check if indices are in range
     //--------------------------------------------------------------------------
@@ -754,18 +748,18 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     (*bad) = 0 ;
 //  (*ok) = 1 ;
 
-    GB_cuda_builder_phase1 <<<grid, block1, 0, mystream>>>
+    GB_cuda_builder_phase1 <<<grid, block1, 0, stream>>>
         (/* outputs: */ Key_in, /* ok, */ bad,
-         /* inputs: */ I,
+         /* inputs: */ I, vlen,
             #if GB_BUILD_MATRIX
-            J,
+            J, vdim,
             #endif
-            vlen, vdim, nvals) ;
+            nvals) ;
 
     cudaError_t err1 = cudaGetLastError ( ) ;
 //  printf ("phase1 cuda error %d\n", err1) ;
     CUDA_OK (err1) ;
-    CUDA_OK (cudaStreamSynchronize (mystream)) ;
+    CUDA_OK (cudaStreamSynchronize (stream)) ;
 //  (*ok) = (*bad == 0) ;
 //  printf ("phase1 sync, ok: %lu, bad: %lu\n", *ok, *bad) ;
 
@@ -868,7 +862,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         GB_key_decomposer { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
-        mystream)) ;
+        stream)) ;
     #else
     CUDA_OK (cub::DeviceRadixSort::SortPairs (
         /* temp storage: */ W_3, W_3_size,
@@ -877,11 +871,11 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         GB_key_decomposer { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
-        mystream)) ;
+        stream)) ;
     #endif
 
     CUDA_OK (cudaGetLastError ( )) ;
-    CUDA_OK (cudaStreamSynchronize (mystream)) ;
+    CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     // allocate workspace for CUB radix sort
     W_3 = GB_MALLOC_MEMORY (W_3_size+1, 1, &W_3_size) ;
@@ -902,7 +896,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         GB_key_decomposer { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
-        mystream)) ;
+        stream)) ;
     #else
     CUDA_OK (cub::DeviceRadixSort::SortPairs (
         /* temp storage: */ W_3, W_3_size,
@@ -911,19 +905,16 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         GB_key_decomposer { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
-        mystream)) ;
+        stream)) ;
     #endif
 
     CUDA_OK (cudaGetLastError ( )) ;
-    CUDA_OK (cudaStreamSynchronize (mystream)) ;
+    CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     // Key_in and CUB workspace no longer needed
-    #if 0
-    // FIXME: add this back in
     GB_FREE_MEMORY (&W_0, W_0_size) ;
     GB_FREE_MEMORY (&W_3, W_3_size) ;
     Key_in = NULL ;
-    #endif
 
     // sorted tuples are now in (Key_out,Sx) 
 
@@ -1014,7 +1005,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         (int64_t) gridsz, (int64_t) BLOCKDIM) ;
     #endif
 
-    GB_cuda_builder_phase3 <<<grid, block1, 0, mystream3>>>
+    GB_cuda_builder_phase3 <<<grid, block1, 0, stream>>>
         ( /* outputs: */ Map, ChunkSum,
             #if GB_BUILD_MATRIX
             JDelta, JDeltaSum,
@@ -1022,7 +1013,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
           /* inputs: */ Key_out, nvals, nchunks) ;
 
     CUDA_OK (cudaGetLastError ( )) ;
-    CUDA_OK (cudaStreamSynchronize (mystream3)) ;
+    CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     #if GB_BUILD_MATRIX
     #if 0
@@ -1201,7 +1192,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     #endif
 
     // construct Tp, Th, Ti, and Tx, summing up duplicates
-    GB_cuda_builder_phase5 <<<grid, block1, 0, mystream>>>
+    GB_cuda_builder_phase5 <<<grid, block1, 0, stream>>>
         (/* outputs: */ T,
          /* inputs: */  Map, ChunkSum,
             #if GB_BUILD_MATRIX
@@ -1210,7 +1201,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             Key_out, Sx, nvals, nchunks) ;
 
     CUDA_OK (cudaGetLastError ( )) ;
-    CUDA_OK (cudaStreamSynchronize (mystream)) ;
+    CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     #if 0
     GB_Tp_TYPE *__restrict__ Tp = (GB_Tp_TYPE *) T->p ;
@@ -1231,10 +1222,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         printf ("\n") ;
     }
     #endif
-
-//  FIXME: use the input stream; remove mystream and mystream3
-//  CUDA_OK (cudaStreamDestroy (mystream)) ;
-//  CUDA_OK (cudaStreamDestroy (mystream3)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result
