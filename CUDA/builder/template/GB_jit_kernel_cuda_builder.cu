@@ -922,6 +922,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // FIXME: add this back in
     GB_FREE_MEMORY (&W_0, W_0_size) ;
     GB_FREE_MEMORY (&W_3, W_3_size) ;
+    Key_in = NULL ;
     #endif
 
     // sorted tuples are now in (Key_out,Sx) 
