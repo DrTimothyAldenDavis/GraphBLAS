@@ -214,7 +214,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
-    ASSERT_MATRIX_OK (R, "R = I_inverse matrix", GB2) ;
+    ASSERT_MATRIX_OK (R, "R = I_inverse matrix", GB0) ;
     (*R_handle) = R ;
     return (GrB_SUCCESS) ;
 }
