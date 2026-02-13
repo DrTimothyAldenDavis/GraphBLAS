@@ -120,7 +120,6 @@ __global__ void GB_cuda_builder_phase1
 (
     // output
     GB_key_t *Key_in,   // size nvals+1: Key_in [-1...nvals-1]
-//  uint64_t *ok,       // if true: (I,J) are valid; false: (I,J) out of range
     uint64_t *bad,      // count of # of invalid tuples (zero on input)
     // input
     const GB_I_TYPE *__restrict__ I, // size nvals
@@ -386,18 +385,16 @@ __global__ void GB_cuda_builder_phase3
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_builder_phase5
+// GB_cuda_builder_phase5_with_dupl
 //------------------------------------------------------------------------------
 
 // phase5 constructs the output matrix T (Tp, Th, Ti, and Tx) from the
-// (Key_out,Sx) tuples, summing up duplicates (if any).
+// (Key_out,Sx) tuples, summing up duplicates (at least one duplicate is
+// present).
 
 // compare with select/phase3 and select/phase6
 
-// TODO: make GB_cuda_builder_phase5_nodupl, and don't call this kernel,
-// when no duplicates appear
-
-__global__ void GB_cuda_builder_phase5
+__global__ void GB_cuda_builder_phase5_with_dupl
 (
     // outputs
     GrB_Matrix T,
@@ -427,9 +424,6 @@ __global__ void GB_cuda_builder_phase5
     #if !GB_ISO_BUILD
     GB_Tx_TYPE *__restrict__ Tx = (GB_Tx_TYPE *) T->x ; Tx-- ;
     #endif
-
-    // TODO: if no duplicates have been found, Map and ChunkSum are not
-    // needed.  Just copy all of Key_out [0..nvals-1].i to Ti [0..nvals-1]
 
     #if 0
     if (threadIdx.x == 0 && blockIdx.x == 0)
@@ -464,14 +458,10 @@ __global__ void GB_cuda_builder_phase5
         int64_t plast = pfirst + CHUNKSIZE ;
         plast = GB_IMIN (plast, nvals) ;
         my_chunk_size = plast - pfirst ;
-//      printf ("chunk: %ld, pfirst: %ld, plast %ld\n",  chunk, pfirst, plast) ;
 
         //----------------------------------------------------------------------
         // copy the entries, sum duplicates, and construct Tp and Th
         //----------------------------------------------------------------------
-
-        // TODO: if tnz == nvals, then no duplicates will appear, so the
-        // following loop can be simplified
 
         for (int64_t pdelta = threadIdx.x ;
                      pdelta < my_chunk_size ;
@@ -534,6 +524,124 @@ __global__ void GB_cuda_builder_phase5
             {
                 // The p-th entry is the leading entry of the kT-th vector of T
                 Tp [kT] = pT - 1 ;      // shift by 1 since pT is 1-based
+                // Th [kT] = Key_out [p].j ;
+                GB_KEY_UNLOAD_J (Key_out, p, j1) ;
+                Th [kT] = j1 ;
+            }
+            #endif
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // finalize the last vector of C
+    //--------------------------------------------------------------------------
+
+    if (threadIdx.x == 0 && blockIdx.x == 0)
+    {
+        // T->nvec is 0-based, so increment Tp to undo the Tp-- done above
+        Tp++ ;
+        #if GB_MTX_BUILD
+        Tp [T->nvec] = T->nvals ;
+        #else
+        Tp [0] = 0 ;
+        Tp [1] = T->nvals ;
+        #endif
+    }
+}
+
+
+//------------------------------------------------------------------------------
+// GB_cuda_builder_phase5_without_dupl
+//------------------------------------------------------------------------------
+
+// phase5 constructs the output matrix T (Tp, Th, Ti, and Tx) from the
+// (Key_out,Sx) tuples, where no duplicates appear.
+
+// compare with select/phase3 and select/phase6
+
+__global__ void GB_cuda_builder_phase5_without_dupl
+(
+    // outputs
+    GrB_Matrix T,
+    // inputs, not modified:
+    #if GB_MTX_BUILD
+    Int *JDelta,            // size nvals+1, in JDelta [-1..nvals-1]
+    GB_Tp_TYPE *JDeltaSum,  // size nchunks+1
+    #endif
+    GB_key_t *Key_out,      // size nvals+1: Key_out [-1 ... nvals-1]
+    GB_Sx_TYPE *Sx,         // size nvals+1: Sx  [-1 ... nvals-1]
+    int64_t nvals,          // # of tuples in (I,J,X)
+    int64_t nchunks
+)
+{
+
+    //--------------------------------------------------------------------------
+    // get T->p, T->h, T->i, and T->x. kT is 1-based but p is 0-based
+    //--------------------------------------------------------------------------
+
+    GB_Tp_TYPE *__restrict__ Tp = (GB_Tp_TYPE *) T->p ; Tp-- ; // indexed with kT
+    #if GB_MTX_BUILD
+    GB_Tj_TYPE *__restrict__ Th = (GB_Tj_TYPE *) T->h ; Th-- ; // indexed with kT
+    #endif
+    GB_Ti_TYPE *__restrict__ Ti = (GB_Ti_TYPE *) T->i ;        // index with p
+    #if !GB_ISO_BUILD
+    GB_Tx_TYPE *__restrict__ Tx = (GB_Tx_TYPE *) T->x ;        // index with p
+    #endif
+
+    //--------------------------------------------------------------------------
+    // copy the entries from (Key_out,Sx) into Tp, Th, Ti, and Tx, no duplicates
+    //--------------------------------------------------------------------------
+
+    for (int64_t chunk = blockIdx.x ;
+                 chunk < nchunks ;
+                 chunk += gridDim.x)        // grid-stride loop
+    {
+
+        //----------------------------------------------------------------------
+        // determine the chunk
+        //----------------------------------------------------------------------
+
+        int64_t pfirst = chunk << LOG2_CHUNKSIZE ;
+        int64_t my_chunk_size ;
+        // this computation is just the 2nd #if case of select/phase3:
+        int64_t plast = pfirst + CHUNKSIZE ;
+        plast = GB_IMIN (plast, nvals) ;
+        my_chunk_size = plast - pfirst ;
+
+        //----------------------------------------------------------------------
+        // copy the entries, sum duplicates, and construct Tp and Th
+        //----------------------------------------------------------------------
+
+        for (int64_t pdelta = threadIdx.x ;
+                     pdelta < my_chunk_size ;
+                     pdelta += blockDim.x)       // block-stride loop
+        {
+
+            int64_t p = pfirst + pdelta ;
+
+            //------------------------------------------------------------------
+            // copy the entries
+            //------------------------------------------------------------------
+
+            // Ti [p] = Key_out [p].i ;
+            GB_KEY_UNLOAD_I (Key_out, p, i1) ;
+            Ti [p] = (GB_Ti_TYPE) i1 ;
+
+            #if !GB_ISO_BUILD
+            GB_BLD_COPY (Tx, p, Sx, p) ;       // Tx [p] = Sx [p]
+            #endif
+
+            //------------------------------------------------------------------
+            // construct Tp and Th, if T is a matrix (skip if T is a vector)
+            //------------------------------------------------------------------
+
+            #if GB_MTX_BUILD
+            GB_Tp_TYPE kT = JDelta [p  ] + JDeltaSum [chunk] ;
+            GB_Tp_TYPE k0 = JDelta [p-1] + JDeltaSum [chunk - (pdelta == 0)] ;
+            if (k0 < kT)
+            {
+                // The p-th entry is the leading entry of the kT-th vector of T
+                Tp [kT] = p ;       // p is already 0-based
                 // Th [kT] = Key_out [p].j ;
                 GB_KEY_UNLOAD_J (Key_out, p, j1) ;
                 Th [kT] = j1 ;
@@ -652,6 +760,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     {
         // out of memory
         GB_FREE_ALL ;
+        printf ("out of memory for W_0, size %lu\n",
+            (uint64_t) nvals * sizeof (GB_key_t)) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -677,24 +787,18 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     // get 2 uint64_t scalars from the W_8 workspace
     uint64_t *bad = ((uint64_t *) W_8) ;
-//  uint64_t *ok  = ((uint64_t *) W_8) + 1 ;
     (*bad) = 0 ;
-//  (*ok) = 1 ;
 
     GB_cuda_builder_phase1 <<<grid, block1, 0, stream>>>
-        (/* outputs: */ Key_in, /* ok, */ bad,
+        (/* outputs: */ Key_in, bad,
          /* inputs: */ I, vlen,
             #if GB_MTX_BUILD
             J, vdim,
             #endif
             nvals) ;
 
-    cudaError_t err1 = cudaGetLastError ( ) ;
-//  printf ("phase1 cuda error %d\n", err1) ;
-    CUDA_OK (err1) ;
+    CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
-//  (*ok) = (*bad == 0) ;
-//  printf ("phase1 sync, ok: %lu, bad: %lu\n", *ok, *bad) ;
 
     // HACK: repeat phase1 on the CPU
     #if 0
@@ -721,9 +825,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         #endif
         if (Key_in [p] != key) ABORT ("phase 1 failed\n") ;
     }
+    bool ok = (my_bad == 0) ;
+    printf ("phase1 CPU, ok: %lu, bad: %lu\n", ok, my_bad) ;
     (*bad) = my_bad ;
-    (*ok) = (*bad == 0) ;
-    printf ("phase1 CPU, ok: %lu, bad: %lu\n", *ok, *bad) ;
     #endif
 
     // after the CUDA kernel launch is done, check if the (I,J) indices are OK
@@ -779,6 +883,14 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     {
         // out of memory
         GB_FREE_ALL ;
+        printf ("out of memory for W_1, size %lu, or W_2, size %lu\n",
+            (uint64_t) nvals * sizeof (GB_key_t),
+            #if GB_ISO_BUILD
+            0
+            #else
+            (uint64_t) nvals * sizeof (GB_Sx_TYPE)
+            #endif
+            ) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -817,6 +929,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     {
         // out of memory
         GB_FREE_ALL ;
+        printf ("out of memory for W_3, size %lu\n", W_3_size) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -1095,7 +1208,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     // allocate the T matrix as hypersparse, with tnz entries and tnvec vectors,
     // or as sparse if T is a typecasted GrB_Vector.
-    GB_OK (GB_new_bix (&T, ttype, vlen, vdim,
+    info = (GB_new_bix (&T, ttype, vlen, vdim,
         /* Ap_option: */ (tnz == 0) ? GB_ph_calloc : GB_ph_malloc,
         is_csc,
         #if GB_MTX_BUILD
@@ -1114,50 +1227,46 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         /* p_is_32: */ (GB_Tp_BITS == 32),
         /* j_is_32: */ (GB_Tj_BITS == 32),
         /* i_is_32: */ (GB_Ti_BITS == 32))) ;
+    if (info != GrB_SUCCESS)
+    {
+        printf ("new_bix failed: %d\n", info) ;
+    }
+    GB_OK (info) ;
 
     T->nvals = tnz ;
     T->magic = GB_MAGIC ;
     T->nvec = tnvec ;
     T->nvec_nonempty = tnvec ;
 
-    #if 0
-    printf ("did phase5 new_bix: T->nvec = %ld\n", T->nvec) ;
-    #endif
-
-    // TODO: if (tnz == nvals) then there are no duplicates, and
-    // phase5 does not have to check for them!
-
-    // construct Tp, Th, Ti, and Tx, summing up duplicates
-    GB_cuda_builder_phase5 <<<grid, block1, 0, stream>>>
-        (/* outputs: */ T,
-         /* inputs: */  Map, ChunkSum,
-            #if GB_MTX_BUILD
-            JDelta, JDeltaSum,
-            #endif
-            Key_out, Sx, nvals, nchunks) ;
+    if (tnz == nvals)
+    {
+        // construct Tp, Th, Ti, and Tx, no duplicates appear
+        printf ("build phase5, tnz %ld, no dupl\n", tnz) ;
+        GB_cuda_builder_phase5_without_dupl <<<grid, block1, 0, stream>>>
+            (/* outputs: */ T,
+             /* inputs: */
+                #if GB_MTX_BUILD
+                JDelta, JDeltaSum,
+                #endif
+                Key_out, Sx, nvals, nchunks) ;
+    }
+    else
+    {
+        // construct Tp, Th, Ti, and Tx, summing up duplicates
+        // (at least one duplicate appears)
+        printf ("build phase5, tnz %ld, nvals %ld, with %ld dupl\n",
+            tnz, nvals, nvals - tnz) ;
+        GB_cuda_builder_phase5_with_dupl <<<grid, block1, 0, stream>>>
+            (/* outputs: */ T,
+             /* inputs: */  Map, ChunkSum,
+                #if GB_MTX_BUILD
+                JDelta, JDeltaSum,
+                #endif
+                Key_out, Sx, nvals, nchunks) ;
+    }
 
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
-
-    #if 0
-    GB_Tp_TYPE *__restrict__ Tp = (GB_Tp_TYPE *) T->p ;
-    #if GB_MTX_BUILD
-    GB_Tj_TYPE *__restrict__ Th = (GB_Tj_TYPE *) T->h ;
-    #endif
-    for (int k = 0 ; k <= std::min (nvals, T->nvec) ; k++)
-    {
-        int64_t p = Tp [k] ;
-        printf ("Tp [%d] = %ld,     ", k, p) ;
-        #if GB_MTX_BUILD
-        if (k < T->nvec)
-        {
-            int64_t j = Th [k] ;
-            printf ("Th [%d] = %ld", k, j) ;
-        }
-        #endif
-        printf ("\n") ;
-    }
-    #endif
 
     //--------------------------------------------------------------------------
     // free workspace and return result

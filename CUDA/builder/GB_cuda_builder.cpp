@@ -85,9 +85,12 @@ GrB_Info GB_cuda_builder            // build a matrix from tuples
     // build T from the (I,J,X) tuples
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_cuda_builder_jit (Thandle, ttype, vlen, vdim, is_csc, is_matrix,
+    printf ("calling the builder jit\n") ;
+    info = (GB_cuda_builder_jit (Thandle, ttype, vlen, vdim, is_csc, is_matrix,
         I, J, X, X_iso, nvals, dup, xtype, I_is_32, J_is_32,
         Tp_is_32, Tj_is_32, Ti_is_32, stream, gridsz)) ;
+    printf ("builder jit info: %d\n", info) ;
+    GB_OK (info) ;
 
     //--------------------------------------------------------------------------
     // release the stream

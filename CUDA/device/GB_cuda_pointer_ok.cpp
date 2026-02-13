@@ -19,7 +19,7 @@ bool GB_cuda_pointer_ok
 
     if (p == NULL)
     {
-        printf ("\n%s: %s (%p) is NULL\n", __FILE__, name, p) ;
+//      printf ("\n%s: %s (%p) is NULL\n", __FILE__, name, p) ;
         return (true) ;
     }
 
@@ -28,27 +28,27 @@ bool GB_cuda_pointer_ok
 
     if (status != cudaSuccess)
     {
-        printf ("\n%s: %s (%p) cudaPointerGetAttributes failed\n", __FILE__, name, p) ;
+//      printf ("\n%s: %s (%p) cudaPointerGetAttributes failed\n", __FILE__, name, p) ;
         return (false) ;
     }
     if (attr.type == cudaMemoryTypeHost)
     {
-        printf ("\n%s: %s (%p) belongs to the host only\n", __FILE__, name, p) ;
+//      printf ("\n%s: %s (%p) belongs to the host only\n", __FILE__, name, p) ;
         return (false) ;
     }
     else if (attr.type == cudaMemoryTypeDevice)
     {
-        printf ("\n%s: %s (%p) belongs to the GPU only\n", __FILE__, name, p) ;
+//      printf ("\n%s: %s (%p) belongs to the GPU only\n", __FILE__, name, p) ;
         return (true) ;
     }
     else if (attr.type == cudaMemoryTypeManaged)
     {
-        printf ("\n%s: %s (%p) belongs is managed memory (CPU and GPU)\n", __FILE__, name, p) ;
+//      printf ("\n%s: %s (%p) belongs is managed memory (CPU and GPU)\n", __FILE__, name, p) ;
         return (true) ;
     }
     else
     {
-        printf ("\n%s: %s (%p) is unknown memory\n", __FILE__, name, p) ;
+//      printf ("\n%s: %s (%p) is unknown memory\n", __FILE__, name, p) ;
         return (false) ;
     }
 }
