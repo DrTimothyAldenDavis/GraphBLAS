@@ -42,81 +42,37 @@ using namespace cooperative_groups ;
 // typedefs
 //------------------------------------------------------------------------------
 
-// GB_key_t: sorting key type for CUB radix sort
+// GB_key_t: sorting key type for CUB radix sort.
+// GB_KEY_TYPE is uint32_t or uint64_t
 
-#if GB_BUILD_MATRIX
+#if GB_MTX_BUILD
 
-    #if (GB_KEY_BITS == 32)
+    struct GB_key_t
+    {
+        GB_KEY_TYPE j ;
+        GB_KEY_TYPE i ;
+        GB_key_t ( ) = default ;
+        // initializer for key = {...} syntax, but not needed here:
+        // GB_key_t (GB_KEY_TYPE j, GB_KEY_TYPE i) : j(j), i(i) { }
+    } ;
 
-#if 0
-        // GB_key_t is a single uint64_t, set to ((j << 32) | i);
-        // GB_KEY_TYPE is uint32_t
-        typedef uint64_t GB_key_t ;
-        #define GB_KEY_LOAD(Key_in,p,i1,j1)                             \
-            Key_in [p] = ((((uint64_t) (j1)) << 32) | ((uint64_t) i1))
-        #define GB_KEY_UNLOAD_I(Key_out,p,i1)                           \
-            uint32_t i1 = (uint32_t) (Key_out [p] & 0xFFFFFFFF) ;
-        #define GB_KEY_UNLOAD_J(Key_out,p,j1)                           \
-            uint32_t j1 = (uint32_t) (Key_out [p] >> 32) ;
+    #define GB_KEY_LOAD(Key_in,p,i1,j1)                 \
+        Key_in [p].i = (GB_KEY_TYPE) i1 ;               \
+        Key_in [p].j = (GB_KEY_TYPE) j1 ;
+    #define GB_KEY_UNLOAD_I(Key_out,p,i1)               \
+        GB_KEY_TYPE i1 = (GB_KEY_TYPE) Key_out [p].i ;
+    #define GB_KEY_UNLOAD_J(Key_out,p,j1)               \
+        GB_KEY_TYPE j1 = (GB_KEY_TYPE) Key_out [p].j ;
 
-#else
-
-        // FIXME: this decomposer object doesn't work:
-
-        // GB_key_t requires a struct
-        // GB_KEY_TYPE is uint32_t
-        struct GB_key_t
+    struct GB_key_decomposer_t
+    {
+        __host__ __device__
+        cuda::std::tuple <GB_KEY_TYPE&, GB_KEY_TYPE&> operator()(GB_key_t& key)
+        const
         {
-            uint32_t j ;
-            uint32_t i ;
-            GB_key_t ( ) = default ;
-            // initializer for key = {...} syntax, but not needed here:
-            // GB_key_t (uint32_t j, uint32_t i) : j(j), i(i) { }
-        } ;
-
-        #define GB_KEY_LOAD(Key_in,p,i1,j1)             \
-            Key_in [p].i = (uint32_t) i1 ;              \
-            Key_in [p].j = (uint32_t) j1 ;
-        #define GB_KEY_UNLOAD_I(Key_out,p,i1)           \
-            uint32_t i1 = (uint32_t) Key_out [p].i ;
-        #define GB_KEY_UNLOAD_J(Key_out,p,j1)           \
-            uint32_t j1 = (uint32_t) Key_out [p].j ;
-
-        struct GB_key_decomposer_t
-        {
-            __host__ __device__
-            cuda::std::tuple <uint32_t&, uint32_t&> operator()(GB_key_t& key)
-            const
-            {
-                return {key.j, key.i} ;
-            }
-        } ;
-
-#endif
-
-    #else
-
-        // GB_key_t requires a struct
-        // GB_KEY_TYPE is uint64_t
-        typedef struct
-        {
-            uint64_t i ;
-            uint64_t j ;
+            return {key.j, key.i} ;
         }
-        GB_key_t ;
-        #define GB_KEY_LOAD(Key_in,p,i1,j1)             \
-            Key_in [p].i = (uint64_t) i1 ;              \
-            Key_in [p].j = (uint64_t) j1 ;
-        #define GB_KEY_UNLOAD_I(Key_out,p,i1)           \
-            uint64_t i1 = (uint64_t) Key_out [p].i ;
-        #define GB_KEY_UNLOAD_J(Key_out,p,j1)           \
-            uint64_t j1 = (uint64_t) Key_out [p].j ;
-
-        // FIXME: need a decomposer object here
-
-        #error "not yet working"
-
-    #endif
+    } ;
 
 #else
 
@@ -169,7 +125,7 @@ __global__ void GB_cuda_builder_phase1
     // input
     const GB_I_TYPE *__restrict__ I, // size nvals
     int64_t vlen,       // vector-length dimension of C (for I indices)
-    #if GB_BUILD_MATRIX
+    #if GB_MTX_BUILD
     const GB_J_TYPE *__restrict__ J, // size nvals, NULL if C is a vector
     int64_t vdim,       // vector-dim dimension of C (for J indices)
     #endif
@@ -189,12 +145,12 @@ __global__ void GB_cuda_builder_phase1
     {
         // get the indices
         GB_I_TYPE i = I [p] ;
-        #if GB_BUILD_MATRIX
+        #if GB_MTX_BUILD
         GB_J_TYPE j = J [p] ;
         #endif
 
         // count the # of tuples out of range
-        #if GB_BUILD_MATRIX
+        #if GB_MTX_BUILD
         my_bad += (uint64_t) ((i >= vlen) + (j >= vdim)) ;
         #else
         my_bad += (uint64_t) ((i >= vlen)) ;
@@ -233,7 +189,7 @@ __global__ void GB_cuda_builder_phase3
     // outputs
     Int *Map,               // size nvals+1, in Map [-1...nvals-1]
     GB_Tp_TYPE *ChunkSum,   // size nchunks+1, in ChunkSum [-1..nchunks]
-    #if GB_BUILD_MATRIX
+    #if GB_MTX_BUILD
     Int *JDelta,            // size nvals+1, in JDelta [-1..nvals-1]
     GB_Tp_TYPE *JDeltaSum,  // size nchunks+1
     #endif
@@ -249,7 +205,7 @@ __global__ void GB_cuda_builder_phase3
     //--------------------------------------------------------------------------
 
     __shared__ Int Local_Map [CHUNKSIZE] ;
-    #if GB_BUILD_MATRIX
+    #if GB_MTX_BUILD
     __shared__ Int Local_JDelta [CHUNKSIZE] ;
     #endif
 
@@ -265,7 +221,7 @@ __global__ void GB_cuda_builder_phase3
         memset (&(Key_out [-1]), 0xFF, sizeof (GB_key_t)) ;
         Map [-1] = 0 ;
         ChunkSum [-1] = 0 ;
-        #if GB_BUILD_MATRIX
+        #if GB_MTX_BUILD
         JDelta [-1] = 0 ;
         JDeltaSum [-1] = 0 ;
         #endif
@@ -316,18 +272,18 @@ __global__ void GB_cuda_builder_phase3
             // get the indices
             GB_KEY_UNLOAD (Key_out, p-1, iprev, jprev) ;
             GB_KEY_UNLOAD (Key_out, p,   i,     j    ) ;
-            #if GB_BUILD_MATRIX
+            #if GB_MTX_BUILD
             // leading is true if this is the first entry in vector j
             bool leading = (j != jprev) ;
             #endif
             // keep = 1 if (i,j) is unique, 0 if duplicate
             bool keep = (i != iprev)
-                #if GB_BUILD_MATRIX
+                #if GB_MTX_BUILD
                 || leading
                 #endif
                 ;
             Local_Map [pdelta] = keep ;         // 1 if 1st in seq of dupls
-            #if GB_BUILD_MATRIX
+            #if GB_MTX_BUILD
             Local_JDelta [pdelta] = leading ;   // 1 if leading entry of vector
             #endif
         }
@@ -341,7 +297,7 @@ __global__ void GB_cuda_builder_phase3
                 pdelta += blockDim.x)
         {
             Local_Map [pdelta] = 0 ;
-            #if GB_BUILD_MATRIX
+            #if GB_MTX_BUILD
             Local_JDelta [pdelta] = 0 ;
             #endif
         }
@@ -359,7 +315,7 @@ __global__ void GB_cuda_builder_phase3
 
         this_thread_block ( ).sync ( ) ;
         Int t_block_aggregate ;
-        #if GB_BUILD_MATRIX
+        #if GB_MTX_BUILD
         Int s_block_aggregate ;
         #endif
 
@@ -380,7 +336,7 @@ __global__ void GB_cuda_builder_phase3
             ChunkSum [chunk] = t_block_aggregate ;
 
             // construct JDelta and JDeltaSum
-            #if GB_BUILD_MATRIX
+            #if GB_MTX_BUILD
             for (int i = 1 ; i < CHUNKSIZE ; i++)
             {
                 Local_JDelta [i] += Local_JDelta [i-1] ;
@@ -404,7 +360,7 @@ __global__ void GB_cuda_builder_phase3
         BlockStore (W.store).Store (Map + pfirst, t) ;
         this_thread_block ( ).sync ( ) ;
 
-        #if GB_BUILD_MATRIX
+        #if GB_MTX_BUILD
         BlockLoad (W.load).Load (Local_JDelta, t) ;
         this_thread_block ( ).sync ( ) ;
         BlockScan (W.scan).InclusiveSum (t, t, s_block_aggregate) ;
@@ -417,7 +373,7 @@ __global__ void GB_cuda_builder_phase3
         if (threadIdx.x == blockDim.x - 1)
         {
             ChunkSum  [chunk] = t_block_aggregate ;
-            #if GB_BUILD_MATRIX
+            #if GB_MTX_BUILD
             JDeltaSum [chunk] = s_block_aggregate ;
             #endif
         }
@@ -448,7 +404,7 @@ __global__ void GB_cuda_builder_phase5
     // inputs, not modified:
     Int *Map,               // size nvals+1, in Map [-1...nvals-1]
     GB_Tp_TYPE *ChunkSum,   // size nchunks+1, in ChunkSum [-1..nchunks]
-    #if GB_BUILD_MATRIX
+    #if GB_MTX_BUILD
     Int *JDelta,            // size nvals+1, in JDelta [-1..nvals-1]
     GB_Tp_TYPE *JDeltaSum,  // size nchunks+1
     #endif
@@ -464,7 +420,7 @@ __global__ void GB_cuda_builder_phase5
     //--------------------------------------------------------------------------
 
     GB_Tp_TYPE *__restrict__ Tp = (GB_Tp_TYPE *) T->p ; Tp-- ;
-    #if GB_BUILD_MATRIX
+    #if GB_MTX_BUILD
     GB_Tj_TYPE *__restrict__ Th = (GB_Tj_TYPE *) T->h ; Th-- ;
     #endif
     GB_Ti_TYPE *__restrict__ Ti = (GB_Ti_TYPE *) T->i ; Ti-- ;
@@ -571,7 +527,7 @@ __global__ void GB_cuda_builder_phase5
             // construct Tp and Th, if T is a matrix (skip if T is a vector)
             //------------------------------------------------------------------
 
-            #if GB_BUILD_MATRIX
+            #if GB_MTX_BUILD
             GB_Tp_TYPE kT = JDelta [p  ] + JDeltaSum [chunk] ;
             GB_Tp_TYPE k0 = JDelta [p-1] + JDeltaSum [chunk - (pdelta == 0)] ;
             if (k0 < kT)
@@ -594,7 +550,7 @@ __global__ void GB_cuda_builder_phase5
     {
         // T->nvec is 0-based, so increment Tp to undo the Tp-- done above
         Tp++ ;
-        #if GB_BUILD_MATRIX
+        #if GB_MTX_BUILD
         Tp [T->nvec] = T->nvals ;
         #else
         Tp [0] = 0 ;
@@ -709,7 +665,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     #endif
 
     #if 0
-    #if GB_BUILD_MATRIX
+    #if GB_MTX_BUILD
     for (int64_t p = 0 ; p < nvals ; p++)
     {
         int64_t i = I [p] ;
@@ -728,7 +684,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     GB_cuda_builder_phase1 <<<grid, block1, 0, stream>>>
         (/* outputs: */ Key_in, /* ok, */ bad,
          /* inputs: */ I, vlen,
-            #if GB_BUILD_MATRIX
+            #if GB_MTX_BUILD
             J, vdim,
             #endif
             nvals) ;
@@ -748,19 +704,19 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     {
         // get the indices
         GB_I_TYPE i = I [p] ;
-        #if GB_BUILD_MATRIX
+        #if GB_MTX_BUILD
         GB_J_TYPE j = J [p] ;
         #endif
         // check if the indices are in range
         my_ok = my_ok
-            #if GB_BUILD_MATRIX
+            #if GB_MTX_BUILD
             && (j < vdim)
             #endif 
             && (i < vlen) ;
         my_bad += (!my_ok) ;
         // load the indices into Key_in [p]
         uint64_t key = (uint64_t) i ;
-        #if GB_BUILD_MATRIX
+        #if GB_MTX_BUILD
         key = (((uint64_t) (j)) << 32) | key ;
         #endif
         if (Key_in [p] != key) ABORT ("phase 1 failed\n") ;
@@ -774,7 +730,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     GB_OK (((*bad) == 0) ? GrB_SUCCESS : GrB_INVALID_INDEX) ;
 
     #if 0
-    #if GB_BUILD_MATRIX
+    #if GB_MTX_BUILD
     for (int64_t p = 0 ; p < nvals ; p++)
     {
         GB_KEY_UNLOAD (Key_in, p, i, j) ;
@@ -835,7 +791,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     CUDA_OK (cub::DeviceRadixSort::SortKeys (
         /* temp storage: */ W_3, W_3_size,
         Key_in, Key_out, nvals,
-        #if 1
+        #if GB_MTX_BUILD
         GB_key_decomposer_t { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
@@ -844,7 +800,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     CUDA_OK (cub::DeviceRadixSort::SortPairs (
         /* temp storage: */ W_3, W_3_size,
         Key_in, Key_out, /* values in: */ X, /* values out: */ Sx, nvals,
-        #if 1
+        #if GB_MTX_BUILD
         GB_key_decomposer_t { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
@@ -869,7 +825,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     CUDA_OK (cub::DeviceRadixSort::SortKeys (
         /* temp storage: */ W_3, W_3_size,
         Key_in, Key_out, nvals,
-        #if 1
+        #if GB_MTX_BUILD
         GB_key_decomposer_t { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
@@ -878,7 +834,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     CUDA_OK (cub::DeviceRadixSort::SortPairs (
         /* temp storage: */ W_3, W_3_size,
         Key_in, Key_out, /* values in: */ X, /* values out: */ Sx, nvals,
-        #if 1
+        #if GB_MTX_BUILD
         GB_key_decomposer_t { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
@@ -896,7 +852,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // sorted tuples are now in (Key_out,Sx) 
 
     #if 0
-    #if GB_BUILD_MATRIX
+    #if GB_MTX_BUILD
     for (int64_t p = 0 ; p < nvals ; p++)
     {
         GB_KEY_UNLOAD (Key_out, p, i, j) ;
@@ -952,7 +908,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     W_5 = GB_MALLOC_MEMORY (nchunks+2, sizeof (GB_Tp_TYPE), &W_5_size) ;
 
     // allocate JDelta, JDeltaSum: for cumsum of leading entries of vectors of C
-    #if GB_BUILD_MATRIX
+    #if GB_MTX_BUILD
     W_6 = GB_MALLOC_MEMORY (nvals+1 + CHUNKSIZE, sizeof (Int), &W_6_size) ;
     W_7 = GB_MALLOC_MEMORY (nchunks+2, sizeof (GB_Tp_TYPE), &W_7_size) ;
     #endif
@@ -960,13 +916,13 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // shift by one so Map [-1...nvals-1], etc can be used
     Int *Map              = ((Int        *) W_4) + 1 ;
     GB_Tp_TYPE *ChunkSum  = ((GB_Tp_TYPE *) W_5) + 1 ;
-    #if GB_BUILD_MATRIX
+    #if GB_MTX_BUILD
     Int *JDelta           = ((Int        *) W_6) + 1 ;
     GB_Tp_TYPE *JDeltaSum = ((GB_Tp_TYPE *) W_7) + 1 ;
     #endif
 
     #if 0
-    #if GB_BUILD_MATRIX
+    #if GB_MTX_BUILD
     printf ("\nphase3 input:\n") ;
     for (int64_t p = 0 ; p < nvals ; p++)
     {
@@ -984,7 +940,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     GB_cuda_builder_phase3 <<<grid, block1, 0, stream>>>
         ( /* outputs: */ Map, ChunkSum,
-            #if GB_BUILD_MATRIX
+            #if GB_MTX_BUILD
             JDelta, JDeltaSum,
             #endif
           /* inputs: */ Key_out, nvals, nchunks) ;
@@ -992,7 +948,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-    #if GB_BUILD_MATRIX
+    #if GB_MTX_BUILD
     #if 0
     printf ("\nphase3 output:\n") ;
     for (int64_t p = -1 ; p < nvals ; p++)
@@ -1045,7 +1001,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     //            0 [       0 |       1 |       2 |       4 ] 4
 
     ChunkSum [-1] = 0 ;         // sentinel value
-    #if GB_BUILD_MATRIX
+    #if GB_MTX_BUILD
     JDeltaSum [-1] = 0 ;        // sentinel value
     #endif
 
@@ -1060,7 +1016,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         tnz += t ;
 
         // get the # of leading entries found in this chunk
-        #if GB_BUILD_MATRIX
+        #if GB_MTX_BUILD
         int64_t s = JDeltaSum [chunk] ;
         // overwrite the entry with the cumulative sum, so that the new
         // JDeltaSum [chunk] = original JDeltaSum [0..chunk-1]
@@ -1069,7 +1025,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         #endif
     }
     ChunkSum  [nchunks] = tnz ;
-    #if GB_BUILD_MATRIX
+    #if GB_MTX_BUILD
     JDeltaSum [nchunks] = tnvec ;
     #else
     tnvec = 1 ;
@@ -1082,7 +1038,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     {
         printf ("ChunkSum [%ld] = %ld",
             chunk, (int64_t) ChunkSum [chunk]) ;
-        #if GB_BUILD_MATRIX
+        #if GB_MTX_BUILD
         printf (", JDeltaSum [%ld] = %ld\n",
             chunk, (int64_t) JDeltaSum [chunk]) ;
         #endif
@@ -1142,7 +1098,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     GB_OK (GB_new_bix (&T, ttype, vlen, vdim,
         /* Ap_option: */ (tnz == 0) ? GB_ph_calloc : GB_ph_malloc,
         is_csc,
-        #if GB_BUILD_MATRIX
+        #if GB_MTX_BUILD
         /* sparsity: */ GxB_HYPERSPARSE,
         /* bitmap_calloc: */ false,
         /* hyper_switch: */ GB_ALWAYS_HYPER,
@@ -1175,7 +1131,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     GB_cuda_builder_phase5 <<<grid, block1, 0, stream>>>
         (/* outputs: */ T,
          /* inputs: */  Map, ChunkSum,
-            #if GB_BUILD_MATRIX
+            #if GB_MTX_BUILD
             JDelta, JDeltaSum,
             #endif
             Key_out, Sx, nvals, nchunks) ;
@@ -1185,14 +1141,14 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     #if 0
     GB_Tp_TYPE *__restrict__ Tp = (GB_Tp_TYPE *) T->p ;
-    #if GB_BUILD_MATRIX
+    #if GB_MTX_BUILD
     GB_Tj_TYPE *__restrict__ Th = (GB_Tj_TYPE *) T->h ;
     #endif
     for (int k = 0 ; k <= std::min (nvals, T->nvec) ; k++)
     {
         int64_t p = Tp [k] ;
         printf ("Tp [%d] = %ld,     ", k, p) ;
-        #if GB_BUILD_MATRIX
+        #if GB_MTX_BUILD
         if (k < T->nvec)
         {
             int64_t j = Th [k] ;

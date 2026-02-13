@@ -239,7 +239,7 @@ void GB_macrofy_build           // construct all macros for GB_build
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// type of build:\n") ;
-    fprintf (fp, "#define GB_BUILD_MATRIX %d\n", is_mat) ;
+    fprintf (fp, "#define GB_MTX_BUILD %d\n", is_mat) ;
     fprintf (fp, "#define GB_ISO_BUILD %d\n", iso) ;
     fprintf (fp, "#define GB_NO_DUPLICATES %d\n", no_dupl) ;
 
