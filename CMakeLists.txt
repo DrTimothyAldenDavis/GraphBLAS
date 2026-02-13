@@ -103,22 +103,10 @@ if ( GRAPHBLAS_HAS_CUDA )
     FetchContent_MakeAvailable ( rmm )
 
     find_package ( rmm REQUIRED )
-
-        message ( STATUS "RMM :    " ${rmm_FOUND} )
-        message ( STATUS "RMM ver: " ${rmm_VERSION} )
-        message ( STATUS "RMM inc: " ${rmm_INCLUDE_DIRS} )
-        message ( STATUS "RMM lib: " ${rmm_LIBRARY_DIR} )
-
-        message ( STATUS "RMM ver: " ${RMM_VERSION} )
-        message ( STATUS "RMM inc: " ${RMM_INCLUDE_DIRS} )
-        message ( STATUS "RMM lib: " ${RMM_LIBRARY_DIR} )
-
-
-        message ( STATUS "RMM bin: " ${RMM_BINARY_DIR} )
-        message ( STATUS "RMM src: " ${RMM_SOURCE_DIR} )
-
-        message ( STATUS "spdlog bin: " ${spdlog_BINARY_DIR} )
-        message ( STATUS "spdlog src: " ${spdlog_SOURCE_DIR} )
+    message ( STATUS "RMM bin: " ${RMM_BINARY_DIR} )
+    message ( STATUS "RMM src: " ${RMM_SOURCE_DIR} )
+    message ( STATUS "spdlog bin: " ${spdlog_BINARY_DIR} )
+    message ( STATUS "spdlog src: " ${spdlog_SOURCE_DIR} )
 
 #   set ( EXTERNAL_INCLUDES_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
 
@@ -161,10 +149,10 @@ if ( GRAPHBLAS_HAS_CUDA )
 # #       ${CMAKE_CURRENT_BINARY_DIR}/external_includes/rmm/cpp/include
 #         ${CUDA_INCLUDE_DIRS} )
 
-      set ( RMM_WRAP_INCLUDES ${PROJECT_BINARY_DIR}
-          ${RMM_SOURCE_DIR}/include
-          ${spdlog_SOURCE_DIR}/include
-          ${CUDA_INCLUDE_DIRS} )
+  set ( RMM_WRAP_INCLUDES ${PROJECT_BINARY_DIR}
+      ${RMM_SOURCE_DIR}/include
+      ${spdlog_SOURCE_DIR}/include
+      ${CUDA_INCLUDE_DIRS} )
 
 else ( )
 
