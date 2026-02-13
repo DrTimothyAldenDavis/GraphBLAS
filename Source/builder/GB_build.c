@@ -393,7 +393,9 @@ GrB_Info GB_build               // build matrix
     // has no zombies or pending tuples, so GB_all_entries_are_iso does not
     // need to handle those cases.  T->x [0] is the new iso value of T.
 
-    // TODO: move this into CUDA kernel
+#if 0
+    // FIXME: re-enable this when releasing GraphBLAS
+    // TODO: move this into CUDA kernel or write a CUDA kernel for it
     if (!X_iso && GB_all_entries_are_iso (T))
     { 
         // All entries in T are the same; convert T to iso
@@ -401,6 +403,7 @@ GrB_Info GB_build               // build matrix
         T->iso = true ;
         GB_OK (GB_convert_any_to_iso (T, NULL)) ;   // OK
     }
+#endif
 
     //--------------------------------------------------------------------------
     // transplant and typecast T into C, conform C, and free T

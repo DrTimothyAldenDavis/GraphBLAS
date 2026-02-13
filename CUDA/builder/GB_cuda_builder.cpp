@@ -81,10 +81,6 @@ GrB_Info GB_cuda_builder            // build a matrix from tuples
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     gridsz = std::max (gridsz, 1) ;
 
-    CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
-    CUDA_OK (cudaStreamSynchronize (stream)) ;  //FIXME: remove
-    CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
-
     //--------------------------------------------------------------------------
     // build T from the (I,J,X) tuples
     //--------------------------------------------------------------------------

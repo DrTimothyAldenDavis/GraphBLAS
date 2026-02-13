@@ -48,7 +48,7 @@ using namespace cooperative_groups ;
 
     #if (GB_KEY_BITS == 32)
 
-#if 1
+#if 0
         // GB_key_t is a single uint64_t, set to ((j << 32) | i);
         // GB_KEY_TYPE is uint32_t
         typedef uint64_t GB_key_t ;
@@ -70,6 +70,8 @@ using namespace cooperative_groups ;
             uint32_t j ;
             uint32_t i ;
             GB_key_t ( ) = default ;
+            // initializer for key = {...} syntax, but not needed here:
+            // GB_key_t (uint32_t j, uint32_t i) : j(j), i(i) { }
         } ;
 
         #define GB_KEY_LOAD(Key_in,p,i1,j1)             \
@@ -80,10 +82,10 @@ using namespace cooperative_groups ;
         #define GB_KEY_UNLOAD_J(Key_out,p,j1)           \
             uint32_t j1 = (uint32_t) Key_out [p].j ;
 
-        struct GB_key_decomposer
+        struct GB_key_decomposer_t
         {
             __host__ __device__
-            cuda::std:tuple <uint32_t&, uint32_t&> operator()(GB_key_t &key)
+            cuda::std::tuple <uint32_t&, uint32_t&> operator()(GB_key_t& key)
             const
             {
                 return {key.j, key.i} ;
@@ -230,8 +232,7 @@ __global__ void GB_cuda_builder_phase3
 (
     // outputs
     Int *Map,               // size nvals+1, in Map [-1...nvals-1]
-    GB_Tp_TYPE *ChunkSum,   // size nchunks+1,
-                            // in ChunkSum [-1..nchunks]
+    GB_Tp_TYPE *ChunkSum,   // size nchunks+1, in ChunkSum [-1..nchunks]
     #if GB_BUILD_MATRIX
     Int *JDelta,            // size nvals+1, in JDelta [-1..nvals-1]
     GB_Tp_TYPE *JDeltaSum,  // size nchunks+1
@@ -329,11 +330,6 @@ __global__ void GB_cuda_builder_phase3
             #if GB_BUILD_MATRIX
             Local_JDelta [pdelta] = leading ;   // 1 if leading entry of vector
             #endif
-            #if 0
-            printf ("thread %d (i,j) = (%u, %u), (iprev,jprev) = (%u, %u)"
-                " keep: %d, leading: %d\n",
-                threadIdx.x, i, j, iprev, jprev, keep, leading) ;
-            #endif
         }
 
         //----------------------------------------------------------------------
@@ -394,8 +390,6 @@ __global__ void GB_cuda_builder_phase3
                 JDelta [pfirst + i] = Local_JDelta [i] ;
             }
             s_block_aggregate = Local_JDelta [CHUNKSIZE-1] ;
-            printf ("chunk: %d, s_block_agg %d\n",
-                (int) chunk, (int) s_block_aggregate) ;
             JDeltaSum [chunk] = s_block_aggregate ;
             #endif
         }
@@ -419,21 +413,16 @@ __global__ void GB_cuda_builder_phase3
         this_thread_block ( ).sync ( ) ;
         #endif
 
-#endif
-
         // finally, the aggregate sums are written to ChunkSum and JDeltaSum
         if (threadIdx.x == blockDim.x - 1)
         {
-            #if 0
-            printf ("phase3, set chunk: %ld: %d, %d\n", chunk,
-                t_block_aggregate, s_block_aggregate);
-            #endif
             ChunkSum  [chunk] = t_block_aggregate ;
             #if GB_BUILD_MATRIX
             JDeltaSum [chunk] = s_block_aggregate ;
             #endif
         }
 
+#endif
 
         this_thread_block ( ).sync ( ) ;
 
@@ -449,14 +438,16 @@ __global__ void GB_cuda_builder_phase3
 
 // compare with select/phase3 and select/phase6
 
+// TODO: make GB_cuda_builder_phase5_nodupl, and don't call this kernel,
+// when no duplicates appear
+
 __global__ void GB_cuda_builder_phase5
 (
     // outputs
     GrB_Matrix T,
     // inputs, not modified:
     Int *Map,               // size nvals+1, in Map [-1...nvals-1]
-    GB_Tp_TYPE *ChunkSum,   // size nchunks+1,
-                            // in ChunkSum [-1..nchunks]
+    GB_Tp_TYPE *ChunkSum,   // size nchunks+1, in ChunkSum [-1..nchunks]
     #if GB_BUILD_MATRIX
     Int *JDelta,            // size nvals+1, in JDelta [-1..nvals-1]
     GB_Tp_TYPE *JDeltaSum,  // size nchunks+1
@@ -523,6 +514,9 @@ __global__ void GB_cuda_builder_phase5
         // copy the entries, sum duplicates, and construct Tp and Th
         //----------------------------------------------------------------------
 
+        // TODO: if tnz == nvals, then no duplicates will appear, so the
+        // following loop can be simplified
+
         for (int64_t pdelta = threadIdx.x ;
                      pdelta < my_chunk_size ;
                      pdelta += blockDim.x)       // block-stride loop
@@ -538,10 +532,6 @@ __global__ void GB_cuda_builder_phase5
             GB_Tp_TYPE pT = Map [p  ] + ChunkSum [chunk] ;
             // get the position p0 in C of the (p-1)-st tuple in (Key_out,Sx)
             GB_Tp_TYPE p0 = Map [p-1] + ChunkSum [chunk - (pdelta == 0)] ;
-            #if 0
-            printf ("pfirst %ld, pdelta %ld, p: %ld, p0: %d, pT: %d\n",
-                pfirst, pdelta, p, p0, pT) ;
-            #endif
             if (p0 < pT)
             {
                 // This entry is the first in a sequence of duplicates (perhaps
@@ -570,11 +560,6 @@ __global__ void GB_cuda_builder_phase5
                     if (is_duplicate)
                     {
                         // Tx [pT] += Sx [pdupl]
-                        #if 0
-                        printf ("p: %ld, p2: %ld, nvals %ld, pT: %ld, "
-                            "pdupl: %ld, got duplicate\n",
-                            p, p2, nvals, (uint64_t) pT, (uint64_t) pdupl) ;
-                        #endif
                         GB_BLD_DUP (Tx, pT, Sx, pdupl) ;
                     }
                 }
@@ -589,17 +574,9 @@ __global__ void GB_cuda_builder_phase5
             #if GB_BUILD_MATRIX
             GB_Tp_TYPE kT = JDelta [p  ] + JDeltaSum [chunk] ;
             GB_Tp_TYPE k0 = JDelta [p-1] + JDeltaSum [chunk - (pdelta == 0)] ;
-            #if 0
-            printf ("p %ld, k0: %ld, kT: %ld, k0 < kT: %d\n",
-                p, (int64_t) k0, (int64_t) kT, k0 < kT) ;
-            #endif
             if (k0 < kT)
             {
                 // The p-th entry is the leading entry of the kT-th vector of T
-                #if 0
-                printf ("got lead: p: %ld:  k0 %d kT %d, pT-1: %d\n",
-                    p, k0, kT, pT-1) ;
-                #endif
                 Tp [kT] = pT - 1 ;      // shift by 1 since pT is 1-based
                 // Th [kT] = Key_out [p].j ;
                 GB_KEY_UNLOAD_J (Key_out, p, j1) ;
@@ -858,8 +835,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     CUDA_OK (cub::DeviceRadixSort::SortKeys (
         /* temp storage: */ W_3, W_3_size,
         Key_in, Key_out, nvals,
-        #if 0
-        GB_key_decomposer { },
+        #if 1
+        GB_key_decomposer_t { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
         stream)) ;
@@ -867,8 +844,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     CUDA_OK (cub::DeviceRadixSort::SortPairs (
         /* temp storage: */ W_3, W_3_size,
         Key_in, Key_out, /* values in: */ X, /* values out: */ Sx, nvals,
-        #if 0
-        GB_key_decomposer { },
+        #if 1
+        GB_key_decomposer_t { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
         stream)) ;
@@ -892,8 +869,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     CUDA_OK (cub::DeviceRadixSort::SortKeys (
         /* temp storage: */ W_3, W_3_size,
         Key_in, Key_out, nvals,
-        #if 0
-        GB_key_decomposer { },
+        #if 1
+        GB_key_decomposer_t { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
         stream)) ;
@@ -901,8 +878,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     CUDA_OK (cub::DeviceRadixSort::SortPairs (
         /* temp storage: */ W_3, W_3_size,
         Key_in, Key_out, /* values in: */ X, /* values out: */ Sx, nvals,
-        #if 0
-        GB_key_decomposer { },
+        #if 1
+        GB_key_decomposer_t { },
         #endif
         /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
         stream)) ;
@@ -1190,6 +1167,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     #if 0
     printf ("did phase5 new_bix: T->nvec = %ld\n", T->nvec) ;
     #endif
+
+    // TODO: if (tnz == nvals) then there are no duplicates, and
+    // phase5 does not have to check for them!
 
     // construct Tp, Th, Ti, and Tx, summing up duplicates
     GB_cuda_builder_phase5 <<<grid, block1, 0, stream>>>
