@@ -96,7 +96,7 @@ static inline int GB_ngpus_to_use
 GrB_Info GB_cuda_init (void) ;
 GrB_Info GB_cuda_finalize (void) ;
 
-bool GB_cuda_get_device_count   // true if OK, false if failure
+void GB_cuda_get_device_count
 (
     int *gpu_count              // return # of GPUs in the system
 ) ;

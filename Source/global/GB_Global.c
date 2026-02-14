@@ -1055,15 +1055,15 @@ bool GB_Global_gpu_count_set (bool enable_cuda)
     #if defined ( GRAPHBLAS_HAS_CUDA )
     if (enable_cuda)
     {
-        return (GB_cuda_get_device_count (&GB_Global.gpu_count)) ;
+        GB_cuda_get_device_count (&GB_Global.gpu_count) ;
     }
     else
     #endif
     {
         // no GPUs available, or available but not requested
         GB_Global.gpu_count = 0 ;
-        return (true) ;
     }
+    return (true) ;
 }
 
 int GB_Global_gpu_count_get (void)
