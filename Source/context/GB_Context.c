@@ -276,7 +276,7 @@ int32_t GB_Context_gpu_ids_get          // return # of GPUs to use
 
     if (Context == GxB_CONTEXT_WORLD)
     {
-        GB_OPENMP_LOCK_SET (0) ;        // global get (gpu ids array)
+        GB_OPENMP_LOCK_SET (5) ;        // global get (gpu ids array)
     }
 
     int32_t ngpus = Context->ngpus ;
@@ -292,7 +292,7 @@ int32_t GB_Context_gpu_ids_get          // return # of GPUs to use
 
     if (Context == GxB_CONTEXT_WORLD)
     {
-        GB_OPENMP_LOCK_UNSET (0) ;      // global get (gpu ids array)
+        GB_OPENMP_LOCK_UNSET (5) ;      // global get (gpu ids array)
     }
 
     // printf ("\nGot Context ngpus: %d\n", ngpus) ;
@@ -368,7 +368,7 @@ GrB_Info GB_Context_gpu_ids_set
 
     if (Context == GxB_CONTEXT_WORLD)
     {
-        GB_OPENMP_LOCK_SET (0) ;        // global set (gpu ids array)
+        GB_OPENMP_LOCK_SET (5) ;        // global set (gpu ids array)
     }
 
     Context->ngpus = ngpus ;
@@ -384,7 +384,7 @@ GrB_Info GB_Context_gpu_ids_set
 
     if (Context == GxB_CONTEXT_WORLD)
     {
-        GB_OPENMP_LOCK_UNSET (0) ;      // global set (gpu ids array)
+        GB_OPENMP_LOCK_UNSET (5) ;      // global set (gpu ids array)
     }
 
     return (GrB_SUCCESS) ;
