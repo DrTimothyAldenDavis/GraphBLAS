@@ -16,6 +16,9 @@
 // their consituient parts (the types and ops in a semiring for example) have a
 // hash of UINT64_MAX.
 
+// This method does not determine if any GPUs are available, or which to use.
+// It only checks if the type can be handle by any GPU.
+
 #include "GB_cuda.hpp"
 
 bool GB_cuda_type_branch            // return true if the type is OK on GPU

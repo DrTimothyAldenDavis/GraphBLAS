@@ -55,9 +55,11 @@ bool GB_cuda_AxB_dot3_branch
     double bdeg = ((double) GB_nnz (B)) / ((double) GB_IMAX (1, B->nvec)) ;
     double work = GB_nnz (M) * GB_IMIN (adeg, bdeg) ;
 
-    int ngpus_to_use = GB_ngpus_to_use (work) ;
-    GBURBLE (" work:%g GPUs:%d ", work, ngpus_to_use) ;
-    if (ngpus_to_use > 0)
+    int gpu_count = GB_ngpus_to_use (work) ;
+    int ngpus_max = GB_Context_gpu_ids (NULL) ;     // FIXME: get gpu_ids
+    gpu_count = std::min (gpu_count, ngpus_max) ;
+    GBURBLE (" work:%g GPUs:%d ", work, gpu_count) ;
+    if (gpu_count > 0)
     {
         // FIXME: determine which GPU from the context object
         return true ;

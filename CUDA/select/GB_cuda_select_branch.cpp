@@ -56,6 +56,8 @@ bool GB_cuda_select_branch
 
     double work = GB_nnz_held (A) ;
     int gpu_count = GB_ngpus_to_use (work) ;
+    int ngpus_max = GB_Context_gpu_ids (NULL) ;     // FIXME: get gpu_ids
+    gpu_count = std::min (gpu_count, ngpus_max) ;
     ok = ok && (gpu_count > 0);
     return ok ;
 }

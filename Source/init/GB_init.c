@@ -150,7 +150,6 @@ GrB_Info GB_init            // start up GraphBLAS
 
     GB_Context_nthreads_max_set (NULL, GB_omp_get_max_threads ( )) ;
     GB_Context_chunk_set        (NULL, GB_CHUNK_DEFAULT) ;
-    GB_Context_gpu_ids_set      (NULL, NULL, 0) ;
 
     //--------------------------------------------------------------------------
     // initialize the blocking/nonblocking mode
