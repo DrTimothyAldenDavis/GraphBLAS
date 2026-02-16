@@ -9,24 +9,18 @@
 //------------------------------------------------------------------------------
 
 // If no devices are found or cudaGetDeviceCount returns an error, then
-// gpu_count is returned as zero.
+// the GPU count is returned as zero.
 
 // FIXME: remove printf
 
 #include "GB_cuda.hpp"
 
-void GB_cuda_get_device_count
-(
-    int *gpu_count              // return # of GPUs in the system
-)
+int GB_cuda_get_device_count (void) // return # of GPUs in the system
 {
-    (*gpu_count) = 0 ;
-    cudaError_t err = cudaGetDeviceCount (gpu_count) ;
+    int gpu_count = 0 ;
+    cudaError_t err = cudaGetDeviceCount (&gpu_count) ;
     printf ("GB_cuda_get_device_count: %d, cudaError_t: %d (%s)\n",
-        *gpu_count, err, cudaGetErrorString (err)) ;
-    if (err != cudaSuccess)
-    {
-        (*gpu_count) = 0 ;
-    }
+        gpu_count, err, cudaGetErrorString (err)) ;
+    return ((err == cudaSuccess) ? gpu_count : 0) ;
 }
 

@@ -92,7 +92,7 @@ bool     GB_Global_print_one_based_get (void) ;
 void     GB_Global_stats_mem_shallow_set (bool mem_shallow) ;
 bool     GB_Global_stats_mem_shallow_get (void) ;
 
-bool     GB_Global_gpu_count_set (bool enable_cuda) ;
+void     GB_Global_gpu_count_set (bool enable_cuda) ;
 int      GB_Global_gpu_count_get (void) ;
 size_t   GB_Global_gpu_memorysize_get (int device) ;
 int      GB_Global_gpu_sm_get (int device) ;

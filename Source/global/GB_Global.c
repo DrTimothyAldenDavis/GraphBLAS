@@ -1046,7 +1046,7 @@ bool GB_Global_stats_mem_shallow_get (void)
 // CUDA
 //------------------------------------------------------------------------------
 
-bool GB_Global_gpu_count_set (bool enable_cuda)
+void GB_Global_gpu_count_set (bool enable_cuda)
 { 
     // set the # of GPUs in the system;
     // this function is only called once, by GB_init.
@@ -1055,7 +1055,7 @@ bool GB_Global_gpu_count_set (bool enable_cuda)
     #if defined ( GRAPHBLAS_HAS_CUDA )
     if (enable_cuda)
     {
-        GB_cuda_get_device_count (&GB_Global.gpu_count) ;
+        GB_Global.gpu_count = GB_cuda_get_device_count ( ) ;
     }
     else
     #endif
@@ -1063,7 +1063,6 @@ bool GB_Global_gpu_count_set (bool enable_cuda)
         // no GPUs available, or available but not requested
         GB_Global.gpu_count = 0 ;
     }
-    return (true) ;
 }
 
 int GB_Global_gpu_count_get (void)

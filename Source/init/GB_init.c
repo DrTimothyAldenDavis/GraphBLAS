@@ -88,17 +88,25 @@ GrB_Info GB_init            // start up GraphBLAS
     bool malloc_is_thread_safe = true ;
 
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    mode = GxB_NONBLOCKING_GPU ;    // HACK FIXME for CUDA: force GPU to be used
-    if (mode == GxB_NONBLOCKING_GPU || mode == GxB_BLOCKING_GPU)
+    GB_Global_gpu_count_set (true) ;
+    int gpu_count = GB_Global_gpu_count_get ( ) ;
+    printf ("GB_init: gpu_count: %d\n", gpu_count) ;
+    if (gpu_count > 0)
     {
-        // ignore the memory management function pointers and use rmm_wrap_*
-        malloc_function  = rmm_wrap_malloc ;
-        calloc_function  = rmm_wrap_calloc ;
-        realloc_function = rmm_wrap_realloc ;
-        free_function    = rmm_wrap_free ;
-        // the rmm_wrap methods are not thread-safe
-        malloc_is_thread_safe = false ;
+        mode = GxB_NONBLOCKING_GPU ;    // HACK FIXME : force GPU to be used
+        if (mode == GxB_NONBLOCKING_GPU || mode == GxB_BLOCKING_GPU)
+        {
+            // ignore the memory management function pointers and use rmm_wrap_*
+            malloc_function  = rmm_wrap_malloc ;
+            calloc_function  = rmm_wrap_calloc ;
+            realloc_function = rmm_wrap_realloc ;
+            free_function    = rmm_wrap_free ;
+            // the rmm_wrap methods are not thread-safe
+            malloc_is_thread_safe = false ;
+        }
     }
+    #else
+    GB_Global_gpu_count_set (false) ;
     #endif
 
     if (malloc_function == NULL || free_function == NULL)
@@ -161,12 +169,7 @@ GrB_Info GB_init            // start up GraphBLAS
         // initialize the GPUs
         GB_OK (GB_cuda_init ( )) ;
     }
-    else
     #endif
-    { 
-        // CUDA not available at compile-time, or not requested at run time
-        GB_Global_gpu_count_set (0) ;
-    }
 
     //--------------------------------------------------------------------------
     // set the global default format
