@@ -95,5 +95,22 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
     int nthreads                        // # of threads to use
 ) ;
 
+GrB_Info GB_transpose_builder       // C=A', C=(ctype)A' or C=op(A')
+(
+    GrB_Matrix *Thandle,        // output matrix T, header allocated on input
+    GrB_Type ctype,             // desired type of T
+    const bool C_is_csc,        // desired CSR/CSC format of C
+    const bool C_iso,           // true if C is iso
+    const GB_iso_code C_code_iso,   // iso code for C
+    const GrB_Matrix A,         // input matrix; C == A if done in place
+    const bool in_place,        // true if C and A are the same matrix
+        // no operator is applied if op is NULL
+        const GB_Operator op,       // unary/idxunop/binop to apply
+        const GrB_Scalar scalar,    // scalar to bind to binary operator
+        bool binop_bind1st,         // if true, binop(x,A) else binop(A,y)
+        bool flipij,                // if true, flip i,j for user idxunop
+    GB_Werk Werk
+) ;
+
 #endif
 

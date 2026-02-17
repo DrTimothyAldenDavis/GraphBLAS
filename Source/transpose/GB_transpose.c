@@ -2,12 +2,12 @@
 // GB_transpose: C=A' or C=op(A'), with typecasting
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// CALLS:     GB_builder
+// CALLS:     GB_transpose_builder
 
 // Transpose a matrix, C=A', and optionally apply a unary operator and/or
 // typecast the values.  The transpose may be done in-place, in which case C or
@@ -36,9 +36,6 @@
 
 #define GB_FREE_WORKSPACE               \
 {                                       \
-    GB_FREE_MEMORY (&iwork, iwork_size) ;      \
-    GB_FREE_MEMORY (&jwork, jwork_size) ;      \
-    GB_FREE_MEMORY (&Swork, Swork_size) ;      \
     GB_WERK_POP (Count, uint64_t) ;     \
 }
 
@@ -51,9 +48,7 @@
 }
 
 #include "transpose/GB_transpose.h"
-#include "builder/GB_build.h"
 #include "apply/GB_apply.h"
-#include "extractTuples/GB_extractTuples.h"
 
 //------------------------------------------------------------------------------
 // GB_transpose
@@ -84,9 +79,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     ASSERT (A != NULL) ;
     bool in_place = (A == C) ;
     GB_WERK_DECLARE (Count, uint64_t) ;
-    void *iwork = NULL ; size_t iwork_size = 0 ;
-    void *jwork = NULL ; size_t jwork_size = 0 ;
-    GB_void *Swork = NULL ; size_t Swork_size = 0 ;
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
     GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
@@ -132,7 +124,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
     size_t apsize = (Ap_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t ajsize = (Aj_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    size_t aisize = (Ai_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+//  size_t aisize = (Ai_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     //--------------------------------------------------------------------------
     // determine the max number of threads to use
@@ -754,178 +746,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         {
 
             //------------------------------------------------------------------
-            // transpose via GB_builder
+            // transpose via builder method
             //------------------------------------------------------------------
 
             GBURBLE ("(builder transpose) ") ;
-
-            //------------------------------------------------------------------
-            // allocate and create iwork
-            //------------------------------------------------------------------
-
-            // allocate iwork of size anz
-            iwork = GB_MALLOC_MEMORY (anz, ajsize, &iwork_size) ;
-            if (iwork == NULL)
-            { 
-                // out of memory
-                GB_FREE_ALL ;
-                return (GrB_OUT_OF_MEMORY) ;
-            }
-
-            // Construct the "row" indices of C, which are "column" indices of
-            // A.  This array becomes the permanent T->i on output.
-            GB_OK (GB_extract_vector_list (iwork, Aj_is_32, A, Werk)) ;
-
-            //------------------------------------------------------------------
-            // allocate the output matrix and additional space (jwork and Swork)
-            //------------------------------------------------------------------
-
-            // T is created using the requested integers of C.
-            GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-                GxB_HYPERSPARSE, anz, avdim, avlen, Werk) ;
-
-            // initialize the header of T, with no content,
-            // and initialize the type and dimension of T.
-
-            info = GB_new (&T, // hyper, existing header
-                ctype, avdim, avlen, GB_ph_null, C_is_csc,
-                GxB_HYPERSPARSE, A_hyper_switch, 0,
-                Cp_is_32, Cj_is_32, Ci_is_32) ;
-            ASSERT (info == GrB_SUCCESS) ;
-
-            // if in_place, the prior A->p and A->h can now be freed
-            if (in_place)
-            { 
-                if (!A->p_shallow) GB_FREE_MEMORY (&A->p, A->p_size) ;
-                if (!A->h_shallow) GB_FREE_MEMORY (&A->h, A->h_size) ;
-            }
-
-            GB_void *S_input = NULL ;
-
-            // for the GB_builder method, if the transpose is done in-place and
-            // A->i is not shallow, A->i can be used and then freed.
-            // Otherwise, A->i is not modified at all.
-            bool ok = true ;
-            bool recycle_Ai = (in_place && !A->i_shallow) ;
-            if (!recycle_Ai)
-            { 
-                // allocate jwork of size anz
-                jwork = GB_MALLOC_MEMORY (anz, aisize, &jwork_size) ;
-                ok = ok && (jwork != NULL) ;
-            }
-
-            if (op != NULL && !C_iso)
-            { 
-                Swork = (GB_void *) GB_XALLOC_MEMORY (false, C_iso, anz, csize,
-                    &Swork_size) ;
-                ok = ok && (Swork != NULL) ;
-            }
-
-            if (!ok)
-            { 
-                // out of memory
-                GB_FREE_ALL ;
-                return (GrB_OUT_OF_MEMORY) ;
-            }
-
-            //------------------------------------------------------------------
-            // construct jwork and Swork
-            //------------------------------------------------------------------
-
-            // "row" indices of A become "column" indices of C
-            if (recycle_Ai)
-            { 
-                // A->i is used as workspace for the "column" indices of C.
-                // jwork is A->i, and is freed by GB_builder.
-                jwork = A->i ;
-                jwork_size = A->i_size ;
-                A->i = NULL ;
-                ASSERT (in_place) ;
-            }
-            else
-            { 
-                // copy A->i into jwork, making a deep copy.  jwork is freed by
-                // GB_builder.  A->i is not modified, even if out of memory.
-                GB_memcpy (jwork, A->i, anz * aisize, nthreads_max) ;
-            }
-
-            // numerical values: apply the op, typecast, or make shallow copy
-            GrB_Type stype ;
-            GB_void sscalar [GB_VLA(csize)] ;
-            if (C_iso)
-            { 
-                // apply the op to the iso scalar
-                GB_unop_iso (sscalar, ctype, C_code_iso, op, A, scalar) ;
-                S_input = sscalar ;     // S_input is used instead of Swork
-                Swork = NULL ;
-                stype = ctype ;
-            }
-            else if (op != NULL)
-            { 
-                // Swork = op (A)
-                info = GB_apply_op (Swork, ctype, C_code_iso, op, scalar,
-                    binop_bind1st, flipij, A, Werk) ;
-                ASSERT (info == GrB_SUCCESS) ;
-                // GB_builder will not need to typecast Swork to T->x, and it
-                // may choose to transplant it into T->x
-                S_input = NULL ;        // Swork is used instead of S_input
-                stype = ctype ;
-            }
-            else
-            { 
-                // GB_builder will typecast S_input from atype to ctype if
-                // needed.  S_input is a shallow copy of Ax, and must not be
-                // modified.
-                ASSERT (!C_iso) ;
-                ASSERT (!A->iso) ;
-                S_input = (GB_void *) A->x ; // S_input is used instead of Swork
-                Swork = NULL ;
-                stype = atype ;
-            }
-
-            //------------------------------------------------------------------
-            // build the matrix: T = (ctype) A' or op ((xtype) A')
-            //------------------------------------------------------------------
-
-            // internally, jwork is freed and then T->x is allocated, so the
-            // total memory usage is anz * max (csize, sizeof(aisize)).  T is
-            // always hypersparse.  Either T, Swork, and S_input are all iso,
-            // or all non-iso, depending on C_iso.
-
-            GB_OK (GB_builder (
-                T,          // create T using a static header
-                ctype,      // T is of type ctype
-                avdim,      // T->vlen = A->vdim, always > 1
-                avlen,      // T->vdim = A->vlen, always > 1
-                C_is_csc,   // T has the same CSR/CSC format as C
-                &iwork,     // iwork_handle, becomes T->i on output
-                &iwork_size,
-                &jwork,     // jwork_handle, freed on output
-                &jwork_size,
-                &Swork,     // Swork_handle, freed on output
-                &Swork_size,
-                false,      // tuples are not sorted on input
-                true,       // tuples have no duplicates
-                anz,        // size of iwork, jwork, and Swork
-                true,       // is_matrix: unused
-                NULL, NULL, // original I,J indices: not used here
-                S_input,    // array of values of type stype, not modified
-                C_iso,      // iso property of T is the same as C->iso
-                anz,        // number of tuples
-                NULL,       // no dup operator needed (input has no duplicates)
-                stype,      // type of S_input or Swork
-                false,      // no burble (already burbled above)
-                Werk,
-                Aj_is_32, Ai_is_32, // integer sizes of iwork and jwork
-                Cp_is_32, Cj_is_32, Ci_is_32  // integer sizes for T 
-            )) ;
-
-            // GB_builder always frees jwork, and either frees iwork or
-            // transplants it in to T->i and sets iwork to NULL.  So iwork and
-            // jwork are always NULL on output.  GB_builder does not modify
-            // S_input.
-            ASSERT (iwork == NULL && jwork == NULL && Swork == NULL) ;
-            ASSERT (!GB_JUMBLED (T)) ;
+            GB_OK (GB_transpose_builder (&T, ctype, C_is_csc, C_iso, C_code_iso,
+                A, in_place, op, scalar, binop_bind1st, flipij, Werk)) ;
 
         }
         else
@@ -936,6 +762,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             //------------------------------------------------------------------
 
             // T = A' and typecast to ctype
+            GBURBLE ("(bucket transpose) ") ;
             GB_OK (GB_transpose_bucket (T, C_code_iso, ctype, C_is_csc, A,
                 op, scalar, binop_bind1st,
                 nworkspaces_bucket, nthreads_bucket, Werk)) ;

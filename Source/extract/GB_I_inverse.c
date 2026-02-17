@@ -72,6 +72,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     }
 
     GB_IPTR (W, W_is_32) ;
+    // FIXME: do this in parallel:
     for (int64_t k = 0 ; k < nI ; k++)
     { 
         // W [k] = k

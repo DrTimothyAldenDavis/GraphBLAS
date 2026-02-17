@@ -7,12 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_FREE_MEMORY (&Wi, Wi_size) ;        \
-    GB_FREE_MEMORY (&Wj, Wj_size) ;   \
-    GB_FREE_MEMORY (&Wx, Wx_size) ;   \
-    GB_phybix_free (C) ;            \
+#define GB_FREE_ALL                     \
+{                                       \
+    GB_FREE_MEMORY (&Wi, Wi_size) ;     \
+    GB_FREE_MEMORY (&Wj, Wj_size) ;     \
+    GB_FREE_MEMORY (&Wx, Wx_size) ;     \
+    GB_phybix_free (C) ;                \
 }
 
 #include "concat/GB_concat.h"
