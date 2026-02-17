@@ -2593,6 +2593,7 @@ void GB_jitifyer_nvcc_compile
     "-I'%s/src' "                       // include source directory
     "-I'%s/src/template' "
     "-I'%s/src/include' "
+    "%s "                               // openmp include directories
     "-o '%s/c/%02x/%s%s' "              // *.o output file
     "-c '%s/c/%02x/%s.cu' "             // *.cu input file
     "%s "                               // burble stdout
@@ -2611,7 +2612,7 @@ void GB_jitifyer_nvcc_compile
     "-o '%s/lib/%02x/%s%s%s' "          // lib*.so output file
     "'%s/c/%02x/%s%s' "                 // *.o input file
     " -cudart=shared "
-//  "%s "                               // libraries to link with (any?)
+    "%s "                               // libraries to link with
     "%s "                               // burble stdout
     "%s %s%s%s\"",                      // error log file
 
@@ -2624,6 +2625,7 @@ void GB_jitifyer_nvcc_compile
     GB_jit_cache_path,                  // include cache/src
     GB_jit_cache_path,                  // include cache/src/template
     GB_jit_cache_path,                  // include cache/src/include
+    GB_OMP_INC,                         // openmp include
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o output file
     GB_jit_cache_path, bucket, kernel_name,                 // *.cu input file
     burble_stdout,                      // burble stdout
@@ -2638,7 +2640,7 @@ void GB_jitifyer_nvcc_compile
     GB_jit_cache_path, bucket,  
     GB_LIB_PREFIX, kernel_name, GB_LIB_SUFFIX,              // lib*.so file
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
-//  GB_jit_C_libraries                  // libraries to link with
+    GB_jit_C_libraries                  // libraries to link with
     burble_stdout,                      // burble stdout
     err_redirect, log_quote, GB_jit_error_log, log_quote) ; // error log file
 
