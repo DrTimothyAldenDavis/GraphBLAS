@@ -123,6 +123,8 @@ void GB_macrofy_build           // construct all macros for GB_build
     bool nocasting = (ttype == stype) &&
         (ttype == xtype) && (ttype == ytype) && (ttype == ztype) ;
 
+    fprintf (fp, "#define GB_BLD_NOCASTING %d\n", nocasting) ;
+
     if (nocasting)
     { 
 

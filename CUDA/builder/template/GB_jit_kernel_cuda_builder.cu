@@ -406,7 +406,7 @@ __global__ void GB_cuda_builder_phase5_with_dupl
     GB_Tp_TYPE *JDeltaSum,  // size nchunks+1
     #endif
     GB_key_t *Key_out,      // size nvals+1: Key_out [-1 ... nvals-1]
-    GB_Sx_TYPE *Sx,         // size nvals+1: Sx  [-1 ... nvals-1]
+    GB_Sx_TYPE *Sx,         // size nvals+1: Sx [0 ... nvals]
     int64_t nvals,          // # of tuples in (I,J,X)
     int64_t nchunks
 )
@@ -505,8 +505,8 @@ __global__ void GB_cuda_builder_phase5_with_dupl
                     is_duplicate = (pT == pdupl) ;
                     if (is_duplicate)
                     {
-                        // Tx [pT] += Sx [pdupl]
-                        GB_BLD_DUP (Tx, pT, Sx, pdupl) ;
+                        // Tx [pT] += Sx [p2]
+                        GB_BLD_DUP (Tx, pT, Sx, p2) ;
                     }
                 }
                 #endif
@@ -558,6 +558,9 @@ __global__ void GB_cuda_builder_phase5_with_dupl
 // (Key_out,Sx) tuples, where no duplicates appear.
 
 // compare with select/phase3 and select/phase6
+
+// FIXME: transplant Sx into T->x instead, no need to copy, if GB_BLD_NOCASTING
+// is true.
 
 __global__ void GB_cuda_builder_phase5_without_dupl
 (
@@ -914,7 +917,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     // shift by one so Key_out [-1...nvals-1], etc can be used
     GB_key_t *Key_out = ((GB_key_t   *) W_1) + 1 ;
-    GB_Sx_TYPE *Sx    = ((GB_Sx_TYPE *) W_2) + 1 ;
+
+    // no need to shift Sx
+    GB_Sx_TYPE *Sx    = ((GB_Sx_TYPE *) W_2) ;
 
     // FIXME: if X cannot be read by the GPU, then copy it from X into
     // another workspace allocated on the GPU using OpenMP, and then do
@@ -1262,7 +1267,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         #endif
         /* plen: */ tnvec,
         /* nzmax: */ tnz+2,
-        /* numeric: */ true,
+        /* numeric: */ true,    // FIXME: make false if nocasting and no duplic
         /* A_iso: */ GB_ISO_BUILD,
         /* p_is_32: */ (GB_Tp_BITS == 32),
         /* j_is_32: */ (GB_Tj_BITS == 32),

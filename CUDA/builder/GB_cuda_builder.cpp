@@ -21,14 +21,22 @@
 (1) pass in Key_in array, which the caller can fill in its own CUDA kernel.
     In this case, tuples are not checked for validity.  That is the
     responsibility of the prior CUDA kernel that created Key_in.
+
 (2) tag I,J, and/or X as temporaries that can be consumed by this method,
-    and incorporated into the output T matrix, or used in another way
+    and incorporated into the output T matrix, or used in another way;
+
 (3) known_sorted: true if tuples do not need to be sorted
+
 (4) known_no_duplicates: true if no duplicates can appear
+
 (5) known_valid: if true, tuples are known to be valid
+
 (6) check if I,J,X are not accessible by the GPU; if so, do phase1
-    on the CPU, and copy X into another workspace for the CUB radix sort
-    in phase2.  Alternatively, skip the CUDA kernel entirely.
+    on the CPU, and copy X into another workspace for the CUB radix sort in
+    phase2.  This would require OpenMP.  Alternatively, skip the CUDA kernel
+    entirely.  Or, require the caller to copy I,J into Key_in on the CPU (in
+    another jit kernel perhaps) and pass in Key_in; and copy X into
+    GPU-accessible workspace (also in another jit kernel).
 */
 
 GrB_Info GB_cuda_builder            // build a matrix from tuples
