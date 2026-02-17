@@ -2583,7 +2583,10 @@ void GB_jitifyer_nvcc_compile
     " --gpu-architecture=compute_%d%d"  // major,minor
     " --gpu-code=sm_%d%d "              // major,minor
     " -fPIC " 
-    " -g " // " -O3 "   // HACK FIXME for CUDA
+    " -Xcompiler -fopenmp "             // enable OpenMP in host code
+    // HACK FIXME for CUDA: -g or -O3:
+//  " -g "
+    " -O3 "
 //  " --device-debug "          // HACK FIXME
 //  " --generate-line-info "            // HACK FIXME
 //  " --source-in-ptx "         // HACK FIXME
@@ -2618,7 +2621,7 @@ void GB_jitifyer_nvcc_compile
 
     // compile:
     GB_CUDA_COMPILER,                   // nvcc compiler FIXME use get/set
-    GB_CUDA_INC,                        // nvcc compiler -I includes FIXME use get/set
+    GB_CUDA_INC,                        // nvcc compiler -I FIXME use get/set
     (int) major, (int) minor,           // CUDA compute_xy architecture
     (int) major, (int) minor,           // CUDA sm_xy code
 //  GB_CUDA_FLAGS,                      // nvcc compiler flags FIXME use get/set
@@ -2633,14 +2636,14 @@ void GB_jitifyer_nvcc_compile
 
     // link:
     GB_CUDA_COMPILER,                   // nvcc compiler FIXME use get/set
-    GB_CUDA_INC,                        // nvcc compiler -I includes FIXME use get/set
+    GB_CUDA_INC,                        // nvcc compiler -I FIXME use get/set
 //  GB_CUDA_FLAGS,                      // nvcc compiler flags FIXME use get/set
     (int) major, (int) minor,           // CUDA compute_xy architecture
     (int) major, (int) minor,           // CUDA sm_xy code
     GB_jit_cache_path, bucket,  
     GB_LIB_PREFIX, kernel_name, GB_LIB_SUFFIX,              // lib*.so file
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
-    GB_jit_C_libraries                  // libraries to link with
+    GB_jit_C_libraries,                 // libraries to link with
     burble_stdout,                      // burble stdout
     err_redirect, log_quote, GB_jit_error_log, log_quote) ; // error log file
 
