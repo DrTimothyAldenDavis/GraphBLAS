@@ -16,9 +16,26 @@
     GB_cuda_stream_pool_release (&stream) ;     \
 }
 
+/* Alternative/additional signature:
+
+(1) pass in Key_in array, which the caller can fill in its own CUDA kernel.
+    In this case, tuples are not checked for validity.  That is the
+    responsibility of the prior CUDA kernel that created Key_in.
+(2) tag I,J, and/or X as temporaries that can be consumed by this method,
+    and incorporated into the output T matrix, or used in another way
+(3) known_sorted: true if tuples do not need to be sorted
+(4) known_no_duplicates: true if no duplicates can appear
+(5) known_valid: if true, tuples are known to be valid
+(6) check if I,J,X are not accessible by the GPU; if so, do phase1
+    on the CPU, and copy X into another workspace for the CUB radix sort
+    in phase2.  Alternatively, skip the CUDA kernel entirely.
+*/
+
 GrB_Info GB_cuda_builder            // build a matrix from tuples
 (
+    // output, not defined on input:
     GrB_Matrix *Thandle,            // matrix to build, dynamic header
+    // inputs, not modified:
     const GrB_Type ttype,           // type of output matrix T
     const int64_t vlen,             // length of each vector of T
     const int64_t vdim,             // number of vectors in T

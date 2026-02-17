@@ -14,9 +14,9 @@
 
 GrB_Info GB_cuda_builder_jit
 (
-    // output:
-    GrB_Matrix *Thandle,
-    // input:
+    // output, not defined on input:
+    GrB_Matrix *Thandle,            // matrix to build, dynamic header
+    // inputs, not modified:
     const GrB_Type ttype,           // type of output matrix T
     const int64_t vlen,             // length of each vector of T
     const int64_t vdim,             // number of vectors in T

@@ -676,6 +676,12 @@ extern "C"
     GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
 }
 
+#undef GB_TIMING
+// #define GB_TIMING
+#ifdef GB_TIMING
+#include <omp.h>
+#endif
+
 GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 {
 
@@ -683,6 +689,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // get callback functions
     //--------------------------------------------------------------------------
 
+    #ifdef GB_TIMING
+    double t1 = omp_get_wtime ( ) ;
+    #endif
     #ifdef GB_JIT_RUNTIME
     // get callback functions
     GB_GET_CALLBACKS ;
@@ -848,6 +857,12 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // method), then they can be used as workspace or as Ti, Tx components of
     // the output matrix.
 
+    #ifdef GB_TIMING
+    t1 = omp_get_wtime ( ) - t1 ;
+    printf ("builder phase 1: %g sec\n", t1) ;
+    double t2 = omp_get_wtime ( ) ;
+    #endif
+
     //--------------------------------------------------------------------------
     // phase2: CUB radix sort of (Key_in,X) to obtain (Key_out,Sx)
     //--------------------------------------------------------------------------
@@ -974,6 +989,12 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     #endif
     #endif
 
+    #ifdef GB_TIMING
+    t2 = omp_get_wtime ( ) - t2 ;
+    printf ("builder phase 2: %g sec\n", t2) ;
+    double t3 = omp_get_wtime ( ) ;
+    #endif
+
     //--------------------------------------------------------------------------
     // phase3: look for duplicates (compare with phase1 of CUDA/select)
     //--------------------------------------------------------------------------
@@ -1089,6 +1110,12 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     #endif
     #endif
 
+    #ifdef GB_TIMING
+    t3 = omp_get_wtime ( ) - t3 ;
+    printf ("builder phase 3: %g sec\n", t3) ;
+    double t4 = omp_get_wtime ( ) ;
+    #endif
+
     //--------------------------------------------------------------------------
     // phase4: sum up the unique entries in each chunk (on the CPU)
     //--------------------------------------------------------------------------
@@ -1157,6 +1184,12 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         #endif
         printf ("\n") ;
     }
+    #endif
+
+    #ifdef GB_TIMING
+    t4 = omp_get_wtime ( ) - t4 ;
+    printf ("builder phase 4: %g sec\n", t4) ;
+    double t5 = omp_get_wtime ( ) ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -1267,6 +1300,12 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
+
+    #ifdef GB_TIMING
+    t5 = omp_get_wtime ( ) - t5 ;
+    printf ("builder phase 5: %g sec\n", t5) ;
+    printf ("builder all:     %g sec\n", t1 + t2 + t3 + t4 + t5) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // free workspace and return result

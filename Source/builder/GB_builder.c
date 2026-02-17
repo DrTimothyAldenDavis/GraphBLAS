@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// CALLED BY: GB_build, GB_wait, GB_transpose, GB_concat_hyper
+// CALLED BY: GB_build, GB_wait, GB_transpose, GB_concat_hyper, GB_I_inverse,
+// GB_reshape, GB_hyper_hash_build, and GB_Matrix_import.
 
 // This function is called by GB_build to build a matrix T for GrB_Matrix_build
 // or GrB_Vector_build, by GB_wait to build a matrix T from the list of pending
