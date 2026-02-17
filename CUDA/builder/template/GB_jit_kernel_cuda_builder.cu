@@ -798,6 +798,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     uint64_t *bad = ((uint64_t *) W_8) ;
     (*bad) = 0 ;
 
+    // FIXME: if I or J cannot be read by the GPU, do phase1 on the CPU
+    // with OpenMP
+
     GB_cuda_builder_phase1 <<<grid, block1, 0, stream>>>
         (/* outputs: */ Key_in, bad,
          /* inputs: */ I, vlen,
@@ -912,6 +915,10 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // shift by one so Key_out [-1...nvals-1], etc can be used
     GB_key_t *Key_out = ((GB_key_t   *) W_1) + 1 ;
     GB_Sx_TYPE *Sx    = ((GB_Sx_TYPE *) W_2) + 1 ;
+
+    // FIXME: if X cannot be read by the GPU, then copy it from X into
+    // another workspace allocated on the GPU using OpenMP, and then do
+    // the CUB radix sort.
 
     // determine the amount of workspace needed by CUB radix sort
     #if GB_ISO_BUILD
