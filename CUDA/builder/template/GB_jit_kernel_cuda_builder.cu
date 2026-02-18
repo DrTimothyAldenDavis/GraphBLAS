@@ -76,7 +76,7 @@ using namespace cooperative_groups ;
 
 #else
 
-    // Buidling a GrB_Vector, so j is not used. 
+    // Buidling a GrB_Vector, so j is not used.
     // GB_key_t is not a struct; just a plain uint32_t or uint64_t
     typedef GB_KEY_TYPE GB_key_t ;
     #define GB_KEY_LOAD(Key_in,p,i1,j1)                 \
@@ -149,6 +149,29 @@ __global__ void GB_cuda_builder_phase1
         GB_J_TYPE j = J [p] ;
         #endif
 
+#if 0
+        if (p > 0)
+        {
+            GB_I_TYPE i0 = I [p-1] ;
+            #if GB_MTX_BUILD
+            GB_J_TYPE j0 = J [p-1] ;
+            #endif
+            my_unsorted +=
+                #if GB_MTX_BUILD
+                ((j0 > j) || (j0 == j && i0 > i)) ;
+                #else
+                (i0 > i) ;
+                #endif
+            my_dupls +=
+                #if GB_MTX_BUILD
+                ((j0 == j) && (i0 == i)) ;
+                #else
+                (i0 == i) ;
+                #endif
+        }
+#endif
+
+#if 0
         // count the number of indices that are out of order
         my_unsorted += (p == 0) ? 0 :
             #if GB_MTX_BUILD
@@ -164,6 +187,7 @@ __global__ void GB_cuda_builder_phase1
             #else
             (I [p-1] == i) ;
             #endif
+#endif
 
         // count the # of tuples out of range
         #if GB_MTX_BUILD
@@ -180,6 +204,7 @@ __global__ void GB_cuda_builder_phase1
     // compute the global count of bad, unsorted, and duplicate tuples
     //--------------------------------------------------------------------------
 
+#if 0
     my_bad      = GB_cuda_threadblock_sum_uint64 (my_bad) ;
     my_unsorted = GB_cuda_threadblock_sum_uint64 (my_unsorted) ;
     my_dupls    = GB_cuda_threadblock_sum_uint64 (my_dupls) ;
@@ -189,6 +214,8 @@ __global__ void GB_cuda_builder_phase1
         GB_cuda_atomic_add <uint64_t> (unsorted, my_unsorted) ;
         GB_cuda_atomic_add <uint64_t> (dupls   , my_dupls) ;
     }
+#endif
+
 }
 
 
@@ -1016,7 +1043,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         my_ok = my_ok
             #if GB_MTX_BUILD
             && (j < vdim)
-            #endif 
+            #endif
             && (i < vlen) ;
         my_bad += (!my_ok) ;
         // load the indices into Key_in [p]
@@ -1037,8 +1064,12 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     // if the tuples are sorted then dupls is a valid count of the # of
     // duplicates
+    #if 0
     bool known_sorted = (*unsorted == 0) ;
     bool known_no_duplicates = known_sorted && (*dupls == 0) ;
+    #endif
+    bool known_sorted = false ;
+    bool known_no_duplicates = false ;
     printf ("known_sorted: %d, known_no_duplicates: %d\n",
         known_sorted, known_no_duplicates) ;
 
@@ -1201,7 +1232,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         GB_FREE_MEMORY (&W_3, W_3_size) ;
     }
 
-    // sorted tuples are now in (Key_out,Sx) 
+    // sorted tuples are now in (Key_out,Sx)
     Key_in = NULL ;
 
     #if 0
@@ -1239,7 +1270,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // LJDelta is 1 if the entry is first in its vector (a leading entry), held
     // in a temporary shared array in each threadblock.  It is computed from
     // Key_out.j only and is not affected by the presence of duplicates.
-    // JDelta is the cumsum of chunk of LJDelta. 
+    // JDelta is the cumsum of chunk of LJDelta.
 
     // inputs:
     // Key_out.j:inf [ 0 0 0 0 | 1 1 1 1 | 1 2 2 4 | 4 4     ]
@@ -1319,7 +1350,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         // phase3 does not need to look for duplicates
         #if GB_MTX_BUILD
         GB_cuda_builder_phase3_no_dupl <<<grid, block1, 0, stream>>>
-            ( /* outputs: */ 
+            ( /* outputs: */
                 JDelta, JDeltaSum,
               /* inputs: */ Key_out, nvals, nchunks) ;
         #endif
