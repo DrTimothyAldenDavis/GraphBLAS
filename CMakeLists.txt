@@ -86,8 +86,8 @@ if ( GRAPHBLAS_HAS_CUDA )
     # with CUDA, and supporting libraries: Rapids Memory Manager (rmm), and spdlog
     cmake_policy ( SET CMP0135 NEW )    # URL download timestamp policy
     find_package ( CUDAToolkit REQUIRED )
-    set ( CMAKE_CUDA_FLAGS "-cudart=static -lineinfo -Wno-deprecated-gpu-targets " )
-    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fPIC " )
+    set ( CMAKE_CUDA_FLAGS "-forward-unknown-to-host-compiler -cudart=shared -Wno-deprecated-gpu-targets --std=c++17 -fPIC" )
+    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fPIC" )
     message ( STATUS "C++ flags for CUDA: ${CMAKE_CXX_FLAGS}" )
     message ( STATUS "CUDA include dirs:  ${CUDA_INCLUDE_DIRS}" )
     message ( STATUS "CUDA libraries:     ${CUDA_LIBRARIES}" )
@@ -626,7 +626,12 @@ if ( GRAPHBLAS_HAS_OPENMP )
         endif ( )
     endif ( )
     message ( STATUS "CMAKE OpenMP C flags:      ${OpenMP_C_FLAGS}" )
-    set ( GB_OPENMP_C_FLAGS "${OpenMP_C_FLAGS}" )
+    message ( STATUS "CMAKE OpenMP CXX flags:    ${OpenMP_CXX_FLAGS}" )
+    set ( GB_OPENMP_C_FLAGS   "${OpenMP_C_FLAGS}" )
+    set ( GB_OPENMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}" )
+    set ( CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   ${GB_OPENMP_C_FLAGS}" )
+    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GB_OPENMP_CXX_FLAGS}" )
+    set ( CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --compiler-options=\"${GB_OPENMP_CXX_FLAGS}\"" )
 else ( )
     message ( WARNING
     "WARNING:  OpenMP was not found (or was disabled with "
@@ -648,6 +653,7 @@ else ( )
         "GxB_Context_engage will return GrB_NOT_IMPLEMENTED." )
     endif ( )
     set ( GB_OPENMP_C_FLAGS "" )
+    set ( GB_OPENMP_CXX_FLAGS "" )
 endif ( )
 
 #-------------------------------------------------------------------------------

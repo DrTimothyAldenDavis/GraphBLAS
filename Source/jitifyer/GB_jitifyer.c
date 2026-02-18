@@ -2576,27 +2576,21 @@ void GB_jitifyer_nvcc_compile
     // compile:
     "sh -c \""                          // execute with POSIX shell
     " %s "                              // nvcc compiler command
-    "-forward-unknown-to-host-compiler "
     "-DGB_JIT_RUNTIME=1 "
     " %s "                              // -I includes for nvcc
-    " -std=c++17 " 
+    " %s "                              // nvcc flags
     " --gpu-architecture=compute_%d%d"  // major,minor
     " --gpu-code=sm_%d%d "              // major,minor
-    " -fPIC " 
-    " -Xcompiler -fopenmp "             // enable OpenMP in host code
-    // HACK FIXME for CUDA: -g or -O3:
+    // HACK FIXME for CUDA:
 //  " -g "
-    " -O3 "
 //  " --device-debug "          // HACK FIXME
 //  " --generate-line-info "            // HACK FIXME
 //  " --source-in-ptx "         // HACK FIXME
 //  " --ptxas-options=-v "          // HACK FIXME
-    " -Wno-deprecated-gpu-targets "
-//  " %s "                              // nvcc flags
     "-I'%s/src' "                       // include source directory
     "-I'%s/src/template' "
     "-I'%s/src/include' "
-    "%s "                               // openmp include directories
+    "%s "                               // openmp -I flags
     "-o '%s/c/%02x/%s%s' "              // *.o output file
     "-c '%s/c/%02x/%s.cu' "             // *.cu input file
     "%s "                               // burble stdout
@@ -2606,9 +2600,7 @@ void GB_jitifyer_nvcc_compile
     " %s "                              // nvcc compiler command
     "-DGB_JIT_RUNTIME=1 "
     " %s "                              // -I includes for nvcc
-    " -std=c++17 " 
-    " -Wno-deprecated-gpu-targets "
-//  " %s "                              // nvcc flags FIXME
+    " %s "                              // nvcc flags
     " --gpu-architecture=compute_%d%d"  // major,minor
     " --gpu-code=sm_%d%d "              // major,minor
     " -shared "
@@ -2622,13 +2614,13 @@ void GB_jitifyer_nvcc_compile
     // compile:
     GB_CUDA_COMPILER,                   // nvcc compiler FIXME use get/set
     GB_CUDA_INC,                        // nvcc compiler -I FIXME use get/set
+    GB_CUDA_FLAGS,                      // nvcc compiler flags FIXME use get/set
     (int) major, (int) minor,           // CUDA compute_xy architecture
     (int) major, (int) minor,           // CUDA sm_xy code
-//  GB_CUDA_FLAGS,                      // nvcc compiler flags FIXME use get/set
     GB_jit_cache_path,                  // include cache/src
     GB_jit_cache_path,                  // include cache/src/template
     GB_jit_cache_path,                  // include cache/src/include
-    GB_OMP_INC,                         // openmp include
+    GB_OMP_INC,                         // openmp -I flags
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o output file
     GB_jit_cache_path, bucket, kernel_name,                 // *.cu input file
     burble_stdout,                      // burble stdout
@@ -2637,7 +2629,7 @@ void GB_jitifyer_nvcc_compile
     // link:
     GB_CUDA_COMPILER,                   // nvcc compiler FIXME use get/set
     GB_CUDA_INC,                        // nvcc compiler -I FIXME use get/set
-//  GB_CUDA_FLAGS,                      // nvcc compiler flags FIXME use get/set
+    GB_CUDA_FLAGS,                      // nvcc compiler flags FIXME use get/set
     (int) major, (int) minor,           // CUDA compute_xy architecture
     (int) major, (int) minor,           // CUDA sm_xy code
     GB_jit_cache_path, bucket,  
@@ -2691,7 +2683,7 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
     "-I'%s/src' "                       // include source directory
     "-I'%s/src/template' "
     "-I'%s/src/include' "
-    "%s "                               // openmp include directories
+    "%s "                               // openmp -I flags
     "-o '%s/c/%02x/%s%s' "              // *.o output file
     "-c '%s/c/%02x/%s.c' "              // *.c input file
     "%s "                               // burble stdout
@@ -2713,7 +2705,7 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
     GB_jit_cache_path,                  // include cache/src
     GB_jit_cache_path,                  // include cache/src/template
     GB_jit_cache_path,                  // include cache/src/include
-    GB_OMP_INC,                         // openmp include
+    GB_OMP_INC,                         // openmp -I flags
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o output file
     GB_jit_cache_path, bucket, kernel_name,                 // *.c input file
     burble_stdout,                      // burble stdout

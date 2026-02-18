@@ -681,9 +681,6 @@ extern "C"
 
 #undef GB_TIMING
 // #define GB_TIMING
-#ifdef GB_TIMING
-#include <omp.h>
-#endif
 
 GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 {
@@ -693,7 +690,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     //--------------------------------------------------------------------------
 
     #ifdef GB_TIMING
-    double t1 = omp_get_wtime ( ) ;
+    double t1 = GB_OPENMP_GET_WTIME ;
     #endif
     #ifdef GB_JIT_RUNTIME
     // get callback functions
@@ -864,9 +861,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // the output matrix.
 
     #ifdef GB_TIMING
-    t1 = omp_get_wtime ( ) - t1 ;
+    t1 = GB_OPENMP_GET_WTIME - t1 ;
     printf ("builder phase 1: %g sec\n", t1) ;
-    double t2 = omp_get_wtime ( ) ;
+    double t2 = GB_OPENMP_GET_WTIME ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -1002,9 +999,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     #endif
 
     #ifdef GB_TIMING
-    t2 = omp_get_wtime ( ) - t2 ;
+    t2 = GB_OPENMP_GET_WTIME - t2 ;
     printf ("builder phase 2: %g sec\n", t2) ;
-    double t3 = omp_get_wtime ( ) ;
+    double t3 = GB_OPENMP_GET_WTIME ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -1123,9 +1120,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     #endif
 
     #ifdef GB_TIMING
-    t3 = omp_get_wtime ( ) - t3 ;
+    t3 = GB_OPENMP_GET_WTIME - t3 ;
     printf ("builder phase 3: %g sec\n", t3) ;
-    double t4 = omp_get_wtime ( ) ;
+    double t4 = GB_OPENMP_GET_WTIME ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -1199,9 +1196,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     #endif
 
     #ifdef GB_TIMING
-    t4 = omp_get_wtime ( ) - t4 ;
+    t4 = GB_OPENMP_GET_WTIME - t4 ;
     printf ("builder phase 4: %g sec\n", t4) ;
-    double t5 = omp_get_wtime ( ) ;
+    double t5 = GB_OPENMP_GET_WTIME ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -1314,7 +1311,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     #ifdef GB_TIMING
-    t5 = omp_get_wtime ( ) - t5 ;
+    t5 = GB_OPENMP_GET_WTIME - t5 ;
     printf ("builder phase 5: %g sec\n", t5) ;
     printf ("builder all:     %g sec\n", t1 + t2 + t3 + t4 + t5) ;
     #endif

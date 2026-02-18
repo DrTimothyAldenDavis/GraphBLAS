@@ -602,7 +602,7 @@ extern "C"
 GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 {
     #ifdef TIMING
-    double t = omp_get_wtime ( ) ;
+    double t = GB_OPENMP_GET_WTIME ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -733,9 +733,9 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     #ifdef TIMING
-    t = omp_get_wtime ( ) - t ;
+    t = GB_OPENMP_GET_WTIME - t ;
     printf ("\nselect sparse phase1: %g sec (gpu: Map, with cumsum)\n", t) ;
-    t = omp_get_wtime ( ) ;
+    t = GB_OPENMP_GET_WTIME ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -763,9 +763,9 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     ChunkSum [nchunks_in_A] = cnz ;
 
     #ifdef TIMING
-    t = omp_get_wtime ( ) - t ;
+    t = GB_OPENMP_GET_WTIME - t ;
     printf ("select sparse phase2: %g sec (cpu: ChunkSum of Map)\n", t) ;
-    t = omp_get_wtime ( ) ;
+    t = GB_OPENMP_GET_WTIME ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -848,9 +848,9 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // Map (in W_1) no longer needed; reused below for Ck_Delta
 
     #ifdef TIMING
-    t = omp_get_wtime ( ) - t ;
+    t = GB_OPENMP_GET_WTIME - t ;
     printf ("select sparse phase3: %g sec (gpu: create Ci,Cx,Ck)\n", t) ;
-    t = omp_get_wtime ( ) ;
+    t = GB_OPENMP_GET_WTIME ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -891,9 +891,9 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     #ifdef TIMING
-    t = omp_get_wtime ( ) - t ;
+    t = GB_OPENMP_GET_WTIME - t ;
     printf ("select sparse phase4: %g sec (gpu: Ck_Delta, with cumsum)\n", t) ;
-    t = omp_get_wtime ( ) ;
+    t = GB_OPENMP_GET_WTIME ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -922,9 +922,9 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     //       0 [       0|      2|    4 ]  5
 
     #ifdef TIMING
-    t = omp_get_wtime ( ) - t ;
+    t = GB_OPENMP_GET_WTIME - t ;
     printf ("select sparse phase5: %g sec (cpu: ChunkSum for Ck_Delta\n", t) ;
-    t = omp_get_wtime ( ) ;
+    t = GB_OPENMP_GET_WTIME ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -978,7 +978,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     #ifdef TIMING
-    t = omp_get_wtime ( ) - t ;
+    t = GB_OPENMP_GET_WTIME - t ;
     printf ("select sparse phase6: %g sec (gpu: Cp,Ch)\n", t) ;
     #endif
 
