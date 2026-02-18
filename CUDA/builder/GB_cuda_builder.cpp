@@ -37,6 +37,49 @@
     entirely.  Or, require the caller to copy I,J into Key_in on the CPU (in
     another jit kernel perhaps) and pass in Key_in; and copy X into
     GPU-accessible workspace (also in another jit kernel).
+
+--------------------------------------------------------------------------------
+Usage in all of GraphBLAS:
+
+(1) GB_build.c, for GrB_Matrix_build etc:
+    I,J,X are owned by the user.  Might not be accessible on the GPU.
+    Must check for duplicates, need to sort.
+    Must check if tuples are valid.
+
+(2) GrB_Matrix_import:
+    Same as GrB_Matrix_build.
+
+(3) GB_concat_hyper:
+    Its CUDA kernel must fill Key_in and input X from extractTuples.
+    No duplicates, need to sort.
+    Tuples are known to be valid.
+
+(4) GB_I_inverse:
+    J might be owned by the user.  Might not be accessible on the GPU.
+    Its CUDA kernel must fill Key_in.  Matrix is iso.
+    No duplicates, need to sort.
+    Tuples are known to be valid.
+
+(5) GB_hyper_hash_build:
+    Its CUDA kernel must fill Key_in and X.
+    No duplicates, need to sort.
+    Tuples are known to be valid.
+
+(6) GB_reshape:
+    Its CUDA kernel must fill Key_in.  Matrix can be iso or non-iso.
+    might be in-place (X is consumed here) or not in-place (X is readonly)
+    No duplicates, might need to sort if input matrix is jumbled.
+    Tuples are known to be valid.
+
+(7) GB_transpose_builder:
+    Its CUDA kernel must fill Key_in.  Matrix can be iso or non-iso.
+    No duplicates, need to sort.
+    Tuples are known to be valid.
+
+(8) GB_wait:
+    Its CUDA kernel must fill Key_in.  Matrix can be iso or non-iso.
+    Must check for duplicates, need to sort (depending on A->pending->sorted)
+    Tuples are known to be valid.
 */
 
 GrB_Info GB_cuda_builder            // build a matrix from tuples

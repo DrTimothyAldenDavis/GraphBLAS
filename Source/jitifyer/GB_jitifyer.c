@@ -2581,12 +2581,14 @@ void GB_jitifyer_nvcc_compile
     " %s "                              // nvcc flags
     " --gpu-architecture=compute_%d%d"  // major,minor
     " --gpu-code=sm_%d%d "              // major,minor
+#if 0
     // HACK FIXME for CUDA:
-//  " -g "
-//  " --device-debug "          // HACK FIXME
-//  " --generate-line-info "            // HACK FIXME
-//  " --source-in-ptx "         // HACK FIXME
-//  " --ptxas-options=-v "          // HACK FIXME
+    " -g "
+    " --device-debug "          // HACK FIXME
+    " --generate-line-info "            // HACK FIXME
+    " --source-in-ptx "         // HACK FIXME
+    " --ptxas-options=-v "          // HACK FIXME
+#endif
     "-I'%s/src' "                       // include source directory
     "-I'%s/src/template' "
     "-I'%s/src/include' "
