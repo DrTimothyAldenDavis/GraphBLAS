@@ -138,6 +138,7 @@ __global__ void GB_cuda_builder_phase1
     uint64_t my_bad = 0 ;
     uint64_t my_unsorted = 0 ;
     uint64_t my_dupls = 0 ;
+    this_thread_block ( ).sync ( ) ;
 
     for (int64_t p = blockIdx.x * blockDim.x + threadIdx.x ;
                  p < nvals ;
@@ -150,30 +151,31 @@ __global__ void GB_cuda_builder_phase1
         #endif
 
 #if 0
+
         if (p > 0)
         {
             GB_I_TYPE i0 = I [p-1] ;
             #if GB_MTX_BUILD
             GB_J_TYPE j0 = J [p-1] ;
             #endif
-            my_unsorted +=
+            my_unsorted += (uint64_t)
                 #if GB_MTX_BUILD
                 ((j0 > j) || (j0 == j && i0 > i)) ;
                 #else
                 (i0 > i) ;
                 #endif
-            my_dupls +=
+            my_dupls += (uint64_t)
                 #if GB_MTX_BUILD
                 ((j0 == j) && (i0 == i)) ;
                 #else
                 (i0 == i) ;
                 #endif
         }
-#endif
 
-#if 0
+#else
+
         // count the number of indices that are out of order
-        my_unsorted += (p == 0) ? 0 :
+        my_unsorted += (p == 0) ? 0 : (uint64_t)
             #if GB_MTX_BUILD
             ((J [p-1] > j) || (J [p-1] == j && I [p-1] > i)) ;
             #else
@@ -181,7 +183,7 @@ __global__ void GB_cuda_builder_phase1
             #endif
 
         // count the # of duplicates (only valid if indices are all in order)
-        my_dupls += (p == 0) ? 0 :
+        my_dupls += (p == 0) ? 0 : (uint64_t)
             #if GB_MTX_BUILD
             ((J [p-1] == j) && (I [p-1] == i)) ;
             #else
@@ -191,7 +193,8 @@ __global__ void GB_cuda_builder_phase1
 
         // count the # of tuples out of range
         #if GB_MTX_BUILD
-        my_bad += (uint64_t) ((i >= vlen) + (j >= vdim)) ;
+        my_bad += (uint64_t) ((i >= vlen) || (j >= vdim)) ;
+        if (i >= vlen || j >= vdim) printf ("bad: %lu %lu %lu %lu\n", i, vlen, j, vdim) ;
         #else
         my_bad += (uint64_t) ((i >= vlen)) ;
         #endif
@@ -204,20 +207,19 @@ __global__ void GB_cuda_builder_phase1
     // compute the global count of bad, unsorted, and duplicate tuples
     //--------------------------------------------------------------------------
 
-#if 0
+    this_thread_block ( ).sync ( ) ;
     my_bad      = GB_cuda_threadblock_sum_uint64 (my_bad) ;
     my_unsorted = GB_cuda_threadblock_sum_uint64 (my_unsorted) ;
     my_dupls    = GB_cuda_threadblock_sum_uint64 (my_dupls) ;
     if (threadIdx.x == 0)
     {
+        if (my_bad > 0) printf ("block: %d bad %lu my_bad %lu\n",
+            blockIdx.x, *bad, my_bad) ;
         GB_cuda_atomic_add <uint64_t> (bad     , my_bad) ;
         GB_cuda_atomic_add <uint64_t> (unsorted, my_unsorted) ;
         GB_cuda_atomic_add <uint64_t> (dupls   , my_dupls) ;
     }
-#endif
-
 }
-
 
 //------------------------------------------------------------------------------
 // GB_cuda_builder_phase3_with_dupl
@@ -1064,12 +1066,13 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     // if the tuples are sorted then dupls is a valid count of the # of
     // duplicates
-    #if 0
+    #if 1
     bool known_sorted = (*unsorted == 0) ;
     bool known_no_duplicates = known_sorted && (*dupls == 0) ;
-    #endif
+    #else
     bool known_sorted = false ;
     bool known_no_duplicates = false ;
+    #endif
     printf ("known_sorted: %d, known_no_duplicates: %d\n",
         known_sorted, known_no_duplicates) ;
 
@@ -1114,6 +1117,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     printf ("\n\n============================== builder phase 2\n\n") ;
     printf ("nvals %ld, iso: %d\n", nvals, GB_ISO_BUILD) ;
     #endif
+
+    // FIXME: if X cannot be read by the GPU, then copy it from X into
+    // another workspace allocated on the GPU using OpenMP.
 
     GB_key_t *Key_out ;
     GB_Sx_TYPE *Sx ;
@@ -1163,10 +1169,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
         // no need to shift Sx
         Sx = ((GB_Sx_TYPE *) W_2) ;
-
-        // FIXME: if X cannot be read by the GPU, then copy it from X into
-        // another workspace allocated on the GPU using OpenMP, and then do
-        // the CUB radix sort.
 
         // determine the amount of workspace needed by CUB radix sort
         #if GB_ISO_BUILD
@@ -1349,6 +1351,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     {
         // phase3 does not need to look for duplicates
         #if GB_MTX_BUILD
+        printf ("phase 5 with NO duplicates present\n") ;
         GB_cuda_builder_phase3_no_dupl <<<grid, block1, 0, stream>>>
             ( /* outputs: */
                 JDelta, JDeltaSum,
@@ -1357,6 +1360,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     }
     else
     {
+        printf ("phase 5 with duplicates present\n") ;
         GB_cuda_builder_phase3_with_dupl <<<grid, block1, 0, stream>>>
             ( /* outputs: */ Map, ChunkSum,
                 #if GB_MTX_BUILD
