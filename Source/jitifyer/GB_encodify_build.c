@@ -2,7 +2,7 @@
 // GB_encodify_build: encode a build problem, including types and op
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ uint64_t GB_encodify_build      // encode an build problem
     const GB_jit_kcode kcode,   // kernel to encode
     const GrB_BinaryOp dup,     // operator for summing up duplicates
     const GrB_Type ttype,       // type of Tx array
-    const GrB_Type stype,       // type of Sx array
+    const GrB_Type stype,       // type of Sx array (values of input tuples)
     bool is_matrix,             // if true, J is NULL, else non-NULL
     bool iso_build,             // if true, Tx and Sx are iso
     bool Tp_is_32,              // if true, Tp is uint32_t, else uint64_t
@@ -31,7 +31,10 @@ uint64_t GB_encodify_build      // encode an build problem
     bool K_is_32,               // if true, K_work is uint32_t else uint64_t
     bool K_is_null,             // if true, K_work is NULL
     bool Key_is_32,             // if true, GB_key_t is uint32_t else uint64_t
-    bool no_duplicates          // if true, no duplicates appear
+    bool no_duplicates,         // if true, no duplicates appear
+    const GrB_Matrix A          // input matrix, for builder-based CUDA kernels
+                                // (GB_cuda_concat_hyper, GB_cuda_reshape,
+                                // GB_cuda_transpose, ...)
 )
 { 
 
@@ -55,7 +58,7 @@ uint64_t GB_encodify_build      // encode an build problem
     GB_encodify_kcode (encoding, kcode) ;
     GB_enumify_build (&encoding->code, dup, ttype, stype,
         is_matrix, iso_build, Tp_is_32, Tj_is_32, Ti_is_32,
-        I_is_32, J_is_32, K_is_32, K_is_null, Key_is_32, no_duplicates) ;
+        I_is_32, J_is_32, K_is_32, K_is_null, Key_is_32, no_duplicates, A) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length

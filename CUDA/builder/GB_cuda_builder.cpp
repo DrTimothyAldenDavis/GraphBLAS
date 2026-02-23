@@ -42,6 +42,7 @@
 Usage in all of GraphBLAS:
 
 (1) GB_build.c, for GrB_Matrix_build etc:
+    family: I,J,X, no Key_in type, suffix: dup->name
     I,J,X are owned by the user.  Might not be accessible on the GPU.
     Must check for duplicates, need to sort.
     Must check if tuples are valid.
@@ -50,33 +51,40 @@ Usage in all of GraphBLAS:
     Same as GrB_Matrix_build.
 
 (3) GB_concat_hyper:
+    family: A, Key_in type, suffix: A->type (or second op ->type)
     Its CUDA kernel must fill Key_in and input X from extractTuples.
     No duplicates, need to sort.
     Tuples are known to be valid.
 
 (4) GB_I_inverse:
+    family: no A, need I, Key_in type, suffix: none
     J might be owned by the user.  Might not be accessible on the GPU.
     Its CUDA kernel must fill Key_in.  Matrix is iso.
     No duplicates, need to sort.
     Tuples are known to be valid.
 
 (5) GB_hyper_hash_build:
+    family: needs A, Key_in type, suffix: A->type
     Its CUDA kernel must fill Key_in and X.
     No duplicates, need to sort.
     Tuples are known to be valid.
 
 (6) GB_reshape:
+    family: needs A, Key_in type, suffix: A->type
     Its CUDA kernel must fill Key_in.  Matrix can be iso or non-iso.
     might be in-place (X is consumed here) or not in-place (X is readonly)
     No duplicates, might need to sort if input matrix is jumbled.
     Tuples are known to be valid.
 
 (7) GB_transpose_builder:
+    family: needs A, Key_in type, suffix: A->type
     Its CUDA kernel must fill Key_in.  Matrix can be iso or non-iso.
     No duplicates, need to sort.
     Tuples are known to be valid.
 
 (8) GB_wait:
+    family: no A, needs A->Pending (as I,J,X), Key_in type,
+        suffix: A->pending->op->name (which is dup->name)
     Its CUDA kernel must fill Key_in.  Matrix can be iso or non-iso.
     Must check for duplicates, need to sort (depending on A->pending->sorted)
     Tuples are known to be valid.

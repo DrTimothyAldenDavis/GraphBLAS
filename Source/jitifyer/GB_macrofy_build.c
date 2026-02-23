@@ -26,8 +26,15 @@ void GB_macrofy_build           // construct all macros for GB_build
     // extract the method_code
     //--------------------------------------------------------------------------
 
-    // 32/64 bit (9 bits, 3 hex digits)
+    // (7 bits, 2 hex digits):
+    bool apresent = GB_RSHIFT (method_code, 42, 1) ;
+    int asparsity = GB_RSHIFT (method_code, 40, 2) ;
+    bool Ap_is_32 = GB_RSHIFT (method_code, 39, 1) ;
+    bool Aj_is_32 = GB_RSHIFT (method_code, 38, 1) ;
+    bool Ai_is_32 = GB_RSHIFT (method_code, 37, 1) ;
     int Key_is_32 = GB_RSHIFT (method_code, 36, 1) ;
+
+    // 32/64 bit (8 bits, 2 hex digits)
     int is_mat    = GB_RSHIFT (method_code, 35, 1) ;
     int J_is_32   = GB_RSHIFT (method_code, 34, 1) ;
     int Tp_is_32  = GB_RSHIFT (method_code, 33, 1) ;
@@ -47,7 +54,7 @@ void GB_macrofy_build           // construct all macros for GB_build
 
     // types of S and T (2 hex digits)
 //  int tcode     = GB_RSHIFT (method_code, 4, 4) ;
-//  int scode     = GB_RSHIFT (method_code, 0, 4) ;
+    int scode     = GB_RSHIFT (method_code, 0, 4) ;
 
     //--------------------------------------------------------------------------
     // describe the operator
@@ -267,6 +274,20 @@ void GB_macrofy_build           // construct all macros for GB_build
     // Key type for CUDA kernels only:
     fprintf (fp, "#define GB_KEY_TYPE %s\n", Key_is_32 ? "uint32_t":"uint64_t");
     fprintf (fp, "#define GB_KEY_BITS %d\n", Key_is_32 ? 32 : 64) ;
+
+    //--------------------------------------------------------------------------
+    // construct the macros for A (for CUDA kernels only)
+    //--------------------------------------------------------------------------
+
+    if (apresent)
+    {
+        // FIXME: GB_reshape and concat_hyper will need a2type == ttype
+        GrB_Type a2type = stype ;    // FIXME: ok for now
+        GrB_Type atype  = stype ;
+        int acode = scode ;
+        GB_macrofy_input (fp, "a", "A", "A", true, a2type, atype,
+            asparsity, acode, iso, -1, Ap_is_32, Aj_is_32, Ai_is_32) ;
+    }
 
     //--------------------------------------------------------------------------
     // include the final default definitions

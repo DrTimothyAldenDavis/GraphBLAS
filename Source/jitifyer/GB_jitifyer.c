@@ -1828,7 +1828,7 @@ GrB_Info GB_jitifyer_load2_worker
 
         case GB_jit_build_family  : 
             op1 = op ;
-            method_code_digits = 10 ;   // see GB_enumify_build
+            method_code_digits = 11 ;   // see GB_enumify_build
             break ;
 
         case GB_jit_ewise_family  : 

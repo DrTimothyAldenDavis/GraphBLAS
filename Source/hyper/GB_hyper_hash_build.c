@@ -22,6 +22,14 @@
 
 #include "builder/GB_build.h"
 
+#if 0
+GrB_Info GB_hyper_hash_build    // construct the A->Y hyper_hash for A
+(
+    GrB_Matrix A,       // does not depend on A->type
+    GB_Werk Werk
+)
+#endif
+
 GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
 {
     //--------------------------------------------------------------------------

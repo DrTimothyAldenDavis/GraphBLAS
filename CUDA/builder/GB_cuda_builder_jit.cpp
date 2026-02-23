@@ -57,7 +57,8 @@ GrB_Info GB_cuda_builder_jit
         /* K_is_32, not used: */ true,
         /* K_is_null, (K is not used in CUDA): */ true,
         /* Key_is_32: */ (vlen <= UINT32_MAX && vdim <= UINT32_MAX),
-        /* no_duplicates, not used: */ false) ;
+        /* no_duplicates, not used: */ false,
+        /* A, not used: */ NULL) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
