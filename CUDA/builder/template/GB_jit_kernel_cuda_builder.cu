@@ -32,7 +32,7 @@ using namespace cooperative_groups ;
 
 #include <cuda/std/tuple>
 
-#if 1
+#if 0
 #define ABORT(msg) {  \
     printf ("Abort! line %d, %s\n", __LINE__, msg) ; \
     fflush (stdout) ; abort ( ) ; }
@@ -150,7 +150,8 @@ __global__ void GB_cuda_builder_phase1
         GB_J_TYPE j = J [p] ;
         #endif
 
-#if 0
+#if 1
+#if 1
 
         if (p > 0)
         {
@@ -190,11 +191,13 @@ __global__ void GB_cuda_builder_phase1
             (I [p-1] == i) ;
             #endif
 #endif
+#endif
 
         // count the # of tuples out of range
         #if GB_MTX_BUILD
         my_bad += (uint64_t) ((i >= vlen) || (j >= vdim)) ;
-        if (i >= vlen || j >= vdim) printf ("bad: %lu %lu %lu %lu\n", i, vlen, j, vdim) ;
+//      if (i >= vlen || j >= vdim)
+//          printf ("bad: %lu %lu %lu %lu\n", i, vlen, j, vdim) ;
         #else
         my_bad += (uint64_t) ((i >= vlen)) ;
         #endif
@@ -1082,7 +1085,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     printf ("known_sorted: %d, known_no_duplicates: %d\n",
         known_sorted, known_no_duplicates) ;
 
-    #if 1
+    #if 0
     #if GB_MTX_BUILD
     printf ("\n") ;
     for (int64_t p = 0 ; p < nvals ; p++)
@@ -1255,8 +1258,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     #endif
     #endif
 
-    #if 1
-    printf ("\nafter sort:") ;
+    #if 0
+    printf ("\nafter sort:\n") ;
     {
         bool ok4 = true ;
         for (int64_t p = 0 ; p < nvals ; p++)
@@ -1278,7 +1281,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             GB_KEY_UNLOAD_J (Key_out, p, j1) ;
             i = i1 ;
             j = j1 ;
-            printf ("Key_out [%ld] : (i,j): (%ld, %ld)\n", p, i, j) ;
+//          printf ("Key_out [%ld] : (i,j): (%ld, %ld)\n", p, i, j) ;
             bool outoforder = (jprev > j) || (jprev == j && iprev > i) ;
             if (outoforder)
             {
@@ -1434,20 +1437,25 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     }
     #endif
 
-    #if 1
-    printf ("\nChunks after phase3:\n") ;
-    bool ok2 = true ;
-    for (int64_t chunk = 0 ; chunk < nchunks ; chunk++)
-    {
-        printf ("ChunkSum [%ld] = %ld,  JDeltaSum [%ld] = %ld\n",
-            chunk, (int64_t) ChunkSum [chunk],
-            chunk, (int64_t) JDeltaSum [chunk]) ;
-        ok2 = ok2 && (ChunkSum [chunk] <= CHUNKSIZE)
-                && (JDeltaSum [chunk] <= CHUNKSIZE) ;
-    }
-    if (!ok2) ABORT ("chunks are bad!\n") ;
+    #if 0
 
-    printf ("\n") ;
+    if (!known_no_duplicates)
+    {
+        printf ("\nChunks after phase3:\n") ;
+        bool ok2 = true ;
+        for (int64_t chunk = 0 ; chunk < nchunks ; chunk++)
+        {
+    //      printf ("ChunkSum [%ld] = %ld,  JDeltaSum [%ld] = %ld\n",
+    //          chunk, (int64_t) ChunkSum [chunk],
+    //          chunk, (int64_t) JDeltaSum [chunk]) ;
+            ok2 = ok2 && (ChunkSum [chunk] <= CHUNKSIZE)
+                    && (JDeltaSum [chunk] <= CHUNKSIZE) ;
+        }
+        printf ("\nChunks after phase3 are:\n", ok2) ;
+        if (!ok2) ABORT ("chunks are bad!\n") ;
+    }
+
+    printf ("\nChecking RadixSort output:\n") ;
     {
         int64_t alljdsum = 0 ;
         bool ok3 = true ;
@@ -1477,7 +1485,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
                 i = i1 ;
                 j = j1 ;
                 jdsum += (j != jprev) ;
-                printf ("Key_out [%ld] : (i,j): (%ld, %ld)\n", p, i, j) ;
+//              printf ("Key_out [%ld] : (i,j): (%ld, %ld)\n", p, i, j) ;
                 bool outoforder = (jprev > j) || (jprev == j && iprev > i) ;
                 if (outoforder)
                 {
