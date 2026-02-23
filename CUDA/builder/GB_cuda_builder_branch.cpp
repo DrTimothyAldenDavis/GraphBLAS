@@ -49,6 +49,7 @@ bool GB_cuda_builder_branch
         !GB_cuda_pointer_ok (J, "J") ||
         !GB_cuda_pointer_ok (X, "X"))
     {
+        // FIXME: remove this printf
         printf ("%s: (I,J,X) pointers not accessible by the GPU\n", __FILE__) ;
         return (false) ;
     }

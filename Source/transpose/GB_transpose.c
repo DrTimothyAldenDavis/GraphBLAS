@@ -720,7 +720,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // transpose a general sparse or hypersparse matrix
@@ -731,44 +731,72 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // T=A' with optional typecasting, or T=op(A')
 
         //----------------------------------------------------------------------
-        // select the method
+        // try the transpose on the GPU
         //----------------------------------------------------------------------
 
-        int nworkspaces_bucket, nthreads_bucket ;
-        bool use_builder = GB_transpose_method (A,
-            &nworkspaces_bucket, &nthreads_bucket) ;
+        info = GrB_NO_VALUE ;
+        #if defined ( GRAPHBLAS_HAS_CUDA )
+        if (GB_cuda_transpose_branch (ctype, A, op, scalar))
+        {
+            info = GB_cuda_transpose (&T, ctype, C_is_csc, C_iso, C_code_iso,
+                A, in_place, op, scalar, binop_bind1st, flipij) ;
+            if (!(info == GrB_NO_VALUE || info == GrB_SUCCESS))
+            {
+                // out-of-memory, JIT error, or other error occurred
+                GB_FREE_ALL ;
+                return (info) ;
+            }
+        }
+        #endif
 
         //----------------------------------------------------------------------
-        // transpose the matrix with the selected method
+        // transpose on the CPU if the GPU hasn't done it
         //----------------------------------------------------------------------
 
-        if (use_builder)
+        if (info == GrB_NO_VALUE)
         {
 
             //------------------------------------------------------------------
-            // transpose via builder method
+            // select the method
             //------------------------------------------------------------------
 
-            GBURBLE ("(builder transpose) ") ;
-            GB_OK (GB_transpose_builder (&T, ctype, C_is_csc, C_iso, C_code_iso,
-                A, in_place, op, scalar, binop_bind1st, flipij, Werk)) ;
-
-        }
-        else
-        { 
+            int nworkspaces_bucket, nthreads_bucket ;
+            bool use_builder = GB_transpose_method (A,
+                &nworkspaces_bucket, &nthreads_bucket) ;
 
             //------------------------------------------------------------------
-            // transpose via bucket sort
+            // transpose the matrix with the selected method on the CPU
             //------------------------------------------------------------------
 
-            // T = A' and typecast to ctype
-            GBURBLE ("(bucket transpose) ") ;
-            GB_OK (GB_transpose_bucket (T, C_code_iso, ctype, C_is_csc, A,
-                op, scalar, binop_bind1st,
-                nworkspaces_bucket, nthreads_bucket, Werk)) ;
+            if (use_builder)
+            { 
 
-            ASSERT_MATRIX_OK (T, "T from bucket", GB0) ;
-            ASSERT (GB_JUMBLED_OK (T)) ;
+                //--------------------------------------------------------------
+                // transpose via builder method
+                //--------------------------------------------------------------
+
+                GBURBLE ("(builder transpose) ") ;
+                GB_OK (GB_transpose_builder (&T, ctype, C_is_csc, C_iso,
+                    C_code_iso, A, in_place, op, scalar, binop_bind1st, flipij,
+                    Werk)) ;
+
+            }
+            else
+            { 
+
+                //--------------------------------------------------------------
+                // transpose via bucket sort
+                //--------------------------------------------------------------
+
+                // T = A' and typecast to ctype
+                GBURBLE ("(bucket transpose) ") ;
+                GB_OK (GB_transpose_bucket (T, C_code_iso, ctype, C_is_csc, A,
+                    op, scalar, binop_bind1st,
+                    nworkspaces_bucket, nthreads_bucket, Werk)) ;
+
+                ASSERT_MATRIX_OK (T, "T from bucket", GB0) ;
+                ASSERT (GB_JUMBLED_OK (T)) ;
+            }
         }
     }
 

@@ -295,5 +295,13 @@ GrB_Info GB_cuda_builder            // build a matrix from tuples
     bool Ti_is_32       // true if T->i is built as 32 bit, false if 64
 ) ;
 
+bool GrB_cuda_transpose_branch
+(
+    const GrB_Type ctype,
+    const GrB_Matrix A,
+    const GB_Operator op,           // any type of operator
+    const GrB_Scalar scalar
+) ;
+
 #endif
 
