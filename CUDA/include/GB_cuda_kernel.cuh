@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/template/GB_cuda_kernel.cuh: definitions for CUDA kernels
+// GraphBLAS/CUDA/template/GB_cuda_kernel.cuh: definitions for CUDA JIT kernels
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -10,7 +10,7 @@
 
 // This file is #include'd into all device functions for CUDA JIT kernels for
 // GraphBLAS.  It provides a subset of GraphBLAS.h and GB.h, plus other
-// definitions.  It is not used on the host.
+// definitions.  It is not used outside of the CUDA JIT kernels.
 
 #pragma once
 
@@ -25,6 +25,7 @@
 #include <stdio.h>
 // #include <cub/block/block_scan.cuh>
 #include <cub/cub.cuh>
+#include <cuda/std/tuple>
 #include <cooperative_groups.h>
 using namespace cooperative_groups ;
 
