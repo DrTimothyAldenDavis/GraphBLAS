@@ -26,17 +26,8 @@
     GB_FREE_WORKSPACE ;                     \
 }
 
-using namespace cooperative_groups ;
 #include "template/GB_cuda_tile_sum_uint64.cuh"
 #include "template/GB_cuda_threadblock_sum_uint64.cuh"
-
-#include <cuda/std/tuple>
-
-#if 0
-#define ABORT(msg) {  \
-    printf ("Abort! line %d, %s\n", __LINE__, msg) ; \
-    fflush (stdout) ; abort ( ) ; }
-#endif
 
 //------------------------------------------------------------------------------
 // typedefs
@@ -52,8 +43,6 @@ using namespace cooperative_groups ;
         GB_KEY_TYPE j ;
         GB_KEY_TYPE i ;
         GB_key_t ( ) = default ;
-        // initializer for key = {...} syntax, but not needed here:
-        // GB_key_t (GB_KEY_TYPE j, GB_KEY_TYPE i) : j(j), i(i) { }
     } ;
 
     #define GB_KEY_LOAD(Key_in,p,i1,j1)                 \
@@ -103,6 +92,10 @@ using namespace cooperative_groups ;
 // Int can be uint16_t if CHUNKSIZE is < 65,535
 #define Int uint16_t
 
+#if CHUNKSIZE > 65535
+#error "Int cannot be uint16_t"
+#endif
+
 //------------------------------------------------------------------------------
 // GB_cuda_builder_phase1:
 //------------------------------------------------------------------------------
@@ -150,21 +143,20 @@ __global__ void GB_cuda_builder_phase1
         GB_J_TYPE j = J [p] ;
         #endif
 
-#if 1
-#if 1
-
         if (p > 0)
         {
             GB_I_TYPE i0 = I [p-1] ;
             #if GB_MTX_BUILD
             GB_J_TYPE j0 = J [p-1] ;
             #endif
+            // count the number of indices that are out of order
             my_unsorted += (uint64_t)
                 #if GB_MTX_BUILD
                 ((j0 > j) || (j0 == j && i0 > i)) ;
                 #else
                 (i0 > i) ;
                 #endif
+            // count the # of duplicates (only valid indices are all in order)
             my_dupls += (uint64_t)
                 #if GB_MTX_BUILD
                 ((j0 == j) && (i0 == i)) ;
@@ -173,31 +165,9 @@ __global__ void GB_cuda_builder_phase1
                 #endif
         }
 
-#else
-
-        // count the number of indices that are out of order
-        my_unsorted += (p == 0) ? 0 : (uint64_t)
-            #if GB_MTX_BUILD
-            ((J [p-1] > j) || (J [p-1] == j && I [p-1] > i)) ;
-            #else
-            (I [p-1] > i) ;
-            #endif
-
-        // count the # of duplicates (only valid if indices are all in order)
-        my_dupls += (p == 0) ? 0 : (uint64_t)
-            #if GB_MTX_BUILD
-            ((J [p-1] == j) && (I [p-1] == i)) ;
-            #else
-            (I [p-1] == i) ;
-            #endif
-#endif
-#endif
-
         // count the # of tuples out of range
         #if GB_MTX_BUILD
         my_bad += (uint64_t) ((i >= vlen) || (j >= vdim)) ;
-//      if (i >= vlen || j >= vdim)
-//          printf ("bad: %lu %lu %lu %lu\n", i, vlen, j, vdim) ;
         #else
         my_bad += (uint64_t) ((i >= vlen)) ;
         #endif
@@ -211,8 +181,6 @@ __global__ void GB_cuda_builder_phase1
     //--------------------------------------------------------------------------
 
     this_thread_block ( ).sync ( ) ;
-//  if (my_bad > 0) printf ("Hey! %d %lu\n", threadIdx.x, my_bad) ;
-
     my_bad      = GB_cuda_threadblock_sum_uint64 (my_bad) ;
     this_thread_block ( ).sync ( ) ;
     my_unsorted = GB_cuda_threadblock_sum_uint64 (my_unsorted) ;
@@ -222,8 +190,6 @@ __global__ void GB_cuda_builder_phase1
 
     if (threadIdx.x == 0)
     {
-//      if (my_bad > 0) printf ("block: %d bad %lu my_bad %lu\n",
-//          blockIdx.x, *bad, my_bad) ;
         GB_cuda_atomic_add <uint64_t> (bad     , my_bad) ;
         GB_cuda_atomic_add <uint64_t> (unsorted, my_unsorted) ;
         GB_cuda_atomic_add <uint64_t> (dupls   , my_dupls) ;
@@ -648,20 +614,6 @@ __global__ void GB_cuda_builder_phase5_with_dupl
     GB_Tx_TYPE *__restrict__ Tx = (GB_Tx_TYPE *) T->x ; Tx-- ;
     #endif
 
-    #if 0
-    if (threadIdx.x == 0 && blockIdx.x == 0)
-    {
-        printf ("Chunks at start of phase5:\n") ;
-        for (int64_t chunk = -1 ; chunk < nchunks ; chunk++)
-        {
-            printf ("ChunkSum [%ld] = %ld,  JDeltaSum [%ld] = %ld\n",
-                chunk, (int64_t) ChunkSum [chunk],
-                chunk, (int64_t) JDeltaSum [chunk]) ;
-        }
-    }
-    this_thread_block ( ).sync ( ) ;
-    #endif
-
     //--------------------------------------------------------------------------
     // copy the entries from (Key_out,Sx) into Tp, Th, Ti, and Tx, summing dupls
     //--------------------------------------------------------------------------
@@ -962,7 +914,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     int64_t tnz = 0 ;   // # of unique tuples, and # of entries in T
     int64_t tnvec = 0 ; // # of vectors of T
     int64_t nchunks = (nvals + CHUNKSIZE - 1) >> LOG2_CHUNKSIZE ;
-    // printf ("nchunks: %ld\n", nchunks) ;
 
     dim3 grid (gridsz) ;        // = min (ceil (nvals/CHUNKSIZE), 256*(#sms))
     dim3 block1 (BLOCKDIM) ;
@@ -992,30 +943,11 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     {
         // out of memory
         GB_FREE_ALL ;
-        printf ("out of memory for W_0, size %lu\n",
-            (uint64_t) nvals * sizeof (GB_key_t)) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
     // shift by one so Key_in [-1...nvals-1] can be used
     GB_key_t *Key_in = ((GB_key_t *) W_0) + 1 ;
-
-    #if 0
-    printf ("W_0: %p Key_in %p difference: %lu\n",
-        W_0, Key_in, (uint64_t) (Key_in - ((GB_key_t *) W_0))) ;
-    printf ("\n\n============================== builder phase 1\n\n") ;
-    #endif
-
-    #if 0
-    #if GB_MTX_BUILD
-    for (int64_t p = 0 ; p < nvals ; p++)
-    {
-        int64_t i = I [p] ;
-        int64_t j = J [p] ;
-        printf ("tuple [%ld] = (%ld, %ld)\n", p, i, j) ;
-    }
-    #endif
-    #endif
 
     // get 2 uint64_t scalars from the W_8 workspace
     uint64_t *bad = ((uint64_t *) W_8) ;
@@ -1039,61 +971,18 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-    // HACK: repeat phase1 on the CPU
-    #if 0
-    bool my_ok = true ;
-    uint64_t my_bad = 0 ;
-    for (int64_t p = 0 ; p < nvals ; p ++)
-    {
-        // get the indices
-        GB_I_TYPE i = I [p] ;
-        #if GB_MTX_BUILD
-        GB_J_TYPE j = J [p] ;
-        #endif
-        // check if the indices are in range
-        my_ok = my_ok
-            #if GB_MTX_BUILD
-            && (j < vdim)
-            #endif
-            && (i < vlen) ;
-        my_bad += (!my_ok) ;
-        // load the indices into Key_in [p]
-        uint64_t key = (uint64_t) i ;
-        #if GB_MTX_BUILD
-        key = (((uint64_t) (j)) << 32) | key ;
-        #endif
-        if (Key_in [p] != key) ABORT ("phase 1 failed\n") ;
-    }
-    bool ok = (my_bad == 0) ;
-    printf ("phase1 CPU, ok: %lu, bad: %lu\n", ok, my_bad) ;
-    (*bad) = my_bad ;
-    #endif
-
     // after the CUDA kernel launch is done, check if the (I,J) indices are OK
-    printf ("bad: %lu, unsorted: %lu\n", (*bad), (*unsorted)) ;
     GB_OK (((*bad) == 0) ? GrB_SUCCESS : GrB_INVALID_INDEX) ;
 
     // if the tuples are sorted then dupls is a valid count of the # of
     // duplicates
+
     #if 1
     bool known_sorted = (*unsorted == 0) ;
     bool known_no_duplicates = known_sorted && (*dupls == 0) ;
     #else
     bool known_sorted = false ;
     bool known_no_duplicates = false ;
-    #endif
-    printf ("known_sorted: %d, known_no_duplicates: %d\n",
-        known_sorted, known_no_duplicates) ;
-
-    #if 0
-    #if GB_MTX_BUILD
-    printf ("\n") ;
-    for (int64_t p = 0 ; p < nvals ; p++)
-    {
-        GB_KEY_UNLOAD (Key_in, p, i, j) ;
-        printf ("Key_in [%ld] = (%ld, %ld)\n", p, (int64_t) i, (int64_t) j) ;
-    }
-    #endif
     #endif
 
     // TODO: The original (I,J) inputs are no longer needed at this point.  If
@@ -1103,7 +992,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     #ifdef GB_TIMING
     t1 = GB_OPENMP_GET_WTIME - t1 ;
-    printf ("builder phase 1: %g sec\n", t1) ;
+    printf ("builder phase 1: %g sec,", t1) ;
+    printf (" known_sorted: %d, known_no_duplicates: %d\n",
+        known_sorted, known_no_duplicates) ;
     double t2 = GB_OPENMP_GET_WTIME ;
     #endif
 
@@ -1123,11 +1014,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // dupl:             ^ *         ^ *   *             <--1st entry in dupls
     // leading:        @         @           @   @       <--1st of vectors in C
 
-    #if 0
-    printf ("\n\n============================== builder phase 2\n\n") ;
-    printf ("nvals %ld, iso: %d\n", nvals, GB_ISO_BUILD) ;
-    #endif
-
     // FIXME: if X cannot be read by the GPU, then copy it from X into
     // another workspace allocated on the GPU using OpenMP.
 
@@ -1141,7 +1027,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         // tuples are already sorted
         //----------------------------------------------------------------------
 
-        printf ("Tuples already sorted\n") ;
         Key_out = Key_in ;
         Sx = X ;
 
@@ -1153,10 +1038,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         // tuples must be sorted
         //----------------------------------------------------------------------
 
-        printf ("Tuples must be sorted\n") ;
         // allocate Key_out, Sx, and CUB temporary workspace
         W_1 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_key_t), &W_1_size) ;
-        // printf ("W_1_size: %lu\n", (uint64_t) W_1_size) ;
         #if !GB_ISO_BUILD
         W_2 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_Sx_TYPE), &W_2_size) ;
         #endif
@@ -1164,14 +1047,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         {
             // out of memory
             GB_FREE_ALL ;
-            printf ("out of memory for W_1, size %lu, or W_2, size %lu\n",
-                (uint64_t) nvals * sizeof (GB_key_t),
-                #if GB_ISO_BUILD
-                0
-                #else
-                (uint64_t) nvals * sizeof (GB_Sx_TYPE)
-                #endif
-                ) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -1207,12 +1082,10 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
         // allocate workspace for CUB radix sort
         W_3 = GB_MALLOC_MEMORY (W_3_size+1, 1, &W_3_size) ;
-        // printf ("W_3_size for radix sort: %lu\n", (uint64_t) W_3_size) ;
         if (W_3 == NULL)
         {
             // out of memory
             GB_FREE_ALL ;
-            printf ("out of memory for W_3, size %lu\n", W_3_size) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -1248,19 +1121,13 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // sorted tuples are now in (Key_out,Sx)
     Key_in = NULL ;
 
-    #if 0
-    #if GB_MTX_BUILD
-    for (int64_t p = 0 ; p < nvals ; p++)
-    {
-        GB_KEY_UNLOAD (Key_out, p, i, j) ;
-        printf ("Key_out [%ld] = (%ld, %ld)\n", p, (int64_t) i, (int64_t) j) ;
-    }
-    #endif
-    #endif
+    //--------------------------------------------------------------------------
+    // sanity check
+    //--------------------------------------------------------------------------
 
     #if 0
-    printf ("\nafter sort:\n") ;
     {
+        printf ("\nafter sort:\n") ;
         bool ok4 = true ;
         for (int64_t p = 0 ; p < nvals ; p++)
         {
@@ -1281,21 +1148,21 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             GB_KEY_UNLOAD_J (Key_out, p, j1) ;
             i = i1 ;
             j = j1 ;
-//          printf ("Key_out [%ld] : (i,j): (%ld, %ld)\n", p, i, j) ;
             bool outoforder = (jprev > j) || (jprev == j && iprev > i) ;
             if (outoforder)
             {
-                printf ("p: %ld, iprev,jprev: (%ld,%ld), i,j (%ld,%ld) out of order!\n",
-                    p,iprev,jprev, i,j) ;
+                printf ("p: %ld, iprev,jprev: (%ld,%ld), i,j (%ld,%ld) "
+                    "out of order!\n", p,iprev,jprev, i,j) ;
                 ok4 = false ;
             }
             bool bad_index = (j > vdim) || (i > vlen) ;
             if (bad_index)
             {
-                ABORT ("out of range!\n") ;
+                printf ("out of range!\n") ;
+                return (GrB_PANIC) ;
             }
         }
-        if (!ok4) ABORT ("out of order!\n") ;
+        if (!ok4) { printf ("out of order!\n") ; return (GrB_PANIC) ; }
     }
     #endif
 
@@ -1308,10 +1175,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     //--------------------------------------------------------------------------
     // phase3: look for duplicates (compare with phase1 of CUDA/select)
     //--------------------------------------------------------------------------
-
-    #if 0
-    printf ("\n\n============================== builder phase 3\n\n") ;
-    #endif
 
     // builder/phase3 determines which entries are the first in a sequence of
     // duplicates (output: Map), and which entries are the first in their
@@ -1356,7 +1219,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         {
             // out of memory
             GB_FREE_ALL ;
-            printf ("out of memory for W_4 and W_5\n") ;
             return (GrB_OUT_OF_MEMORY) ;
         }
     }
@@ -1369,7 +1231,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     {
         // out of memory
         GB_FREE_ALL ;
-        printf ("out of memory for W_6 and W_7\n") ;
         return (GrB_OUT_OF_MEMORY) ;
     }
     #endif
@@ -1382,28 +1243,10 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     GB_Tp_TYPE *JDeltaSum = ((GB_Tp_TYPE *) W_7) + 1 ;
     #endif
 
-    #if 0
-    #if GB_MTX_BUILD
-    printf ("\nphase3 input:\n") ;
-    for (int64_t p = 0 ; p < nvals ; p++)
-    {
-        GB_KEY_UNLOAD (Key_out, p, i, j) ;
-        printf ("Key_out [%ld] = (%ld, %ld), chunk: %ld\n",
-            p, (int64_t) i, (int64_t) j, p / CHUNKSIZE) ;
-    }
-    #endif
-    #endif
-
-    #if 0
-    printf ("do phase 3: gridsz %ld, blockdim %ld\n",
-        (int64_t) gridsz, (int64_t) BLOCKDIM) ;
-    #endif
-
     if (known_no_duplicates)
     {
         // phase3 does not need to look for duplicates
         #if GB_MTX_BUILD
-        printf ("phase 3 with NO duplicates present\n") ;
         GB_cuda_builder_phase3_no_dupl <<<grid, block1, 0, stream>>>
             ( /* outputs: */
                 JDelta, JDeltaSum,
@@ -1412,7 +1255,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     }
     else
     {
-        printf ("phase 3 with duplicates present\n") ;
         GB_cuda_builder_phase3_with_dupl <<<grid, block1, 0, stream>>>
             ( /* outputs: */ Map, ChunkSum,
                 #if GB_MTX_BUILD
@@ -1424,38 +1266,12 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-    #if GB_MTX_BUILD
-    #if 0
-    printf ("\nphase3 output:\n") ;
-    for (int64_t p = -1 ; p < nvals ; p++)
-    {
-        GB_KEY_UNLOAD (Key_out, p, i, j) ;
-        printf ("\nKey_out [%ld] = (%ld, %ld), chunk: %ld\n",
-            p, (int64_t) i, (int64_t) j, p / CHUNKSIZE) ;
-        printf ("    Map [%ld] = %d\n", p, Map [p]) ;
-        printf ("    JDelta [%ld] = %d\n", p, JDelta [p]) ;
-    }
-    #endif
+    //--------------------------------------------------------------------------
+    // sanity check
+    //--------------------------------------------------------------------------
 
     #if 0
-
-    if (!known_no_duplicates)
-    {
-        printf ("\nChunks after phase3:\n") ;
-        bool ok2 = true ;
-        for (int64_t chunk = 0 ; chunk < nchunks ; chunk++)
-        {
-    //      printf ("ChunkSum [%ld] = %ld,  JDeltaSum [%ld] = %ld\n",
-    //          chunk, (int64_t) ChunkSum [chunk],
-    //          chunk, (int64_t) JDeltaSum [chunk]) ;
-            ok2 = ok2 && (ChunkSum [chunk] <= CHUNKSIZE)
-                    && (JDeltaSum [chunk] <= CHUNKSIZE) ;
-        }
-        printf ("\nChunks after phase3 are:\n", ok2) ;
-        if (!ok2) ABORT ("chunks are bad!\n") ;
-    }
-
-    printf ("\nChecking RadixSort output:\n") ;
+    printf ("\nChecking phase3 output:\n") ;
     {
         int64_t alljdsum = 0 ;
         bool ok3 = true ;
@@ -1489,15 +1305,16 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
                 bool outoforder = (jprev > j) || (jprev == j && iprev > i) ;
                 if (outoforder)
                 {
-                    printf ("chunk %ld: p: %ld, iprev,jprev: (%ld,%ld), i,j (%ld,%ld) out of order!\n",
+                    printf ("chunk %ld: p: %ld, iprev,jprev: (%ld,%ld), "
+                        "i,j (%ld,%ld) out of order!\n",
                         chunk,p,iprev,jprev, i,j) ;
-                    // ABORT ("out of order!\n") ;
                     ok4 = false ;
                 }
                 bool bad_index = (j > vdim) || (i > vlen) ;
                 if (bad_index)
                 {
-                    ABORT ("out of range!\n") ;
+                    printf ("out of range!\n") ;
+                    return (GrB_PANIC) ;
                 }
             }
             if (jdsum != JDeltaSum [chunk])
@@ -1509,11 +1326,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             alljdsum += jdsum ;
         }
         printf ("alljdsum: %ld\n", alljdsum) ;
-        if (!ok4) { ABORT ("out of order!\n") ; }
-        if (!ok3) { ABORT ("JDeltaSum is bad!\n") ; }
+        if (!ok4) { printf ("out of order!\n") ; return (GrB_PANIC) ; }
+        if (!ok3) { printf ("JDeltaSum is bad!\n") ; return (GrB_PANIC) ; }
     }
-
-    #endif
     #endif
 
     #ifdef GB_TIMING
@@ -1525,10 +1340,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     //--------------------------------------------------------------------------
     // phase4: sum up the unique entries in each chunk (on the CPU)
     //--------------------------------------------------------------------------
-
-    #if 0
-    printf ("\n\n============================== builder phase 4\n\n") ;
-    #endif
 
     // compare with phase2 of CUDA/select
 
@@ -1591,21 +1402,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     tnvec = 1 ;
     #endif
 
-    #if 0
-    printf ("did phase4: tnvec is %ld\n", tnvec) ;
-    printf ("Chunks after phase4:\n") ;
-    for (int64_t chunk = -1 ; chunk <= nchunks ; chunk++)
-    {
-        printf ("ChunkSum [%ld] = %ld",
-            chunk, (int64_t) ChunkSum [chunk]) ;
-        #if GB_MTX_BUILD
-        printf (", JDeltaSum [%ld] = %ld\n",
-            chunk, (int64_t) JDeltaSum [chunk]) ;
-        #endif
-        printf ("\n") ;
-    }
-    #endif
-
     #ifdef GB_TIMING
     t4 = GB_OPENMP_GET_WTIME - t4 ;
     printf ("builder phase 4: %g sec\n", t4) ;
@@ -1617,10 +1413,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     //--------------------------------------------------------------------------
 
     // compare with phase3 of CUDA/select
-
-    #if 0
-    printf ("\n\n============================== builder phase 5\n\n") ;
-    #endif
 
     // builder/phase5 allocates the output T matrix (including T->p, T->h,
     // T->i, and T->x arrays), then moves the data from (Key_out,Sx) into
@@ -1661,7 +1453,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     // allocate the T matrix as hypersparse, with tnz entries and tnvec vectors,
     // or as sparse if T is a typecasted GrB_Vector.
-    info = (GB_new_bix (&T, ttype, vlen, vdim,
+    GB_OK (GB_new_bix (&T, ttype, vlen, vdim,
         /* Ap_option: */ (tnz == 0) ? GB_ph_calloc : GB_ph_malloc,
         is_csc,
         #if GB_MTX_BUILD
@@ -1680,11 +1472,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         /* p_is_32: */ (GB_Tp_BITS == 32),
         /* j_is_32: */ (GB_Tj_BITS == 32),
         /* i_is_32: */ (GB_Ti_BITS == 32))) ;
-    if (info != GrB_SUCCESS)
-    {
-        printf ("new_bix failed: %d\n", info) ;
-    }
-    GB_OK (info) ;
 
     T->nvals = tnz ;
     T->magic = GB_MAGIC ;
@@ -1694,7 +1481,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     if (tnz == nvals)
     {
         // construct Tp, Th, Ti, and Tx, no duplicates appear
-        printf ("build phase5, tnz %ld, no dupl\n", tnz) ;
         GB_cuda_builder_phase5_no_dupl <<<grid, block1, 0, stream>>>
             (/* outputs: */ T,
              /* inputs: */
@@ -1707,8 +1493,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     {
         // construct Tp, Th, Ti, and Tx, summing up duplicates
         // (at least one duplicate appears)
-        printf ("build phase5, tnz %ld, nvals %ld, with %ld dupl\n",
-            tnz, nvals, nvals - tnz) ;
         GB_cuda_builder_phase5_with_dupl <<<grid, block1, 0, stream>>>
             (/* outputs: */ T,
              /* inputs: */  Map, ChunkSum,
@@ -1723,7 +1507,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     #ifdef GB_TIMING
     t5 = GB_OPENMP_GET_WTIME - t5 ;
-    printf ("builder phase 5: %g sec\n", t5) ;
+    printf ("builder phase 5: %g sec, tnz: %ld, duplicates: %ld\n", t5,
+        tnz, nvals-tnz) ;
     printf ("builder all:     %g sec\n", t1 + t2 + t3 + t4 + t5) ;
     #endif
 
