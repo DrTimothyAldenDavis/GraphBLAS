@@ -32,10 +32,7 @@ void GB_enumify_build           // enumerate a GB_build problem
     bool K_is_32,               // if true, K_work is uint32_t else uint64_t
     bool K_is_null,             // if true, K_work is NULL
     bool Key_is_32,             // if true, GB_key_t is uint32_t else uint64_t
-    bool no_duplicates,         // if true, no duplicates appear
-    const GrB_Matrix A          // input matrix, for builder-based CUDA kernels
-                                // (GB_cuda_concat_hyper, GB_cuda_reshape,
-                                // GB_cuda_transpose, ...)
+    bool no_duplicates          // if true, no duplicates appear
 )
 {
 
@@ -69,17 +66,6 @@ void GB_enumify_build           // enumerate a GB_build problem
     int key_is_32 = (Key_is_32) ? 1 : 0 ;
     int no_dupl   = (no_duplicates) ? 1 : 0 ;
 
-    // input matrix, for CUDA kernels. A->type must match input stype,
-    // but this condition is not checked, except as an assertion.
-    int apresent = (A != NULL) ;
-    ASSERT (GB_IMPLIES (A != NULL, A->type == stype)) ;
-    int A_sparsity = GB_sparsity (A) ;
-    int asparsity ;
-    GB_enumify_sparsity (&asparsity, A_sparsity) ;
-    int ap_is_32 = (A == NULL || A->p_is_32) ? 1 : 0 ;
-    int aj_is_32 = (A == NULL || A->j_is_32) ? 1 : 0 ;
-    int ai_is_32 = (A == NULL || A->i_is_32) ? 1 : 0 ;
-
     //--------------------------------------------------------------------------
     // enumify the dup binary operator
     //--------------------------------------------------------------------------
@@ -90,17 +76,10 @@ void GB_enumify_build           // enumerate a GB_build problem
     // construct the method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 44 (11 hex digits)
+    // total method_code bits: 37 (10 hex digits)
 
     (*method_code) =
                                                // range        bits
-                // (7 bits, 2 hex digits):
-                // sparsity and properties of A
-                GB_LSHIFT (apresent   , 42) |  // 0 to 1       1
-                GB_LSHIFT (asparsity  , 40) |  // 0 to 3       2
-                GB_LSHIFT (ap_is_32   , 39) |  // 0 to 1       1
-                GB_LSHIFT (aj_is_32   , 38) |  // 0 to 1       1
-                GB_LSHIFT (ai_is_32   , 37) |  // 0 to 1       1
                 // size of integers in GB_Key_t:
                 GB_LSHIFT (key_is_32  , 36) |  // 0 to 1       1
 

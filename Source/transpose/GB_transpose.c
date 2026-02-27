@@ -739,7 +739,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         if (GB_cuda_transpose_branch (ctype, A, op, scalar))
         {
             info = GB_cuda_transpose (&T, ctype, C_is_csc, C_iso, C_code_iso,
-                A, in_place, op, scalar, binop_bind1st, flipij) ;
+                A, in_place, op, scalar, binop_bind1st, flipij, Werk) ;
             if (!(info == GrB_NO_VALUE || info == GrB_SUCCESS))
             {
                 // out-of-memory, JIT error, or other error occurred

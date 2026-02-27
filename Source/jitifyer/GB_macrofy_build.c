@@ -26,12 +26,7 @@ void GB_macrofy_build           // construct all macros for GB_build
     // extract the method_code
     //--------------------------------------------------------------------------
 
-    // (7 bits, 2 hex digits):
-    bool apresent = GB_RSHIFT (method_code, 42, 1) ;
-    int asparsity = GB_RSHIFT (method_code, 40, 2) ;
-    bool Ap_is_32 = GB_RSHIFT (method_code, 39, 1) ;
-    bool Aj_is_32 = GB_RSHIFT (method_code, 38, 1) ;
-    bool Ai_is_32 = GB_RSHIFT (method_code, 37, 1) ;
+    // (1 bit, 1 hex digits):
     int Key_is_32 = GB_RSHIFT (method_code, 36, 1) ;
 
     // 32/64 bit (8 bits, 2 hex digits)
@@ -54,7 +49,7 @@ void GB_macrofy_build           // construct all macros for GB_build
 
     // types of S and T (2 hex digits)
 //  int tcode     = GB_RSHIFT (method_code, 4, 4) ;
-    int scode     = GB_RSHIFT (method_code, 0, 4) ;
+//  int scode     = GB_RSHIFT (method_code, 0, 4) ;
 
     //--------------------------------------------------------------------------
     // describe the operator
@@ -192,7 +187,7 @@ void GB_macrofy_build           // construct all macros for GB_build
         fprintf (fp, "#define GB_BLD_DUP(Tx,p,Sx,k) \\\n") ;
 
         // ytype y = (ytype) Sx [k] ;
-        fprintf (fp, "    %s ", ytype_name) ;
+        fprintf (fp, "{ \\\n    %s ", ytype_name) ;
         if (cast_s_to_y == NULL)
         { 
             fprintf (fp, "y = (%s) Sx [k]", ytype_name) ;
@@ -240,7 +235,7 @@ void GB_macrofy_build           // construct all macros for GB_build
         { 
             fprintf (fp, cast_z_to_t, "    Tx [p]", "z") ;
         }
-        fprintf (fp, " ;\n") ;
+        fprintf (fp, " ; \\\n}\n") ;
     }
 
     //--------------------------------------------------------------------------
@@ -271,23 +266,13 @@ void GB_macrofy_build           // construct all macros for GB_build
     fprintf (fp, "#define GB_K_WORK(k) %s\n", K_is_null ? "k" : "K_work [k]") ;
     fprintf (fp, "#define GB_K_IS_NULL %d\n", K_is_null) ;
 
+    //--------------------------------------------------------------------------
+    // construct the macros for A and Key (for CUDA kernels only)
+    //--------------------------------------------------------------------------
+
     // Key type for CUDA kernels only:
     fprintf (fp, "#define GB_KEY_TYPE %s\n", Key_is_32 ? "uint32_t":"uint64_t");
     fprintf (fp, "#define GB_KEY_BITS %d\n", Key_is_32 ? 32 : 64) ;
-
-    //--------------------------------------------------------------------------
-    // construct the macros for A (for CUDA kernels only)
-    //--------------------------------------------------------------------------
-
-    if (apresent)
-    {
-        // FIXME: GB_reshape and concat_hyper will need a2type == ttype
-        GrB_Type a2type = stype ;    // FIXME: ok for now
-        GrB_Type atype  = stype ;
-        int acode = scode ;
-        GB_macrofy_input (fp, "a", "A", "A", true, a2type, atype,
-            asparsity, acode, iso, -1, Ap_is_32, Aj_is_32, Ai_is_32) ;
-    }
 
     //--------------------------------------------------------------------------
     // include the final default definitions

@@ -50,13 +50,16 @@ GrB_Info GxB_Context_new            // create a new Context
     Context->chunk = GB_Context_chunk_get (NULL) ;
     int32_t gpu_ids [GB_MAX_NGPUS] ;
     int32_t ngpus = GB_Context_gpu_ids_get (NULL, gpu_ids) ;
+//  printf ("ngpus: %d\n", ngpus) ;
     GrB_Info info = GB_Context_gpu_ids_set (Context, gpu_ids, ngpus) ;
+//  printf ("info here is %d\n", info) ;
     if (info != GrB_SUCCESS)
     {
         // This "cannot" fail since the global settings have already been
         // checked, so the inputs to the call to GB_Context_gpu_ids_set will
         // always be valid.  As a result, the test coverage cannot test this
         // case.
+//      printf ("how did this fail??\n") ;
         GxB_Context_free (&Context) ;
         return (info) ;
     }

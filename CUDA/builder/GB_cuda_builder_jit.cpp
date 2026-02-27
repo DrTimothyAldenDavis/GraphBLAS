@@ -49,6 +49,8 @@ GrB_Info GB_cuda_builder_jit
     // encodify the problem
     //--------------------------------------------------------------------------
 
+    bool Key_is_32 = (vlen <= UINT32_MAX && vdim <= UINT32_MAX) ;
+
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_build (&encoding, &suffix,
@@ -56,9 +58,8 @@ GrB_Info GB_cuda_builder_jit
         Tp_is_32, Tj_is_32, Ti_is_32, I_is_32, J_is_32,
         /* K_is_32, not used: */ true,
         /* K_is_null, (K is not used in CUDA): */ true,
-        /* Key_is_32: */ (vlen <= UINT32_MAX && vdim <= UINT32_MAX),
-        /* no_duplicates, not used: */ false,
-        /* A, not used: */ NULL) ;
+        Key_is_32,
+        /* no_duplicates, not used: */ false) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

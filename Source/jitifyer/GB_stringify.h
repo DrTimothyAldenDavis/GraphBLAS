@@ -1255,10 +1255,7 @@ uint64_t GB_encodify_build      // encode an build problem
     bool K_is_32,               // if true, K_work is uint32_t else uint64_t
     bool K_is_null,             // if true, K_work is NULL
     bool Key_is_32,             // if true, GB_key_t is uint32_t else uint64_t
-    bool no_duplicates,         // if true, no duplicates appear
-    const GrB_Matrix A          // input matrix, for builder-based CUDA kernels
-                                // (GB_cuda_concat_hyper, GB_cuda_reshape,
-                                // GB_cuda_transpose, ...)
+    bool no_duplicates          // if true, no duplicates appear
 ) ;
 
 void GB_enumify_build           // enumerate a GB_build problem
@@ -1279,10 +1276,7 @@ void GB_enumify_build           // enumerate a GB_build problem
     bool K_is_32,               // if true, K_work is uint32_t else uint64_t
     bool K_is_null,             // if true, K_work is NULL
     bool Key_is_32,             // if true, GB_key_t is uint32_t else uint64_t
-    bool no_duplicates,         // if true, no duplicates appear
-    const GrB_Matrix A          // input matrix, for builder-based CUDA kernels
-                                // (GB_cuda_concat_hyper, GB_cuda_reshape,
-                                // GB_cuda_transpose, ...)
+    bool no_duplicates          // if true, no duplicates appear
 ) ;
 
 void GB_macrofy_build           // construct all macros for GB_build

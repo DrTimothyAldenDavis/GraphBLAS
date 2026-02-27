@@ -64,7 +64,7 @@ Usage in all of GraphBLAS:
     Tuples are known to be valid.
 
 (5) GB_hyper_hash_build:
-    family: needs A, Key_in type, suffix: A->type
+    family: needs A, Key_in type, suffix: none
     Its CUDA kernel must fill Key_in and X.
     No duplicates, need to sort.
     Tuples are known to be valid.

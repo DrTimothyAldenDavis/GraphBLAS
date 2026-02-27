@@ -279,7 +279,10 @@ int32_t GB_Context_gpu_ids_get          // return # of GPUs to use
         GB_OPENMP_LOCK_SET (5) ;        // global get (gpu ids array)
     }
 
+//  printf ("GxB_CONTEXT_WORLD is %p, this %p\n", GxB_CONTEXT_WORLD, Context) ;
+
     int32_t ngpus = Context->ngpus ;
+//  printf ("here the Context->ngpus is %d\n", ngpus) ;
     ngpus = GB_IMIN (ngpus, GB_MAX_NGPUS) ;
     ngpus = GB_IMAX (ngpus, 0) ;
     if (gpu_ids != NULL)
@@ -295,7 +298,7 @@ int32_t GB_Context_gpu_ids_get          // return # of GPUs to use
         GB_OPENMP_LOCK_UNSET (5) ;      // global get (gpu ids array)
     }
 
-    // printf ("\nGot Context ngpus: %d\n", ngpus) ;
+//  printf ("\nGot Context %p ngpus: %d\n", Context, ngpus) ;
 
     return (ngpus) ;
 }
@@ -336,6 +339,7 @@ GrB_Info GB_Context_gpu_ids_set
         Context = GxB_CONTEXT_WORLD ;
     }
     int32_t ngpus_max = GB_Global_gpu_count_get ( ) ;
+//  printf ("ngpus %d ngpus_max %d\n", ngpus, ngpus_max) ;
     if (ngpus > ngpus_max)
     { 
         return (GrB_INVALID_VALUE) ;    // too many GPUs requested
@@ -364,7 +368,7 @@ GrB_Info GB_Context_gpu_ids_set
         Context->gpu_ids [id] = (uint16_t) id ;
     }
 
-    printf ("\nSet Context ngpus: %d\n", ngpus) ;
+//  printf ("\nSet Context ngpus: %d\n", ngpus) ;
 
     if (Context == GxB_CONTEXT_WORLD)
     {
