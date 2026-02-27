@@ -184,11 +184,11 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
         // GB_builder will typecast S_input from atype to ctype if
         // needed.  S_input is a shallow copy of Ax, and must not be
         // modified.
-        printf ("using S_input %p\n") ;
         ASSERT (!C_iso) ;
         ASSERT (!A->iso) ;
         X = (GB_void *) A->x ;
         stype = atype ;
+        printf ("using S_input %p\n", X) ;
     }
 
     printf ("X: %p, Swork: %p\n", X, Swork) ;

@@ -1021,7 +1021,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     double t2 = GB_OPENMP_GET_WTIME ;
     #endif
 
-    #if 1
+    #if 0
     {
         printf ("\nbefore sort:\n") ;
         for (int64_t p = 0 ; p < nvals ; p++)
@@ -1040,7 +1040,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         }
     }
     #endif
-
 
     //--------------------------------------------------------------------------
     // phase2: CUB radix sort of (Key_in,X) to obtain (Key_out,Sx)
