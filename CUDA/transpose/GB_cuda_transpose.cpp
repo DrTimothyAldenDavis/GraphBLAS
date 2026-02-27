@@ -14,10 +14,11 @@
 // in the T = (*Thandle) output, which later transplanted into the C matrix by
 // the caller, GB_transpose.
 
-#define GB_FREE_WORKSPACE                       \
-{                                               \
-    GB_FREE_MEMORY (&Key_in, Key_in_size) ;     \
-    GB_FREE_MEMORY (&Swork, Swork_size) ;       \
+#define GB_FREE_WORKSPACE                           \
+{                                                   \
+    GB_FREE_MEMORY (&Key_input, Key_input_size) ;   \
+    GB_FREE_MEMORY (&Swork, Swork_size) ;           \
+    GB_cuda_stream_pool_release (&stream) ;         \
 }
 
 #define GB_FREE_ALL                             \
@@ -26,10 +27,11 @@
     GB_Matrix_free (Thandle) ;                  \
 }
 
-#include "transpose/GB_transpose.h"
-#include "builder/GB_build.h"
-#include "apply/GB_apply.h"
-#include "extractTuples/GB_extractTuples.h"
+#include "transpose/GB_cuda_transpose.hpp"
+extern "C"
+{
+    #include "apply/GB_apply.h"
+}
 
 //------------------------------------------------------------------------------
 // GB_cuda_transpose
@@ -62,7 +64,8 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     GrB_Matrix T = (*Thandle) ;     // just the header of T is given on input
     ASSERT (T != NULL) ;
 
-    GB_void *Key_in = NULL ; size_t Key_in_size = 0 ;
+    cudaStream_t stream = nullptr ;
+    GB_void *Key_input = NULL ; size_t Key_input_size = 0 ;
     GB_void *Swork = NULL  ; size_t Swork_size = 0 ;
 
     GrB_Type atype = A->type ;
@@ -83,15 +86,17 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     size_t csize = ctype->size ;
 
     //--------------------------------------------------------------------------
-    // construct Key_in
+    // construct Key_input
     //--------------------------------------------------------------------------
 
+    // FIXME: Key_is_32 must match the CUDA builder JIT:
     bool Key_is_32 = (avlen <= UINT32_MAX) && (avdim <= UINT32_MAX) ;
     size_t key_size = 2 * ((Key_is_32) ? sizeof (uint32_t) : sizeof (uint64_t));
 
     // allocate iwork of size anz
-    Key_in = GB_MALLOC_MEMORY (anz, key_size, &Key_in_size) ;
-    if (Key_in == NULL)
+    Key_input = (GB_void *) GB_MALLOC_MEMORY (anz+1, key_size,
+        &Key_input_size) ;
+    if (Key_input == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
@@ -100,6 +105,20 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
 
     // Construct the "row" indices of C, which are "column" indices of A.
 //    GB_OK (GB_extract_vector_list (iwork, Aj_is_32, A, Werk)) ;
+
+    GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
+
+    // determine the geometry of the CUDA kernel launches
+    int32_t number_of_sms = GB_Global_gpu_sm_get (0) ;
+    int64_t raw_gridsz = GB_ICEIL (anz, GB_CUDA_TRANSPOSE_PREP_CHUNKSIZE) ;
+    int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
+    gridsz = std::max (gridsz, 1) ;
+
+    GB_OK (GB_cuda_transpose_prep_jit (
+        /* output: */ Key_input,
+        /* input: */ Key_is_32, A, stream, gridsz)) ;
+
+    GB_OK (GB_cuda_stream_pool_release (&stream)) ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix
@@ -123,6 +142,9 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     //------------------------------------------------------------------
     // construct Swork
     //------------------------------------------------------------------
+
+    // FIXME: this work is the same as GB_tranpose_builder; make it
+    // its own function
 
     if (op != NULL && !C_iso)
     { 
@@ -150,6 +172,7 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     else if (op != NULL)
     { 
         // Swork = op (A)
+        // FIXME: tell GB_apply_op it "must" use the GPU
         info = GB_apply_op (Swork, ctype, C_code_iso, op, scalar,
             binop_bind1st, flipij, A, Werk) ;
         ASSERT (info == GrB_SUCCESS) ;
@@ -175,12 +198,13 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     //------------------------------------------------------------------
 
     GB_OK (GB_cuda_builder (
-        T,          // create T using a static header
+        Thandle,    // create T using a static header
         ctype,      // T is of type ctype
         avdim,      // T->vlen = A->vdim, always > 1
         avlen,      // T->vdim = A->vlen, always > 1
         C_is_csc,   // T has the same CSR/CSC format as C
         true,       // is_matrix, since T->vdim is always > 1
+        Key_input,  // (i,j) indices pre-loaded into Key_input workspace
         NULL,       // I indices: not used
         NULL,       // J indices: not used
         Swork,      // X values
@@ -192,8 +216,8 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
         true,       // I_is_32: not used
         true,       // J_is_32: not used
         Cp_is_32, Cj_is_32, Ci_is_32  // integer sizes for T 
-
 #if 0
+        // FIXME: add these options:
         false,      // tuples are not sorted on input
         true,       // tuples have no duplicates
 #endif
@@ -204,7 +228,7 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     //------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
-    ASSERT (!GB_JUMBLED (T)) ;
+    ASSERT (!GB_JUMBLED (*Thandle)) ;
     return (GrB_SUCCESS) ;
 }
 

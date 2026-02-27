@@ -11,10 +11,10 @@
 
 bool GB_cuda_transpose_branch
 (
-    const GrB_Type ctype,           // output matrix type
-    const GrB_Matrix A,             // matrix to transpose
-    const GB_Operator op,           // any type of operator: T = op(A')
-    const GrB_Scalar scalar         // scalar to bind if op is a binary op
+    const GrB_Type ctype,
+    const GrB_Matrix A,
+    const GB_Operator op,           // any type of operator
+    const GrB_Scalar scalar
 )
 {
 

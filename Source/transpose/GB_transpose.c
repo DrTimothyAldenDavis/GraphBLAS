@@ -34,6 +34,8 @@
 // m-by-n, then at most O(e/n) threads are used.  The GB_builder method is more
 // scalable, but not as fast with a modest number of threads.
 
+#define GB_DEBUG
+
 #define GB_FREE_WORKSPACE               \
 {                                       \
     GB_WERK_POP (Count, uint64_t) ;     \
@@ -746,6 +748,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                 GB_FREE_ALL ;
                 return (info) ;
             }
+            ASSERT_MATRIX_OK (T, "T from CUDA", GB0) ;
         }
         #endif
 

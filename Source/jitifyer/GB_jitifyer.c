@@ -1828,7 +1828,7 @@ GrB_Info GB_jitifyer_load2_worker
 
         case GB_jit_build_family  : 
             op1 = op ;
-            method_code_digits = 11 ;   // see GB_enumify_build
+            method_code_digits = 10 ;   // see GB_enumify_build
             break ;
 
         case GB_jit_ewise_family  : 
@@ -2581,7 +2581,7 @@ void GB_jitifyer_nvcc_compile
     " %s "                              // nvcc flags
     " --gpu-architecture=compute_%d%d"  // major,minor
     " --gpu-code=sm_%d%d "              // major,minor
-#if 0
+#if 1
     // HACK FIXME for CUDA:
     " -g "
     " --device-debug "          // HACK FIXME

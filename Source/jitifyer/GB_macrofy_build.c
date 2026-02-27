@@ -26,7 +26,8 @@ void GB_macrofy_build           // construct all macros for GB_build
     // extract the method_code
     //--------------------------------------------------------------------------
 
-    // (1 bit, 1 hex digits):
+    // (2 bits, 1 hex digits):
+    int Key_pre   = GB_RSHIFT (method_code, 37, 1) ;
     int Key_is_32 = GB_RSHIFT (method_code, 36, 1) ;
 
     // 32/64 bit (8 bits, 2 hex digits)
@@ -271,6 +272,7 @@ void GB_macrofy_build           // construct all macros for GB_build
     //--------------------------------------------------------------------------
 
     // Key type for CUDA kernels only:
+    fprintf (fp, "#define GB_KEY_PRELOADED %d\n", Key_pre) ;
     fprintf (fp, "#define GB_KEY_TYPE %s\n", Key_is_32 ? "uint32_t":"uint64_t");
     fprintf (fp, "#define GB_KEY_BITS %d\n", Key_is_32 ? 32 : 64) ;
 

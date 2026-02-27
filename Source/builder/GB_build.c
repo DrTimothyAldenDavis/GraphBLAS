@@ -283,6 +283,7 @@ GrB_Info GB_build               // build matrix
             C->vdim,                // T->vdim = C->vdim
             C->is_csc,              // T has the same CSR/CSC format as C
             is_matrix,              // true if T is a GrB_Matrix
+            NULL,                   // Key_input: not used
             C->is_csc ? I : J,      // size nvals
             C->is_csc ? J : I,      // size nvals, or NULL for vector
             (const GB_void *) X,    // values, size nvals or 1 if iso

@@ -54,7 +54,7 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
         /* J_is_32, not used: */ true,
         K_is_32,
         K_is_null,
-        /* Key_is_32, not used: */ true,
+        /* Key_preloaded, Key_is_32, not used: */ false, true,
         ndupl == 0) ;
 
     //--------------------------------------------------------------------------

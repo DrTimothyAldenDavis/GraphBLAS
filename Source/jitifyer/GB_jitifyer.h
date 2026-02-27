@@ -189,6 +189,7 @@ typedef enum
 
     // apply methods:
     GB_JIT_CUDA_KERNEL_APPLYUNOP = 1026,
+    GB_JIT_CUDA_KERNEL_TRANSPOSE_PREP = 1027,
     //... (up to 9 apply methods?)
 
     // select methods:

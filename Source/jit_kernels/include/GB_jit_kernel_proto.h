@@ -862,6 +862,7 @@ GrB_Info GB_jit_kernel_builder                                              \
     const int64_t vlen,     /* length of each vector of T */                \
     const int64_t vdim,     /* # of vectors in T */                         \
     const bool is_csc,      /* true if T is CSC, false if CSR */            \
+    const GB_void *Key_input, /* if Key_in is preloaded by the caller */    \
     const GB_void *I_input, /* row indices of type GB_I_TYPE */             \
     const GB_void *J_input, /* column indices of type GB_J_TYPE */          \
     const GB_void *X_input, /* values of type GB_Sx_TYPE */                 \
@@ -869,6 +870,15 @@ GrB_Info GB_jit_kernel_builder                                              \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
     const GB_callback_struct *restrict my_callback                          \
+)
+
+#define GB_JIT_CUDA_KERNEL_TRANSPOSE_PREP_PROTO(GB_jit_kernel_tran_prep)    \
+GrB_Info GB_jit_kernel_tran_prep                                            \
+(                                                                           \
+    GB_void *Key_input,                                                     \
+    GrB_Matrix A,                                                           \
+    cudaStream_t stream,                                                    \
+    int32_t gridsz                                                          \
 )
 
 //------------------------------------------------------------------------------

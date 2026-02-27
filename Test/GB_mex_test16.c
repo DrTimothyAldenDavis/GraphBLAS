@@ -135,6 +135,7 @@ void mexFunction
         /* Tp, Tj, Tj is_32: */ true, true, true,
         /* I,J,K is_32: */ true, true, true,
         /* K is NULL: */ true,
+        /* Key_preloaded: */ false,
         /* Key_is_32: */ true,
         /* no dupl: */ false) ;
     CHECK (code == UINT64_MAX) ;

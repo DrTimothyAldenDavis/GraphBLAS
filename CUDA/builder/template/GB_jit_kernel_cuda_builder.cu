@@ -128,10 +128,16 @@ __global__ void GB_cuda_builder_phase1
     // load the (I,J) tuples into the Key_in workspace
     //--------------------------------------------------------------------------
 
+    if (threadIdx.x == 0 && blockIdx.x == 0)
+    {
+        // first thread loads the sentinel value of Key_in
+        memset (&(Key_in [-1]), 0xFF, sizeof (GB_key_t)) ;
+    }
+
     uint64_t my_bad = 0 ;
     uint64_t my_unsorted = 0 ;
     uint64_t my_dupls = 0 ;
-    this_thread_block ( ).sync ( ) ;
+//  this_thread_block ( ).sync ( ) ;
 
     for (int64_t p = blockIdx.x * blockDim.x + threadIdx.x ;
                  p < nvals ;
@@ -801,6 +807,9 @@ __global__ void GB_cuda_builder_phase5_no_dupl
             // copy the entries
             //------------------------------------------------------------------
 
+// FIXME: break this into 2 loops?  One for the entries and 2nd for Tp, Th?
+// Or 3 loops? The loop for Ti and Tx are simple.
+
             // Ti [p] = Key_out [p].i ;
             GB_KEY_UNLOAD_I (Key_out, p, i1) ;
             Ti [p] = (GB_Ti_TYPE) i1 ;
@@ -881,8 +890,10 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     //--------------------------------------------------------------------------
 
     // GB_I_TYPE and GB_J_TYPE are uint32_t or uint64_t
+    #if !GB_KEY_PRELOADED
     GB_I_TYPE  *I = (GB_I_TYPE  *) I_input ;
     GB_J_TYPE  *J = (GB_J_TYPE  *) J_input ;
+    #endif
     GB_Sx_TYPE *X = (GB_Sx_TYPE *) X_input ;
 
     //--------------------------------------------------------------------------
@@ -936,6 +947,18 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // TODO: the check for valid indices could be skipped if this method knows
     // its I,J inputs are already valid.
 
+    #if GB_KEY_PRELOADED
+
+    // the caller has pre-loaded Key_in
+    GB_key_t *Key_in = ((GB_key_t *) Key_input) + 1 ;
+
+    // FIXME: use a #define for these instead; these are hard-coded for
+    // the CUDA transpose
+    bool known_sorted = false ;         // FIXME: depends on the caller
+    bool known_no_duplicates = true ;   // FIXME: depends on the caller
+
+    #else
+
     // allocate Key_in and W_8 workspace
     W_0 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_key_t), &W_0_size) ;
     W_8 = GB_MALLOC_MEMORY (3, sizeof (uint64_t), &W_8_size) ;
@@ -945,7 +968,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-
     // shift by one so Key_in [-1...nvals-1] can be used
     GB_key_t *Key_in = ((GB_key_t *) W_0) + 1 ;
 
@@ -976,13 +998,14 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     // if the tuples are sorted then dupls is a valid count of the # of
     // duplicates
-
     #if 1
     bool known_sorted = (*unsorted == 0) ;
     bool known_no_duplicates = known_sorted && (*dupls == 0) ;
     #else
     bool known_sorted = false ;
     bool known_no_duplicates = false ;
+    #endif
+
     #endif
 
     // TODO: The original (I,J) inputs are no longer needed at this point.  If
@@ -997,6 +1020,27 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         known_sorted, known_no_duplicates) ;
     double t2 = GB_OPENMP_GET_WTIME ;
     #endif
+
+    #if 1
+    {
+        printf ("\nbefore sort:\n") ;
+        for (int64_t p = 0 ; p < nvals ; p++)
+        {
+            GB_KEY_UNLOAD_I (Key_in, p, i1) ;
+            GB_KEY_UNLOAD_J (Key_in, p, j1) ;
+            int64_t i = (int64_t) i1 ;
+            int64_t j = (int64_t) j1 ;
+            printf ("Key_in [%ld] = (%ld,%ld)\n", p, i, j) ;
+            bool bad_index = (j > vdim) || (i > vlen) ;
+            if (bad_index)
+            {
+                printf ("out of range!\n") ;
+                return (GrB_PANIC) ;
+            }
+        }
+    }
+    #endif
+
 
     //--------------------------------------------------------------------------
     // phase2: CUB radix sort of (Key_in,X) to obtain (Key_out,Sx)
@@ -1055,6 +1099,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
         // no need to shift Sx
         Sx = ((GB_Sx_TYPE *) W_2) ;
+        printf ("X: %p\n", X) ;
 
         // determine the amount of workspace needed by CUB radix sort
         #if GB_ISO_BUILD

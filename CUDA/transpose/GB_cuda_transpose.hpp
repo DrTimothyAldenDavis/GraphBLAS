@@ -11,13 +11,15 @@
 
 #include "GB_cuda.hpp"
 
-GrB_Info GB_cuda_transpose_jit
+GrB_Info GB_cuda_transpose_prep_jit
 (
-
-    // CUDA stream and launch parameters:
+    // output:
+    GB_void *Key_input,
+    // input:
+    bool Key_is_32,
+    const GrB_Matrix A,
     cudaStream_t stream,
-    int32_t gridsz,
-    int32_t blocksz
+    int32_t gridsz
 ) ;
 
 #endif

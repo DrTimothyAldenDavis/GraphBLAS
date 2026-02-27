@@ -271,23 +271,26 @@ bool GB_cuda_pointer_ok
 
 GrB_Info GB_cuda_builder            // build a matrix from tuples
 (
-    GrB_Matrix *Thandle,            // matrix to build, dynamic header
-    const GrB_Type ttype,           // type of output matrix T
-    const int64_t vlen,             // length of each vector of T
-    const int64_t vdim,             // number of vectors in T
-    const bool is_csc,              // true if T is CSC, false if CSR
-    const bool is_matrix,           // true if T a GrB_Matrix, false if vector
-    const GB_void *restrict I,      // original indices, size nvals
-    const GB_void *restrict J,      // original indices, size nvals
-    const GB_void *restrict X,      // array of values of tuples, size nvals,
-                                    // or size 1 if X is iso
-    const bool X_iso,               // true if X is iso
-    const int64_t nvals,            // number of tuples
-    GrB_BinaryOp dup,               // binary function to assemble duplicates,
-                                    // if NULL use the SECOND operator to
-                                    // keep the most recent duplicate.
-    const GrB_Type xtype,           // the type of X
-    bool do_burble,                 // if true, then burble is allowed
+    // output, not defined on input:
+    GrB_Matrix *Thandle,    // matrix to build, dynamic header
+    // inputs, not modified:
+    const GrB_Type ttype,   // type of output matrix T
+    const int64_t vlen,     // length of each vector of T
+    const int64_t vdim,     // number of vectors in T
+    const bool is_csc,      // true if T is CSC, false if CSR
+    const bool is_matrix,   // true if T a GrB_Matrix, false if vector
+    const GB_void *Key_input,  // if Key is preloaded, NULL otherwise
+    const GB_void *I,       // original indices, size nvals
+    const GB_void *J,       // original indices, size nvals
+    const GB_void *X,       // array of values of tuples, size nvals,
+                            // or size 1 if X is iso
+    const bool X_iso,       // true if X is iso
+    const int64_t nvals,    // number of tuples
+    GrB_BinaryOp dup,       // binary function to assemble duplicates,
+                            // if NULL use the SECOND operator to
+                            // keep the most recent duplicate.
+    const GrB_Type xtype,   // the type of X
+    bool do_burble,         // if true, then burble is allowed
     bool I_is_32,       // true if I is 32 bit, false if 64
     bool J_is_32,       // true if J is 32 bit, false if 64
     bool Tp_is_32,      // true if T->p is built as 32 bit, false if 64
@@ -295,12 +298,29 @@ GrB_Info GB_cuda_builder            // build a matrix from tuples
     bool Ti_is_32       // true if T->i is built as 32 bit, false if 64
 ) ;
 
-bool GrB_cuda_transpose_branch
+bool GB_cuda_transpose_branch
 (
     const GrB_Type ctype,
     const GrB_Matrix A,
     const GB_Operator op,           // any type of operator
     const GrB_Scalar scalar
+) ;
+
+GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
+(
+    GrB_Matrix *Thandle,        // output matrix T, header allocated on input
+    GrB_Type ctype,             // desired type of T
+    const bool C_is_csc,        // desired CSR/CSC format of C and T
+    const bool C_iso,           // true if C (and T) is iso
+    const GB_iso_code C_code_iso,   // iso code for C and T
+    const GrB_Matrix A,         // input matrix; C == A if done in place
+    const bool in_place,        // true if C and A are the same matrix
+        // no operator is applied if op is NULL
+        const GB_Operator op,       // unary/idxunop/binop to apply
+        const GrB_Scalar scalar,    // scalar to bind to binary operator
+        bool binop_bind1st,         // if true, binop(x,A) else binop(A,y)
+        bool flipij,                // if true, flip i,j for user idxunop
+    GB_Werk Werk
 ) ;
 
 #endif
