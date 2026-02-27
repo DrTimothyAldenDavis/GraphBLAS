@@ -137,14 +137,11 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
         Cp_is_32, Cj_is_32, Ci_is_32) ;
     ASSERT (info == GrB_SUCCESS) ;
 
-    GB_void *S_input = NULL ;
+    GB_void *X = NULL ;
 
     //------------------------------------------------------------------
-    // construct Swork
+    // construct Swork if necessary
     //------------------------------------------------------------------
-
-    // FIXME: this work is the same as GB_tranpose_builder; make it
-    // its own function
 
     if (op != NULL && !C_iso)
     { 
@@ -165,20 +162,21 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     { 
         // apply the op to the iso scalar
         GB_unop_iso (sscalar, ctype, C_code_iso, op, A, scalar) ;
-        S_input = sscalar ;     // S_input is used instead of Swork
-        Swork = NULL ;
+        X = sscalar ;
         stype = ctype ;
+        printf ("C_iso, so Swork is NULL\n") ;
     }
     else if (op != NULL)
     { 
         // Swork = op (A)
         // FIXME: tell GB_apply_op it "must" use the GPU
+        printf ("using GB_apply_op\n") ;
         info = GB_apply_op (Swork, ctype, C_code_iso, op, scalar,
             binop_bind1st, flipij, A, Werk) ;
         ASSERT (info == GrB_SUCCESS) ;
         // GB_builder will not need to typecast Swork to T->x, and it
         // may choose to transplant it into T->x
-        S_input = NULL ;        // Swork is used instead of S_input
+        X = Swork ;
         stype = ctype ;
     }
     else
@@ -186,12 +184,14 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
         // GB_builder will typecast S_input from atype to ctype if
         // needed.  S_input is a shallow copy of Ax, and must not be
         // modified.
+        printf ("using S_input %p\n") ;
         ASSERT (!C_iso) ;
         ASSERT (!A->iso) ;
-        S_input = (GB_void *) A->x ; // S_input is used instead of Swork
-        Swork = NULL ;
+        X = (GB_void *) A->x ;
         stype = atype ;
     }
+
+    printf ("X: %p, Swork: %p\n", X, Swork) ;
 
     //------------------------------------------------------------------
     // build the matrix: T = (ctype) A' or op ((xtype) A')
@@ -207,11 +207,11 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
         Key_input,  // (i,j) indices pre-loaded into Key_input workspace
         NULL,       // I indices: not used
         NULL,       // J indices: not used
-        Swork,      // X values
+        X,          // X values
         C_iso,      // iso property of T is the same as C->iso
         anz,        // number of tuples
         NULL,       // no dup operator needed (input has no duplicates)
-        stype,      // type of Swork
+        stype,      // type of X
         false,      // no burble (already burbled above)
         true,       // I_is_32: not used
         true,       // J_is_32: not used
