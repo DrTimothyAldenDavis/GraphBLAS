@@ -740,17 +740,21 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         #if defined ( GRAPHBLAS_HAS_CUDA )
         if (GB_cuda_transpose_branch (ctype, A, op, scalar))
         {
-            printf ("\n================ CUDA Transpose:\n") ;
+            printf ("\n================ CUDA Transpose: T %p\n", T) ;
             info = GB_cuda_transpose (&T, ctype, C_is_csc, C_iso, C_code_iso,
                 A, in_place, op, scalar, binop_bind1st, flipij, Werk) ;
-            printf ("\n================ CUDA Transpose: result %d\n", info) ;
+            printf ("\n================ CUDA Transpose: T %p result %d\n",
+                T, info) ;
             if (!(info == GrB_NO_VALUE || info == GrB_SUCCESS))
             {
                 // out-of-memory, JIT error, or other error occurred
                 GB_FREE_ALL ;
                 return (info) ;
             }
-            ASSERT_MATRIX_OK (T, "T from CUDA", GB0) ;
+            if (info == GrB_SUCCESS)
+            {
+                ASSERT_MATRIX_OK (T, "T from CUDA", GB0) ;
+            }
         }
         #endif
 
@@ -768,6 +772,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             int nworkspaces_bucket, nthreads_bucket ;
             bool use_builder = GB_transpose_method (A,
                 &nworkspaces_bucket, &nthreads_bucket) ;
+
+            if (T == NULL)
+            {
+                // the CUDA branch may have freed the T header; reallocate it
+                GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+            }
 
             //------------------------------------------------------------------
             // transpose the matrix with the selected method on the CPU
@@ -799,7 +809,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                     op, scalar, binop_bind1st,
                     nworkspaces_bucket, nthreads_bucket, Werk)) ;
 
-                ASSERT_MATRIX_OK (T, "T from bucket", GB0) ;
+                ASSERT_MATRIX_OK (T, "T from bucket", GB5) ;
                 ASSERT (GB_JUMBLED_OK (T)) ;
             }
         }
