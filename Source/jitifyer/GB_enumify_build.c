@@ -9,8 +9,6 @@
 
 // Enumify a build operation.
 
-#define GB_DEBUG
-
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 

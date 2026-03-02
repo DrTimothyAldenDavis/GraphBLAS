@@ -34,8 +34,6 @@
 // m-by-n, then at most O(e/n) threads are used.  The GB_builder method is more
 // scalable, but not as fast with a modest number of threads.
 
-#define GB_DEBUG
-
 #define GB_FREE_WORKSPACE               \
 {                                       \
     GB_WERK_POP (Count, uint64_t) ;     \
@@ -809,7 +807,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                     op, scalar, binop_bind1st,
                     nworkspaces_bucket, nthreads_bucket, Werk)) ;
 
-                ASSERT_MATRIX_OK (T, "T from bucket", GB5) ;
+                ASSERT_MATRIX_OK (T, "T from bucket", GB0) ;
                 ASSERT (GB_JUMBLED_OK (T)) ;
             }
         }
