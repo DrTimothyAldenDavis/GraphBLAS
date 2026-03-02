@@ -191,7 +191,7 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
         printf ("using S_input %p\n", X) ;
     }
 
-    printf ("X: %p, Swork: %p\n", X, Swork) ;
+    printf ("GB_cuda_tranpose, X: %p, Swork: %p\n", X, Swork) ;
 
     //------------------------------------------------------------------
     // build the matrix: T = (ctype) A' or op ((xtype) A')

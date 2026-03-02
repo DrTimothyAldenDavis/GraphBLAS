@@ -738,10 +738,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         #if defined ( GRAPHBLAS_HAS_CUDA )
         if (GB_cuda_transpose_branch (ctype, A, op, scalar))
         {
-            printf ("\n================ CUDA Transpose: T %p\n", T) ;
+            printf ("\n================ CUDA Transpose: T %p\n", T) ;  // FIXME
             info = GB_cuda_transpose (&T, ctype, C_is_csc, C_iso, C_code_iso,
                 A, in_place, op, scalar, binop_bind1st, flipij, Werk) ;
-            printf ("\n================ CUDA Transpose: T %p result %d\n",
+            printf ("\n================ CUDA Transpose: T %p :%d\n",//FIXME
                 T, info) ;
             if (!(info == GrB_NO_VALUE || info == GrB_SUCCESS))
             {
@@ -788,6 +788,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                 // transpose via builder method
                 //--------------------------------------------------------------
 
+                printf ("CPU transpose: via builder\n") ;//FIXME
                 GBURBLE ("(builder transpose) ") ;
                 GB_OK (GB_transpose_builder (&T, ctype, C_is_csc, C_iso,
                     C_code_iso, A, in_place, op, scalar, binop_bind1st, flipij,
@@ -802,6 +803,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                 //--------------------------------------------------------------
 
                 // T = A' and typecast to ctype
+                printf ("CPU transpose: via bucket\n") ;//FIXME
                 GBURBLE ("(bucket transpose) ") ;
                 GB_OK (GB_transpose_bucket (T, C_code_iso, ctype, C_is_csc, A,
                     op, scalar, binop_bind1st,
