@@ -15,9 +15,15 @@
 // GrB_NO_VALUE is returned; if x is a GrB_scalar, x is returned as empty,
 // and GrB_SUCCESS is returned.
 
+#define GB_DEBUG
+
 #include "GB.h"
 
 #define GB_FREE_ALL ;
+
+//------------------------------------------------------------------------------
+// GrB_Vector_extractElement_Scalar
+//------------------------------------------------------------------------------
 
 GrB_Info GrB_Vector_extractElement_Scalar   // S = V(i,j)
 (
@@ -122,6 +128,61 @@ GrB_Info GrB_Vector_extractElement_Scalar   // S = V(i,j)
     S->nvals = entry_present ? 1 : 0 ;
     return ((entry_present || no_entry) ? GrB_SUCCESS : info) ;
 }
+
+//------------------------------------------------------------------------------
+// GB_Vector_find_entry: finds the position of a single entry V(i)
+//------------------------------------------------------------------------------
+
+// Finds V(i) in the vector V, which must not be jumbled.  The vector may
+// have zombies.  Pending tuples are ignored and not searched; the method
+// returns false if V(i) is a pending tuple.
+
+GB_STATIC_INLINE void GB_Vector_find_entry
+(
+    // output:
+    int64_t *pleft,     // position of the entry, if V(i) found
+    bool *found,        // true if V(i) found
+    bool *is_zombie,    // true if V(i) is found, but is a zombie
+    // input
+    const GrB_Vector V,
+    int64_t i
+)
+{
+
+    ASSERT (!V->jumbled) ;
+    GB_Ap_DECLARE (Vp, const) ; GB_Ap_PTR (Vp, V) ;
+
+    if (Vp != NULL)
+    { 
+        // V is sparse
+        (*pleft) = 0 ;
+        int64_t pright = GB_IGET (Vp, 1) - 1 ;
+        // Time taken for this step is at most O(log(nnz(V))).
+        (*found) = GB_binary_search_zombie (i, V->i, V->i_is_32, pleft,
+            &pright, V->nzombies > 0, is_zombie)  ;
+    }
+    else
+    {
+        // V is bitmap or full
+        (*pleft) = i ;
+        const int8_t *restrict Vb = V->b ;
+        if (Vb != NULL)
+        { 
+            // V is bitmap
+            (*found) = (Vb [(*pleft)] == 1) ;
+        }
+        else
+        { 
+            // V is full
+            (*found) = true ;
+        }
+        (*is_zombie) = false ;
+    }
+}
+
+//------------------------------------------------------------------------------
+// GrB_Vector_extractElement_TYPE and GxB_Vector_isStoredElement
+//------------------------------------------------------------------------------
 
 #define GB_WHERE_STRING "GrB_Vector_extractElement (&x, v, i)"
 

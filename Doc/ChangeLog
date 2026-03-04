@@ -1,3 +1,10 @@
+version 10.4.0
+
+    * GrB_Matrix_extractElement: no longer waits if the entry can be
+        found without finalizing pending tuples
+    * GxB_atfork_(prepare,parent,child): added to support an application
+        needing to fork, while still using GraphBLAS.
+
 Jan 21, 2026, version 10.3.1
 
     * (67) bug fix:  incorrect JIT kernel constructed for R=masker(C,M,Z)
