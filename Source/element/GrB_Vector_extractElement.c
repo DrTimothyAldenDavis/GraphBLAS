@@ -15,8 +15,6 @@
 // GrB_NO_VALUE is returned; if x is a GrB_scalar, x is returned as empty,
 // and GrB_SUCCESS is returned.
 
-#define GB_DEBUG
-
 #include "GB.h"
 
 #define GB_FREE_ALL ;
