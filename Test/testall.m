@@ -119,6 +119,7 @@ F100 = {4,4,0,0} ;
 %===============================================================================
 
 % < 1 second: debug_on
+logstat ('test304'    ,t, J0   , F0   ) ; % extractElement
 logstat ('test302'    ,t, J0   , F0   ) ; % GPU controls
 logstat ('test277'    ,t, J0   , F1   ) ; % context get/set
 
