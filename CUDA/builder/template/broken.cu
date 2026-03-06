@@ -664,8 +664,8 @@ __global__ void GB_cuda_builder_phase5_with_dupl
                 // This entry is the first in a sequence of duplicates (perhaps
                 // just a single entry with no duplicates)
                 // Ti [pT] = Key_out [p].i ;
-                GB_KEY_UNLOAD_I (Key_out, p, i1) ;
-                Ti [pT] = (GB_Ti_TYPE) i1 ;
+                GB_KEY_UNLOAD_I (Key_out, p, i) ;
+                Ti [pT] = (GB_Ti_TYPE) i ;
 
                 #if !GB_ISO_BUILD
                 GB_BLD_COPY (Tx, pT, Sx, p) ; // Tx [pT] = Sx [p]
@@ -706,8 +706,8 @@ __global__ void GB_cuda_builder_phase5_with_dupl
                 // The p-th entry is the leading entry of the kT-th vector of T
                 Tp [kT] = pT - 1 ;      // shift by 1 since pT is 1-based
                 // Th [kT] = Key_out [p].j ;
-                GB_KEY_UNLOAD_J (Key_out, p, j1) ;
-                Th [kT] = j1 ;
+                GB_KEY_UNLOAD_J (Key_out, p, j) ;
+                Th [kT] = (GB_Tj_TYPE) j ;
             }
             #endif
         }
@@ -740,9 +740,6 @@ __global__ void GB_cuda_builder_phase5_with_dupl
 
 // compare with select/phase3 and select/phase6
 
-// FIXME: transplant Sx into T->x instead, no need to copy, if GB_BLD_NOCASTING
-// is true.
-
 __global__ void GB_cuda_builder_phase5_no_dupl
 (
     // outputs
@@ -773,9 +770,39 @@ __global__ void GB_cuda_builder_phase5_no_dupl
     #endif
 
     //--------------------------------------------------------------------------
-    // copy the entries from (Key_out,Sx) into Tp, Th, Ti, and Tx, no duplicates
+    // copy the entries from Key_out into Ti
     //--------------------------------------------------------------------------
 
+    for (int64_t p = blockIdx.x * blockDim.x + threadIdx.x ;
+                 p < nvals ;
+                 p += blockDim.x * gridDim.x)       // grid-block-stride loop
+    {
+        // Ti [p] = Key_out [p].i ;
+        GB_KEY_UNLOAD_I (Key_out, p, i) ;
+        Ti [p] = (GB_Ti_TYPE) i ;
+    }
+
+    //--------------------------------------------------------------------------
+    // copy the entries from Sx into Tx
+    //--------------------------------------------------------------------------
+
+    // FIXME: transplant Sx into T->x instead, no need to copy, if
+    // GB_BLD_SXTYPE_IS_TXTYPE is true.
+
+    #if !GB_ISO_BUILD
+    for (int64_t p = blockIdx.x * blockDim.x + threadIdx.x ;
+                 p < nvals ;
+                 p += blockDim.x * gridDim.x)       // grid-block-stride loop
+    {
+        GB_BLD_COPY (Tx, p, Sx, p) ;       // Tx [p] = Sx [p]
+    }
+    #endif
+
+    //--------------------------------------------------------------------------
+    // construct Tp and Th
+    //--------------------------------------------------------------------------
+
+    #if GB_MTX_BUILD
     for (int64_t chunk = blockIdx.x ;
                  chunk < nchunks ;
                  chunk += gridDim.x)        // grid-stride loop
@@ -800,29 +827,12 @@ __global__ void GB_cuda_builder_phase5_no_dupl
                      pdelta < my_chunk_size ;
                      pdelta += blockDim.x)       // block-stride loop
         {
-
             int64_t p = pfirst + pdelta ;
 
             //------------------------------------------------------------------
-            // copy the entries
+            // construct Tp and Th, if T is a matrix
             //------------------------------------------------------------------
 
-// FIXME: break this into 2 loops?  One for the entries and 2nd for Tp, Th?
-// Or 3 loops? The loop for Ti and Tx are simple.
-
-            // Ti [p] = Key_out [p].i ;
-            GB_KEY_UNLOAD_I (Key_out, p, i1) ;
-            Ti [p] = (GB_Ti_TYPE) i1 ;
-
-            #if !GB_ISO_BUILD
-            GB_BLD_COPY (Tx, p, Sx, p) ;       // Tx [p] = Sx [p]
-            #endif
-
-            //------------------------------------------------------------------
-            // construct Tp and Th, if T is a matrix (skip if T is a vector)
-            //------------------------------------------------------------------
-
-            #if GB_MTX_BUILD
             GB_Tp_TYPE kT = JDelta [p  ] + JDeltaSum [chunk] ;
             GB_Tp_TYPE k0 = JDelta [p-1] + JDeltaSum [chunk - (pdelta == 0)] ;
             if (k0 < kT)
@@ -830,12 +840,12 @@ __global__ void GB_cuda_builder_phase5_no_dupl
                 // The p-th entry is the leading entry of the kT-th vector of T
                 Tp [kT] = p ;       // p is already 0-based
                 // Th [kT] = Key_out [p].j ;
-                GB_KEY_UNLOAD_J (Key_out, p, j1) ;
-                Th [kT] = j1 ;
+                GB_KEY_UNLOAD_J (Key_out, p, j) ;
+                Th [kT] = j ;
             }
-            #endif
         }
     }
+    #endif
 
     //--------------------------------------------------------------------------
     // finalize the last vector of C
@@ -1078,6 +1088,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
         // no need to shift Sx
         Sx = ((GB_Sx_TYPE *) W_2) ;
+        // printf ("X: %p\n", X) ;
 
         // determine the amount of workspace needed by CUB radix sort
         #if GB_ISO_BUILD

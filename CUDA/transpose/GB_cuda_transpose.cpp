@@ -114,11 +114,16 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     gridsz = std::max (gridsz, 1) ;
 
+    double t = GB_OPENMP_GET_WTIME ;        // FIXME
+
     GB_OK (GB_cuda_transpose_prep_jit (
         /* output: */ Key_input,
         /* input: */ Key_is_32, A, stream, gridsz)) ;
 
     GB_OK (GB_cuda_stream_pool_release (&stream)) ;
+
+    t = GB_OPENMP_GET_WTIME - t ;
+    printf ("CUDA transpose prep time: %g\n", t) ;  // FIXME
 
     //--------------------------------------------------------------------------
     // allocate the output matrix
@@ -164,13 +169,13 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
         GB_unop_iso (sscalar, ctype, C_code_iso, op, A, scalar) ;
         X = sscalar ;
         stype = ctype ;
-        printf ("C_iso, so Swork is NULL\n") ;
+//      printf ("C_iso, so Swork is NULL\n") ;
     }
     else if (op != NULL)
     { 
         // Swork = op (A)
         // FIXME: tell GB_apply_op it "must" use the GPU
-        printf ("using GB_apply_op\n") ;
+        // printf ("using GB_apply_op\n") ;
         info = GB_apply_op (Swork, ctype, C_code_iso, op, scalar,
             binop_bind1st, flipij, A, Werk) ;
         ASSERT (info == GrB_SUCCESS) ;
@@ -188,10 +193,10 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
         ASSERT (!A->iso) ;
         X = (GB_void *) A->x ;
         stype = atype ;
-        printf ("using S_input %p\n", X) ;
+//      printf ("using S_input %p\n", X) ;
     }
 
-    printf ("GB_cuda_tranpose, X: %p, Swork: %p\n", X, Swork) ;
+//  printf ("GB_cuda_tranpose, X: %p, Swork: %p\n", X, Swork) ;
 
     //------------------------------------------------------------------
     // build the matrix: T = (ctype) A' or op ((xtype) A')

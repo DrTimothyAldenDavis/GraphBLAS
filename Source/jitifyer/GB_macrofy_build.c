@@ -123,9 +123,11 @@ void GB_macrofy_build           // construct all macros for GB_build
     fprintf (fp, "\n// build copy/dup methods:\n") ;
 
     // no typecasting if all 5 types are the same
-    bool nocasting = (ttype == stype) &&
+    bool stype_is_ttype = (ttype == stype) ;
+    bool nocasting = stype_is_ttype &&
         (ttype == xtype) && (ttype == ytype) && (ttype == ztype) ;
 
+    fprintf (fp, "#define GB_BLD_SXTYPE_IS_TXTYPE %d\n", stype_is_ttype) ;
     fprintf (fp, "#define GB_BLD_NOCASTING %d\n", nocasting) ;
 
     if (nocasting)
