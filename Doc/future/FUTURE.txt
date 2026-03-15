@@ -1,5 +1,9 @@
 FUTURE plans for GraphBLAS:
 
+    select:  exploit the mask for C<M> = select(A) during the select operation;
+        currently, if a mask is present, it is exploited only after computing
+        T=select(A).
+
     JIT package: don't just check 1st line of GraphBLAS.h when deciding to
         unpack the src in user cache folder. Use a crc test.
 
