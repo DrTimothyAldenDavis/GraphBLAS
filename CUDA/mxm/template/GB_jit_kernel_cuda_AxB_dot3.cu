@@ -26,7 +26,7 @@
 // dot3 kernel launch geometry
 //------------------------------------------------------------------------------
 
-// FIXME: some duplicates here
+// FIXME: some duplicates here; move to GB_cuda_geomtry.hpp
 // FIXME: tune these values.  Bigger chunk_size leads to fewer binary searches
 // with GB_cuda_ek_slice_setup, for example.
 #define chunk_size 128

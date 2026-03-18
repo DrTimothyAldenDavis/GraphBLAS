@@ -14,6 +14,8 @@
 // BlockPrefixCallbackOp
 //------------------------------------------------------------------------------
 
+// FIXME: do we really need our own operator here?
+
 // A stateful callback functor that maintains a running prefix to be applied
 // during consecutive scan operations.
 struct BlockPrefixCallbackOp

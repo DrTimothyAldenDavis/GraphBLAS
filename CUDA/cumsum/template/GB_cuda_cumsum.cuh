@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: this method is currently unused, used only in
+// FIXME: this method is currently unused, it was only used in
 // CUDA/select/template/GB_jit_kernel_cuda_select_sparse_OLD.cu.
 
 #ifndef GB_CUDA_CUMSUM
