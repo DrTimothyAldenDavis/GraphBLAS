@@ -252,7 +252,7 @@ static inline void GB_encodify_kcode
     {
         // CUDA kernel
         int device = 0 ;
-        GB_cuda_get_device (&device) ;
+        GB_cuda_get_device (&device) ;  // FIXME: this assumes device is set OK
         int major = GB_Global_gpu_compute_capability_major_get (device) ;
         int minor = GB_Global_gpu_compute_capability_minor_get (device) ;
         encoding->major = (uint8_t) major ;
