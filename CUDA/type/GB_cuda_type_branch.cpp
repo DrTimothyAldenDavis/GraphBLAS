@@ -41,6 +41,14 @@ bool GB_cuda_type_branch            // return true if the type is OK on GPU
 
     size_t size = type->size ;
 
+    if (size > 128) // FIXME: max type size should depend on major/minor device
+    {
+        // the type is too big for the GPU (the builder will fail at 192 bytes
+        // on the sm70 architecture, at least; see the wildtype_demo, which
+        // causes the CUB Radix sort to use too much shared memory)
+        return (false) ;
+    }
+
     if (size == sizeof (uint8_t) || size == sizeof (uint16_t))
     {
         // size is 1 or 2 bytes
