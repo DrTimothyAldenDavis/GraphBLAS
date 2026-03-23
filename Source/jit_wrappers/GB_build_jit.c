@@ -55,7 +55,8 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
         K_is_32,
         K_is_null,
         /* Key_preloaded, Key_is_32, not used: */ false, true,
-        ndupl == 0) ;
+        /* known_no_duplicates: */ ndupl == 0,
+        /* known_sorted (not used): */ false) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

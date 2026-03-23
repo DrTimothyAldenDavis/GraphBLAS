@@ -38,9 +38,12 @@ GrB_Info GB_cuda_builder_jit
     bool Tp_is_32,      // true if T->p is built as 32 bit, false if 64
     bool Tj_is_32,      // true if T->h is built as 32 bit, false if 64
     bool Ti_is_32,      // true if T->i is built as 32 bit, false if 64
+    bool known_no_duplicates,   // true if tuples known to have no duplicates
+    bool known_sorted,          // true if tuples known to be sorted on input
     // CUDA stream and launch parameters:
     cudaStream_t stream,
     int32_t gridsz
 ) ;
 
 #endif
+

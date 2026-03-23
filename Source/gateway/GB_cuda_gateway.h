@@ -90,7 +90,7 @@ static inline int GB_ngpus_to_use
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_* gateway functions
+// CUDA init/finalize and device methods
 //------------------------------------------------------------------------------
 
 GrB_Info GB_cuda_init (void) ;
@@ -108,10 +108,18 @@ bool GB_cuda_get_device_properties
     GB_cuda_device *prop
 ) ;
 
+//------------------------------------------------------------------------------
+// CUDA type branch
+//------------------------------------------------------------------------------
+
 bool GB_cuda_type_branch            // return true if the type is OK on GPU
 (
     const GrB_Type type             // type to query
 ) ;
+
+//------------------------------------------------------------------------------
+// CUDA reduce to scalar
+//------------------------------------------------------------------------------
 
 bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
 (
@@ -131,39 +139,9 @@ GrB_Info GB_cuda_reduce_to_scalar
     const GrB_Matrix A
 ) ;
 
-bool GB_cuda_rowscale_branch
-(
-    const GrB_Matrix D,
-    const GrB_Matrix B,
-    const GrB_Semiring semiring,
-    const bool flipxy
-) ;
-
-GrB_Info GB_cuda_rowscale
-(
-    GrB_Matrix C,
-    const GrB_Matrix D,
-    const GrB_Matrix B,
-    const GrB_Semiring semiring,
-    const bool flipxy
-) ;
-
-bool GB_cuda_colscale_branch
-(
-    const GrB_Matrix A,
-    const GrB_Matrix D,
-    const GrB_Semiring semiring,
-    const bool flipxy
-) ;
-
-GrB_Info GB_cuda_colscale
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix D,
-    const GrB_Semiring semiring,
-    const bool flipxy
-) ;
+//------------------------------------------------------------------------------
+// CUDA apply
+//------------------------------------------------------------------------------
 
 bool GB_cuda_apply_binop_branch
 (
@@ -199,6 +177,10 @@ GrB_Info GB_cuda_apply_binop
     const bool bind1st
 ) ;
 
+//------------------------------------------------------------------------------
+// CUDA select
+//------------------------------------------------------------------------------
+
 bool GB_cuda_select_branch
 (
     const GrB_Matrix A,
@@ -226,9 +208,42 @@ GrB_Info GB_cuda_select_sparse
     GB_Werk Werk
 ) ;
 
-bool GB_cuda_type_branch            // return true if the type is OK on GPU
+//------------------------------------------------------------------------------
+// CUDA matrix-matrix multiply
+//------------------------------------------------------------------------------
+
+bool GB_cuda_rowscale_branch
 (
-    const GrB_Type type             // type to query
+    const GrB_Matrix D,
+    const GrB_Matrix B,
+    const GrB_Semiring semiring,
+    const bool flipxy
+) ;
+
+GrB_Info GB_cuda_rowscale
+(
+    GrB_Matrix C,
+    const GrB_Matrix D,
+    const GrB_Matrix B,
+    const GrB_Semiring semiring,
+    const bool flipxy
+) ;
+
+bool GB_cuda_colscale_branch
+(
+    const GrB_Matrix A,
+    const GrB_Matrix D,
+    const GrB_Semiring semiring,
+    const bool flipxy
+) ;
+
+GrB_Info GB_cuda_colscale
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix D,
+    const GrB_Semiring semiring,
+    const bool flipxy
 ) ;
 
 GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
@@ -252,6 +267,20 @@ bool GB_cuda_AxB_dot3_branch
     const bool flipxy               // if true, do z=fmult(b,a) vs fmult(a,b)
 ) ;
 
+//------------------------------------------------------------------------------
+// determine if the GPU can access the memory
+//------------------------------------------------------------------------------
+
+bool GB_cuda_pointer_ok
+(
+    const void *p,
+    const char *name
+) ;
+
+//------------------------------------------------------------------------------
+// builder
+//------------------------------------------------------------------------------
+
 bool GB_cuda_builder_branch
 (
     const GrB_Matrix C,
@@ -261,12 +290,6 @@ bool GB_cuda_builder_branch
     const void *J,
     const void *X,
     const uint64_t nvals
-) ;
-
-bool GB_cuda_pointer_ok
-(
-    const void *p,
-    const char *name
 ) ;
 
 GrB_Info GB_cuda_builder            // build a matrix from tuples
@@ -295,8 +318,25 @@ GrB_Info GB_cuda_builder            // build a matrix from tuples
     bool J_is_32,       // true if J is 32 bit, false if 64
     bool Tp_is_32,      // true if T->p is built as 32 bit, false if 64
     bool Tj_is_32,      // true if T->h is built as 32 bit, false if 64
-    bool Ti_is_32       // true if T->i is built as 32 bit, false if 64
+    bool Ti_is_32,      // true if T->i is built as 32 bit, false if 64
+    bool known_no_duplicates,   // true if tuples known to have no duplicates
+    bool known_sorted           // true if tuples known to be sorted on input
 ) ;
+
+static inline bool GB_cuda_builder_key_is_32
+(
+    const int64_t vlen,
+    const int64_t vdim
+)
+{
+    // returns true if Key_in will contain 32-bit integers (uint32_t);
+    // if false, then Key_in will contain uint64_t integers
+    return (vlen <= UINT32_MAX && vdim <= UINT32_MAX) ;
+}
+
+//------------------------------------------------------------------------------
+// CUDA transpose
+//------------------------------------------------------------------------------
 
 bool GB_cuda_transpose_branch
 (

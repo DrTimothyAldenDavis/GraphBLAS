@@ -32,7 +32,8 @@ uint64_t GB_encodify_build      // encode an build problem
     bool K_is_null,             // if true, K_work is NULL
     bool Key_preloaded,         // if true, Key_in is preloaded on input
     bool Key_is_32,             // if true, GB_key_t is uint32_t else uint64_t
-    bool no_duplicates          // if true, no duplicates appear
+    bool known_no_duplicates,   // if true, tuples known to not have duplicates
+    bool known_sorted           // if true, tuples known to already be sorted
 )
 { 
 
@@ -57,7 +58,7 @@ uint64_t GB_encodify_build      // encode an build problem
     GB_enumify_build (&encoding->code, dup, ttype, stype,
         is_matrix, iso_build, Tp_is_32, Tj_is_32, Ti_is_32,
         I_is_32, J_is_32, K_is_32, K_is_null, Key_preloaded, Key_is_32,
-        no_duplicates) ;
+        known_no_duplicates, known_sorted) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length

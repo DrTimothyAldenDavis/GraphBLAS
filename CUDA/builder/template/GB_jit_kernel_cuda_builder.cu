@@ -111,8 +111,12 @@ __global__ void GB_cuda_builder_phase1
     // output
     GB_key_t *Key_in,   // size nvals+1: Key_in [-1...nvals-1]
     uint64_t *bad,      // count of # of invalid tuples (zero on input)
+    #if !GB_KNOWN_SORTED
     uint64_t *unsorted, // count of # of tuples out of order (zero on input)
+    #endif
+    #if !GB_KNOWN_NO_DUPLICATES
     uint64_t *dupls,    // count of # duplicates if all in order (zero on input)
+    #endif
     // input
     const GB_I_TYPE *__restrict__ I, // size nvals
     int64_t vlen,       // vector-length dimension of C (for I indices)
@@ -135,9 +139,12 @@ __global__ void GB_cuda_builder_phase1
     }
 
     uint64_t my_bad = 0 ;
+    #if !GB_KNOWN_SORTED
     uint64_t my_unsorted = 0 ;
+    #endif
+    #if !GB_KNOWN_NO_DUPLICATES
     uint64_t my_dupls = 0 ;
-//  this_thread_block ( ).sync ( ) ;
+    #endif
 
     for (int64_t p = blockIdx.x * blockDim.x + threadIdx.x ;
                  p < nvals ;
@@ -155,6 +162,7 @@ __global__ void GB_cuda_builder_phase1
             #if GB_MTX_BUILD
             GB_J_TYPE j0 = J [p-1] ;
             #endif
+            #if !GB_KNOWN_SORTED
             // count the number of indices that are out of order
             my_unsorted += (uint64_t)
                 #if GB_MTX_BUILD
@@ -162,6 +170,8 @@ __global__ void GB_cuda_builder_phase1
                 #else
                 (i0 > i) ;
                 #endif
+            #endif
+            #if !GB_KNOWN_NO_DUPLICATES
             // count the # of duplicates (only valid indices are all in order)
             my_dupls += (uint64_t)
                 #if GB_MTX_BUILD
@@ -169,6 +179,7 @@ __global__ void GB_cuda_builder_phase1
                 #else
                 (i0 == i) ;
                 #endif
+            #endif
         }
 
         // count the # of tuples out of range
@@ -189,16 +200,24 @@ __global__ void GB_cuda_builder_phase1
     this_thread_block ( ).sync ( ) ;
     my_bad      = GB_cuda_threadblock_sum_uint64 (my_bad) ;
     this_thread_block ( ).sync ( ) ;
+    #if !GB_KNOWN_SORTED
     my_unsorted = GB_cuda_threadblock_sum_uint64 (my_unsorted) ;
     this_thread_block ( ).sync ( ) ;
+    #endif
+    #if !GB_KNOWN_NO_DUPLICATES
     my_dupls    = GB_cuda_threadblock_sum_uint64 (my_dupls) ;
     this_thread_block ( ).sync ( ) ;
+    #endif
 
     if (threadIdx.x == 0)
     {
         GB_cuda_atomic_add <uint64_t> (bad     , my_bad) ;
+        #if !GB_KNOWN_SORTED
         GB_cuda_atomic_add <uint64_t> (unsorted, my_unsorted) ;
+        #endif
+        #if !GB_KNOWN_NO_DUPLICATES
         GB_cuda_atomic_add <uint64_t> (dupls   , my_dupls) ;
+        #endif
     }
 }
 
@@ -214,6 +233,8 @@ __global__ void GB_cuda_builder_phase1
 // cumulative sum of the number of leading entries in each chunk.
 
 // Compare with select/phase1
+
+#if !GB_KNOWN_NO_DUPLICATES
 
 __global__ void GB_cuda_builder_phase3_with_dupl
 (
@@ -414,6 +435,8 @@ __global__ void GB_cuda_builder_phase3_with_dupl
         this_thread_block ( ).sync ( ) ;
     }
 }
+
+#endif
 
 //------------------------------------------------------------------------------
 // GB_cuda_builder_phase3_no_dupl
@@ -949,62 +972,82 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     #if GB_KEY_PRELOADED
 
-    // the caller has pre-loaded Key_in
-    GB_key_t *Key_in = ((GB_key_t *) Key_input) + 1 ;
+        //----------------------------------------------------------------------
+        // the caller has pre-loaded Key_in
+        //----------------------------------------------------------------------
 
-    // FIXME: use a #define for these instead; these are hard-coded for
-    // the CUDA transpose
-    bool known_sorted = false ;         // FIXME: depends on the caller
-    bool known_no_duplicates = true ;   // FIXME: depends on the caller
+        GB_key_t *Key_in = ((GB_key_t *) Key_input) + 1 ;
+
+        // Key_in is not checked for duplicates or sorted status at run time;
+        // it only uses the cases known at JIT compile time
+        #define known_no_duplicates GB_KNOWN_NO_DUPLICATES
+        #define known_sorted        GB_KNOWN_SORTED
 
     #else
 
-    // allocate Key_in and W_8 workspace
-    W_0 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_key_t), &W_0_size) ;
-    W_8 = GB_MALLOC_MEMORY (3, sizeof (uint64_t), &W_8_size) ;
-    if (W_0 == NULL || W_8 == NULL)
-    {
-        // out of memory
-        GB_FREE_ALL ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-    // shift by one so Key_in [-1...nvals-1] can be used
-    GB_key_t *Key_in = ((GB_key_t *) W_0) + 1 ;
+        //----------------------------------------------------------------------
+        // load Key_in from I and J
+        //----------------------------------------------------------------------
 
-    // get 2 uint64_t scalars from the W_8 workspace
-    uint64_t *bad = ((uint64_t *) W_8) ;
-    uint64_t *unsorted = ((uint64_t *) W_8) + 1 ;
-    uint64_t *dupls = ((uint64_t *) W_8) + 2 ;
-    (*bad) = 0 ;
-    (*unsorted) = 0 ;
-    (*dupls) = 0 ;
+        // allocate Key_in and W_8 workspace
+        W_0 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_key_t), &W_0_size) ;
+        W_8 = GB_MALLOC_MEMORY (3, sizeof (uint64_t), &W_8_size) ;
+        if (W_0 == NULL || W_8 == NULL)
+        {
+            // out of memory
+            GB_FREE_ALL ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+        // shift by one so Key_in [-1...nvals-1] can be used
+        GB_key_t *Key_in = ((GB_key_t *) W_0) + 1 ;
 
-    // FIXME: if I or J cannot be read by the GPU, do phase1 on the CPU
-    // with OpenMP
+        // get 2 uint64_t scalars from the W_8 workspace
+        uint64_t *bad = ((uint64_t *) W_8) ;
+        uint64_t *unsorted = ((uint64_t *) W_8) + 1 ;
+        uint64_t *dupls = ((uint64_t *) W_8) + 2 ;
+        (*bad) = 0 ;
+        (*unsorted) = 0 ;
+        (*dupls) = 0 ;
 
-    GB_cuda_builder_phase1 <<<grid, block1, 0, stream>>>
-        (/* outputs: */ Key_in, bad, unsorted, dupls,
-         /* inputs: */ I, vlen,
-            #if GB_MTX_BUILD
-            J, vdim,
-            #endif
-            nvals) ;
+        // FIXME: if I or J cannot be read by the GPU, do phase1 on the CPU
+        // with OpenMP
 
-    CUDA_OK (cudaGetLastError ( )) ;
-    CUDA_OK (cudaStreamSynchronize (stream)) ;
+        GB_cuda_builder_phase1 <<<grid, block1, 0, stream>>>
+            (/* outputs: */ Key_in, bad,
+                #if !GB_KNOWN_SORTED
+                unsorted,
+                #endif
+                #if !GB_KNOWN_NO_DUPLICATES
+                dupls,
+                #endif
+             /* inputs: */ I, vlen,
+                #if GB_MTX_BUILD
+                J, vdim,
+                #endif
+                nvals) ;
 
-    // after the CUDA kernel launch is done, check if the (I,J) indices are OK
-    GB_OK (((*bad) == 0) ? GrB_SUCCESS : GrB_INVALID_INDEX) ;
+        CUDA_OK (cudaGetLastError ( )) ;
+        CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-    // if the tuples are sorted then dupls is a valid count of the # of
-    // duplicates
-    #if 1
-    bool known_sorted = (*unsorted == 0) ;
-    bool known_no_duplicates = known_sorted && (*dupls == 0) ;
-    #else
-    bool known_sorted = false ;
-    bool known_no_duplicates = false ;
-    #endif
+        // after the CUDA kernel launch is done, check if (I,J) indices are OK
+        GB_OK (((*bad) == 0) ? GrB_SUCCESS : GrB_INVALID_INDEX) ;
+
+        #if GB_KNOWN_SORTED
+        // tuples are asserted to be sorted on input; this is not checked
+        #define known_sorted true
+        #else
+        // check if tuples are sorted on input
+        bool known_sorted = (*unsorted == 0) ;
+        #endif
+
+        #if GB_KNOWN_NO_DUPLICATES
+        // tuples are asserted to have no duplicates on input
+        #define known_no_duplicates true
+        #else
+        // check if tuples have no duplicates; if the tuples are sorted then
+        // dupls is a valid count of the # of duplicates
+        bool known_no_duplicates = known_sorted && (*dupls == 0) ;
+        #endif
 
     #endif
 
@@ -1043,103 +1086,125 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     GB_key_t *Key_out ;
     GB_Sx_TYPE *Sx ;
 
-    if (known_sorted)
+    #if GB_KNOWN_SORTED
     {
 
         //----------------------------------------------------------------------
-        // tuples are already sorted
+        // tuples are known to be sorted on input
         //----------------------------------------------------------------------
 
         Key_out = Key_in ;
         Sx = X ;
 
     }
-    else
+    #else
     {
 
         //----------------------------------------------------------------------
-        // tuples must be sorted
+        // tuples are not known to be sorted on input; but may be found to be so
         //----------------------------------------------------------------------
 
-        // allocate Key_out, Sx, and CUB temporary workspace
-        W_1 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_key_t), &W_1_size) ;
-        #if !GB_ISO_BUILD
-        W_2 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_Sx_TYPE), &W_2_size) ;
-        #endif
-        if (W_1 == NULL || (!GB_ISO_BUILD && W_2 == NULL))
+        if (known_sorted)
         {
-            // out of memory
-            GB_FREE_ALL ;
-            return (GrB_OUT_OF_MEMORY) ;
+
+            //------------------------------------------------------------------
+            // tuples have been checked and found to be already sorted
+            //------------------------------------------------------------------
+
+            Key_out = Key_in ;
+            Sx = X ;
+
         }
-
-        // shift by one so Key_out [-1...nvals-1], etc can be used
-        Key_out = ((GB_key_t *) W_1) + 1 ;
-
-        // no need to shift Sx
-        Sx = ((GB_Sx_TYPE *) W_2) ;
-
-        // determine the amount of workspace needed by CUB radix sort
-        #if GB_ISO_BUILD
-        CUDA_OK (cub::DeviceRadixSort::SortKeys (
-            /* temp storage: */ W_3, W_3_size,
-            Key_in, Key_out, nvals,
-            #if GB_MTX_BUILD
-            GB_key_decomposer_t { },
-            #endif
-            /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
-            stream)) ;
-        #else
-        CUDA_OK (cub::DeviceRadixSort::SortPairs (
-            /* temp storage: */ W_3, W_3_size,
-            Key_in, Key_out, /* values in: */ X, /* values out: */ Sx, nvals,
-            #if GB_MTX_BUILD
-            GB_key_decomposer_t { },
-            #endif
-            /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
-            stream)) ;
-        #endif
-
-        CUDA_OK (cudaGetLastError ( )) ;
-        CUDA_OK (cudaStreamSynchronize (stream)) ;
-
-        // allocate workspace for CUB radix sort
-        W_3 = GB_MALLOC_MEMORY (W_3_size+1, 1, &W_3_size) ;
-        if (W_3 == NULL)
+        else
         {
-            // out of memory
-            GB_FREE_ALL ;
-            return (GrB_OUT_OF_MEMORY) ;
+
+            //------------------------------------------------------------------
+            // tuples must be sorted
+            //------------------------------------------------------------------
+
+            // allocate Key_out, Sx, and CUB temporary workspace
+            W_1 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_key_t), &W_1_size) ;
+            #if !GB_ISO_BUILD
+            W_2 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_Sx_TYPE), &W_2_size) ;
+            #endif
+            if (W_1 == NULL || (!GB_ISO_BUILD && W_2 == NULL))
+            {
+                // out of memory
+                GB_FREE_ALL ;
+                return (GrB_OUT_OF_MEMORY) ;
+            }
+
+            // shift by one so Key_out [-1...nvals-1], etc can be used
+            Key_out = ((GB_key_t *) W_1) + 1 ;
+
+            // no need to shift Sx
+            Sx = ((GB_Sx_TYPE *) W_2) ;
+
+            // determine the amount of workspace needed by CUB radix sort
+            #if GB_ISO_BUILD
+            CUDA_OK (cub::DeviceRadixSort::SortKeys (
+                /* temp storage: */ W_3, W_3_size,
+                Key_in, Key_out, nvals,
+                #if GB_MTX_BUILD
+                GB_key_decomposer_t { },
+                #endif
+                /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
+                stream)) ;
+            #else
+            CUDA_OK (cub::DeviceRadixSort::SortPairs (
+                /* temp storage: */ W_3, W_3_size,
+                Key_in, Key_out,
+                /* values in: */ X, /* values out: */ Sx, nvals,
+                #if GB_MTX_BUILD
+                GB_key_decomposer_t { },
+                #endif
+                /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
+                stream)) ;
+            #endif
+
+            CUDA_OK (cudaGetLastError ( )) ;
+            CUDA_OK (cudaStreamSynchronize (stream)) ;
+
+            // allocate workspace for CUB radix sort
+            W_3 = GB_MALLOC_MEMORY (W_3_size+1, 1, &W_3_size) ;
+            if (W_3 == NULL)
+            {
+                // out of memory
+                GB_FREE_ALL ;
+                return (GrB_OUT_OF_MEMORY) ;
+            }
+
+            // sort (Key_in,X) to get (Key_out,Sx)
+            #if GB_ISO_BUILD
+            CUDA_OK (cub::DeviceRadixSort::SortKeys (
+                /* temp storage: */ W_3, W_3_size,
+                Key_in, Key_out, nvals,
+                #if GB_MTX_BUILD
+                GB_key_decomposer_t { },
+                #endif
+                /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
+                stream)) ;
+            #else
+            CUDA_OK (cub::DeviceRadixSort::SortPairs (
+                /* temp storage: */ W_3, W_3_size,
+                Key_in, Key_out,
+                /* values in: */ X, /* values out: */ Sx, nvals,
+                #if GB_MTX_BUILD
+                GB_key_decomposer_t { },
+                #endif
+                /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
+                stream)) ;
+            #endif
+
+            CUDA_OK (cudaGetLastError ( )) ;
+            CUDA_OK (cudaStreamSynchronize (stream)) ;
+
+            // Key_in and CUB workspace no longer needed
+            GB_FREE_MEMORY (&W_0, W_0_size) ;
+            GB_FREE_MEMORY (&W_3, W_3_size) ;
         }
-
-        // sort (Key_in,X) to get (Key_out,Sx)
-        #if GB_ISO_BUILD
-        CUDA_OK (cub::DeviceRadixSort::SortKeys (
-            /* temp storage: */ W_3, W_3_size,
-            Key_in, Key_out, nvals,
-            #if GB_MTX_BUILD
-            GB_key_decomposer_t { },
-            #endif
-            /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
-            stream)) ;
-        #else
-        CUDA_OK (cub::DeviceRadixSort::SortPairs (
-            /* temp storage: */ W_3, W_3_size,
-            Key_in, Key_out, /* values in: */ X, /* values out: */ Sx, nvals,
-            #if GB_MTX_BUILD
-            GB_key_decomposer_t { },
-            #endif
-            /* begin/end bits: */ 0, sizeof (GB_key_t) * 8,
-            stream)) ;
-        #endif
-
-        CUDA_OK (cudaGetLastError ( )) ;
-        CUDA_OK (cudaStreamSynchronize (stream)) ;
-
-        // Key_in and CUB workspace no longer needed
-        GB_FREE_MEMORY (&W_0, W_0_size) ;
-        GB_FREE_MEMORY (&W_3, W_3_size) ;
     }
+    #endif
 
     // sorted tuples are now in (Key_out,Sx)
     Key_in = NULL ;
@@ -1234,6 +1299,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     //            0 [       1 |       1 |       2 |       0 ] 0
 
     // allocate Map and ChunkSum: for cumsum of 1st entries in sequence of dupls
+    #if !GB_KNOWN_NO_DUPLICATES
     if (!known_no_duplicates)
     {
         W_4 = GB_MALLOC_MEMORY (nvals+1 + CHUNKSIZE, sizeof (Int), &W_4_size) ;
@@ -1245,6 +1311,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             return (GrB_OUT_OF_MEMORY) ;
         }
     }
+    #endif
 
     // allocate JDelta, JDeltaSum: for cumsum of leading entries of vectors of C
     #if GB_MTX_BUILD
@@ -1258,17 +1325,21 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     }
     #endif
 
+    #if !GB_KNOWN_NO_DUPLICATES
     // shift by one so Map [-1...nvals-1], etc can be used
     Int *Map              = ((Int        *) W_4) + 1 ;
     GB_Tp_TYPE *ChunkSum  = ((GB_Tp_TYPE *) W_5) + 1 ;
+    #endif
+
     #if GB_MTX_BUILD
     Int *JDelta           = ((Int        *) W_6) + 1 ;
     GB_Tp_TYPE *JDeltaSum = ((GB_Tp_TYPE *) W_7) + 1 ;
     #endif
 
-    if (known_no_duplicates)
+    #if GB_KNOWN_NO_DUPLICATES
     {
-        // phase3 does not need to look for duplicates
+        // phase3 does not need to look for duplicates; this is known
+        // at compile time of the JIT kernel
         #if GB_MTX_BUILD
         GB_cuda_builder_phase3_no_dupl <<<grid, block1, 0, stream>>>
             ( /* outputs: */
@@ -1276,15 +1347,30 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
               /* inputs: */ Key_out, nvals, nchunks) ;
         #endif
     }
-    else
+    #else
     {
-        GB_cuda_builder_phase3_with_dupl <<<grid, block1, 0, stream>>>
-            ( /* outputs: */ Map, ChunkSum,
-                #if GB_MTX_BUILD
-                JDelta, JDeltaSum,
-                #endif
-              /* inputs: */ Key_out, nvals, nchunks) ;
+        if (known_no_duplicates)
+        {
+            // phase3 does not need to look for duplicates; this is known
+            // only after checking for duplicates
+            #if GB_MTX_BUILD
+            GB_cuda_builder_phase3_no_dupl <<<grid, block1, 0, stream>>>
+                ( /* outputs: */
+                    JDelta, JDeltaSum,
+                  /* inputs: */ Key_out, nvals, nchunks) ;
+            #endif
+        }
+        else
+        {
+            GB_cuda_builder_phase3_with_dupl <<<grid, block1, 0, stream>>>
+                ( /* outputs: */ Map, ChunkSum,
+                    #if GB_MTX_BUILD
+                    JDelta, JDeltaSum,
+                    #endif
+                  /* inputs: */ Key_out, nvals, nchunks) ;
+        }
     }
+    #endif
 
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
@@ -1380,10 +1466,13 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // JDeltaSum on output (an exclusive sum):
     //            0 [       0 |       1 |       2 |       4 ] 4
 
+    #if !GB_KNOWN_NO_DUPLICATES
     if (!known_no_duplicates)
     {
         ChunkSum [-1] = 0 ;         // sentinel value
     }
+    #endif
+
     #if GB_MTX_BUILD
     JDeltaSum [-1] = 0 ;        // sentinel value
     #endif
@@ -1391,6 +1480,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // overwrite ChunkSum [0..gridsz] with its cumulative sum
     for (int64_t chunk = 0 ; chunk < nchunks ; chunk++)
     {
+        #if !GB_KNOWN_NO_DUPLICATES
         if (!known_no_duplicates)
         {
             // get the # of entries found in this chunk
@@ -1400,6 +1490,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             ChunkSum [chunk] = tnz ;
             tnz += t ;
         }
+        #endif
 
         // get the # of leading entries found in this chunk
         #if GB_MTX_BUILD
@@ -1411,14 +1502,25 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         #endif
     }
 
-    if (!known_no_duplicates)
+    #if GB_KNOWN_NO_DUPLICATES
     {
-        ChunkSum [nchunks] = tnz ;
-    }
-    else
-    {
+        // tuples are known to have no duplicates on input
         tnz = nvals ;
     }
+    #else
+    {
+        // tuples might have duplicates
+        if (known_no_duplicates)
+        {
+            tnz = nvals ;
+        }
+        else
+        {
+            ChunkSum [nchunks] = tnz ;
+        }
+    }
+    #endif
+
     #if GB_MTX_BUILD
     JDeltaSum [nchunks] = tnvec ;
     #else
@@ -1501,9 +1603,13 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     T->nvec = tnvec ;
     T->nvec_nonempty = tnvec ;
 
-    if (tnz == nvals)
+    #if GB_KNOWN_NO_DUPLICATES
     {
-        // construct Tp, Th, Ti, and Tx, no duplicates appear
+
+        //----------------------------------------------------------------------
+        // construct Tp, Th, Ti, and Tx, no duplicates can appear
+        //----------------------------------------------------------------------
+
         GB_cuda_builder_phase5_no_dupl <<<grid, block1, 0, stream>>>
             (/* outputs: */ T,
              /* inputs: */
@@ -1512,18 +1618,39 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
                 #endif
                 Key_out, Sx, nvals, nchunks) ;
     }
-    else
+    #else
     {
-        // construct Tp, Th, Ti, and Tx, summing up duplicates
-        // (at least one duplicate appears)
-        GB_cuda_builder_phase5_with_dupl <<<grid, block1, 0, stream>>>
-            (/* outputs: */ T,
-             /* inputs: */  Map, ChunkSum,
-                #if GB_MTX_BUILD
-                JDelta, JDeltaSum,
-                #endif
-                Key_out, Sx, nvals, nchunks) ;
+
+        //----------------------------------------------------------------------
+        // duplicates are possible, but none might be found at run time
+        //----------------------------------------------------------------------
+
+        if (tnz == nvals)
+        {
+            // construct Tp, Th, Ti, and Tx, no duplicates appear after
+            // carefully checking for any possible duplicates
+            GB_cuda_builder_phase5_no_dupl <<<grid, block1, 0, stream>>>
+                (/* outputs: */ T,
+                 /* inputs: */
+                    #if GB_MTX_BUILD
+                    JDelta, JDeltaSum,
+                    #endif
+                    Key_out, Sx, nvals, nchunks) ;
+        }
+        else
+        {
+            // construct Tp, Th, Ti, and Tx, summing up duplicates
+            // (at least one duplicate appears)
+            GB_cuda_builder_phase5_with_dupl <<<grid, block1, 0, stream>>>
+                (/* outputs: */ T,
+                 /* inputs: */  Map, ChunkSum,
+                    #if GB_MTX_BUILD
+                    JDelta, JDeltaSum,
+                    #endif
+                    Key_out, Sx, nvals, nchunks) ;
+        }
     }
+    #endif
 
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;

@@ -22,15 +22,15 @@
 
 {
 
-    #ifndef GB_NO_DUPLICATES
-    #define GB_NO_DUPLICATES (ndupl == 0)
+    #ifndef GB_KNOWN_NO_DUPLICATES
+    #define GB_KNOWN_NO_DUPLICATES (ndupl == 0)
     #endif
 
     #ifndef GB_K_IS_NULL
     #define GB_K_IS_NULL (K_work == NULL)
     #endif
 
-    if (GB_NO_DUPLICATES)
+    if (GB_KNOWN_NO_DUPLICATES)
     {
 
         //----------------------------------------------------------------------

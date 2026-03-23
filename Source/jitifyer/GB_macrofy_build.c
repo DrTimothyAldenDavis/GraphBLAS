@@ -26,7 +26,8 @@ void GB_macrofy_build           // construct all macros for GB_build
     // extract the method_code
     //--------------------------------------------------------------------------
 
-    // (2 bits, 1 hex digits):
+    // (3 bits, 1 hex digits):
+    int sorted    = GB_RSHIFT (method_code, 38, 1) ;
     int Key_pre   = GB_RSHIFT (method_code, 37, 1) ;
     int Key_is_32 = GB_RSHIFT (method_code, 36, 1) ;
 
@@ -242,13 +243,14 @@ void GB_macrofy_build           // construct all macros for GB_build
     }
 
     //--------------------------------------------------------------------------
-    // iso, is_matrix, duplicates
+    // iso, is_matrix, duplicates, sorted
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// type of build:\n") ;
     fprintf (fp, "#define GB_MTX_BUILD %d\n", is_mat) ;
     fprintf (fp, "#define GB_ISO_BUILD %d\n", iso) ;
-    fprintf (fp, "#define GB_NO_DUPLICATES %d\n", no_dupl) ;
+    fprintf (fp, "#define GB_KNOWN_NO_DUPLICATES %d\n", no_dupl) ;
+    fprintf (fp, "#define GB_KNOWN_SORTED %d\n", sorted) ;
 
     //--------------------------------------------------------------------------
     // 32/64 integer arrays

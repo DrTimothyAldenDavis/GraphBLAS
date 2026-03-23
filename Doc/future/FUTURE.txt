@@ -15,19 +15,11 @@ FUTURE plans for GraphBLAS:
 
     kernel fusion
 
-    CUDA kernels
-        CUDA: finding src
-        CUDA: kernel source location, and name
-
-    distributed framework
-
     fine-grain parallelism for dot-product based mxm, mxv, vxm,
         then add GxB_vxvt (outer product) and GxB_vtxv (inner product)
         (or call them GxB_outerProduct and GxB_innerProduct?)
 
     aggregators
-
-    GrB_extract with GrB_Vectors instead of (GrB_Index *) arrays for I and J
 
     iso: set a flag with GrB_get/set to disable iso.  useful if the matrix is
     about to become non-iso anyway. Pagerank does:

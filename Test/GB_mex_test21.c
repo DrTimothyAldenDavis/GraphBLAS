@@ -263,7 +263,8 @@ void mexFunction
         /* K is NULL: */ false,
         /* Key_preloaded: */ false,
         /* Key_is_32: */ true,
-        /* no dupl: */ false) ;
+        /* no dupl: */ false,
+        /* sorted: */ false) ;
     GB_macrofy_build (fp, method_code, op2, GrB_BOOL, GrB_BOOL) ;
 
     HEADER ;
@@ -278,7 +279,8 @@ void mexFunction
         /* K is NULL: */ false,
         /* Key_preloaded: */ false,
         /* Key_is_32: */ true,
-        /* no dupl: */ true) ;
+        /* no dupl: */ true,
+        /* sorted: */ false) ;
     GB_macrofy_build (fp, method_code, op2, GxB_FC32, GxB_FC32) ;
 
     //--------------------------------------------------------------------------

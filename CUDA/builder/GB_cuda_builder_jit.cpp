@@ -40,6 +40,8 @@ GrB_Info GB_cuda_builder_jit
     bool Tp_is_32,      // true if T->p is built as 32 bit, false if 64
     bool Tj_is_32,      // true if T->h is built as 32 bit, false if 64
     bool Ti_is_32,      // true if T->i is built as 32 bit, false if 64
+    bool known_no_duplicates,   // true if tuples known to have no duplicates
+    bool known_sorted,          // true if tuples known to be sorted on input
     // CUDA stream and launch parameters:
     cudaStream_t stream,
     int32_t gridsz
@@ -50,7 +52,7 @@ GrB_Info GB_cuda_builder_jit
     // encodify the problem
     //--------------------------------------------------------------------------
 
-    bool Key_is_32 = (vlen <= UINT32_MAX && vdim <= UINT32_MAX) ;
+    bool Key_is_32 = GB_cuda_builder_key_is_32 (vlen, vdim) ;
 
     GB_jit_encoding encoding ;
     char *suffix ;
@@ -59,8 +61,7 @@ GrB_Info GB_cuda_builder_jit
         Tp_is_32, Tj_is_32, Ti_is_32, I_is_32, J_is_32,
         /* K_is_32, not used: */ true,
         /* K_is_null, (K is not used in CUDA): */ true,
-        Key_input, Key_is_32,
-        /* no_duplicates, not used: */ false) ;
+        Key_input, Key_is_32, known_no_duplicates, known_sorted) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

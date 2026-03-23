@@ -277,24 +277,26 @@ GrB_Info GB_build               // build matrix
         // Build the matrix on the GPU.
         // TODO: should be able to construct T with C->type
         info = GB_cuda_builder (
-            &T,                     // create T using a dynamic header
-            ttype,                  // the type of T
-            C->vlen,                // T->vlen = C->vlen
-            C->vdim,                // T->vdim = C->vdim
-            C->is_csc,              // T has the same CSR/CSC format as C
-            is_matrix,              // true if T is a GrB_Matrix
-            NULL,                   // Key_input: not used
+            &T,         // create T using a dynamic header
+            ttype,      // the type of T
+            C->vlen,    // T->vlen = C->vlen
+            C->vdim,    // T->vdim = C->vdim
+            C->is_csc,  // T has the same CSR/CSC format as C
+            is_matrix,  // true if T is a GrB_Matrix
+            NULL,       // Key_input: not used
             C->is_csc ? I : J,      // size nvals
             C->is_csc ? J : I,      // size nvals, or NULL for vector
             (const GB_void *) X,    // values, size nvals or 1 if iso
-            X_iso,                  // true if X is iso
-            nvals,                  // number of tuples
-            dup2,                   // op to assemble duplicates (may be NULL)
-            xtype,                  // type of the X array
-            true,                   // burble is OK
+            X_iso,      // true if X is iso
+            nvals,      // number of tuples
+            dup2,       // op to assemble duplicates (may be NULL)
+            xtype,      // type of the X array
+            true,       // burble is OK
             C->is_csc ? I_is_32 : J_is_32,  // if true, I is 32-bit; else 64-bit
             C->is_csc ? J_is_32 : I_is_32,  // if true, J is 32-bit; else 64-bit
-            Tp_is_32, Tj_is_32, Ti_is_32    // integer sizes to create T
+            Tp_is_32, Tj_is_32, Ti_is_32,   // integer sizes to create T
+            false,      // tuples not known to have no duplicates priori
+            false       // tuples not known to be sorted a priori
             ) ;
         if (!(info == GrB_NO_VALUE || info == GrB_SUCCESS))
         {

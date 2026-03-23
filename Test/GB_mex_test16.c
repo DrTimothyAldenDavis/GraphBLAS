@@ -137,7 +137,8 @@ void mexFunction
         /* K is NULL: */ true,
         /* Key_preloaded: */ false,
         /* Key_is_32: */ true,
-        /* no dupl: */ false) ;
+        /* no dupl: */ false,
+        /* sorted: */ false) ;
     CHECK (code == UINT64_MAX) ;
 
     //--------------------------------------------------------------------------

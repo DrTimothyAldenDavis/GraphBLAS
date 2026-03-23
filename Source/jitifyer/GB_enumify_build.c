@@ -31,7 +31,8 @@ void GB_enumify_build           // enumerate a GB_build problem
     bool K_is_null,             // if true, K_work is NULL
     bool Key_preloaded,         // if true, Key_in is preloaded on input
     bool Key_is_32,             // if true, GB_key_t is uint32_t else uint64_t
-    bool no_duplicates          // if true, no duplicates appear
+    bool known_no_duplicates,   // if true, tuples known to not have duplicates
+    bool known_sorted           // if true, tuples known to already be sorted
 )
 {
 
@@ -64,7 +65,8 @@ void GB_enumify_build           // enumerate a GB_build problem
     int k_is_null = (K_is_null) ? 1 : 0 ;
     int key_pre   = (Key_preloaded) ? 1 : 0 ;
     int key_is_32 = (Key_is_32) ? 1 : 0 ;
-    int no_dupl   = (no_duplicates) ? 1 : 0 ;
+    int no_dupl   = (known_no_duplicates) ? 1 : 0 ;
+    int sorted    = (known_sorted) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // enumify the dup binary operator
@@ -76,11 +78,12 @@ void GB_enumify_build           // enumerate a GB_build problem
     // construct the method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 38 (10 hex digits)
+    // total method_code bits: 39 (10 hex digits)
 
     (*method_code) =
                                                // range        bits
                 // Key_in preloaded, and size of integers in GB_Key_t:
+                GB_LSHIFT (sorted     , 38) |  // 0 to 1       1
                 GB_LSHIFT (key_pre    , 37) |  // 0 to 1       1
                 GB_LSHIFT (key_is_32  , 36) |  // 0 to 1       1
 

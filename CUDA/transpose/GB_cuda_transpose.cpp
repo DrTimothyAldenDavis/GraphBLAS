@@ -28,6 +28,7 @@
 }
 
 #include "transpose/GB_cuda_transpose.hpp"
+#include "builder/GB_cuda_builder.hpp"
 extern "C"
 {
     #include "apply/GB_apply.h"
@@ -89,8 +90,7 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     // construct Key_input
     //--------------------------------------------------------------------------
 
-    // FIXME: Key_is_32 must match the CUDA builder JIT:
-    bool Key_is_32 = (avlen <= UINT32_MAX) && (avdim <= UINT32_MAX) ;
+    bool Key_is_32 = GB_cuda_builder_key_is_32 (avlen, avdim) ;
     size_t key_size = 2 * ((Key_is_32) ? sizeof (uint32_t) : sizeof (uint64_t));
 
     // allocate iwork of size anz
@@ -102,9 +102,6 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-
-    // Construct the "row" indices of C, which are "column" indices of A.
-//    GB_OK (GB_extract_vector_list (iwork, Aj_is_32, A, Werk)) ;
 
     GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
 
@@ -169,34 +166,28 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
         GB_unop_iso (sscalar, ctype, C_code_iso, op, A, scalar) ;
         X = sscalar ;
         stype = ctype ;
-//      printf ("C_iso, so Swork is NULL\n") ;
     }
     else if (op != NULL)
     { 
         // Swork = op (A)
         // FIXME: tell GB_apply_op it "must" use the GPU
-        // printf ("using GB_apply_op\n") ;
         info = GB_apply_op (Swork, ctype, C_code_iso, op, scalar,
             binop_bind1st, flipij, A, Werk) ;
         ASSERT (info == GrB_SUCCESS) ;
-        // GB_builder will not need to typecast Swork to T->x, and it
-        // may choose to transplant it into T->x
+        // GB_cuda_builder will not need to typecast Swork to T->x, and it may
+        // choose to transplant it into T->x
         X = Swork ;
         stype = ctype ;
     }
     else
     { 
-        // GB_builder will typecast S_input from atype to ctype if
-        // needed.  S_input is a shallow copy of Ax, and must not be
-        // modified.
+        // GB_cuda_builder will typecast S_input from atype to ctype if needed.
+        // S_input is a shallow copy of Ax, and must not be modified.
         ASSERT (!C_iso) ;
         ASSERT (!A->iso) ;
         X = (GB_void *) A->x ;
         stype = atype ;
-//      printf ("using S_input %p\n", X) ;
     }
-
-//  printf ("GB_cuda_tranpose, X: %p, Swork: %p\n", X, Swork) ;
 
     //------------------------------------------------------------------
     // build the matrix: T = (ctype) A' or op ((xtype) A')
@@ -220,12 +211,9 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
         false,      // no burble (already burbled above)
         true,       // I_is_32: not used
         true,       // J_is_32: not used
-        Cp_is_32, Cj_is_32, Ci_is_32  // integer sizes for T 
-#if 0
-        // FIXME: add these options:
-        false,      // tuples are not sorted on input
-        true,       // tuples have no duplicates
-#endif
+        Cp_is_32, Cj_is_32, Ci_is_32, // integer sizes for T 
+        true,       // tuples known to have no duplicates
+        false       // tuples are not sorted on input
     )) ;
 
     //------------------------------------------------------------------

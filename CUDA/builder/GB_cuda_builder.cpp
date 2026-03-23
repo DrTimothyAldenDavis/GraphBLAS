@@ -76,7 +76,7 @@ Usage in all of GraphBLAS:
     No duplicates, might need to sort if input matrix is jumbled.
     Tuples are known to be valid.
 
-(7) GB_transpose_builder:
+(7) GB_transpose_builder: DONE except for #define's
     family: needs A, Key_in type, suffix: A->type
     Its CUDA kernel must fill Key_in.  Matrix can be iso or non-iso.
     No duplicates, need to sort.
@@ -88,6 +88,18 @@ Usage in all of GraphBLAS:
     Its CUDA kernel must fill Key_in.  Matrix can be iso or non-iso.
     Must check for duplicates, need to sort (depending on A->pending->sorted)
     Tuples are known to be valid.
+
+    If no typecasting and A->type and A->Pending->type match, then
+    A+build(A->Pending) could skip ewiseAdd, and instead place all of A in the
+    keys, and do build (A, A->Pending).
+
+General observations:
+
+    (1) if Key_in is provided, no need to check if tuples are valid
+    (2) input Key_in might be known to be sorted
+    (3) duplicates can appear in Key_in (GB_wait only); other cases have
+        no duplicates
+
 */
 
 GrB_Info GB_cuda_builder            // build a matrix from tuples
@@ -116,7 +128,9 @@ GrB_Info GB_cuda_builder            // build a matrix from tuples
     bool J_is_32,       // true if J is 32 bit, false if 64
     bool Tp_is_32,      // true if T->p is built as 32 bit, false if 64
     bool Tj_is_32,      // true if T->h is built as 32 bit, false if 64
-    bool Ti_is_32       // true if T->i is built as 32 bit, false if 64
+    bool Ti_is_32,      // true if T->i is built as 32 bit, false if 64
+    bool known_no_duplicates,   // true if tuples known to have no duplicates
+    bool known_sorted           // true if tuples known to be sorted on input
 )
 {
 
@@ -162,12 +176,10 @@ GrB_Info GB_cuda_builder            // build a matrix from tuples
     // build T from the (I,J,X) tuples
     //--------------------------------------------------------------------------
 
-//  printf ("calling the builder jit\n") ;
-    info = (GB_cuda_builder_jit (Thandle, ttype, vlen, vdim, is_csc, is_matrix,
+    GB_OK (GB_cuda_builder_jit (Thandle, ttype, vlen, vdim, is_csc, is_matrix,
         Key_input, I, J, X, X_iso, nvals, dup, xtype, I_is_32, J_is_32,
-        Tp_is_32, Tj_is_32, Ti_is_32, stream, gridsz)) ;
-//  printf ("builder jit info: %d\n", info) ;
-    GB_OK (info) ;
+        Tp_is_32, Tj_is_32, Ti_is_32, known_no_duplicates, known_sorted,
+        stream, gridsz)) ;
 
     //--------------------------------------------------------------------------
     // release the stream
