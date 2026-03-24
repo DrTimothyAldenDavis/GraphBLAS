@@ -106,6 +106,18 @@
 // returns the first invalid indices for the error message returned to the user
 // application; this kernel does not do that.
 
+// phase1 checks if the I,J tuples are already in order, and returns
+// (*unsorted) as the # of tuples that are out of order.  If this count is
+// zero, the sort (via CUB RadixSort) can be skipped.
+
+// phase1 counts the # of adjacent duplicate entries (as (*dupls); if tuples
+// are in order and this count is zero, then no duplicates exist in the I,J
+// tuples.
+
+// This phase is skipped if the caller passes in Key_input as the pre-loaded
+// keys.
+
+#if !GB_KEY_PRELOADED
 __global__ void GB_cuda_builder_phase1
 (
     // output
@@ -220,6 +232,7 @@ __global__ void GB_cuda_builder_phase1
         #endif
     }
 }
+#endif
 
 //------------------------------------------------------------------------------
 // GB_cuda_builder_phase3_with_dupl
@@ -235,7 +248,6 @@ __global__ void GB_cuda_builder_phase1
 // Compare with select/phase1
 
 #if !GB_KNOWN_NO_DUPLICATES
-
 __global__ void GB_cuda_builder_phase3_with_dupl
 (
     // outputs
@@ -451,7 +463,6 @@ __global__ void GB_cuda_builder_phase3_with_dupl
 // Compare with select/phase1
 
 #if GB_MTX_BUILD
-
 __global__ void GB_cuda_builder_phase3_no_dupl
 (
     // outputs
@@ -612,6 +623,7 @@ __global__ void GB_cuda_builder_phase3_no_dupl
 
 // compare with select/phase3 and select/phase6
 
+#if !GB_KNOWN_NO_DUPLICATES
 __global__ void GB_cuda_builder_phase5_with_dupl
 (
     // outputs
@@ -752,6 +764,7 @@ __global__ void GB_cuda_builder_phase5_with_dupl
         #endif
     }
 }
+#endif
 
 //------------------------------------------------------------------------------
 // GB_cuda_builder_phase5_transplant
@@ -1077,10 +1090,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // dupl:             ^     *   ^ *         *
 
     // builder/phase1 loads the (I,J) tuples into Key_in and ensures the
-    // indices are in range.
-
-    // TODO: the check for valid indices could be skipped if this method knows
-    // its I,J inputs are already valid.
+    // indices are in range.  If the input keys are preloaded in Key_input,
+    // they are assumed to be valid, and not checked.
 
     #if GB_KEY_PRELOADED
 
@@ -1162,11 +1173,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         #endif
 
     #endif
-
-    // TODO: The original (I,J) inputs are no longer needed at this point.  If
-    // (I,J) can be modified and freed on return (see the CPU GB_builder
-    // method), then they can be used as workspace or as Ti, Tx components of
-    // the output matrix.
 
     #ifdef GB_TIMING
     t1 = GB_OPENMP_GET_WTIME - t1 ;
@@ -1745,11 +1751,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     #if GB_TRANSPLANT_IS_POSSIBLE
     if (Sx_transplant)
     {
-        // transplant Sx (aliased to W_2) into T->x
-//      printf ("T->x %p\n", T->x) ;
-//      printf (">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n") ;
-//      printf (">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Sx transplant, yay!\n") ;
-//      printf (">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n") ;
+        // transplant Sx (aliased to W_2) into T->x; W_2 is not freed when done
         T->x = Sx ;
         T->x_size = W_2_size ;
         W_2 = NULL ;
@@ -1769,7 +1771,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         if (Sx_transplant)
         {
             // Sx has been transplanted into T->x
-            // printf ("calling phase5 transplant case\n") ;
             GB_cuda_builder_phase5_transplant <<<grid, block1, 0, stream>>>
                 (/* outputs: */ T,
                  /* inputs: */
@@ -1782,7 +1783,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         #endif
         {
             // copy/cast Sx into T->x
-            // printf ("calling phase5 no_dupl case\n") ;
             GB_cuda_builder_phase5_no_dupl <<<grid, block1, 0, stream>>>
                 (/* outputs: */ T,
                  /* inputs: */
@@ -1808,7 +1808,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             if (Sx_transplant)
             {
                 // Sx has been transplanted into T->x
-                // printf ("calling phase5 transplant case (B)\n") ;
                 GB_cuda_builder_phase5_transplant <<<grid, block1, 0, stream>>>
                     (/* outputs: */ T,
                      /* inputs: */
@@ -1821,7 +1820,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             #endif
             {
                 // copy/cast Sx into T->x
-                // printf ("calling phase5 no_dupl case (B)\n") ;
                 GB_cuda_builder_phase5_no_dupl <<<grid, block1, 0, stream>>>
                     (/* outputs: */ T,
                      /* inputs: */
@@ -1835,7 +1833,6 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         {
             // construct Tp, Th, Ti, and Tx, summing up duplicates
             // (at least one duplicate appears)
-            // printf ("calling phase5 with dupl case\n") ;
             GB_cuda_builder_phase5_with_dupl <<<grid, block1, 0, stream>>>
                 (/* outputs: */ T,
                  /* inputs: */  Map, ChunkSum,
