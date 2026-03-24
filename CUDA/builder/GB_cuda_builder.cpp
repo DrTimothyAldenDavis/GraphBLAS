@@ -18,20 +18,7 @@
 
 /* Alternative/additional signature:
 
-(1) pass in Key_in array, which the caller can fill in its own CUDA kernel.
-    In this case, tuples are not checked for validity.  That is the
-    responsibility of the prior CUDA kernel that created Key_in.
-
-(2) tag I,J, and/or X as temporaries that can be consumed by this method,
-    and incorporated into the output T matrix, or used in another way;
-
-(3) known_sorted: true if tuples do not need to be sorted
-
-(4) known_no_duplicates: true if no duplicates can appear
-
-(5) known_valid: if true, tuples are known to be valid
-
-(6) check if I,J,X are not accessible by the GPU; if so, do phase1
+check if I,J,X are not accessible by the GPU; if so, do phase1
     on the CPU, and copy X into another workspace for the CUB radix sort in
     phase2.  This would require OpenMP.  Alternatively, skip the CUDA kernel
     entirely.  Or, require the caller to copy I,J into Key_in on the CPU (in
@@ -41,7 +28,7 @@
 --------------------------------------------------------------------------------
 Usage in all of GraphBLAS:
 
-(1) GB_build.c, for GrB_Matrix_build etc:
+(1) GB_build.c, for GrB_Matrix_build etc: DONE
     family: I,J,X, no Key_in type, suffix: dup->name
     I,J,X are owned by the user.  Might not be accessible on the GPU.
     Must check for duplicates, need to sort.
@@ -54,21 +41,21 @@ Usage in all of GraphBLAS:
     family: A, Key_in type, suffix: A->type (or second op ->type)
     Its CUDA kernel must fill Key_in and input X from extractTuples.
     X is workspace to be freed so it can be reused by the builder
-    No duplicates, need to sort.
+    No duplicates, need to sort; transplant of Sx is possible
     Tuples are known to be valid.
 
 (4) GB_I_inverse:
     family: no A, need I, Key_in type, suffix: none
     J might be owned by the user.  Might not be accessible on the GPU.
     Its CUDA kernel must fill Key_in.  Matrix is iso.
-    No duplicates, need to sort.
+    No duplicates, need to sort; transplant of Sx is possible
     Tuples are known to be valid.
 
 (5) GB_hyper_hash_build:
     family: needs A, Key_in type, suffix: none
     Its CUDA kernel must fill Key_in and X.
     X is workspace to be freed so it can be reused by the builder
-    No duplicates, need to sort.
+    No duplicates, need to sort; transplant of Sx is possible
     Tuples are known to be valid.
 
 (6) GB_reshape:
@@ -76,10 +63,12 @@ Usage in all of GraphBLAS:
     Its CUDA kernel must fill Key_in.  Matrix can be iso or non-iso.
     might be in-place (X is consumed here) or not in-place (X is readonly)
     X is workspace to be freed so it can be reused by the builder
-    No duplicates, might need to sort if input matrix is jumbled.
+    No duplicates, might need to sort if input matrix is jumbled;
+    if so then transplant of Sx is possible.  Otherwise, 
+    GB_cuda_builder_phase5_no_dupl will copy Sx (== A->x) into T->x.
     Tuples are known to be valid.
 
-(7) GB_transpose_builder:
+(7) GB_transpose_builder: DONE
     family: needs A, Key_in type, suffix: A->type
     Its CUDA kernel must fill Key_in.  Matrix can be iso or non-iso.
     X is the input A->x and cannot be modified ... unless A is transposed
@@ -104,9 +93,11 @@ Usage in all of GraphBLAS:
 General observations:
 
     (1) if Key_in is provided, no need to check if tuples are valid
-    (2) input Key_in might be known to be sorted
+    (2) input Key_in might be known to be sorted.  If so, then
+        GB_KNOWN_SORTED is set true in the JIT kernel.
     (3) duplicates can appear in Key_in (GB_wait only); other cases have
-        no duplicates
+        no duplicates.  If duplicates cannot possibly appear then
+        GB_KNOWN_NO_DUPLICATES is set true in the JIT kernel.
 
 */
 
