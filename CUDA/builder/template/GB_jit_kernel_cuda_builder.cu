@@ -827,6 +827,8 @@ __global__ void GB_cuda_builder_phase5_transplant
             // copy the entries
             //------------------------------------------------------------------
 
+            // FIXME: break this into 2 loops?  For Ti, and (Tp,Th)
+
             // Ti [p] = Key_out [p].i ;
             GB_KEY_UNLOAD_I (Key_out, p, i1) ;
             Ti [p] = (GB_Ti_TYPE) i1 ;
@@ -941,8 +943,7 @@ __global__ void GB_cuda_builder_phase5_no_dupl
             // copy the entries
             //------------------------------------------------------------------
 
-// FIXME: break this into 2 loops?  One for the entries and 2nd for Tp, Th?
-// Or 3 loops? The loop for Ti and Tx are simple.
+            // FIXME: break this into 3 loops?  For Ti, Tx, and (Tp,Th)
 
             // Ti [p] = Key_out [p].i ;
             GB_KEY_UNLOAD_I (Key_out, p, i1) ;
