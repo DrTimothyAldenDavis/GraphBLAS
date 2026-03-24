@@ -753,6 +753,120 @@ __global__ void GB_cuda_builder_phase5_with_dupl
     }
 }
 
+//------------------------------------------------------------------------------
+// GB_cuda_builder_phase5_transplant
+//------------------------------------------------------------------------------
+
+// phase5 constructs the output matrix T (Tp, Th, Ti, and Tx) from the
+// (Key_out,Sx) tuples, where no duplicates appear.
+
+// compare with select/phase3 and select/phase6
+
+// Sx has already been transplanted into T->x
+
+#define GB_TRANSPLANT_IS_POSSIBLE (GB_BLD_SXTYPE_IS_TXTYPE && !GB_ISO_BUILD)
+
+#if GB_TRANSPLANT_IS_POSSIBLE
+__global__ void GB_cuda_builder_phase5_transplant
+(
+    // outputs
+    GrB_Matrix T,
+    // inputs, not modified:
+    #if GB_MTX_BUILD
+    Int *JDelta,            // size nvals+1, in JDelta [-1..nvals-1]
+    GB_Tp_TYPE *JDeltaSum,  // size nchunks+1
+    #endif
+    GB_key_t *Key_out,      // size nvals+1: Key_out [-1 ... nvals-1]
+    int64_t nvals,          // # of tuples in (I,J,X)
+    int64_t nchunks
+)
+{
+
+    //--------------------------------------------------------------------------
+    // get T->p, T->h, and T->i. kT is 1-based but p is 0-based
+    //--------------------------------------------------------------------------
+
+    GB_Tp_TYPE *__restrict__ Tp = (GB_Tp_TYPE *) T->p ; Tp-- ; // index with kT
+    #if GB_MTX_BUILD
+    GB_Tj_TYPE *__restrict__ Th = (GB_Tj_TYPE *) T->h ; Th-- ; // index with kT
+    #endif
+    GB_Ti_TYPE *__restrict__ Ti = (GB_Ti_TYPE *) T->i ;        // index with p
+
+    //--------------------------------------------------------------------------
+    // copy the entries from (Key_out,Sx) into Tp, Th, Ti, and Tx, no duplicates
+    //--------------------------------------------------------------------------
+
+    for (int64_t chunk = blockIdx.x ;
+                 chunk < nchunks ;
+                 chunk += gridDim.x)        // grid-stride loop
+    {
+
+        //----------------------------------------------------------------------
+        // determine the chunk
+        //----------------------------------------------------------------------
+
+        int64_t pfirst = chunk << LOG2_CHUNKSIZE ;
+        int64_t my_chunk_size ;
+        // this computation is just the 2nd #if case of select/phase3:
+        int64_t plast = pfirst + CHUNKSIZE ;
+        plast = GB_IMIN (plast, nvals) ;
+        my_chunk_size = plast - pfirst ;
+
+        //----------------------------------------------------------------------
+        // copy the entries, sum duplicates, and construct Tp and Th
+        //----------------------------------------------------------------------
+
+        for (int64_t pdelta = threadIdx.x ;
+                     pdelta < my_chunk_size ;
+                     pdelta += blockDim.x)       // block-stride loop
+        {
+
+            int64_t p = pfirst + pdelta ;
+
+            //------------------------------------------------------------------
+            // copy the entries
+            //------------------------------------------------------------------
+
+            // Ti [p] = Key_out [p].i ;
+            GB_KEY_UNLOAD_I (Key_out, p, i1) ;
+            Ti [p] = (GB_Ti_TYPE) i1 ;
+
+            //------------------------------------------------------------------
+            // construct Tp and Th, if T is a matrix (skip if T is a vector)
+            //------------------------------------------------------------------
+
+            #if GB_MTX_BUILD
+            GB_Tp_TYPE kT = JDelta [p  ] + JDeltaSum [chunk] ;
+            GB_Tp_TYPE k0 = JDelta [p-1] + JDeltaSum [chunk - (pdelta == 0)] ;
+            if (k0 < kT)
+            {
+                // The p-th entry is the leading entry of the kT-th vector of T
+                Tp [kT] = p ;       // p is already 0-based
+                // Th [kT] = Key_out [p].j ;
+                GB_KEY_UNLOAD_J (Key_out, p, j1) ;
+                Th [kT] = j1 ;
+            }
+            #endif
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // finalize the last vector of C
+    //--------------------------------------------------------------------------
+
+    if (threadIdx.x == 0 && blockIdx.x == 0)
+    {
+        // T->nvec is 0-based, so increment Tp to undo the Tp-- done above
+        Tp++ ;
+        #if GB_MTX_BUILD
+        Tp [T->nvec] = T->nvals ;
+        #else
+        Tp [0] = 0 ;
+        Tp [1] = T->nvals ;
+        #endif
+    }
+}
+#endif
 
 //------------------------------------------------------------------------------
 // GB_cuda_builder_phase5_no_dupl
@@ -762,9 +876,6 @@ __global__ void GB_cuda_builder_phase5_with_dupl
 // (Key_out,Sx) tuples, where no duplicates appear.
 
 // compare with select/phase3 and select/phase6
-
-// FIXME: transplant Sx into T->x instead, no need to copy, if GB_BLD_NOCASTING
-// is true.
 
 __global__ void GB_cuda_builder_phase5_no_dupl
 (
@@ -1085,6 +1196,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     GB_key_t *Key_out ;
     GB_Sx_TYPE *Sx ;
+    bool Sx_is_workspace = false ;  // true if Sx is allocated
 
     #if GB_KNOWN_SORTED
     {
@@ -1094,7 +1206,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         //----------------------------------------------------------------------
 
         Key_out = Key_in ;
-        Sx = X ;
+        Sx = X ;                    // Sx is X, and is not allocated
 
     }
     #else
@@ -1112,7 +1224,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             //------------------------------------------------------------------
 
             Key_out = Key_in ;
-            Sx = X ;
+            Sx = X ;                    // Sx is X, and is not allocated
 
         }
         else
@@ -1139,6 +1251,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
             // no need to shift Sx
             Sx = ((GB_Sx_TYPE *) W_2) ;
+            #if !GB_ISO_BUILD
+            Sx_is_workspace = true ;    // Sx is allocated workspace
+            #endif
 
             // determine the amount of workspace needed by CUB radix sort
             #if GB_ISO_BUILD
@@ -1576,6 +1691,29 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // Tp:           [ 0       3       6     8       11 ] of length T->nvec+1
     // Th:           [ 0       1       2     4          ] of length T->nvec
 
+    // Observation: when I,J are provided (not Key_in) then these are
+    // always user-owned arrays and cannot be modified.  So do not try to
+    // re-use them (as is done in the CPU builder).  However, if Sx was
+    // allocated above, no duplicates were found, and no typecasting is needed,
+    // then Sx can be tranplanted into T as T->x.
+
+    #if GB_KNOWN_NO_DUPLICATES
+    // the input tuples are known to have no duplicates
+    #define no_duplicates true
+    #else
+    // the input tuples have been checked and no duplicates appear
+    bool no_duplicates = (tnz == nvals) ;
+    #endif
+
+    #if GB_TRANSPLANT_IS_POSSIBLE
+    // Sx can be transplanted into T->x if it is allocated workspace (W_2)
+    // and if no duplicates exist.  However, if T is iso-valued, then Sx
+    // does not exist and is not transplanted into T->x
+    bool Sx_transplant = Sx_is_workspace && no_duplicates ;
+    #else
+    #define Sx_transplant false
+    #endif
+
     // allocate the T matrix as hypersparse, with tnz entries and tnvec vectors,
     // or as sparse if T is a typecasted GrB_Vector.
     GB_OK (GB_new_bix (&T, ttype, vlen, vdim,
@@ -1592,7 +1730,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         #endif
         /* plen: */ tnvec,
         /* nzmax: */ tnz+2,
-        /* numeric: */ true,    // FIXME: make false if nocasting and no duplic
+        /* numeric: */ !Sx_transplant, // don't allocate T->x if transplanting
         /* A_iso: */ GB_ISO_BUILD,
         /* p_is_32: */ (GB_Tp_BITS == 32),
         /* j_is_32: */ (GB_Tj_BITS == 32),
@@ -1603,6 +1741,22 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     T->nvec = tnvec ;
     T->nvec_nonempty = tnvec ;
 
+    #if GB_TRANSPLANT_IS_POSSIBLE
+    if (Sx_transplant)
+    {
+        // transplant Sx (aliased to W_2) into T->x
+//      printf ("T->x %p\n", T->x) ;
+//      printf (">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n") ;
+//      printf (">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Sx transplant, yay!\n") ;
+//      printf (">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n") ;
+        T->x = Sx ;
+        T->x_size = W_2_size ;
+        W_2 = NULL ;
+        W_2_size = 0 ;
+        Sx = NULL ;
+    }
+    #endif
+
     #if GB_KNOWN_NO_DUPLICATES
     {
 
@@ -1610,25 +1764,24 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         // construct Tp, Th, Ti, and Tx, no duplicates can appear
         //----------------------------------------------------------------------
 
-        GB_cuda_builder_phase5_no_dupl <<<grid, block1, 0, stream>>>
-            (/* outputs: */ T,
-             /* inputs: */
-                #if GB_MTX_BUILD
-                JDelta, JDeltaSum,
-                #endif
-                Key_out, Sx, nvals, nchunks) ;
-    }
-    #else
-    {
-
-        //----------------------------------------------------------------------
-        // duplicates are possible, but none might be found at run time
-        //----------------------------------------------------------------------
-
-        if (tnz == nvals)
+        #if GB_TRANSPLANT_IS_POSSIBLE
+        if (Sx_transplant)
         {
-            // construct Tp, Th, Ti, and Tx, no duplicates appear after
-            // carefully checking for any possible duplicates
+            // Sx has been transplanted into T->x
+            // printf ("calling phase5 transplant case\n") ;
+            GB_cuda_builder_phase5_transplant <<<grid, block1, 0, stream>>>
+                (/* outputs: */ T,
+                 /* inputs: */
+                    #if GB_MTX_BUILD
+                    JDelta, JDeltaSum,
+                    #endif
+                    Key_out, nvals, nchunks) ;
+        }
+        else
+        #endif
+        {
+            // copy/cast Sx into T->x
+            // printf ("calling phase5 no_dupl case\n") ;
             GB_cuda_builder_phase5_no_dupl <<<grid, block1, 0, stream>>>
                 (/* outputs: */ T,
                  /* inputs: */
@@ -1637,10 +1790,51 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
                     #endif
                     Key_out, Sx, nvals, nchunks) ;
         }
+
+    }
+    #else
+    {
+
+        //----------------------------------------------------------------------
+        // duplicates are possible, but none might be found at run time
+        //----------------------------------------------------------------------
+
+        if (no_duplicates)
+        {
+            // construct Tp, Th, Ti, and Tx, no duplicates appear after
+            // carefully checking for any possible duplicates
+            #if GB_TRANSPLANT_IS_POSSIBLE
+            if (Sx_transplant)
+            {
+                // Sx has been transplanted into T->x
+                // printf ("calling phase5 transplant case (B)\n") ;
+                GB_cuda_builder_phase5_transplant <<<grid, block1, 0, stream>>>
+                    (/* outputs: */ T,
+                     /* inputs: */
+                        #if GB_MTX_BUILD
+                        JDelta, JDeltaSum,
+                        #endif
+                        Key_out, nvals, nchunks) ;
+            }
+            else
+            #endif
+            {
+                // copy/cast Sx into T->x
+                // printf ("calling phase5 no_dupl case (B)\n") ;
+                GB_cuda_builder_phase5_no_dupl <<<grid, block1, 0, stream>>>
+                    (/* outputs: */ T,
+                     /* inputs: */
+                        #if GB_MTX_BUILD
+                        JDelta, JDeltaSum,
+                        #endif
+                        Key_out, Sx, nvals, nchunks) ;
+            }
+        }
         else
         {
             // construct Tp, Th, Ti, and Tx, summing up duplicates
             // (at least one duplicate appears)
+            // printf ("calling phase5 with dupl case\n") ;
             GB_cuda_builder_phase5_with_dupl <<<grid, block1, 0, stream>>>
                 (/* outputs: */ T,
                  /* inputs: */  Map, ChunkSum,
@@ -1659,7 +1853,10 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     t5 = GB_OPENMP_GET_WTIME - t5 ;
     printf ("builder phase 5: %g sec, tnz: %ld, duplicates: %ld\n", t5,
         tnz, nvals-tnz) ;
-    printf ("builder all:     %g sec\n", t1 + t2 + t3 + t4 + t5) ;
+    printf ("builder all:     %g sec, no_casting: %d, iso: %d, "
+        "transplant: %d\n",
+        t1 + t2 + t3 + t4 + t5, GB_BLD_SXTYPE_IS_TXTYPE, GB_ISO_BUILD,
+        Sx_transplant) ;
     #endif
 
     //--------------------------------------------------------------------------

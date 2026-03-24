@@ -53,6 +53,7 @@ Usage in all of GraphBLAS:
 (3) GB_concat_hyper:
     family: A, Key_in type, suffix: A->type (or second op ->type)
     Its CUDA kernel must fill Key_in and input X from extractTuples.
+    X is workspace to be freed so it can be reused by the builder
     No duplicates, need to sort.
     Tuples are known to be valid.
 
@@ -66,6 +67,7 @@ Usage in all of GraphBLAS:
 (5) GB_hyper_hash_build:
     family: needs A, Key_in type, suffix: none
     Its CUDA kernel must fill Key_in and X.
+    X is workspace to be freed so it can be reused by the builder
     No duplicates, need to sort.
     Tuples are known to be valid.
 
@@ -73,12 +75,18 @@ Usage in all of GraphBLAS:
     family: needs A, Key_in type, suffix: A->type
     Its CUDA kernel must fill Key_in.  Matrix can be iso or non-iso.
     might be in-place (X is consumed here) or not in-place (X is readonly)
+    X is workspace to be freed so it can be reused by the builder
     No duplicates, might need to sort if input matrix is jumbled.
     Tuples are known to be valid.
 
-(7) GB_transpose_builder: DONE except for #define's
+(7) GB_transpose_builder:
     family: needs A, Key_in type, suffix: A->type
     Its CUDA kernel must fill Key_in.  Matrix can be iso or non-iso.
+    X is the input A->x and cannot be modified ... unless A is transposed
+        in place.  However, the sort is out-of-place so re-using A->x
+        does not help.  Instead, since Sx is workspace (output from CUB
+        sort) and no duplicates appear, Sx can be transplanted as T->x if
+        no typecasting is needed
     No duplicates, need to sort.
     Tuples are known to be valid.
 
@@ -140,7 +148,7 @@ GrB_Info GB_cuda_builder            // build a matrix from tuples
 
     GrB_Info info = GrB_NO_VALUE ;
     ASSERT (Thandle != NULL) ;
-    ASSERT (I != NULL) ;
+    ASSERT (I != NULL || Key_input != NULL) ;
     ASSERT (X != NULL) ;
     ASSERT (ttype != NULL) ;
     ASSERT (xtype != NULL) ;

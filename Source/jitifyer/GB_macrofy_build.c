@@ -129,7 +129,7 @@ void GB_macrofy_build           // construct all macros for GB_build
         (ttype == xtype) && (ttype == ytype) && (ttype == ztype) ;
 
     fprintf (fp, "#define GB_BLD_SXTYPE_IS_TXTYPE %d\n", stype_is_ttype) ;
-    fprintf (fp, "#define GB_BLD_NOCASTING %d\n", nocasting) ;
+    fprintf (fp, "#define GB_BLD_NO_CASTING %d\n", nocasting) ;
 
     if (nocasting)
     { 
