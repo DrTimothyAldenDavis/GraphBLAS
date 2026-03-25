@@ -1182,6 +1182,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     double t2 = GB_OPENMP_GET_WTIME ;
     #endif
 
+    // Inputs I,J are no longer needed.
+
     //--------------------------------------------------------------------------
     // phase2: CUB radix sort of (Key_in,X) to obtain (Key_out,Sx)
     //--------------------------------------------------------------------------
@@ -1199,7 +1201,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // leading:        @         @           @   @       <--1st of vectors in C
 
     // FIXME: if X cannot be read by the GPU, then copy it from X into
-    // another workspace allocated on the GPU using OpenMP.
+    // another workspace allocated on the GPU using OpenMP, before doing
+    // phase2.
 
     GB_key_t *Key_out ;
     GB_Sx_TYPE *Sx ;
@@ -1212,7 +1215,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         // tuples are known to be sorted on input
         //----------------------------------------------------------------------
 
-        Key_out = Key_in ;
+        Key_out = Key_in ;          // either Key_input, or allocated workspace
         Sx = X ;                    // Sx is X, and is not allocated
 
     }
@@ -1230,8 +1233,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             // tuples have been checked and found to be already sorted
             //------------------------------------------------------------------
 
-            Key_out = Key_in ;
-            Sx = X ;                    // Sx is X, and is not allocated
+            Key_out = Key_in ;      // either Key_input, or allocated workspace
+            Sx = X ;                // Sx is X, and is not allocated
 
         }
         else
@@ -1328,7 +1331,11 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     }
     #endif
 
-    // sorted tuples are now in (Key_out,Sx)
+    // sorted tuples are now in (Key_out,Sx).  Inputs I,J,X and Key_input are
+    // no longer needed (unless Key_out is aliased to Key_input, and unless Sx
+    // is aliased to X).  Workspace Key_in is no longer needed (either
+    // Key_input or allocated W_2 workspace).
+
     Key_in = NULL ;
 
     //--------------------------------------------------------------------------
