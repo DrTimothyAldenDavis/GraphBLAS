@@ -1,4 +1,4 @@
-classdef GrB
+classdef GrB < handle & matlab.mixin.CustomElementSerialization
 %GrB GraphBLAS sparse matrices for Octave/MATLAB.
 %
 % GraphBLAS is a library for creating graph algorithms based on sparse
@@ -469,6 +469,23 @@ classdef GrB
 %       C = GrB.subassign (Cin, M, accum,     A,    I, J, desc)
 %       C = GrB.trans     (Cin, M, accum,     A,          desc)
 %       C = GrB.vreduce   (Cin, M, accum, op, A,          desc)
+
+% FIXME: add these methods, which work on C in place:
+%       GrB._apply     (C, M, accum, op, A,          desc)
+%       GrB._apply2    (C, M, accum, op, A, B,       desc)
+%       GrB._assign    (C, M, accum,     A,    I, J, desc)
+%       GrB._eadd      (C, M, accum, op, A, B,       desc)
+%       GrB._eunion    (C, M, accum, op, A, a, B, b, desc)
+%       GrB._emult     (C, M, accum, op, A, B,       desc)
+%       GrB._extract   (C, M, accum,     A,    I, J, desc)
+%       GrB._kronecker (C, M, accum, op, A, B,       desc)
+%       GrB._mxm       (C, M, accum, op, A, B,       desc)
+%       GrB._reduce    (C,    accum, op, A,          desc)
+%       GrB._select    (C, M, accum, op, A, b,       desc)
+%       GrB._subassign (C, M, accum,     A,    I, J, desc)
+%       GrB._trans     (C, M, accum,     A,          desc)
+%       GrB._vreduce   (C, M, accum, op, A,          desc)
+
 %
 %   The parameters divide into 4 classes: matrices, strings, cells, and a
 %   single optional struct (the descriptor).  The order of parameters
