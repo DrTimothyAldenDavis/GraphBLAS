@@ -202,6 +202,10 @@
 #define GB_cexpm1 GM_cexpm1
 #define GB_cfloorf GM_cfloorf
 #define GB_cfloor GM_cfloor
+#define GB_child_flush GM_child_flush
+#define GB_child_free GM_child_free
+#define GB_child_malloc GM_child_malloc
+#define GB_child_printf GM_child_printf
 #define GB_cisfinitef GM_cisfinitef
 #define GB_cisfinite GM_cisfinite
 #define GB_cisinff GM_cisinff
@@ -239,6 +243,8 @@
 #define GB_Context_chunk_get GM_Context_chunk_get
 #define GB_Context_chunk GM_Context_chunk
 #define GB_Context_chunk_set GM_Context_chunk_set
+#define GB_Context_disabled GM_Context_disabled
+#define GB_Context_disable GM_Context_disable
 #define GB_Context_disengage GM_Context_disengage
 #define GB_Context_engage GM_Context_engage
 #define GB_Context_gpu_ids_get GM_Context_gpu_ids_get
@@ -425,6 +431,7 @@
 #define GB_Global_lock_init GM_Global_lock_init
 #define GB_Global_lock_set GM_Global_lock_set
 #define GB_Global_lock_unset GM_Global_lock_unset
+#define GB_Global_lock_wipe GM_Global_lock_wipe
 #define GB_Global_make_persistent GM_Global_make_persistent
 #define GB_Global_malloc_debug_count_decrement GM_Global_malloc_debug_count_decrement
 #define GB_Global_malloc_debug_count_set GM_Global_malloc_debug_count_set
@@ -877,6 +884,11 @@
 #define GB_JITpackage_358 GM_JITpackage_358
 #define GB_JITpackage_359 GM_JITpackage_359
 #define GB_JITpackage_35 GM_JITpackage_35
+#define GB_JITpackage_360 GM_JITpackage_360
+#define GB_JITpackage_361 GM_JITpackage_361
+#define GB_JITpackage_362 GM_JITpackage_362
+#define GB_JITpackage_363 GM_JITpackage_363
+#define GB_JITpackage_364 GM_JITpackage_364
 #define GB_JITpackage_36 GM_JITpackage_36
 #define GB_JITpackage_37 GM_JITpackage_37
 #define GB_JITpackage_38 GM_JITpackage_38
@@ -1297,6 +1309,7 @@
 #define GB_transpose_bind1st_jit GM_transpose_bind1st_jit
 #define GB_transpose_bind2nd_jit GM_transpose_bind2nd_jit
 #define GB_transpose_bucket GM_transpose_bucket
+#define GB_transpose_builder GM_transpose_builder
 #define GB_transpose_cast GM_transpose_cast
 #define GB_transpose GM_transpose
 #define GB_transpose_in_place GM_transpose_in_place
@@ -3062,6 +3075,9 @@
 #define GxB_ATANH_FC64 GxM_ATANH_FC64
 #define GxB_ATANH_FP32 GxM_ATANH_FP32
 #define GxB_ATANH_FP64 GxM_ATANH_FP64
+#define GxB_atfork_child GxM_atfork_child
+#define GxB_atfork_parent GxM_atfork_parent
+#define GxB_atfork_prepare GxM_atfork_prepare
 #define GxB_BAND_BAND_UINT16 GxM_BAND_BAND_UINT16
 #define GxB_BAND_BAND_UINT32 GxM_BAND_BAND_UINT32
 #define GxB_BAND_BAND_UINT64 GxM_BAND_BAND_UINT64
