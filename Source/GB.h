@@ -48,7 +48,7 @@
 #include "element/GB_Element.h"
 #include "op/GB_op.h"
 #include "hyper/GB_hyper.h"
-#include "werk/GB_where.h"
+#include "werk/GB_werk_init.h"
 #include "cast/GB_cast.h"
 #include "wait/GB_wait.h"
 #include "convert/GB_convert.h"

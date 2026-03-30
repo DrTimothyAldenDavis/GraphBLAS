@@ -16,7 +16,7 @@ GrB_Info GB_init            // start up GraphBLAS
 
     // pointers to memory management functions.
     void * (* malloc_function  ) (size_t),          // required
-    void * (* calloc_function  ) (size_t, size_t),  // optional, can be NULL
+    void * (* calloc_function  ) (size_t, size_t),  // not used
     void * (* realloc_function ) (void *, size_t),  // optional, can be NULL
     void   (* free_function    ) (void *),          // required
 

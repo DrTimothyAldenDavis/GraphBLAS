@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_where.h: definitions for Werk space and error logging
+// GB_werk_init.h: definitions for Werk space and error logging
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

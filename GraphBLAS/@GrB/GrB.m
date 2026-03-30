@@ -1,4 +1,4 @@
-classdef GrB < handle & matlab.mixin.CustomElementSerialization
+classdef GrB < handle
 %GrB GraphBLAS sparse matrices for Octave/MATLAB.
 %
 % GraphBLAS is a library for creating graph algorithms based on sparse
@@ -659,6 +659,20 @@ methods
     end
 
     %---------------------------------------------------------------------
+    % GrB: GraphBLAS matrix destructor
+    %---------------------------------------------------------------------
+
+    function delete(C)
+    end
+
+    %---------------------------------------------------------------------
+    % saveobj: save a GraphBLAS matrix to a file
+    %---------------------------------------------------------------------
+
+    function G = saveobj (G)
+    end
+
+    %---------------------------------------------------------------------
     % implicitly-defined methods
     %---------------------------------------------------------------------
 
@@ -980,6 +994,13 @@ methods
 end
 
 methods (Static)
+
+    %---------------------------------------------------------------------
+    % loadobj: load a GraphBLAS matrix from a file
+    %---------------------------------------------------------------------
+
+    function G = loadobj (G)
+    end
 
     %---------------------------------------------------------------------
     % Static Methods:

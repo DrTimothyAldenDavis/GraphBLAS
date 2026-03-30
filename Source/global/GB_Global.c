@@ -215,6 +215,7 @@ static GB_Global_struct GB_Global =
 
     // malloc/realloc/free functions: default to C11 functions
     .malloc_function  = malloc,
+    .calloc_function  = NULL,       // using malloc_function instead
     .realloc_function = realloc,
     .free_function    = free,
     .malloc_is_thread_safe = true,

@@ -78,8 +78,8 @@ void  rmm_wrap_deallocate (void *p, size_t size) ;
 
 // The four malloc/calloc/realloc/free signatures (based on current device_id):
 void *rmm_wrap_malloc (size_t size) ;
-void *rmm_wrap_calloc (size_t n, size_t size) ;
-void *rmm_wrap_realloc (void *p, size_t newsize) ;
+// void *rmm_wrap_calloc (size_t n, size_t size) ;      // not used
+// void *rmm_wrap_realloc (void *p, size_t newsize) ;   // not used
 void  rmm_wrap_free (void *p) ;
 
 // Get streams from context (based on current device_id):

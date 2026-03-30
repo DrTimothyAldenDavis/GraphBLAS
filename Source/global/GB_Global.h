@@ -36,8 +36,7 @@ int64_t  GB_Global_hyper_hash_get (void) ;
 
 void     GB_Global_bitmap_switch_set (int k, float b) ;
 float    GB_Global_bitmap_switch_get (int k) ;
-float    GB_Global_bitmap_switch_matrix_get
-                        (int64_t vlen, int64_t vdim) ;
+float    GB_Global_bitmap_switch_matrix_get (int64_t vlen, int64_t vdim) ;
 void     GB_Global_bitmap_switch_default (void) ;
 
 void     GB_Global_is_csc_set (bool is_csc) ;
@@ -49,13 +48,11 @@ void     GB_Global_abort (void) ;
 void     GB_Global_malloc_function_set (void * (* malloc_function) (size_t)) ;
 void  *  GB_Global_malloc_function (size_t size) ;
 
-void     GB_Global_realloc_function_set
-            (void * (* realloc_function) (void *, size_t)) ;
+void     GB_Global_realloc_function_set (void * (* realloc_function) (void *, size_t)) ;
 void  *  GB_Global_realloc_function (void *p, size_t size) ;
 bool     GB_Global_have_realloc_function (void) ;
 
-void     GB_Global_calloc_function_set
-            (void * (* calloc_function) (size_t, size_t)) ;
+void     GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t)) ;
 
 void     GB_Global_free_function_set (void (* free_function) (void *)) ;
 void     GB_Global_free_function (void *p) ;

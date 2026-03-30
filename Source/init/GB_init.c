@@ -98,8 +98,8 @@ GrB_Info GB_init            // start up GraphBLAS
         {
             // ignore the memory management function pointers and use rmm_wrap_*
             malloc_function  = rmm_wrap_malloc ;
-            calloc_function  = rmm_wrap_calloc ;
-            realloc_function = rmm_wrap_realloc ;
+            calloc_function  = NULL ;           // using malloc_function
+            realloc_function = NULL ;           // using malloc/free instead
             free_function    = rmm_wrap_free ;
             // the rmm_wrap methods are not thread-safe
             malloc_is_thread_safe = false ;
@@ -120,7 +120,7 @@ GrB_Info GB_init            // start up GraphBLAS
     // GrB_init passes in the C11 malloc/calloc/realloc/free.
 
     GB_Global_malloc_function_set  (malloc_function ) ; // cannot be NULL
-    GB_Global_calloc_function_set  (calloc_function ) ; // ok if NULL
+    GB_Global_calloc_function_set  (calloc_function ) ; // not used
     GB_Global_realloc_function_set (realloc_function) ; // ok if NULL
     GB_Global_free_function_set    (free_function   ) ; // cannot be NULL
 
