@@ -61,6 +61,7 @@ GrB_Info GxB_Vector_load
         return (GrB_INVALID_VALUE) ;
     }
     ASSERT_VECTOR_OK (V, "V to load (contents mostly ignored)", GB0) ;
+    int memlane = 0 ;       // this method assumes X is in memlane 0
 
     //--------------------------------------------------------------------------
     // clear prior content of V and load X, making V a dense GrB_Vector
@@ -75,7 +76,7 @@ GrB_Info GxB_Vector_load
     { 
         // *X is given to GraphBLAS to be owned by the vector V, so add it to
         // the global debug memtable.
-        GB_Global_memtable_add (*X, X_size) ;
+        GB_Global_memtable_add (*X, X_size, memlane) ;
     }
 
     GB_vector_load (V, X, type, n, X_size, readonly) ;

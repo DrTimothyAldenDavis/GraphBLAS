@@ -47,19 +47,11 @@ GrB_Info GB_init            // start up GraphBLAS
 (
     int mode,               // blocking or non-blocking mode
 
-#if 1
-    // pointers to memory management functions.
+    // pointers to memory management functions:
     GB_malloc_function_t malloc_function,           // required
     GB_calloc_function_t calloc_function,           // unused, can be NULL
     GB_realloc_function_t realloc_function,         // optional, can be NULL
     GB_free_function_t free_function,               // required
-#else
-    // pointers to memory management functions.
-    void * (* malloc_function  ) (size_t),          // required
-    void * (* calloc_function  ) (size_t, size_t),  // optional, can be NULL
-    void * (* realloc_function ) (void *, size_t),  // optional, can be NULL
-    void   (* free_function    ) (void *),          // required
-#endif
 
     GB_Werk Werk      // from GrB_init or GxB_init
 )
@@ -96,6 +88,7 @@ GrB_Info GB_init            // start up GraphBLAS
     bool malloc_is_thread_safe = true ;
 
     #if defined ( GRAPHBLAS_HAS_CUDA )
+    // FIXME: use rmm_wrap_malloc etc for memlane 1
     GB_Global_gpu_count_set (true) ;
     int gpu_count = GB_Global_gpu_count_get ( ) ;
     printf ("GB_init: gpu_count: %d\n", gpu_count) ;
@@ -125,14 +118,14 @@ GrB_Info GB_init            // start up GraphBLAS
 
     GB_Global_GrB_init_called_set (true) ;
 
-    // GrB_init passes in the C11 malloc/calloc/realloc/free.
+    // GrB_init passes in the C11 malloc/calloc/realloc/free; these methods
+    // are used for memlane 0
+    GB_Global_malloc_function_set  (malloc_function , 0) ; // cannot be NULL
+    GB_Global_calloc_function_set  (calloc_function , 0) ; // not used
+    GB_Global_realloc_function_set (realloc_function, 0) ; // ok if NULL
+    GB_Global_free_function_set    (free_function   , 0) ; // cannot be NULL
 
-    GB_Global_malloc_function_set  (malloc_function ) ; // cannot be NULL
-    GB_Global_calloc_function_set  (calloc_function ) ; // not used
-    GB_Global_realloc_function_set (realloc_function) ; // ok if NULL
-    GB_Global_free_function_set    (free_function   ) ; // cannot be NULL
-
-    GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe) ;
+    GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe, 0) ;
     GB_Global_memtable_clear ( ) ;
 
     GB_Global_malloc_tracking_set (false) ;

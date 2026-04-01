@@ -578,32 +578,36 @@ GrB_Info GrB_Global_get_VOID
 
             case GxB_MALLOC_FUNCTION : 
                 {
+                    int memlane = 0 ; // FIXME 
                     void **func = (void **) value ;
-                    (*func) = GB_Global_malloc_function_get ( ) ;
+                    (*func) = GB_Global_malloc_function_get (memlane) ;
                 }
                 info = GrB_SUCCESS ;
                 break ;
 
             case GxB_CALLOC_FUNCTION : 
                 {
+                    int memlane = 0 ; // FIXME 
                     void **func = (void **) value ;
-                    (*func) = GB_Global_calloc_function_get ( ) ;
+                    (*func) = GB_Global_calloc_function_get (memlane) ;
                 }
                 info = GrB_SUCCESS ;
                 break ;
 
             case GxB_REALLOC_FUNCTION : 
                 {
+                    int memlane = 0 ; // FIXME 
                     void **func = (void **) value ;
-                    (*func) = GB_Global_realloc_function_get ( ) ;
+                    (*func) = GB_Global_realloc_function_get (memlane) ;
                 }
                 info = GrB_SUCCESS ;
                 break ;
 
             case GxB_FREE_FUNCTION : 
                 {
+                    int memlane = 0 ; // FIXME 
                     void **func = (void **) value ;
-                    (*func) = GB_Global_free_function_get ( ) ;
+                    (*func) = GB_Global_free_function_get (memlane) ;
                 }
                 info = GrB_SUCCESS ;
                 break ;

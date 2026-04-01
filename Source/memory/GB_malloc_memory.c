@@ -27,7 +27,8 @@ static inline void *GB_malloc_helper
     // make sure the block is at least 8 bytes in size
     (*size) = GB_IMAX (*size, 8) ;
 
-    p = GB_Global_malloc_function (*size) ;
+    int memlane = 0 ;   // FIXME
+    p = GB_Global_malloc_function (*size, memlane) ;
 
     #ifdef GB_MEMDUMP
     GBMDUMP ("malloc  %p %8ld: ", p, *size) ;

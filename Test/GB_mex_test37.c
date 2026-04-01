@@ -148,7 +148,8 @@ GrB_Info ewise
     // get the current free function
     //--------------------------------------------------------------------------
 
-    free_function = GB_Global_free_function_get ( ) ;
+    int memlane = 0 ;
+    free_function = GB_Global_free_function_get (memlane) ;
 
     //--------------------------------------------------------------------------
     // create bitmap format of A, A', and T

@@ -50,26 +50,24 @@ bool     GB_Global_is_csc_get (void) ;
 void     GB_Global_abort_set (void (* abort_function) (void)) ;
 void     GB_Global_abort (void) ;
 
-// TODO: add memlane to these methods: [
-void     GB_Global_malloc_function_set (GB_malloc_function_t malloc_function) ;
-void  *  GB_Global_malloc_function_get (void) ;
-void  *  GB_Global_malloc_function (size_t size) ;
+void     GB_Global_malloc_function_set (GB_malloc_function_t malloc_function, int memlane) ;
+void  *  GB_Global_malloc_function_get (int memlane) ;
+void  *  GB_Global_malloc_function (size_t size, int memlane) ;
 
-void     GB_Global_calloc_function_set (GB_calloc_function_t calloc_function) ;
-void  *  GB_Global_calloc_function_get (void) ;
+void     GB_Global_calloc_function_set (GB_calloc_function_t calloc_function, int memlane) ;
+void  *  GB_Global_calloc_function_get (int memlane) ;
 
-void     GB_Global_realloc_function_set (GB_realloc_function_t realloc_function) ;
-void  *  GB_Global_realloc_function_get (void) ;
-void  *  GB_Global_realloc_function (void *p, size_t size) ;
-bool     GB_Global_realloc_function_have (void) ;
+void     GB_Global_realloc_function_set (GB_realloc_function_t realloc_function, int memlane) ;
+void  *  GB_Global_realloc_function_get (int memlane) ;
+void  *  GB_Global_realloc_function (void *p, size_t size, int memlane) ;
+bool     GB_Global_realloc_function_have (int memlane) ;
 
-void     GB_Global_free_function_set (GB_free_function_t free_function) ;
-void  *  GB_Global_free_function_get (void) ;
-void     GB_Global_free_function (void *p) ;
+void     GB_Global_free_function_set (GB_free_function_t free_function, int memlane) ;
+void  *  GB_Global_free_function_get (int memlane) ;
+void     GB_Global_free_function (void *p, int memlane) ;
 
-void     GB_Global_malloc_is_thread_safe_set (bool malloc_is_thread_safe) ;
-bool     GB_Global_malloc_is_thread_safe_get (void) ;
-// TODO end ]
+void     GB_Global_malloc_is_thread_safe_set (bool malloc_is_thread_safe, int memlane) ;
+bool     GB_Global_malloc_is_thread_safe_get (int memlane) ;
 
 void     GB_Global_malloc_tracking_set (bool malloc_tracking) ;
 bool     GB_Global_malloc_tracking_get (void) ;
@@ -83,7 +81,6 @@ bool     GB_Global_malloc_debug_get (void) ;
 void     GB_Global_malloc_debug_count_set (int64_t malloc_debug_count) ;
 bool     GB_Global_malloc_debug_count_decrement (void) ;
 
-// TODO: always memlane = 0 in these methods:
 void *   GB_Global_persistent_malloc (size_t size) ;
 void     GB_Global_persistent_make (void *p) ;
 void     GB_Global_persistent_set (void (* persistent_function) (void *)) ;
@@ -119,11 +116,10 @@ void     GB_Global_timing_set (int k, double t) ;
 void     GB_Global_timing_add (int k, double t) ;
 double   GB_Global_timing_get (int k) ;
 
-// TODO: add memlane to add (input) and find (output)
 int      GB_Global_memtable_n (void) ;
 void     GB_Global_memtable_dump (void) ;
 void     GB_Global_memtable_clear (void) ;
-void     GB_Global_memtable_add (void *p, size_t size) ;
+void     GB_Global_memtable_add (void *p, size_t size, int memlane) ;
 size_t   GB_Global_memtable_size (void *p) ;
 void     GB_Global_memtable_remove (void *p) ;
 bool     GB_Global_memtable_find (void *p) ;

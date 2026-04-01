@@ -65,7 +65,8 @@ bool GB_mx_get_global       // true if doing malloc_debug
         GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree) ;
     }
     // mxMalloc, mxCalloc, mxRealloc, and mxFree are not thread safe
-    GB_Global_malloc_is_thread_safe_set (false) ;
+    GB_Global_malloc_is_thread_safe_set (false, 0) ;
+    GB_Global_malloc_is_thread_safe_set (false, 1) ;
     ASSERT (GB_Global_nmalloc_get ( ) == 0) ;
     GB_Global_abort_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;

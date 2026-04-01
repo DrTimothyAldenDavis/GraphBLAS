@@ -60,6 +60,7 @@ void mexFunction
     GrB_Type myint = NULL, My4x64 = NULL ;
     GB_void *Null = NULL ;
     char *err ;
+    printf ("\nGB_mex_test3: starting...\n\n") ;
 
     //--------------------------------------------------------------------------
     // startup GraphBLAS

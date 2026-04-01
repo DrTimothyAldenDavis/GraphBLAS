@@ -57,6 +57,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     // malloc a new block if p is NULL on input
     //--------------------------------------------------------------------------
 
+    int memlane = 0 ;   // FIXME
     if (p == NULL)
     { 
         p = GB_MALLOC_MEMORY (nitems_new, size_of_item, size_allocated) ;
@@ -111,7 +112,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
 
     void *pnew = NULL ;
     size_t newsize_allocated = GB_IMAX (newsize, 8) ;
-    if (!GB_Global_realloc_function_have ( ))
+    if (!GB_Global_realloc_function_have (memlane))
     {
 
         //----------------------------------------------------------------------
@@ -146,7 +147,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         { 
             GBMDUMP ("realloc %p oldsize %8ld newsize %8ld: ",
                 p, oldsize_allocated, newsize_allocated) ;
-            pnew = GB_Global_realloc_function (p, newsize_allocated) ;
+            pnew = GB_Global_realloc_function (p, newsize_allocated, memlane) ;
             #ifdef GB_MEMDUMP
             GB_Global_memtable_dump ( ) ;
             #endif

@@ -250,6 +250,9 @@
 #define GB_Context_gpu_ids_get GM_Context_gpu_ids_get
 #define GB_Context_gpu_ids GM_Context_gpu_ids
 #define GB_Context_gpu_ids_set GM_Context_gpu_ids_set
+#define GB_Context_memlane_get GM_Context_memlane_get
+#define GB_Context_memlane GM_Context_memlane
+#define GB_Context_memlane_set GM_Context_memlane_set
 #define GB_Context_nthreads_max_get GM_Context_nthreads_max_get
 #define GB_Context_nthreads_max GM_Context_nthreads_max
 #define GB_Context_nthreads_max_set GM_Context_nthreads_max_set

@@ -64,6 +64,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL (A) ;
+    int memlane = 0 ;       // this method assumes memlane 0
 
     if (!packing)
     { 
@@ -241,7 +242,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
             { 
                 // for debugging only
                 GBMDUMP ("import A->h to memtable: %p\n", (*A)->h) ;
-                GB_Global_memtable_add ((*A)->h, (*A)->h_size) ;
+                GB_Global_memtable_add ((*A)->h, (*A)->h_size, memlane) ;
             }
             // fall through to the sparse case
 
@@ -267,7 +268,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
                 { 
                     // for debugging only
                     GBMDUMP ("import A->p to memtable: %p\n", (*A)->p) ;
-                    GB_Global_memtable_add ((*A)->p, (*A)->p_size) ;
+                    GB_Global_memtable_add ((*A)->p, (*A)->p_size, memlane) ;
                 }
             }
 
@@ -278,7 +279,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
             { 
                 // for debugging only
                 GBMDUMP ("import A->i to memtable: %p\n", (*A)->i) ;
-                GB_Global_memtable_add ((*A)->i, (*A)->i_size) ;
+                GB_Global_memtable_add ((*A)->i, (*A)->i_size, memlane) ;
             }
             break ;
 
@@ -292,7 +293,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
             { 
                 // for debugging only
                 GBMDUMP ("import A->b to memtable: %p\n", (*A)->b) ;
-                GB_Global_memtable_add ((*A)->b, (*A)->b_size) ;
+                GB_Global_memtable_add ((*A)->b, (*A)->b_size, memlane) ;
             }
             break ;
 
@@ -311,7 +312,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
         { 
             // for debugging only
             GBMDUMP ("import A->x to memtable: %p\n", (*A)->x) ;
-            GB_Global_memtable_add ((*A)->x, (*A)->x_size) ;
+            GB_Global_memtable_add ((*A)->x, (*A)->x_size, memlane) ;
         }
     }
 

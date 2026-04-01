@@ -202,7 +202,8 @@ void mexFunction
     K->type = GrB_UINT64 ;
     K->x_size = Kx_size ;
     GBMDUMP ("add K->x to memtable: %p\n", K->x) ;
-    GB_Global_memtable_add (K->x, K->x_size) ;
+    int memlane = 0 ;
+    GB_Global_memtable_add (K->x, K->x_size, memlane) ;
     K->iso = false  ;            	
 
     //--------------------------------------------------------------------------
@@ -254,7 +255,7 @@ void mexFunction
     V->i_shallow = false ;
     V->i_is_32 = false ;
     GBMDUMP ("add V->i to memtable: %p\n", V->i) ;
-    GB_Global_memtable_add (V->i, V->i_size) ;  // this was the old T->x
+    GB_Global_memtable_add (V->i, V->i_size, memlane) ;
 
     // transplant the values of G as the values of V
     V->x = Gx ;
@@ -262,7 +263,7 @@ void mexFunction
     V->x_shallow = false ;
     V->iso = G_iso  ;            	
     GBMDUMP ("add V->x to memtable: %p\n", V->x) ;
-    GB_Global_memtable_add (V->x, V->x_size) ;  // this was the old G->x
+    GB_Global_memtable_add (V->x, V->x_size, memlane) ;
 
     GB_Ap_DECLARE (Vp, ) ; GB_Ap_PTR (Vp, V) ;
     GB_ISET (Vp, 0, 0) ;        // Vp [0] = 0 ;

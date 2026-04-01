@@ -1476,6 +1476,17 @@ GB_GLOBAL GrB_IndexUnaryOp
 // for floating-point types). They only affect the time and memory usage of the
 // computations.
 
+/* FIXME: add GrB get/set to move a matrix between memlanes:
+
+    GrB_Matrix_set_INT32 (A, memlane, GxB_MEMLANE) ;
+    GrB_Vector_set_INT32 (V, memlane, GxB_MEMLANE) ;
+    GrB_Scalar_set_INT32 (S, memlane, GxB_MEMLANE) ;
+
+    GrB_Matrix_get_INT32 (A, &memlane, GxB_MEMLANE) ;
+    GrB_Vector_get_INT32 (V, &memlane, GxB_MEMLANE) ;
+    GrB_Scalar_get_INT32 (S, &memlane, GxB_MEMLANE) ;
+*/
+
 typedef enum    // GxB_Option_Field ;
 {
 
@@ -2815,6 +2826,8 @@ GrB_Info GrB_init           // start up GraphBLAS
 ) ;
 
 #ifndef GRAPHBLAS_VANILLA
+// FIXME: GxB_init sets malloc/calloc/realloc/free for memlane 0;
+// CUDA always uses RMM for lane 1.
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 (
     int mode,               // blocking or non-blocking mode (GrB_Mode)
@@ -6548,6 +6561,7 @@ GrB_Info GxB_unload_Vector_into_Container   // GrB_Vector -> GxB_Container
     const GrB_Descriptor desc   // currently unused
 ) ;
 
+// FIXME: add memlane parameter to GxB_Vector_load ; call it GxB_load
 GrB_Info GxB_Vector_load
 (
     // input/output:
@@ -6563,6 +6577,7 @@ GrB_Info GxB_Vector_load
     const GrB_Descriptor desc   // currently unused; for future expansion
 ) ;
 
+// FIXME: add *memlane parameter to GxB_Vector_unload ; call it GxB_unload
 GrB_Info GxB_Vector_unload
 (
     // input/output:
@@ -6788,11 +6803,12 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 // level 1).
 
 #ifndef GRAPHBLAS_VANILLA
+// FIXME: GxB_Matrix_serialize: **blob_handle: assume memlane 0
 GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 (
     // output:
     void **blob_handle,             // the blob, allocated on output
-    GrB_Index *blob_size_handle,    // size of the blob on output
+    GrB_Index *blob_size,           // size of the blob on output
     // input:
     GrB_Matrix A,                   // matrix to serialize
     const GrB_Descriptor desc       // descriptor to select compression method
@@ -6805,18 +6821,19 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     // output:
     void *blob,                     // the blob, already allocated in input
     // input/output:
-    GrB_Index *blob_size_handle,    // size of the blob on input.  On output,
+    GrB_Index *blob_size,           // size of the blob on input.  On output,
                                     // the # of bytes used in the blob.
     // input:
     GrB_Matrix A                    // matrix to serialize
 ) ;
 
 #ifndef GRAPHBLAS_VANILLA
+// FIXME: GxB_Vector_serialize: **blob_handle: assume memlane 0
 GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
 (
     // output:
     void **blob_handle,             // the blob, allocated on output
-    GrB_Index *blob_size_handle,    // size of the blob on output
+    GrB_Index *blob_size,           // size of the blob on output
     // input:
     GrB_Vector u,                   // vector to serialize
     const GrB_Descriptor desc       // descriptor to select compression method
@@ -6827,7 +6844,7 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
 GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
 (
     // output:
-    GrB_Index *blob_size_handle,    // upper bound on the required size of the
+    GrB_Index *blob_size,           // upper bound on the required size of the
                                     // blob on output.
     // input:
     GrB_Matrix A                    // matrix to serialize
@@ -6836,6 +6853,8 @@ GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
 // The GrB* and GxB* deserialize methods are nearly identical.  The GxB*
 // deserialize methods simply add the descriptor, which allows for optional
 // control of the # of threads used to deserialize the blob.
+
+// FIXME: what memlane to deserialize to?
 
 #ifndef GRAPHBLAS_VANILLA
 GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
@@ -8047,8 +8066,8 @@ void GxB_atfork_child (void) ;      // the child must call this after fork()
 
 #ifndef NHISTORICAL
 
-typedef int GrB_Field ; // STRONGLY DEPRECATED: will be removed in v11.0.0,
-    // to allow the creation of a GraphBLAS object that represents a
+typedef int GrB_Field ; // STRONGLY DEPRECATED: will be removed in a future
+    // version to allow the creation of a GraphBLAS object that represents a
     // mathematical field: https://en.wikipedia.org/wiki/Field_(mathematics)
 
 // GrB_getVersion: use GrB_get instead

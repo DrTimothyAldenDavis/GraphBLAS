@@ -117,13 +117,16 @@ void mexFunction
     GB_mx_at_exit ( ) ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
 
+    int memlane = 0 ;   // FIXME
+
     // finalize, but tell GraphBLAS that GrB_init can be called again:
     GB_mx_at_exit ( ) ;
 
     OK (GxB_init (GrB_NONBLOCKING, mxMalloc, NULL, NULL, mxFree)) ;
 
     // mxMalloc, mxCalloc, mxRealloc, and mxFree are not thread safe
-    GB_Global_malloc_is_thread_safe_set (false) ;
+    GB_Global_malloc_is_thread_safe_set (false, 0) ;
+    GB_Global_malloc_is_thread_safe_set (false, 1) ;
 
     GB_Global_abort_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;
@@ -4041,7 +4044,7 @@ void mexFunction
     v->p = mxMalloc (v->p_size) ;
     memset (v->p, 0, v->p_size) ;
     printf ("test0, add v->p to memtable %d\n", v->p) ;
-    GB_Global_memtable_add (v->p, v->p_size) ;
+    GB_Global_memtable_add (v->p, v->p_size, memlane) ;
     ERR (GB_Vector_check (v, "v invalid", G1, ff)) ;
     v->vdim = 1 ;
 
@@ -4058,7 +4061,7 @@ void mexFunction
     v->p = psave ;
     v->p_size = p_size_save ;
     printf ("test0, add v->p to memtable %d\n", v->p) ;
-    GB_Global_memtable_add (v->p, v->p_size) ;
+    GB_Global_memtable_add (v->p, v->p_size, memlane) ;
     psave = NULL ;
     OK (GB_Vector_check (v, "v OK now", G1, ff)) ;
 
@@ -4708,7 +4711,7 @@ void mexFunction
     Eleven->h = &nothing ;
     Eleven->h_size = sizeof (int64_t) ;
     printf ("test0, add Eleven->h to memtable %d\n", Eleven->h) ;
-    GB_Global_memtable_add (Eleven->h, 1 * sizeof (int64_t)) ;
+    GB_Global_memtable_add (Eleven->h, 1 * sizeof (int64_t), memlane) ;
     ERR (GB_Matrix_check (Eleven, "Eleven invalid", G2, NULL)) ;
     ERR (GxB_Matrix_fprint (Eleven, "Eleven", G2, NULL)) ;
     ERR (GxB_Matrix_fprint (Eleven, "Eleven invalid", G2, ff)) ;

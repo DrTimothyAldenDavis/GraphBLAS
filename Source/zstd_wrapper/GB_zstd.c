@@ -18,7 +18,8 @@
 
 void *ZSTD_malloc (size_t s)
 {
-    return (GB_Global_malloc_function (s)) ;
+    int memlane = 0 ;   // FIXME
+    return (GB_Global_malloc_function (s, memlane)) ;
 }
 
 void *ZSTD_calloc (size_t n, size_t s)
@@ -28,14 +29,16 @@ void *ZSTD_calloc (size_t n, size_t s)
     bool ok = GB_size_t_multiply (&ns, n, s) ;
     if (!ok) return (NULL) ;
     // malloc the space and then use memset to clear it
-    void *p = GB_Global_malloc_function (ns) ;
+    int memlane = 0 ;   // FIXME
+    void *p = GB_Global_malloc_function (ns, memlane) ;
     if (p != NULL) memset (p, 0, ns) ;
     return (p) ;
 }
 
 void ZSTD_free (void *p)
 {
-    GB_Global_free_function (p) ;
+    int memlane = 0 ;   // FIXME
+    GB_Global_free_function (p, memlane) ;
 }
 
 // ZSTD uses switch statements with no default case.
