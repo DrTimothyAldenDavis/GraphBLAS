@@ -346,9 +346,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     //--------------------------------------------------------------------------
 
     int64_t nallocs ;
-    size_t mem_deep, mem_shallow, memsize ;
+    size_t mem_deep, mem_shallow, mem_size ;
     GB_memoryUsage (&nallocs, &mem_deep, &mem_shallow, A, true) ;
-    memsize = mem_deep + (pr_mem_shallow ? mem_shallow : 0) ;
+    mem_size = mem_deep + (pr_mem_shallow ? mem_shallow : 0) ;
 
     #if GB_DEVELOPER
     if (pr_short || pr_complete)
@@ -506,23 +506,23 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     //--------------------------------------------------------------------------
 
     #define K (1024L)
-    if (memsize < K)
+    if (mem_size < K)
     { 
-        GBPR0 (", memory: " GBd " bytes\n", (int64_t) memsize) ;
+        GBPR0 (", memory: " GBd " bytes\n", (int64_t) mem_size) ;
     }
-    else if (memsize < K*K)
+    else if (mem_size < K*K)
     { 
-        double s = ((double) memsize) / ((double) K) ;
+        double s = ((double) mem_size) / ((double) K) ;
         GBPR0 (", memory: %.1f KB\n", s) ;
     }
-    else if (memsize < K*K*K)
+    else if (mem_size < K*K*K)
     { 
-        double s = ((double) memsize) / ((double) K*K) ;
+        double s = ((double) mem_size) / ((double) K*K) ;
         GBPR0 (", memory: %.1f MB\n", s) ;
     }
     else
     {
-        double s = ((double) memsize) / ((double) K*K*K) ;
+        double s = ((double) mem_size) / ((double) K*K*K) ;
         GBPR0 (", memory: %.1f GB\n", s) ;
     }
 

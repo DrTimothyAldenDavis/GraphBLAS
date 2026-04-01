@@ -111,7 +111,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
 
     void *pnew = NULL ;
     size_t newsize_allocated = GB_IMAX (newsize, 8) ;
-    if (!GB_Global_have_realloc_function ( ))
+    if (!GB_Global_realloc_function_have ( ))
     {
 
         //----------------------------------------------------------------------

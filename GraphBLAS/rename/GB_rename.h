@@ -416,7 +416,6 @@
 #define GB_Global_GrB_init_called_set GM_Global_GrM_init_called_set
 #define GB_Global_hack_get GM_Global_hack_get
 #define GB_Global_hack_set GM_Global_hack_set
-#define GB_Global_have_realloc_function GM_Global_have_realloc_function
 #define GB_Global_hyper_hash_get GM_Global_hyper_hash_get
 #define GB_Global_hyper_hash_set GM_Global_hyper_hash_set
 #define GB_Global_hyper_switch_get GM_Global_hyper_switch_get
@@ -432,7 +431,6 @@
 #define GB_Global_lock_set GM_Global_lock_set
 #define GB_Global_lock_unset GM_Global_lock_unset
 #define GB_Global_lock_wipe GM_Global_lock_wipe
-#define GB_Global_make_persistent GM_Global_make_persistent
 #define GB_Global_malloc_debug_count_decrement GM_Global_malloc_debug_count_decrement
 #define GB_Global_malloc_debug_count_set GM_Global_malloc_debug_count_set
 #define GB_Global_malloc_debug_get GM_Global_malloc_debug_get
@@ -458,6 +456,7 @@
 #define GB_Global_p_control_get GM_Global_p_control_get
 #define GB_Global_p_control_set GM_Global_p_control_set
 #define GB_Global_persistent_free GM_Global_persistent_free
+#define GB_Global_persistent_make GM_Global_persistent_make
 #define GB_Global_persistent_malloc GM_Global_persistent_malloc
 #define GB_Global_persistent_set GM_Global_persistent_set
 #define GB_Global_printf_get GM_Global_printf_get
@@ -466,6 +465,7 @@
 #define GB_Global_print_one_based_set GM_Global_print_one_based_set
 #define GB_Global_realloc_function_get GM_Global_realloc_function_get
 #define GB_Global_realloc_function GM_Global_realloc_function
+#define GB_Global_realloc_function_have GM_Global_realloc_function_have
 #define GB_Global_realloc_function_set GM_Global_realloc_function_set
 #define GB_Global_stats_mem_shallow_get GM_Global_stats_mem_shallow_get
 #define GB_Global_stats_mem_shallow_set GM_Global_stats_mem_shallow_set

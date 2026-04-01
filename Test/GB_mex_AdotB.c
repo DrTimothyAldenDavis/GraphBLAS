@@ -215,8 +215,9 @@ void mexFunction
     // get flipxy
     GET_SCALAR (3, bool, flipxy, false) ;
 
-    struct GB_Matrix_opaque C_header ;
-    C = GB_clear_matrix_header (&C_header) ;
+//  struct GB_Matrix_opaque C_header ;
+//  C = GB_clear_matrix_header (&C_header) ;
+    GB_CLEAR_MATRIX_HEADER (C, NULL) ;
 
     if (A->type == Complex)
     {

@@ -36,10 +36,10 @@ __inline__ __device__ uint64_t GB_cuda_threadblock_sum_uint64
         tiled_partition<GB_CUDA_TILE_SIZE> (g) ;
     // here, tile.sync() is implicit (see comments above)
 
-    // lane: a local thread id, for all threads in a single tile, ranging from
-    // 0 to the size of the tile minus one.  Normally the tile has size 32, but
-    // it could be a power of 2 less than or equal to 32.
-    int lane = threadIdx.x & (GB_CUDA_TILE_SIZE-1) ;
+    // threadId_in_tile: a local thread id, for all threads in a single tile,
+    // ranging from 0 to the size of the tile minus one.  Normally the tile has
+    // size 32, but it could be a power of 2 less than or equal to 32.
+    int threadId_in_tile = threadIdx.x & (GB_CUDA_TILE_SIZE-1) ;
     // tile_id: is the id for a single tile, each with GB_CUDA_TILE_SIZE
     // threads in it.
     int tile_id = threadIdx.x >> GB_CUDA_LOG2_TILE_SIZE ;
@@ -50,7 +50,7 @@ __inline__ __device__ uint64_t GB_cuda_threadblock_sum_uint64
     // shared result for partial sums of all threads in a tile:
     static __shared__ uint64_t shared [GB_CUDA_TILE_SIZE] ;
 
-    if (lane == 0)
+    if (threadId_in_tile == 0)
     {
         shared [tile_id] = val ;    // Write reduced value to shared memory
     }
@@ -67,7 +67,7 @@ __inline__ __device__ uint64_t GB_cuda_threadblock_sum_uint64
     {
         // read from shared memory only if that tile existed
         val = (threadIdx.x < (blockDim.x >> GB_CUDA_LOG2_TILE_SIZE)) ?
-            shared [lane] : 0 ;
+            shared [threadId_in_tile] : 0 ;
         val = GB_cuda_tile_sum_uint64 (tile, val) ;
     }
 

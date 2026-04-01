@@ -684,7 +684,7 @@ Version 5.1.0, June 28, 2021
     * GxB_*_pack/unpack methods added
     * GrB.argmin/argmax: added to @GrB interface
     * GxB_PRINT_1BASED: added to the global settings
-    * GxB_*_memoryUsage added
+    * GxB_Matrix_memoryUsage and related methods: added
     * Source/Generated: split into Source/Generated1 and Source/Generated2
         for faster compilation when GBCOMPACT is enabled
     * port to Octave:  gbmake and gbtest work in Octave7 to build and test

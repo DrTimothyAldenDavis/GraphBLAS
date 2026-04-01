@@ -738,14 +738,7 @@ methods
     %
     %       others: colon factor divisors superiorfloat
 
-    % methods in matfun not implemented here:
-    %
-    %       balance cdf2rdf chol cholupdate condeig condest cond
-    %       decomposition det expm funm gsvd hess inv ldl linsolve logm
-    %       lscov lsqminnorm ltitr lu normest1 normest null ordeig ordqz
-    %       ordschur orth pinv planerot polyeig qrdelete qrinsert qr
-    %       qrupdate qz rank rcond rref rsf2csf schur sqrtm svd sylvester
-    %       trace vecnorm
+    % methods in matfun not implemented here: lu, chol, qr, ... (many)
 
     % methods in sparfun not implemented here:
     %

@@ -279,10 +279,7 @@ int32_t GB_Context_gpu_ids_get          // return # of GPUs to use
         GB_OPENMP_LOCK_SET (5) ;        // global get (gpu ids array)
     }
 
-//  printf ("GxB_CONTEXT_WORLD is %p, this %p\n", GxB_CONTEXT_WORLD, Context) ;
-
     int32_t ngpus = Context->ngpus ;
-//  printf ("here the Context->ngpus is %d\n", ngpus) ;
     ngpus = GB_IMIN (ngpus, GB_MAX_NGPUS) ;
     ngpus = GB_IMAX (ngpus, 0) ;
     if (gpu_ids != NULL)
@@ -297,9 +294,6 @@ int32_t GB_Context_gpu_ids_get          // return # of GPUs to use
     {
         GB_OPENMP_LOCK_UNSET (5) ;      // global get (gpu ids array)
     }
-
-//  printf ("\nGot Context %p ngpus: %d\n", Context, ngpus) ;
-
     return (ngpus) ;
 }
 
@@ -339,7 +333,6 @@ GrB_Info GB_Context_gpu_ids_set
         Context = GxB_CONTEXT_WORLD ;
     }
     int32_t ngpus_max = GB_Global_gpu_count_get ( ) ;
-//  printf ("ngpus %d ngpus_max %d\n", ngpus, ngpus_max) ;
     if (ngpus > ngpus_max)
     { 
         return (GrB_INVALID_VALUE) ;    // too many GPUs requested
@@ -368,8 +361,6 @@ GrB_Info GB_Context_gpu_ids_set
         Context->gpu_ids [id] = (uint16_t) id ;
     }
 
-//  printf ("\nSet Context ngpus: %d\n", ngpus) ;
-
     if (Context == GxB_CONTEXT_WORLD)
     {
         GB_OPENMP_LOCK_SET (5) ;        // global set (gpu ids array)
@@ -392,6 +383,69 @@ GrB_Info GB_Context_gpu_ids_set
     }
 
     return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
+// Context->memlane: memory lane to use
+//------------------------------------------------------------------------------
+
+// GB_Context_memlane_get : get memlane from a Context
+int GB_Context_memlane_get (GxB_Context Context)
+{
+    if (GB_Context_disabled)
+    {
+        // no thread-local-storage can be used; use memlane 0
+        return (0) ;
+    }
+    int memlane ;
+    if (Context == NULL || Context == GxB_CONTEXT_WORLD)
+    { 
+        GB_ATOMIC_READ
+        memlane = GxB_CONTEXT_WORLD->memlane ;
+    }
+    else
+    { 
+        memlane = Context->memlane ;
+    }
+    return (memlane) ;
+}
+
+// GB_Context_memlane: get memlane from the current Context
+int GB_Context_memlane (void)
+{ 
+    // This method is used by most GraphBLAS functions to determine the memlane
+    // to use.  If a Context is engaged, it uses the engaged context.
+    // Otherwise, it uses the default GxB_CONTEXT_WORLD.
+    if (GB_Context_disabled)
+    {
+        // no thread-local-storage can be used; use memlane 0
+        return (0) ;
+    }
+    return (GB_Context_memlane_get (GB_CONTEXT_THREAD)) ;
+}
+
+// GB_Context_memlane_set: set memlane in a Context
+void GB_Context_memlane_set
+(
+    GxB_Context Context,
+    int memlane
+)
+{
+    if (GB_Context_disabled)
+    {
+        // no thread-local-storage can be used; use memlane 0
+        return ;
+    }
+    memlane = (memlane == 0) ? 0 : 1 ;  // ensure memlane is 0 or 1
+    if (Context == NULL || Context == GxB_CONTEXT_WORLD)
+    { 
+        GB_ATOMIC_WRITE
+        GxB_CONTEXT_WORLD->memlane = memlane ;
+    }
+    else
+    { 
+        Context->memlane = memlane ;
+    }
 }
 
 //------------------------------------------------------------------------------

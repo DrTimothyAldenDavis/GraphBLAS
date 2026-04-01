@@ -13,9 +13,6 @@
 #include "GB.h"
 #include "jitifyer/GB_jitifyer.h"
 
-typedef void * (*GB_realloc_function_t) (void *, size_t) ;
-typedef void * (*GB_calloc_function_t ) (size_t, size_t) ;
-
 void *GB_child_malloc (size_t size) ;
 void GB_child_free (void *p) ;
 int GB_child_printf (const char *restrict format, ...) ;

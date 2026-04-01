@@ -15,6 +15,8 @@
 // (required for CUDA).  Leave static headers enabled by default by leaving
 // this commented out or setting GBNSTATIC to 0.
 
+
+#if 0
 #ifndef GBNSTATIC
     #if defined ( GRAPHBLAS_HAS_CUDA )
     #define GBNSTATIC 1
@@ -22,10 +24,32 @@
     #define GBNSTATIC 0
     #endif
 #endif
+#else
+// FIXME: with memlane, do not use static headers
+#undef  GBNSTATIC
+#define GBNSTATIC 1
+#endif
 
 #undef GB_CLEAR_MATRIX_HEADER
 
-#if GBNSTATIC
+// #if GBNSTATIC
+
+    #ifdef MATLAB_MEX_FILE
+
+    // do not use any static headers
+    #define GB_CLEAR_MATRIX_HEADER(XX,XX_header_handle)                     \
+    {                                                                       \
+        size_t XX_size ;                                                    \
+        XX = GB_CALLOC_MEMORY (1, sizeof (struct GB_Matrix_opaque),         \
+            &XX_size) ;                                                     \
+        if (XX != NULL)                                                     \
+        {                                                                   \
+            XX->header_size = XX_size ;                                     \
+            XX->magic = GB_MAGIC2 ;                                         \
+        }                                                                   \
+    }
+
+    #else
 
     // do not use any static headers
     #define GB_CLEAR_MATRIX_HEADER(XX,XX_header_handle)                     \
@@ -42,16 +66,19 @@
         XX->magic = GB_MAGIC2 ;                                             \
     }
 
-#else
+    #endif
 
-    // use static headers
-    #define GB_CLEAR_MATRIX_HEADER(XX,XX_header_handle)                     \
-    {                                                                       \
-        XX = GB_clear_matrix_header (XX_header_handle) ;                    \
-    }
+// #else
+// 
+//  // use static headers
+//  #define GB_CLEAR_MATRIX_HEADER(XX,XX_header_handle)                     \
+//  {                                                                       \
+//      XX = GB_clear_matrix_header (XX_header_handle) ;                    \
+//  }
+//
+// #endif
 
-#endif
-
+#if 0
 #ifndef GB_CLEAR_MATRIX_HEADER_H
 #define GB_CLEAR_MATRIX_HEADER_H
 
@@ -64,5 +91,6 @@ static inline GrB_Matrix GB_clear_matrix_header // clear a static header
     return (C) ;
 }
 
+#endif
 #endif
 

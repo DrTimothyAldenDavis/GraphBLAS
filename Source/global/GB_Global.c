@@ -60,10 +60,17 @@ typedef struct
     // All threads must use the same malloc/realloc/free functions.
     // They default to the C11 functions, but can be defined by GxB_init.
 
+#if 1
+    GB_malloc_function_t malloc_function ;              // required
+    GB_calloc_function_t calloc_function ;              // may be NULL; unused
+    GB_realloc_function_t realloc_function ;            // may be NULL
+    GB_free_function_t free_function ;                  // required
+#else
     void * (* malloc_function  ) (size_t)         ;     // required
     void * (* calloc_function  ) (size_t, size_t) ;     // may be NULL
     void * (* realloc_function ) (void *, size_t) ;     // may be NULL
     void   (* free_function    ) (void *)         ;     // required
+#endif
     bool malloc_is_thread_safe ;   // default is true
 
     //--------------------------------------------------------------------------
@@ -91,8 +98,8 @@ typedef struct
     // then use malloc_debug_count for testing memory allocation and
     // out-of-memory conditions.  If malloc_debug_count > 0, the value is
     // decremented after each allocation of memory.  If malloc_debug_count <=
-    // 0, the GB_*_memory routines pretend to fail; returning NULL and not
-    // allocating anything.
+    // 0, the GB_malloc_memory and related routines pretend to fail; returning
+    // NULL and not allocating anything.
 
     bool malloc_tracking ;          // true if allocations are being tracked
     int64_t nmalloc ;               // number of blocks allocated but not freed
@@ -722,7 +729,7 @@ void GB_Global_memtable_remove (void *p)
 
 #include "include/GB_pedantic_disable.h"
 
-void GB_Global_malloc_function_set (void * (* malloc_function) (size_t))
+void GB_Global_malloc_function_set (GB_malloc_function_t malloc_function)
 { 
     GB_Global.malloc_function = malloc_function ;
 }
@@ -755,7 +762,7 @@ void * GB_Global_malloc_function (size_t size)
 // calloc_function
 //------------------------------------------------------------------------------
 
-void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
+void GB_Global_calloc_function_set (GB_calloc_function_t calloc_function)
 { 
     GB_Global.calloc_function = calloc_function ;
 }
@@ -769,10 +776,7 @@ void * GB_Global_calloc_function_get (void)
 // realloc_function
 //------------------------------------------------------------------------------
 
-void GB_Global_realloc_function_set
-(
-    void * (* realloc_function) (void *, size_t)
-)
+void GB_Global_realloc_function_set (GB_realloc_function_t realloc_function)
 { 
     GB_Global.realloc_function = realloc_function ;
 }
@@ -782,7 +786,7 @@ void * GB_Global_realloc_function_get (void)
     return ((void *) GB_Global.realloc_function) ;
 }
 
-bool GB_Global_have_realloc_function (void)
+bool GB_Global_realloc_function_have (void)
 { 
     return (GB_Global.realloc_function != NULL) ;
 }
@@ -814,7 +818,7 @@ void * GB_Global_realloc_function (void *p, size_t size)
 // free_function
 //------------------------------------------------------------------------------
 
-void GB_Global_free_function_set (void (* free_function) (void *))
+void GB_Global_free_function_set (GB_free_function_t free_function)
 { 
     GB_Global.free_function = free_function ;
 }
@@ -853,11 +857,11 @@ void * GB_Global_persistent_malloc (size_t size)
 {
     // malloc persistent memory
     void *p = GB_Global.malloc_function (size) ;
-    GB_Global_make_persistent (p) ;
+    GB_Global_persistent_make (p) ;
     return (p) ;
 }
 
-void GB_Global_make_persistent (void *p)
+void GB_Global_persistent_make (void *p)
 {
     if (p != NULL && GB_Global.persistent_function != NULL)
     { 

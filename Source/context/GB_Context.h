@@ -17,6 +17,10 @@ int    GB_Context_nthreads_max (void) ;
 int    GB_Context_nthreads_max_get (GxB_Context Context) ;
 void   GB_Context_nthreads_max_set (GxB_Context Context, int nthreads_max) ;
 
+int    GB_Context_memlane (void) ;
+int    GB_Context_memlane_get (GxB_Context Context) ;
+void   GB_Context_memlane_set (GxB_Context Context, int memlane) ;
+
 double GB_Context_chunk (void) ;
 double GB_Context_chunk_get (GxB_Context Context) ;
 void   GB_Context_chunk_set (GxB_Context Context, double chunk) ;

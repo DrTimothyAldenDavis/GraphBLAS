@@ -488,6 +488,8 @@ struct GB_Context_opaque    // content of GxB_Context
                             // (in range 0 to GB_MAX_NGPUS)
     uint16_t gpu_ids [GB_MAX_NGPUS] ;   // using GPUs gpu_ids [0..ngpus-1],
                             // or no GPU if ngpus == 0.
+    // memlane:
+    int32_t memlane ;       // 0 (CPU) or 1 (typically Rapids for the GPU)
 } ;
 
 //------------------------------------------------------------------------------
