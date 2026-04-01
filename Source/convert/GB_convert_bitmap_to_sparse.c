@@ -88,7 +88,7 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     // Cx and A->x always have the same type.
     // The values are not converted if A is iso (Cx is NULL).
     GB_OK (GB_convert_b2s (Cp, Ci, NULL, Cx, &cnvec_nonempty,
-        Cp_is_32, Ci_is_32, false, A->type, A, Werk)) ;
+        Cp_is_32, false, Ci_is_32, A->type, A, Werk)) ;
 
     //--------------------------------------------------------------------------
     // free prior content of A and transplant the new content

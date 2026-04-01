@@ -303,7 +303,7 @@ GrB_Info GB_ijxvector
                 return (GrB_OUT_OF_MEMORY) ;
             }
             GB_OK (GB_convert_b2s (Cp, /* Ci: */ I, NULL, NULL, NULL,
-                false, I_type == GrB_UINT32, false, List->type,
+                false, false, I_type == GrB_UINT32, List->type,
                 (GrB_Matrix) List, Werk)) ;
         }
 
