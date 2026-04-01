@@ -27,9 +27,8 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
     const bool C_is_matrix, // true for C=op(A), false for Cx=op(A)
     const GrB_Type ctype,   // C=((ctype) T) is the final typecast
     const bool Cp_is_32,        // if true, Cp is uint32_t, else uint64_t
-    // FIXME: these args are backwards:
-    const bool Ci_is_32,        // if true, Ci is uint32_t, else uint64_t
     const bool Cj_is_32,        // if true, Cj is uint32_t, else uint64_t
+    const bool Ci_is_32,        // if true, Ci is uint32_t, else uint64_t
     // operator:
         const GB_Operator op,       // unary/index-unary to apply; not binaryop
         const bool flipij,          // if true, flip i,j for user idxunop
@@ -115,9 +114,8 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
                                                // range        bits
                 // C and A properties (3 hex digits)
                 GB_LSHIFT (cp_is_32   , 44) |  // 0 or 1       1
-// FIXME: ci and cj are backwards:
-                GB_LSHIFT (ci_is_32   , 43) |  // 0 or 1       1    FIXME
-                GB_LSHIFT (cj_is_32   , 42) |  // 0 or 1       1    FIXME
+                GB_LSHIFT (cj_is_32   , 43) |  // 0 or 1       1
+                GB_LSHIFT (ci_is_32   , 42) |  // 0 or 1       1
                 GB_LSHIFT (ap_is_32   , 41) |  // 0 or 1       1
                 GB_LSHIFT (aj_is_32   , 40) |  // 0 or 1       1
                 GB_LSHIFT (ai_is_32   , 39) |  // 0 or 1       1
