@@ -41,10 +41,9 @@ uint64_t GB_encodify_apply      // encode an apply problem
     const int C_sparsity,
     const bool C_is_matrix,     // true for C=op(A), false for Cx=op(A)
     const GrB_Type ctype,
-    // FIXME: these args are backwards:
     const bool Cp_is_32,        // if true, Cp is uint32_t, else uint64_t
-    const bool Ci_is_32,        // if true, Ci is uint32_t, else uint64_t
     const bool Cj_is_32,        // if true, Cj is uint32_t, else uint64_t
+    const bool Ci_is_32,        // if true, Ci is uint32_t, else uint64_t
     // operator:
     const GB_Operator op,       // not JIT'd if NULL
     const bool flipij,

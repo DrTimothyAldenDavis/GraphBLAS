@@ -35,9 +35,8 @@ GrB_Info GB_cuda_transpose_prep_jit
         /* C not present: */ GxB_FULL, false,
         /* ctype: unused: */ GrB_BOOL,
         /* Cp_is_32, unused: */ false,
-        // FIXME: args backwards:
-        /* Ci_is_32, used for Key_is_32: */ Key_is_32,
         /* Cj_is_32: unused: */ false,
+        /* Ci_is_32, used for Key_is_32: */ Key_is_32,
         op, /* flipij: */ false, GB_sparsity (A), true, GrB_BOOL,
         A->p_is_32, A->j_is_32, A->i_is_32,
         /* A iso (values not used): */ true, A->nzombies) ;

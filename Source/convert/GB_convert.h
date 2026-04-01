@@ -118,8 +118,9 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
     int64_t *cnvec_nonempty,    // # of non-empty vectors
     // inputs: not modified
     const bool Cp_is_32,        // if true, Cp is uint32_t; otherwise uint64_t
-    const bool Ci_is_32,        // if true, Ci is uint32_t; otherwise uint64_t
-    const bool Cj_is_32,        // if true, Cj is uint32_t; otherwise uint64_t
+// FIXME: args backwards:
+    const bool Ci_is_32,        // if true, Ci is uint32_t; otherwise uint64_t  FIXME
+    const bool Cj_is_32,        // if true, Cj is uint32_t; otherwise uint64_t  FIXME
     const GrB_Type ctype,       // type of Cx
     const GrB_Matrix A,         // matrix to extract; not modified
     GB_Werk Werk

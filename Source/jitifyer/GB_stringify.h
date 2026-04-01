@@ -960,8 +960,9 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
     const bool C_is_matrix, // true for C=op(A), false for Cx=op(A)
     const GrB_Type ctype,   // C=((ctype) T) is the final typecast
     const bool Cp_is_32,        // if true, Cp is uint32_t, else uint64_t
-    const bool Ci_is_32,        // if true, Ci is uint32_t, else uint64_t
-    const bool Cj_is_32,        // if true, Cj is uint32_t, else uint64_t
+    // FIXME: args backwards:
+    const bool Ci_is_32,        // if true, Ci is uint32_t, else uint64_t FIXME
+    const bool Cj_is_32,        // if true, Cj is uint32_t, else uint64_t FIXME
     // operator:
         const GB_Operator op,       // unary/index-unary to apply; not binaryop
         const bool flipij,          // if true, flip i,j for user idxunop
@@ -1025,8 +1026,8 @@ uint64_t GB_encodify_apply      // encode an apply problem
     const bool C_is_matrix,     // true for C=op(A), false for Cx=op(A)
     const GrB_Type ctype,
     const bool Cp_is_32,        // if true, Cp is uint32_t, else uint64_t
-    const bool Ci_is_32,        // if true, Ci is uint32_t, else uint64_t
     const bool Cj_is_32,        // if true, Cj is uint32_t, else uint64_t
+    const bool Ci_is_32,        // if true, Ci is uint32_t, else uint64_t
     // operator:
     const GB_Operator op,       // not JIT'd if NULL
     const bool flipij,
@@ -1144,8 +1145,9 @@ GrB_Info GB_convert_b2s_jit         // extract CSC/CSR or triplets from bitmap
     GB_void *restrict Cx,           // values for CSC/CSR or triplet form
     // inputs: not modified
     const bool Cp_is_32,            // if true, Cp is uint32_t, else uint64_t
-    const bool Ci_is_32,            // if true, Cp is uint32_t, else uint64_t
-    const bool Cj_is_32,            // if true, Cp is uint32_t, else uint64_t
+    // FIXME: args backwards:
+    const bool Ci_is_32,            // if true, Cp is uint32_t, else uint64_t FIXME
+    const bool Cj_is_32,            // if true, Cp is uint32_t, else uint64_t FIXME
     const GrB_Type ctype,           // type of Cx
     GB_Operator op,
     const GrB_Matrix A,             // matrix to extract; not modified
