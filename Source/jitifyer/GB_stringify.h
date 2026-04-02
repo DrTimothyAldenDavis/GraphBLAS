@@ -1144,9 +1144,8 @@ GrB_Info GB_convert_b2s_jit         // extract CSC/CSR or triplets from bitmap
     GB_void *restrict Cx,           // values for CSC/CSR or triplet form
     // inputs: not modified
     const bool Cp_is_32,            // if true, Cp is uint32_t, else uint64_t
-    // FIXME: args backwards:
-    const bool Ci_is_32,            // if true, Cp is uint32_t, else uint64_t FIXME
-    const bool Cj_is_32,            // if true, Cp is uint32_t, else uint64_t FIXME
+    const bool Cj_is_32,            // if true, Cp is uint32_t, else uint64_t
+    const bool Ci_is_32,            // if true, Cp is uint32_t, else uint64_t
     const GrB_Type ctype,           // type of Cx
     GB_Operator op,
     const GrB_Matrix A,             // matrix to extract; not modified

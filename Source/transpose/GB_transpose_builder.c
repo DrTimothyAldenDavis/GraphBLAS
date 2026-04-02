@@ -96,8 +96,6 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    // FIXME: for CUDA, extract into Key_in, not (iwork,jwork)
-
     // Construct the "row" indices of C, which are "column" indices of
     // A.  This array becomes the permanent T->i on output.
     GB_OK (GB_extract_vector_list (iwork, Aj_is_32, A, Werk)) ;

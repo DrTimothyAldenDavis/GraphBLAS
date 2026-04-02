@@ -284,7 +284,7 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
             struct GB_UnaryOp_opaque op_header ;
             GB_Operator op = GB_unop_identity (ctype, &op_header) ;
             info = GB_convert_b2s_jit (Cp, Ci, Cj, Cx_new,
-                Cp_is_32, Ci_is_32, Cj_is_32, ctype, op, A, W, nthreads) ;
+                Cp_is_32, Cj_is_32, Ci_is_32, ctype, op, A, W, nthreads) ;
         }
 
         //----------------------------------------------------------------------
