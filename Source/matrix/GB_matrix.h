@@ -119,8 +119,8 @@ static inline GrB_Info GB_matrix_header_new
     ASSERT (Ahandle != NULL) ;
     uint64_t header_mem = GB_mem (memlane, 0) ;
     // printf ("matrix header new: %lu\n", header_mem) ;
-    (*Ahandle) = GB_CALLOC_MEMORY (1, sizeof (struct GB_Matrix_opaque),
-        &header_mem) ;
+    (*Ahandle) = (GrB_Matrix) GB_CALLOC_MEMORY (1,
+        sizeof (struct GB_Matrix_opaque), &header_mem) ;
     if (*Ahandle == NULL)
     {
         return (GrB_OUT_OF_MEMORY) ;

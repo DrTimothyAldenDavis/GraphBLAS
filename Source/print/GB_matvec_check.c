@@ -355,11 +355,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     {
         if (A->header_mem == 0)
         {
-            GBPR ("  static header,") ;
+            GBPR ("  static header (%p),", A) ;
         }
         else
         {
-            GBPR ("  header %p", (void *) A) ;
+            GBPR ("  header (%p)", (void *) A) ;
         }
         GBPR (" number of memory blocks: " GBd "\n", nallocs) ;
         GBPR ("  deep: " GBu " shallow: " GBu " total: " GBu "\n",

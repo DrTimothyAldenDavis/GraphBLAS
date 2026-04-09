@@ -20,6 +20,8 @@ bool GB_cuda_apply_unop_branch
         return false ;
     }
 
+    bool ok = true ;
+
     if (op->xtype != NULL)
     {
         ok = ok && (GB_cuda_type_branch (op->xtype)) ;
