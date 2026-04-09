@@ -54,7 +54,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     ASSERT_MATRIX_OK (A, "A input for GB_select", GB0) ;
     ASSERT_SCALAR_OK (Thunk, "Thunk for GB_select", GB0) ;
 
-    struct GB_Matrix_opaque T_header ;
+    // struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
 
     // check domains and dimensions for C<M> = accum (C,T)
@@ -367,7 +367,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     // create T
     //--------------------------------------------------------------------------
 
-    GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+    // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+    GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
 
     if (make_copy)
     { 

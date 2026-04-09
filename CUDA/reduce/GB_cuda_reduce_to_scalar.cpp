@@ -18,7 +18,7 @@
 #undef  GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE                                   \
 {                                                           \
-    GB_FREE_MEMORY (&zscalar, zscalar_size) ;               \
+    GB_FREE_MEMORY (&zscalar, zscalar_mem) ;                \
 }
 
 #define GB_FREE_ALL                                         \
@@ -48,7 +48,7 @@ GrB_Info GB_cuda_reduce_to_scalar
     //--------------------------------------------------------------------------
 
     GB_void *zscalar = NULL ;
-    size_t zscalar_size = 0 ;
+    uint64_t zscalar_mem = 0 ;
     GrB_Matrix V = NULL ;
     (*V_handle) = NULL ;
     GrB_Info info = GrB_SUCCESS ;
@@ -95,7 +95,7 @@ GrB_Info GB_cuda_reduce_to_scalar
         // allocate and initialize zscalar (upscaling it to at least 32 bits)
         size_t zscalar_space = GB_IMAX (zsize, sizeof (uint32_t)) ;
         zscalar = (GB_void *) GB_MALLOC_MEMORY (1, zscalar_space,
-            &zscalar_size) ;
+            &zscalar_mem) ;
         if (zscalar == NULL)
         {
             // out of memory

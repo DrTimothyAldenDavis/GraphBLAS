@@ -21,15 +21,6 @@ bool GB_cuda_rowscale_branch
         return false ;
     }
 
-    if (D->header_size == 0)
-    {
-        return false ;
-    }
-    if (B->header_size == 0)
-    {
-        return false ;
-    }
-
     if (!GB_cuda_type_branch (D->type) ||
         !GB_cuda_type_branch (B->type) ||
         !GB_cuda_type_branch (semiring->multiply->ztype))
@@ -41,6 +32,6 @@ bool GB_cuda_rowscale_branch
     int gpu_count = GB_ngpus_to_use (work) ;
     int ngpus_max = GB_Context_gpu_ids (NULL) ;     // FIXME: get gpu_ids
     gpu_count = std::min (gpu_count, ngpus_max) ;
-    
-    return (gpu_count > 0);
+    return (gpu_count > 0) ;
 }
+

@@ -104,5 +104,32 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     GB_Werk Werk
 ) ;
 
+//------------------------------------------------------------------------------
+// GB_matrix_header_new
+//------------------------------------------------------------------------------
+
+// Allocate an empty matrix header
+
+static inline GrB_Info GB_matrix_header_new
+(
+    GrB_Matrix *Ahandle,
+    int memlane
+)
+{
+    ASSERT (Ahandle != NULL) ;
+    uint64_t header_mem = GB_mem (memlane, 0) ;
+    // printf ("matrix header new: %lu\n", header_mem) ;
+    (*Ahandle) = GB_CALLOC_MEMORY (1, sizeof (struct GB_Matrix_opaque),
+        &header_mem) ;
+    if (*Ahandle == NULL)
+    {
+        return (GrB_OUT_OF_MEMORY) ;
+    }
+    (*Ahandle)->header_mem = header_mem ;
+    (*Ahandle)->magic = GB_MAGIC2 ;
+    // printf ("now matrix header new: %lu\n", header_mem) ;
+    return (GrB_SUCCESS) ;
+}
+
 #endif
 

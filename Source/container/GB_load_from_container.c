@@ -70,7 +70,6 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
     A->jumbled = false ;
     uint64_t plen1 = 0, plen, Ab_len = 0, Ax_len = 0, Ai_len = 0 ;
     GrB_Type Ap_type = NULL, Ah_type = NULL, Ab_type = NULL, Ai_type = NULL ;
-    uint64_t Ah_size = 0, Ap_size = 0, Ai_size = 0, Ab_size = 0, Ax_size = 0 ;
     uint64_t nrows_times_ncols = UINT64_MAX ;
     bool okb = GB_uint64_multiply (&nrows_times_ncols, nrows, ncols) ;
     bool ok = true ;
@@ -112,8 +111,7 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
 
             // load A->p
             GB_OK (GB_vector_unload (Container->p, &(A->p), &Ap_type,
-                &plen1, &Ap_size, &(A->p_shallow), Werk)) ;
-            A->p_size = (size_t) Ap_size ;
+                &plen1, &(A->p_mem), &(A->p_shallow), Werk)) ;
             ok = GB_type_ok (Ap_type) ;
 
             // load or create A->h
@@ -123,22 +121,19 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
                 // allocate space for A->h of type Ah_type for a single entry
                 // Ah_type is uint32 or uint64, so sizeof (uint64_t) is fine.
                 plen = 0 ;
-                size_t s = 0 ;
-                A->h = GB_CALLOC_MEMORY (1, sizeof (uint64_t), &s) ;
+                A->h = GB_CALLOC_MEMORY (1, sizeof (uint64_t), &(A->h_mem)) ;
                 if (A->h == NULL)
                 { 
                     GB_FREE_ALL ;
                     return (GrB_OUT_OF_MEMORY) ;
                 }
-                Ah_size = (uint64_t) s ;
                 A->h_shallow = false ;
             }
             else
             { 
                 GB_OK (GB_vector_unload (Container->h, &(A->h), &Ah_type,
-                    &plen, &Ah_size, &(A->h_shallow), Werk)) ;
+                    &plen, &(A->h_mem), &(A->h_shallow), Werk)) ;
             }
-            A->h_size = (size_t) Ah_size ;
             ok = ok && GB_type_ok (Ah_type) ;
 
             // load A->Y
@@ -150,8 +145,7 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
 
             // load A->i
             GB_OK (GB_vector_unload (Container->i, &(A->i), &Ai_type,
-                &Ai_len, &Ai_size, &(A->i_shallow), Werk)) ;
-            A->i_size = (size_t) Ai_size ;
+                &Ai_len, &(A->i_mem), &(A->i_shallow), Werk)) ;
             ok = ok && GB_type_ok (Ai_type) ;
 
             // define plen, nvec, and jumbled
@@ -176,8 +170,7 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
 
             // load A->p
             GB_OK (GB_vector_unload (Container->p, &(A->p), &Ap_type,
-                &plen1, &Ap_size, &(A->p_shallow), Werk)) ;
-            A->p_size = (size_t) Ap_size ;
+                &plen1, &(A->p_mem), &(A->p_shallow), Werk)) ;
             ok = GB_type_ok (Ap_type) ;
 
             // clear Container->h, Y, and b
@@ -187,8 +180,7 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
 
             // load A->i
             GB_OK (GB_vector_unload (Container->i, &(A->i), &Ai_type,
-                &Ai_len, &Ai_size, &(A->i_shallow), Werk)) ;
-            A->i_size = (size_t) Ai_size ;
+                &Ai_len, &(A->i_mem), &(A->i_shallow), Werk)) ;
             ok = ok && GB_type_ok (Ai_type) ;
 
             // define plen, nvec, and jumbled
@@ -217,8 +209,7 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
 
             // load A->b
             GB_OK (GB_vector_unload (Container->b, (void **) &(A->b), &Ab_type,
-                &Ab_len, &Ab_size, &(A->b_shallow), Werk)) ;
-            A->b_size = (size_t) Ab_size ;
+                &Ab_len, &(A->b_mem), &(A->b_shallow), Werk)) ;
 
             // clear Container->i
             GB_vector_reset (Container->i) ;
@@ -258,8 +249,7 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
 
     // load A->x
     GB_OK (GB_vector_unload (Container->x, &(A->x), &(A->type),
-        &Ax_len, &Ax_size, &(A->x_shallow), Werk)) ;
-    A->x_size = (size_t) Ax_size ;
+        &Ax_len, &(A->x_mem), &(A->x_shallow), Werk)) ;
 
     // define the integer types
     A->p_is_32 = (Ap_type == GrB_UINT32 || Ap_type == GrB_INT32) ;

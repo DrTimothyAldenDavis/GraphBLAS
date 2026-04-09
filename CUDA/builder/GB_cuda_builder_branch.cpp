@@ -36,15 +36,6 @@ bool GB_cuda_builder_branch
         return (false) ;
     }
 
-    if (C->header_size == 0)
-    {
-        // see Source/matrix/GB_clear_matrix_header.h for details.  If A has a
-        // static header, it cannot be done on the GPU.  However, if GraphBLAS
-        // is compiled to use CUDA, there should be no static headers anyway,
-        // so this is likely dead code.  Just a sanity check.
-        return (false) ;
-    }
-
     if (!GB_cuda_pointer_ok (I, "I") ||
         !GB_cuda_pointer_ok (J, "J") ||
         !GB_cuda_pointer_ok (X, "X"))

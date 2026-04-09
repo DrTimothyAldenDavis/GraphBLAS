@@ -9,15 +9,15 @@
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
-    GB_FREE_MEMORY (&W_0, W_0_size) ;       \
-    GB_FREE_MEMORY (&W_1, W_1_size) ;       \
-    GB_FREE_MEMORY (&W_2, W_2_size) ;       \
-    GB_FREE_MEMORY (&W_3, W_3_size) ;       \
-    GB_FREE_MEMORY (&W_4, W_4_size) ;       \
-    GB_FREE_MEMORY (&W_5, W_5_size) ;       \
-    GB_FREE_MEMORY (&W_6, W_6_size) ;       \
-    GB_FREE_MEMORY (&W_7, W_7_size) ;       \
-    GB_FREE_MEMORY (&W_8, W_8_size) ;       \
+    GB_FREE_MEMORY (&W_0, W_0_mem) ;        \
+    GB_FREE_MEMORY (&W_1, W_1_mem) ;        \
+    GB_FREE_MEMORY (&W_2, W_2_mem) ;        \
+    GB_FREE_MEMORY (&W_3, W_3_mem) ;        \
+    GB_FREE_MEMORY (&W_4, W_4_mem) ;        \
+    GB_FREE_MEMORY (&W_5, W_5_mem) ;        \
+    GB_FREE_MEMORY (&W_6, W_6_mem) ;        \
+    GB_FREE_MEMORY (&W_7, W_7_mem) ;        \
+    GB_FREE_MEMORY (&W_8, W_8_mem) ;        \
 }
 
 #define GB_FREE_ALL                         \
@@ -1053,21 +1053,21 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     GrB_Info info = GrB_SUCCESS ;
 
     // workspace needed for CUB radix sort of (Key_in,X):
-    void *W_0 = NULL ; size_t W_0_size = 0 ;    // size nvals+1: Key_in
-    void *W_1 = NULL ; size_t W_1_size = 0 ;    // size nvals+1: Key_out
-    void *W_2 = NULL ; size_t W_2_size = 0 ;    // size nvals+1: Sx (or NULL)
-    void *W_3 = NULL ; size_t W_3_size = 0 ;    // size nvals+1: CUB workspace
+    void *W_0 = NULL ; uint64_t W_0_mem = 0 ;    // size nvals+1: Key_in
+    void *W_1 = NULL ; uint64_t W_1_mem = 0 ;    // size nvals+1: Key_out
+    void *W_2 = NULL ; uint64_t W_2_mem = 0 ;    // size nvals+1: Sx (or NULL)
+    void *W_3 = NULL ; uint64_t W_3_mem = 0 ;    // size nvals+1: CUB workspace
 
     // when the CUB radix sort is done, Key_in and the CUB workspace can
     // be freed.
 
     // workspace needed after CUB radix sort:
-    void *W_4 = NULL ; size_t W_4_size = 0 ;    // size nvals+1: Map
-    void *W_5 = NULL ; size_t W_5_size = 0 ;    // size nchunks+2: ChunkSum
-    void *W_6 = NULL ; size_t W_6_size = 0 ;    // size nvals+1: JDelta
-    void *W_7 = NULL ; size_t W_7_size = 0 ;    // size nchunks+2: JDeltaSum
+    void *W_4 = NULL ; uint64_t W_4_mem = 0 ;    // size nvals+1: Map
+    void *W_5 = NULL ; uint64_t W_5_mem = 0 ;    // size nchunks+2: ChunkSum
+    void *W_6 = NULL ; uint64_t W_6_mem = 0 ;    // size nvals+1: JDelta
+    void *W_7 = NULL ; uint64_t W_7_mem = 0 ;    // size nchunks+2: JDeltaSum
 
-    void *W_8 = NULL ; size_t W_8_size = 0 ;    // size 2: scalar workspace
+    void *W_8 = NULL ; uint64_t W_8_mem = 0 ;    // size 2: scalar workspace
 
     // # of entries, chunks, and vectors of T
     int64_t tnz = 0 ;   // # of unique tuples, and # of entries in T
@@ -1113,8 +1113,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         //----------------------------------------------------------------------
 
         // allocate Key_in and W_8 workspace
-        W_0 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_key_t), &W_0_size) ;
-        W_8 = GB_MALLOC_MEMORY (3, sizeof (uint64_t), &W_8_size) ;
+        W_0 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_key_t), &W_0_mem) ;
+        W_8 = GB_MALLOC_MEMORY (3, sizeof (uint64_t), &W_8_mem) ;
         if (W_0 == NULL || W_8 == NULL)
         {
             // out of memory
@@ -1245,9 +1245,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             //------------------------------------------------------------------
 
             // allocate Key_out, Sx, and CUB temporary workspace
-            W_1 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_key_t), &W_1_size) ;
+            W_1 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_key_t), &W_1_mem) ;
             #if !GB_ISO_BUILD
-            W_2 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_Sx_TYPE), &W_2_size) ;
+            W_2 = GB_MALLOC_MEMORY (nvals+1, sizeof (GB_Sx_TYPE), &W_2_mem) ;
             #endif
             if (W_1 == NULL || (!GB_ISO_BUILD && W_2 == NULL))
             {
@@ -1265,10 +1265,12 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             Sx_is_workspace = true ;    // Sx is allocated workspace
             #endif
 
+            size_t W_3_memsize = 0 ;
+
             // determine the amount of workspace needed by CUB radix sort
             #if GB_ISO_BUILD
             CUDA_OK (cub::DeviceRadixSort::SortKeys (
-                /* temp storage: */ W_3, W_3_size,
+                /* temp storage: */ W_3, W_3_memsize,
                 Key_in, Key_out, nvals,
                 #if GB_MTX_BUILD
                 GB_key_decomposer_t { },
@@ -1277,7 +1279,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
                 stream)) ;
             #else
             CUDA_OK (cub::DeviceRadixSort::SortPairs (
-                /* temp storage: */ W_3, W_3_size,
+                /* temp storage: */ W_3, W_3_memsize,
                 Key_in, Key_out,
                 /* values in: */ X, /* values out: */ Sx, nvals,
                 #if GB_MTX_BUILD
@@ -1291,7 +1293,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             CUDA_OK (cudaStreamSynchronize (stream)) ;
 
             // allocate workspace for CUB radix sort
-            W_3 = GB_MALLOC_MEMORY (W_3_size+1, 1, &W_3_size) ;
+            W_3 = GB_MALLOC_MEMORY (W_3_memsize+1, 1, &W_3_mem) ;
             if (W_3 == NULL)
             {
                 // out of memory
@@ -1302,7 +1304,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             // sort (Key_in,X) to get (Key_out,Sx)
             #if GB_ISO_BUILD
             CUDA_OK (cub::DeviceRadixSort::SortKeys (
-                /* temp storage: */ W_3, W_3_size,
+                /* temp storage: */ W_3, W_3_memsize,
                 Key_in, Key_out, nvals,
                 #if GB_MTX_BUILD
                 GB_key_decomposer_t { },
@@ -1311,7 +1313,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
                 stream)) ;
             #else
             CUDA_OK (cub::DeviceRadixSort::SortPairs (
-                /* temp storage: */ W_3, W_3_size,
+                /* temp storage: */ W_3, W_3_memsize,
                 Key_in, Key_out,
                 /* values in: */ X, /* values out: */ Sx, nvals,
                 #if GB_MTX_BUILD
@@ -1325,8 +1327,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             CUDA_OK (cudaStreamSynchronize (stream)) ;
 
             // Key_in and CUB workspace no longer needed
-            GB_FREE_MEMORY (&W_0, W_0_size) ;
-            GB_FREE_MEMORY (&W_3, W_3_size) ;
+            GB_FREE_MEMORY (&W_0, W_0_mem) ;
+            GB_FREE_MEMORY (&W_3, W_3_mem) ;
         }
     }
     #endif
@@ -1431,8 +1433,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     #if !GB_KNOWN_NO_DUPLICATES
     if (!known_no_duplicates)
     {
-        W_4 = GB_MALLOC_MEMORY (nvals+1 + CHUNKSIZE, sizeof (Int), &W_4_size) ;
-        W_5 = GB_MALLOC_MEMORY (nchunks+2, sizeof (GB_Tp_TYPE), &W_5_size) ;
+        W_4 = GB_MALLOC_MEMORY (nvals+1 + CHUNKSIZE, sizeof (Int), &W_4_mem) ;
+        W_5 = GB_MALLOC_MEMORY (nchunks+2, sizeof (GB_Tp_TYPE), &W_5_mem) ;
         if (W_4 == NULL || W_5 == NULL)
         {
             // out of memory
@@ -1444,8 +1446,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     // allocate JDelta, JDeltaSum: for cumsum of leading entries of vectors of C
     #if GB_MTX_BUILD
-    W_6 = GB_MALLOC_MEMORY (nvals+1 + CHUNKSIZE, sizeof (Int), &W_6_size) ;
-    W_7 = GB_MALLOC_MEMORY (nchunks+2, sizeof (GB_Tp_TYPE), &W_7_size) ;
+    W_6 = GB_MALLOC_MEMORY (nvals+1 + CHUNKSIZE, sizeof (Int), &W_6_mem) ;
+    W_7 = GB_MALLOC_MEMORY (nchunks+2, sizeof (GB_Tp_TYPE), &W_7_mem) ;
     if (W_6 == NULL || W_7 == NULL)
     {
         // out of memory
@@ -1760,9 +1762,9 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     {
         // transplant Sx (aliased to W_2) into T->x; W_2 is not freed when done
         T->x = Sx ;
-        T->x_size = W_2_size ;
+        T->x_mem = W_2_mem ;
         W_2 = NULL ;
-        W_2_size = 0 ;
+        W_2_mem = 0 ;
         Sx = NULL ;
     }
     #endif

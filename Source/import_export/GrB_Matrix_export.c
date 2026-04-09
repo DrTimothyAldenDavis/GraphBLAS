@@ -19,9 +19,9 @@
 // GrB_Matrix or the size of a type.  SuiteSparse:GraphBLAS provides
 // GxB_Matrix_type_name to query the type of a matrix (returning a string),
 // which can be converted into a GrB_Type with GxB_Type_from_name.  The size of
-// a type can be queried with GxB_Type_size.  Using these methods, a user
-// application can ensure that its Ax array has the correct size for any
-// given GrB_Matrix it wishes to export, regardless of its type.
+// a type can be queried with GrB_get  Using these methods, a user application
+// can ensure that its Ax array has the correct size for any given GrB_Matrix
+// it wishes to export, regardless of its type.
 
 #define GB_FREE_ALL                 \
 {                                   \
@@ -56,7 +56,7 @@ static GrB_Info GB_export_worker  // export a matrix
     GrB_Info info ;
 
     GrB_Matrix A = A_input ;
-    struct GB_Matrix_opaque T_header ;
+    // struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
 
     switch (format)
@@ -131,10 +131,11 @@ static GrB_Info GB_export_worker  // export a matrix
 
     if (make_copy)
     { 
-        GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+        // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
         if (is_csc != csc_requested)
         { 
             // T = A'
+            GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
             GB_OK (GB_transpose_cast (T, A->type, csc_requested, A, false,
                 Werk)) ;
         }

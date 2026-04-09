@@ -43,7 +43,7 @@ GrB_Info GB_unop_new
 
     op->magic = GB_MAGIC ;
     op->user_name = NULL ;
-    op->user_name_size = 0 ;
+    op->user_name_mem = 0 ;
     op->xtype = xtype ;
     op->ztype = ztype ;
     op->ytype = NULL ;
@@ -54,7 +54,7 @@ GrB_Info GB_unop_new
     op->idxbinop_function = NULL ;
     op->theta_type = NULL ;
     op->theta = NULL ;
-    op->theta_size = 0 ;
+    op->theta_mem = 0 ;
 
     op->opcode = opcode ;
 
@@ -69,7 +69,7 @@ GrB_Info GB_unop_new
 
     return (GB_op_name_and_defn (
         // output:
-        op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_size),
+        op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_mem),
         // input:
         unop_name, unop_defn, opcode == GB_USER_unop_code, jitable)) ;
 }

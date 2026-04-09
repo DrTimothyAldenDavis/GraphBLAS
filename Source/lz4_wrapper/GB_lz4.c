@@ -27,7 +27,7 @@ void *LZ4_calloc (size_t n, size_t s)
     int memlane = 0 ;   // FIXME
     // ns = n*s, the size of the space to allocate
     size_t ns = 0 ;
-    bool ok = GB_size_t_multiply (&ns, n, s) ;
+    bool ok = GB_Size_t_multiply (&ns, n, s) ;
     if (!ok) return (NULL) ;
     // malloc the space and then use memset to clear it
     void *p = GB_Global_malloc_function (ns, memlane) ;

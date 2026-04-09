@@ -30,14 +30,15 @@ GB_CALLBACK_MATRIX_FREE_PROTO (GB_Matrix_free)
         if (A != NULL && (A->magic == GB_MAGIC || A->magic == GB_MAGIC2))
         {
             // free all content of A
-            GB_FREE_MEMORY (&(A->user_name), A->user_name_size) ;
-            size_t header_size = A->header_size ;
+            GB_FREE_MEMORY (&(A->user_name), A->user_name_mem) ;
+            uint64_t header_mem = A->header_mem ;
+            uint64_t header_memsize = GB_memsize (header_mem) ;
             GB_phybix_free (A) ;
-            if (!(A->header_size == 0))
+            if (header_memsize != 0)
             { 
                 // free the header of A itself, unless it is static
                 A->magic = GB_FREED ;       // to help detect dangling pointers
-                GB_FREE_MEMORY (Ahandle, header_size) ;
+                GB_FREE_MEMORY (Ahandle, header_mem) ;
                 (*Ahandle) = NULL ;
             }
         }

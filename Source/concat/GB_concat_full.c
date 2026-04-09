@@ -38,7 +38,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
 
     GrB_Info info ;
     GrB_Matrix A = NULL ;
-    struct GB_Matrix_opaque T_header ;
+    // struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
 
     GrB_Type ctype = C->type ;
@@ -94,7 +94,8 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
             if (csc != A->is_csc)
             { 
                 // T = (ctype) A', not in-place
-                GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+                // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+                GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
                 GB_OK (GB_transpose_cast (T, ctype, csc, A, false, Werk)) ;
                 A = T ;
                 GB_MATRIX_WAIT (A) ;

@@ -46,17 +46,17 @@ GrB_Info GB_binop_new
 
     op->magic = GB_MAGIC ;
     op->user_name = NULL ;
-    op->user_name_size = 0 ;
+    op->user_name_mem = 0 ;             // always use memlane = 0
     op->ztype = ztype ;
     op->xtype = xtype ;
     op->ytype = ytype ;
     op->unop_function = NULL ;
     op->idxunop_function = NULL ;
-    op->binop_function = function ;       // NULL for GB_reduce_to_vector
+    op->binop_function = function ;     // NULL for GB_reduce_to_vector
     op->idxbinop_function = NULL ;
     op->theta_type = NULL ;
     op->theta = NULL ;
-    op->theta_size = 0 ;
+    op->theta_mem = 0 ;                 // always use memlane = 0
     op->opcode = opcode ;
 
     //--------------------------------------------------------------------------
@@ -71,7 +71,7 @@ GrB_Info GB_binop_new
 
     return (GB_op_name_and_defn (
         // output:
-        op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_size),
+        op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_mem),
         // input:
         binop_name, binop_defn, opcode == GB_USER_binop_code, jitable)) ;
 }

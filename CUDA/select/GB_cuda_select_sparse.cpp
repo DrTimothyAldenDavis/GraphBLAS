@@ -31,14 +31,14 @@ GrB_Info GB_cuda_select_sparse
 
     // check inputs
     GrB_Info info = GrB_NO_VALUE ;
-    ASSERT (C != NULL && !(C->header_size == 0)) ;
-    ASSERT (A != NULL && !(A->header_size == 0)) ;
+    ASSERT (C != NULL) ;
+    ASSERT (A != NULL) ;
 
     GBURBLE ("(select sparse on cuda) ") ;
-    printf ("\nblockdim1: %d chunksize1: %d\n", 
+    printf ("\nblockdim1: %d chunksize1: %d\n",
         GB_CUDA_SELECT_SPARSE_BLOCKDIM1,
         GB_CUDA_SELECT_SPARSE_CHUNKSIZE1) ;
-    printf ("blockdim2: %d chunksize2: %d\n", 
+    printf ("blockdim2: %d chunksize2: %d\n",
         GB_CUDA_SELECT_SPARSE_BLOCKDIM2,
         GB_CUDA_SELECT_SPARSE_CHUNKSIZE2) ;
 
@@ -91,7 +91,7 @@ GrB_Info GB_cuda_select_sparse
     if (C->nvec == C->vdim)
     {
         // C hypersparse with all vectors present; quick convert to sparse
-        GB_FREE_MEMORY (&(C->h), C->h_size) ;
+        GB_FREE_MEMORY (&(C->h), C->h_mem) ;
     }
 
     ASSERT_MATRIX_OK (C, "C output of cuda_select_sparse", GB0) ;

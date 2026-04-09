@@ -13,12 +13,12 @@
 #include "import_export/GB_export.h"
 #include "builder/GB_build.h"
 
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_Matrix_free (A) ;            \
-    GB_FREE_MEMORY (&Ap_copy, Ap_size) ;   \
-    GB_FREE_MEMORY (&Ai_copy, Ai_size) ;   \
-    GB_FREE_MEMORY (&Ax_copy, Ax_size) ;   \
+#define GB_FREE_ALL                     \
+{                                       \
+    GB_Matrix_free (A) ;                \
+    GB_FREE_MEMORY (&Ap_copy, Ap_mem) ; \
+    GB_FREE_MEMORY (&Ai_copy, Ai_mem) ; \
+    GB_FREE_MEMORY (&Ax_copy, Ax_mem) ; \
 }
 
 //------------------------------------------------------------------------------
@@ -120,9 +120,9 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     // allocate copies of Ap, Ai, and Ax to be imported
     //--------------------------------------------------------------------------
 
-    uint64_t *Ap_copy = NULL ; size_t Ap_size = 0 ;
-    uint64_t *Ai_copy = NULL ; size_t Ai_size = 0 ;
-    GB_void  *Ax_copy = NULL ; size_t Ax_size = 0 ;
+    uint64_t *Ap_copy = NULL ; uint64_t Ap_mem = 0 ;    // always memlane = 0
+    uint64_t *Ai_copy = NULL ; uint64_t Ai_mem = 0 ;    // always memlane = 0
+    GB_void  *Ax_copy = NULL ; uint64_t Ax_mem = 0 ;    // always memlane = 0
     size_t typesize = type->size ;
 
     // Ap_copy, Ai_copy, Ax_copy are malloc'ed so they are already in the
@@ -133,15 +133,15 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     {
         case GrB_CSR_FORMAT : 
         case GrB_CSC_FORMAT : 
-            Ap_copy = GB_MALLOC_MEMORY (plen,  sizeof (uint64_t), &Ap_size) ;
-            Ai_copy = GB_MALLOC_MEMORY (nvals, sizeof (uint64_t), &Ai_size) ;
-            Ax_copy = GB_MALLOC_MEMORY (nvals, typesize, &Ax_size) ;
+            Ap_copy = GB_MALLOC_MEMORY (plen,  sizeof (uint64_t), &Ap_mem) ;
+            Ai_copy = GB_MALLOC_MEMORY (nvals, sizeof (uint64_t), &Ai_mem) ;
+            Ax_copy = GB_MALLOC_MEMORY (nvals, typesize, &Ax_mem) ;
             ok = (Ap_copy != NULL && Ai_copy != NULL && Ax_copy != NULL) ;
             break ;
 
 //      case GrB_DENSE_ROW_FORMAT :
 //      case GrB_DENSE_COL_FORMAT :
-//          Ax_copy = GB_MALLOC_MEMORY (nvals, typesize, &Ax_size) ;
+//          Ax_copy = GB_MALLOC_MEMORY (nvals, typesize, &Ax_mem) ;
 //          ok = (Ax_copy != NULL) ;
 //          break ;
 
@@ -190,12 +190,12 @@ static GrB_Info GB_import_worker   // import a matrix of any type
         case GrB_CSR_FORMAT : 
 
             GB_OK (GB_import (false, A, type, ncols, nrows, false,
-                &Ap_copy, Ap_size,  // Ap
+                &Ap_copy, GB_memsize (Ap_mem),  // Ap
                 NULL, 0,            // Ah
                 NULL, 0,            // Ab
-                &Ai_copy, Ai_size,  // Ai
+                &Ai_copy, GB_memsize (Ai_mem),  // Ai
                 (void **)
-                &Ax_copy, Ax_size,  // Ax
+                &Ax_copy, GB_memsize (Ax_mem),  // Ax
                 0, true, 0,         // CSR format may be jumbled
                 GxB_SPARSE, false,  // sparse by row
                 false,              // not iso
@@ -207,12 +207,12 @@ static GrB_Info GB_import_worker   // import a matrix of any type
         case GrB_CSC_FORMAT : 
 
             GB_OK (GB_import (false, A, type, nrows, ncols, false,
-                &Ap_copy, Ap_size,  // Ap
+                &Ap_copy, GB_memsize (Ap_mem),  // Ap
                 NULL, 0,            // Ah
                 NULL, 0,            // Ab
-                &Ai_copy, Ai_size,  // Ai
+                &Ai_copy, GB_memsize (Ai_mem),  // Ai
                 (void **)
-                &Ax_copy, Ax_size,  // Ax
+                &Ax_copy, GB_memsize (Ax_mem),  // Ax
                 0, true, 0,         // CSC format may be jumbled
                 GxB_SPARSE, true,   // sparse by column
                 false,              // not iso
@@ -229,7 +229,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
 //              NULL, 0,            // Ab
 //              NULL, 0,            // Ai
 //              (void **)
-//              &Ax_copy, Ax_size,  // Ax
+//              &Ax_copy, GB_memsize (Ax_mem),  // Ax
 //              0, false, 0,        // cannot be jumbled
 //              GxB_FULL, false,    // full by row
 //              false,              // not iso
@@ -246,7 +246,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
 //              NULL, 0,            // Ab
 //              NULL, 0,            // Ai
 //              (void **)
-//              &Ax_copy, Ax_size,  // Ax
+//              &Ax_copy, GB_memsize (Ax_mem),  // Ax
 //              0, false, 0,        // cannot be jumbled
 //              GxB_FULL, true,     // full by column
 //              false,              // not iso
@@ -258,9 +258,9 @@ static GrB_Info GB_import_worker   // import a matrix of any type
         default : // GrB_COO_FORMAT
             {
                 // build A as hypersparse by row or by column
-                void *no_I_work = NULL ; size_t I_work_size = 0 ;
-                void *no_J_work = NULL ; size_t J_work_size = 0 ;
-                GB_void *no_X_work = NULL ; size_t X_work_size = 0 ;
+                void *no_I_work = NULL ; uint64_t I_work_mem = 0 ;
+                void *no_J_work = NULL ; uint64_t J_work_mem = 0 ;
+                GB_void *no_X_work = NULL ; uint64_t X_work_mem = 0 ;
                 bool is_csc = GB_Global_is_csc_get ( ) ;
                 int64_t vlen = is_csc ? nrows : ncols ;
                 int64_t vdim = is_csc ? ncols : nrows ;
@@ -279,11 +279,11 @@ static GrB_Info GB_import_worker   // import a matrix of any type
                     vdim,
                     is_csc,         // CSR/CSC format
                     &no_I_work,     // I_work_handle, not used here
-                    &I_work_size,
+                    &I_work_mem,
                     &no_J_work,     // J_work_handle, not used here
-                    &J_work_size,
+                    &J_work_mem,
                     &no_X_work,     // X_work_handle, not used here
-                    &X_work_size,
+                    &X_work_mem,
                     false,          // known_sorted: not yet known
                     false,          // known_no_duplicates: not yet known
                     0,              // I_work, J_work, and X_work not used here

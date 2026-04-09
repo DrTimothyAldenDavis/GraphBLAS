@@ -16,13 +16,13 @@
 
 #define GB_JIT_QUERY_PROTO(query_func)                                  \
 bool query_func (uint64_t *hash, int v [3], const char *defn [5],       \
-    void *id, void *term, size_t id_size, size_t term_size)
+    void *id, void *term, size_t id_memsize, size_t term_memsize)
 
 #define GB_JIT_KERNEL_USER_OP_PROTO(GB_jit_kernel_user_op)              \
 GrB_Info GB_jit_kernel_user_op (void **user_function, char **defn)
 
 #define GB_JIT_KERNEL_USER_TYPE_PROTO(GB_jit_kernel_user_type)          \
-GrB_Info GB_jit_kernel_user_type (size_t *user_type_size, char **defn)
+GrB_Info GB_jit_kernel_user_type (uint64_t *user_type_memsize, char **defn)
 
 #define GB_JIT_KERNEL_ADD_PROTO(GB_jit_kernel_add)                      \
 GrB_Info GB_jit_kernel_add                                              \

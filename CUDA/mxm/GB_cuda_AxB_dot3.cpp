@@ -51,10 +51,10 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
 
     // when CUDA is enabled, no static headers are used in all of GraphBLAS
     GrB_Info info ;
-    ASSERT (C != NULL && !(C->header_size == 0)) ;
-    ASSERT (M != NULL && !(M->header_size == 0)) ;
-    ASSERT (A != NULL && !(A->header_size == 0)) ;
-    ASSERT (B != NULL && !(B->header_size == 0)) ;
+    ASSERT (C != NULL) ;
+    ASSERT (M != NULL) ;
+    ASSERT (A != NULL) ;
+    ASSERT (B != NULL) ;
 
     ASSERT_MATRIX_OK (M, "M for dot3 cuda A'*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for dot3 cuda A'*B", GB0) ;

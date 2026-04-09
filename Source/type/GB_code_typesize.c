@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_code_size: given a type code, return sizeof (type)
+// GB_code_typesize: given a type code, return sizeof (type)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -11,7 +11,7 @@
 
 #include "GB.h"
 
-size_t GB_code_size             // return the size of a type, given its code
+size_t GB_code_typesize         // return the size of a type, given its code
 (
     const GB_Type_code code,    // input code of the type to find the size of
     const size_t usize          // known size of user-defined type

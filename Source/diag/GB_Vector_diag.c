@@ -42,7 +42,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     ASSERT (!GB_any_aliased (A, V)) ;       // A and V cannot be aliased
     ASSERT (!GB_IS_HYPERSPARSE (V)) ;       // vectors cannot be hypersparse
 
-    struct GB_Matrix_opaque T_header ;
+    // struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
 
     GrB_Type atype = A->type ;
@@ -105,7 +105,8 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
 
     struct GB_Scalar_opaque scalar_header ;
     GrB_Scalar scalar = GB_Scalar_wrap (&scalar_header, GrB_INT64, &k) ;
-    GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+    // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+    GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
     GB_OK (GB_selector (T, GrB_DIAG, false, A, scalar, Werk)) ;
     GB_OK (GB_convert_any_to_hyper (T, Werk)) ;
     GB_MATRIX_WAIT (T) ;
@@ -144,14 +145,14 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     { 
         // transplant T->i into V->i
         V->i = T->i ;
-        V->i_size = T->i_size ;
+        V->i_mem = T->i_mem ;
         T->i_shallow = true ;
     }
     else
     { 
         // transplant T->h into V->i
         V->i = T->h ;
-        V->i_size = T->h_size ;
+        V->i_mem = T->h_mem ;
         T->h_shallow = true ;
     }
 
@@ -165,7 +166,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     { 
         // transplant T->x into V->x
         V->x = T->x ;
-        V->x_size = T->x_size ;
+        V->x_mem = T->x_mem ;
         T->x = NULL ;
     }
     else
@@ -173,7 +174,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
         // V->x = (vtype) T->x
         // V is sparse so malloc is OK
         V->x = GB_XALLOC_MEMORY (false, V->iso, vnz, vtype->size,
-            &(V->x_size)) ;
+            &(V->x_mem)) ;
         if (V->x == NULL)
         { 
             // out of memory

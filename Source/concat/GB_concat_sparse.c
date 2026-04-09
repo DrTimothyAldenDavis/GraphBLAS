@@ -15,8 +15,8 @@
             GB_Matrix_free (&(S [k])) ;         \
         }                                       \
     }                                           \
-    GB_FREE_MEMORY (&S, S_size) ;                 \
-    GB_FREE_MEMORY (&Work, Work_size) ;           \
+    GB_FREE_MEMORY (&S, S_mem) ;                \
+    GB_FREE_MEMORY (&Work, Work_mem) ;          \
     GB_WERK_POP (A_ek_slicing, int64_t) ;
 
 #define GB_FREE_ALL         \
@@ -52,9 +52,9 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     GrB_Matrix A = NULL ;
     ASSERT_MATRIX_OK (C, "C input to concat sparse", GB0) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
-    GB_MDECL (Work, , u) ; size_t Work_size = 0 ;
+    GB_MDECL (Work, , u) ; uint64_t Work_mem = 0 ;  // FIXME memlane
     GrB_Matrix *S = NULL ;
-    size_t S_size = 0 ;
+    uint64_t S_mem = 0 ;  // FIXME memlane
 
     GrB_Type ctype = C->type ;
     int64_t cvlen = C->vlen ;
@@ -101,8 +101,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     int64_t nouter = csc ? n : m ;
     int64_t ninner = csc ? m : n ;
     size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    Work = GB_CALLOC_MEMORY (ninner * cvdim, cpsize, &Work_size) ;
-    S = GB_CALLOC_MEMORY (m * n, sizeof (GrB_Matrix), &S_size) ;
+    Work = GB_CALLOC_MEMORY (ninner * cvdim, cpsize, &Work_mem) ;
+    S = GB_CALLOC_MEMORY (m * n, sizeof (GrB_Matrix), &S_mem) ;
     if (S == NULL || Work == NULL)
     { 
         // out of memory

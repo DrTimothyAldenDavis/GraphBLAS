@@ -16,7 +16,7 @@
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \
-    GB_FREE_MEMORY (&W, W_size) ;               \
+    GB_FREE_MEMORY (&W, W_mem) ;                \
 }
 
 #define GB_FREE_ALL                             \
@@ -46,7 +46,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
 
     GrB_Info info = GrB_SUCCESS ;
     GrB_Matrix R = NULL ;
-    GB_MDECL (W, , u) ; size_t W_size = 0 ;
+    GB_MDECL (W, , u) ; uint64_t W_mem = 0 ;    // FIXME memlane
     (*R_handle) = NULL ;
     GB_IDECL (I, const, u) ; GB_IPTR (I, I_is_32) ;
 
@@ -63,7 +63,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
 
     bool W_is_32 = (nI < INT32_MAX) ;
     size_t wsize = (W_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    W = GB_MALLOC_MEMORY (nI, wsize, &W_size) ;
+    W = GB_MALLOC_MEMORY (nI, wsize, &W_mem) ;
     if (W == NULL)
     { 
         // out of memory
@@ -87,9 +87,9 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     uint64_t S_input [1] ;
     S_input [0] = 1 ;
 
-    void *no_I_work = NULL ; size_t I_work_size = 0 ;
-    void *no_J_work = NULL ; size_t J_work_size = 0 ;
-    GB_void *no_X_work = NULL ; size_t X_work_size = 0 ;
+    void *no_I_work = NULL ; uint64_t I_work_mem = 0 ;        // OK, memlane = 0
+    void *no_J_work = NULL ; uint64_t J_work_mem = 0 ;        // OK, memlane = 0
+    GB_void *no_X_work = NULL ; uint64_t X_work_mem = 0 ;     // OK, memlane = 0
 
     GB_OK (GB_builder (
         // T
@@ -103,11 +103,11 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
         // is_csc
         false,              // R is CSR
         // I_work_handle and size
-        &no_I_work, &I_work_size,            // I_work not used
+        &no_I_work, &I_work_mem,            // I_work not used
         // J_work_handle and size
-        &no_J_work, &J_work_size,            // J_work not used
+        &no_J_work, &J_work_mem,            // J_work not used
         // X_work_handle and size
-        &no_X_work, &X_work_size,            // X_work not used
+        &no_X_work, &X_work_mem,            // X_work not used
         // known_sorted
         false,              // tuples might not be sorted
         // known_no_duplicates

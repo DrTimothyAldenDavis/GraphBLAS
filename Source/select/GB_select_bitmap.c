@@ -40,7 +40,7 @@ GrB_Info GB_select_bitmap
     ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
     GB_Opcode opcode = op->opcode ;
     ASSERT (opcode != GB_NONZOMBIE_idxunop_code) ;
-    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
+    ASSERT (C != NULL) ;
 
     //--------------------------------------------------------------------------
     // get A

@@ -24,23 +24,25 @@ typedef GB_JIT_KERNEL_USER_TYPE_PROTO ((*GB_user_type_f)) ;
 // The hash table is a global variable and is shared by all threads of the user
 // application.  It is only visible inside this file.  It starts out empty
 // (NULL).  Its size is either zero (at the beginning), or a power of two (of
-// size GB_JITIFIER_INITIAL_SIZE or more).
+// size GB_JITIFIER_INITIAL_NENTRIES or more).
 
 // The strings are also global variables, and are used for filenames,
 // directories, and JIT compilation commands, flags, and settings.
 
+// All objects are allocated in memlane 0 using persistent memory.
+
 #ifdef GBCOVER
 // use a smaller JIT table size during test coverage
-#define GB_JITIFIER_INITIAL_SIZE (1024)
+#define GB_JITIFIER_INITIAL_NENTRIES (1024)
 #else
-#define GB_JITIFIER_INITIAL_SIZE (32*1024)
+#define GB_JITIFIER_INITIAL_NENTRIES (32*1024)
 #endif
 
 static GB_jit_entry *GB_jit_table = NULL ;
-static int64_t  GB_jit_table_size = 0 ;  // always a power of 2
+static uint64_t GB_jit_table_nentries = 0 ;  // always a power of 2
 static uint64_t GB_jit_table_bits = 0 ;  // hash mask (0xFFFF if size is 2^16)
-static int64_t  GB_jit_table_populated = 0 ;
-static size_t   GB_jit_table_allocated = 0 ;
+static uint64_t GB_jit_table_populated = 0 ;
+static uint64_t GB_jit_table_allocated = 0 ;
 
 static bool GB_jit_use_cmake =
     #if defined (_MSC_VER)
@@ -51,43 +53,43 @@ static bool GB_jit_use_cmake =
 
 // path to user cache folder:
 static char    *GB_jit_cache_path = NULL ;
-static size_t   GB_jit_cache_path_allocated = 0 ;
+static uint64_t GB_jit_cache_path_allocated = 0 ;
 
 // path to error log file:
 static char    *GB_jit_error_log = NULL ;
-static size_t   GB_jit_error_log_allocated = 0 ;
+static uint64_t GB_jit_error_log_allocated = 0 ;
 
 // name of the C compiler:
 static char    *GB_jit_C_compiler = NULL ;
-static size_t   GB_jit_C_compiler_allocated = 0 ;
+static uint64_t GB_jit_C_compiler_allocated = 0 ;
 
 // flags for the C compiler:
 static char    *GB_jit_C_flags = NULL ;
-static size_t   GB_jit_C_flags_allocated = 0 ;
+static uint64_t GB_jit_C_flags_allocated = 0 ;
 
 // link flags for the C compiler:
 static char    *GB_jit_C_link_flags = NULL ;
-static size_t   GB_jit_C_link_flags_allocated = 0 ;
+static uint64_t GB_jit_C_link_flags_allocated = 0 ;
 
 // libraries to link against when using the direct compile/link:
 static char    *GB_jit_C_libraries = NULL ;
-static size_t   GB_jit_C_libraries_allocated = 0 ;
+static uint64_t GB_jit_C_libraries_allocated = 0 ;
 
 // libraries to link against when using cmake:
 static char    *GB_jit_C_cmake_libs = NULL ;
-static size_t   GB_jit_C_cmake_libs_allocated = 0 ;
+static uint64_t GB_jit_C_cmake_libs_allocated = 0 ;
 
 // preface to add to each CPU JIT kernel:
 static char    *GB_jit_C_preface = NULL ;
-static size_t   GB_jit_C_preface_allocated = 0 ;
+static uint64_t GB_jit_C_preface_allocated = 0 ;
 
 // preface to add to each CUDA JIT kernel:
 static char    *GB_jit_CUDA_preface = NULL ;
-static size_t   GB_jit_CUDA_preface_allocated = 0 ;
+static uint64_t GB_jit_CUDA_preface_allocated = 0 ;
 
 // temporary workspace for filenames and system commands:
 static char    *GB_jit_temp = NULL ;
-static size_t   GB_jit_temp_allocated = 0 ;
+static uint64_t GB_jit_temp_allocated = 0 ;
 
 // compile with -DJITINIT=4 (for example) to set the initial JIT C control
 #ifdef JITINIT
@@ -106,10 +108,10 @@ static int GB_jit_control = GB_JIT_C_CONTROL_INIT ;
 #ifdef GB_DEBUG
 static void check_table (void)
 {
-    int64_t populated = 0 ;
+    uint64_t populated = 0 ;
     if (GB_jit_table != NULL)
     {
-        for (uint64_t k = 0 ; k < GB_jit_table_size ; k++)
+        for (uint64_t k = 0 ; k < GB_jit_table_nentries ; k++)
         {
             GB_jit_entry *e = &(GB_jit_table [k]) ;
             if (e->dl_function != NULL)
@@ -147,11 +149,11 @@ static void check_table (void)
 
 #ifdef GB_MEMDUMP
 
-    #define GB_MALLOC_PERSISTENT(X,siz)                     \
+    #define GB_MALLOC_PERSISTENT(X,memsize)                 \
     {                                                       \
-        X = GB_Global_persistent_malloc (siz) ;             \
+        X = GB_Global_persistent_malloc (memsize) ;         \
         GBMDUMP ("persistent malloc (%4d): %p size %g\n",   \
-            __LINE__, (void *) X, (double) siz) ;           \
+            __LINE__, (void *) X, (double) memsize) ;       \
     }
 
     #define GB_FREE_PERSISTENT(X)                           \
@@ -166,9 +168,9 @@ static void check_table (void)
 
 #else
 
-    #define GB_MALLOC_PERSISTENT(X,siz)                     \
+    #define GB_MALLOC_PERSISTENT(X,memsize)                 \
     {                                                       \
-        X = GB_Global_persistent_malloc (siz) ;             \
+        X = GB_Global_persistent_malloc (memsize) ;         \
     }
 
     #define GB_FREE_PERSISTENT(X)                           \
@@ -184,21 +186,21 @@ static void check_table (void)
     X ## _allocated = 0 ;                               \
 }
 
-#define GB_MALLOC_STUFF(X,len)                          \
+#define GB_MALLOC_STUFF(X,memsize)                      \
 {                                                       \
-    GB_MALLOC_PERSISTENT (X, (len) + 2) ;               \
+    GB_MALLOC_PERSISTENT (X, (memsize) + 2) ;           \
     if (X == NULL)                                      \
     {                                                   \
         return (GrB_OUT_OF_MEMORY) ;                    \
     }                                                   \
-    X ## _allocated = (len) + 2 ;                       \
+    X ## _allocated = (memsize) + 2 ;                   \
 }
 
 #define GB_COPY_STUFF(X,src)                            \
 {                                                       \
     ASSERT (src != NULL) ;                              \
-    size_t len = strlen (src) ;                         \
-    GB_MALLOC_STUFF (X, len) ;                          \
+    uint64_t mem = GB_mem (0, strlen (src)) ;           \
+    GB_MALLOC_STUFF (X, mem) ;                          \
     strncpy (X, src, X ## _allocated) ;                 \
 }
 
@@ -231,9 +233,9 @@ void GB_jitifyer_finalize (void)
 // underscore, and slash).  Backslash is valid but replaced with slash.
 // All other invalid characters are replaced with underscore.
 
-void GB_jitifyer_sanitize (char *string, size_t len)
+void GB_jitifyer_sanitize (char *string, uint64_t len)
 {
-    for (int k = 0 ; k < len ; k++)
+    for (uint64_t k = 0 ; k < len ; k++)
     {
         // check for the end of the string
         if (string [k] == '\0') break ;
@@ -329,8 +331,8 @@ GrB_Info GB_jitifyer_init (void)
         if (home != NULL)
         { 
             // found home; create the cache path
-            size_t len = strlen (home) + 60 ;
-            GB_MALLOC_STUFF (GB_jit_cache_path, len) ;
+            uint64_t memsize = (uint64_t) (strlen (home) + 60) ;
+            GB_MALLOC_STUFF (GB_jit_cache_path, memsize) ;
             snprintf (GB_jit_cache_path, GB_jit_cache_path_allocated,
                 "%s/%sSuiteSparse/GrB%d.%d.%d"
                 #if defined ( GBMATLAB ) && defined ( __APPLE__ )
@@ -747,15 +749,16 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     // allocate workspace for the largest uncompressed file
     //--------------------------------------------------------------------------
 
-    size_t dst_size = 0 ;
+    size_t dst_memsize = 0 ;
     for (int k = 0 ; k < GB_JITpackage_nfiles ; k++)
     { 
-        size_t uncompressed_size = GB_JITpackage_index [k].uncompressed_size ;
-        dst_size = GB_IMAX (dst_size, uncompressed_size) ;
+        size_t uncompressed_memsize =
+            GB_JITpackage_index [k].uncompressed_memsize ;
+        dst_memsize = GB_IMAX (dst_memsize, uncompressed_memsize) ;
     }
 
     uint8_t *dst ;
-    GB_MALLOC_PERSISTENT (dst, (dst_size+2) * sizeof(uint8_t)) ;
+    GB_MALLOC_PERSISTENT (dst, (dst_memsize+2) * sizeof(uint8_t)) ;
     if (dst == NULL)
     {
         // JITPackage error: out of memory; disable the JIT
@@ -772,9 +775,9 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     { 
         // uncompress the blob
         uint8_t *src = GB_JITpackage_index [k].blob ;
-        size_t src_size = GB_JITpackage_index [k].compressed_size ;
-        size_t u = ZSTD_decompress (dst, dst_size, src, src_size) ;
-        if (u != GB_JITpackage_index [k].uncompressed_size)
+        size_t src_memsize = GB_JITpackage_index [k].compressed_memsize ;
+        size_t u = ZSTD_decompress (dst, dst_memsize, src, src_memsize) ;
+        if (u != GB_JITpackage_index [k].uncompressed_memsize)
         {
             // JITPackage error: blob is invalid
             ok = false ;
@@ -892,7 +895,7 @@ GrB_Info GB_jitifyer_alloc_space (void)
     //--------------------------------------------------------------------------
 
     GB_FREE_STUFF (GB_jit_temp) ;
-    size_t len =
+    uint64_t memsize =
         2 * GB_jit_C_compiler_allocated +
         2 * GB_jit_C_flags_allocated +
         GB_jit_C_link_flags_allocated +
@@ -902,7 +905,7 @@ GrB_Info GB_jitifyer_alloc_space (void)
         GB_jit_C_cmake_libs_allocated +
         GB_jit_error_log_allocated +
         300 ;
-    GB_MALLOC_STUFF (GB_jit_temp, len) ;
+    GB_MALLOC_STUFF (GB_jit_temp, memsize) ;
 
     return (GrB_SUCCESS) ;
 }
@@ -2182,7 +2185,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 )
 {
 
-    size_t siz = 0 ;
+    uint64_t memsize = 0 ;
     ASSERT_TABLE_OK ;
 
     //--------------------------------------------------------------------------
@@ -2196,20 +2199,21 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         // allocate the initial hash table
         //----------------------------------------------------------------------
 
-        siz = GB_JITIFIER_INITIAL_SIZE * sizeof (struct GB_jit_entry_struct) ;
-        GB_MALLOC_PERSISTENT (GB_jit_table, siz) ;
+        memsize = GB_JITIFIER_INITIAL_NENTRIES *
+            sizeof (struct GB_jit_entry_struct) ;
+        GB_MALLOC_PERSISTENT (GB_jit_table, memsize) ;
         if (GB_jit_table == NULL)
         {
             // JIT error: out of memory
             return (false) ;
         }
-        memset (GB_jit_table, 0, siz) ;
-        GB_jit_table_size = GB_JITIFIER_INITIAL_SIZE ;
-        GB_jit_table_bits = GB_JITIFIER_INITIAL_SIZE - 1 ;
-        GB_jit_table_allocated = siz ;
+        memset (GB_jit_table, 0, memsize) ;
+        GB_jit_table_nentries = GB_JITIFIER_INITIAL_NENTRIES ;
+        GB_jit_table_bits = GB_JITIFIER_INITIAL_NENTRIES - 1 ;
+        GB_jit_table_allocated = memsize ;
 
     }
-    else if (4 * GB_jit_table_populated >= GB_jit_table_size)
+    else if (4 * GB_jit_table_populated >= GB_jit_table_nentries)
     {
 
         //----------------------------------------------------------------------
@@ -2218,11 +2222,11 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 
         ASSERT_TABLE_OK ;
         // create a new table that is four times the size
-        int64_t new_size = 4 * GB_jit_table_size ;
-        int64_t new_bits = new_size - 1 ;
-        siz = new_size * sizeof (struct GB_jit_entry_struct) ;
+        int64_t new_nentries = 4 * GB_jit_table_nentries ;
+        int64_t new_bits = new_nentries - 1 ;
+        memsize = new_nentries * sizeof (struct GB_jit_entry_struct) ;
         GB_jit_entry *new_table ;
-        GB_MALLOC_PERSISTENT (new_table, siz) ;
+        GB_MALLOC_PERSISTENT (new_table, memsize) ;
         if (new_table == NULL)
         {
             // JIT error: out of memory; leave the existing table as-is
@@ -2230,8 +2234,8 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         }
 
         // rehash into the new table
-        memset (new_table, 0, siz) ;
-        for (uint64_t k = 0 ; k < GB_jit_table_size ; k++)
+        memset (new_table, 0, memsize) ;
+        for (uint64_t k = 0 ; k < GB_jit_table_nentries ; k++)
         {
             if (GB_jit_table [k].dl_function != NULL)
             { 
@@ -2256,9 +2260,9 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 
         // use the new table
         GB_jit_table = new_table ;
-        GB_jit_table_size = new_size ;
+        GB_jit_table_nentries = new_nentries ;
         GB_jit_table_bits = new_bits ;
-        GB_jit_table_allocated = siz ;
+        GB_jit_table_allocated = memsize ;
         ASSERT_TABLE_OK ;
     }
 
@@ -2338,7 +2342,7 @@ void GB_jitifyer_table_free (bool freeall)
 { 
     if (GB_jit_table != NULL)
     {
-        for (uint64_t k = 0 ; k < GB_jit_table_size ; k++)
+        for (uint64_t k = 0 ; k < GB_jit_table_nentries ; k++)
         {
             GB_jit_entry *e = &(GB_jit_table [k]) ;
             if (e->dl_function != NULL)
@@ -2365,7 +2369,7 @@ void GB_jitifyer_table_free (bool freeall)
     { 
         // the JIT table is now empty, so free it
         GB_FREE_STUFF (GB_jit_table) ;
-        GB_jit_table_size = 0 ;
+        GB_jit_table_nentries = 0 ;
         GB_jit_table_bits = 0 ;
     }
 }

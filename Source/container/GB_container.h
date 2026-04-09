@@ -36,7 +36,8 @@ void GB_vector_load
     // input:
     GrB_Type type,          // type of X
     uint64_t n,             // # of entries in X
-    uint64_t X_size,        // size of X in bytes (at least n*(sizeof the type))
+    uint64_t X_mem,         // memsize of X in bytes (>= n*(sizeof the type))
+                            // and memlane
     bool readonly           // if true, X is treated as readonly
 ) ;
 
@@ -48,7 +49,8 @@ GrB_Info GB_vector_unload
     // output:
     GrB_Type *type,         // type of X
     uint64_t *n,            // # of entries in X
-    uint64_t *X_size,       // size of X in bytes (at least n*(sizeof the type))
+    uint64_t *X_mem,        // memsize of X in bytes (>= n*(sizeof the type))
+                            // and memlane
     bool *readonly,         // if true, X is treated as readonly
     GB_Werk Werk
 ) ;

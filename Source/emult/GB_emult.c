@@ -37,17 +37,17 @@
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \
-    GB_FREE_MEMORY (&TaskList, TaskList_size) ;   \
-    GB_FREE_MEMORY (&C_to_M, C_to_M_size) ;       \
-    GB_FREE_MEMORY (&C_to_A, C_to_A_size) ;       \
-    GB_FREE_MEMORY (&C_to_B, C_to_B_size) ;       \
+    GB_FREE_MEMORY (&TaskList, TaskList_mem) ;  \
+    GB_FREE_MEMORY (&C_to_M, C_to_M_mem) ;      \
+    GB_FREE_MEMORY (&C_to_A, C_to_A_mem) ;      \
+    GB_FREE_MEMORY (&C_to_B, C_to_B_mem) ;      \
 }
 
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_WORKSPACE ;         \
-    GB_FREE_MEMORY (&Cp, Cp_size) ;    \
-    GB_phybix_free (C) ;        \
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WORKSPACE ;             \
+    GB_FREE_MEMORY (&Cp, Cp_mem) ;  \
+    GB_phybix_free (C) ;            \
 }
 
 GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
@@ -72,7 +72,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
+    ASSERT (C != NULL) ;
 
     ASSERT_MATRIX_OK (A, "A for emult", GB0) ;
     ASSERT_MATRIX_OK (B, "B for emult", GB0) ;
@@ -85,13 +85,14 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // declare workspace
     //--------------------------------------------------------------------------
 
-    GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
-    int64_t *C_to_M = NULL ; size_t C_to_M_size = 0 ;
-    int64_t *C_to_A = NULL ; size_t C_to_A_size = 0 ;
-    int64_t *C_to_B = NULL ; size_t C_to_B_size = 0 ;
+    // FIXME memlane
+    GB_task_struct *TaskList = NULL ; uint64_t TaskList_mem = 0 ;
+    int64_t *C_to_M = NULL ; uint64_t C_to_M_mem = 0 ;
+    int64_t *C_to_A = NULL ; uint64_t C_to_A_mem = 0 ;
+    int64_t *C_to_B = NULL ; uint64_t C_to_B_mem = 0 ;
     int64_t Cnvec, Cnvec_nonempty ;
-    void *Cp = NULL ; size_t Cp_size = 0 ;
-    const void *Ch = NULL ; size_t Ch_size = 0 ;
+    void *Cp = NULL ; uint64_t Cp_mem = 0 ;
+    const void *Ch = NULL ; uint64_t Ch_mem = 0 ;
     int C_ntasks = 0, C_nthreads ;
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
 
@@ -411,10 +412,10 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
     GB_OK (GB_emult_08_phase0 (
         // computed by phase0:
-        &Cnvec, &Ch, &Ch_size,
-        &C_to_M, &C_to_M_size,
-        &C_to_A, &C_to_A_size,
-        &C_to_B, &C_to_B_size,
+        &Cnvec, &Ch, &Ch_mem,
+        &C_to_M, &C_to_M_mem,
+        &C_to_A, &C_to_A_mem,
+        &C_to_B, &C_to_B_mem,
         &Cp_is_32, &Cj_is_32, &Ci_is_32,
         // input/output to phase0:
         &C_sparsity,
@@ -431,7 +432,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // phase1a: split C into tasks
     GB_OK (GB_ewise_slice (
         // computed by phase1a:
-        &TaskList, &TaskList_size, &C_ntasks, &C_nthreads,
+        &TaskList, &TaskList_mem, &C_ntasks, &C_nthreads,
         // computed by phase0:
         Cnvec, Ch, Cj_is_32, C_to_M, C_to_A, C_to_B, /* Ch_is_Mh: */ false,
         // original input:
@@ -440,7 +441,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // count the number of entries in each vector of C
     GB_OK (GB_emult_08_phase1 (
         // computed by phase1:
-        &Cp, &Cp_size, &Cnvec_nonempty,
+        &Cp, &Cp_mem, &Cnvec_nonempty,
         // from phase1a:
         TaskList, C_ntasks, C_nthreads,
         // from phase0:
@@ -459,11 +460,11 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // computed or used by phase2:
         C, ctype, C_is_csc, op, flipij,
         // from phase1:
-        &Cp, Cp_size, Cnvec_nonempty,
+        &Cp, Cp_mem, Cnvec_nonempty,
         // from phase1a:
         TaskList, C_ntasks, C_nthreads,
         // from phase0:
-        Cnvec, Ch, Ch_size, C_to_M, C_to_A, C_to_B,
+        Cnvec, Ch, Ch_mem, C_to_M, C_to_A, C_to_B,
         Cp_is_32, Cj_is_32, Ci_is_32, C_sparsity,
         // from GB_emult_sparsity:
         ewise_method,

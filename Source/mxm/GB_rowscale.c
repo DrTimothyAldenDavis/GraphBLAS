@@ -37,7 +37,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
+    ASSERT (C != NULL) ;
     ASSERT_MATRIX_OK (D, "D for rowscale D*B", GB0) ;
     ASSERT_MATRIX_OK (B, "B for rowscale D*B", GB0) ;
     ASSERT (!GB_ZOMBIES (D)) ;
@@ -294,8 +294,8 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
             // be the same as the size of the D and B types.
             // flipxy false: dii = (xtype) D(i,i) and bij = (ytype) B(i,j)
             // flipxy true:  dii = (ytype) D(i,i) and bij = (xtype) B(i,j)
-            size_t dii_size = flipxy ? ysize : xsize ;
-            size_t bij_size = flipxy ? xsize : ysize ;
+            size_t diisize = flipxy ? ysize : xsize ;
+            size_t bijsize = flipxy ? xsize : ysize ;
 
             GB_cast_function cast_D, cast_B ;
             if (flipxy)
@@ -321,7 +321,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
 
             // dii = D(i,i), located in Dx [i]
             #define GB_DECLAREA(dii)                                    \
-                GB_void dii [GB_VLA(dii_size)] ;
+                GB_void dii [GB_VLA(diisize)] ;
             #define GB_GETA(dii,Dx,i,D_iso)                             \
                 if (!D_is_pattern)                                      \
                 {                                                       \
@@ -330,7 +330,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
 
             // bij = B(i,j), located in Bx [pB]
             #define GB_DECLAREB(bij)                                    \
-                GB_void bij [GB_VLA(bij_size)] ;
+                GB_void bij [GB_VLA(bijsize)] ;
             #define GB_GETB(bij,Bx,pB,B_iso)                            \
                 if (!B_is_pattern)                                      \
                 {                                                       \

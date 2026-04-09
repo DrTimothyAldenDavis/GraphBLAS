@@ -71,7 +71,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         // user as an invalid GrB_Vector.
 
         ASSERT (A->plen == 1) ;
-        ASSERT (A->p_size >= 2 * psize) ;
+        ASSERT (GB_memsize (A->p_mem) >= 2 * psize) ;
         ASSERT (A->nvec == 0 || A->nvec == 1) ;
         if (A->nvec == 0)
         { 
@@ -113,8 +113,8 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         // allocate the new Ap array, of size n+1
         //----------------------------------------------------------------------
 
-        void *Ap_new = NULL ; size_t Ap_new_size = 0 ;
-        Ap_new = GB_MALLOC_MEMORY (n+1, psize, &Ap_new_size) ;
+        void *Ap_new = NULL ; uint64_t Ap_new_mem = 0 ; // FIXME memlane
+        Ap_new = GB_MALLOC_MEMORY (n+1, psize, &Ap_new_mem) ;
         if (Ap_new == NULL)
         { 
             // out of memory
@@ -270,7 +270,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         GB_phy_free (A) ;
 
         // transplant the new vector pointers; matrix is no longer hypersparse
-        A->p = Ap_new ; A->p_size = Ap_new_size ;
+        A->p = Ap_new ; A->p_mem = Ap_new_mem ;
         A->h = NULL ;
         A->nvec = n ;
 //      A->nvec_nonempty = nvec_nonempty ;

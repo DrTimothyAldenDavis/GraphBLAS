@@ -28,9 +28,9 @@ bool GB_factory_kernels_enabled = true ;
 //------------------------------------------------------------------------------
 
 #define GB_ALLOCATE_WORK(work_type)                                         \
-    size_t Work_size ;                                                      \
+    size_t Work_mem = 0 ;  /* FIXME memlane */                              \
     work_type *Work = GB_MALLOC_MEMORY (nthreads, sizeof (work_type),       \
-        &Work_size) ;                                                       \
+        &Work_mem) ;                                                        \
     if (Work == NULL) return (false) ;
 
 //------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ bool GB_factory_kernels_enabled = true ;
 //------------------------------------------------------------------------------
 
 #define GB_FREE_WORKSPACE                                                   \
-    GB_FREE_MEMORY (&Work, Work_size) ;
+    GB_FREE_MEMORY (&Work, Work_mem) ;
 
 //------------------------------------------------------------------------------
 // GB_helper5: construct pattern of S for gblogassign
@@ -425,11 +425,11 @@ static GxB_Container Container = NULL ;
 static GrB_Vector GB_helper_component (void)
 {
     size_t s = sizeof (struct GB_Vector_opaque) ;
-    GrB_Vector p = GB_Global_persistent_malloc (s) ;
+    GrB_Vector p = GB_Global_persistent_malloc (s) ;    // always use memlane 0
     if (p != NULL)
     {
         memset (p, 0, s) ;
-        p->header_size = s ;
+        p->header_mem = GB_mem (s, 0) ;     // always use memlane 0
         p->type = GrB_BOOL ;
         p->is_csc = true ;
         p->plen = -1 ;
@@ -454,7 +454,8 @@ void GB_helper_container_new (void)         // allocate the global Container
 
     // allocate a new Container
     size_t s = sizeof (struct GxB_Container_struct) ;
-    Container = GB_Global_persistent_malloc (s) ;
+    Container = GB_Global_persistent_malloc (s) ;    // always use memlane 0
+    printf ("new persistent container: %p\n", Container) ;
     if (Container != NULL)
     {
         memset (Container, 0, s) ;

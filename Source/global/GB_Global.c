@@ -134,11 +134,11 @@ typedef struct
     // for malloc debugging only
     //--------------------------------------------------------------------------
 
-    #ifdef GB_DEBUG
+    #ifdef GB_MEMTABLE_DEBUG
     #define GB_MEMTABLE_SIZE 10000
     GB_void *memtable_p [GB_MEMTABLE_SIZE] ;
-    size_t   memtable_size [GB_MEMTABLE_SIZE] ;
-    int      memtable_lane [GB_MEMTABLE_SIZE] ;
+    uint64_t memtable_memsize [GB_MEMTABLE_SIZE] ;
+    int      memtable_memlane [GB_MEMTABLE_SIZE] ;
     #endif
     int nmemtable ;
 
@@ -553,15 +553,15 @@ void GB_Global_abort (void)
 
 void GB_Global_memtable_dump (void)
 {
-    #if defined (GB_DEBUG) && defined (GB_MEMDUMP)
+    #if defined ( GB_MEMTABLE_DEBUG ) && defined ( GB_MEMDUMP )
     GBMDUMP ("\nmemtable dump: %d nmalloc " GBd "\n",
         GB_Global.nmemtable, GB_Global.nmalloc) ;
     for (int k = 0 ; k < GB_Global.nmemtable ; k++)
     {
         GBMDUMP ("  %4d: %12p : %ld lane: %d\n", k,
             GB_Global.memtable_p [k],
-            GB_Global.memtable_size [k],
-            GB_Global.memtable_lane [k]) ;
+            GB_Global.memtable_memsize [k],
+            GB_Global.memtable_memlane [k]) ;
     }
     #endif
 }
@@ -577,7 +577,7 @@ void GB_Global_memtable_clear (void)
 }
 
 // add a pointer to the table of malloc'd blocks
-void GB_Global_memtable_add (void *p, size_t size, int memlane)
+void GB_Global_memtable_add (void *p, uint64_t mem)
 {
     if (p == NULL) return ;
     if (GB_Global.malloc_tracking)
@@ -586,9 +586,11 @@ void GB_Global_memtable_add (void *p, size_t size, int memlane)
         GB_Global.nmalloc++ ;
     }
 
-    #ifdef GB_DEBUG
+    #ifdef GB_MEMTABLE_DEBUG
+    uint64_t memsize = GB_memsize (mem) ;
+    int memlane = GB_memlane (mem) ;
     bool fail = false ;
-    GBMDUMP ("memtable add %p size %ld\n", p, size) ;
+    GBMDUMP ("memtable add %p memsize %ld memlane %d\n", p, memsize, memlane) ;
     GB_OPENMP_LOCK_SET (3)  // memtable (debug only)
     {
         int n = GB_Global.nmemtable ;
@@ -599,7 +601,8 @@ void GB_Global_memtable_add (void *p, size_t size, int memlane)
             {
                 if (p == GB_Global.memtable_p [i])
                 {
-                    GBDUMP ("\nFAIL add duplicate %p size %ld\n", p, size) ;
+                    GBDUMP ("\nFAIL add duplicate %p memsize %ld lane %d\n",
+                        p, memsize, memlane) ;
                     GB_Global_memtable_dump ( ) ;
                     fail = true ;
                     break ;
@@ -609,8 +612,8 @@ void GB_Global_memtable_add (void *p, size_t size, int memlane)
         if (!fail && p != NULL)
         {
             GB_Global.memtable_p [n] = p ;
-            GB_Global.memtable_size [n] = size ;
-            GB_Global.memtable_lane [n] = memlane ;
+            GB_Global.memtable_memsize [n] = memsize ;
+            GB_Global.memtable_memlane [n] = memlane ;
             GB_Global.nmemtable++ ;
         }
     }
@@ -620,14 +623,12 @@ void GB_Global_memtable_add (void *p, size_t size, int memlane)
     #endif
 }
 
-// FIXME: add GB_Global_memtable_memlane (void *p)
-
-// get the size of a malloc'd block
-size_t GB_Global_memtable_size (void *p)
+// get the memsize of a malloc'd block
+uint64_t GB_Global_memtable_memsize (void *p)
 {
-    size_t size = 0 ;
+    uint64_t memsize = 0 ;
 
-    #ifdef GB_DEBUG
+    #ifdef GB_MEMTABLE_DEBUG
     if (p == NULL) return (0) ;
     bool found = false ;
     GB_OPENMP_LOCK_SET (3)  // memtable (debug only)
@@ -637,7 +638,7 @@ size_t GB_Global_memtable_size (void *p)
         {
             if (p == GB_Global.memtable_p [i])
             {
-                size = GB_Global.memtable_size [i] ;
+                memsize = GB_Global.memtable_memsize [i] ;
                 found = true ;
                 break ;
             }
@@ -652,7 +653,40 @@ size_t GB_Global_memtable_size (void *p)
     }
     #endif
 
-    return (size) ;
+    return (memsize) ;
+}
+
+// get the memlane of a malloc'd block
+int GB_Global_memtable_memlane (void *p)
+{
+    int memlane = 0 ;
+
+    #ifdef GB_MEMTABLE_DEBUG
+    if (p == NULL) return (0) ;
+    bool found = false ;
+    GB_OPENMP_LOCK_SET (3)  // memtable (debug only)
+    {
+        int n = GB_Global.nmemtable ;
+        for (int i = 0 ; i < n ; i++)
+        {
+            if (p == GB_Global.memtable_p [i])
+            {
+                memlane = GB_Global.memtable_memlane [i] ;
+                found = true ;
+                break ;
+            }
+        }
+    }
+    GB_OPENMP_LOCK_UNSET (3)    // memtable (debug only)
+    if (!found)
+    {
+        GBDUMP ("\nFAIL: %p not found\n", p) ;
+        GB_Global_memtable_dump ( ) ;
+        ASSERT (0) ;
+    }
+    #endif
+
+    return (memlane) ;
 }
 
 // test if a malloc'd block is in the table
@@ -660,7 +694,7 @@ bool GB_Global_memtable_find (void *p)
 {
     bool found = false ;
 
-    #ifdef GB_DEBUG
+    #ifdef GB_MEMTABLE_DEBUG
     if (p == NULL) return (false) ;
     GB_OPENMP_LOCK_SET (3)  // memtable (debug only)
     {
@@ -690,7 +724,7 @@ void GB_Global_memtable_remove (void *p)
         GB_Global.nmalloc-- ;
     }
 
-    #ifdef GB_DEBUG
+    #ifdef GB_MEMTABLE_DEBUG
     bool found = false ;
     GBMDUMP ("memtable remove %p ", p) ;
     GB_OPENMP_LOCK_SET (3)  // memtable (debug only)
@@ -702,8 +736,8 @@ void GB_Global_memtable_remove (void *p)
             {
                 // found p in the table; remove it
                 GB_Global.memtable_p [i] = GB_Global.memtable_p [n-1] ;
-                GB_Global.memtable_size [i] = GB_Global.memtable_size [n-1] ;
-                GB_Global.memtable_lane [i] = GB_Global.memtable_lane [n-1] ;
+                GB_Global.memtable_memsize [i] = GB_Global.memtable_memsize [n-1] ;
+                GB_Global.memtable_memlane [i] = GB_Global.memtable_memlane [n-1] ;
                 GB_Global.nmemtable -- ;
                 found = true ;
                 break ;
@@ -719,7 +753,6 @@ void GB_Global_memtable_remove (void *p)
     }
     GB_Global_memtable_dump ( ) ;
     #endif
-
 }
 
 //------------------------------------------------------------------------------
@@ -742,22 +775,22 @@ void * GB_Global_malloc_function_get (int memlane)
     return ((void *) GB_Global.malloc_function [memlane] ) ;
 }
 
-void * GB_Global_malloc_function (size_t size, int memlane)
+void * GB_Global_malloc_function (uint64_t memsize, int memlane)
 { 
     void *p = NULL ;
     if (GB_Global.malloc_is_thread_safe [memlane])
     {
-        p = GB_Global.malloc_function [memlane] (size) ;
+        p = GB_Global.malloc_function [memlane] (memsize) ;
     }
     else
     {
         GB_OPENMP_LOCK_SET (2)   // for non-thread-safe malloc
         {
-            p = GB_Global.malloc_function [memlane] (size) ;
+            p = GB_Global.malloc_function [memlane] (memsize) ;
         }
         GB_OPENMP_LOCK_UNSET (2) // for non-thread-safe malloc
     }
-    GB_Global_memtable_add (p, size, memlane) ;
+    GB_Global_memtable_add (p, GB_mem (memlane, memsize)) ;
     return (p) ;
 }
 
@@ -802,25 +835,25 @@ bool GB_Global_realloc_function_have (int memlane)
     return (GB_Global.realloc_function [memlane] != NULL) ;
 }
 
-void * GB_Global_realloc_function (void *p, size_t size, int memlane)
+void * GB_Global_realloc_function (void *p, uint64_t memsize, int memlane)
 { 
     void *pnew = NULL ;
     if (GB_Global.malloc_is_thread_safe [memlane])
     {
-        pnew = GB_Global.realloc_function [memlane] (p, size) ;
+        pnew = GB_Global.realloc_function [memlane] (p, memsize) ;
     }
     else
     {
         GB_OPENMP_LOCK_SET (2)   // for non-thread-safe malloc
         {
-            pnew = GB_Global.realloc_function [memlane] (p, size) ;
+            pnew = GB_Global.realloc_function [memlane] (p, memsize) ;
         }
         GB_OPENMP_LOCK_UNSET (2) // for non-thread-safe malloc
     }
     if (pnew != NULL)
     {
         GB_Global_memtable_remove (p) ;
-        GB_Global_memtable_add (pnew, size, memlane) ;
+        GB_Global_memtable_add (pnew, GB_mem (memlane, memsize)) ;
     }
     return (pnew) ;
 }
@@ -864,10 +897,10 @@ void GB_Global_free_function (void *p, int memlane)
 // returns, except for any memory passed back to the MATLAB caller.  This is
 // fine for all of GraphBLAS, except for the JIT hash table.
 
-void * GB_Global_persistent_malloc (size_t size)
+void * GB_Global_persistent_malloc (uint64_t memsize)
 {
     // malloc persistent memory (always using memlane 0)
-    void *p = GB_Global.malloc_function [0] (size) ;  // always using memlane 0
+    void *p = GB_Global.malloc_function [0] (memsize) ;  // always memlane = 0
     GB_Global_persistent_make (p) ;
     return (p) ;
 }
@@ -1098,10 +1131,10 @@ int GB_Global_gpu_count_get (void)
 #define GB_GPU_DEVICE_CHECK(error) \
     if (device < 0 || device >= GB_Global.gpu_count) return (error) ;
 
-size_t GB_Global_gpu_memorysize_get (int device)
+uint64_t GB_Global_gpu_memorysize_get (int device)
 {
-    // get the memory size of a specific GPU
-    GB_GPU_DEVICE_CHECK (0) ;       // memory size zero if invalid GPU
+    // get the memory of a specific GPU
+    GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
     return (GB_Global.gpu_properties [device].total_global_memory) ;
 }
 
@@ -1126,17 +1159,17 @@ int GB_Global_gpu_compute_capability_minor_get (int device)
     return (GB_Global.gpu_properties [device].compute_capability_minor) ;
 }
 
-bool GB_Global_gpu_device_pool_size_set (int device, size_t size)
+bool GB_Global_gpu_device_pool_memsize_set (int device, uint64_t gpusize)
 {
     GB_GPU_DEVICE_CHECK (false) ;   // fail if invalid GPU
-    GB_Global.gpu_properties [device].pool_size = size ;
+    GB_Global.gpu_properties [device].pool_memsize = gpusize ;
     return (true) ; 
 }
 
-bool GB_Global_gpu_device_max_pool_size_set (int device, size_t size)
+bool GB_Global_gpu_device_max_pool_memsize_set (int device, uint64_t gpusize)
 {
     GB_GPU_DEVICE_CHECK (false) ;   // fail if invalid GPU
-    GB_Global.gpu_properties [device].max_pool_size = size ;
+    GB_Global.gpu_properties [device].max_pool_memsize = gpusize ;
     return (true) ; 
 }
 

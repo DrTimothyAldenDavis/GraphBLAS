@@ -34,7 +34,8 @@ GrB_Info GB_convert_full_to_bitmap      // convert matrix from full to bitmap
 
     int64_t anz = GB_nnz_full (A) ;
     GB_BURBLE_N (anz, "(full to bitmap) ") ;
-    A->b = GB_MALLOC_MEMORY (anz, sizeof (int8_t), &(A->b_size)) ;
+    A->b_mem = 0 ;     // FIXME: memlane
+    A->b = GB_MALLOC_MEMORY (anz, sizeof (int8_t), &(A->b_mem)) ;
     if (A->b == NULL)
     { 
         // out of memory

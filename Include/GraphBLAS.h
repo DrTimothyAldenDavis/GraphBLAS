@@ -2757,7 +2757,7 @@ typedef int64_t (*GxB_print_function)
     // output:
     char *string,           // value is printed to the string
     // input:
-    size_t string_size,     // size of the string array
+    size_t string_len,      // size of the string array in bytes
     const void *value,      // value to print
     int verbose             // if >0, print verbosely; else tersely
 ) ;
@@ -6561,7 +6561,6 @@ GrB_Info GxB_unload_Vector_into_Container   // GrB_Vector -> GxB_Container
     const GrB_Descriptor desc   // currently unused
 ) ;
 
-// FIXME: add memlane parameter to GxB_Vector_load ; call it GxB_load
 GrB_Info GxB_Vector_load
 (
     // input/output:
@@ -6570,14 +6569,14 @@ GrB_Info GxB_Vector_load
     // input:
     GrB_Type type,          // type of X
     uint64_t n,             // # of entries in X
-    uint64_t X_size,        // size of X in bytes (at least n*(sizeof the type))
+    uint64_t X_memsize,     // size of X in bytes (at least n*(sizeof the type))
     int handling,           // GrB_DEFAULT (0): transfer ownership to GraphBLAS
                             // GxB_IS_READONLY: X treated as readonly;
                             //      ownership kept by the user application
+                            // handling+memlane is returned
     const GrB_Descriptor desc   // currently unused; for future expansion
 ) ;
 
-// FIXME: add *memlane parameter to GxB_Vector_unload ; call it GxB_unload
 GrB_Info GxB_Vector_unload
 (
     // input/output:
@@ -6586,7 +6585,7 @@ GrB_Info GxB_Vector_unload
     // output:
     GrB_Type *type,         // type of X
     uint64_t *n,            // # of entries in X
-    uint64_t *X_size,       // size of X in bytes (at least n*(sizeof the type))
+    uint64_t *X_memsize,    // size of X in bytes (at least n*(sizeof the type))
     int *handling,          // see GxB_Vector_load
     const GrB_Descriptor desc   // currently unused; for future expansion
 ) ;
@@ -7096,7 +7095,8 @@ struct GB_Iterator_opaque
     int64_t k ;                 // the current vector
 
     // only changes when the iterator is created:
-    size_t header_size ;        // size of this iterator object
+    size_t header_size ;        // size of this iterator object in bytes
+                                // (always using memlane of 0)
 
     // these components only change when the iterator is attached:
     int64_t pmax ;              // avlen*avdim for bitmap; nvals(A) otherwise

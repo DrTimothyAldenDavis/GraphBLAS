@@ -23,8 +23,8 @@
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \
-    GB_FREE_MEMORY (&Cwork,    Cwork_size) ;    \
-    GB_FREE_MEMORY (&TaskList, TaskList_size) ; \
+    GB_FREE_MEMORY (&Cwork,    Cwork_mem) ;     \
+    GB_FREE_MEMORY (&TaskList, TaskList_mem) ;  \
 }
 
 #define GB_FREE_ALL                             \
@@ -53,7 +53,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
+    ASSERT (C != NULL) ;
 
     ASSERT_MATRIX_OK (M, "M for dot3 A'*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for dot3 A'*B", GB0) ;
@@ -75,8 +75,9 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
 
     int ntasks, nthreads ;
-    GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
-    float *Cwork = NULL ; size_t Cwork_size = 0 ;
+    GB_task_struct *TaskList = NULL ;
+    uint64_t TaskList_mem = 0 ; // FIXME memlane
+    float *Cwork = NULL ; uint64_t Cwork_mem = 0 ;    // FIXME memlane
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -194,7 +195,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // This workspace is large, of size cnz+1, so the logic below may allow it
     // to be resused as C->i and C->x, which have not yet been allocated.
 
-    Cwork = GB_MALLOC_MEMORY (cnz+1, sizeof (float), &Cwork_size) ;
+    Cwork = GB_MALLOC_MEMORY (cnz+1, sizeof (float), &Cwork_mem) ;
     if (Cwork == NULL)
     {
         // out of memory
@@ -242,7 +243,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
-    GB_OK (GB_AxB_dot3_one_slice (&TaskList, &TaskList_size, &ntasks, &nthreads,
+    GB_OK (GB_AxB_dot3_one_slice (&TaskList, &TaskList_mem, &ntasks, &nthreads,
         M, Werk)) ;
 
     //--------------------------------------------------------------------------
@@ -278,8 +279,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // free the current tasks and construct the tasks for the second phase
     //--------------------------------------------------------------------------
 
-    GB_FREE_MEMORY (&TaskList, TaskList_size) ;
-    GB_OK (GB_AxB_dot3_slice (&TaskList, &TaskList_size, &ntasks, &nthreads,
+    GB_FREE_MEMORY (&TaskList, TaskList_mem) ;
+    GB_OK (GB_AxB_dot3_slice (&TaskList, &TaskList_mem, &ntasks, &nthreads,
         C, Cwork, cnz, Werk)) ;
 
     GBURBLE ("nthreads %d ntasks %d ", nthreads, ntasks) ;
@@ -294,28 +295,28 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     { 
         // transplant Cwork as C->i, and allocate just C->x
         C->i = (void *) Cwork ;
-        C->i_size = Cwork_size ;
+        C->i_mem = Cwork_mem ;
         Cwork = NULL ;
-        Cwork_size = 0 ;
+        Cwork_mem = 0 ;
         C->x = GB_XALLOC_MEMORY (false, C_iso, cnz+1, C->type->size,
-            &(C->x_size)) ;
+            &(C->x_mem)) ;
     }
     else if (sizeof (float) == C->type->size && !C_iso)
     { 
         // transplant Cwork as C->x, and allocate just C->i
-        C->i = GB_MALLOC_MEMORY (cnz+1, cisize, &(C->i_size)) ;
+        C->i = GB_MALLOC_MEMORY (cnz+1, cisize, &(C->i_mem)) ;
         C->x = (void *) Cwork ;
-        C->x_size = Cwork_size ;
+        C->x_mem = Cwork_mem ;
         Cwork = NULL ;
-        Cwork_size = 0 ;
+        Cwork_mem = 0 ;
     }
     else
     { 
         // otherwise, free Cwork and allocate both C->i and C->x
-        GB_FREE_MEMORY (&Cwork, Cwork_size) ;
-        C->i = GB_MALLOC_MEMORY (cnz+1, cisize, &(C->i_size)) ;
+        GB_FREE_MEMORY (&Cwork, Cwork_mem) ;
+        C->i = GB_MALLOC_MEMORY (cnz+1, cisize, &(C->i_mem)) ;
         C->x = GB_XALLOC_MEMORY (false, C_iso, cnz+1, C->type->size,
-            &(C->x_size)) ;
+            &(C->x_mem)) ;
     }
 
     // Cwork has either been transplanted into C as C->i or C->x, or it has

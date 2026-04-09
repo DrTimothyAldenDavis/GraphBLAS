@@ -35,24 +35,24 @@
 
 #include "transpose/GB_transpose.h"
 
-#define GB_FREE_WORKSPACE                                               \
-{                                                                       \
-    if (Workspaces != NULL && Workspaces_size != NULL)                  \
-    {                                                                   \
-        for (int tid = 0 ; tid < nworkspaces ; tid++)                   \
-        {                                                               \
-            GB_FREE_MEMORY (&(Workspaces [tid]), Workspaces_size [tid]) ; \
-        }                                                               \
-    }                                                                   \
-    GB_WERK_POP (A_slice, int64_t) ;                                    \
-    GB_WERK_POP (Workspaces_size, size_t) ;                             \
-    GB_WERK_POP (Workspaces, void *) ;                                  \
+#define GB_FREE_WORKSPACE                                                   \
+{                                                                           \
+    if (Workspaces != NULL && Workspaces_mems != NULL)                      \
+    {                                                                       \
+        for (int tid = 0 ; tid < nworkspaces ; tid++)                       \
+        {                                                                   \
+            GB_FREE_MEMORY (&(Workspaces [tid]), Workspaces_mems [tid]) ;   \
+        }                                                                   \
+    }                                                                       \
+    GB_WERK_POP (A_slice, int64_t) ;                                        \
+    GB_WERK_POP (Workspaces_mems, uint64_t) ;                               \
+    GB_WERK_POP (Workspaces, void *) ;                                      \
 }
 
-#define GB_FREE_ALL                                                     \
-{                                                                       \
-    GB_phybix_free (C) ;                                                \
-    GB_FREE_WORKSPACE ;                                                 \
+#define GB_FREE_ALL                                                         \
+{                                                                           \
+    GB_phybix_free (C) ;                                                    \
+    GB_FREE_WORKSPACE ;                                                     \
 }
 
 GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
@@ -76,8 +76,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // check inputs
     //--------------------------------------------------------------------------
 
-    // C is an empty header and not yet allocated
-    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
+    // C is an empty header and its contents have not yet allocated
+    ASSERT (C != NULL) ;
     ASSERT_TYPE_OK (ctype, "ctype for transpose", GB0) ;
     ASSERT_MATRIX_OK (A, "A input for transpose_bucket", GB0) ;
     ASSERT (!GB_PENDING (A)) ;
@@ -94,7 +94,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
     GB_WERK_DECLARE (A_slice, int64_t) ;            // size nthreads+1
     GB_WERK_DECLARE (Workspaces, void *) ;          // size nworkspaces
-    GB_WERK_DECLARE (Workspaces_size, size_t) ;     // size nworkspaces
+    GB_WERK_DECLARE (Workspaces_mems, uint64_t) ;    // size nworkspaces
 
     //--------------------------------------------------------------------------
     // get A
@@ -144,8 +144,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     //--------------------------------------------------------------------------
 
     GB_WERK_PUSH (Workspaces, nworkspaces, void *) ;
-    GB_WERK_PUSH (Workspaces_size, nworkspaces, size_t) ;
-    if (Workspaces == NULL || Workspaces_size == NULL)
+    GB_WERK_PUSH (Workspaces_mems, nworkspaces, uint64_t) ;
+    if (Workspaces == NULL || Workspaces_mems == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
@@ -156,8 +156,9 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     for (int tid = 0 ; tid < nworkspaces ; tid++)
     { 
         // each workspace has the same size integer as Cp
+        Workspaces_mems [tid] = 0 ;     // FIXME memlane
         Workspaces [tid] = GB_MALLOC_MEMORY (avlen + 1, cpsize,
-            &Workspaces_size [tid]) ;
+            &Workspaces_mems [tid]) ;
         ok = ok && (Workspaces [tid] != NULL) ;
     }
 

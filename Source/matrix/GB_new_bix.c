@@ -17,7 +17,7 @@
 //      A new, dynamically allocated header for the matrix A is allocated.  If
 //      successful, *Ahandle points to the new handle, and its contents, on
 //      output.  If an out-of-memory condition occurs, the header is freed and
-//      *Ahandle is NULL on output.  If successful, (*Ahandle)->header_size
+//      *Ahandle is NULL on output.  If successful, (*Ahandle)->header_mem
 //      will always be nonzero on output.
 
 // If *Ahandle is not NULL on input:
@@ -26,7 +26,7 @@
 //      modified on output, either on success or failure.  If successful, the
 //      content of A has been created.  If an out-of-memory condition occurs,
 //      the preexisting header is not freed and *Ahandle is unmodified on
-//      output. (*Ahandle)->header_size is unchanged.
+//      output. (*Ahandle)->header_mem is unchanged.
 
 #include "GB.h"
 

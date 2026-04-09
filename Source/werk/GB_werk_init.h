@@ -21,7 +21,7 @@ static inline GB_Werk GB_Werk_init (GB_Werk Werk, const char *where_string)
 
     // get the pointer to where any error will be logged
     Werk->logger_handle = NULL ;
-    Werk->logger_size_handle = NULL ;
+    Werk->logger_mem_handle = NULL ;
 
     // initialize the Werk stack
     Werk->pwerk = 0 ;
@@ -186,10 +186,10 @@ static inline GrB_Info GB_valid1
     if (C != NULL)                                                  \
     {                                                               \
         /* free any prior error logged in the object */             \
-        GB_FREE_MEMORY (&(C->logger), C->logger_size) ;             \
+        GB_FREE_MEMORY (&(C->logger), C->logger_mem) ;              \
         /* get the error logger */                                  \
         Werk->logger_handle = &(C->logger) ;                        \
-        Werk->logger_size_handle = &(C->logger_size) ;              \
+        Werk->logger_mem_handle = &(C->logger_mem) ;                \
         /* combine the matrix and global pji_control */             \
         Werk->p_control = GB_pji_control (C->p_control, Werk->p_control) ; \
         Werk->j_control = GB_pji_control (C->j_control, Werk->j_control) ; \
@@ -256,9 +256,9 @@ static inline GrB_Info GB_valid1
     if (desc != NULL)                                               \
     {                                                               \
         /* free any prior error logged in the object */             \
-        GB_FREE_MEMORY (&(desc->logger), desc->logger_size) ;       \
+        GB_FREE_MEMORY (&(desc->logger), desc->logger_mem) ;        \
         Werk->logger_handle = &(desc->logger) ;                     \
-        Werk->logger_size_handle = &(desc->logger_size) ;           \
+        Werk->logger_mem_handle = &(desc->logger_mem) ;             \
     }
 
 //------------------------------------------------------------------------------
@@ -291,9 +291,9 @@ const char *GB_status_code (GrB_Info info) ;
         char **logger_handle = Werk->logger_handle ;                        \
         if (logger_handle != NULL)                                          \
         {                                                                   \
-            size_t *logger_size_handle = Werk->logger_size_handle ;         \
+            size_t *logger_mem_handle = Werk->logger_mem_handle ;           \
             (*logger_handle) = GB_CALLOC_MEMORY (GB_LOGGER_LEN+1,           \
-                sizeof (char), logger_size_handle) ;                        \
+                sizeof (char), logger_mem_handle) ;                         \
             if ((*logger_handle) != NULL)                                   \
             {                                                               \
                 snprintf ((*logger_handle), GB_LOGGER_LEN,                  \

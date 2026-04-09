@@ -80,23 +80,23 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     bool allocated_header = false ;
     if ((*Ahandle) == NULL)
     {
-        size_t header_size ;
+        size_t header_mem = 0 ; // FIXME memlane
         (*Ahandle) = GB_CALLOC_MEMORY (1, sizeof (struct GB_Matrix_opaque),
-            &header_size) ;
+            &header_mem) ;
         if (*Ahandle == NULL)
         { 
             // out of memory
             return (GrB_OUT_OF_MEMORY) ;
         }
         allocated_header = true ;
-        (*Ahandle)->header_size = header_size ;
+        (*Ahandle)->header_mem = header_mem ;
     }
 //  else
 //  {
 //      // the header of A has been provided on input.  It may already be
 //      // malloc'd, or it might be statically allocated in the caller.  In the
-//      // latter case, the header_size is zero.  Thus,
-//      // (*Ahandle)->header_size is not modified.
+//      // latter case, the header_mem is zero.  Thus,
+//      // (*Ahandle)->header_mem is not modified.
 //  }
 
     GrB_Matrix A = *Ahandle ;
@@ -109,9 +109,9 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->magic = GB_MAGIC2 ;                 // object is not yet valid
     A->type = type ;
     A->user_name = NULL ;
-    A->user_name_size = 0 ;     // no user_name yet
+    A->user_name_mem = 0 ;     // no user_name yet
     A->logger = NULL ;          // no error logged yet
-    A->logger_size = 0 ;
+    A->logger_mem = 0 ;
 
     // CSR/CSC format
     A->is_csc = is_csc ;
@@ -177,12 +177,12 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     }
 
     // no content yet
-    A->p = NULL ; A->p_shallow = false ; A->p_size = 0 ;
-    A->h = NULL ; A->h_shallow = false ; A->h_size = 0 ;
+    A->p = NULL ; A->p_shallow = false ; A->p_mem = 0 ; // FIXME memlane
+    A->h = NULL ; A->h_shallow = false ; A->h_mem = 0 ; // FIXME memlane
     A->Y = NULL ; A->Y_shallow = false ; A->no_hyper_hash = false ;
-    A->b = NULL ; A->b_shallow = false ; A->b_size = 0 ;
-    A->i = NULL ; A->i_shallow = false ; A->i_size = 0 ;
-    A->x = NULL ; A->x_shallow = false ; A->x_size = 0 ;
+    A->b = NULL ; A->b_shallow = false ; A->b_mem = 0 ; // FIXME memlane
+    A->i = NULL ; A->i_shallow = false ; A->i_mem = 0 ; // FIXME memlane
+    A->x = NULL ; A->x_shallow = false ; A->x_mem = 0 ; // FIXME memlane
 
     A->nvals = 0 ;
     A->nzombies = 0 ;
@@ -217,12 +217,12 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     {
         // Sets the vector pointers to zero, which defines all vectors as empty
         A->magic = GB_MAGIC ;
-        A->p = GB_CALLOC_MEMORY (A->plen+1, psize, &(A->p_size)) ;
+        A->p = GB_CALLOC_MEMORY (A->plen+1, psize, &(A->p_mem)) ;
         ok = (A->p != NULL) ;
         if (A_is_hyper)
         { 
             // since nvec is zero, there is never any need to initialize A->h
-            A->h = GB_MALLOC_MEMORY (A->plen, jsize, &(A->h_size)) ;
+            A->h = GB_MALLOC_MEMORY (A->plen, jsize, &(A->h_mem)) ;
             ok = ok && (A->h != NULL) ;
         }
     }
@@ -233,11 +233,11 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // caller must set A->p [0..plen] and then set A->magic to GB_MAGIC,
         // before returning the matrix to the user application.
         A->magic = GB_MAGIC2 ;
-        A->p = GB_MALLOC_MEMORY (A->plen+1, psize, &(A->p_size)) ;
+        A->p = GB_MALLOC_MEMORY (A->plen+1, psize, &(A->p_mem)) ;
         ok = (A->p != NULL) ;
         if (A_is_hyper)
         { 
-            A->h = GB_MALLOC_MEMORY (A->plen, jsize, &(A->h_size)) ;
+            A->h = GB_MALLOC_MEMORY (A->plen, jsize, &(A->h_mem)) ;
             ok = ok && (A->h != NULL) ;
         }
     }

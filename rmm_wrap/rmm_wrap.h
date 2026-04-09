@@ -54,9 +54,8 @@ int rmm_wrap_initialize
 (
     uint32_t device_id,
     RMM_MODE mode,
-    size_t init_pool_size,
-    size_t max_pool_size
-    // , size_t stream_pool_size
+    size_t init_pool_memsize,
+    size_t max_pool_memsize
 ) ;
 
 // initialize rmm_wrap_contexts for each device in CUDA_VISIBLE_DEVICES
@@ -64,9 +63,8 @@ int rmm_wrap_initialize
 int rmm_wrap_initialize_all_same
 (
     RMM_MODE mode,
-    size_t init_pool_size,
-    size_t max_pool_size
-    // , size_t stream_pool_size
+    size_t init_pool_memsize,
+    size_t max_pool_memsize
 ) ;
 
 // destroy an RMM resource

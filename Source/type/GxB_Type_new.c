@@ -68,9 +68,9 @@ GrB_Info GxB_Type_new
     //--------------------------------------------------------------------------
 
     // allocate the type
-    size_t header_size ;
+    uint64_t header_mem = 0 ;   // FIXME memlane
     GrB_Type t = GB_MALLOC_MEMORY (1, sizeof (struct GB_Type_opaque),
-        &header_size) ;
+        &header_mem) ;
     if (t == NULL)
     { 
         // out of memory
@@ -78,14 +78,14 @@ GrB_Info GxB_Type_new
     }
 
     // initialize the type
-    t->header_size = header_size ;
+    t->header_mem = header_mem ;
     t->user_name = NULL ;
-    t->user_name_size = 0 ;
+    t->user_name_mem = 0 ;
     t->size = sizeof_type ;
     t->code = GB_UDT_code ;         // user-defined type
     memset (t->name, 0, GxB_MAX_NAME_LEN) ;   // no name yet
     t->defn = NULL ;                // no definition yet
-    t->defn_size = 0 ;
+    t->defn_mem = 0 ;
     t->print_function = NULL ;      // no function to print type
 
     //--------------------------------------------------------------------------
@@ -118,11 +118,11 @@ GrB_Info GxB_Type_new
 
         // allocate space for the typedef
         t->defn = GB_MALLOC_MEMORY (defn_len+1, sizeof (char),
-            &(t->defn_size)) ;
+            &(t->defn_mem)) ;
         if (t->defn == NULL)
         { 
             // out of memory
-            GB_FREE_MEMORY (&t, header_size) ;
+            GB_FREE_MEMORY (&t, header_mem) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 

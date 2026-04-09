@@ -18,7 +18,7 @@
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 #include "unaryop/GB_unop.h"
-#define GB_FREE_ALL GB_FREE_MEMORY (&W, W_size) ;
+#define GB_FREE_ALL GB_FREE_MEMORY (&W, W_mem) ;
 
 GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
 (
@@ -52,7 +52,7 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
     // get inputs and determine tasks
     //--------------------------------------------------------------------------
 
-    void *W = NULL ; size_t W_size = 0 ;
+    void *W = NULL ; uint64_t W_mem = 0 ;   // FIXME memlane
     GB_IDECL (W , , u) ;
     GB_IDECL (Cp, , u) ; GB_IPTR (Cp, Cp_is_32) ;
     GB_IDECL (Ci, , u) ; GB_IPTR (Ci, Ci_is_32) ;
@@ -108,7 +108,7 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
         //----------------------------------------------------------------------
 
         // allocate one row of W per thread, each row of length avdim
-        W = GB_MALLOC_MEMORY (nthreads * avdim, psize, &W_size) ;
+        W = GB_MALLOC_MEMORY (nthreads * avdim, psize, &W_mem) ;
         if (W == NULL)
         {
             // out of memory

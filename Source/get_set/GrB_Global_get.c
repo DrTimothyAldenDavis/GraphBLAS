@@ -17,7 +17,7 @@
 struct GB_Global_opaque GB_OPAQUE (WORLD_OBJECT) =
 {
     GB_MAGIC,                       // magic: initialized
-    0,                              // header_size: statically allocated
+    0,                              // header_mem: statically allocated
 } ;
 
 const GrB_Global GrB_GLOBAL = & GB_OPAQUE (WORLD_OBJECT) ;

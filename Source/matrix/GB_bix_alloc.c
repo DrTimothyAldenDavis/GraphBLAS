@@ -55,16 +55,17 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
     bool ok = true ;
     if (sparsity == GxB_BITMAP)
     {
+        A->b_mem = 0 ;      // FIXME memlane
         if (bitmap_calloc)
         { 
             // content is fully defined
-            A->b = GB_CALLOC_MEMORY (nzmax, sizeof (int8_t), &(A->b_size)) ;
+            A->b = GB_CALLOC_MEMORY (nzmax, sizeof (int8_t), &(A->b_mem)) ;
             A->magic = GB_MAGIC ;
         }
         else
         { 
             // bitmap is not defined and will be computed by the caller
-            A->b = GB_MALLOC_MEMORY (nzmax, sizeof (int8_t), &(A->b_size)) ;
+            A->b = GB_MALLOC_MEMORY (nzmax, sizeof (int8_t), &(A->b_mem)) ;
         }
         ok = (A->b != NULL) ;
     }
@@ -77,16 +78,18 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
             // matrix is too large for its requested integer settings
             return (GrB_INVALID_VALUE) ;
         }
+        A->i_mem = 0 ;      // FIXME memlane
         size_t isize = A->i_is_32 ? sizeof (int32_t) : sizeof (int64_t) ;
-        A->i = GB_MALLOC_MEMORY (nzmax, isize, &(A->i_size)) ;
+        A->i = GB_MALLOC_MEMORY (nzmax, isize, &(A->i_mem)) ;
         ok = (A->i != NULL) ;
     }
 
     if (numeric)
     { 
         // calloc the space if A is bitmap
+        A->x_mem = 0 ;      // FIXME memlane
         A->x = GB_XALLOC_MEMORY (sparsity == GxB_BITMAP, A_iso, nzmax,
-            A->type->size, &(A->x_size)) ;
+            A->type->size, &(A->x_mem)) ;
         ok = ok && (A->x != NULL) ;
     }
 

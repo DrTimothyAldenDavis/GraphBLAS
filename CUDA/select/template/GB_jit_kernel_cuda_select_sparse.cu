@@ -57,10 +57,10 @@ using namespace cooperative_groups ;
 
 #define GB_FREE_WORKSPACE               \
 {                                       \
-    GB_FREE_MEMORY (&W_0, W_0_size) ;   \
-    GB_FREE_MEMORY (&W_1, W_1_size) ;   \
-    GB_FREE_MEMORY (&W_2, W_2_size) ;   \
-    GB_FREE_MEMORY (&W_3, W_3_size) ;   \
+    GB_FREE_MEMORY (&W_0, W_0_mem) ;    \
+    GB_FREE_MEMORY (&W_1, W_1_mem) ;    \
+    GB_FREE_MEMORY (&W_2, W_2_mem) ;    \
+    GB_FREE_MEMORY (&W_3, W_3_mem) ;    \
 }
 
 #undef  GB_FREE_ALL
@@ -624,12 +624,12 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     GrB_Info info ;
 
     // workspaces of size anz+2
-    void *W_0 = NULL ; size_t W_0_size = 0 ;
-    void *W_1 = NULL ; size_t W_1_size = 0 ;
+    void *W_0 = NULL ; uint64_t W_0_mem = 0 ;   // FIXME memlane
+    void *W_1 = NULL ; uint64_t W_1_mem = 0 ;   // FIXME memlane
     // workspace of size max (nchunks_in_A, nchunks_in_C)+1
-    void *W_2 = NULL ; size_t W_2_size = 0 ;
+    void *W_2 = NULL ; uint64_t W_2_mem = 0 ;   // FIXME memlane
     // workspace of size cnz+2, where cnz <= anz
-    void *W_3 = NULL ; size_t W_3_size = 0 ;
+    void *W_3 = NULL ; uint64_t W_3_mem = 0 ;   // FIXME memlane
 
     GB_A_NHELD (anz) ;          // # of entries in A
     int64_t cnz = 0 ;           // # of entries in C (which is <= anz)
@@ -697,10 +697,10 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // could be used for them.  However, the RMM memory manager gives better
     // performance than cudaMalloc.
     #if Ak_SAVE
-    W_0 = GB_MALLOC_MEMORY (anz+2, sizeof (GB_Aj_SIGNED_TYPE), &W_0_size) ;
+    W_0 = GB_MALLOC_MEMORY (anz+2, sizeof (GB_Aj_SIGNED_TYPE), &W_0_mem) ;
     #endif
-    W_1 = GB_MALLOC_MEMORY (anz+2 + CHUNKSIZE1, sizeof (Int), &W_1_size) ;
-    W_2 = GB_MALLOC_MEMORY (nchunks_max+2, sizeof (GB_Ap_TYPE), &W_2_size) ;
+    W_1 = GB_MALLOC_MEMORY (anz+2 + CHUNKSIZE1, sizeof (Int), &W_1_mem) ;
+    W_2 = GB_MALLOC_MEMORY (nchunks_max+2, sizeof (GB_Ap_TYPE), &W_2_mem) ;
     if ((Ak_SAVE && W_0 == NULL) || W_1 == NULL || W_2 == NULL)
     {
         // out of memory
@@ -787,7 +787,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     C->jumbled = A->jumbled ;
 
     // allocate workspace of size cnz+2
-    W_3 = GB_MALLOC_MEMORY (cnz+2, sizeof (GB_Aj_SIGNED_TYPE), &W_3_size) ;
+    W_3 = GB_MALLOC_MEMORY (cnz+2, sizeof (GB_Aj_SIGNED_TYPE), &W_3_mem) ;
     if (W_3 == NULL)
     {
         // out of memory
@@ -843,7 +843,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     // Ak (in W_0) no longer needed, and W_0 is no longer needed, so free it
-    GB_FREE_MEMORY (&W_0, W_0_size) ;
+    GB_FREE_MEMORY (&W_0, W_0_mem) ;
 
     // Map (in W_1) no longer needed; reused below for Ck_Delta
 
@@ -933,17 +933,19 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 
     // The caller has already allocated C->p, C->h for a user-returnable empty
     // hypersparse matrix.  Free them here before reallocating them.
-    GB_FREE_MEMORY (&(C->p), C->p_size) ;
-    GB_FREE_MEMORY (&(C->h), C->h_size) ;
+    GB_FREE_MEMORY (&(C->p), C->p_mem) ;
+    GB_FREE_MEMORY (&(C->h), C->h_mem) ;
 
     // Allocate Cp and Ch
     C->plen = cnvec ;
     C->nvec = cnvec ;
     C->nvec_nonempty = cnvec ;
+    C->p_mem = 0 ;      // FIXME memlane
+    C->h_mem = 0 ;      // FIXME memlane
     C->p = (GB_Cp_TYPE *) GB_MALLOC_MEMORY (C->plen+1, sizeof (GB_Cp_TYPE),
-        &(C->p_size)) ;
+        &(C->p_mem)) ;
     C->h = (GB_Cj_TYPE *) GB_MALLOC_MEMORY (C->plen, sizeof (GB_Cj_TYPE),
-        &(C->h_size)) ;
+        &(C->h_mem)) ;
     if (C->p == NULL || C->h == NULL)
     {
         // out of memory

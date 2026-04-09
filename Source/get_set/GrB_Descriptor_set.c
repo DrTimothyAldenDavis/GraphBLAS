@@ -196,7 +196,7 @@ GrB_Info GrB_Descriptor_set_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (desc == NULL || desc->header_size == 0)
+    if (desc == NULL || desc->header_mem == 0)
     { 
         // built-in descriptors may not be modified
         return (GrB_INVALID_VALUE) ;
@@ -237,7 +237,7 @@ GrB_Info GrB_Descriptor_set_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (desc == NULL || desc->header_size == 0 || field != GrB_NAME)
+    if (desc == NULL || desc->header_mem == 0 || field != GrB_NAME)
     { 
         // built-in descriptors may not be modified
         return (GrB_INVALID_VALUE) ;
@@ -252,7 +252,7 @@ GrB_Info GrB_Descriptor_set_String
     // set the field
     //--------------------------------------------------------------------------
 
-    return (GB_user_name_set (&(desc->user_name), &(desc->user_name_size),
+    return (GB_user_name_set (&(desc->user_name), &(desc->user_name_mem),
         value, false)) ;
 }
 
@@ -272,7 +272,7 @@ GrB_Info GrB_Descriptor_set_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (desc == NULL || desc->header_size == 0)
+    if (desc == NULL || desc->header_mem == 0)
     { 
         // built-in descriptors may not be modified
         return (GrB_INVALID_VALUE) ;

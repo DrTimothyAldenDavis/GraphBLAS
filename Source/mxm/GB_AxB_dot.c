@@ -68,7 +68,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
+    ASSERT (C != NULL) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for dot A'*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ;

@@ -37,7 +37,7 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
     //--------------------------------------------------------------------------
 
     GB_CHECK_MAGIC (monoid) ;
-    if (monoid->header_size == 0)
+    if (GB_memsize (monoid->header_mem) == 0)
     { 
         GBPR0 ("(built-in):") ;
     }
@@ -81,13 +81,13 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
     if (pr != GxB_SILENT)
     { 
         char *string = NULL ;
-        size_t string_size = 0 ;
+        uint64_t string_mem = 0 ;   // always use memlane 0
 
         // print the identity value, if present
         GBPR ("    identity: [ ") ;
         info = GB_entry_check (monoid->op->ztype, monoid->identity, pr, f,
-            &string, &string_size) ;
-        GB_FREE_MEMORY (&string, string_size) ;
+            &string, &string_mem) ;
+        GB_FREE_MEMORY (&string, string_mem) ;
         if (info != GrB_SUCCESS) return (info) ;
         GBPR (" ] ") ;
 
@@ -96,8 +96,8 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
         { 
             GBPR ("terminal: [ ") ;
             info = GB_entry_check (monoid->op->ztype, monoid->terminal, pr, f,
-                &string, &string_size) ;
-            GB_FREE_MEMORY (&string, string_size) ;
+                &string, &string_mem) ;
+            GB_FREE_MEMORY (&string, string_mem) ;
             if (info != GrB_SUCCESS) return (info) ;
             GBPR (" ]") ;
         }

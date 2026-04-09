@@ -52,7 +52,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     // C may be aliased with M, A, and/or B
 
     GrB_Info info ;
-    struct GB_Matrix_opaque T_header, AT_header, BT_header ;
+    // struct GB_Matrix_opaque T_header, AT_header, BT_header ;
     GrB_Matrix T = NULL, AT = NULL, BT = NULL ;
     GrB_BinaryOp op = op_in ;
 
@@ -130,7 +130,8 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     { 
         // AT = A' and typecast to op->xtype
         GBURBLE ("(A transpose) ") ;
-        GB_CLEAR_MATRIX_HEADER (AT, &AT_header) ;
+        // GB_CLEAR_MATRIX_HEADER (AT, &AT_header) ;
+        GB_OK (GB_matrix_header_new (&AT, /* FIXME memlane: */ 0)) ;
         GB_OK (GB_transpose_cast (AT, op->xtype, T_is_csc, A, A_is_pattern,
             Werk)) ;
         ASSERT_MATRIX_OK (AT, "AT kron", GB0) ;
@@ -140,7 +141,8 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     { 
         // BT = B' and typecast to op->ytype
         GBURBLE ("(B transpose) ") ;
-        GB_CLEAR_MATRIX_HEADER (BT, &BT_header) ;
+        // GB_CLEAR_MATRIX_HEADER (BT, &BT_header) ;
+        GB_OK (GB_matrix_header_new (&BT, /* FIXME memlane: */ 0)) ;
         GB_OK (GB_transpose_cast (BT, op->ytype, T_is_csc, B, B_is_pattern,
             Werk)) ;
         ASSERT_MATRIX_OK (BT, "BT kron", GB0) ;
@@ -150,7 +152,8 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     // T = kron(A,B)
     //--------------------------------------------------------------------------
 
-    GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+    // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+    GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
     GB_OK (GB_kroner (T, T_is_csc, op, flipij,
         A_transpose ? AT : A, A_is_pattern,
         B_transpose ? BT : B, B_is_pattern, Werk)) ;

@@ -15,7 +15,7 @@
 
 #define GB_FREE_WORKSPACE                               \
 {                                                       \
-    GB_FREE_MEMORY (&TaskList_IxJ, TaskList_IxJ_size) ;   \
+    GB_FREE_MEMORY (&TaskList_IxJ, TaskList_IxJ_mem) ;  \
 }
 
 #define GB_FREE_ALL                                     \
@@ -50,7 +50,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
+    ASSERT (C != NULL) ;
     ASSERT_MATRIX_OK (A, "A for C=A(I,J) bitmap subref", GB0) ;
     ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
     ASSERT (!GB_IS_SPARSE (A)) ;
@@ -63,7 +63,8 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     // workspace for assign/template/GB_bitmap_assign_IxJ_template.c
     //--------------------------------------------------------------------------
 
-    GB_task_struct *TaskList_IxJ = NULL ; size_t TaskList_IxJ_size = 0 ;
+    GB_task_struct *TaskList_IxJ = NULL ;
+    uint64_t TaskList_IxJ_mem = 0 ;     // FIXME memlane
     int ntasks_IxJ = 0, nthreads_IxJ = 0 ;
 
     //--------------------------------------------------------------------------

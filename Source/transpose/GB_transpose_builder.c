@@ -14,17 +14,17 @@
 // T = (*Thandle) output, which later transplanted into the C matrix by the
 // caller, GB_transpose.
 
-#define GB_FREE_WORKSPACE                       \
-{                                               \
-    GB_FREE_MEMORY (&iwork, iwork_size) ;       \
-    GB_FREE_MEMORY (&jwork, jwork_size) ;       \
-    GB_FREE_MEMORY (&Swork, Swork_size) ;       \
+#define GB_FREE_WORKSPACE                   \
+{                                           \
+    GB_FREE_MEMORY (&iwork, iwork_mem) ;    \
+    GB_FREE_MEMORY (&jwork, jwork_mem) ;    \
+    GB_FREE_MEMORY (&Swork, Swork_mem) ;    \
 }
 
-#define GB_FREE_ALL                             \
-{                                               \
-    GB_FREE_WORKSPACE ;                         \
-    GB_Matrix_free (Thandle) ;                  \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_FREE_WORKSPACE ;                     \
+    GB_Matrix_free (Thandle) ;              \
 }
 
 #include "transpose/GB_transpose.h"
@@ -62,9 +62,9 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
     ASSERT (Thandle != NULL) ;
     GrB_Matrix T = (*Thandle) ;     // just the header of T is given on input
     ASSERT (T != NULL) ;
-    void *iwork = NULL ; size_t iwork_size = 0 ;
-    void *jwork = NULL ; size_t jwork_size = 0 ;
-    GB_void *Swork = NULL ; size_t Swork_size = 0 ;
+    void *iwork = NULL ; uint64_t iwork_mem = 0 ;       // FIXME memlane
+    void *jwork = NULL ; uint64_t jwork_mem = 0 ;       // FIXME memlane
+    GB_void *Swork = NULL ; uint64_t Swork_mem = 0 ;    // FIXME memlane
 
     GrB_Type atype = A->type ;
     int64_t anz = GB_nnz (A) ;
@@ -88,7 +88,7 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
     //--------------------------------------------------------------------------
 
     // allocate iwork of size anz
-    iwork = GB_MALLOC_MEMORY (anz, ajsize, &iwork_size) ;
+    iwork = GB_MALLOC_MEMORY (anz, ajsize, &iwork_mem) ;
     if (iwork == NULL)
     { 
         // out of memory
@@ -120,8 +120,8 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
     // if in_place, the prior A->p and A->h can now be freed
     if (in_place)
     { 
-        if (!A->p_shallow) GB_FREE_MEMORY (&A->p, A->p_size) ;
-        if (!A->h_shallow) GB_FREE_MEMORY (&A->h, A->h_size) ;
+        if (!A->p_shallow) GB_FREE_MEMORY (&A->p, A->p_mem) ;
+        if (!A->h_shallow) GB_FREE_MEMORY (&A->h, A->h_mem) ;
     }
 
     GB_void *S_input = NULL ;
@@ -134,14 +134,14 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
     if (!recycle_Ai)
     { 
         // allocate jwork of size anz
-        jwork = GB_MALLOC_MEMORY (anz, aisize, &jwork_size) ;
+        jwork = GB_MALLOC_MEMORY (anz, aisize, &jwork_mem) ;
         ok = ok && (jwork != NULL) ;
     }
 
     if (op != NULL && !C_iso)
     { 
         Swork = (GB_void *) GB_XALLOC_MEMORY (false, C_iso, anz, csize,
-            &Swork_size) ;
+            &Swork_mem) ;
         ok = ok && (Swork != NULL) ;
     }
 
@@ -162,7 +162,7 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
         // A->i is used as workspace for the "column" indices of C.
         // jwork is A->i, and is freed by GB_builder.
         jwork = A->i ;
-        jwork_size = A->i_size ;
+        jwork_mem = A->i_mem ;
         A->i = NULL ;
         ASSERT (in_place) ;
     }
@@ -224,11 +224,11 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
         avlen,      // T->vdim = A->vlen, always > 1
         C_is_csc,   // T has the same CSR/CSC format as C
         &iwork,     // iwork_handle, becomes T->i on output
-        &iwork_size,
+        &iwork_mem,
         &jwork,     // jwork_handle, freed on output
-        &jwork_size,
+        &jwork_mem,
         &Swork,     // Swork_handle, freed on output
-        &Swork_size,
+        &Swork_mem,
         false,      // tuples are not sorted on input
         true,       // tuples have no duplicates
         anz,        // size of iwork, jwork, and Swork

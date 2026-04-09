@@ -41,7 +41,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 
     GrB_Info info ;
     (*mask_applied) = false ;
-    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
+    ASSERT (C != NULL) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy A*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ;

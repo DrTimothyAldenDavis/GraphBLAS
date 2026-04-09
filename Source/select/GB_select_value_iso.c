@@ -44,7 +44,7 @@ GrB_Info GB_select_value_iso
     ASSERT (A->iso) ;
     ASSERT (op->opcode >= GB_VALUENE_idxunop_code
          && op->opcode <= GB_VALUELE_idxunop_code)
-    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
+    ASSERT (C != NULL) ;
 
     //--------------------------------------------------------------------------
     // determine if C is empty or a copy of A

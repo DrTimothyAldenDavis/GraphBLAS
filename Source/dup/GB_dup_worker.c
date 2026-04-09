@@ -11,8 +11,7 @@
 
 // if numeric is false, C->x is allocated but not initialized.
 
-// If *Chandle is not NULL on input, the header is reused.  It may be a static
-// or dynamic header, depending on C->header_size.
+// If *Chandle is not NULL on input, the header is reused.
 
 // The input matrix A can include any pending work (pending tuples, zombies,
 // or jumbled).  The pending work is copied into the output matrix C.  It is
@@ -22,7 +21,7 @@
 #include "get_set/GB_get_set.h"
 #include "pending/GB_Pending.h"
 #define GB_FREE_ALL \
-    GB_FREE_MEMORY (&C_user_name, C_user_name_size) ;
+    GB_FREE_MEMORY (&C_user_name, C_user_name_mem) ;
 
 GrB_Info GB_dup_worker      // make an exact copy of a matrix
 (
@@ -75,10 +74,10 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     //--------------------------------------------------------------------------
 
     char *C_user_name = NULL ;
-    size_t C_user_name_size = 0 ;
+    uint64_t C_user_name_mem = 0 ;      // FIXME memlane
     if (A->user_name != NULL)
     { 
-        info = GB_user_name_set (&C_user_name, &C_user_name_size,
+        info = GB_user_name_set (&C_user_name, &C_user_name_mem,
             A->user_name, false) ;
         if (info != GrB_SUCCESS)
         { 
@@ -199,9 +198,9 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     //--------------------------------------------------------------------------
 
     C->user_name = C_user_name ;
-    C->user_name_size = C_user_name_size ;
+    C->user_name_mem = C_user_name_mem ;
     C_user_name = NULL ;
-    C_user_name_size = 0 ;
+    C_user_name_mem = 0 ;
 
     //--------------------------------------------------------------------------
     // return the result

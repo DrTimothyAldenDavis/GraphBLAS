@@ -36,9 +36,10 @@ GrB_Info GB_extractTuples_prep
     // quick return if V already has the right properties
     //--------------------------------------------------------------------------
 
-    uint64_t required_size = nvals * vtype->size ;
+    uint64_t required_memsize = nvals * vtype->size ;
     if (GB_IS_FULL (V) && V->nvals == nvals && V->vlen == nvals &&
-        V->type == vtype && !(V->x_shallow) && V->x_size >= required_size)
+        V->type == vtype && !(V->x_shallow) &&
+        GB_memsize (V->x_mem) >= required_memsize)
     { 
         // nothing to do; the vector is already in the right format
         return (GrB_SUCCESS) ;
@@ -48,8 +49,12 @@ GrB_Info GB_extractTuples_prep
     // remove V->x and free all other content
     //--------------------------------------------------------------------------
 
+    // FIXME: if V->x is shallow, we still need to know the memlane of the
+    // content it points to.  Suppose it points to a vector W->x.  Then
+    // V->x_mem must be GB_mem (GB_memlane (W->x), 0).
+
     void *Vx = V->x_shallow ? NULL : V->x ;
-    size_t Vx_size = V->x_shallow ? 0 : V->x_size ;
+    uint64_t Vx_mem = V->x_shallow ? 0 : V->x_mem ; // FIXME memlane
     V->x = NULL ;
     GB_phybix_free ((GrB_Matrix) V) ;
 
@@ -57,14 +62,14 @@ GrB_Info GB_extractTuples_prep
     // ensure Vx is large enough
     //--------------------------------------------------------------------------
 
-    if (required_size > Vx_size)
+    if (required_memsize > GB_memsize (Vx_mem))
     { 
         // If Vx is not large enough, reallocate it.  If Vx was initially not
         // empty, it means the space is growing incrementally, so add 25% extra
         // space for future growth.
-        GB_FREE_MEMORY (&Vx, Vx_size) ;
-        int64_t n = nvals + ((Vx_size == 0) ? 0 : (nvals / 4)) ;
-        Vx = GB_MALLOC_MEMORY (n, vtype->size, &Vx_size) ;
+        GB_FREE_MEMORY (&Vx, Vx_mem) ;
+        int64_t n = nvals + ((GB_memsize (Vx_mem) == 0) ? 0 : (nvals / 4)) ;
+        Vx = GB_MALLOC_MEMORY (n, vtype->size, &Vx_mem) ;
         if (Vx == NULL)
         { 
             return (GrB_OUT_OF_MEMORY) ;
@@ -75,7 +80,7 @@ GrB_Info GB_extractTuples_prep
     // load Vx back, to create V as a dense nvals-by-1 vector of type vtype
     //--------------------------------------------------------------------------
 
-    GB_vector_load (V, &Vx, vtype, nvals, Vx_size, false) ;
+    GB_vector_load (V, &Vx, vtype, nvals, Vx_mem, false) ;
     ASSERT_VECTOR_OK (V, "V prepped", GB0) ;
     return (GrB_SUCCESS) ;
 }

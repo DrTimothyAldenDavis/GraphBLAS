@@ -15,8 +15,14 @@
 
 #include "builder/GB_build.h"
 #include "ij/GB_ij.h"
-#define GB_FREE_ALL                             \
-    if (I_size > 0) GB_FREE_MEMORY (&I, I_size) ;
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL                     \
+{                                       \
+    if (GB_memsize (I_mem) > 0)         \
+    {                                   \
+        GB_FREE_MEMORY (&I, I_mem) ;    \
+    }                                   \
+}
 
 GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
 (
@@ -46,7 +52,7 @@ GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
     //--------------------------------------------------------------------------
 
     void *I = NULL ;
-    size_t I_size = 0 ;
+    uint64_t I_mem = 0 ;    // FIXME memlane
 
     GB_MATRIX_WAIT (scalar) ;
     if (GB_nnz ((GrB_Matrix) scalar) != 1)
@@ -62,7 +68,7 @@ GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
     GrB_Type I_type = NULL ;
     bool need_copy = (w == I_vector) ;
     GB_OK (GB_ijxvector (I_vector, need_copy, 0, desc, true,
-        &I, &ni, &I_size, &I_type, Werk)) ;
+        &I, &ni, &I_mem, &I_type, Werk)) ;
     bool I_is_32 = (I_type == GrB_UINT32) ;
 
     //--------------------------------------------------------------------------

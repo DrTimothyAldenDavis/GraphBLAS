@@ -143,9 +143,9 @@ GrB_Info GB_Vector_assign_scalar    // w<Mask>(I) = accum (w(I),s)
         GB_ijlength (I, I_is_32, ni, GB_NROWS (w), &nI, &I_Kind, Icolon) ;
 
         // create an empty matrix A of the right size, and use matrix assign
-        struct GB_Matrix_opaque A_header ;
-        GB_CLEAR_MATRIX_HEADER (A, &A_header) ;
-        GB_OK (GB_new (&A,  // existing header
+        // struct GB_Matrix_opaque A_header ;
+        // GB_CLEAR_MATRIX_HEADER (A, &A_header) ;
+        GB_OK (GB_new (&A,  // new header
             scalar->type, nI, 1, GB_ph_calloc, true, GxB_AUTO_SPARSITY,
             GB_HYPER_SWITCH_DEFAULT, 1, /* OK: */ false, false, false)) ;
         info = GB_assign (

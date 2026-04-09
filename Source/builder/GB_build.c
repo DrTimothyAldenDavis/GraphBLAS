@@ -122,7 +122,7 @@ GrB_Info GB_build               // build matrix
 
     // check C
     GrB_Info info ;
-    struct GB_Matrix_opaque T_header ;
+    // struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
     ASSERT (C != NULL) ;
     GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
@@ -324,24 +324,28 @@ GrB_Info GB_build               // build matrix
         // I, J, and X must be treated as readonly, so GB_builder is not
         // allowed to transplant them into T->x.
 
-        void *no_I_work = NULL ; size_t I_work_size = 0 ;
-        void *no_J_work = NULL ; size_t J_work_size = 0 ;
-        GB_void *no_X_work = NULL ; size_t X_work_size = 0 ;
+        void *no_I_work = NULL ;
+        uint64_t I_work_mem = 0 ;   // FIXME memlane
+        void *no_J_work = NULL ;
+        uint64_t J_work_mem = 0 ;   // FIXME memlane
+        GB_void *no_X_work = NULL ;
+        uint64_t X_work_mem = 0 ;   // FIXME memlane
 
-        GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+        // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+        GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
 
         GB_OK (GB_builder (
-            T,                      // create T using a static header
+            T,                      // create T using a existing header
             ttype,                  // the type of T
             C->vlen,                // T->vlen = C->vlen
             C->vdim,                // T->vdim = C->vdim
             C->is_csc,              // T has the same CSR/CSC format as C
             &no_I_work,             // I_work_handle, not used here
-            &I_work_size,
+            &I_work_mem,
             &no_J_work,             // J_work_handle, not used here
-            &J_work_size,
+            &J_work_mem,
             &no_X_work,             // X_work_handle, not used here
-            &X_work_size,
+            &X_work_mem,
             false,                  // known_sorted: not yet known
             false,                  // known_no_duplicates: not yet known
             0,                      // I_work, J_work, and X_work not used here

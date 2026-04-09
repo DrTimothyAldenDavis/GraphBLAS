@@ -21,9 +21,9 @@
 
 #include "select/GB_select.h"
 
-#define GB_FREE_ALL                         \
-    GB_FREE_MEMORY (&ythunk, ythunk_size) ;   \
-    GB_FREE_MEMORY (&athunk, athunk_size) ;
+#define GB_FREE_ALL                             \
+    GB_FREE_MEMORY (&ythunk, ythunk_mem) ;      \
+    GB_FREE_MEMORY (&athunk, athunk_mem) ;
 
 GrB_Info GB_selector
 (
@@ -50,10 +50,10 @@ GrB_Info GB_selector
     ASSERT (GB_IMPLIES (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode),
         !GB_JUMBLED (A))) ;
 
-    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
+    ASSERT (C != NULL) ;
     const bool A_iso = A->iso ;
-    void *ythunk = NULL ; size_t ythunk_size = 0 ;
-    void *athunk = NULL ; size_t athunk_size = 0 ;
+    void *ythunk = NULL ; uint64_t ythunk_mem = 0 ;   // FIXME memlane
+    void *athunk = NULL ; uint64_t athunk_mem = 0 ;   // FIXME memlane
 
     //--------------------------------------------------------------------------
     // get Thunk
@@ -67,8 +67,8 @@ GrB_Info GB_selector
     // them on the CPU stack, so the CUDA kernels can access them.
     const size_t ysize = op->ytype->size ;
     const size_t asize = A->type->size ;
-    ythunk = GB_CALLOC_MEMORY (1, ysize, &ythunk_size) ;
-    athunk = GB_CALLOC_MEMORY (1, asize, &athunk_size) ;
+    ythunk = GB_CALLOC_MEMORY (1, ysize, &ythunk_mem) ;
+    athunk = GB_CALLOC_MEMORY (1, asize, &athunk_mem) ;
     if (ythunk == NULL || athunk == NULL)
     {
         // out of memory

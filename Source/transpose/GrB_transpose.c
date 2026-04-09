@@ -36,7 +36,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_BURBLE_START ("GrB_transpose") ;
 
-    struct GB_Matrix_opaque T_header ;
+    // struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
 
     // C may be aliased with M and/or A
@@ -76,7 +76,8 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     // T = A or A', where T can have the type of C or the type of A
     //--------------------------------------------------------------------------
 
-    GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+    // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+    GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
     bool C_is_csc = C->is_csc ;
     if (C_is_csc != A->is_csc)
     { 

@@ -25,7 +25,7 @@ GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
 (
     // computed by phase1:
     void **Cp_handle,               // output of size Cnvec+1
-    size_t *Cp_size_handle,
+    uint64_t *Cp_mem_handle,
     int64_t *Cnvec_nonempty,        // # of non-empty vectors in C
     // tasks from phase1a:
     GB_task_struct *restrict TaskList,   // array of structs
@@ -54,7 +54,7 @@ GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     ASSERT (Cp_handle != NULL) ;
-    ASSERT (Cp_size_handle != NULL) ;
+    ASSERT (Cp_mem_handle != NULL) ;
     ASSERT (Cnvec_nonempty != NULL) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phase1", GB0) ;
@@ -85,9 +85,9 @@ GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     (*Cp_handle) = NULL ;
-    GB_MDECL (Cp, , u) ; size_t Cp_size = 0 ;
+    GB_MDECL (Cp, , u) ; uint64_t Cp_mem = 0 ;  // FIXME memlane
     size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    Cp = GB_CALLOC_MEMORY (GB_IMAX (2, Cnvec+1), cpsize, &Cp_size) ;
+    Cp = GB_CALLOC_MEMORY (GB_IMAX (2, Cnvec+1), cpsize, &Cp_mem) ;
     if (Cp == NULL)
     { 
         // out of memory
@@ -115,7 +115,7 @@ GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     (*Cp_handle) = Cp ;
-    (*Cp_size_handle) = Cp_size ;
+    (*Cp_mem_handle) = Cp_mem ;
     return (GrB_SUCCESS) ;
 }
 

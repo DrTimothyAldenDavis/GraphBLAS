@@ -56,7 +56,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     GrB_Info info ;
     GrB_Matrix MT = NULL, T = NULL, AT = NULL, BT = NULL ;
-    struct GB_Matrix_opaque T_header, MT_header, AT_header, BT_header ;
+    // struct GB_Matrix_opaque T_header, MT_header, AT_header, BT_header ;
 
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
 
@@ -235,7 +235,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     { 
         // MT = (bool) M'
         GBURBLE ("(M transpose) ") ;
-        GB_CLEAR_MATRIX_HEADER (MT, &MT_header) ;
+        // GB_CLEAR_MATRIX_HEADER (MT, &MT_header) ;
+        GB_OK (GB_matrix_header_new (&MT, /* FIXME memlane: */ 0)) ;
         GB_OK (GB_transpose_cast (MT, GrB_BOOL, T_is_csc, M, Mask_struct,
             Werk)) ;
         M1 = MT ;
@@ -258,7 +259,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     { 
         // AT = (xtype) A' or AT = (xtype) one (A')
         GBURBLE ("(A transpose) ") ;
-        GB_CLEAR_MATRIX_HEADER (AT, &AT_header) ;
+        // GB_CLEAR_MATRIX_HEADER (AT, &AT_header) ;
+        GB_OK (GB_matrix_header_new (&AT, /* FIXME memlane: */ 0)) ;
         GB_OK (GB_transpose_cast (AT, op->xtype, T_is_csc, A, A_is_pattern,
             Werk)) ;
         A1 = AT ;
@@ -270,7 +272,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     { 
         // BT = (ytype) B' or BT = (ytype) one (B')
         GBURBLE ("(B transpose) ") ;
-        GB_CLEAR_MATRIX_HEADER (BT, &BT_header) ;
+        // GB_CLEAR_MATRIX_HEADER (BT, &BT_header) ;
+        GB_OK (GB_matrix_header_new (&BT, /* FIXME memlane: */ 0)) ;
         GB_OK (GB_transpose_cast (BT, op->ytype, T_is_csc, B, B_is_pattern,
             Werk)) ;
         B1 = BT ;
@@ -366,7 +369,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     //--------------------------------------------------------------------------
 
     bool mask_applied = false ;
-    GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+    // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+    GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
 
     if (eWiseAdd)
     { 
@@ -437,7 +441,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
                 // shallow copy of A->h or A->i, from GB_transpose.
                 ASSERT (A1 == AT) ;
                 T->h_shallow = AT->h_shallow ;
-                T->h_size = AT->h_size ;
+                T->h_mem = AT->h_mem ;
                 AT->h_shallow = true ;
             }
             else if (B_transpose && T->h == B1->h)
@@ -446,7 +450,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
                 // shallow copy of B->h or B->i, from GB_transpose.
                 ASSERT (B1 == BT) ;
                 T->h_shallow = BT->h_shallow ;
-                T->h_size = BT->h_size ;
+                T->h_mem = BT->h_mem ;
                 BT->h_shallow = true ;
             }
             else if (M_transpose && T->h == M1->h)
@@ -455,7 +459,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
                 // shallow copy of M->h or M->i, from GB_transpose.
                 ASSERT (M1 == MT) ;
                 T->h_shallow = MT->h_shallow ;
-                T->h_size = MT->h_size ;
+                T->h_mem = MT->h_mem ;
                 MT->h_shallow = true ;
             }
 

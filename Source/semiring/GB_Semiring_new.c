@@ -47,7 +47,7 @@ GrB_Info GB_Semiring_new            // create a semiring
     // initialize the semiring
     semiring->magic = GB_MAGIC ;
     semiring->user_name = NULL ;            // user_name for GrB_get/GrB_set
-    semiring->user_name_size = 0 ;
+    semiring->user_name_mem = 0 ;
     semiring->add = add ;
     semiring->multiply = multiply ;
     semiring->name = NULL ;
@@ -63,8 +63,9 @@ GrB_Info GB_Semiring_new            // create a semiring
         size_t add_len  = strlen (semiring->add->op->name) ;
         size_t mult_len = strlen (semiring->multiply->name) ;
         semiring->name_len = (int32_t) (add_len + mult_len + 1) ;
+        semiring->name_mem = 0 ;            // always use memlane 0
         semiring->name = GB_MALLOC_MEMORY (semiring->name_len + 1,
-            sizeof (char), &(semiring->name_size)) ;
+            sizeof (char), &(semiring->name_mem)) ;
         if (semiring->name == NULL)
         { 
             // out of memory

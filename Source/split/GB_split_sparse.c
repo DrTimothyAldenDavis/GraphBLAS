@@ -12,7 +12,7 @@
 
 #define GB_FREE_WORKSPACE                   \
     GB_WERK_POP (C_ek_slicing, int64_t) ;   \
-    GB_FREE_MEMORY (&Wp, Wp_size) ;
+    GB_FREE_MEMORY (&Wp, Wp_mem) ;
 
 #define GB_FREE_ALL                         \
     GB_FREE_WORKSPACE ;                     \
@@ -84,9 +84,9 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     // FUTURE: Wp is allocated with the same integers as Ap, but it could be
     // chosen based on anz instead.
 
-    GB_MDECL (Wp, , u) ; size_t Wp_size = 0 ;
+    GB_MDECL (Wp, , u) ; uint64_t Wp_mem = 0 ;  // FIXME memlane
     size_t apsize = (Ap_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    Wp = GB_MALLOC_MEMORY (anvec, apsize, &Wp_size) ;
+    Wp = GB_MALLOC_MEMORY (anvec, apsize, &Wp_mem) ;
     if (Wp == NULL)
     { 
         // out of memory

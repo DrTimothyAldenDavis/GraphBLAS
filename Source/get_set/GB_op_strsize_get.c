@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_op_size_get: get the size of a string in an op
+// GB_op_strsize_get: get the size of a string in an op
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 #include "get_set/GB_get_set.h"
 
-GrB_Info GB_op_size_get
+GrB_Info GB_op_strsize_get
 (
     GB_Operator op,
     size_t * value,

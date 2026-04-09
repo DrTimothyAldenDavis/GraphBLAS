@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_matvec_name_size_get: get max size of a matrix/vector/scalar name or type
+// GB_matvec_namesize_get: get max size of a matrix/vector/scalar name or type
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 #include "get_set/GB_get_set.h"
 
-GrB_Info GB_matvec_name_size_get (GrB_Matrix A, size_t *value, int field)
+GrB_Info GB_matvec_namesize_get (GrB_Matrix A, size_t *value, int field)
 {
     const char *name = NULL ;
 

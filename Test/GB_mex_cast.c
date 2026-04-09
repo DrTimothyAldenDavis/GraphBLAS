@@ -76,12 +76,14 @@ void mexFunction
         // create a shallow cnz-by-1 matrix T to wrap the array X
         T = NULL ;
         void *Tx = X ;
-        uint64_t nrows = cnz, ncols = 1, Tx_size = cnz * xtype->size ;
-        GxB_Matrix_import_FullC (&T, xtype, nrows, ncols, &Tx, Tx_size, false, NULL) ;
+        uint64_t nrows = cnz, ncols = 1, Tx_memsize = cnz * xtype->size ;
+        GxB_Matrix_import_FullC (&T, xtype, nrows, ncols, &Tx, Tx_memsize,
+            false, NULL) ;
         // GB_cast_array (C, ctype->code, X, xtype->code, NULL, cnz, 1) ;
         GB_cast_array (C, ctype->code, T, 1) ;
         bool iso ;
-        GxB_Matrix_export_FullC (&T, &xtype, &nrows, &ncols, &Tx, &Tx_size, &iso, NULL) ;
+        GxB_Matrix_export_FullC (&T, &xtype, &nrows, &ncols, &Tx, &Tx_memsize,
+            &iso, NULL) ;
     }
 
     GB_mx_put_global (do_cover) ;

@@ -336,7 +336,7 @@ GrB_Info GB_sort
     ASSERT_BINARYOP_OK (op, "op for GB_sort", GB0) ;
 
     GrB_Matrix T = NULL ;
-    struct GB_Matrix_opaque T_header ;
+    // struct GB_Matrix_opaque T_header ;
     GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
@@ -413,7 +413,8 @@ GrB_Info GB_sort
     if (C_is_NULL)
     { 
         // C is a temporary matrix, which is freed when done
-        GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+        // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
+        GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
         C = T ;
     }
 
@@ -720,7 +721,8 @@ GrB_Info GB_sort
     {
         // allocate P->i and use it to construct the new indices
         size_t pisize = P->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
-        P->i = GB_MALLOC_MEMORY (cnz, pisize, &(P->i_size)) ;
+        P->i_mem = 0 ;  // FIXME memlane
+        P->i = GB_MALLOC_MEMORY (cnz, pisize, &(P->i_mem)) ;
         if (P->i == NULL)
         { 
             // out of memory
@@ -793,9 +795,9 @@ GrB_Info GB_sort
             // C is a temporary matrix T, and its contents are not needed.  The
             // indices of C become the values of P, Cp becomes Pp, and Ch (if
             // present) becomes Ph.
-            P->x = C->i ; C->i = NULL ; P->x_size = C->i_size ;
-            P->p = C->p ; C->p = NULL ; P->p_size = C->p_size ;
-            P->h = C->h ; C->h = NULL ; P->h_size = C->h_size ;
+            P->x = C->i ; C->i = NULL ; P->x_mem = C->i_mem ;
+            P->p = C->p ; C->p = NULL ; P->p_mem = C->p_mem ;
+            P->h = C->h ; C->h = NULL ; P->h_mem = C->h_mem ;
             P->plen = C->plen ;
         }
         else
@@ -805,12 +807,15 @@ GrB_Info GB_sort
             // copied to Pp, and Ch (if present) is copied to Ph.
             int64_t pplen = GB_IMAX (1, cnvec) ;
             P->plen = pplen ;
-            P->x = GB_MALLOC_MEMORY (cnz, pxsize, &(P->x_size)) ;
-            P->p = GB_MALLOC_MEMORY (pplen+1, ppsize, &(P->p_size)) ;
+            P->x_mem = 0 ;  // FIXME memlane
+            P->p_mem = 0 ;  // FIXME memlane
+            P->h_mem = 0 ;  // FIXME memlane
+            P->x = GB_MALLOC_MEMORY (cnz, pxsize, &(P->x_mem)) ;
+            P->p = GB_MALLOC_MEMORY (pplen+1, ppsize, &(P->p_mem)) ;
             P->h = NULL ;
             if (C_is_hyper)
             { 
-                P->h = GB_MALLOC_MEMORY (pplen, pjsize, &(P->h_size)) ;
+                P->h = GB_MALLOC_MEMORY (pplen, pjsize, &(P->h_mem)) ;
             }
             if (P->x == NULL || P->p == NULL || (C_is_hyper && P->h == NULL))
             { 

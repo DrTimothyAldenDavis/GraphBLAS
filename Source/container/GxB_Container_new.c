@@ -33,9 +33,9 @@ GrB_Info GxB_Container_new
     // allocate the new Container
     //--------------------------------------------------------------------------
 
-    size_t header_size ;
+    uint64_t header_mem = 0 ;   // FIXME memlane
     (*Container) = GB_CALLOC_MEMORY (1, sizeof (struct GxB_Container_struct),
-        &header_size) ;
+        &header_mem) ;
     if (*Container == NULL)
     { 
         // out of memory

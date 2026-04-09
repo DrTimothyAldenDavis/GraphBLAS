@@ -366,8 +366,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         {
             A->p = Mp ;
             A->i = Mi ;
-            A->p_size = (ncols+1) * sizeof (int64_t) ;
-            A->i_size = GB_IMAX (anz, 1) * sizeof (int64_t) ;
+            A->p_mem = GB_mem (0, (ncols+1) * sizeof (int64_t)) ;
+            A->i_mem = GB_mem (0, GB_IMAX (anz, 1) * sizeof (int64_t)) ;
             A->p_shallow = true ;
             A->i_shallow = true ;
         }
@@ -375,8 +375,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         {
             A->p = NULL ;
             A->i = NULL ;
-            A->p_size = 0 ;
-            A->i_size = 0 ;
+            A->p_mem = 0 ;
+            A->i_mem = 0 ;
             A->p_shallow = false ;
             A->i_shallow = false ;
         }
@@ -410,7 +410,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // (logical, double, or double complex), and a deep copy is not
         // requested.  Just make a shallow copy.
         A->x = MatlabX ;
-        A->x_size = anzmax * atype_out->size ;
+        A->x_mem = GB_mem (0, anzmax * atype_out->size) ;
     }
     else
     {
@@ -418,7 +418,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         {
             // allocate new space for the GraphBLAS values
             A->x = (GB_void *) GB_malloc_memory (anz * atype_out->size,
-                sizeof (GB_void), &(A->x_size)) ;
+                sizeof (GB_void), &(A->x_mem)) ;
             if (A->x == NULL)
             {
                 FREE_ALL ;
@@ -452,14 +452,15 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             GrB_Type ttype = (atype_in_code == GB_UDT_code) ?
                 GxB_FC64 : atype_in ;
             void *Tx = MatlabX ;
-            uint64_t nrows = anz, ncols = 1, Tx_size = anz * asize ;
-            GxB_Matrix_import_FullC (&T, ttype, nrows, ncols, &Tx, Tx_size,
+            uint64_t nrows = anz, ncols = 1,
+            Tx_memsize = anz * asize ;
+            GxB_Matrix_import_FullC (&T, ttype, nrows, ncols, &Tx, Tx_memsize,
                 false, NULL) ;
             GB_cast_array (A->x, code1, T, 1) ;
             // GB_cast_array (A->x, code1, MatlabX, code2, NULL, anz, 1) ;
             bool iso ;
             GxB_Matrix_export_FullC (&T, &ttype, &nrows, &ncols, &Tx,
-                &Tx_size, &iso, NULL) ;
+                &Tx_memsize, &iso, NULL) ;
         }
     }
 
@@ -481,7 +482,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         if (!A->x_shallow)
         {
             // convert A to iso, and reduce the size of A->x to a single entry
-            if (A->x_size >= atype_out->size)
+            if (GB_memsize (A->x_mem) >= atype_out->size)
             {
                 // use the first entry of A->x as the iso value of A
                 A->iso = true ;
@@ -498,7 +499,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         {
             // just set the iso flag, leave A->x unmodified.  A can be iso
             // only if A->x is large enough to hold at least 1 entry.
-            A->iso = (A->x_size >= atype_out->size) ;
+            A->iso = (GB_memsize (A->x_mem) >= atype_out->size) ;
         }
 
         ASSERT_MATRIX_OK (A, "got iso A from MATLAB", GB0) ;

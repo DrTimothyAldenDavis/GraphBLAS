@@ -67,8 +67,9 @@ GrB_Info GB_subassign_09
     // S = C(I,J)
     //--------------------------------------------------------------------------
 
-    struct GB_Matrix_opaque S_header ;
-    GB_CLEAR_MATRIX_HEADER (S, &S_header) ;
+    // struct GB_Matrix_opaque S_header ;
+    // GB_CLEAR_MATRIX_HEADER (S, &S_header) ;
+    GB_OK (GB_matrix_header_new (&S, /* FIXME memlane: */ 0)) ;
     GB_OK (GB_subassign_symbolic (S, C, I, I_is_32, ni, J, J_is_32, nj, true,
         Werk)) ;
 

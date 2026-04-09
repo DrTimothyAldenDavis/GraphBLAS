@@ -36,7 +36,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
 (
     // output of phase1:
     void **Cp_handle,                   // output of size Cnvec+1
-    size_t *Cp_size_handle,
+    uint64_t *Cp_mem_handle,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
     // tasks from phase0b:
@@ -71,7 +71,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
     // from phase1:
     void **Cp_handle,       // vector pointers for C
-    size_t Cp_size,
+    uint64_t Cp_mem,
     const int64_t Cnvec_nonempty,   // # of non-empty vectors in C
     // tasks from phase1a:
     const GB_task_struct *restrict TaskList,    // array of structs
@@ -80,7 +80,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // analysis from phase0:
     const int64_t Cnvec,
     void **Ch_handle,
-    size_t Ch_size,
+    uint64_t Ch_mem,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,

@@ -16,8 +16,8 @@
 
 #define GB_FREE_WORKSPACE                           \
 {                                                   \
-    GB_FREE_MEMORY (&Key_input, Key_input_size) ;   \
-    GB_FREE_MEMORY (&Swork, Swork_size) ;           \
+    GB_FREE_MEMORY (&Key_input, Key_input_mem) ;    \
+    GB_FREE_MEMORY (&Swork, Swork_mem) ;            \
     GB_cuda_stream_pool_release (&stream) ;         \
 }
 
@@ -66,8 +66,8 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     ASSERT (T != NULL) ;
 
     cudaStream_t stream = nullptr ;
-    GB_void *Key_input = NULL ; size_t Key_input_size = 0 ;
-    GB_void *Swork = NULL  ; size_t Swork_size = 0 ;
+    GB_void *Key_input = NULL ; uint64_t Key_input_mem = 0 ; // FIXME memlane
+    GB_void *Swork = NULL  ; uint64_t Swork_mem = 0 ;        // FIXME memlane
 
     GrB_Type atype = A->type ;
     int64_t anz = GB_nnz (A) ;
@@ -95,7 +95,7 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
 
     // allocate iwork of size anz
     Key_input = (GB_void *) GB_MALLOC_MEMORY (anz+1, key_size,
-        &Key_input_size) ;
+        &Key_input_mem) ;
     if (Key_input == NULL)
     { 
         // out of memory
@@ -148,7 +148,7 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     if (op != NULL && !C_iso)
     { 
         Swork = (GB_void *) GB_XALLOC_MEMORY (false, C_iso, anz, csize,
-            &Swork_size) ;
+            &Swork_mem) ;
         if (Swork == NULL)
         {
             // out of memory

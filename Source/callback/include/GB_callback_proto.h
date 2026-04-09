@@ -69,25 +69,25 @@ void GX_free_memory         /* free memory */                               \
     /* input/output*/                                                       \
     void **p,               /* pointer to block of memory to free */        \
     /* input */                                                             \
-    size_t size_allocated   /* # of bytes actually allocated */             \
+    uint64_t mem            /* # of bytes allocated, and memlane */         \
 )
 
 #define GB_CALLBACK_MALLOC_MEMORY_PROTO(GX_malloc_memory)                   \
 void *GX_malloc_memory      /* pointer to allocated block of memory */      \
 (                                                                           \
-    size_t nitems,          /* number of items to allocate */               \
-    size_t size_of_item,    /* sizeof each item */                          \
-    /* output */                                                            \
-    size_t *size_allocated  /* # of bytes actually allocated */             \
+    uint64_t nitems,        /* number of items to allocate */               \
+    uint64_t size_of_item,  /* sizeof each item */                          \
+    /* input/output */                                                      \
+    uint64_t *mem           /* # of bytes allocated, and memlane */         \
 )
 
 #define GB_CALLBACK_CALLOC_MEMORY_PROTO(GX_calloc_memory)                   \
 void *GX_calloc_memory      /* pointer to allocated block of memory */      \
 (                                                                           \
-    size_t nitems,          /* number of items to allocate */               \
-    size_t size_of_item,    /* sizeof each item */                          \
-    /* output */                                                            \
-    size_t *size_allocated  /* # of bytes actually allocated */             \
+    uint64_t nitems,        /* number of items to allocate */               \
+    uint64_t size_of_item,  /* sizeof each item */                          \
+    /* input/output */                                                      \
+    uint64_t *mem           /* # of bytes allocated, and memlane */         \
 )
 
 #define GB_CALLBACK_MEMSET_PROTO(GX_memset)                                 \
@@ -95,7 +95,7 @@ void GX_memset                  /* parallel memset */                       \
 (                                                                           \
     void *dest,                 /* destination */                           \
     const int c,                /* value to to set */                       \
-    size_t n,                   /* # of bytes to set */                     \
+    uint64_t n,                 /* # of bytes to set */                     \
     int nthreads                /* max # of threads to use */               \
 )
 
@@ -104,11 +104,11 @@ void *GX_werk_pop     /* free the top block of werkspace memory */          \
 (                                                                           \
     /* input/output */                                                      \
     void *p,                    /* werkspace to free */                     \
-    size_t *size_allocated,     /* # of bytes actually allocated for p */   \
+    uint64_t *mem,              /* memsize and memlane of p */              \
     /* input */                                                             \
     bool on_stack,              /* true if werkspace is from Werk stack */  \
-    size_t nitems,              /* # of items to allocate */                \
-    size_t size_of_item,        /* size of each item */                     \
+    uint64_t nitems,            /* # of items to allocate */                \
+    uint64_t size_of_item,      /* size of each item */                     \
     GB_Werk Werk                                                            \
 )
 
@@ -116,11 +116,11 @@ void *GX_werk_pop     /* free the top block of werkspace memory */          \
 void *GX_werk_push    /* return pointer to newly allocated space */         \
 (                                                                           \
     /* output */                                                            \
-    size_t *size_allocated,     /* # of bytes actually allocated */         \
+    uint64_t *mem,              /* memsize and memlane of p */              \
     bool *on_stack,             /* true if werkspace is from Werk stack */  \
     /* input */                                                             \
-    size_t nitems,              /* # of items to allocate */                \
-    size_t size_of_item,        /* size of each item */                     \
+    uint64_t nitems,            /* # of items to allocate */                \
+    uint64_t size_of_item,      /* size of each item */                     \
     GB_Werk Werk                                                            \
 )
 
@@ -136,7 +136,7 @@ GrB_Info GX_subassign_one_slice     /* slice M for subassign_05, 06n, 07 */ \
 (                                                                           \
     /* output: */                                                           \
     GB_task_struct **p_TaskList,    /* array of structs */                  \
-    size_t *p_TaskList_size,        /* size of TaskList */                  \
+    uint64_t *p_TaskList_mem,       /* size of TaskList and memlane */      \
     int *p_ntasks,                  /* # of tasks constructed */            \
     int *p_nthreads,                /* # of threads to use */               \
     /* input: */                                                            \
@@ -160,13 +160,13 @@ GrB_Info GX_add_phase0          /* find vectors in C for C=A+B or C<M>=A+B*/\
 (                                                                           \
     int64_t *p_Cnvec,           /* # of vectors to compute in C */          \
     void **Ch_handle,           /* Ch: size Cnvec, or NULL */               \
-    size_t *Ch_size_handle,              /* size of Ch in bytes */          \
+    uint64_t *Ch_mem_handle,             /* size of Ch in bytes; memlane */ \
     int64_t *restrict *C_to_M_handle,    /* C_to_M: size Cnvec, or NULL */  \
-    size_t *C_to_M_size_handle,          /* size of C_to_M in bytes */      \
+    uint64_t *C_to_M_mem_handle,         /* size of C_to_M and memlane */   \
     int64_t *restrict *C_to_A_handle,    /* C_to_A: size Cnvec, or NULL */  \
-    size_t *C_to_A_size_handle,          /* size of C_to_A in bytes */      \
+    uint64_t *C_to_A_mem_handle,         /* size of C_to_A and memlane */   \
     int64_t *restrict *C_to_B_handle,    /* C_to_B: size Cnvec, or NULL */  \
-    size_t *C_to_B_size_handle,          /* size of C_to_A in bytes */      \
+    uint64_t *C_to_B_mem_handle,         /* size of C_to_A and memlane */   \
     bool *p_Ch_is_Mh,           /* if true, then Ch == Mh */                \
     bool *p_Cp_is_32,           /* if true, Cp is 32-bit; else 64-bit */    \
     bool *p_Cj_is_32,           /* if true, Ch is 32-bit; else 64-bit */    \
@@ -183,7 +183,7 @@ GrB_Info GX_ewise_slice                                                     \
 (                                                                           \
     /* output: */                                                           \
     GB_task_struct **p_TaskList,    /* array of structs */                  \
-    size_t *p_TaskList_size,        /* size of TaskList */                  \
+    uint64_t *p_TaskList_mem,       /* size of TaskList and memlane */      \
     int *p_ntasks,                  /* # of tasks constructed */            \
     int *p_nthreads,                /* # of threads for eWise operation */  \
     /* input: */                                                            \
@@ -205,7 +205,7 @@ GrB_Info GX_subassign_IxJ_slice                                             \
 (                                                                           \
     /* output: */                                                           \
     GB_task_struct **p_TaskList,    /* array of structs */                  \
-    size_t *p_TaskList_size,        /* size of TaskList */                  \
+    uint64_t *p_TaskList_mem,       /* size of TaskList and memlane */      \
     int *p_ntasks,                  /* # of tasks constructed */            \
     int *p_nthreads,                /* # of threads to use */               \
     /* input: */                                                            \
@@ -230,15 +230,15 @@ GrB_Info GX_subassign_08n_slice                                             \
 (                                                                           \
     /* output: */                                                           \
     GB_task_struct **p_TaskList,    /* size max_ntasks */                   \
-    size_t *p_TaskList_size,        /* size of TaskList */                  \
+    uint64_t *p_TaskList_mem,       /* size of TaskList and memlane */      \
     int *p_ntasks,                  /* # of tasks constructed */            \
     int *p_nthreads,                /* # of threads to use */               \
     int64_t *p_Znvec,               /* # of vectors to compute in Z */      \
     const void **Zh_handle,         /* Zh is A->h, M->h, or NULL */         \
     int64_t *restrict *Z_to_A_handle, /* Z_to_A: size Znvec, or NULL */     \
-    size_t *Z_to_A_size_handle,                                             \
+    uint64_t *Z_to_A_mem_handle,                                            \
     int64_t *restrict *Z_to_M_handle, /* Z_to_M: size Znvec, or NULL */     \
-    size_t *Z_to_M_size_handle,                                             \
+    uint64_t *Z_to_M_mem_handle,                                            \
     bool *Zj_is_32_handle,                                                  \
     /* input: */                                                            \
     const GrB_Matrix C,         /* output matrix C */                       \

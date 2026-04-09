@@ -28,7 +28,7 @@ GrB_Info GB_op_name_and_defn
     int32_t *op_name_len,       // op->name_len
     uint64_t *op_hash,          // op->hash
     char **op_defn,             // op->defn
-    size_t *op_defn_size,       // op->defn_size
+    uint64_t *op_defn_mem,      // op->defn_mem
     // input
     const char *input_name,     // user-provided name, may be NULL
     const char *input_defn,     // user-provided name, may be NULL

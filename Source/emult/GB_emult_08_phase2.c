@@ -47,7 +47,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     const bool flipij,      // if true, i,j must be flipped
     // from phase1:
     void **Cp_handle,       // vector pointers for C
-    size_t Cp_size,
+    uint64_t Cp_mem,
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // tasks from phase1a:
     const GB_task_struct *restrict TaskList, // array of structs
@@ -56,7 +56,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     // analysis from phase0:
     const int64_t Cnvec,
     const void *Ch,
-    size_t Ch_size,
+    uint64_t Ch_mem,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
@@ -80,7 +80,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
+    ASSERT (C != NULL) ;
 
     ASSERT_BINARYOP_OK (op, "op for emult phase2", GB0) ;
     ASSERT_MATRIX_OK (A, "A for emult 08 phase2", GB0) ;
@@ -155,7 +155,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
         // Ch must not be freed since Ch is always shallow
-        GB_FREE_MEMORY (Cp_handle, Cp_size) ;
+        GB_FREE_MEMORY (Cp_handle, Cp_mem) ;
         return (info) ;
     }
 
@@ -166,7 +166,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     // transplant Cp into C as the vector pointers, from GB_emult_08_phase1
 //  C->nvec_nonempty = Cnvec_nonempty ;
     GB_nvec_nonempty_set (C, Cnvec_nonempty) ;
-    C->p = Cp ; C->p_size = Cp_size ;
+    C->p = Cp ; C->p_mem = Cp_mem ;
     C->nvals = cnz ;
     (*Cp_handle) = NULL ;
 
@@ -174,7 +174,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     if (C_is_hyper)
     { 
         // C->h is currently shallow; a copy is made at the end
-        C->h = (void *) Ch ; C->h_size = Ch_size ;
+        C->h = (void *) Ch ; C->h_mem = Ch_mem ;
         C->h_shallow = true ;
         C->nvec = Cnvec ;
     }

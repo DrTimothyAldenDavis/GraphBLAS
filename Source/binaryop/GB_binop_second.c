@@ -51,7 +51,7 @@ GrB_BinaryOp GB_binop_second    // return SECOND operator, or NULL on error
             // SECOND_UDT opertor except for this method.
             if (op == NULL) return (NULL) ;
             // op = &op_header has been provided by the caller
-            op->header_size = 0 ;
+            op->header_mem = 0 ;    // always use memlane 0
             #ifdef GB_DEBUG
             GrB_Info info =
             #endif

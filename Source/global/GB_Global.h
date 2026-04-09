@@ -52,14 +52,14 @@ void     GB_Global_abort (void) ;
 
 void     GB_Global_malloc_function_set (GB_malloc_function_t malloc_function, int memlane) ;
 void  *  GB_Global_malloc_function_get (int memlane) ;
-void  *  GB_Global_malloc_function (size_t size, int memlane) ;
+void  *  GB_Global_malloc_function (uint64_t memsize, int memlane) ;
 
 void     GB_Global_calloc_function_set (GB_calloc_function_t calloc_function, int memlane) ;
 void  *  GB_Global_calloc_function_get (int memlane) ;
 
 void     GB_Global_realloc_function_set (GB_realloc_function_t realloc_function, int memlane) ;
 void  *  GB_Global_realloc_function_get (int memlane) ;
-void  *  GB_Global_realloc_function (void *p, size_t size, int memlane) ;
+void  *  GB_Global_realloc_function (void *p, uint64_t memsize, int memlane) ;
 bool     GB_Global_realloc_function_have (int memlane) ;
 
 void     GB_Global_free_function_set (GB_free_function_t free_function, int memlane) ;
@@ -81,7 +81,7 @@ bool     GB_Global_malloc_debug_get (void) ;
 void     GB_Global_malloc_debug_count_set (int64_t malloc_debug_count) ;
 bool     GB_Global_malloc_debug_count_decrement (void) ;
 
-void *   GB_Global_persistent_malloc (size_t size) ;
+void *   GB_Global_persistent_malloc (uint64_t memsize) ;
 void     GB_Global_persistent_make (void *p) ;
 void     GB_Global_persistent_set (void (* persistent_function) (void *)) ;
 void     GB_Global_persistent_free (void **p) ;
@@ -100,10 +100,10 @@ bool     GB_Global_stats_mem_shallow_get (void) ;
 
 void     GB_Global_gpu_count_set (bool enable_cuda) ;
 int      GB_Global_gpu_count_get (void) ;
-size_t   GB_Global_gpu_memorysize_get (int device) ;
+uint64_t GB_Global_gpu_memorysize_get (int device) ;
 int      GB_Global_gpu_sm_get (int device) ;
-bool     GB_Global_gpu_device_pool_size_set (int device, size_t size) ;
-bool     GB_Global_gpu_device_max_pool_size_set (int device, size_t size) ;
+bool     GB_Global_gpu_device_pool_memsize_set (int device, uint64_t gpusize) ;
+bool     GB_Global_gpu_device_max_pool_memsize_set (int device, uint64_t gpusize) ;
 bool     GB_Global_gpu_device_memory_resource_set (int device, void *resource) ;
 void*    GB_Global_gpu_device_memory_resource_get (int device) ;
 bool     GB_Global_gpu_device_properties_get (int device) ;
@@ -113,14 +113,15 @@ int      GB_Global_gpu_compute_capability_minor_get (int device) ;
 void     GB_Global_timing_clear_all (void) ;
 void     GB_Global_timing_clear (int k) ;
 void     GB_Global_timing_set (int k, double t) ;
-void     GB_Global_timing_add (int k, double t) ;
+void     GB_Global_timing_add (int k, double t) ; 
 double   GB_Global_timing_get (int k) ;
 
 int      GB_Global_memtable_n (void) ;
 void     GB_Global_memtable_dump (void) ;
 void     GB_Global_memtable_clear (void) ;
-void     GB_Global_memtable_add (void *p, size_t size, int memlane) ;
-size_t   GB_Global_memtable_size (void *p) ;
+void     GB_Global_memtable_add (void *p, uint64_t mem) ;
+uint64_t GB_Global_memtable_memsize (void *p) ;
+int      GB_Global_memtable_memlane (void *p) ;
 void     GB_Global_memtable_remove (void *p) ;
 bool     GB_Global_memtable_find (void *p) ;
 

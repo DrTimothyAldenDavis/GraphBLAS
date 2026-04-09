@@ -18,17 +18,17 @@
 #include "include/GB_unused.h"
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_Matrix_free (&Cwork) ;       \
-    GB_Matrix_free (&Awork) ;       \
-    GB_Matrix_free (&AT) ;          \
-    GB_Matrix_free (&Mwork) ;       \
-    GB_Matrix_free (&MT) ;          \
-    GB_FREE_MEMORY (&I2, I2_size) ;   \
-    GB_FREE_MEMORY (&J2, J2_size) ;   \
-    GB_FREE_MEMORY (&I2k, I2k_size) ; \
-    GB_FREE_MEMORY (&J2k, J2k_size) ; \
+#define GB_FREE_ALL                     \
+{                                       \
+    GB_Matrix_free (&Cwork) ;           \
+    GB_Matrix_free (&Awork) ;           \
+    GB_Matrix_free (&AT) ;              \
+    GB_Matrix_free (&Mwork) ;           \
+    GB_Matrix_free (&MT) ;              \
+    GB_FREE_MEMORY (&I2, I2_mem) ;      \
+    GB_FREE_MEMORY (&J2, J2_mem) ;      \
+    GB_FREE_MEMORY (&I2k, I2k_mem) ;    \
+    GB_FREE_MEMORY (&J2k, J2k_mem) ;    \
 }
 
 GrB_Info GB_assign_prep
@@ -45,17 +45,17 @@ GrB_Info GB_assign_prep
     GrB_Matrix *Awork_handle,          // NULL, or a temporary matrix
 
     // static headers for Cwork, Mwork, Awork, MT and AT
-    GrB_Matrix Cwork_header_handle,
-    GrB_Matrix Mwork_header_handle,
-    GrB_Matrix Awork_header_handle,
-    GrB_Matrix MT_header_handle,
-    GrB_Matrix AT_header_handle,
+    // GrB_Matrix Cwork_header_handle,
+    // GrB_Matrix Mwork_header_handle,
+    // GrB_Matrix Awork_header_handle,
+    // GrB_Matrix MT_header_handle,
+    // GrB_Matrix AT_header_handle,
 
     // modified versions of the Rows/Cols lists, and their analysis:
     void **I_handle,            // Rows, Cols, or a modified copy I2
     bool *I_is_32_handle,
     void **I2_handle,           // NULL, or sorted/pruned Rows or Cols
-    size_t *I2_size_handle,
+    uint64_t *I2_mem_handle,
     int64_t *ni_handle,
     int64_t *nI_handle,
     int *Ikind_handle,
@@ -64,7 +64,7 @@ GrB_Info GB_assign_prep
     void **J_handle,            // Rows, Cols, or a modified copy J2
     bool *J_is_32_handle,
     void **J2_handle,           // NULL, or sorted/pruned Rows or Cols
-    size_t *J2_size_handle,
+    uint64_t *J2_mem_handle,
     int64_t *nj_handle,
     int64_t *nJ_handle,
     int *Jkind_handle,
@@ -123,10 +123,10 @@ GrB_Info GB_assign_prep
     GrB_Matrix MT = NULL ;
     GrB_Matrix AT = NULL ;
 
-    void *I2  = NULL ; size_t I2_size = 0 ;
-    void *J2  = NULL ; size_t J2_size = 0 ;
-    void *I2k = NULL ; size_t I2k_size = 0 ;
-    void *J2k = NULL ; size_t J2k_size = 0 ;
+    void *I2  = NULL ; uint64_t I2_mem = 0 ;
+    void *J2  = NULL ; uint64_t J2_mem = 0 ;
+    void *I2k = NULL ; uint64_t I2k_mem = 0 ;
+    void *J2k = NULL ; uint64_t J2k_mem = 0 ;
 
     (*scalar_type_handle) = NULL ;
 
@@ -140,14 +140,14 @@ GrB_Info GB_assign_prep
 
     (*I_handle) = NULL ; 
     (*I2_handle) = NULL ;
-    (*I2_size_handle) = 0 ;
+    (*I2_mem_handle) = 0 ;
     (*ni_handle) = 0 ;
     (*nI_handle) = 0 ;
     (*Ikind_handle) = 0 ;
 
     (*J_handle) = NULL ;
     (*J2_handle) = NULL ;
-    (*J2_size_handle) = 0 ;
+    (*J2_mem_handle) = 0 ;
     (*nj_handle) = 0 ;
     (*nJ_handle) = 0 ;
     (*Jkind_handle) = 0 ;
@@ -703,7 +703,8 @@ GrB_Info GB_assign_prep
         // TODO: if accum is present and it does not depend on the values of
         // A,  construct AT as iso.
         GBURBLE ("(A transpose) ") ;
-        GB_CLEAR_MATRIX_HEADER (AT, AT_header_handle) ;
+        // GB_CLEAR_MATRIX_HEADER (AT, AT_header_handle) ;
+        GB_OK (GB_matrix_header_new (&AT, /* FIXME memlane: */ 0)) ;
         GB_OK (GB_transpose_cast (AT, A->type, C_is_csc, A, false, Werk)) ;
         GB_MATRIX_WAIT (AT) ;       // A cannot be jumbled
         A = AT ;
@@ -732,7 +733,8 @@ GrB_Info GB_assign_prep
             // MT = M' to conform M to the same CSR/CSC format as C,
             // and typecast to boolean.
             GBURBLE ("(M transpose) ") ;
-            GB_CLEAR_MATRIX_HEADER (MT, MT_header_handle) ;
+            // GB_CLEAR_MATRIX_HEADER (MT, MT_header_handle) ;
+            GB_OK (GB_matrix_header_new (&MT, /* FIXME memlane: */ 0)) ;
             GB_OK (GB_transpose_cast (MT, GrB_BOOL, C_is_csc, M, Mask_struct,
                 Werk)) ;
             GB_MATRIX_WAIT (MT) ;       // M cannot be jumbled
@@ -834,8 +836,8 @@ GrB_Info GB_assign_prep
             int64_t ni2 ;
             ASSERT (Ikind == GB_LIST) ;
             GB_OK (GB_ijsort (I, I_is_32, ni, imax,
-                &ni2, &I2 , &I2_is_32 , &I2_size,
-                      &I2k, &I2k_is_32, &I2k_size, Werk)) ;
+                &ni2, &I2 , &I2_is_32 , &I2_mem,
+                      &I2k, &I2k_is_32, &I2k_mem, Werk)) ;
             // Recheck the length and properties of the new I2.  This may
             // convert I2 to GB_ALL or GB_RANGE, after I2 has been sorted.
             GB_ijlength (I2, I2_is_32, ni2, C->vlen, &nI, &Ikind, Icolon) ;
@@ -856,8 +858,8 @@ GrB_Info GB_assign_prep
             int64_t nj2 ;
             ASSERT (Jkind == GB_LIST) ;
             GB_OK (GB_ijsort (J, J_is_32, nj, jmax,
-                &nj2, &J2 , &J2_is_32 , &J2_size,
-                      &J2k, &J2k_is_32, &J2k_size, Werk)) ;
+                &nj2, &J2 , &J2_is_32 , &J2_mem,
+                      &J2k, &J2k_is_32, &J2k_mem, Werk)) ;
             // Recheck the length and properties of the new J2.  This may
             // convert J2 to GB_ALL or GB_RANGE, after J2 has been sorted.
             GB_ijlength (J2, J2_is_32, nj2, C->vdim, &nJ, &Jkind, Jcolon) ;
@@ -878,7 +880,8 @@ GrB_Info GB_assign_prep
         if (!scalar_expansion)
         { 
             // Awork = A (Iinv, Jinv)
-            GB_CLEAR_MATRIX_HEADER (Awork, Awork_header_handle) ;
+            // GB_CLEAR_MATRIX_HEADER (Awork, Awork_header_handle) ;
+            GB_OK (GB_matrix_header_new (&Awork, /* FIXME memlane: */ 0)) ;
             GB_OK (GB_subref (Awork, false, A->is_csc, A,
                 Iinv, I2k_is_32, ni,
                 Jinv, J2k_is_32, nj,
@@ -897,7 +900,8 @@ GrB_Info GB_assign_prep
         { 
             // Mwork = M (Iinv, Jinv)
             // if Mask_struct then Mwork is extracted as iso
-            GB_CLEAR_MATRIX_HEADER (Mwork, Mwork_header_handle) ;
+            // GB_CLEAR_MATRIX_HEADER (Mwork, Mwork_header_handle) ;
+            GB_OK (GB_matrix_header_new (&Mwork, /* FIXME memlane: */ 0)) ;
             GB_OK (GB_subref (Mwork, Mask_struct, M->is_csc, M,
                 Iinv, I2k_is_32, ni,
                 Jinv, J2k_is_32, nj,
@@ -912,8 +916,8 @@ GrB_Info GB_assign_prep
             M = Mwork ;
         }
 
-        GB_FREE_MEMORY (&I2k, I2k_size) ;
-        GB_FREE_MEMORY (&J2k, J2k_size) ;
+        GB_FREE_MEMORY (&I2k, I2k_mem) ;
+        GB_FREE_MEMORY (&J2k, J2k_mem) ;
     }
 
     // I and J are now sorted, with no duplicate entries.  They are either
@@ -1040,12 +1044,12 @@ GrB_Info GB_assign_prep
     else if (C_aliased)
     {
         // C is aliased with M or A: make a copy of C to assign into
-        GB_CLEAR_MATRIX_HEADER (Cwork, Cwork_header_handle) ;
+        // GB_CLEAR_MATRIX_HEADER (Cwork, Cwork_header_handle) ;
         if (C_replace_may_be_done_early)
         { 
             // Instead of duplicating C, create a new empty matrix Cwork.
             int sparsity = (C->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-            GB_OK (GB_new (&Cwork, // sparse or hyper, existing header
+            GB_OK (GB_new (&Cwork, // sparse or hyper, new header
                 ctype, C->vlen, C->vdim, GB_ph_calloc, C_is_csc,
                 sparsity, C->hyper_switch, 1,
                 C->p_is_32, C->j_is_32, C->i_is_32)) ;
@@ -1090,7 +1094,6 @@ if (C==A && !GB_any_aliased (C, M) && Mask_struct && Mask_comp && whole_C_matrix
         }
         // Cwork must be transplanted back into C when done
         C = Cwork ;
-        ASSERT (C->header_size == 0 || GBNSTATIC) ;
     }
     else
     {
@@ -1346,7 +1349,7 @@ if (C==A && !GB_any_aliased (C, M) && Mask_struct && Mask_comp && whole_C_matrix
     (*I_handle      ) = (void *) I ;    // either Rows, Cols, or I2
     (*I_is_32_handle) = I_is_32 ;
     (*I2_handle     ) = I2 ;        // temporary sorted copy of Rows/Cols list
-    (*I2_size_handle) = I2_size ;
+    (*I2_mem_handle ) = I2_mem ;
     (*ni_handle     ) = ni ;
     (*nI_handle     ) = nI ;
     (*Ikind_handle  ) = Ikind ;
@@ -1354,7 +1357,7 @@ if (C==A && !GB_any_aliased (C, M) && Mask_struct && Mask_comp && whole_C_matrix
     (*J_handle      ) = (void *) J ;    // either Rows, Cols, or J2
     (*J_is_32_handle) = J_is_32 ;
     (*J2_handle     ) = J2 ;        // temporary sorted copy of Rows/Cols list
-    (*J2_size_handle) = J2_size ;
+    (*J2_mem_handle ) = J2_mem ;
     (*nj_handle     ) = nj ;
     (*nJ_handle     ) = nJ ;
     (*Jkind_handle  ) = Jkind ;

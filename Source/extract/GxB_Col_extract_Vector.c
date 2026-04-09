@@ -15,8 +15,13 @@
 #include "extract/GB_extract.h"
 #include "mask/GB_get_mask.h"
 #include "ij/GB_ij.h"
-#define GB_FREE_ALL                             \
-    if (I_size > 0) GB_FREE_MEMORY (&I, I_size) ;
+#define GB_FREE_ALL                     \
+{                                       \
+    if (GB_memsize (I_mem) > 0)         \
+    {                                   \
+        GB_FREE_MEMORY (&I, I_mem) ;    \
+    }                                   \
+}
 
 GrB_Info GxB_Col_extract_Vector     // w<mask> = accum (w, A(I,j))
 (
@@ -64,11 +69,11 @@ GrB_Info GxB_Col_extract_Vector     // w<mask> = accum (w, A(I,j))
     //--------------------------------------------------------------------------
 
     void *I = NULL ;
-    size_t I_size = 0 ;
+    uint64_t I_mem = 0 ;    // FIXME memlane
     int64_t ni = 0 ;
     GrB_Type I_type = NULL ;
     GB_OK (GB_ijxvector (I_vector, (w == I_vector), 0, desc, false,
-        &I, &ni, &I_size, &I_type, Werk)) ;
+        &I, &ni, &I_mem, &I_type, Werk)) ;
     bool I_is_32 = (I_type == GrB_UINT32) ;
 
     //--------------------------------------------------------------------------

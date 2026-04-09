@@ -17,7 +17,7 @@
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
-    GB_FREE_MEMORY (&Zp, Zp_size) ;           \
+    GB_FREE_MEMORY (&Zp, Zp_mem) ;          \
     GB_WERK_POP (Work, uint64_t) ;          \
     GB_WERK_POP (A_ek_slicing, int64_t) ;   \
 }
@@ -50,7 +50,7 @@ GrB_Info GB_select_sparse
     // sparse/hypersparse, with one exception: for the DIAG operator, A may be
     // sparse, hypersparse, or full.
 
-    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
+    ASSERT (C != NULL) ;
     ASSERT_MATRIX_OK (A, "A input for GB_select_sparse", GB0) ;
     ASSERT_INDEXUNARYOP_OK (op, "op for GB_select_sparse", GB0) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
@@ -63,7 +63,7 @@ GrB_Info GB_select_sparse
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    void *Zp = NULL ; size_t Zp_size = 0 ;
+    void *Zp = NULL ; uint64_t Zp_mem = 0 ; // FIXME memlane
     GB_WERK_DECLARE (Work, uint64_t) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
@@ -171,7 +171,7 @@ GrB_Info GB_select_sparse
     if (op_is_positional)
     {
         // allocate Zp
-        Zp = GB_MALLOC_MEMORY (C->plen + 1, cpsize, &Zp_size) ;
+        Zp = GB_MALLOC_MEMORY (C->plen + 1, cpsize, &Zp_mem) ;
         if (Zp == NULL)
         { 
             // out of memory

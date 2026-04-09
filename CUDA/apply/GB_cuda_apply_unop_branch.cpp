@@ -20,13 +20,6 @@ bool GB_cuda_apply_unop_branch
         return false ;
     }
 
-    if (A->header_size == 0)
-    {
-        return false ;
-    }
-    
-    bool ok = (GB_cuda_type_branch (ctype) && GB_cuda_type_branch (A->type)) ;
-
     if (op->xtype != NULL)
     {
         ok = ok && (GB_cuda_type_branch (op->xtype)) ;

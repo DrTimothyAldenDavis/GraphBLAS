@@ -153,12 +153,12 @@ GrB_Info GB_Matrix_assign_scalar    // C<Mask>(I,J) = accum (C(I,J),s)
         GB_ijlength (J, J_is_32, nj, GB_NCOLS (C), &nJ, &J_Kind, Jcolon) ;
 
         // create an empty matrix A of the right size, and use matrix assign
-        struct GB_Matrix_opaque A_header ;
-        GB_CLEAR_MATRIX_HEADER (A, &A_header) ;
+        // struct GB_Matrix_opaque A_header ;
+        // GB_CLEAR_MATRIX_HEADER (A, &A_header) ;
         bool is_csc = C->is_csc ;
         int64_t vlen = is_csc ? nI : nJ ;
         int64_t vdim = is_csc ? nJ : nI ;
-        GB_OK (GB_new (&A,  // existing header
+        GB_OK (GB_new (&A,  // new header
             scalar->type, vlen, vdim, GB_ph_calloc, is_csc, GxB_AUTO_SPARSITY,
             GB_HYPER_SWITCH_DEFAULT, 1, /* OK: */ false, false, false)) ;
         info = GB_assign (

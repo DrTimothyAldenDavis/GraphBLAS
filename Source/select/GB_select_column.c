@@ -41,7 +41,7 @@ GrB_Info GB_select_column
             opcode == GB_COLLE_idxunop_code ||
             opcode == GB_COLGT_idxunop_code) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
-    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
+    ASSERT (C != NULL) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 

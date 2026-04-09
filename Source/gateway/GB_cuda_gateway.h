@@ -41,8 +41,8 @@ typedef struct
     int  compute_capability_major ;
     int  compute_capability_minor ;
     bool use_memory_pool ;
-    size_t  pool_size ;
-    size_t  max_pool_size ;
+    size_t  pool_memsize ;
+    size_t  max_pool_memsize ;
     void *memory_resource ;
     // TODO: add something about the streams for this device
 }
