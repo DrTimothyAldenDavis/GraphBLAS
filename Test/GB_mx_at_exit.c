@@ -23,9 +23,9 @@ void GB_mx_at_exit ( void )
     // be called again.  This is an extension to the spec that is possible with
     // SuiteSparse:GraphBLAS but not available via a documented function.
     // Instead, an internal method is used.  If this flag is set, the next call
-    // to any @GrB mexFunction will first call gb_usage, which calls GxB_init
-    // to re-initialize GraphBLAS.  That method will re-load the hash table
-    // with all PreJIT kernels.
+    // to any GraphBLAS mexFunction will first call GB_mx_get_global, which
+    // calls GxB_init to re-initialize GraphBLAS.  That method will re-load the
+    // hash table with all PreJIT kernels.
 
     // These 2 lines are placed together so a "grep GrB_finalize" reports
     // both of them.

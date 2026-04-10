@@ -59,7 +59,7 @@ bool GB_mx_get_global       // true if doing malloc_debug
 
     if (!GB_Global_GrB_init_called_get ( ))
     {
-        // call GxB_init (see also gb_usage in @GrB)
+        // call GxB_init
         mexAtExit (GB_mx_at_exit) ;
         GB_Global_persistent_set (mexMakeMemoryPersistent) ;
         GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree) ;

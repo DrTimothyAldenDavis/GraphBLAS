@@ -327,7 +327,7 @@ mxArray *GB_mx_object_to_mxArray    // returns the MATLAB mxArray
         if (Sx == NULL && cnz > 0) mexErrMsgTxt ("Sx is NULL!\n") ;
         GB_cast_array ((GB_void *) Sx, GB_FP64_code, C, 1) ;
         mexMakeMemoryPersistent (Sx) ;
-        mxSetPr (A, Sx) ;
+        mxSetData (A, Sx) ;
 
         // Sx was just malloc'd.  Treat it as if GraphBLAS has freed it
         GB_AS_IF_FREE (Sx) ;

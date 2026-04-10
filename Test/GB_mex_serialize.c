@@ -17,7 +17,7 @@
 #include "GB_mex_errors.h"
 
 // method:
-// -2                          // GrB*serialize with default LZ4 compression
+// -2                          // serialize with default LZ4 compression
 // GxB_COMPRESSION_NONE -1     // no compression
 // GxB_COMPRESSION_DEFAULT 0   // ZSTD level 1
 // GxB_COMPRESSION_LZ4   1000  // LZ4

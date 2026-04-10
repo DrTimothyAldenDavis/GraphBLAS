@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// This is for testing only.  See GrB.argmax instead.
+// This is for testing only.
 
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
