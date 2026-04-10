@@ -38,15 +38,6 @@ GrB_Info GB_cuda_select_bitmap
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     gridsz = std::max (gridsz, 1) ;
 
-    // FIXME NOW: [
-    printf ("ythunk %p, ok: %d\n", ythunk, GB_cuda_pointer_ok (ythunk, "ythunk")) ;
-    printf ("A %p, ok: %d\n", A, GB_cuda_pointer_ok (A, "A")) ;
-    // GxB_Matrix_fprint (A, "A", 5, stdout) ;
-    GB_matvec_check (A, "A", 5, stdout, "matrix") ;
-    fflush (stdout) ;
-    if (!GB_cuda_pointer_ok (A,"A")) abort ( ) ;
-    // ]
-
     GB_OK (GB_cuda_select_bitmap_jit (C, A,
         flipij, ythunk, op, stream, gridsz)) ;
 

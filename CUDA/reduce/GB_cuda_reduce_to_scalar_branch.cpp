@@ -30,6 +30,12 @@ bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
         return false ;
     }
 
+    if (A->header_mem == 0)
+    {
+        // FIXME memlane: check all of A
+        return (false) ;
+    }
+
     if (!GB_cuda_type_branch (A->type) ||
         !GB_cuda_type_branch (monoid->op->ztype))
     {

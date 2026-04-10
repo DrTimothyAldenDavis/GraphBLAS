@@ -16,7 +16,6 @@
 // value via GB_select_bitmap.
 
 // This method takes O(1) time and space.
-#define GB_DEBUG    /* FIXME NOW: and fix GB5 */
 
 #define GB_FREE_ALL                         \
 {                                           \
@@ -66,12 +65,12 @@ GrB_Info GB_select_value_iso
         A->type->size) ;
     S = GB_Scalar_wrap (&S_header, xtype, xscalar) ;
     S->iso = false ;    // but ensure S is not iso
-    ASSERT_SCALAR_OK (S, "iso scalar wrap", GB5) ;
+    ASSERT_SCALAR_OK (S, "iso scalar wrap", GB0) ;
 
     // apply the select operator to the iso scalar S
     GB_OK (GB_select_bitmap (C, false, op, false, (GrB_Matrix) S, ithunk,
         athunk, ythunk, Werk)) ;
-    ASSERT_MATRIX_OK (C, "C from iso scalar test", GB5) ;
+    ASSERT_MATRIX_OK (C, "C from iso scalar test", GB0) ;
     bool C_empty = (GB_nnz (C) == 0) ;
     GB_phybix_free (C) ;
 

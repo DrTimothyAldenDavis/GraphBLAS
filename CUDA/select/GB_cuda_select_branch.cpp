@@ -30,6 +30,12 @@ bool GB_cuda_select_branch
         return false ;
     }
 
+    if (A->header_mem == 0)
+    {
+        // FIXME memlane: check all of A
+        return (false) ;
+    }
+
     bool ok = (GB_cuda_type_branch (A->type)) ;
 
     if (op->xtype != NULL)

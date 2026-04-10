@@ -45,6 +45,12 @@ bool GB_cuda_builder_branch
         return (false) ;
     }
 
+    if (C->header_mem == 0)
+    {
+        // FIXME memlane: check all of C
+        return (false) ;
+    }
+
     bool ok = (GB_cuda_type_branch (C->type) && GB_cuda_type_branch (xtype)) ;
 
     if (dup != NULL && dup != GxB_IGNORE_DUP)

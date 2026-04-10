@@ -20,6 +20,12 @@ bool GB_cuda_apply_unop_branch
         return false ;
     }
 
+    if (A->header_mem == 0)
+    {
+        // FIXME memlane: check all of A
+        return (false) ;
+    }
+
     bool ok = true ;
 
     if (op->xtype != NULL)

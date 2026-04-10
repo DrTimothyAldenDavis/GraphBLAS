@@ -21,6 +21,12 @@ bool GB_cuda_colscale_branch
         return false ;
     }
 
+    if (A->header_mem == 0 || D->header_mem == 0)
+    {
+        // FIXME memlane: check all of A, D
+        return (false) ;
+    }
+
     if (!GB_cuda_type_branch (A->type) ||
         !GB_cuda_type_branch (D->type) ||
         !GB_cuda_type_branch (semiring->multiply->ztype))

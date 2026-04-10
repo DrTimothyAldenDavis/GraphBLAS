@@ -18,7 +18,6 @@
 // header.
 
 // TODO: GB_selector does not exploit the mask.
-#define GB_DEBUG    /* FIXME NOW: and GB5 */
 
 #include "select/GB_select.h"
 
@@ -42,9 +41,9 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT_INDEXUNARYOP_OK (op, "idxunop for GB_selector", GB5) ;
-    ASSERT_SCALAR_OK (Thunk, "Thunk for GB_selector", GB5) ;
-    ASSERT_MATRIX_OK (A, "A input for GB_selector", GB5_Z) ;
+    ASSERT_INDEXUNARYOP_OK (op, "idxunop for GB_selector", GB0) ;
+    ASSERT_SCALAR_OK (Thunk, "Thunk for GB_selector", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_selector", GB0_Z) ;
     // positional op (tril, triu, diag, offdiag, resize, rowindex, ...):
     // can't be jumbled.  nonzombie, entry-valued op, user op: jumbled OK
     GB_Opcode opcode = op->opcode ;
@@ -115,7 +114,6 @@ GrB_Info GB_selector
     { 
         // C is either entirely empty, or a completely shallow copy of A.
         // This method takes O(1) time and space.
-        GxB_print (A, 5) ;  // FIXME NOW
         GB_OK (GB_select_value_iso (C, op, A, ithunk, athunk, ythunk, Werk)) ;
         GB_FREE_ALL ;
         return (GrB_SUCCESS) ;
@@ -215,7 +213,7 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     GB_FREE_ALL ;
-    ASSERT_MATRIX_OK (C, "C output of GB_selector", GB5) ;
+    ASSERT_MATRIX_OK (C, "C output of GB_selector", GB0) ;
     return (GrB_SUCCESS) ;
 }
 
