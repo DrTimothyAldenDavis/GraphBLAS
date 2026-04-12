@@ -3364,6 +3364,7 @@
 #define GxB_EXPM1_FP64 GxM_EXPM1_FP64
 #define GxB_FC32 GxM_FC32
 #define GxB_FC64 GxM_FC64
+#define GxB_finalized GxM_finalized
 #define GxB_FIRST_FC32 GxM_FIRST_FC32
 #define GxB_FIRST_FC64 GxM_FIRST_FC64
 #define GxB_FIRSTI1_INT32 GxM_FIRSTI1_INT32
@@ -3430,6 +3431,7 @@
 #define GxB_IndexUnaryOp_ytype_name GxM_IndexUnaryOp_ytype_name
 #define GxB_IndexUnaryOp_ztype_name GxM_IndexUnaryOp_ztype_name
 #define GxB_init GxM_init
+#define GxB_initialized GxM_initialized
 #define GxB_ISEQ_BOOL GxM_ISEQ_BOOL
 #define GxB_ISEQ_FC32 GxM_ISEQ_FC32
 #define GxB_ISEQ_FC64 GxM_ISEQ_FC64

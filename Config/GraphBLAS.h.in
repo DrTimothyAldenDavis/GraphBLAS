@@ -2825,7 +2825,10 @@ GrB_Info GrB_init           // start up GraphBLAS
     int mode                // blocking or non-blocking mode, no GPU (GrB_Mode)
 ) ;
 
+GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
+
 #ifndef GRAPHBLAS_VANILLA
+
 // FIXME: GxB_init sets malloc/calloc/realloc/free for memlane 0;
 // CUDA always uses RMM for lane 1.
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
@@ -2837,9 +2840,33 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     void * (* user_realloc_function ) (void *, size_t),
     void   (* user_free_function    ) (void *)
 ) ;
-#endif
 
-GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
+// SuiteSparse:GraphBLAS can be initialized and finalized any number of times.
+// Each call to GrB_init/GxB_init must be followed by a call to GrB_finalize.
+// Between those to calls, any GraphBLAS method can be used except GrB_init/
+// GxB_init.  Before the first call to GrB_init/GxB_init, or after a call to
+// GrB_finalize, the only methods that can be called are GrB_init, GxB_init,
+// GxB_initialized, and GxB_finalized.
+
+// GrB_init and GxB_init return GrB_INVALID_VALUE if GraphBLAS is already
+// initialized.  GrB_finalize returns GrB_INVALID_VALUE if GraphBLAS has not
+// been initialized, and sets the state of GraphBLAS to not-initialized.
+
+GrB_Info GxB_initialized    // determine if GraphBLAS is initialized
+(
+    int *flag               // returns true if GrB_init or GxB_init has been
+                            // called (and the corresponding GrB_finalize
+                            // has not), false otherwise
+) ;
+
+GrB_Info GxB_finalized      // determine if GraphBLAS is finalized
+(
+    int *flag               // returns true if GrB_init or GxB_init has not
+                            // yet been called or if GrB_finalize has been
+                            // called, false otherwise
+) ;
+
+#endif
 
 //==============================================================================
 // GrB_Descriptor: the GraphBLAS descriptor

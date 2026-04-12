@@ -58,15 +58,20 @@ GrB_Info GB_init            // start up GraphBLAS
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // ensure GraphBLAS has not been initialized
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
     if (GB_Global_GrB_init_called_get ( ))
     { 
-        // GrB_init can only be called once
+        // GrB_init can only be called if GraphBLAS has not already been
+        // initialized
         return (GrB_INVALID_VALUE) ;
     }
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
 
     if (!(mode == GrB_NONBLOCKING || mode == GrB_BLOCKING ||
           mode == GxB_NONBLOCKING_GPU || mode == GxB_BLOCKING_GPU))
@@ -115,8 +120,6 @@ GrB_Info GB_init            // start up GraphBLAS
         // only malloc and free required.  calloc and/or realloc may be NULL
         return (GrB_NULL_POINTER) ;
     }
-
-    GB_Global_GrB_init_called_set (true) ;
 
     // GrB_init passes in the C11 malloc/calloc/realloc/free; these methods
     // are used for memlane 0
@@ -203,7 +206,7 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_OK (GB_jitifyer_init ( )) ;
 
     //--------------------------------------------------------------------------
-    // return result
+    // CUDA hacks
     //--------------------------------------------------------------------------
 
     #pragma omp flush
@@ -214,6 +217,11 @@ GrB_Info GB_init            // start up GraphBLAS
 //  GB_Global_hack_set (2,2) ;  // HACK FIXME for CUDA: force the GPU never to be used
     #endif
 
+    //--------------------------------------------------------------------------
+    // GraphBLAS has now been initialized
+    //--------------------------------------------------------------------------
+
+    GB_Global_GrB_init_called_set (true) ;
     return (GrB_SUCCESS) ;
 }
 

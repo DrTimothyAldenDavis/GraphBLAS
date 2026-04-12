@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Global_Option_get: get a global default option
+// GxB_Global_Option_get: get a global default option (HISTORICAL)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

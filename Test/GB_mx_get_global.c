@@ -57,7 +57,9 @@ bool GB_mx_get_global       // true if doing malloc_debug
     // save JIT control
     int control = GB_jitifyer_get_control ( ) ;
 
-    if (!GB_Global_GrB_init_called_get ( ))
+    int GraphBLAS_is_initialized = 0 ;
+    GxB_initialized (&GraphBLAS_is_initialized) ;
+    if (!GraphBLAS_is_initialized)
     {
         // call GxB_init
         mexAtExit (GB_mx_at_exit) ;
