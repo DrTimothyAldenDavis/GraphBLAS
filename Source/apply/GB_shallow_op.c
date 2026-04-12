@@ -29,7 +29,7 @@
 
 GrB_Info GB_shallow_op      // create shallow matrix and apply operator
 (
-    GrB_Matrix C,           // output C, of type op*->ztype, static header
+    GrB_Matrix C,           // output C, of type op*->ztype
     const bool C_is_csc,    // desired CSR/CSC format of C
         const GB_Operator op,       // unary/index-unary/binop to apply
         const GrB_Scalar scalar,    // scalar to bind to binary operator
@@ -186,6 +186,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     //--------------------------------------------------------------------------
 
     // allocate new space for the numerical values of C; use calloc if bitmap
+    C->x_mem = 0 ;                  // FIXME memlane
     C->x = GB_XALLOC_MEMORY (GB_IS_BITMAP (C), C_iso, anz,
         C->type->size, &(C->x_mem)) ;
     C->x_shallow = false ;          // free C->x when freeing C

@@ -173,6 +173,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     {
         // V->x = (vtype) T->x
         // V is sparse so malloc is OK
+        V->x_mem = 0 ; // FIXME memlane
         V->x = GB_XALLOC_MEMORY (false, V->iso, vnz, vtype->size,
             &(V->x_mem)) ;
         if (V->x == NULL)

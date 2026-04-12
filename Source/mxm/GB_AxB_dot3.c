@@ -290,6 +290,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     size_t cisize = (Ci_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    C->x_mem = 0 ;  // FIXME memlane
+    C->i_mem = 0 ;  // FIXME memlane
 
     if (sizeof (float) == sizeof (uint32_t) && Ci_is_32)
     { 

@@ -17,10 +17,10 @@ void *GB_xalloc_memory      // return the newly-allocated space
     uint64_t nentries,      // # of entries to allocate if non iso
     uint64_t sizeof_entry,  // size of each entry
     // input/output
-    uint64_t *mem           // resulting memsize and memlane
+    uint64_t *mem           // memlane on input; resulting memsize and memlane
+                            // on output
 )
 {
-    (*mem) = 0 ;            // FIXME memlane
     void *p ;
     nentries = GB_IMAX (nentries, 1) ;
     GBMDUMP ("xalloc : ") ;

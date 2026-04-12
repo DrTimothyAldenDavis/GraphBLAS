@@ -188,7 +188,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (T != NULL) ;            // T is a static or dynamic header on input 
+    ASSERT (T != NULL) ;            // T header on input
     ASSERT (nvals >= 0) ;
     ASSERT_TYPE_OK (ttype, "ttype for builder", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (dup, "dup for builder", GB0) ;
@@ -1059,6 +1059,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // allocate T->i
     //--------------------------------------------------------------------------
 
+    T->i_mem = 0 ;      // FIXME memlane
     if (ndupl == 0)
     {
 
@@ -1243,6 +1244,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     bool copy_S_into_T = (nocasting && known_sorted && ndupl == 0) ;
     info = GrB_NO_VALUE ;
+    T->x_mem = 0 ;      // FIXME memlane
 
     if (copy_S_into_T && S_work != NULL)
     { 
