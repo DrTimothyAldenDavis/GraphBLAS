@@ -68,7 +68,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     GrB_Matrix A = NULL ;
     GrB_Matrix T = NULL ;
 
-    int memlane = 0 ;       // FIXME memlane 0 for mxMalloc, or memlane 2?
+    int memlane = GB_MEMLANE_MATLAB ;   // FIXME memlane: or make param?
 
     if (A_matlab == NULL)
     {

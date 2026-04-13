@@ -65,7 +65,7 @@ GrB_Info axb (GB_Werk Werk)
     }
 
     GrB_Matrix MT = NULL ;
-    GB_matrix_header_new (&MT, /* FIXME memlane: */ 0) ;
+    GB_matrix_header_new (&MT, GB_MEMLANE_MATLAB) ;
     if (MT == NULL)
     {
         GrB_Monoid_free_(&add) ;
@@ -168,7 +168,7 @@ GrB_Info axb_complex (GB_Werk Werk)
     }
 
     GrB_Matrix MT = NULL ;
-    GB_matrix_header_new (&MT, /* FIXME memlane: */ 0) ;
+    GB_matrix_header_new (&MT, GB_MEMLANE_MATLAB) ;
     if (MT == NULL)
     {
         GrB_Matrix_free_(&Aconj) ;
@@ -286,7 +286,7 @@ void mexFunction
         mexErrMsgTxt ("invalid dimensions") ;
     }
 
-    GB_matrix_header_new (&C, /* FIXME memlane: */ 0) ;
+    GB_matrix_header_new (&C, GB_MEMLANE_MATLAB) ;
 
     if (A->type == Complex)
     {

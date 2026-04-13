@@ -41,6 +41,11 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+
+    ASSERT (C != NULL) ;
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     ASSERT_INDEXUNARYOP_OK (op, "idxunop for GB_selector", GB0) ;
     ASSERT_SCALAR_OK (Thunk, "Thunk for GB_selector", GB0) ;
     ASSERT_MATRIX_OK (A, "A input for GB_selector", GB0_Z) ;
@@ -50,10 +55,9 @@ GrB_Info GB_selector
     ASSERT (GB_IMPLIES (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode),
         !GB_JUMBLED (A))) ;
 
-    ASSERT (C != NULL) ;
     const bool A_iso = A->iso ;
-    void *ythunk = NULL ; uint64_t ythunk_mem = 0 ;   // FIXME memlane
-    void *athunk = NULL ; uint64_t athunk_mem = 0 ;   // FIXME memlane
+    void *ythunk = NULL ; uint64_t ythunk_mem = mem ;
+    void *athunk = NULL ; uint64_t athunk_mem = mem ;
 
     //--------------------------------------------------------------------------
     // get Thunk

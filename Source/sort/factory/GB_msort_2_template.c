@@ -320,9 +320,12 @@ static GrB_Info GB_msort_2_method    // sort array A of size 2-by-n
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    GB_A0_t *restrict W_0 = NULL ; uint64_t W_0_mem = 0 ;   // FIXME memlane
-    GB_A1_t *restrict W_1 = NULL ; uint64_t W_1_mem = 0 ;   // FIXME memlane
-    int64_t *restrict W_T = NULL ; uint64_t W_T_mem = 0 ;   // FIXME memlane
+    int memlane = 0 ;   // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
+
+    GB_A0_t *restrict W_0 = NULL ; uint64_t W_0_mem = mem ;
+    GB_A1_t *restrict W_1 = NULL ; uint64_t W_1_mem = mem ;
+    int64_t *restrict W_T = NULL ; uint64_t W_T_mem = mem ;
 
     W_0 = GB_MALLOC_MEMORY (n, sizeof (GB_A0_t), &W_0_mem) ;
     W_1 = GB_MALLOC_MEMORY (n, sizeof (GB_A1_t), &W_1_mem) ;

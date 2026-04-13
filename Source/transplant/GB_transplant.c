@@ -56,6 +56,9 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     // the ctype and A->type must be compatible.  C->type is ignored
     ASSERT (GB_Type_compatible (ctype, A->type)) ;
 
@@ -174,7 +177,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (allocate_Cb)
     { 
         // allocate new C->b component
-        C->b_mem = 0 ;      // FIXME memlane
+        C->b_mem = mem ;
         C->b = GB_MALLOC_MEMORY (anz, sizeof (int8_t), &(C->b_mem)) ;
         ok = ok && (C->b != NULL) ;
     }
@@ -182,7 +185,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (allocate_Ci)
     { 
         // allocate new C->i component
-        C->i_mem = 0 ;      // FIXME memlane
+        C->i_mem = mem ;
         C->i = GB_MALLOC_MEMORY (anz, isize, &(C->i_mem)) ;
         ok = ok && (C->i != NULL) ;
     }
@@ -190,7 +193,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (allocate_Cx)
     { 
         // allocate new C->x component; use calloc if C is bitmap
-        C->x_mem = 0 ;      // FIXME memlane
+        C->x_mem = mem ;
         C->x = GB_XALLOC_MEMORY (C_is_bitmap, A_iso, anz, C->type->size,
             &(C->x_mem)) ;
         ok = ok && (C->x != NULL) ;
@@ -273,8 +276,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
             // A is hypersparse, create new C->p and C->h
             C->plen = GB_IMAX (1, anvec) ;
             C->nvec = anvec ;
-            C->p_mem = 0 ;      // FIXME memlane
-            C->h_mem = 0 ;      // FIXME memlane
+            C->p_mem = mem ;
+            C->h_mem = mem ;
             C->p = GB_MALLOC_MEMORY (C->plen+1, psize, &(C->p_mem)) ;
             C->h = GB_MALLOC_MEMORY (C->plen  , jsize, &(C->h_mem)) ;
             if (C->p == NULL || C->h == NULL)
@@ -293,7 +296,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
             // A is sparse, create new C->p
             C->plen = avdim ;
             C->nvec = avdim ;
-            C->p_mem = 0 ;      // FIXME memlane
+            C->p_mem = mem ;
             C->p = GB_MALLOC_MEMORY (C->plen+1, psize, &(C->p_mem)) ;
             if (C->p == NULL)
             { 

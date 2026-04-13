@@ -60,11 +60,11 @@ typedef struct
     // All threads must use the same malloc/realloc/free functions.
     // They default to the C11 functions, but can be defined by GxB_init.
 
-    GB_malloc_function_t malloc_function [2] ;      // required
-    GB_calloc_function_t calloc_function [2] ;      // may be NULL; unused
-    GB_realloc_function_t realloc_function [2] ;    // may be NULL
-    GB_free_function_t free_function [2] ;          // required
-    bool malloc_is_thread_safe [2] ;                // default is true
+    GB_malloc_function_t malloc_function [GB_MEMLANES] ; // required
+    GB_calloc_function_t calloc_function [GB_MEMLANES] ; // may be NULL; unused
+    GB_realloc_function_t realloc_function [GB_MEMLANES] ; // may be NULL
+    GB_free_function_t free_function [GB_MEMLANES] ;     // required
+    bool malloc_is_thread_safe [GB_MEMLANES] ;           // default is true
 
     //--------------------------------------------------------------------------
     // tell MATLAB to make memory persistent
@@ -215,11 +215,11 @@ static GB_Global_struct GB_Global =
     .abort_function   = abort,
 
     // malloc/realloc/free functions: default to C11 functions
-    .malloc_function  = { malloc,  malloc  },
-    .calloc_function  = { NULL,    NULL    },
-    .realloc_function = { realloc, realloc },
-    .free_function    = { free,    free    },
-    .malloc_is_thread_safe = { true, true },
+    .malloc_function       = { malloc , malloc  , malloc , malloc },
+    .calloc_function       = { NULL   , NULL    , NULL   , NULL   },
+    .realloc_function      = { realloc, realloc , realloc, realloc},
+    .free_function         = { free   , free    , free   , free   },
+    .malloc_is_thread_safe = { true   , true    , true   , true   },
 
     // tell MATLAB to make memory persistent
     .persistent_function = NULL,
@@ -899,8 +899,8 @@ void GB_Global_free_function (void *p, int memlane)
 
 void * GB_Global_persistent_malloc (uint64_t memsize)
 {
-    // malloc persistent memory (always using memlane 0)
-    void *p = GB_Global.malloc_function [0] (memsize) ;  // always memlane = 0
+    // malloc persistent memory
+    void *p = GB_Global.malloc_function [GB_MEMLANE_MATLAB] (memsize) ;
     GB_Global_persistent_make (p) ;
     return (p) ;
 }
@@ -922,10 +922,10 @@ void GB_Global_persistent_set (void (* persistent_function) (void *))
 
 void GB_Global_persistent_free (void **p)
 {
-    // free persistent memory (always using memlane 0)
+    // free persistent memory
     if (p != NULL && *p != NULL)
     { 
-        GB_Global.free_function [0] (*p) ;  // always using memlane 0
+        GB_Global.free_function [GB_MEMLANE_MATLAB] (*p) ;
     }
     (*p) = NULL ;
 }

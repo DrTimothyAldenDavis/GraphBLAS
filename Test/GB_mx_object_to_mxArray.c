@@ -156,7 +156,7 @@ mxArray *GB_mx_object_to_mxArray    // returns the MATLAB mxArray
     if (C->x == NULL)
     {
         ASSERT (cnz == 0) ;
-        C->x_mem = 0 ;      // always use memlane 0
+        C->x_mem = GB_MEMLANE_MATLAB ;
         C->x = (GB_void *) GB_malloc_memory (2 * sizeof (double),
             sizeof (GB_void), &(C->x_mem)) ;
         memset (C->x, 0, 2 * sizeof (double)) ;
@@ -170,7 +170,7 @@ mxArray *GB_mx_object_to_mxArray    // returns the MATLAB mxArray
         if (C->i == NULL)
         {
             ASSERT (cnz == 0) ;
-            C->i_mem = 0 ;      // always use memlane 0
+            C->i_mem = GB_MEMLANE_MATLAB ;
             C->i = (int64_t *) GB_malloc_memory (1, sizeof (uint64_t),
                 &(C->i_mem)) ;
             uint64_t *Ci = C->i ;
@@ -180,7 +180,7 @@ mxArray *GB_mx_object_to_mxArray    // returns the MATLAB mxArray
         if (C->p == NULL)
         {
             ASSERT (cnz == 0) ;
-            C->p_mem = 0 ;      // always use memlane 0
+            C->p_mem = GB_MEMLANE_MATLAB ;
             C->p = (int64_t *) GB_malloc_memory (C->vdim + 1, sizeof (uint64_t),
                 &(C->p_mem)) ;
             memset (C->p, 0, (C->vdim + 1) * sizeof (int64_t)) ;
@@ -321,7 +321,7 @@ mxArray *GB_mx_object_to_mxArray    // returns the MATLAB mxArray
 
         // otherwise C is cast into a MATLAB double sparse matrix
         A = mxCreateSparse (0, 0, 0, mxREAL) ;
-        uint64_t Sx_mem = 0 ;   // always use memlane 0
+        uint64_t Sx_mem = GB_MEMLANE_MATLAB ;
         double *Sx = (double *) GB_malloc_memory (cnz+1, sizeof (double),
             &Sx_mem) ;
         if (Sx == NULL && cnz > 0) mexErrMsgTxt ("Sx is NULL!\n") ;

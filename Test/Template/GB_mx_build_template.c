@@ -130,7 +130,7 @@ static GrB_Info builder
     GrB_Info info ;
     GrB_Scalar scalar = NULL ;
     (*Chandle) = NULL ;
-    int memlane = 0 ;       // FIXME memlane 0 for mxMalloc, or memlane 2?
+    int memlane = GB_MEMLANE_MATLAB ;
 
     // create the GraphBLAS output object C
     int sparsity = GxB_SPARSE + GxB_HYPERSPARSE ;

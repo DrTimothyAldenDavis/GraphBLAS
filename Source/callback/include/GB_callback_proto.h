@@ -116,7 +116,7 @@ void *GX_werk_pop     /* free the top block of werkspace memory */          \
 void *GX_werk_push    /* return pointer to newly allocated space */         \
 (                                                                           \
     /* output */                                                            \
-    uint64_t *mem,              /* memsize and memlane of p */              \
+    uint64_t *p_mem,            /* memsize and memlane of p */              \
     bool *on_stack,             /* true if werkspace is from Werk stack */  \
     /* input */                                                             \
     uint64_t nitems,            /* # of items to allocate */                \

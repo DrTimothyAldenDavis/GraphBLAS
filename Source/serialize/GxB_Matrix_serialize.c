@@ -55,6 +55,9 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     GB_WHERE_1 (A, "GxB_Matrix_serialize (&blob, &blob_memsize, A, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_serialize") ;
 
+    int memlane = GB_memlane (A->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     // get the compression method from the descriptor
@@ -65,7 +68,7 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     //--------------------------------------------------------------------------
 
     (*blob_handle) = NULL ;
-    uint64_t blob_memsize = 0 ;     // FIXME memlane
+    uint64_t blob_memsize = mem ;
     info = GB_serialize ((GB_void **) blob_handle, &blob_memsize, A, method,
         Werk) ;
     (*blob_memsize_handle) = blob_memsize ;

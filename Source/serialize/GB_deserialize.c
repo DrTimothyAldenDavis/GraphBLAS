@@ -26,7 +26,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     // input:
     GrB_Type type_expected,         // type expected (NULL for any built-in)
     const GB_void *blob,            // serialized matrix 
-    size_t blob_memsize                // size of the blob
+    size_t blob_memsize             // size of the blob
 )
 {
 

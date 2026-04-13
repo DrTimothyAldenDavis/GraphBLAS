@@ -206,7 +206,7 @@ GrB_Info GB_selectop_to_idxunop
     // finish any pending work on the Thunk
     GB_MATRIX_WAIT (Thunk) ;
 
-    int memlane = 0 ;   // FIXME memlane for index unary op
+    int memlane = 0 ; // FIXME memlane for index unary op, make param
 
     // allocate the NewThunk as a full scalar
     GB_OK (GB_new_bix ((GrB_Matrix *) &NewThunk, idxunop->ytype, 1, 1,

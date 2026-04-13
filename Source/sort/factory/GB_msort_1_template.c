@@ -307,8 +307,11 @@ static GrB_Info GB_msort_1_method      // sort array A of size 1-by-n
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    GB_A0_t *restrict W_0 = NULL ; uint64_t W_0_mem = 0 ;   // FIXME memlane
-    int64_t *restrict W_T = NULL ; uint64_t W_T_mem = 0 ;   // FIXME memlane
+    int memlane = 0 ;   // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
+
+    GB_A0_t *restrict W_0 = NULL ; uint64_t W_0_mem = mem ;
+    int64_t *restrict W_T = NULL ; uint64_t W_T_mem = mem ;
 
     W_0 = GB_MALLOC_MEMORY (n, sizeof (GB_A0_t), &W_0_mem) ;
     W_T = GB_MALLOC_MEMORY (6*ntasks + 1, sizeof (int64_t), &W_T_mem) ;

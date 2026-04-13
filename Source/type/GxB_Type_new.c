@@ -53,6 +53,9 @@ GrB_Info GxB_Type_new
     GB_RETURN_IF_NULL (type) ;
     GB_BURBLE_START ("GxB_Type_new") ;
 
+    int memlane = 0 ;   // FIXME memlane from Context
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     GrB_Info info ;
     (*type) = NULL ;
 
@@ -68,7 +71,7 @@ GrB_Info GxB_Type_new
     //--------------------------------------------------------------------------
 
     // allocate the type
-    uint64_t header_mem = 0 ;   // FIXME memlane
+    uint64_t header_mem = mem ;
     GrB_Type t = GB_MALLOC_MEMORY (1, sizeof (struct GB_Type_opaque),
         &header_mem) ;
     if (t == NULL)

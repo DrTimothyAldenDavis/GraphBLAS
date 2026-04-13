@@ -688,6 +688,9 @@ static GrB_Info GB_SORT (mtx)
     ASSERT (op->xtype == op->ytype) ;
     #endif
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // get callback functions
     //--------------------------------------------------------------------------
@@ -710,11 +713,11 @@ static GrB_Info GB_SORT (mtx)
     GB_C_TYPE  *restrict Cx = (GB_C_TYPE  *) C->x ;
 
     // workspace
-    GB_C_TYPE  *restrict W_0 = NULL ; uint64_t W_0_mem = 0 ;    // FIXME memlane
-    GB_Ci_TYPE *restrict W_1 = NULL ; uint64_t W_1_mem = 0 ;    // FIXME memlane
-    int64_t    *restrict W   = NULL ; uint64_t W_mem   = 0 ;    // FIXME memlane
+    GB_C_TYPE  *restrict W_0 = NULL ; uint64_t W_0_mem = mem ;
+    GB_Ci_TYPE *restrict W_1 = NULL ; uint64_t W_1_mem = mem ;
+    int64_t    *restrict W   = NULL ; uint64_t W_mem   = mem ;
     int64_t *restrict C_skipped = NULL ;
-    uint64_t C_skipped_mem = 0 ;    // FIXME memlane
+    uint64_t C_skipped_mem = mem ;
     GB_WERK_DECLARE (SortTasks, int64_t) ;
 
     #if GB_SORT_UDT
@@ -861,8 +864,7 @@ static GrB_Info GB_SORT (mtx)
 
     W   = GB_MALLOC_MEMORY (max_length + 6*ntasks2 + 1, sizeof (int64_t),
         &W_mem) ;
-    W_0 = (GB_C_TYPE *) GB_MALLOC_MEMORY (max_length, GB_SIZE,
-        &W_0_mem) ;
+    W_0 = (GB_C_TYPE *) GB_MALLOC_MEMORY (max_length, GB_SIZE, &W_0_mem) ;
     W_1 = (GB_Ci_TYPE *) GB_MALLOC_MEMORY (max_length, sizeof (GB_Ci_TYPE),
         &W_1_mem) ;
 

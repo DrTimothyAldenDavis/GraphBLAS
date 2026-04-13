@@ -56,7 +56,8 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
     GrB_Matrix *A,              // handle of matrix to create
     GrB_Type type,              // type of matrix to create
     uint64_t nrows,             // matrix dimension is nrows-by-ncols
-    uint64_t ncols
+    uint64_t ncols,
+    int memlane                 // memlane for the matrix
 )
 {
 
@@ -75,8 +76,6 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
         // problem too large
         return (GrB_INVALID_VALUE) ;
     }
-
-    int memlane = 0 ;       // FIXME memlane from Context
 
     //--------------------------------------------------------------------------
     // create the matrix

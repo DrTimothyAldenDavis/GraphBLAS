@@ -40,9 +40,8 @@
     }                                           \
 }
 
-// FIXME: how to tell the caller the memlane used to allocate the blob?
-// Solution: use memlane = GB_memlane (A->header_mem) by default; and add new
-// methods where the memlane of the blob can returned or provided on input.
+// FIXME: use memlane = GB_memlane (A->header_mem) by default; and add new
+// methods where the memlane of the blob can be provided on input.
 
 GrB_Info GB_serialize               // serialize a matrix into a blob
 (
@@ -66,7 +65,11 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     GrB_Info info ;
     ASSERT (blob_memsize_handle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for serialize", GB0) ;
-    uint64_t blob_mem = 0 ;         // FIXME memlane
+
+    int memlane = GB_memlane (A->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
+    uint64_t blob_mem = mem ;
 
     int Ap_is_32 = (A->p_is_32) ? 1 : 0 ;
     int Aj_is_32 = (A->j_is_32) ? 1 : 0 ;
@@ -103,16 +106,16 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
 
     (*blob_memsize_handle) = 0 ;
 
-    GB_blocks *Ap_Blocks = NULL ; uint64_t Ap_Blocks_mem = 0 ;
-    GB_blocks *Ah_Blocks = NULL ; uint64_t Ah_Blocks_mem = 0 ;
-    GB_blocks *Ab_Blocks = NULL ; uint64_t Ab_Blocks_mem = 0 ;
-    GB_blocks *Ai_Blocks = NULL ; uint64_t Ai_Blocks_mem = 0 ;
-    GB_blocks *Ax_Blocks = NULL ; uint64_t Ax_Blocks_mem = 0 ;
-    uint64_t *Ap_Sblocks = NULL ; uint64_t Ap_Sblocks_mem = 0 ;
-    uint64_t *Ah_Sblocks = NULL ; uint64_t Ah_Sblocks_mem = 0 ;
-    uint64_t *Ab_Sblocks = NULL ; uint64_t Ab_Sblocks_mem = 0 ;
-    uint64_t *Ai_Sblocks = NULL ; uint64_t Ai_Sblocks_mem = 0 ;
-    uint64_t *Ax_Sblocks = NULL ; uint64_t Ax_Sblocks_mem = 0 ;
+    GB_blocks *Ap_Blocks = NULL ; uint64_t Ap_Blocks_mem = mem ;
+    GB_blocks *Ah_Blocks = NULL ; uint64_t Ah_Blocks_mem = mem ;
+    GB_blocks *Ab_Blocks = NULL ; uint64_t Ab_Blocks_mem = mem ;
+    GB_blocks *Ai_Blocks = NULL ; uint64_t Ai_Blocks_mem = mem ;
+    GB_blocks *Ax_Blocks = NULL ; uint64_t Ax_Blocks_mem = mem ;
+    uint64_t *Ap_Sblocks = NULL ; uint64_t Ap_Sblocks_mem = mem ;
+    uint64_t *Ah_Sblocks = NULL ; uint64_t Ah_Sblocks_mem = mem ;
+    uint64_t *Ab_Sblocks = NULL ; uint64_t Ab_Sblocks_mem = mem ;
+    uint64_t *Ai_Sblocks = NULL ; uint64_t Ai_Sblocks_mem = mem ;
+    uint64_t *Ax_Sblocks = NULL ; uint64_t Ax_Sblocks_mem = mem ;
     int32_t Ap_nblocks = 0      ; uint64_t Ap_compressed_memsize = 0 ;
     int32_t Ah_nblocks = 0      ; uint64_t Ah_compressed_memsize = 0 ;
     int32_t Ab_nblocks = 0      ; uint64_t Ab_compressed_memsize = 0 ;

@@ -436,7 +436,9 @@ void GB_Context_memlane_set
         // no thread-local-storage can be used; use memlane 0
         return ;
     }
-    memlane = (memlane == 0) ? 0 : 1 ;  // ensure memlane is 0 or 1
+    // ensure memlane is in range
+    memlane = GB_IMAX (memlane, 0) ;
+    memlane = GB_IMIN (memlane, GB_MEMLANES) ;
     if (Context == NULL || Context == GxB_CONTEXT_WORLD)
     { 
         GB_ATOMIC_WRITE

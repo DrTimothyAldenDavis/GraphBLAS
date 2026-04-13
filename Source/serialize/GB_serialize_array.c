@@ -48,6 +48,9 @@ GrB_Info GB_serialize_array
     // check inputs
     //--------------------------------------------------------------------------
 
+    int memlane = 0 ;   // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     ASSERT (Blocks_handle != NULL) ;
     ASSERT (Blocks_mem_handle != NULL) ;
     ASSERT (Sblocks_handle != NULL) ;
@@ -56,7 +59,7 @@ GrB_Info GB_serialize_array
     ASSERT (method_used != NULL) ;
     ASSERT (compressed_memsize != NULL) ;
     GB_blocks *Blocks = NULL ;
-    uint64_t Blocks_mem = 0, Sblocks_mem = 0 ;  // FIXME memlane
+    uint64_t Blocks_mem = mem, Sblocks_mem = mem ;
     int32_t nblocks = 0 ;
     uint64_t *Sblocks = NULL ;
 
@@ -86,6 +89,8 @@ GrB_Info GB_serialize_array
         // no compression, return result as a single block (plus the sentinel)
         if (!dryrun)
         {
+            Blocks_mem = mem ;
+            Sblocks_mem = mem ;
             Blocks  = GB_MALLOC_MEMORY (2, sizeof (GB_blocks), &Blocks_mem) ;
             Sblocks = GB_MALLOC_MEMORY (2, sizeof (uint64_t), &Sblocks_mem) ;
             if (Blocks == NULL || Sblocks == NULL)
@@ -147,9 +152,10 @@ GrB_Info GB_serialize_array
     // allocate the output Blocks: one per block plus the sentinel block
     if (!dryrun)
     {
+        Blocks_mem = mem ;
+        Sblocks_mem = mem ;
         Blocks = GB_CALLOC_MEMORY (nblocks+1, sizeof (GB_blocks), &Blocks_mem) ;
-        Sblocks = GB_CALLOC_MEMORY (nblocks+1, sizeof (uint64_t),
-            &Sblocks_mem) ;
+        Sblocks = GB_CALLOC_MEMORY (nblocks+1, sizeof (uint64_t), &Sblocks_mem);
         if (Blocks == NULL || Sblocks == NULL)
         { 
             // out of memory

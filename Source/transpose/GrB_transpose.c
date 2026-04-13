@@ -36,6 +36,8 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_BURBLE_START ("GrB_transpose") ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+
     GrB_Matrix T = NULL ;
 
     // C may be aliased with M and/or A
@@ -75,7 +77,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     // T = A or A', where T can have the type of C or the type of A
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
+    GB_OK (GB_matrix_header_new (&T, memlane)) ;
     bool C_is_csc = C->is_csc ;
     if (C_is_csc != A->is_csc)
     { 

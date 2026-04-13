@@ -66,6 +66,9 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
     // check inputs
     //--------------------------------------------------------------------------
 
+    int memlane = 0 ;   // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     ASSERT (p_TaskList != NULL) ;
     ASSERT (p_TaskList_mem != NULL) ;
     ASSERT (p_ntasks != NULL) ;
@@ -87,11 +90,11 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
     ASSERT (!GB_PENDING (M)) ; 
 
     (*p_TaskList  ) = NULL ;
-    (*p_TaskList_mem) = 0 ;         // FIXME memlane
+    (*p_TaskList_mem) = mem ;
     (*p_ntasks    ) = 0 ;
     (*p_nthreads  ) = 1 ;
 
-    GB_MDECL (Cwork, , u) ; uint64_t Cwork_mem = 0 ;          // FIXME memlane
+    GB_MDECL (Cwork, , u) ; uint64_t Cwork_mem = mem ;
     GB_WERK_DECLARE (Coarse, int64_t) ;     // size ntasks1+1
     int ntasks1 = 0 ;
 
@@ -115,7 +118,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
     // into tasks, even when nthreads_max is 1.
 
     GB_task_struct *restrict TaskList = NULL ;
-    uint64_t TaskList_mem = 0 ;     // FIXME memlane
+    uint64_t TaskList_mem = mem ;
     int max_ntasks = 0 ;
     int ntasks0 = (M == NULL && nthreads_max == 1) ? 1 : (32 * nthreads_max) ;
     GB_REALLOC_TASK_WORK (TaskList, ntasks0, max_ntasks) ;

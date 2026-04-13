@@ -44,12 +44,15 @@ GrB_Info GB_deserialize_from_blob
     // check inputs
     //--------------------------------------------------------------------------
 
+    int memlane = 0 ;           // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     ASSERT (blob != NULL) ;
     ASSERT (s_handle != NULL) ;
     ASSERT (X_handle != NULL) ;
     ASSERT (X_mem_handle != NULL) ;
     (*X_handle) = NULL ;
-    (*X_mem_handle) = 0 ;   // FIXME memlane
+    (*X_mem_handle) = mem ;
 
     //--------------------------------------------------------------------------
     // parse the method
@@ -62,7 +65,7 @@ GrB_Info GB_deserialize_from_blob
     // allocate the output array
     //--------------------------------------------------------------------------
 
-    uint64_t X_mem = 0 ;        // FIXME memlane
+    uint64_t X_mem = mem ;
     GB_void *X = NULL ;
     if (nblocks == 0)
     {
