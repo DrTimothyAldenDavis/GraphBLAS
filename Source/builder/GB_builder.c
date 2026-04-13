@@ -200,6 +200,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
     ASSERT (J_work_mem_handle != NULL) ;
     ASSERT (S_work_mem_handle != NULL) ;
 
+    int memlane = GB_memlane (T->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // get Sx
     //--------------------------------------------------------------------------
@@ -238,7 +241,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // into the output matrix T.
     bool K_is_32 = (nvals < UINT32_MAX) ;
     GB_MDECL (K_work, , u) ;
-    uint64_t K_work_mem = 0 ;   // FIXME: memlane
+    uint64_t K_work_mem = mem ;
 
     Tj_is_32 = GB_determine_j_is_32 (Tj_is_32, vdim) ;     // OK
     Ti_is_32 = GB_determine_i_is_32 (Ti_is_32, vlen) ;     // OK
@@ -367,7 +370,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // (4) Do nothing, letting I_is_32 be determined by the integer size
         // of the I_input array.
 
-        (*I_work_mem_handle) = 0 ;  // FIXME: memlane
+        (*I_work_mem_handle) = mem ;
         I_work = GB_MALLOC_MEMORY (nvals,
             I_is_32 ? sizeof (uint32_t) : sizeof (uint64_t),
             I_work_mem_handle) ;
@@ -500,7 +503,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 // This does not need to use GB_determine_i_is_32, since J_work
                 // is not transplanted into the output matrix T.
                 bool J_is_32_new = (vdim < UINT32_MAX) ;
-                (*J_work_mem_handle) = 0 ;  // FIXME: memlane
+                (*J_work_mem_handle) = mem ;
                 J_work = GB_MALLOC_MEMORY (nvals,
                     J_is_32_new ? sizeof (uint32_t) : sizeof (uint64_t),
                     J_work_mem_handle) ;
@@ -916,7 +919,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     GB_OK (GB_new (&T, // always hyper, existing header
         ttype, vlen, vdim, GB_ph_malloc, is_csc,
         GxB_HYPERSPARSE, GB_ALWAYS_HYPER, tnvec,
-        Tp_is_32, Tj_is_32, Ti_is_32)) ;
+        Tp_is_32, Tj_is_32, Ti_is_32, memlane)) ;
 
     ASSERT (T->p != NULL) ;
     ASSERT (T->h != NULL) ;
@@ -1059,7 +1062,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // allocate T->i
     //--------------------------------------------------------------------------
 
-    T->i_mem = 0 ;      // FIXME memlane
+    T->i_mem = mem ;
     if (ndupl == 0)
     {
 
@@ -1244,7 +1247,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     bool copy_S_into_T = (nocasting && known_sorted && ndupl == 0) ;
     info = GrB_NO_VALUE ;
-    T->x_mem = 0 ;      // FIXME memlane
+    T->x_mem = mem ;
 
     if (copy_S_into_T && S_work != NULL)
     { 

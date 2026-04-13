@@ -84,6 +84,9 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     // if op is NULL, then no operator is applied
 
     // This method is only be used when A is sparse or hypersparse.
@@ -94,7 +97,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
     GB_WERK_DECLARE (A_slice, int64_t) ;            // size nthreads+1
     GB_WERK_DECLARE (Workspaces, void *) ;          // size nworkspaces
-    GB_WERK_DECLARE (Workspaces_mems, uint64_t) ;    // size nworkspaces
+    GB_WERK_DECLARE (Workspaces_mems, uint64_t) ;   // size nworkspaces
 
     //--------------------------------------------------------------------------
     // get A
@@ -134,7 +137,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     GB_OK (GB_new_bix (&C, // sparse, existing header
         ctype, avdim, avlen, GB_ph_malloc, C_is_csc, GxB_SPARSE, true,
         A->hyper_switch, avlen, anz, true, C_iso,
-        Cp_is_32, Cj_is_32, Ci_is_32)) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, memlane)) ;
 
     C->nvals = anz ;
     size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
@@ -156,7 +159,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     for (int tid = 0 ; tid < nworkspaces ; tid++)
     { 
         // each workspace has the same size integer as Cp
-        Workspaces_mems [tid] = 0 ;     // FIXME memlane
+        Workspaces_mems [tid] = mem ;
         Workspaces [tid] = GB_MALLOC_MEMORY (avlen + 1, cpsize,
             &Workspaces_mems [tid]) ;
         ok = ok && (Workspaces [tid] != NULL) ;

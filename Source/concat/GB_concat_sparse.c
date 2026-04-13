@@ -51,10 +51,12 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     GrB_Info info ;
     GrB_Matrix A = NULL ;
     ASSERT_MATRIX_OK (C, "C input to concat sparse", GB0) ;
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
-    GB_MDECL (Work, , u) ; uint64_t Work_mem = 0 ;  // FIXME memlane
-    GrB_Matrix *S = NULL ;
-    uint64_t S_mem = 0 ;  // FIXME memlane
+    GB_MDECL (Work, , u) ; uint64_t Work_mem = mem ;
+    GrB_Matrix *S = NULL ; uint64_t S_mem = mem ;
 
     GrB_Type ctype = C->type ;
     int64_t cvlen = C->vlen ;
@@ -77,7 +79,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
 
     GB_OK (GB_new_bix (&C, // existing header
         ctype, cvlen, cvdim, GB_ph_malloc, csc, GxB_SPARSE, false,
-        hyper_switch, cvdim, cnz, true, C_iso, Cp_is_32, Cj_is_32, Ci_is_32)) ;
+        hyper_switch, cvdim, cnz, true, C_iso, Cp_is_32, Cj_is_32, Ci_is_32,
+        memlane)) ;
 
     // restore the settings of C
     C->bitmap_switch = bitmap_switch ;
@@ -136,7 +139,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 GB_OK (GB_new (&T, // auto sparsity, new header
                     A->type, A->vdim, A->vlen, GB_ph_null, csc,
                     GxB_AUTO_SPARSITY, -1, 1,
-                    A->p_is_32, A->j_is_32, A->i_is_32)) ;
+                    A->p_is_32, A->j_is_32, A->i_is_32, memlane)) ;
                 // save T in array S
                 if (csc)
                 { 

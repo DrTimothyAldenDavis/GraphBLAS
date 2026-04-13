@@ -106,6 +106,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_JUMBLED (B)) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
@@ -265,7 +267,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     GrB_Info info = GB_new_bix (&C, // any sparsity, existing header
         ctype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso,
-        Cp_is_32, Cj_is_32, Ci_is_32) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, memlane) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B

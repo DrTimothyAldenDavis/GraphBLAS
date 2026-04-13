@@ -51,6 +51,9 @@ GrB_Info GB_Matrix_assign_scalar    // C<Mask>(I,J) = accum (C(I,J),s)
     GB_RETURN_IF_NULL (J) ;
     GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     // if C has a user-defined type, its type must match the scalar type
     if (C->type->code == GB_UDT_code && C->type != scalar->type)
     { 
@@ -160,7 +163,8 @@ GrB_Info GB_Matrix_assign_scalar    // C<Mask>(I,J) = accum (C(I,J),s)
         int64_t vdim = is_csc ? nJ : nI ;
         GB_OK (GB_new (&A,  // new header
             scalar->type, vlen, vdim, GB_ph_calloc, is_csc, GxB_AUTO_SPARSITY,
-            GB_HYPER_SWITCH_DEFAULT, 1, /* OK: */ false, false, false)) ;
+            GB_HYPER_SWITCH_DEFAULT, 1, /* OK: */ false, false, false,
+            memlane)) ;
         info = GB_assign (
             C, C_replace,                   // C matrix and its descriptor
             M, Mask_comp, Mask_struct,      // mask matrix and its descriptor

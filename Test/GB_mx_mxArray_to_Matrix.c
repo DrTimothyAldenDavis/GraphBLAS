@@ -66,8 +66,9 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     //--------------------------------------------------------------------------
 
     GrB_Matrix A = NULL ;
-    struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
+
+    int memlane = 0 ;       // FIXME memlane 0 for mxMalloc, or memlane 2?
 
     if (A_matlab == NULL)
     {
@@ -317,7 +318,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         info = GB_new (&A, // sparse or full, new header
             atype_out, (uint64_t) nrows, (uint64_t) ncols,
             GB_ph_calloc, is_csc, sparsity, GxB_HYPER_DEFAULT, 0,
-            p_is_32, j_is_32, i_is_32) ;
+            p_is_32, j_is_32, i_is_32, memlane) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;
@@ -336,9 +337,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
         if (sparsity != GxB_FULL)
         {
-//          memcpy (A->p, Mp, (ncols+1) * sizeof (int64_t)) ;
             GB_cast_int (A->p, apcode, Mp, GB_UINT64_code, ncols+1, 1) ;
-//          memcpy (A->i, Mi, anz * sizeof (int64_t)) ;
             GB_cast_int (A->i, aicode, Mi, GB_UINT64_code, anz, 1) ;
         }
 
@@ -354,7 +353,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             atype_out, (uint64_t) nrows, (uint64_t) ncols,
             GB_ph_null, is_csc, sparsity, GxB_HYPER_DEFAULT, 0,
             /* must be false (MATLAB matrices are 64/64 bit): */
-            false, false, false) ;
+            false, false, false, memlane) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;

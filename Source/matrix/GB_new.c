@@ -35,7 +35,9 @@
 
 GrB_Info GB_new                 // create matrix, except for indices & values
 (
+    // output:
     GrB_Matrix *Ahandle,        // handle of matrix to create
+    // inputs:
     const GrB_Type type,        // matrix type
     const int64_t vlen,         // length of each vector
     const int64_t vdim,         // number of vectors
@@ -47,7 +49,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
                                 // Ignored if A is not hypersparse.
     bool p_is_32,               // if true, A->p is 32 bit; 64 bit otherwise
     bool j_is_32,               // if true, A->h and A->Y are 32 bit; else 64
-    bool i_is_32                // if true, A->i is 32 bit; 64 bit otherwise
+    bool i_is_32,               // if true, A->i is 32 bit; 64 bit otherwise
+    int memlane                 // memlane for the matrix
 )
 {
 
@@ -77,10 +80,12 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     // allocate the matrix header, if not already allocated on input
     //--------------------------------------------------------------------------
 
+    uint64_t mem = GB_mem (memlane, 0) ;
     bool allocated_header = false ;
     if ((*Ahandle) == NULL)
     {
-        size_t header_mem = 0 ; // FIXME memlane
+        // allocate a new header in the memlane
+        uint64_t header_mem = mem ;
         (*Ahandle) = GB_CALLOC_MEMORY (1, sizeof (struct GB_Matrix_opaque),
             &header_mem) ;
         if (*Ahandle == NULL)
@@ -91,13 +96,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         allocated_header = true ;
         (*Ahandle)->header_mem = header_mem ;
     }
-//  else
-//  {
-//      // the header of A has been provided on input.  It may already be
-//      // malloc'd, or it might be statically allocated in the caller.  In the
-//      // latter case, the header_mem is zero.  Thus,
-//      // (*Ahandle)->header_mem is not modified.
-//  }
 
     GrB_Matrix A = *Ahandle ;
 
@@ -109,7 +107,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->magic = GB_MAGIC2 ;                 // object is not yet valid
     A->type = type ;
     A->user_name = NULL ;
-    A->user_name_mem = 0 ;     // no user_name yet
+    A->user_name_mem = 0 ;      // no user_name yet
     A->logger = NULL ;          // no error logged yet
     A->logger_mem = 0 ;
 
@@ -177,12 +175,12 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     }
 
     // no content yet
-    A->p = NULL ; A->p_shallow = false ; A->p_mem = 0 ; // FIXME memlane
-    A->h = NULL ; A->h_shallow = false ; A->h_mem = 0 ; // FIXME memlane
+    A->p = NULL ; A->p_shallow = false ; A->p_mem = mem ;
+    A->h = NULL ; A->h_shallow = false ; A->h_mem = mem ;
     A->Y = NULL ; A->Y_shallow = false ; A->no_hyper_hash = false ;
-    A->b = NULL ; A->b_shallow = false ; A->b_mem = 0 ; // FIXME memlane
-    A->i = NULL ; A->i_shallow = false ; A->i_mem = 0 ; // FIXME memlane
-    A->x = NULL ; A->x_shallow = false ; A->x_mem = 0 ; // FIXME memlane
+    A->b = NULL ; A->b_shallow = false ; A->b_mem = mem ;
+    A->i = NULL ; A->i_shallow = false ; A->i_mem = mem ;
+    A->x = NULL ; A->x_shallow = false ; A->x_mem = mem ;
 
     A->nvals = 0 ;
     A->nzombies = 0 ;

@@ -51,6 +51,8 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     GB_RETURN_IF_NULL (Ax) ;
     ASSERT_TYPE_OK (type, "type for GrB_Matrix_import", GB0) ;
     GrB_Info info ;
+    int memlane = 0 ;       // FIXME: get memlane from the Context
+    uint64_t mem = GB_mem (memlane, 0) ;
 
     // GrB_Matrix_import has no descritptor so it only supports a secure import
     bool fast_import = false ;
@@ -120,9 +122,9 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     // allocate copies of Ap, Ai, and Ax to be imported
     //--------------------------------------------------------------------------
 
-    uint64_t *Ap_copy = NULL ; uint64_t Ap_mem = 0 ;    // always memlane = 0
-    uint64_t *Ai_copy = NULL ; uint64_t Ai_mem = 0 ;    // always memlane = 0
-    GB_void  *Ax_copy = NULL ; uint64_t Ax_mem = 0 ;    // always memlane = 0
+    uint64_t *Ap_copy = NULL ; uint64_t Ap_mem = mem ;
+    uint64_t *Ai_copy = NULL ; uint64_t Ai_mem = mem ;
+    GB_void  *Ax_copy = NULL ; uint64_t Ax_mem = mem ;
     size_t typesize = type->size ;
 
     // Ap_copy, Ai_copy, Ax_copy are malloc'ed so they are already in the
@@ -258,9 +260,9 @@ static GrB_Info GB_import_worker   // import a matrix of any type
         default : // GrB_COO_FORMAT
             {
                 // build A as hypersparse by row or by column
-                void *no_I_work = NULL ; uint64_t I_work_mem = 0 ;
-                void *no_J_work = NULL ; uint64_t J_work_mem = 0 ;
-                GB_void *no_X_work = NULL ; uint64_t X_work_mem = 0 ;
+                void *no_I_work = NULL ; uint64_t I_work_mem = 0 ; // OK null
+                void *no_J_work = NULL ; uint64_t J_work_mem = 0 ; // OK null
+                GB_void *no_X_work = NULL ; uint64_t X_work_mem = 0 ; // OK null
                 bool is_csc = GB_Global_is_csc_get ( ) ;
                 int64_t vlen = is_csc ? nrows : ncols ;
                 int64_t vdim = is_csc ? ncols : nrows ;
@@ -269,7 +271,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
                 GB_OK (GB_new (A, // new header
                     type, vlen, vdim, GB_ph_null, is_csc, GxB_AUTO_SPARSITY,
                     GB_Global_hyper_switch_get ( ), 0,
-                    /* OK; 64-bit only: */ false, false, false)) ;
+                    /* OK; 64-bit only: */ false, false, false, memlane)) ;
 
                 // build A from the input triplets
                 GB_OK (GB_builder (

@@ -101,6 +101,8 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     GrB_Info info ;
     ASSERT (C != NULL) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+
     ASSERT_MATRIX_OK (A, "A for bitmap emult ", GB0) ;
     ASSERT_MATRIX_OK (B, "B for bitmap emult ", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for bitmap emult ", GB0) ;
@@ -174,7 +176,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     GB_OK (GB_new_bix (&C, // bitmap, existing header
         ctype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         GxB_BITMAP, true, A->hyper_switch, -1, cnz, true, C_iso,
-        /* OK: */ false, false, false)) ;
+        /* OK: */ false, false, false, memlane)) ;
 
     C->magic = GB_MAGIC ;
     GB_Type_code ccode = ctype->code ;

@@ -54,6 +54,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     GrB_Info info ;
     ASSERT (C != NULL) ;
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
 
     ASSERT_MATRIX_OK (M, "M for dot3 A'*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for dot3 A'*B", GB0) ;
@@ -76,8 +78,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     int ntasks, nthreads ;
     GB_task_struct *TaskList = NULL ;
-    uint64_t TaskList_mem = 0 ; // FIXME memlane
-    float *Cwork = NULL ; uint64_t Cwork_mem = 0 ;    // FIXME memlane
+    uint64_t TaskList_mem = mem ;
+    float *Cwork = NULL ; uint64_t Cwork_mem = mem ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -182,7 +184,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     GB_OK (GB_new (&C, // sparse or hyper (from M), existing header
         ctype, cvlen, cvdim, GB_ph_malloc, true,
         C_sparsity, M->hyper_switch, cnvec,
-        Cp_is_32, Cj_is_32, Ci_is_32)) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, memlane)) ;
 
     GB_Ch_DECLARE (Ch, ) ; GB_Ch_PTR (Ch, C) ;
 
@@ -224,12 +226,10 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     GB_Type_code mjcode = (Mj_is_32) ? GB_UINT32_code : GB_UINT64_code ; 
 
     // TODO: if integer types of Cp,Ch match Mp,Mh then they could be shallow
-//  GB_memcpy (Cp, Mp, (cnvec+1) * sizeof (int64_t), nthreads) ;
     GB_cast_int (C->p, cpcode, Mp, mpcode, cnvec+1, nthreads) ;
 
     if (M_is_hyper)
     { 
-//      GB_memcpy (Ch, Mh, cnvec * sizeof (int64_t), nthreads) ;
         GB_cast_int (Ch, cjcode, M->h, mjcode, cnvec, nthreads) ;
     }
 //  C->nvec_nonempty = M->nvec_nonempty ;
@@ -290,8 +290,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     size_t cisize = (Ci_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    C->x_mem = 0 ;  // FIXME memlane
-    C->i_mem = 0 ;  // FIXME memlane
+    C->x_mem = mem ;
+    C->i_mem = mem ;
 
     if (sizeof (float) == sizeof (uint32_t) && Ci_is_32)
     { 

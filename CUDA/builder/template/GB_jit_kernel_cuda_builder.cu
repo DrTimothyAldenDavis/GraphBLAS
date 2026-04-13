@@ -1051,23 +1051,24 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     (*Thandle) = NULL ;
     GrB_Matrix T = NULL ;
     GrB_Info info = GrB_SUCCESS ;
+    int memlane = 0 ;       // FIXME memlane RMM
+    uint64_t mem = GB_mem (memlane, 0) ;
 
     // workspace needed for CUB radix sort of (Key_in,X):
-    void *W_0 = NULL ; uint64_t W_0_mem = 0 ;    // size nvals+1: Key_in
-    void *W_1 = NULL ; uint64_t W_1_mem = 0 ;    // size nvals+1: Key_out
-    void *W_2 = NULL ; uint64_t W_2_mem = 0 ;    // size nvals+1: Sx (or NULL)
-    void *W_3 = NULL ; uint64_t W_3_mem = 0 ;    // size nvals+1: CUB workspace
+    void *W_0 = NULL ; uint64_t W_0_mem = mem ;    // size nvals+1: Key_in
+    void *W_1 = NULL ; uint64_t W_1_mem = mem ;    // size nvals+1: Key_out
+    void *W_2 = NULL ; uint64_t W_2_mem = mem ;    // size nvals+1: Sx (or NULL)
+    void *W_3 = NULL ; uint64_t W_3_mem = mem ;    // size nvals+1: CUB work
 
     // when the CUB radix sort is done, Key_in and the CUB workspace can
     // be freed.
 
     // workspace needed after CUB radix sort:
-    void *W_4 = NULL ; uint64_t W_4_mem = 0 ;    // size nvals+1: Map
-    void *W_5 = NULL ; uint64_t W_5_mem = 0 ;    // size nchunks+2: ChunkSum
-    void *W_6 = NULL ; uint64_t W_6_mem = 0 ;    // size nvals+1: JDelta
-    void *W_7 = NULL ; uint64_t W_7_mem = 0 ;    // size nchunks+2: JDeltaSum
-
-    void *W_8 = NULL ; uint64_t W_8_mem = 0 ;    // size 2: scalar workspace
+    void *W_4 = NULL ; uint64_t W_4_mem = mem ;    // size nvals+1: Map
+    void *W_5 = NULL ; uint64_t W_5_mem = mem ;    // size nchunks+2: ChunkSum
+    void *W_6 = NULL ; uint64_t W_6_mem = mem ;    // size nvals+1: JDelta
+    void *W_7 = NULL ; uint64_t W_7_mem = mem ;    // size nchunks+2: JDeltaSum
+    void *W_8 = NULL ; uint64_t W_8_mem = mem ;    // size 2: scalar workspace
 
     // # of entries, chunks, and vectors of T
     int64_t tnz = 0 ;   // # of unique tuples, and # of entries in T
@@ -1750,7 +1751,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         /* A_iso: */ GB_ISO_BUILD,
         /* p_is_32: */ (GB_Tp_BITS == 32),
         /* j_is_32: */ (GB_Tj_BITS == 32),
-        /* i_is_32: */ (GB_Ti_BITS == 32))) ;
+        /* i_is_32: */ (GB_Ti_BITS == 32),
+        memlane)) ;
 
     T->nvals = tnz ;
     T->magic = GB_MAGIC ;

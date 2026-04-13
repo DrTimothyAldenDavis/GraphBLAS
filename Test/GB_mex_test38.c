@@ -146,9 +146,10 @@ void mexFunction
 
     // matrix is too large for 32-bit integers
     expected = GrB_INVALID_VALUE ;
+    int memlane = 0 ;   // FIXME memlane for MATLAB Test
     ERR (GB_new_bix (&B, GrB_FP64, INT64_MAX / 4, INT64_MAX / 4, GB_ph_null,
         true, GxB_HYPERSPARSE, false, 0.1, 2, 2, true, true,
-        true, true, true)) ;
+        true, true, true, memlane)) ;
     CHECK (B == NULL) ;
 
     //--------------------------------------------------------------------------

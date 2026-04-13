@@ -142,6 +142,8 @@ GrB_Info GB_mask                // C<M> = Z
     ASSERT (GB_JUMBLED_OK (C_result)) ;
     ASSERT (GB_PENDING_OK (C_result)) ;
 
+    int memlane = GB_memlane (C_result->header_mem) ;
+
     ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_mask", GB0) ;
     // M may have zombies and pending tuples
     ASSERT (GB_PENDING_OK (M)) ;
@@ -271,7 +273,7 @@ GrB_Info GB_mask                // C<M> = Z
                 GB_OK (GB_new_bix (&C0, // sparse or hyper, new header
                     C_result->type, vlen, vdim, GB_ph_calloc, R_is_csc,
                     GxB_HYPERSPARSE, true, C_result->hyper_switch, 0, 0,
-                    true, false, Cp_is_32, Cj_is_32, Ci_is_32)) ;
+                    true, false, Cp_is_32, Cj_is_32, Ci_is_32, memlane)) ;
                 C = C0 ;
             }
             else
@@ -312,8 +314,7 @@ GrB_Info GB_mask                // C<M> = Z
         // R = masker (C, M, Z):  compute C<M>=Z, placing results in R
         //----------------------------------------------------------------------
 
-        // GB_CLEAR_MATRIX_HEADER (R, &R_header) ;
-        GB_OK (GB_matrix_header_new (&R, /* FIXME memlane: */ 0)) ;
+        GB_OK (GB_matrix_header_new (&R, memlane)) ;
         GB_OK (GB_masker (R, R_is_csc, M, Mask_comp, Mask_struct, C, Z, Werk)) ;
 
         //----------------------------------------------------------------------

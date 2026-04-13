@@ -296,7 +296,8 @@ GrB_Info GX_new_bix     /* create a new matrix, incl. A->b, A->i, A->x */   \
     const bool A_iso,           /* if true, allocate A as iso */            \
     bool p_is_32,               /* if true, A->p is 32 bit; else 64 */      \
     bool j_is_32,               /* if true, A->h, A->Y are 32 bit else 64 */\
-    bool i_is_32                /* if true, A->i is 32 bit; else 64 */      \
+    bool i_is_32,               /* if true, A->i is 32 bit; else 64 */      \
+    int memlane                 /* memlane for the matrix */                \
 )
 
 #define GB_CALLBACK_MATRIX_FREE_PROTO(GX_Matrix_free)                       \

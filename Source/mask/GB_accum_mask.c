@@ -156,6 +156,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_accum_mask", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+
     // pending work in C may be abandoned, or it might not need to be
     // finished if GB_subassign is used, so it is not finished here.
     ASSERT (GB_PENDING_OK (C)) ;
@@ -208,7 +210,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
             ASSERT (GB_JUMBLED_OK (M)) ;
             // GB_CLEAR_MATRIX_HEADER (MT, &MT_header) ;
-            GB_OK (GB_matrix_header_new (&MT, /* FIXME memlane: */ 0)) ;
+            GB_OK (GB_matrix_header_new (&MT, memlane)) ;
             GB_OK (GB_transpose_cast (MT, GrB_BOOL, C->is_csc, M, Mask_struct,
                 Werk)) ;
             // use the transpose mask
@@ -371,7 +373,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             GB_OK (GB_new (&Z, // sparse or hyper, new header
                 C->type, C->vlen, C->vdim, GB_ph_null, C->is_csc,
                 GB_sparsity (T), T->hyper_switch, T->plen,
-                T->p_is_32, T->j_is_32, T->i_is_32)) ;
+                T->p_is_32, T->j_is_32, T->i_is_32, memlane)) ;
 
             // Transplant T into Z, typecasting if needed, and free T.  This
             // may need to do a deep copy if T is shallow.  T is always freed
@@ -400,7 +402,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // be used in GB_mask, below.  So ignore the mask_applied return
             // flag from GB_add.
             bool ignore ;
-            GB_OK (GB_matrix_header_new (&Z, /* FIXME memlane: */ 0)) ;
+            GB_OK (GB_matrix_header_new (&Z, memlane)) ;
             GB_OK (GB_add (Z, C->type, C->is_csc, (apply_mask) ? M : NULL,
                 Mask_struct, Mask_comp, &ignore, C, T, false, NULL, NULL,
                 accum, false, false, Werk)) ;

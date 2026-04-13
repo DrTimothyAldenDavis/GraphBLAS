@@ -43,6 +43,8 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     (*mask_applied) = false ;
     ASSERT (C != NULL) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+
     ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy A*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
@@ -184,7 +186,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         info = GB_new_bix (&C, // existing header
             ztype, A->vlen, B->vdim, GB_ph_null, true, GxB_FULL, false,
             GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true,
-            /* OK: */ false, false, false) ;
+            /* OK: */ false, false, false, memlane) ;
         if (info == GrB_SUCCESS)
         { 
             C->magic = GB_MAGIC ;

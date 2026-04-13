@@ -45,6 +45,8 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+
     //--------------------------------------------------------------------------
     // construct a shallow copy of A for the pattern of C
     //--------------------------------------------------------------------------
@@ -57,7 +59,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     GB_new (&C, // sparse or hyper, existing header
         A->type, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         GB_sparsity (A), A->hyper_switch, 0,
-        A->p_is_32, A->j_is_32, A->i_is_32) ;
+        A->p_is_32, A->j_is_32, A->i_is_32, memlane) ;
     ASSERT (info == GrB_SUCCESS) ;
 
     //--------------------------------------------------------------------------

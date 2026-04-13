@@ -62,9 +62,12 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
     GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A for reshape", GB0) ;
 
-    GB_MDECL (I_work, , u) ; uint64_t I_work_mem = 0 ;    // FIXME memlane
-    GB_MDECL (J_work, , u) ; uint64_t J_work_mem = 0 ;    // FIXME memlane
-    GB_void *S_work = NULL ; uint64_t S_work_mem = 0 ;    // FIXME memlane
+    int memlane = GB_memlane (A->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
+    GB_MDECL (I_work, , u) ; uint64_t I_work_mem = mem ;
+    GB_MDECL (J_work, , u) ; uint64_t J_work_mem = mem ;
+    GB_void *S_work = NULL ; uint64_t S_work_mem = mem ;
     GB_void *S_input = NULL ;
     bool I_work_is_32 = false ;
     bool J_work_is_32 = false ;
@@ -118,7 +121,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             GB_OK (GB_new (&T,  // new header
                 type, A->vdim, A->vlen, GB_ph_null, by_col, GxB_AUTO_SPARSITY,
                 GB_Global_hyper_switch_get ( ), 0,
-                A->p_is_32, A->j_is_32, A->i_is_32)) ;
+                A->p_is_32, A->j_is_32, A->i_is_32, memlane)) ;
             GB_OK (GB_transpose_cast (T, type, by_col, A, false, Werk)) ;
             // now T can be reshaped in-place to construct C
             in_place = true ;
@@ -268,7 +271,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             GB_OK (GB_new (&C, // new header
                 type, vlen_new, vdim_new, GB_ph_null, T_is_csc,
                 GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 0,
-                Cp_is_32, Cj_is_32, Ci_is_32)) ;
+                Cp_is_32, Cj_is_32, Ci_is_32, memlane)) ;
 
             // allocate new space for the future C->i
             I_work = GB_MALLOC_MEMORY (nvals, iwsize, &I_work_mem) ;

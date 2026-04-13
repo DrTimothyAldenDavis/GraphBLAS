@@ -213,7 +213,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     GrB_Info info = GB_new (A, // any sparsity, new or existing user header
         type, vlen, vdim, is_sparse_vector ? GB_ph_calloc : GB_ph_null,
         is_csc, sparsity, GB_Global_hyper_switch_get ( ), nvec,
-        /* OK, import as all-64-bit: */ false, false, false) ;
+        /* OK, import as all-64-bit: */ false, false, false, memlane) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

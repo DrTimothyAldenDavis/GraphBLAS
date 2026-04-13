@@ -55,6 +55,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     ASSERT (GB_VECTOR_OK (C)) ;
     ASSERT (GB_IMPLIES (M_in != NULL, GB_VECTOR_OK (M_in))) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+
     // get the descriptor
     GrB_Info info ;
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
@@ -111,12 +113,11 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     int64_t m = A_transpose ? GB_NROWS (A) : GB_NCOLS (A) ;
     GB_OK (GB_new (&B, // full, new header
         ztype, m, 1, GB_ph_null, true, GxB_FULL, GB_NEVER_HYPER, 1,
-        /* OK: */ false, false, false)) ;
-    // ASSERT (info == GrB_SUCCESS) ;
+        /* OK: */ false, false, false, memlane)) ;
     B->magic = GB_MAGIC ;
     B->iso = true ;
     size_t zsize = ztype->size ;
-    GB_void bscalar [GB_VLA(zsize)] ;
+    GB_void bscalar [GB_VLA(zsize)] ;   // FIXME allocate this in memlane
     memset (bscalar, 0, zsize) ;
     B->x = bscalar ;
     B->x_shallow = true ;
@@ -182,7 +183,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     //--------------------------------------------------------------------------
 
     semiring = &semiring_header ;
-    semiring->header_mem = 0 ;  // always use memlane 0
+    semiring->header_mem = 0 ;  // static header for semiring
     info = GB_Semiring_new (semiring, monoid, op) ;
     if (info != GrB_SUCCESS)
     { 

@@ -110,16 +110,19 @@ GrB_Info GB_assign_prep
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_assign_prep", GB0) ;
     ASSERT (scalar_code <= GB_UDT_code) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     GrB_Matrix Cwork = NULL ;
     GrB_Matrix Mwork = NULL ;
     GrB_Matrix Awork = NULL ;
     GrB_Matrix MT = NULL ;
     GrB_Matrix AT = NULL ;
 
-    void *I2  = NULL ; uint64_t I2_mem = 0 ;
-    void *J2  = NULL ; uint64_t J2_mem = 0 ;
-    void *I2k = NULL ; uint64_t I2k_mem = 0 ;
-    void *J2k = NULL ; uint64_t J2k_mem = 0 ;
+    void *I2  = NULL ; uint64_t I2_mem  = mem ;
+    void *J2  = NULL ; uint64_t J2_mem  = mem ;
+    void *I2k = NULL ; uint64_t I2k_mem = mem ;
+    void *J2k = NULL ; uint64_t J2k_mem = mem ;
 
     (*scalar_type_handle) = NULL ;
 
@@ -727,7 +730,7 @@ GrB_Info GB_assign_prep
             // and typecast to boolean.
             GBURBLE ("(M transpose) ") ;
             // GB_CLEAR_MATRIX_HEADER (MT, MT_header_handle) ;
-            GB_OK (GB_matrix_header_new (&MT, /* FIXME memlane: */ 0)) ;
+            GB_OK (GB_matrix_header_new (&MT, memlane)) ;
             GB_OK (GB_transpose_cast (MT, GrB_BOOL, C_is_csc, M, Mask_struct,
                 Werk)) ;
             GB_MATRIX_WAIT (MT) ;       // M cannot be jumbled
@@ -874,7 +877,7 @@ GrB_Info GB_assign_prep
         { 
             // Awork = A (Iinv, Jinv)
             // GB_CLEAR_MATRIX_HEADER (Awork, Awork_header_handle) ;
-            GB_OK (GB_matrix_header_new (&Awork, /* FIXME memlane: */ 0)) ;
+            GB_OK (GB_matrix_header_new (&Awork, memlane)) ;
             GB_OK (GB_subref (Awork, false, A->is_csc, A,
                 Iinv, I2k_is_32, ni,
                 Jinv, J2k_is_32, nj,
@@ -894,7 +897,7 @@ GrB_Info GB_assign_prep
             // Mwork = M (Iinv, Jinv)
             // if Mask_struct then Mwork is extracted as iso
             // GB_CLEAR_MATRIX_HEADER (Mwork, Mwork_header_handle) ;
-            GB_OK (GB_matrix_header_new (&Mwork, /* FIXME memlane: */ 0)) ;
+            GB_OK (GB_matrix_header_new (&Mwork, memlane)) ;
             GB_OK (GB_subref (Mwork, Mask_struct, M->is_csc, M,
                 Iinv, I2k_is_32, ni,
                 Jinv, J2k_is_32, nj,
@@ -1045,7 +1048,7 @@ GrB_Info GB_assign_prep
             GB_OK (GB_new (&Cwork, // sparse or hyper, new header
                 ctype, C->vlen, C->vdim, GB_ph_calloc, C_is_csc,
                 sparsity, C->hyper_switch, 1,
-                C->p_is_32, C->j_is_32, C->i_is_32)) ;
+                C->p_is_32, C->j_is_32, C->i_is_32, memlane)) ;
             GBURBLE ("(C alias cleared; C_replace early) ") ;
             (*C_replace) = false ;
         }

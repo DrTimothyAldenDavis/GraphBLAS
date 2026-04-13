@@ -50,7 +50,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     GrB_Info info ;
     ASSERT (C != NULL) ;
 
-    // struct GB_Matrix_opaque Awork_header, Bwork_header ;
+    int memlane = GB_memlane (C->header_mem) ;
+
     GrB_Matrix Awork = NULL, Bwork = NULL ;
 
     ASSERT_MATRIX_OK (A_in, "A_in for kron (A,B)", GB0) ;
@@ -168,7 +169,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     GB_OK (GB_new_bix (&C, // full, sparse, or hyper; existing header
         ctype, (int64_t) cvlen, (int64_t) cvdim, GB_ph_malloc, C_is_csc,
         C_sparsity, true, B->hyper_switch, cnvec, cnzmax, true, C_iso,
-        Cp_is_32, Cj_is_32, Ci_is_32)) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, memlane)) ;
 
     //--------------------------------------------------------------------------
     // compute the column counts of C: Cp and Ch if C is hypersparse

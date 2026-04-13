@@ -20,7 +20,9 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
 
 GrB_Info GB_new                 // create matrix, except for indices & values
 (
+    // output:
     GrB_Matrix *Ahandle,        // handle of matrix to create
+    // inputs:
     const GrB_Type type,        // matrix type
     const int64_t vlen,         // length of each vector
     const int64_t vdim,         // number of vectors
@@ -32,7 +34,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
                                 // Ignored if A is not hypersparse.
     bool p_is_32,               // if true, A->p is 32 bit; 64 bit otherwise
     bool j_is_32,               // if true, A->h and A->Y are 32 bit; else 64
-    bool i_is_32                // if true, A->i is 32 bit; 64 bit otherwise
+    bool i_is_32,               // if true, A->i is 32 bit; 64 bit otherwise
+    int memlane                 // memlane for the matrix
 ) ;
 
 /*

@@ -82,6 +82,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
 
     int device = -1;
     cudaStream_t stream = nullptr ;
+    int memlane = 0 ;       // FIXME memlane RMM
 
     CUDA_OK (cudaGetDevice (&device)) ;     // FIXME: use the Context
     printf ("dot3 using cuda device %d\n", device) ;
@@ -141,7 +142,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
         M_sparsity, /* bitmap_calloc: */ false, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for cumsum of Cwork
         /* numeric: */ true, /* iso: */ C_iso,
-        /* C pji_is_32: */ M->p_is_32, M->j_is_32, M->i_is_32)) ;
+        /* C pji_is_32: */ M->p_is_32, M->j_is_32, M->i_is_32, memlane)) ;
 
     //--------------------------------------------------------------------------
     // Pre-fetch arrays that will be used on the device

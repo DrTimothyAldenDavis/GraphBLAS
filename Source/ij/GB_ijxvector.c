@@ -68,7 +68,7 @@
 //      GxB_BACKWARDS   I = [begin, end, -stride]
 //      GxB_STRIDE      I = [begin, end, +stride]
 //
-// Tyis method is not used for GrB_build.
+// This method is not used for GrB_build.
 
 static inline GrB_Info GB_stride
 (
@@ -84,7 +84,6 @@ static inline GrB_Info GB_stride
 )
 {
     ASSERT ((*I_handle) == NULL) ;
-    ASSERT ((*I_mem_handle) == 0) ;
     (*I_handle) = GB_CALLOC_MEMORY (3, sizeof (uint64_t), I_mem_handle) ;
     if ((*I_handle) == NULL)
     { 
@@ -158,14 +157,14 @@ GrB_Info GB_ijxvector
 
     (*I_handle) = NULL ;
     (*ni_handle) = 0 ;
-    (*I_mem_handle) = 0 ;
     (*I_type_handle) = NULL ;
 
-    // struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
-    uint64_t I_mem = 0, I2_mem = 0 ;    // FIXME memlane
+    int memlane = (List == NULL) ? 0 : GB_memlane (List->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+    uint64_t I_mem = mem, I2_mem = mem ;
     void *I = NULL, *I2 = NULL ;
-    (*I_mem_handle) = 0 ;               // FIXME memlane
+    (*I_mem_handle) = mem ;
 
     //--------------------------------------------------------------------------
     // quick return if List is NULL
@@ -440,10 +439,9 @@ GrB_Info GB_ijxvector
     if ((need_copy && GB_memsize (I_mem) == 0) || I_type != I_target_type)
     { 
         // Create an ni-by-1 matrix T containing the values of I
-        // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
         GB_OK (GB_new (&T, // new header
             I_type, ni, 1, GB_ph_null, true, GxB_FULL, 0, 0,
-            false, false, false)) ;
+            false, false, false, memlane)) ;
         GB_vector_load ((GrB_Vector) T, &I, I_type, ni, ni * (I_type->size),
             true) ;
         ASSERT_MATRIX_OK (T, "T for typecast to I", GB0) ;

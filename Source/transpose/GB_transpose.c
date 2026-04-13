@@ -77,12 +77,15 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     GrB_Info info ;
     ASSERT (C != NULL) ;
     ASSERT (A != NULL) ;
+
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     bool in_place = (A == C) ;
     GB_WERK_DECLARE (Count, uint64_t) ;
-    // struct GB_Matrix_opaque T_header ;
+
     GrB_Matrix T = NULL ;
-    // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
-    GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
+    GB_OK (GB_matrix_header_new (&T, memlane)) ;
 
     ASSERT_MATRIX_OK (A, "A input for GB_transpose", GB0) ;
     ASSERT_TYPE_OK_OR_NULL (ctype, "ctype for GB_transpose", GB0) ;
@@ -252,7 +255,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         GB_OK (GB_new_bix (&T, // hyper, existing header
             ctype, avdim, avlen, GB_ph_calloc, C_is_csc, GxB_HYPERSPARSE,
             true, A_hyper_switch, 1, 1, true, false,
-            Cp_is_32, Cj_is_32, Ci_is_32)) ;
+            Cp_is_32, Cj_is_32, Ci_is_32, memlane)) ;
         ASSERT_MATRIX_OK (T, "T empty", GB0) ;
 
     }
@@ -286,7 +289,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             GBURBLE ("(cheap transpose) ") ;
             info = GB_new (&T, // bitmap or full, existing header
                 ctype, avdim, avlen, GB_ph_null, C_is_csc,
-                T_sparsity, A_hyper_switch, 1, Cp_is_32, Cj_is_32, Ci_is_32) ;
+                T_sparsity, A_hyper_switch, 1, Cp_is_32, Cj_is_32, Ci_is_32,
+                memlane) ;
             ASSERT (info == GrB_SUCCESS) ;
         }
         else
@@ -295,7 +299,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             GB_OK (GB_new_bix (&T, // bitmap or full, existing header
                 ctype, avdim, avlen, GB_ph_null, C_is_csc, T_sparsity, true,
                 A_hyper_switch, 1, anz_held, true, C_iso,
-                Cp_is_32, Cj_is_32, Ci_is_32)) ;
+                Cp_is_32, Cj_is_32, Ci_is_32, memlane)) ;
         }
 
         T->magic = GB_MAGIC ;
@@ -376,20 +380,21 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
         info = GB_new (&T, // hyper; existing header
             ctype, 1, avlen, GB_ph_null, C_is_csc,
-            GxB_HYPERSPARSE, A_hyper_switch, 0, Cp_is_32, Cj_is_32, Ci_is_32) ;
+            GxB_HYPERSPARSE, A_hyper_switch, 0, Cp_is_32, Cj_is_32, Ci_is_32,
+            memlane) ;
         ASSERT (info == GrB_SUCCESS) ;
 
         // allocate T->p, T->i, and optionally T->x, but not T->h
         int64_t tplen = GB_IMAX (1, anz) ;
-        T->p_mem = 0 ;      // FIXME memlane
-        T->i_mem = 0 ;      // FIXME memlane
+        T->p_mem = mem ;
+        T->i_mem = mem ;
         T->p = GB_MALLOC_MEMORY (tplen+1, apsize, &(T->p_mem)) ;
         T->i = GB_MALLOC_MEMORY (anz    , ajsize, &(T->i_mem)) ;
         bool allocate_Tx = (op != NULL || C_iso) || (ctype != atype) ;
         if (allocate_Tx)
         { 
             // allocate new space for the new typecasted numerical values of T
-            T->x_mem = 0 ;      // FIXME memlane
+            T->x_mem = mem ;
             T->x = GB_XALLOC_MEMORY (false, C_iso, anz, csize, &(T->x_mem)) ;
         }
         if (T->p == NULL || T->i == NULL || (allocate_Tx && T->x == NULL))
@@ -530,25 +535,26 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // and initialize the type and dimension of T.
         info = GB_new (&T, // sparse; existing header
             ctype, avdim, 1, GB_ph_null, C_is_csc,
-            GxB_SPARSE, A_hyper_switch, 0, Cp_is_32, Cj_is_32, Ci_is_32) ;
+            GxB_SPARSE, A_hyper_switch, 0, Cp_is_32, Cj_is_32, Ci_is_32,
+            memlane) ;
         ASSERT (info == GrB_SUCCESS) ;
 
         T->iso = C_iso ;    // OK
 
         // allocate new space for the values and pattern
-        T->p_mem = 0 ;      // FIXME memlane
+        T->p_mem = mem ;
         T->p = GB_CALLOC_MEMORY (2, apsize, &(T->p_mem)) ;
         if (!A_is_hyper)
         { 
             // A is sparse, so new space is needed for T->i
-            T->i_mem = 0 ;      // FIXME memlane
+            T->i_mem = mem ;
             T->i = GB_MALLOC_MEMORY (anz, ajsize, &(T->i_mem)) ;
         }
         bool allocate_Tx = (op != NULL || C_iso) || (ctype != atype) ;
         if (allocate_Tx)
         { 
             // allocate new space for the new typecasted numerical values of T
-            T->x_mem = 0 ;      // FIXME memlane
+            T->x_mem = mem ;
             T->x = GB_XALLOC_MEMORY (false, C_iso, anz, csize, &(T->x_mem)) ;
         }
 
@@ -781,8 +787,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             if (T == NULL)
             {
                 // the CUDA branch may have freed the T header; reallocate it
-                // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
-                GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
+                GB_OK (GB_matrix_header_new (&T, memlane)) ;
             }
 
             //------------------------------------------------------------------
@@ -903,7 +908,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             // C = op (C), but not in-place since the type of C is changing
             ctype = op->ztype ;
             csize = ctype->size ;
-            uint64_t Cx_mem = 0 ;       // FIXME memlane
+            uint64_t Cx_mem = mem ;
             GB_void *Cx_new = NULL ;
             if (GB_IS_BITMAP (C))
             { 

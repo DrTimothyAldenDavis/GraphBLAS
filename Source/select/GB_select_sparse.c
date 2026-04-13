@@ -58,12 +58,15 @@ GrB_Info GB_select_sparse
     ASSERT (GB_IMPLIES (op->opcode != GB_DIAG_idxunop_code,
         GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // declare workspace
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    void *Zp = NULL ; uint64_t Zp_mem = 0 ; // FIXME memlane
+    void *Zp = NULL ; uint64_t Zp_mem = mem ;
     GB_WERK_DECLARE (Work, uint64_t) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
@@ -99,7 +102,8 @@ GrB_Info GB_select_sparse
 
     GB_OK (GB_new (&C, // sparse or hyper (from A), existing header
         A->type, A->vlen, A->vdim, GB_ph_calloc, A->is_csc,
-        csparsity, A->hyper_switch, A->plen, Cp_is_32, Cj_is_32, Ci_is_32)) ;
+        csparsity, A->hyper_switch, A->plen, Cp_is_32, Cj_is_32, Ci_is_32,
+        memlane)) ;
 
     ASSERT (csparsity == GB_sparsity (C)) ;
     ASSERT (Cp_is_32 == C->p_is_32) ;

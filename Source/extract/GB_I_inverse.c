@@ -45,8 +45,12 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     //--------------------------------------------------------------------------
 
     GrB_Info info = GrB_SUCCESS ;
+
+    int memlane = 0 ;   // FIXME memlane
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     GrB_Matrix R = NULL ;
-    GB_MDECL (W, , u) ; uint64_t W_mem = 0 ;    // FIXME memlane
+    GB_MDECL (W, , u) ; uint64_t W_mem = mem ;
     (*R_handle) = NULL ;
     GB_IDECL (I, const, u) ; GB_IPTR (I, I_is_32) ;
 
@@ -82,14 +86,14 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     // create R: rvdim-by-rvlen (avlen-by-nI), held by row, iso-valued
     GB_OK (GB_new (&R,  // new dynamic header, do not allocate content
         GrB_UINT64, rvlen, rvdim, GB_ph_null, false, GxB_HYPERSPARSE, -1, 0,
-        Rp_is_32, Rj_is_32, Ri_is_32)) ;
+        Rp_is_32, Rj_is_32, Ri_is_32, memlane)) ;
 
     uint64_t S_input [1] ;
     S_input [0] = 1 ;
 
-    void *no_I_work = NULL ; uint64_t I_work_mem = 0 ;        // OK, memlane = 0
-    void *no_J_work = NULL ; uint64_t J_work_mem = 0 ;        // OK, memlane = 0
-    GB_void *no_X_work = NULL ; uint64_t X_work_mem = 0 ;     // OK, memlane = 0
+    void *no_I_work = NULL    ; uint64_t I_work_mem = 0 ;   // OK: NULL pointer
+    void *no_J_work = NULL    ; uint64_t J_work_mem = 0 ;   // OK: NULL pointer
+    GB_void *no_X_work = NULL ; uint64_t X_work_mem = 0 ;   // OK: NULL pointer
 
     GB_OK (GB_builder (
         // T

@@ -64,6 +64,9 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
 
     ASSERT (C != NULL) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     ASSERT_MATRIX_OK_OR_NULL (M, "M for bitmap saxpy A*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
@@ -86,8 +89,8 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
     // declare workspace
     //--------------------------------------------------------------------------
 
-    int8_t  *restrict Wf  = NULL ; uint64_t Wf_mem = 0 ;    // FIXME memlane
-    GB_void *restrict Wcx = NULL ; uint64_t Wcx_mem = 0 ;   // FIXME memlane
+    int8_t  *restrict Wf  = NULL ; uint64_t Wf_mem = mem ;
+    GB_void *restrict Wcx = NULL ; uint64_t Wcx_mem = mem ;
     GB_WERK_DECLARE (H_slice, int64_t) ;
     GB_WERK_DECLARE (A_slice, int64_t) ;
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
@@ -120,7 +123,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
     GB_OK (GB_new_bix (&C, // existing header
         ctype, A->vlen, B->vdim, GB_ph_null, true, GxB_BITMAP, true,
         GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, C_iso,
-        /* OK: */ false, false, false)) ;
+        /* OK: */ false, false, false, memlane)) ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------

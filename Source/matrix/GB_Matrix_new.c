@@ -76,6 +76,8 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
         return (GrB_INVALID_VALUE) ;
     }
 
+    int memlane = 0 ;       // FIXME memlane from Context
+
     //--------------------------------------------------------------------------
     // create the matrix
     //--------------------------------------------------------------------------
@@ -117,7 +119,8 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
     // create the matrix
     GB_OK (GB_new (A, // auto sparsity (sparse/hyper), new header
         type, vlen, vdim, GB_ph_calloc, A_is_csc, GxB_AUTO_SPARSITY,
-        GB_Global_hyper_switch_get ( ), 1, Ap_is_32, Aj_is_32, Ai_is_32)) ;
+        GB_Global_hyper_switch_get ( ), 1, Ap_is_32, Aj_is_32, Ai_is_32,
+        memlane)) ;
 
     return (GrB_SUCCESS) ;
 }

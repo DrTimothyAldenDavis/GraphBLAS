@@ -49,6 +49,9 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
+    int memlane = GB_memlane (A->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     int sparsity_control = A->sparsity_control ;
     float hyper_switch = A->hyper_switch ;
     bool csc = A->is_csc ;
@@ -84,7 +87,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     // FUTURE: Wp is allocated with the same integers as Ap, but it could be
     // chosen based on anz instead.
 
-    GB_MDECL (Wp, , u) ; uint64_t Wp_mem = 0 ;  // FIXME memlane
+    GB_MDECL (Wp, , u) ; uint64_t Wp_mem = mem ;
     size_t apsize = (Ap_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     Wp = GB_MALLOC_MEMORY (anvec, apsize, &Wp_mem) ;
     if (Wp == NULL)
@@ -162,7 +165,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             C = NULL ;
             GB_OK (GB_new (&C, // new header
                 atype, cvlen, cvdim, GB_ph_malloc, csc, A_sparsity,
-                hyper_switch, cnvec, Cp_is_32, Cj_is_32, Ci_is_32)) ;
+                hyper_switch, cnvec, Cp_is_32, Cj_is_32, Ci_is_32, memlane)) ;
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
             C->nvec = cnvec ;
