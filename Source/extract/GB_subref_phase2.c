@@ -44,12 +44,16 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     const bool I_is_32,         // if true, I is 32-bit; else 64-bit
     const bool symbolic,
     GB_Werk Werk
+    // FIXME memlane param
 )
 {
 
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
+
+    int memlane = 0 ;   // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
 
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Cp_mem_handle != NULL) ;
@@ -162,7 +166,7 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
         GxB_AUTO_SPARSITY, cnz, nI, nJ, Werk) ;
 
-    void *Cp = NULL ; uint64_t Cp_mem = 0 ; // FIXME memlane
+    void *Cp = NULL ; uint64_t Cp_mem = mem ;
 
     if (Cp_is_32)
     { 
@@ -190,9 +194,9 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     // return the result
     //--------------------------------------------------------------------------
 
-    (*Cp_handle     ) = Cp ;
+    (*Cp_handle    ) = Cp ;
     (*Cp_mem_handle) = Cp_mem ;
-    (*p_Cp_is_32    ) = Cp_is_32 ;
+    (*p_Cp_is_32   ) = Cp_is_32 ;
     return (GrB_SUCCESS) ;
 }
 

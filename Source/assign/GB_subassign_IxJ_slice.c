@@ -81,12 +81,15 @@ GB_CALLBACK_SUBASSIGN_IXJ_SLICE_PROTO (GB_subassign_IxJ_slice)
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;
 
+    int memlane = 0 ;           // FIXME memlane : make parameter
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     (*p_TaskList  ) = NULL ;
-    (*p_TaskList_mem) = 0 ;     // FIXME memlane
+    (*p_TaskList_mem) = mem ;
     (*p_ntasks    ) = 0 ;
     (*p_nthreads  ) = 1 ;
     int ntasks, max_ntasks = 0, nthreads ;
-    GB_task_struct *TaskList = NULL ; uint64_t TaskList_mem = 0 ;
+    GB_task_struct *TaskList = NULL ; uint64_t TaskList_mem = mem ;
 
     //--------------------------------------------------------------------------
     // determine # of threads to use

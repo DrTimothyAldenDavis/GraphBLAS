@@ -38,6 +38,9 @@ GrB_Info GB_hyper_prune
         return (GrB_SUCCESS) ;
     }
 
+    int memlane = GB_memlane (A->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // count # of empty vectors and check if pruning is needed
     //--------------------------------------------------------------------------
@@ -60,10 +63,10 @@ GrB_Info GB_hyper_prune
     GB_Ap_DECLARE (Ap_old, const) ; GB_Ap_PTR (Ap_old, A) ;
     GB_Ah_DECLARE (Ah_old, const) ; GB_Ah_PTR (Ah_old, A) ;
 
-    GB_Ap_DECLARE (Ap_new, ) ; uint64_t Ap_new_mem = 0 ;        // FIXME memlane
-    GB_Ah_DECLARE (Ah_new, ) ; uint64_t Ah_new_mem = 0 ;        // FIXME memlane
+    GB_Ap_DECLARE (Ap_new, ) ; uint64_t Ap_new_mem = mem ;
+    GB_Ah_DECLARE (Ah_new, ) ; uint64_t Ah_new_mem = mem ;
 
-    GB_MDECL (W, , u) ; uint64_t W_mem = 0 ;        // FIXME memlane
+    GB_MDECL (W, , u) ; uint64_t W_mem = mem ;
 
     int64_t nvec_old = A->nvec ;
 

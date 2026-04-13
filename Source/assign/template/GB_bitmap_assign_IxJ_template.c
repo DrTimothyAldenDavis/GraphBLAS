@@ -18,7 +18,7 @@
 // The workspace must already have been declared as follow:
 //
 //      GB_task_struct *TaskList_IxJ = NULL ;
-//      uint64_t TaskList_IxJ_mem = 0 ;         FIXME memlane
+//      uint64_t TaskList_IxJ_mem = mem ;
 //      int ntasks_IxJ = 0, nthreads_IxJ = 0 ;
 
 // This template is used in the GB_bitmap_assign_* methods, and

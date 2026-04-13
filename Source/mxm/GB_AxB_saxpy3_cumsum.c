@@ -19,6 +19,10 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
     // get C
     //--------------------------------------------------------------------------
 
+    ASSERT (C != NULL) ;
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (!GB_IS_FULL (C)) ;
 
@@ -174,7 +178,7 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
         ASSERT (Cp_is_32) ;
         ASSERT (!C->p_shallow) ;
         void *Cp_new = NULL ;
-        uint64_t Cp_new_mem = 0 ;   // FIXME memlane
+        uint64_t Cp_new_mem = mem ;
         Cp_new = GB_MALLOC_MEMORY (cnvec+1, sizeof (uint64_t), &Cp_new_mem) ;
         if (Cp_new == NULL)
         { 

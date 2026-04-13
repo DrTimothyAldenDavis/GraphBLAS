@@ -136,6 +136,7 @@ static inline bool GB_allocate_result
 //      const GrB_Matrix A,         // first input matrix
 //      const GrB_Matrix B,         // second input matrix
 //      GB_Werk Werk
+//      FIXME memlane: add memlane parameter here
 //  )
 
 GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
@@ -176,6 +177,9 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim)) ;
     ASSERT (GB_IMPLIES (M != NULL, A->vlen == M->vlen)) ;
 
+    int memlane = 0 ;       // FIXME memlane : add param
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // initializations and check for quick return
     //--------------------------------------------------------------------------
@@ -204,10 +208,10 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     }
 
     GB_MDECL (Ch, , u) ;
-    uint64_t Ch_mem = 0 ;   // FIXME memlane
-    int64_t *restrict C_to_M = NULL ; uint64_t C_to_M_mem = 0 ; // FIXME memlane
-    int64_t *restrict C_to_A = NULL ; uint64_t C_to_A_mem = 0 ; // FIXME memlane
-    int64_t *restrict C_to_B = NULL ; uint64_t C_to_B_mem = 0 ; // FIXME memlane
+    uint64_t Ch_mem = mem ;
+    int64_t *restrict C_to_M = NULL ; uint64_t C_to_M_mem = mem ;
+    int64_t *restrict C_to_A = NULL ; uint64_t C_to_A_mem = mem ;
+    int64_t *restrict C_to_B = NULL ; uint64_t C_to_B_mem = mem ;
 
     GB_WERK_DECLARE (Work, int64_t) ;
     int ntasks = 0 ;

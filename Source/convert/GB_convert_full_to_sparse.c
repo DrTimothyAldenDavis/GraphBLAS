@@ -29,6 +29,9 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
+    int memlane = GB_memlane (A->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // allocate A->p and A->i
     //--------------------------------------------------------------------------
@@ -42,8 +45,8 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     GB_determine_pji_is_32 (&Ap_is_32, &Aj_is_32, &Ai_is_32,
         GxB_AUTO_SPARSITY, anz, avlen, avdim, Werk) ;
 
-    void *Ap = NULL ; size_t Ap_mem = 0 ;       // FIXME memlane
-    void *Ai = NULL ; size_t Ai_mem = 0 ;       // FIXME memlane
+    void *Ap = NULL ; size_t Ap_mem = mem ;
+    void *Ai = NULL ; size_t Ai_mem = mem ;
 
     size_t psize = (Ap_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t isize = (Ai_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;

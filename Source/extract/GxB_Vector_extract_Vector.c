@@ -40,6 +40,9 @@ GrB_Info GxB_Vector_extract_Vector  // w<mask> = accum (w, u(I))
         "GxB_Vector_extract_Vector (w, M, accum, u, I, desc)") ;
     GB_BURBLE_START ("GrB_extract") ;
 
+    int memlane = GB_memlane (w->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (mask == NULL || GB_VECTOR_OK (mask)) ;
     ASSERT (GB_VECTOR_OK (u)) ;
@@ -56,7 +59,7 @@ GrB_Info GxB_Vector_extract_Vector  // w<mask> = accum (w, u(I))
     //--------------------------------------------------------------------------
 
     void *I = NULL ;
-    uint64_t I_mem = 0 ;        // FIXME memlane
+    uint64_t I_mem = mem ;
     int64_t ni = 0 ;
     GrB_Type I_type = NULL ;
     GB_OK (GB_ijxvector (I_vector, (w == I_vector), 0, desc, false,

@@ -47,7 +47,12 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    void *Cp = NULL ; uint64_t Cp_mem = 0 ;     // FIXME memlane
+
+    ASSERT (A != NULL) ;
+    int memlane = GB_memlane (A->header_mem) ;  // FIXME memlane: or param?
+    uint64_t mem = GB_mem (memlane, 0) ;
+
+    void *Cp = NULL ; uint64_t Cp_mem = mem ;
     ASSERT_MATRIX_OK (A, "A to extract", GB0) ;
     ASSERT_TYPE_OK (xtype, "xtype to extract", GB0) ;
     ASSERT (p_nvals != NULL) ;

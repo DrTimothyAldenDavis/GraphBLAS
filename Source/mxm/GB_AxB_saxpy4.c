@@ -59,9 +59,14 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+
+    ASSERT (C != NULL) ;
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     GB_WERK_DECLARE (A_slice, int64_t) ;
     GB_WERK_DECLARE (H_slice, int64_t) ;
-    GB_void *restrict Wcx= NULL ; uint64_t Wcx_mem = 0 ;    // FIXME memlane
+    GB_void *restrict Wcx= NULL ; uint64_t Wcx_mem = mem ;
 
     ASSERT_MATRIX_OK (C, "C for saxpy4 C+=A*B", GB0) ;
     ASSERT (GB_IS_FULL (C)) ;

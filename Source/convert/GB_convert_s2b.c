@@ -39,9 +39,14 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+
+    ASSERT (A != NULL) ;
+    int memlane = GB_memlane (A->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
-    int8_t  *restrict Cb      = NULL ; uint64_t Cb_mem = 0 ;    // FIXME memlane
-    GB_void *restrict Cx_new  = NULL ; uint64_t Cx_mem = 0 ;    // FIXME memlane
+    int8_t  *restrict Cb      = NULL ; uint64_t Cb_mem = mem ;
+    GB_void *restrict Cx_new  = NULL ; uint64_t Cx_mem = mem ;
     GB_void *restrict Ax_keep = NULL ;
 
     ASSERT_MATRIX_OK (A, "A converting sparse/hypersparse to bitmap", GB0) ;

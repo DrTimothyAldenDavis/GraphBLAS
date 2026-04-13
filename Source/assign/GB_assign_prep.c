@@ -110,7 +110,7 @@ GrB_Info GB_assign_prep
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_assign_prep", GB0) ;
     ASSERT (scalar_code <= GB_UDT_code) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
+    int memlane = GB_memlane (C_in->header_mem) ;
     uint64_t mem = GB_mem (memlane, 0) ;
 
     GrB_Matrix Cwork = NULL ;
@@ -699,7 +699,7 @@ GrB_Info GB_assign_prep
         // TODO: if accum is present and it does not depend on the values of
         // A,  construct AT as iso.
         GBURBLE ("(A transpose) ") ;
-        GB_OK (GB_matrix_header_new (&AT, /* FIXME memlane: */ 0)) ;
+        GB_OK (GB_matrix_header_new (&AT, memlane)) ;
         GB_OK (GB_transpose_cast (AT, A->type, C_is_csc, A, false, Werk)) ;
         GB_MATRIX_WAIT (AT) ;       // A cannot be jumbled
         A = AT ;

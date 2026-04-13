@@ -43,6 +43,9 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
     ASSERT (GB_IMPLIES (sparsity == GxB_FULL || sparsity == GxB_BITMAP,
         !(A->p_is_32) && !(A->j_is_32) && !(A->i_is_32))) ;
 
+    int memlane = GB_memlane (A->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // allocate the A->b, A->x, and A->i content of the matrix
     //--------------------------------------------------------------------------
@@ -55,7 +58,7 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
     bool ok = true ;
     if (sparsity == GxB_BITMAP)
     {
-        A->b_mem = 0 ;      // FIXME memlane
+        A->b_mem = mem ;
         if (bitmap_calloc)
         { 
             // content is fully defined
@@ -78,7 +81,7 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
             // matrix is too large for its requested integer settings
             return (GrB_INVALID_VALUE) ;
         }
-        A->i_mem = 0 ;      // FIXME memlane
+        A->i_mem = mem ;
         size_t isize = A->i_is_32 ? sizeof (int32_t) : sizeof (int64_t) ;
         A->i = GB_MALLOC_MEMORY (nzmax, isize, &(A->i_mem)) ;
         ok = (A->i != NULL) ;
@@ -87,7 +90,7 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
     if (numeric)
     { 
         // calloc the space if A is bitmap
-        A->x_mem = 0 ;      // FIXME memlane
+        A->x_mem = mem ;
         A->x = GB_XALLOC_MEMORY (sparsity == GxB_BITMAP, A_iso, nzmax,
             A->type->size, &(A->x_mem)) ;
         ok = ok && (A->x != NULL) ;

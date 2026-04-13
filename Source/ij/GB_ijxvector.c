@@ -141,6 +141,7 @@ GrB_Info GB_ijxvector
                             // the descriptor uses the indices.  For build,
                             // this is List->type when using the values.
     GB_Werk Werk                            
+    // FIXME memlane
 )
 {
 
@@ -149,6 +150,9 @@ GrB_Info GB_ijxvector
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+
+    int memlane = 0 ;       // FIXME memlane: make param
+
     ASSERT (I_handle != NULL) ;
     ASSERT (ni_handle != NULL) ;
     ASSERT (I_mem_handle != NULL) ;
@@ -160,7 +164,7 @@ GrB_Info GB_ijxvector
     (*I_type_handle) = NULL ;
 
     GrB_Matrix T = NULL ;
-    int memlane = (List == NULL) ? 0 : GB_memlane (List->header_mem) ;
+//  int memlane = (List == NULL) ? 0 : GB_memlane (List->header_mem) ;
     uint64_t mem = GB_mem (memlane, 0) ;
     uint64_t I_mem = mem, I2_mem = mem ;
     void *I = NULL, *I2 = NULL ;

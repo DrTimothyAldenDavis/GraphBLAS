@@ -47,6 +47,9 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         return (GrB_SUCCESS) ;
     }
 
+    int memlane = GB_memlane (A->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // convert A from hypersparse to sparse
     //--------------------------------------------------------------------------
@@ -113,7 +116,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         // allocate the new Ap array, of size n+1
         //----------------------------------------------------------------------
 
-        void *Ap_new = NULL ; uint64_t Ap_new_mem = 0 ; // FIXME memlane
+        void *Ap_new = NULL ; uint64_t Ap_new_mem = mem ;
         Ap_new = GB_MALLOC_MEMORY (n+1, psize, &Ap_new_mem) ;
         if (Ap_new == NULL)
         { 

@@ -42,12 +42,16 @@ GrB_Info GB_AxB_dot3_one_slice
     // input:
     const GrB_Matrix M,             // matrix to slice
     GB_Werk Werk
+    // FIXME memlane param
 )
 {
 
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
+
+    int memlane = 0 ;       // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
 
     ASSERT (p_TaskList != NULL) ;
     ASSERT (p_TaskList_mem != NULL) ;
@@ -92,7 +96,7 @@ GrB_Info GB_AxB_dot3_one_slice
     int ntasks1 = 0 ;
     int nthreads = GB_nthreads (mnz, chunk, nthreads_max) ;
     GB_task_struct *restrict TaskList = NULL ;
-    uint64_t TaskList_mem = 0 ; // FIXME memlane
+    uint64_t TaskList_mem = mem ;
     int max_ntasks = 0 ;
     int ntasks = 0 ;
     int ntasks0 = (nthreads == 1) ? 1 : (GB_NTASKS_PER_THREAD * nthreads) ;

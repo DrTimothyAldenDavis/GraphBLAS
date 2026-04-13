@@ -30,8 +30,11 @@ GrB_Info GxB_Context_new            // create a new Context
     // create the Context
     //--------------------------------------------------------------------------
 
+    int memlane = 0 ;   // FIXME memlane get from Context
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     // allocate the Context
-    uint64_t header_mem = 0 ;   // FIXME memlane
+    uint64_t header_mem = mem ;
     Context = GB_CALLOC_MEMORY (1, sizeof (struct GB_Context_opaque),
         &header_mem);
     if (Context == NULL)

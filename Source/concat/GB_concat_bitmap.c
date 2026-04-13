@@ -40,6 +40,10 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
 
     GrB_Info info ;
     GrB_Matrix A = NULL ;
+
+    ASSERT (C != NULL) ;
+    int memlane = GB_memlane (C->header_mem) ;
+
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     GrB_Matrix T = NULL ;
 
@@ -93,7 +97,7 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
             if (csc != A->is_csc)
             { 
                 // T = (ctype) A'
-                GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
+                GB_OK (GB_matrix_header_new (&T, memlane)) ;
                 GB_OK (GB_transpose_cast (T, ctype, csc, A, false, Werk)) ;
                 A = T ;
                 GB_MATRIX_WAIT (A) ;

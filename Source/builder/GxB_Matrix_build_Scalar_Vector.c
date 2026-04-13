@@ -50,12 +50,15 @@ GrB_Info GxB_Matrix_build_Scalar_Vector // build a matrix from (I,J,s) tuples
     ASSERT (GB_VECTOR_OK (I_vector)) ;
     ASSERT (GB_VECTOR_OK (J_vector)) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // finish any pending work
     //--------------------------------------------------------------------------
 
     void *I = NULL, *J = NULL ;
-    uint64_t I_mem = 0, J_mem = 0 ;     // FIXME memlane
+    uint64_t I_mem = mem, J_mem = mem ;
 
     GB_MATRIX_WAIT (scalar) ;
     if (GB_nnz ((GrB_Matrix) scalar) != 1)

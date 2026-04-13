@@ -32,14 +32,14 @@ GrB_Info GB_cuda_apply_binop
 {
     GrB_Info info ;
     GB_void *scalarx_cuda = NULL ;
-    uint64_t scalarx_cuda_mem = 0 ; // FIXME memlane
+    uint64_t scalarx_cuda_mem = GB_MEMLANE_RMM ;
 
     cudaStream_t stream = nullptr ;
     GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
 
     ASSERT (scalarx != NULL) ;
-    // make a copy of scalarx to ensure it's not on the CPU stack
 
+    // make a copy of scalarx to ensure it's not on the CPU stack
     if (bind1st)
     {
         ASSERT (op->xtype != NULL) ;

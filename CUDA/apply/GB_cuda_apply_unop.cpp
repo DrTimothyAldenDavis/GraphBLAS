@@ -29,7 +29,7 @@ GrB_Info GB_cuda_apply_unop
 
     GrB_Info info ;
     GB_void *ythunk_cuda = nullptr ;
-    uint64_t ythunk_cuda_mem = 0 ;      // FIXME memlane
+    uint64_t ythunk_cuda_mem = GB_MEMLANE_RMM ;
 
     cudaStream_t stream = nullptr ;
 

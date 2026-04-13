@@ -77,10 +77,13 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     void *J = NULL ;                // Rows, Cols, or J2
     bool I_is_32, J_is_32 ;
 
+    int memlane = GB_memlane (C_in->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     // temporary matrices and arrays
     GrB_Matrix Cwork = NULL, Mwork = NULL, Awork = NULL, SubMask = NULL ;
-    void *I2 = NULL ; uint64_t I2_mem = 0 ; // FIXME memlane
-    void *J2 = NULL ; uint64_t J2_mem = 0 ; // FIXME memlane
+    void *I2 = NULL ; uint64_t I2_mem = mem ;
+    void *J2 = NULL ; uint64_t J2_mem = mem ;
 
     GrB_Type scalar_type = NULL ;
     int64_t ni, nj, nI, nJ, Icolon [3], Jcolon [3] ;
@@ -212,7 +215,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             //------------------------------------------------------------------
 
             ASSERT_MATRIX_OK (M, "big mask", GB0) ;
-            GB_OK (GB_matrix_header_new (&SubMask, /* FIXME memlane: */ 0)) ;
+            GB_OK (GB_matrix_header_new (&SubMask, memlane)) ;
 
             const void *I_SubMask = I ; int64_t ni_SubMask = ni ;
             const void *J_SubMask = J ; int64_t nj_SubMask = nj ;

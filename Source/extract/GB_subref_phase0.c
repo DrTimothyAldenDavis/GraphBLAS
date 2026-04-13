@@ -224,6 +224,7 @@ GrB_Info GB_subref_phase0
     const bool J_is_32,     // if true, I is 32-bit; else 64-bit
     const int64_t nj,       // length of J, or special
     GB_Werk Werk
+    // FIXME memlane param
 )
 {
 
@@ -231,9 +232,11 @@ GrB_Info GB_subref_phase0
     // check inputs
     //--------------------------------------------------------------------------
 
+    int memlane = 0 ;   // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     ASSERT_MATRIX_OK (A, "A for subref phase 0", GB0) ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
-
     ASSERT (p_Ch != NULL) ;
     ASSERT (p_Ap_start != NULL) ;
     ASSERT (p_Ap_end != NULL) ;
@@ -247,10 +250,10 @@ GrB_Info GB_subref_phase0
 
     GrB_Info info ;
     GB_WERK_DECLARE (Count, uint64_t) ;
-    GB_MDECL (Ch, , u) ; uint64_t Ch_mem = 0 ;  // FIXME memlane
+    GB_MDECL (Ch, , u) ; uint64_t Ch_mem = mem ;
 
-    void *Ap_start = NULL ; uint64_t Ap_start_mem = 0 ; // FIXME memlane
-    void *Ap_end   = NULL ; uint64_t Ap_end_mem   = 0 ; // FIXME memlane
+    void *Ap_start = NULL ; uint64_t Ap_start_mem = mem ;
+    void *Ap_end   = NULL ; uint64_t Ap_end_mem   = mem ;
 
     (*p_Ch        ) = NULL ;
     (*p_Ap_start  ) = NULL ;

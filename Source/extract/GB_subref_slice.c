@@ -85,6 +85,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     const void *I,
     const bool I_is_32,         // if true, I is 32-bit; else 64 bit
     GB_Werk Werk
+    // FIXME memlane param
 )
 {
 
@@ -104,12 +105,15 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     ASSERT ((Cnvec > 0) == (Ap_start != NULL)) ;
     ASSERT ((Cnvec > 0) == (Ap_end != NULL)) ;
 
+    int memlane = 0 ;   // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     (*p_TaskList) = NULL ;
     (*p_TaskList_mem) = 0 ;
     (*p_Cwork) = NULL ;
     (*p_Cwork_mem) = 0 ;
 
-    uint64_t *restrict Cwork = NULL ; uint64_t Cwork_mem = 0 ; // FIXME memlane
+    uint64_t *restrict Cwork = NULL ; uint64_t Cwork_mem = mem ;
     GB_WERK_DECLARE (Coarse, int64_t) ;     // size ntasks1+1
     int ntasks1 = 0 ;
     GrB_Matrix R = NULL ;
@@ -139,7 +143,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     // into tasks, even when nthreads_max is 1.
 
     GB_task_struct *restrict TaskList = NULL ;
-    uint64_t TaskList_mem = 0 ; // FIXME memlane
+    uint64_t TaskList_mem = mem ;
     int max_ntasks = 0 ;
     int ntasks0 = (nthreads_max == 1) ? 1 : (32 * nthreads_max) ;
     GB_REALLOC_TASK_WORK (TaskList, ntasks0, max_ntasks) ;

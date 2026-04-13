@@ -32,6 +32,9 @@ GrB_Info GB_extractTuples_prep
         return (GrB_SUCCESS) ;
     }
 
+    int memlane = GB_memlane (V->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // quick return if V already has the right properties
     //--------------------------------------------------------------------------
@@ -49,12 +52,8 @@ GrB_Info GB_extractTuples_prep
     // remove V->x and free all other content
     //--------------------------------------------------------------------------
 
-    // FIXME: if V->x is shallow, we still need to know the memlane of the
-    // content it points to.  Suppose it points to a vector W->x.  Then
-    // V->x_mem must be GB_mem (GB_memlane (W->x), 0).
-
     void *Vx = V->x_shallow ? NULL : V->x ;
-    uint64_t Vx_mem = V->x_shallow ? 0 : V->x_mem ; // FIXME memlane
+    uint64_t Vx_mem = V->x_shallow ? mem : V->x_mem ;
     V->x = NULL ;
     GB_phybix_free ((GrB_Matrix) V) ;
 

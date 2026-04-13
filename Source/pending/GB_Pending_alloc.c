@@ -26,11 +26,14 @@ bool GB_Pending_alloc       // create a list of pending tuples
     ASSERT (C != NULL) ;
     ASSERT (C->Pending == NULL) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // allocate the Pending header
     //--------------------------------------------------------------------------
 
-    uint64_t header_mem = 0 ;   // FIXME memlane
+    uint64_t header_mem = mem ;
     GB_Pending Pending = GB_MALLOC_MEMORY (1, sizeof (struct GB_Pending_struct),
         &header_mem) ;
     if (Pending == NULL)
@@ -51,9 +54,9 @@ bool GB_Pending_alloc       // create a list of pending tuples
     Pending->type = type ;              // type of pending tuples
     Pending->size = type->size ;        // size of pending tuple type
     Pending->op = (iso) ? NULL : op ;   // pending operator (NULL is OK)
-    Pending->i_mem = 0 ;    // FIXME memlane
-    Pending->j_mem = 0 ;    // FIXME memlane
-    Pending->x_mem = 0 ;    // FIXME memlane
+    Pending->i_mem = mem ;
+    Pending->j_mem = mem ;
+    Pending->x_mem = mem ;
 
     bool is_matrix = (C->vdim > 1) ;
     size_t jsize = (C->j_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;

@@ -82,7 +82,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
 
     int device = -1;
     cudaStream_t stream = nullptr ;
-    int memlane = 0 ;       // FIXME memlane RMM
+    int memlane = GB_MEMLANE_RMM ;
 
     CUDA_OK (cudaGetDevice (&device)) ;     // FIXME: use the Context
     printf ("dot3 using cuda device %d\n", device) ;

@@ -37,11 +37,11 @@
 
 // FUTURE:: exploit A==M, B==M, and A==B aliases
 
-#define GB_FREE_ALL                             \
-{                                               \
-    GB_FREE_MEMORY (&C_to_M, C_to_M_mem) ;       \
-    GB_FREE_MEMORY (&C_to_A, C_to_A_mem) ;       \
-    GB_FREE_MEMORY (&C_to_B, C_to_B_mem) ;       \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_FREE_MEMORY (&C_to_M, C_to_M_mem) ;  \
+    GB_FREE_MEMORY (&C_to_A, C_to_A_mem) ;  \
+    GB_FREE_MEMORY (&C_to_B, C_to_B_mem) ;  \
 }
 
 #include "emult/GB_emult.h"
@@ -67,6 +67,7 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Werk Werk
+    // FIXME memlane param
 )
 {
 
@@ -106,6 +107,9 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim)) ;
     ASSERT (GB_IMPLIES (M != NULL, A->vlen == M->vlen)) ;
 
+    int memlane = 0 ;       // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // initializations
     //--------------------------------------------------------------------------
@@ -122,11 +126,11 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 
     ASSERT ((*C_sparsity) == GxB_SPARSE || (*C_sparsity) == GxB_HYPERSPARSE) ;
 
-    GB_MDECL (Ch, , u) ; uint64_t Ch_mem = 0 ; // FIXME memlane
+    GB_MDECL (Ch, , u) ; uint64_t Ch_mem = mem ;
 
-    int64_t *restrict C_to_M = NULL ; uint64_t C_to_M_mem = 0 ; // FIXME memlane
-    int64_t *restrict C_to_A = NULL ; uint64_t C_to_A_mem = 0 ; // FIXME memlane
-    int64_t *restrict C_to_B = NULL ; uint64_t C_to_B_mem = 0 ; // FIXME memlane
+    int64_t *restrict C_to_M = NULL ; uint64_t C_to_M_mem = mem ;
+    int64_t *restrict C_to_A = NULL ; uint64_t C_to_A_mem = mem ;
+    int64_t *restrict C_to_B = NULL ; uint64_t C_to_B_mem = mem ;
 
     //--------------------------------------------------------------------------
     // get content of M, A, and B

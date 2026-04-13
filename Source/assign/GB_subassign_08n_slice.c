@@ -75,6 +75,10 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (C != NULL) ;
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     GrB_Matrix S = NULL ;           // not constructed
     GB_EMPTY_TASKLIST
 
@@ -99,7 +103,7 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
     ASSERT (Z_to_M_handle != NULL) ;
 
     (*p_TaskList  ) = NULL ;
-    (*p_TaskList_mem) = 0 ;         // FIXME memlane
+    (*p_TaskList_mem) = mem ;
     (*p_ntasks    ) = 0 ;
     (*p_nthreads  ) = 1 ;
 

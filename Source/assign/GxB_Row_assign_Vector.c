@@ -41,6 +41,9 @@ GrB_Info GxB_Row_assign_Vector      // C<mask'>(i,J) = accum(C(i,j),u')
         "GxB_Row_assign_Vector (C, M, accum, u, i, J, desc)") ;
     GB_BURBLE_START ("GxB_Row_assign_Vector") ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     ASSERT (mask == NULL || GB_VECTOR_OK (mask)) ;
     ASSERT (GB_VECTOR_OK (u)) ;
 
@@ -56,7 +59,7 @@ GrB_Info GxB_Row_assign_Vector      // C<mask'>(i,J) = accum(C(i,j),u')
     //--------------------------------------------------------------------------
 
     void *J = NULL ;
-    uint64_t J_mem = 0 ;        // FIXME memlane
+    uint64_t J_mem = mem ;
     int64_t nj = 0 ;
     GrB_Type J_type = NULL ;
     GB_OK (GB_ijxvector (J_vector, false, 1, desc, false,

@@ -40,12 +40,16 @@ GrB_Info GxB_Vector_subassign_Scalar_Vector   // w(I)<mask> = accum (w(I),x)
         "GxB_Vector_subassign_Scalar_Vector (w, M, accum, s, I, desc)") ;
     GB_BURBLE_START ("GxB_Vector_subassign_Scalar_Vector") ;
 
+    ASSERT (w != NULL) ;
+    int memlane = GB_memlane (w->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // get the index vectors
     //--------------------------------------------------------------------------
 
     void *I = NULL ;
-    uint64_t I_mem = 0 ;        // FIXME memlane
+    uint64_t I_mem = mem ;
     int64_t ni = 0 ;
     GrB_Type I_type = NULL ;
     GB_OK (GB_ijxvector (I_vector, (w == I_vector), 0, desc, false,

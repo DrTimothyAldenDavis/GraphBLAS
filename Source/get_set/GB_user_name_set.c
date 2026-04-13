@@ -18,8 +18,12 @@ GrB_Info GB_user_name_set
     const char *new_name,           // new name for the object
     const bool only_once            // if true, the name of the object can
                                     // only be set once
+    // FIXME memlane
 )
 { 
+
+    int memlane = 0 ;       // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
 
     if (only_once && (*object_user_name) != NULL)
     { 
@@ -41,7 +45,7 @@ GrB_Info GB_user_name_set
     }
 
     // allocate the new name
-    uint64_t user_name_mem = 0 ;    // FIXME memlane
+    uint64_t user_name_mem = mem ;
     char *user_name = GB_MALLOC_MEMORY (len + 1, sizeof (char), &user_name_mem);
     if (user_name == NULL)
     { 

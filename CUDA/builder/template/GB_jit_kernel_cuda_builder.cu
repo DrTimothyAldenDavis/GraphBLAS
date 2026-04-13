@@ -1051,7 +1051,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     (*Thandle) = NULL ;
     GrB_Matrix T = NULL ;
     GrB_Info info = GrB_SUCCESS ;
-    int memlane = 0 ;       // FIXME memlane RMM
+    int memlane = GB_MEMLANE_RMM ;
     uint64_t mem = GB_mem (memlane, 0) ;
 
     // workspace needed for CUB radix sort of (Key_in,X):

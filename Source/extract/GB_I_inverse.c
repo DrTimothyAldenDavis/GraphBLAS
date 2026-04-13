@@ -37,6 +37,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     // outputs:
     GrB_Matrix *R_handle,       // R = inverse (I)
     GB_Werk Werk
+    // FIXME memlane param
 )
 {
 
@@ -46,7 +47,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
 
     GrB_Info info = GrB_SUCCESS ;
 
-    int memlane = 0 ;   // FIXME memlane
+    int memlane = 0 ;   // FIXME memlane param
     uint64_t mem = GB_mem (memlane, 0) ;
 
     GrB_Matrix R = NULL ;

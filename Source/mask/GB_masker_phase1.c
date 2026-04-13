@@ -58,6 +58,10 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (C != NULL) ;
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     ASSERT (Rp_handle != NULL) ;
     ASSERT (Rp_mem_handle != NULL) ;
     ASSERT (Rnvec_nonempty != NULL) ;
@@ -88,7 +92,7 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     //--------------------------------------------------------------------------
 
     (*Rp_handle) = NULL ;
-    void *Rp = NULL ; uint64_t Rp_mem = 0 ; // FIXME memlane
+    void *Rp = NULL ; uint64_t Rp_mem = mem ;
     size_t rpsize = (Rp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     Rp = GB_CALLOC_MEMORY (GB_IMAX (2, Rnvec+1), rpsize, &Rp_mem) ;
     if (Rp == NULL)

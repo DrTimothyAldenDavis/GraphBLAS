@@ -47,7 +47,7 @@ GrB_Info GB_cuda_reduce_to_scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    int memlane = 0 ;       // FIXME memlane RMM
+    int memlane = GB_MEMLANE_RMM ;
     uint64_t mem = GB_mem (memlane, 0) ;
 
     GB_void *zscalar = NULL ;

@@ -37,6 +37,9 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     ASSERT (!GB_JUMBLED (A)) ;      // bitmap is never jumbled
     ASSERT (!GB_ZOMBIES (A)) ;      // bitmap never has zomies
 
+    int memlane = GB_memlane (A->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // allocate Cp, Ci, and Cx
     //--------------------------------------------------------------------------
@@ -47,9 +50,9 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     int64_t cnvec_nonempty ;
     const int64_t avdim = A->vdim ;
     const size_t asize = A->type->size ;
-    void *Cp = NULL ; uint64_t Cp_mem = 0 ; // FIXME memlane
-    void *Ci = NULL ; uint64_t Ci_mem = 0 ; // FIXME memlane
-    void *Cx = NULL ; uint64_t Cx_mem = 0 ; // FIXME memlane
+    void *Cp = NULL ; uint64_t Cp_mem = mem ;
+    void *Ci = NULL ; uint64_t Ci_mem = mem ;
+    void *Cx = NULL ; uint64_t Cx_mem = mem ;
 
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,

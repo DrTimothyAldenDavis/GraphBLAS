@@ -217,6 +217,10 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
 
     GrB_Info info ;
 
+    ASSERT (C != NULL) ;
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     (*apply_mask) = false ;
     (*M_in_place) = false ;
     (*ntasks) = 0 ;
@@ -256,7 +260,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     //--------------------------------------------------------------------------
 
     GB_saxpy3task_struct *restrict SaxpyTasks = NULL ;
-    uint64_t SaxpyTasks_mem = 0 ; // FIXME memlane
+    uint64_t SaxpyTasks_mem = mem ;
 
     GB_WERK_DECLARE (Coarse_initial, int64_t) ; // initial coarse tasks
     GB_WERK_DECLARE (Coarse_Work, int64_t) ;    // workspace for flop counts
@@ -297,7 +301,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     int64_t Mwork = 0 ;
 
     int64_t *restrict Bflops = NULL ;
-    uint64_t Bflops_mem = 0 ;   // FIXME memlane
+    uint64_t Bflops_mem = mem ;
     // allocate Bflops workspace
     Bflops = GB_MALLOC_MEMORY (bnvec+1, sizeof (uint64_t), &Bflops_mem) ;
     if (Bflops == NULL)

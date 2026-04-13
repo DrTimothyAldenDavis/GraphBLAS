@@ -7,12 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_FREE_ALL                     \
-{                                       \
-    GB_FREE_MEMORY (&Wi, Wi_mem) ;     \
-    GB_FREE_MEMORY (&Wj, Wj_mem) ;     \
-    GB_FREE_MEMORY (&Wx, Wx_mem) ;     \
-    GB_phybix_free (C) ;                \
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_MEMORY (&Wi, Wi_mem) ;  \
+    GB_FREE_MEMORY (&Wj, Wj_mem) ;  \
+    GB_FREE_MEMORY (&Wx, Wx_mem) ;  \
+    GB_phybix_free (C) ;            \
 }
 
 #include "concat/GB_concat.h"
@@ -41,15 +41,18 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     GrB_Matrix A = NULL ;
     ASSERT_MATRIX_OK (C, "C input to concat hyper", GB0) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     GrB_Type ctype = C->type ;
     int64_t cvlen = C->vlen ;
     int64_t cvdim = C->vdim ;
     bool csc = C->is_csc ;
     size_t csize = ctype->size ;
 
-    GB_MDECL (Wi, , u) ; uint64_t Wi_mem = 0 ;        // FIXME memlane
-    GB_MDECL (Wj, , u) ; uint64_t Wj_mem = 0 ;        // FIXME memlane
-    GB_void *restrict Wx = NULL ; uint64_t Wx_mem = 0 ;       // FIXME memlane
+    GB_MDECL (Wi, , u) ; uint64_t Wi_mem = mem ;
+    GB_MDECL (Wj, , u) ; uint64_t Wj_mem = mem ;
+    GB_void *restrict Wx = NULL ; uint64_t Wx_mem = mem ;
 
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,

@@ -85,6 +85,9 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
 
     ASSERT (R != NULL) ;
 
+    int memlane = GB_memlane (R->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     ASSERT_MATRIX_OK (M, "M for masker", GB0) ;
     ASSERT (!GB_PENDING (M)) ;
     ASSERT (!GB_JUMBLED (M)) ;
@@ -118,16 +121,16 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     //--------------------------------------------------------------------------
 
     int64_t Rnvec, Rnvec_nonempty = 0 ;
-    void *Rp = NULL ; uint64_t Rp_mem = 0 ; // FIXME memlane
-    void *Rh = NULL ; uint64_t Rh_mem = 0 ; // FIXME memlane
+    void *Rp = NULL ; uint64_t Rp_mem = mem ;
+    void *Rh = NULL ; uint64_t Rh_mem = mem ;
 
-    int64_t *R_to_M = NULL ; uint64_t R_to_M_mem = 0 ;  // FIXME memlane
-    int64_t *R_to_C = NULL ; uint64_t R_to_C_mem = 0 ;  // FIXME memlane
-    int64_t *R_to_Z = NULL ; uint64_t R_to_Z_mem = 0 ;  // FIXME memlane
+    int64_t *R_to_M = NULL ; uint64_t R_to_M_mem = mem ;
+    int64_t *R_to_C = NULL ; uint64_t R_to_C_mem = mem ;
+    int64_t *R_to_Z = NULL ; uint64_t R_to_Z_mem = mem ;
 
     int R_ntasks = 0 ;
     GB_task_struct *TaskList = NULL ;
-    uint64_t TaskList_mem = 0 ; // FIXME memlane
+    uint64_t TaskList_mem = mem ;
     bool Rp_is_32, Rj_is_32, Ri_is_32 ;
 
     //--------------------------------------------------------------------------

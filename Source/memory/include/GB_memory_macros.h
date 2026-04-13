@@ -18,6 +18,10 @@
 // contains the memlane in the high order byte, and the memsize in the lower 7
 // bytes.
 
+#define GB_MEMLANE_DEFAULT 0
+#define GB_MEMLANE_RMM 0        /* FIXME: Rapids will be on lane 1 */
+#define GB_MEMLANE_MATLAB 0     /* FIXME: mxMalloc will be on lane 2 */
+
 GB_STATIC_INLINE int GB_memlane (uint64_t mem)
 {
     // return the high order byte, containing the memlane

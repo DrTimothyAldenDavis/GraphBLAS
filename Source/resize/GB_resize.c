@@ -37,8 +37,13 @@ GrB_Info GB_resize              // change the size of a matrix
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_void *restrict Ax_new = NULL ; uint64_t Ax_new_mem = 0 ; // FIXME memlane
-    int8_t  *restrict Ab_new = NULL ; uint64_t Ab_new_mem = 0 ; // FIXME memlane
+
+    ASSERT (A != NULL) ;
+    int memlane = GB_memlane (A->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
+    GB_void *restrict Ax_new = NULL ; uint64_t Ax_new_mem = mem ;
+    int8_t  *restrict Ab_new = NULL ; uint64_t Ab_new_mem = mem ;
     ASSERT_MATRIX_OK (A, "A to resize", GB0) ;
 
     GrB_Matrix T = NULL ;
@@ -284,7 +289,7 @@ GrB_Info GB_resize              // change the size of a matrix
             struct GB_Scalar_opaque scalar_header ;
             int64_t k = vlen_new - 1 ;
             GrB_Scalar scalar = GB_Scalar_wrap (&scalar_header, GrB_INT64, &k) ;
-            GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
+            GB_OK (GB_matrix_header_new (&T, memlane)) ;
             GB_OK (GB_selector (T, GrB_ROWLE, false, A, scalar, Werk)) ;
             GB_OK (GB_transplant (A, A->type, &T, Werk)) ;
         }

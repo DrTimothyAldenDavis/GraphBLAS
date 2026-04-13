@@ -60,6 +60,10 @@ GrB_Info GB_AxB_dot3_slice
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (C != NULL) ;
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     ASSERT (p_TaskList != NULL) ;
     ASSERT (p_TaskList_mem != NULL) ;
     ASSERT (p_ntasks != NULL) ;
@@ -103,7 +107,7 @@ GrB_Info GB_AxB_dot3_slice
     int ntasks1 = 0 ;
     nthreads = GB_nthreads (total_work, chunk, nthreads_max) ;
     GB_task_struct *restrict TaskList = NULL ;
-    uint64_t TaskList_mem = 0 ; // FIXME memlane
+    uint64_t TaskList_mem = mem ;
     int max_ntasks = 0 ;
     int ntasks = 0 ;
     int ntasks0 = (nthreads == 1) ? 1 : (32 * nthreads) ;

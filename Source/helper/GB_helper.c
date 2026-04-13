@@ -28,7 +28,7 @@ bool GB_factory_kernels_enabled = true ;
 //------------------------------------------------------------------------------
 
 #define GB_ALLOCATE_WORK(work_type)                                         \
-    size_t Work_mem = 0 ;  /* FIXME memlane */                              \
+    size_t Work_mem = GB_MEMLANE_MATLAB ;                                   \
     work_type *Work = GB_MALLOC_MEMORY (nthreads, sizeof (work_type),       \
         &Work_mem) ;                                                        \
     if (Work == NULL) return (false) ;
@@ -425,11 +425,11 @@ static GxB_Container Container = NULL ;
 static GrB_Vector GB_helper_component (void)
 {
     size_t s = sizeof (struct GB_Vector_opaque) ;
-    GrB_Vector p = GB_Global_persistent_malloc (s) ;    // always use memlane 0
+    GrB_Vector p = GB_Global_persistent_malloc (s) ;  // with GB_MEMLANE_MATLAB
     if (p != NULL)
     {
         memset (p, 0, s) ;
-        p->header_mem = GB_mem (s, 0) ;     // always use memlane 0
+        p->header_mem = GB_mem (GB_MEMLANE_MATLAB, s) ;
         p->type = GrB_BOOL ;
         p->is_csc = true ;
         p->plen = -1 ;
@@ -454,7 +454,7 @@ void GB_helper_container_new (void)         // allocate the global Container
 
     // allocate a new Container
     size_t s = sizeof (struct GxB_Container_struct) ;
-    Container = GB_Global_persistent_malloc (s) ;    // always use memlane 0
+    Container = GB_Global_persistent_malloc (s) ;   // with GB_MEMLANE_MATLAB
     printf ("new persistent container: %p\n", Container) ;
     if (Container != NULL)
     {

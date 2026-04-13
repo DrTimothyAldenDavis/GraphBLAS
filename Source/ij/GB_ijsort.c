@@ -50,6 +50,7 @@ GrB_Info GB_ijsort
     bool *I2k_is_32_handle,     // if I2k_is_32 true, I2 is 32 bits; else 64
     uint64_t *I2k_mem_handle,
     GB_Werk Werk
+    // FIXME memlane
 )
 {
 
@@ -67,14 +68,17 @@ GrB_Info GB_ijsort
     ASSERT (I2k_is_32_handle != NULL) ;
     ASSERT (I2k_mem_handle != NULL) ;
 
+    int memlane = 0 ;   // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // declare workspace and get inputs
     //--------------------------------------------------------------------------
 
-    GB_MDECL (I2 , , u) ; uint64_t I2_mem  = 0 ;        // FIXME memlane
-    GB_MDECL (I2k, , u) ; uint64_t I2k_mem = 0 ;        // FIXME memlane
-    GB_MDECL (I1 , , u) ; uint64_t I1_mem = 0 ;         // FIXME memlane
-    GB_MDECL (I1k, , u) ; uint64_t I1k_mem = 0 ;        // FIXME memlane
+    GB_MDECL (I2 , , u) ; uint64_t I2_mem  = mem ;
+    GB_MDECL (I2k, , u) ; uint64_t I2k_mem = mem ;
+    GB_MDECL (I1 , , u) ; uint64_t I1_mem  = mem ;
+    GB_MDECL (I1k, , u) ; uint64_t I1k_mem = mem ;
     GB_WERK_DECLARE (W, uint64_t) ;
 
     ASSERT (ni > 1) ;

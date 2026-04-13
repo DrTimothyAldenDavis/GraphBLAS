@@ -23,10 +23,13 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_BITMAP_SUBREF_PROTO (GB_jit_kernel)
     GB_GET_CALLBACK (GB_free_memory) ;
     GB_GET_CALLBACK (GB_subassign_IxJ_slice) ;
 
+    int memlane = 0 ;   // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     // declare the TaskList_IxJ workspace
     GrB_Info info = GrB_SUCCESS ;
     GB_task_struct *TaskList_IxJ = NULL ;
-    uint64_t TaskList_IxJ_mem = 0 ;     // FIXME memlane
+    uint64_t TaskList_IxJ_mem = mem ;
     int ntasks_IxJ = 0, nthreads_IxJ = 0 ;
 
     // get C and A

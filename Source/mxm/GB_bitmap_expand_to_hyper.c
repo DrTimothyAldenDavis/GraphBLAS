@@ -41,6 +41,9 @@ GrB_Info GB_bitmap_expand_to_hyper
     ASSERT_MATRIX_OK (A, "A for expand C from bitmap/full to hyper", GB0) ;
     ASSERT_MATRIX_OK (B, "B for expand C from bitmap/full to hyper", GB0) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
 
     int64_t cvlen = C->vlen ;
@@ -70,9 +73,9 @@ GrB_Info GB_bitmap_expand_to_hyper
     GB_Type_code cjcode = (Cj_is_32  ) ? GB_UINT32_code : GB_UINT64_code ;
     GB_Type_code bjcode = (B->j_is_32) ? GB_UINT32_code : GB_UINT64_code ;
 
-    GB_MDECL (Cp, , u) ; uint64_t Cp_mem = 0 ;  // FIXME memlane
-    GB_MDECL (Ci, , u) ; uint64_t Ci_mem = 0 ;  // FIXME memlane
-    void *Ch = NULL ; uint64_t Ch_mem = 0 ;     // FIXME memlane
+    GB_MDECL (Cp, , u) ; uint64_t Cp_mem = mem ;
+    GB_MDECL (Ci, , u) ; uint64_t Ci_mem = mem ;
+    void *Ch = NULL ; uint64_t Ch_mem = mem ;
 
     Cp = GB_MALLOC_MEMORY (cvdim+1, cpsize, &Cp_mem) ;
     if (B_is_hyper)

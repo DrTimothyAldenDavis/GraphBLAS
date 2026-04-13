@@ -47,12 +47,15 @@ GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
     ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (GB_VECTOR_OK (I_vector)) ;
 
+    int memlane = GB_memlane (w->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // finish any pending work
     //--------------------------------------------------------------------------
 
     void *I = NULL ;
-    uint64_t I_mem = 0 ;    // FIXME memlane
+    uint64_t I_mem = mem ;
 
     GB_MATRIX_WAIT (scalar) ;
     if (GB_nnz ((GrB_Matrix) scalar) != 1)

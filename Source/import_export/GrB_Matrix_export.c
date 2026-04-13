@@ -58,6 +58,8 @@ static GrB_Info GB_export_worker  // export a matrix
     GrB_Matrix A = A_input ;
     GrB_Matrix T = NULL ;
 
+    int memlane = GB_memlane (A->header_mem) ;
+
     switch (format)
     {
         case GrB_CSR_FORMAT :
@@ -133,7 +135,7 @@ static GrB_Info GB_export_worker  // export a matrix
         if (is_csc != csc_requested)
         { 
             // T = A'
-            GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
+            GB_OK (GB_matrix_header_new (&T, memlane)) ;
             GB_OK (GB_transpose_cast (T, A->type, csc_requested, A, false,
                 Werk)) ;
         }
@@ -179,9 +181,7 @@ static GrB_Info GB_export_worker  // export a matrix
                 GB_FREE_ALL ;
                 return (GrB_INSUFFICIENT_SPACE) ;
             }
-//          GB_memcpy (Ap, A->p, plen  * sizeof (uint64_t), nthreads_max) ;
             GB_cast_int (Ap, GB_UINT64_code, A->p, apcode, plen, nthreads_max) ;
-//          GB_memcpy (Ai, A->i, nvals * sizeof (uint64_t), nthreads_max) ;
             GB_cast_int (Ai, GB_UINT64_code, A->i, aicode, nvals, nthreads_max);
             (*Ap_len) = plen ;
             (*Ai_len) = nvals ;

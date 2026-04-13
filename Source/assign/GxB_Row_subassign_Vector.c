@@ -44,6 +44,9 @@ GrB_Info GxB_Row_subassign_Vector   // C(i,J)<mask'> = accum (C(i,J),u')
     ASSERT (mask == NULL || GB_VECTOR_OK (mask)) ;
     ASSERT (GB_VECTOR_OK (u)) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         xx1, xx2, xx3, xx7) ;
@@ -56,7 +59,7 @@ GrB_Info GxB_Row_subassign_Vector   // C(i,J)<mask'> = accum (C(i,J),u')
     //--------------------------------------------------------------------------
 
     void *J = NULL ;
-    uint64_t J_mem = 0 ;        // FIXME memlane
+    uint64_t J_mem = mem ;
     int64_t nj = 0 ;
     GrB_Type J_type = NULL ;
     GB_OK (GB_ijxvector (J_vector, false, 1, desc, false,

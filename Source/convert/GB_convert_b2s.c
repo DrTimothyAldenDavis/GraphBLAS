@@ -35,6 +35,7 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
     const GrB_Type ctype,       // type of Cx
     const GrB_Matrix A,         // matrix to extract; not modified
     GB_Werk Werk
+    // FIXME memlane param
 )
 {
 
@@ -48,11 +49,14 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
     ASSERT_TYPE_OK (ctype, "ctype for b2s", GB0) ;
     ASSERT ((Cp_is_32 && A->nvals < UINT32_MAX) || !Cp_is_32) ;
 
+    int memlane = 0 ;   // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // get inputs and determine tasks
     //--------------------------------------------------------------------------
 
-    void *W = NULL ; uint64_t W_mem = 0 ;   // FIXME memlane
+    void *W = NULL ; uint64_t W_mem = mem ;
     GB_IDECL (W , , u) ;
     GB_IDECL (Cp, , u) ; GB_IPTR (Cp, Cp_is_32) ;
     GB_IDECL (Ci, , u) ; GB_IPTR (Ci, Ci_is_32) ;

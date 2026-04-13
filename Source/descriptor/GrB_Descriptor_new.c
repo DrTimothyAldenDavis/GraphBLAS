@@ -25,12 +25,15 @@ GrB_Info GrB_Descriptor_new     // create a new descriptor
     GB_RETURN_IF_NULL (descriptor) ;
     (*descriptor) = NULL ;
 
+    int memlane = 0 ;   // FIXME memlane get from Context
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // create the descriptor
     //--------------------------------------------------------------------------
 
     // allocate the descriptor
-    uint64_t header_mem = 0 ;   // FIXME memlane
+    uint64_t header_mem = mem ;
     (*descriptor) = GB_MALLOC_MEMORY (1, sizeof (struct GB_Descriptor_opaque),
         &header_mem) ;
     if (*descriptor == NULL)

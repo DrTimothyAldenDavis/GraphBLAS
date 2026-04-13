@@ -74,6 +74,9 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     GrB_Info info ;
     ASSERT (C != NULL) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     ASSERT_MATRIX_OK (A, "A for emult", GB0) ;
     ASSERT_MATRIX_OK (B, "B for emult", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for emult", GB0) ;
@@ -85,14 +88,13 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // declare workspace
     //--------------------------------------------------------------------------
 
-    // FIXME memlane
-    GB_task_struct *TaskList = NULL ; uint64_t TaskList_mem = 0 ;
-    int64_t *C_to_M = NULL ; uint64_t C_to_M_mem = 0 ;
-    int64_t *C_to_A = NULL ; uint64_t C_to_A_mem = 0 ;
-    int64_t *C_to_B = NULL ; uint64_t C_to_B_mem = 0 ;
+    GB_task_struct *TaskList = NULL ; uint64_t TaskList_mem = mem ;
+    int64_t *C_to_M = NULL ; uint64_t C_to_M_mem = mem ;
+    int64_t *C_to_A = NULL ; uint64_t C_to_A_mem = mem ;
+    int64_t *C_to_B = NULL ; uint64_t C_to_B_mem = mem ;
     int64_t Cnvec, Cnvec_nonempty ;
-    void *Cp = NULL ; uint64_t Cp_mem = 0 ;
-    const void *Ch = NULL ; uint64_t Ch_mem = 0 ;
+    void *Cp = NULL ; uint64_t Cp_mem = mem ;
+    const void *Ch = NULL ; uint64_t Ch_mem = mem ;
     int C_ntasks = 0, C_nthreads ;
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
 

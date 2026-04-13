@@ -57,12 +57,15 @@ GrB_Info GxB_Matrix_build_Vector // build a matrix from (I,J,X) tuples
     ASSERT_VECTOR_OK (J_vector, "J_vector for build", GB0) ;
     ASSERT_VECTOR_OK (X_vector, "X_vector for build", GB0) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // finish any pending work
     //--------------------------------------------------------------------------
 
     void *I = NULL, *J = NULL, *X = NULL ;
-    uint64_t I_mem = 0, J_mem = 0, X_mem = 0 ;     // FIXME memlane
+    uint64_t I_mem = mem, J_mem = mem, X_mem = mem ;
 
     GB_MATRIX_WAIT (I_vector) ;
     GB_MATRIX_WAIT (J_vector) ;

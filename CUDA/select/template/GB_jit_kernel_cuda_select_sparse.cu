@@ -624,12 +624,12 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     GrB_Info info ;
 
     // workspaces of size anz+2
-    void *W_0 = NULL ; uint64_t W_0_mem = 0 ;   // FIXME memlane
-    void *W_1 = NULL ; uint64_t W_1_mem = 0 ;   // FIXME memlane
+    void *W_0 = NULL ; uint64_t W_0_mem = GB_MEMLANE_RMM ;
+    void *W_1 = NULL ; uint64_t W_1_mem = GB_MEMLANE_RMM ;
     // workspace of size max (nchunks_in_A, nchunks_in_C)+1
-    void *W_2 = NULL ; uint64_t W_2_mem = 0 ;   // FIXME memlane
+    void *W_2 = NULL ; uint64_t W_2_mem = GB_MEMLANE_RMM ;
     // workspace of size cnz+2, where cnz <= anz
-    void *W_3 = NULL ; uint64_t W_3_mem = 0 ;   // FIXME memlane
+    void *W_3 = NULL ; uint64_t W_3_mem = GB_MEMLANE_RMM ;
 
     GB_A_NHELD (anz) ;          // # of entries in A
     int64_t cnz = 0 ;           // # of entries in C (which is <= anz)
@@ -940,8 +940,8 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     C->plen = cnvec ;
     C->nvec = cnvec ;
     C->nvec_nonempty = cnvec ;
-    C->p_mem = 0 ;      // FIXME memlane
-    C->h_mem = 0 ;      // FIXME memlane
+    C->p_mem = GB_MEMLANE_RMM ;
+    C->h_mem = GB_MEMLANE_RMM ;
     C->p = (GB_Cp_TYPE *) GB_MALLOC_MEMORY (C->plen+1, sizeof (GB_Cp_TYPE),
         &(C->p_mem)) ;
     C->h = (GB_Cj_TYPE *) GB_MALLOC_MEMORY (C->plen, sizeof (GB_Cj_TYPE),

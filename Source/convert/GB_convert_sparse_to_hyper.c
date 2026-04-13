@@ -33,6 +33,10 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A converting to hypersparse", GB0) ;
+
+    int memlane = GB_memlane (A->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     int64_t anz = GB_nnz (A) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
@@ -105,8 +109,8 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         // allocate the new A->p and A->h
         //----------------------------------------------------------------------
 
-        GB_Ap_DECLARE (Ap_new, ) ; uint64_t Ap_new_mem = 0 ;  // FIXME memlane
-        GB_Ah_DECLARE (Ah_new, ) ; uint64_t Ah_new_mem = 0 ;  // FIXME memlane
+        GB_Ap_DECLARE (Ap_new, ) ; uint64_t Ap_new_mem = mem ;
+        GB_Ah_DECLARE (Ah_new, ) ; uint64_t Ah_new_mem = mem ;
         int64_t plen_new = (n == 1) ? 1 : nvec_nonempty ;
         size_t psize = A->p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
         size_t jsize = A->j_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
