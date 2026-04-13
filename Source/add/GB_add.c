@@ -11,7 +11,7 @@
 // element-wise on the matrices A and B.  The result is typecasted as needed.
 // The pattern of C is the union of the pattern of A and B, intersection with
 // the mask M, if present.  On input, the contents of C are undefined; it is
-// an output-only matrix in a static header.
+// an output-only matrix in an existing header.
 
 // Let the op be z=f(x,y) where x, y, and z have type xtype, ytype, and ztype.
 // If both A(i,j) and B(i,j) are present, then:
@@ -67,7 +67,7 @@
 
 GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 (
-    GrB_Matrix C,           // output matrix, static header
+    GrB_Matrix C,           // output matrix, existing header
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_Matrix M,     // optional mask for C, unused if NULL

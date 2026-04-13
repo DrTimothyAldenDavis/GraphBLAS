@@ -22,7 +22,7 @@
 
 GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
 (
-    GrB_Matrix C,                   // output matrix, static header
+    GrB_Matrix C,                   // output matrix, existing header
     const GrB_Matrix D,             // diagonal input matrix
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=D*A

@@ -14,7 +14,7 @@
 
 // C is sparse or hypersparse.  M, A, and B can have any format.
 // The accum operator is not handled, and C is not modified in-place.  Instead,
-// C is constructed in a static header.
+// C is constructed in a existing header.
 
 // For simplicity, this discussion and all comments in this code assume that
 // all matrices are in CSC format, but the algorithm is CSR/CSC agnostic.
@@ -116,7 +116,7 @@
 
 GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 (
-    GrB_Matrix C,                   // output, static header, not in-place
+    GrB_Matrix C,                   // output, existing header, not in-place
     const bool C_iso,               // true if C is iso
     const GB_void *cscalar,         // iso value of C
     int C_sparsity,                 // construct C as sparse or hypersparse

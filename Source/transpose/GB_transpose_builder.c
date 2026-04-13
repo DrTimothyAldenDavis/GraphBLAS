@@ -218,7 +218,7 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
     // or all non-iso, depending on C_iso.
 
     GB_OK (GB_builder (
-        T,          // create T using a static header
+        T,          // create T using an existing header
         ctype,      // T is of type ctype
         avdim,      // T->vlen = A->vdim, always > 1
         avlen,      // T->vdim = A->vlen, always > 1

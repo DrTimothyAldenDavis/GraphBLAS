@@ -31,7 +31,7 @@
 
 GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
 (
-    GrB_Matrix C,                   // output matrix, static header
+    GrB_Matrix C,                   // output matrix, existing header
     const GrB_Matrix A,             // input matrix
     const GrB_Matrix D,             // diagonal input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*D;

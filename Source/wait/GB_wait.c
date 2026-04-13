@@ -166,11 +166,9 @@ GrB_Info GB_wait                // finish all pending computations
         GB_void *S_input = (A_iso) ? ((GB_void *) A->x) : NULL ;
         GrB_Type stype = (A_iso) ? A->type : A->Pending->type ;
 
-        // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
         GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
-        // printf ("T: %p\n", T) ;
         info = GB_builder (
-            T,                      // create T using a static header
+            T,                      // create T using an existing header
             A->type,                // T->type = A->type
             A->vlen,                // T->vlen = A->vlen
             A->vdim,                // T->vdim = A->vdim

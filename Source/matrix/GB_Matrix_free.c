@@ -38,6 +38,7 @@ GB_CALLBACK_MATRIX_FREE_PROTO (GB_Matrix_free)
             { 
                 // free the header of A itself, unless it is static
                 A->magic = GB_FREED ;       // to help detect dangling pointers
+                A->header_mem = 0 ;
                 GB_FREE_MEMORY (Ahandle, header_mem) ;
                 (*Ahandle) = NULL ;
             }

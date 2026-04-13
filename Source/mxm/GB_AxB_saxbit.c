@@ -42,7 +42,7 @@
 
 GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
 (
-    GrB_Matrix C,                   // output matrix, static header
+    GrB_Matrix C,                   // output matrix, existing header
     const bool C_iso,               // true if C is iso
     const GB_void *cscalar,         // iso value of C
     const GrB_Matrix M,             // optional mask matrix

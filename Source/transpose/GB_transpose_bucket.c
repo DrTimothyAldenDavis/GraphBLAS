@@ -20,7 +20,7 @@
 // A->is_csc is ignored.
 
 // The input can be hypersparse or non-hypersparse.  The output C is always
-// non-hypersparse, and never shallow.  On input, C is a static header.
+// non-hypersparse, and never shallow.  On input, C is an existing header.
 
 // If A is m-by-n in CSC format, with e nonzeros, the time and memory taken is
 // O(m+n+e) if A is non-hypersparse, or O(m+e) if hypersparse.  This is fine if
@@ -57,7 +57,7 @@
 
 GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 (
-    GrB_Matrix C,               // output matrix (static header)
+    GrB_Matrix C,               // output matrix (existing header)
     const GB_iso_code C_code_iso,   // iso code for C
     const GrB_Type ctype,       // type of output matrix C
     const bool C_is_csc,        // format of output matrix C

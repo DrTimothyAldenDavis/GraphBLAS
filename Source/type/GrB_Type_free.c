@@ -17,7 +17,8 @@ GrB_Info GrB_Type_free          // free a user-defined type
 
     if (type != NULL)
     {
-        // only free a dynamically-allocated type, which have header_mem > 0
+        // only free a dynamically-allocated type, which have
+        // GB_memsize (header_mem) > 0
         GrB_Type t = *type ;
         if (t != NULL)
         {

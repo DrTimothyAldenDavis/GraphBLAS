@@ -66,7 +66,7 @@
 
 GrB_Info GB_masker          // R = masker (C, M, Z)
 (
-    GrB_Matrix R,           // output matrix, static header
+    GrB_Matrix R,           // output matrix, existing header
     const bool R_is_csc,    // format of output matrix R
     const GrB_Matrix M,     // required input mask
     const bool Mask_comp,   // descriptor for M

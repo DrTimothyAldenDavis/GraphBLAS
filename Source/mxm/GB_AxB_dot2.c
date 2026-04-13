@@ -50,7 +50,7 @@
 
 GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
 (
-    GrB_Matrix C,                   // output matrix, static header
+    GrB_Matrix C,                   // output matrix, existing header
     const bool C_iso,               // true if C is iso
     const GB_void *cscalar,         // iso value of C
     const GrB_Matrix M_in,          // mask matrix for C<#M>=A'*B, may be NULL
@@ -178,7 +178,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
 
     if (A_or_B_hyper && M_in != NULL)
     { 
-        // Mwork = M_in (Ah, Bh), where Mwork has a static header
+        // Mwork = M_in (Ah, Bh)
         // if Mask_struct then Mwork is extracted as iso
         // GB_CLEAR_MATRIX_HEADER (Mwork, &Mwork_header) ;
         GB_OK (GB_matrix_header_new (&Mwork, /* FIXME memlane: */ 0)) ;

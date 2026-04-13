@@ -107,11 +107,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     // create B as full iso vector
     //--------------------------------------------------------------------------
 
-    // B is constructed with a static header in O(1) time and space, even
-    // though it is m-by-1.  It contains no dynamically-allocated content and
-    // does not need to be freed.
+    // B is constructed in O(1) time and space, even though it is m-by-1.
     int64_t m = A_transpose ? GB_NROWS (A) : GB_NCOLS (A) ;
-    // GB_CLEAR_MATRIX_HEADER (B, &B_header) ;
     GB_OK (GB_new (&B, // full, new header
         ztype, m, 1, GB_ph_null, true, GxB_FULL, GB_NEVER_HYPER, 1,
         /* OK: */ false, false, false)) ;
@@ -167,7 +164,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             // leading "1" character in its name.  So "reduce_1st" must be
             // unique.
             op = &op_header ;
-            op->header_mem = 0 ;    // always use memlane 0 (static header)
+            op->header_mem = 0 ;    // static header for binary op
             info = GB_binop_new (op, NULL, // op->binop_func. NULL for FIRST_UDT
                 ztype, ztype, ztype,    // ztype is user-defined
                 "1st",                  // a simple name for FIRST_UDT

@@ -4,6 +4,7 @@ FIXME, version 10.4.0
         found without finalizing pending tuples
     * GxB_atfork_(prepare,parent,child): added to support an application
         needing to fork, while still using GraphBLAS.
+    * static headers: removed, except for GB_Scalar_wrap, and unary/binary ops
 
 Jan 21, 2026, version 10.3.1
 
@@ -494,7 +495,7 @@ Version 6.2.0 Feb 14, 2022
 
     * added row/column/entry/vector iterators
     * @GrB C=A*B: revised sparse-times-full rule
-    * static_header: no longer used if CUDA enabled
+    * static header: no longer used if CUDA enabled
     * GB_BURBLE: removed.  Burble can no longer be disabled at compile-time.
 
 Version 6.1.4, Jan 13, 2022

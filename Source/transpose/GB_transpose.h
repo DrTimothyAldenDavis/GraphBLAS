@@ -52,7 +52,7 @@ GrB_Info GB_transpose_cast      // C= (ctype) A' or one (A'), not in-place
 
 GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 (
-    GrB_Matrix C,               // output matrix (static header)
+    GrB_Matrix C,               // output matrix (existing header)
     const GB_iso_code C_code_iso,   // iso code for C
     const GrB_Type ctype,       // type of output matrix C
     const bool C_is_csc,        // format of output matrix C

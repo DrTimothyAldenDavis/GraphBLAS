@@ -92,7 +92,7 @@
 GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 (
     // output
-    GrB_Matrix C,               // output matrix, static header
+    GrB_Matrix C,               // output matrix, existing header
     // input, not modified
     bool C_iso,                 // if true, return C as iso, regardless of A
     const bool C_is_csc,        // requested format of C

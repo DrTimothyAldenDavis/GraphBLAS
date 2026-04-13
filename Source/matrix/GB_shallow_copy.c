@@ -27,7 +27,7 @@
 
 GrB_Info GB_shallow_copy    // create a purely shallow matrix
 (
-    GrB_Matrix C,           // output matrix C, with a static header
+    GrB_Matrix C,           // output matrix C, with a existing header
     const bool C_is_csc,    // desired CSR/CSC format of C
     const GrB_Matrix A,     // input matrix
     GB_Werk Werk

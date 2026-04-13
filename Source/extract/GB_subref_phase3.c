@@ -16,7 +16,7 @@
 
 GrB_Info GB_subref_phase3   // C=A(I,J)
 (
-    GrB_Matrix C,               // output matrix, static header
+    GrB_Matrix C,               // output matrix, existing header
     // from phase2:
     void **Cp_handle,           // vector pointers for C
     const bool Cp_is_32,        // if true, Cp is 32-bit; else 64-bit

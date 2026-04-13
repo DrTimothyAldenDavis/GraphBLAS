@@ -15,7 +15,7 @@
 GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 (
     // output
-    GrB_Matrix C,               // output matrix, static header
+    GrB_Matrix C,               // output matrix, existing header
     // input, not modified
     bool C_iso,                 // if true, return C as iso, regardless of A
     const bool C_is_csc,        // requested format of C
@@ -130,7 +130,7 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
 
 GrB_Info GB_subref_phase3   // C=A(I,J)
 (
-    GrB_Matrix C,               // output matrix, static header
+    GrB_Matrix C,               // output matrix, existing header
     // from phase2:
     void **Cp_handle,           // vector pointers for C
     const bool Cp_is_32,        // if true, Cp is 32-bit; else 64-bit
@@ -171,7 +171,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
 GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 (
     // output:
-    GrB_Matrix C,               // output matrix, static header
+    GrB_Matrix C,               // output matrix, existing header
     // inputs, not modified:
     const GrB_Type ctype,       // type of C to create
     const bool C_iso,           // if true, C is iso

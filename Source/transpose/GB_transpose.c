@@ -282,7 +282,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // allocate T
         if (T_cheap)
         { 
-            // just initialize the static header of T, not T->b or T->x
+            // just initialize the header of T, not T->b or T->x
             GBURBLE ("(cheap transpose) ") ;
             info = GB_new (&T, // bitmap or full, existing header
                 ctype, avdim, avlen, GB_ph_null, C_is_csc,

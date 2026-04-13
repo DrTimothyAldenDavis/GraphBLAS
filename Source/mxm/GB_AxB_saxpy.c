@@ -17,7 +17,7 @@
 
 GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 (
-    GrB_Matrix C,                   // output, static header
+    GrB_Matrix C,                   // output, existing header
     GrB_Matrix C_in,                // original input matrix
     const GrB_Matrix M,             // optional mask matrix
     const bool Mask_comp,           // if true, use !M

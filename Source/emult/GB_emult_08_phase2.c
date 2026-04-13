@@ -40,7 +40,7 @@
 
 GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
 (
-    GrB_Matrix C,           // output matrix, static header
+    GrB_Matrix C,           // output matrix, existing header
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B)

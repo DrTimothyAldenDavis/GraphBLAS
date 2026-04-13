@@ -47,7 +47,7 @@
 
 GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 (
-    GrB_Matrix C,                   // output matrix, static header
+    GrB_Matrix C,                   // output matrix, existing header
     GrB_Matrix C_in,                // input/output matrix, if done in-place
     GrB_Matrix M,                   // optional mask matrix
     const bool Mask_comp,           // if true, use !M

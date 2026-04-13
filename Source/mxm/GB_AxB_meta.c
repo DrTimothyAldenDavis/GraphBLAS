@@ -40,11 +40,11 @@
 
 GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 (
-    GrB_Matrix C,                   // output, static header (if not in-place)
+    GrB_Matrix C,                   // output, existing header (if not in-place)
     GrB_Matrix C_in,                // input/output matrix, if done in-place
     bool C_replace,                 // C matrix descriptor
     const bool C_is_csc,            // desired CSR/CSC format of C
-    GrB_Matrix MT,                  // return MT = M' (static header)
+    GrB_Matrix MT,                  // return MT = M' (existing header)
     bool *M_transposed,             // true if MT = M' was computed
     const GrB_Matrix M_in,          // mask for C<M> (not complemented)
     const bool Mask_comp,           // if true, use !M
@@ -459,7 +459,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     struct GB_Semiring_opaque semiring_struct ;
     GrB_Semiring semiring = &semiring_struct ;
     memcpy (semiring, semiring_in, sizeof (struct GB_Semiring_opaque)) ;
-    semiring->header_mem = 0 ;  // the semiring has a static header
+    semiring->header_mem = 0 ;  // the semiring has a existing header
     semiring->multiply = GB_flip_binop (semiring_in->multiply, &flipxy) ;
 
     opcode = semiring->multiply->opcode  ;

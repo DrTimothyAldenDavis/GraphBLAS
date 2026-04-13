@@ -43,7 +43,7 @@ GB_Operator GB_unop_identity    // return IDENTITY operator, or NULL on error
             // is the name of its type.
             if (op == NULL) return (NULL) ;
             // op = &op_header has been provided by the caller
-            op->header_mem = 0 ;    // static header
+            op->header_mem = 0 ;    // static header for unary op
             #ifdef GB_DEBUG
             GrB_Info info =
             #endif

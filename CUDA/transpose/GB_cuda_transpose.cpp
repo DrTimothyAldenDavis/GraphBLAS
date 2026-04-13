@@ -194,7 +194,7 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     //------------------------------------------------------------------
 
     GB_OK (GB_cuda_builder (
-        Thandle,    // create T using a static header
+        Thandle,    // create T using an existing header
         ctype,      // T is of type ctype
         avdim,      // T->vlen = A->vdim, always > 1
         avlen,      // T->vdim = A->vlen, always > 1

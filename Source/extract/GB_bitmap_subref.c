@@ -27,7 +27,7 @@
 GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 (
     // output:
-    GrB_Matrix C,               // output matrix, static header
+    GrB_Matrix C,               // output matrix, existing header
     // inputs, not modified:
     const GrB_Type ctype,       // type of C to create
     const bool C_iso,           // if true, C is iso

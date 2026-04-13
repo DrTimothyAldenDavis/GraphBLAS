@@ -31,7 +31,9 @@ void GB_Pending_free        // free a list of pending tuples
         GB_FREE_MEMORY (&(Pending->i), Pending->i_mem) ;
         GB_FREE_MEMORY (&(Pending->j), Pending->j_mem) ;
         GB_FREE_MEMORY (&(Pending->x), Pending->x_mem) ;
-        GB_FREE_MEMORY (&(Pending), Pending->header_mem) ;
+        uint64_t header_mem = Pending->header_mem ;
+        Pending->header_mem = 0 ;
+        GB_FREE_MEMORY (PHandle, header_mem) ;
     }
 
     (*PHandle) = NULL ;

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_clear_matrix_header.h: macros for allocating static headers
+// GB_clear_matrix_header.h: macros for allocating a new matrix header
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -7,13 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// GraphBLAS is now configured to never use static headers (with memlane).
-// Matrix headers are now always calloc'd.
-
 #undef  GBNSTATIC
 #define GBNSTATIC 1
 
-// FIXME: make this a function, not a macro
+// FIXME: replace with GB_matrix_header_new and delete this file
 
 #undef  GB_CLEAR_MATRIX_HEADER
 #define GB_CLEAR_MATRIX_HEADER(XX,XX_header_handle)                         \

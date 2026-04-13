@@ -98,7 +98,7 @@ void GB_Matrix_free             // free a matrix
 
 GrB_Info GB_shallow_copy    // create a purely shallow matrix
 (
-    GrB_Matrix C,           // output matrix C, with a static header
+    GrB_Matrix C,           // output matrix C, with a existing header
     const bool C_is_csc,    // desired CSR/CSC format of C
     const GrB_Matrix A,     // input matrix
     GB_Werk Werk
@@ -118,7 +118,6 @@ static inline GrB_Info GB_matrix_header_new
 {
     ASSERT (Ahandle != NULL) ;
     uint64_t header_mem = GB_mem (memlane, 0) ;
-    // printf ("matrix header new: %lu\n", header_mem) ;
     (*Ahandle) = (GrB_Matrix) GB_CALLOC_MEMORY (1,
         sizeof (struct GB_Matrix_opaque), &header_mem) ;
     if (*Ahandle == NULL)
@@ -127,7 +126,6 @@ static inline GrB_Info GB_matrix_header_new
     }
     (*Ahandle)->header_mem = header_mem ;
     (*Ahandle)->magic = GB_MAGIC2 ;
-    // printf ("now matrix header new: %lu\n", header_mem) ;
     return (GrB_SUCCESS) ;
 }
 

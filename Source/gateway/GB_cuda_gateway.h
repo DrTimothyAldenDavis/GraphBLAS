@@ -248,7 +248,7 @@ GrB_Info GB_cuda_colscale
 
 GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
 (
-    GrB_Matrix C,                   // output matrix, static header
+    GrB_Matrix C,                   // output matrix, existing header
     const GrB_Matrix M,             // mask matrix
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix

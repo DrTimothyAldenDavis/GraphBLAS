@@ -45,7 +45,7 @@
 
 GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
 (
-    GrB_Matrix R,                   // output matrix, static header
+    GrB_Matrix R,                   // output matrix, existing header
     const bool R_is_csc,            // format of output matrix R
     // from phase1:
     void **Rp_handle,               // vector pointers for R

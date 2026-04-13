@@ -52,7 +52,7 @@
 
 GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 (
-    GrB_Matrix C,           // output matrix, static header
+    GrB_Matrix C,           // output matrix, existing header
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_Matrix M,     // optional mask, unused if NULL
