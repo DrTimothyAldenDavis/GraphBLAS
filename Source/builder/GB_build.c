@@ -122,7 +122,6 @@ GrB_Info GB_build               // build matrix
 
     // check C
     GrB_Info info ;
-    // struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
     ASSERT (C != NULL) ;
     GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
@@ -324,16 +323,11 @@ GrB_Info GB_build               // build matrix
         // I, J, and X must be treated as readonly, so GB_builder is not
         // allowed to transplant them into T->x.
 
-        void *no_I_work = NULL ;
-        uint64_t I_work_mem = 0 ;   // FIXME memlane
-        void *no_J_work = NULL ;
-        uint64_t J_work_mem = 0 ;   // FIXME memlane
-        GB_void *no_X_work = NULL ;
-        uint64_t X_work_mem = 0 ;   // FIXME memlane
+        void *no_I_work = NULL ; uint64_t I_work_mem = 0 ;      // not used
+        void *no_J_work = NULL ; uint64_t J_work_mem = 0 ;      // not used
+        GB_void *no_X_work = NULL ; uint64_t X_work_mem = 0 ;   // not used
 
-        // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
         GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
-
         GB_OK (GB_builder (
             T,                      // create T using a existing header
             ttype,                  // the type of T

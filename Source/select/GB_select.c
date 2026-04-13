@@ -56,7 +56,6 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
     int memlane = GB_memlane (C->header_mem) ;
 
-    // struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
 
     // check domains and dimensions for C<M> = accum (C,T)

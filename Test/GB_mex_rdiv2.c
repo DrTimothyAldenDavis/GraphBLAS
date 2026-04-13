@@ -45,7 +45,6 @@ int AxB_method = GxB_DEFAULT ;
 bool flipxy = false ;
 bool done_in_place = false ;
 double C_scalar = 0 ;
-struct GB_Matrix_opaque MT_header, T_header ;
 
 GrB_Info axb (GB_Werk Werk) ;
 
@@ -111,10 +110,8 @@ GrB_Info axb (GB_Werk Werk)
         }
     }
 
-//  MT = GB_clear_matrix_header (&MT_header) ;
-//  T  = GB_clear_matrix_header (&T_header) ;
-    GB_CLEAR_MATRIX_HEADER (T, NULL) ;
-    GB_CLEAR_MATRIX_HEADER (MT, NULL) ;
+    GB_matrix_header_new (&T, /* FIXME memlane: */ 0) ;
+    GB_matrix_header_new (&MT, /* FIXME memlane: */ 0) ;
     if (T == NULL || MT == NULL)
     {
         GrB_BinaryOp_free_(&My_rdiv2) ;

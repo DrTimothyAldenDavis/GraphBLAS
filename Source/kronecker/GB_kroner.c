@@ -73,7 +73,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (A))
     { 
         GBURBLE ("A:") ;
-        // GB_CLEAR_MATRIX_HEADER (Awork, &Awork_header) ;
         GB_OK (GB_dup_worker (&Awork, A->iso, A, true, NULL)) ;
         ASSERT_MATRIX_OK (Awork, "dup Awork for kron (A,B)", GB0) ;
         GB_OK (GB_convert_bitmap_to_sparse (Awork, Werk)) ;
@@ -85,7 +84,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (B))
     { 
         GBURBLE ("B:") ;
-        // GB_CLEAR_MATRIX_HEADER (Bwork, &Bwork_header) ;
         GB_OK (GB_dup_worker (&Bwork, B->iso, B, true, NULL)) ;
         ASSERT_MATRIX_OK (Bwork, "dup Bwork for kron (A,B)", GB0) ;
         GB_OK (GB_convert_bitmap_to_sparse (Bwork, Werk)) ;

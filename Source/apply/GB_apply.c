@@ -42,7 +42,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 
     // C may be aliased with M and/or A
 
-//  struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
 
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
@@ -272,7 +271,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     { 
         // T = op (A'), typecasting to op->ztype
         GBURBLE ("(transpose-op) ") ;
-        // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
         GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
         info = GB_transpose (T, T_type, T_is_csc, A, op, scalar,
             binop_bind1st, flipij, Werk) ;
@@ -317,7 +315,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     { 
         // T = op (A), pattern is a shallow copy of A, type is op->ztype.
         GBURBLE ("(shallow-op) ") ;
-        // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
         GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
         info = GB_shallow_op (T, T_is_csc, op, scalar, binop_bind1st, flipij,
             A, Werk) ;

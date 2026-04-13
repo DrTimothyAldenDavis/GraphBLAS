@@ -23,7 +23,6 @@ void mexFunction
 )
 {
 
-    struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
 
     // do not get coverage counts unless the 3rd arg is present

@@ -146,7 +146,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT (Thandle != NULL) ;
     GrB_Info info ;
     GrB_Matrix T = *Thandle ;
-    // struct GB_Matrix_opaque MT_header, Z_header ;
     GrB_Matrix MT = NULL, Z = NULL ;
     GrB_Matrix M = M_in ;
 
@@ -209,7 +208,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // remove zombies and pending tuples from M.  M can be jumbled.
             GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
             ASSERT (GB_JUMBLED_OK (M)) ;
-            // GB_CLEAR_MATRIX_HEADER (MT, &MT_header) ;
             GB_OK (GB_matrix_header_new (&MT, memlane)) ;
             GB_OK (GB_transpose_cast (MT, GrB_BOOL, C->is_csc, M, Mask_struct,
                 Werk)) ;
@@ -356,8 +354,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
         // see GB_spec_accum.m for a description of this step.  If C is empty,
         // then the accumulator can be ignored.
-
-        // GB_CLEAR_MATRIX_HEADER (Z, &Z_header) ;
 
         if (use_transplant)
         { 

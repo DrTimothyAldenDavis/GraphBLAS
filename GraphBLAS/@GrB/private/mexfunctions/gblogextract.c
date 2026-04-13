@@ -182,10 +182,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // K is a shallow copy of M, except for its numerical values
-//  struct GB_Matrix_opaque K_header ;
-//  GrB_Matrix K = GB_clear_matrix_header (&K_header) ;
     GrB_Matrix K = NULL ;
-    // GB_CLEAR_MATRIX_HEADER (K, NULL) ;
     OK (GB_matrix_header_new (&K, /* memlane: */ 0)) ;
 
     OK (GB_shallow_copy (K, GxB_BY_COL, M, NULL)) ;

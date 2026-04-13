@@ -45,7 +45,6 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     int memlane = GB_memlane (V->header_mem) ;
     uint64_t mem = GB_mem (memlane, 0) ;
 
-    // struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
 
     GrB_Type atype = A->type ;

@@ -79,8 +79,6 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
     // temporary matrices and arrays
     GrB_Matrix Cwork = NULL, Mwork = NULL, Awork = NULL, SubMask = NULL ;
-    // struct GB_Matrix_opaque Cwork_header, Mwork_header, Awork_header,
-    //    MT_header, AT_header, SubMask_header ;
     void *I2 = NULL ; uint64_t I2_mem = 0 ; // FIXME memlane
     void *J2 = NULL ; uint64_t J2_mem = 0 ; // FIXME memlane
 
@@ -92,7 +90,6 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
     GB_OK (GB_assign_prep (&C, &M, &A, &subassign_method,
         &Cwork, &Mwork, &Awork,
-        // &Cwork_header, &Mwork_header, &Awork_header, &MT_header, &AT_header,
         &I, &I_is_32, &I2, &I2_mem, &ni, &nI, &Ikind, Icolon,
         &J, &J_is_32, &J2, &J2_mem, &nj, &nJ, &Jkind, Jcolon,
         &scalar_type, C_in, &C_replace, &assign_kind,
@@ -215,7 +212,6 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             //------------------------------------------------------------------
 
             ASSERT_MATRIX_OK (M, "big mask", GB0) ;
-            // GB_CLEAR_MATRIX_HEADER (SubMask, &SubMask_header) ;
             GB_OK (GB_matrix_header_new (&SubMask, /* FIXME memlane: */ 0)) ;
 
             const void *I_SubMask = I ; int64_t ni_SubMask = ni ;

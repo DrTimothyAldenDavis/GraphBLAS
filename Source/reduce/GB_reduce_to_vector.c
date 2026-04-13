@@ -41,7 +41,6 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_FAULTY (desc) ;
 
-    // struct GB_Matrix_opaque B_header ;
     GrB_Matrix B = NULL ;
     struct GB_Semiring_opaque semiring_header ;
     GrB_Semiring semiring = NULL ;

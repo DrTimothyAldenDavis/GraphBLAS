@@ -49,7 +49,6 @@ GrB_Info GB_mxm                     // C<M> = A*B
 
     GrB_Info info ;
 
-    // struct GB_Matrix_opaque MT_header, T_header ;
     GrB_Matrix MT = NULL, T = NULL ;
 
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;

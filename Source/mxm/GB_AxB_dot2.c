@@ -91,7 +91,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
 
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
 
-    // struct GB_Matrix_opaque Awork_header, Bwork_header, Mwork_header ;
     GrB_Matrix M = NULL, Mwork = NULL ;
     GrB_Matrix A = NULL, Awork = NULL ;
     GrB_Matrix B = NULL, Bwork = NULL ;
@@ -133,7 +132,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     if (A_is_hyper)
     { 
         // A = hypershallow version of A_in
-        // GB_CLEAR_MATRIX_HEADER (Awork, &Awork_header) ;
         GB_OK (GB_matrix_header_new (&Awork, memlane)) ;
         A = GB_hyper_shallow (Awork, A_in) ;
     }
@@ -146,7 +144,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     if (B_is_hyper)
     { 
         // B = hypershallow version of B_in
-        // GB_CLEAR_MATRIX_HEADER (Bwork, &Bwork_header) ;
         GB_OK (GB_matrix_header_new (&Bwork, memlane)) ;
         B = GB_hyper_shallow (Bwork, B_in) ;
     }
@@ -181,7 +178,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     { 
         // Mwork = M_in (Ah, Bh)
         // if Mask_struct then Mwork is extracted as iso
-        // GB_CLEAR_MATRIX_HEADER (Mwork, &Mwork_header) ;
         GB_OK (GB_matrix_header_new (&Mwork, memlane)) ;
         GB_OK (GB_subref (Mwork, Mask_struct, M_in->is_csc, M_in,
             (A_is_hyper) ? Ah : GrB_ALL, A->j_is_32, cvlen,

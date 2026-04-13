@@ -61,7 +61,6 @@ GrB_Info GB_wait                // finish all pending computations
     //--------------------------------------------------------------------------
 
     GrB_Info info = GrB_SUCCESS ;
-    // struct GB_Matrix_opaque T_header, W_header, S_header ;
     GrB_Matrix T = NULL, W = NULL, S = NULL, Y = NULL ;
 
     ASSERT_MATRIX_OK (A, "A to wait", GB0_Z) ;
@@ -253,7 +252,6 @@ GrB_Info GB_wait                // finish all pending computations
         struct GB_Scalar_opaque scalar_header ;
         int64_t k = 0 ;
         GrB_Scalar scalar = GB_Scalar_wrap (&scalar_header, GrB_INT64, &k) ;
-        // GB_CLEAR_MATRIX_HEADER (W, &W_header) ;
         GB_OK (GB_matrix_header_new (&W, /* FIXME memlane: */ 0)) ;
         GB_OK (GB_selector (W, GxB_NONZOMBIE, false, A, scalar, Werk)) ;
         GB_OK (GB_transplant (A, A->type, &W, Werk)) ;
@@ -333,7 +331,6 @@ GrB_Info GB_wait                // finish all pending computations
     int64_t anvec = A->nvec ;
     bool ignore ;
 
-    // GB_CLEAR_MATRIX_HEADER (S, &S_header) ;
     GB_OK (GB_matrix_header_new (&S, /* FIXME memlane: */ 0)) ;
     GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T,
         false, NULL, NULL, op_2nd, false, true, Werk)) ;

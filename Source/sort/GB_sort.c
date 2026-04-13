@@ -336,7 +336,6 @@ GrB_Info GB_sort
     ASSERT_BINARYOP_OK (op, "op for GB_sort", GB0) ;
 
     GrB_Matrix T = NULL ;
-    // struct GB_Matrix_opaque T_header ;
     GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
@@ -413,7 +412,6 @@ GrB_Info GB_sort
     if (C_is_NULL)
     { 
         // C is a temporary matrix, which is freed when done
-        // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
         GB_OK (GB_matrix_header_new (&T, /* FIXME memlane: */ 0)) ;
         C = T ;
     }

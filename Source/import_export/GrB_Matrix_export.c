@@ -56,7 +56,6 @@ static GrB_Info GB_export_worker  // export a matrix
     GrB_Info info ;
 
     GrB_Matrix A = A_input ;
-    // struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
 
     switch (format)
@@ -131,7 +130,6 @@ static GrB_Info GB_export_worker  // export a matrix
 
     if (make_copy)
     { 
-        // GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
         if (is_csc != csc_requested)
         { 
             // T = A'

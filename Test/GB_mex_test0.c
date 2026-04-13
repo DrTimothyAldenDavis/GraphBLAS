@@ -2136,10 +2136,8 @@ void mexFunction
     GB_Matrix_check (HugeRow, "huge row", G3, NULL) ;
     GxB_Matrix_fprint (HugeRow, "HugeRow", G3, ff) ;
 
-//  struct GB_Matrix_opaque HugeMatrix_header ;
-//  GrB_Matrix HugeMatrix = GB_clear_matrix_header (&HugeMatrix_header) ;
     GrB_Matrix HugeMatrix = NULL ;
-    GB_CLEAR_MATRIX_HEADER (HugeMatrix, NULL) ;
+    OK (GB_matrix_header_new (&HugeMatrix, /* FIXME memlane: */ 0)) ;
 
     OK (GB_AxB_dot2 (HugeMatrix, false, NULL, NULL, false, false,
         false, HugeRow, HugeRow, GxB_PLUS_TIMES_FP64, false, Werk)) ;
@@ -4929,10 +4927,8 @@ void mexFunction
     OK (GB_Matrix_check (A, "A for shallow op", G3, NULL)) ;
     Werk->where = "GB_shallow_op" ;
 
-    struct GB_Matrix_opaque Q_header ;
-//  GrB_Matrix Q = GB_clear_matrix_header (&Q_header) ;
     GrB_Matrix Q = NULL ;
-    GB_CLEAR_MATRIX_HEADER (Q, NULL) ;
+    OK (GB_matrix_header_new (&Q, /* FIXME memlane: */ 0)) ;
     OK (GB_shallow_op (Q, true, (GB_Operator) GrB_AINV_FP32, NULL, NULL,
         false, C, Werk)) ;
     OK (GB_Matrix_check (Q, "Q empty, float", G3, NULL)) ;

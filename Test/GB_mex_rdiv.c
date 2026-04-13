@@ -37,7 +37,6 @@ int64_t ancols = 0 ;
 int64_t bnrows = 0 ;
 int64_t bncols = 0 ;
 int AxB_method = GxB_DEFAULT ;
-struct GB_Matrix_opaque MT_header, C_header ;
 
 GrB_Info axb (GB_Werk Werk, bool cprint) ;
 
@@ -64,7 +63,6 @@ GrB_BinaryOp My_rdiv = NULL ;
 
 GrB_Info axb (GB_Werk Werk, bool cprint)
 {
-    printf ("here %d\n", __LINE__) ;
     // create the rdiv operator
     // try with a NULL function pointer, to test the JIT
     info = GxB_BinaryOp_new (&My_rdiv,
@@ -87,20 +85,13 @@ GrB_Info axb (GB_Werk Werk, bool cprint)
         return (info) ;
     }
 
-    printf ("here %d\n", __LINE__) ;
-
-//  MT = GB_clear_matrix_header (&MT_header) ;
-//  C  = GB_clear_matrix_header (&C_header) ;
-    GB_CLEAR_MATRIX_HEADER (MT, NULL) ;
-    printf ("here %d: %p\n", __LINE__, MT) ;
+    GB_matrix_header_new (&MT, /* FIXME memlane: */ 0) ;
     if (MT == NULL)
     {
-        printf ("here %d\n", __LINE__) ;
         GrB_BinaryOp_free_(&My_rdiv) ;
         GrB_Semiring_free_(&My_plus_rdiv) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    printf ("here %d\n", __LINE__) ;
 
     // C = A*B
     info = GB_AxB_meta (C, NULL,       // C cannot be computed in place
@@ -123,8 +114,6 @@ GrB_Info axb (GB_Werk Werk, bool cprint)
         true,       // do the sort
         Werk) ;
 
-    printf ("here %d\n", __LINE__) ;
-
     GrB_Matrix_free_(&MT) ;
 
     if (info == GrB_SUCCESS && C != NULL)
@@ -132,11 +121,8 @@ GrB_Info axb (GB_Werk Werk, bool cprint)
         if (cprint) GxB_Matrix_fprint_(C, GxB_COMPLETE, NULL) ;
     }
 
-    printf ("here %d\n", __LINE__) ;
-
     GrB_BinaryOp_free_(&My_rdiv) ;
     GrB_Semiring_free_(&My_plus_rdiv) ;
-    printf ("here %d\n", __LINE__) ;
     return (info) ;
 }
 
@@ -219,10 +205,8 @@ void mexFunction
         mexErrMsgTxt ("invalid dimensions") ;
     }
 
-    GB_CLEAR_MATRIX_HEADER (C, NULL) ;
-    printf ("calling METHOD (axb ... )):\n") ;
+    GB_matrix_header_new (&C, /* FIXME memlane: */ 0) ;
     METHOD (axb (Werk, cprint)) ;
-    printf ("did call METHOD (axb ... )):\n") ;
 
     // return C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C AxB result", false) ;

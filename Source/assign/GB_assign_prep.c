@@ -699,7 +699,6 @@ GrB_Info GB_assign_prep
         // TODO: if accum is present and it does not depend on the values of
         // A,  construct AT as iso.
         GBURBLE ("(A transpose) ") ;
-        // GB_CLEAR_MATRIX_HEADER (AT, AT_header_handle) ;
         GB_OK (GB_matrix_header_new (&AT, /* FIXME memlane: */ 0)) ;
         GB_OK (GB_transpose_cast (AT, A->type, C_is_csc, A, false, Werk)) ;
         GB_MATRIX_WAIT (AT) ;       // A cannot be jumbled
@@ -729,7 +728,6 @@ GrB_Info GB_assign_prep
             // MT = M' to conform M to the same CSR/CSC format as C,
             // and typecast to boolean.
             GBURBLE ("(M transpose) ") ;
-            // GB_CLEAR_MATRIX_HEADER (MT, MT_header_handle) ;
             GB_OK (GB_matrix_header_new (&MT, memlane)) ;
             GB_OK (GB_transpose_cast (MT, GrB_BOOL, C_is_csc, M, Mask_struct,
                 Werk)) ;
@@ -876,7 +874,6 @@ GrB_Info GB_assign_prep
         if (!scalar_expansion)
         { 
             // Awork = A (Iinv, Jinv)
-            // GB_CLEAR_MATRIX_HEADER (Awork, Awork_header_handle) ;
             GB_OK (GB_matrix_header_new (&Awork, memlane)) ;
             GB_OK (GB_subref (Awork, false, A->is_csc, A,
                 Iinv, I2k_is_32, ni,
@@ -896,7 +893,6 @@ GrB_Info GB_assign_prep
         { 
             // Mwork = M (Iinv, Jinv)
             // if Mask_struct then Mwork is extracted as iso
-            // GB_CLEAR_MATRIX_HEADER (Mwork, Mwork_header_handle) ;
             GB_OK (GB_matrix_header_new (&Mwork, memlane)) ;
             GB_OK (GB_subref (Mwork, Mask_struct, M->is_csc, M,
                 Iinv, I2k_is_32, ni,
@@ -1040,7 +1036,6 @@ GrB_Info GB_assign_prep
     else if (C_aliased)
     {
         // C is aliased with M or A: make a copy of C to assign into
-        // GB_CLEAR_MATRIX_HEADER (Cwork, Cwork_header_handle) ;
         if (C_replace_may_be_done_early)
         { 
             // Instead of duplicating C, create a new empty matrix Cwork.

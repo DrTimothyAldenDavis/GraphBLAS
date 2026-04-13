@@ -169,7 +169,6 @@ GrB_Info GB_mask                // C<M> = Z
 
     GrB_Info info = GrB_SUCCESS ;
     GrB_Matrix C = NULL, C0 = NULL, R = NULL ;
-    // struct GB_Matrix_opaque C0_header, R_header ;
 
     //--------------------------------------------------------------------------
     // apply the mask
@@ -269,7 +268,6 @@ GrB_Info GB_mask                // C<M> = Z
                 bool Cp_is_32, Cj_is_32, Ci_is_32 ;
                 GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
                     GxB_HYPERSPARSE, 1, vlen, vdim, Werk) ;
-                // GB_CLEAR_MATRIX_HEADER (C0, &C0_header) ;
                 GB_OK (GB_new_bix (&C0, // sparse or hyper, new header
                     C_result->type, vlen, vdim, GB_ph_calloc, R_is_csc,
                     GxB_HYPERSPARSE, true, C_result->hyper_switch, 0, 0,
