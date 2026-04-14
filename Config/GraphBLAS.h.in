@@ -6530,7 +6530,9 @@ struct GxB_Container_struct
     int32_t format ;                // GxB_HYPERSPARSE, GxB_SPARSE, GxB_BITMAP,
                                     // or GxB_FULL
     int32_t orientation ;           // GrB_ROWMAJOR or GrB_COLMAJOR
-    uint32_t u32_future [14] ;      // for future expansion
+    int32_t memlane ;               // memlane of the Container struct itself,
+                                    // for GxB_Container_free.  Do NOT modify.
+    uint32_t u32_future [13] ;      // for future expansion
 
     // 16 GrB_Vector objects:
     GrB_Vector p ;

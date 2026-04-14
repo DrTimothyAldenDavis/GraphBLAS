@@ -212,6 +212,7 @@ GrB_Info GX_subassign_IxJ_slice                                             \
     /* input: */                                                            \
     const int64_t nI,                                                       \
     const int64_t nJ,                                                       \
+    int memlane,                /* memlane to use */                        \
     GB_Werk Werk                                                            \
 )
 

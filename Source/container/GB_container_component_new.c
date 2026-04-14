@@ -12,9 +12,11 @@
 
 GrB_Info GB_container_component_new
 (
+    // output:
     GrB_Vector *component,
-    GrB_Type type
-    // FIXME memlane parameter
+    // inputs
+    GrB_Type type,
+    int memlane
 )
 { 
 
@@ -24,7 +26,6 @@ GrB_Info GB_container_component_new
 
     GrB_Info info ;
     ASSERT (component != NULL) ;
-    int memlane = 0 ;   // FIXME memlane : add parameter
 
     //--------------------------------------------------------------------------
     // allocate a length-0 full vector and initialize its contents

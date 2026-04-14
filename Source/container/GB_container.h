@@ -13,20 +13,21 @@
 #include "GB.h"
 
 // ensure a Container->component exists and is valid
-#define GB_CHECK_CONTAINER_COMPONENT(Container,component,type)               \
+#define GB_CHECK_CONTAINER_COMPONENT(Container,component,type,memlane)       \
     if (Container->component == NULL)                                        \
     {                                                                        \
-        GB_OK (GB_container_component_new (&(Container->component), type)) ; \
+        GB_OK (GB_container_component_new (&(Container->component), type,    \
+            memlane)) ;                                                      \
     }                                                                        \
     GB_RETURN_IF_INVALID (Container->component) ;                            \
     ASSERT_VECTOR_OK (Container->component, "Container component", GB0) ;
 
-#define GB_CHECK_CONTAINER(Container)                           \
-    GB_CHECK_CONTAINER_COMPONENT (Container, p, GrB_UINT32) ;   \
-    GB_CHECK_CONTAINER_COMPONENT (Container, h, GrB_UINT32) ;   \
-    GB_CHECK_CONTAINER_COMPONENT (Container, b, GrB_INT8) ;     \
-    GB_CHECK_CONTAINER_COMPONENT (Container, i, GrB_UINT32) ;   \
-    GB_CHECK_CONTAINER_COMPONENT (Container, x, GrB_BOOL) ;
+#define GB_CHECK_CONTAINER(Container,memlane)                           \
+    GB_CHECK_CONTAINER_COMPONENT (Container, p, GrB_UINT32, memlane) ;  \
+    GB_CHECK_CONTAINER_COMPONENT (Container, h, GrB_UINT32, memlane) ;  \
+    GB_CHECK_CONTAINER_COMPONENT (Container, b, GrB_INT8  , memlane) ;  \
+    GB_CHECK_CONTAINER_COMPONENT (Container, i, GrB_UINT32, memlane) ;  \
+    GB_CHECK_CONTAINER_COMPONENT (Container, x, GrB_BOOL  , memlane) ;
 
 void GB_vector_load
 (
@@ -76,8 +77,11 @@ void GB_vector_reset    // clear almost all prior content; making V length 0
 
 GrB_Info GB_container_component_new
 (
+    // output:
     GrB_Vector *component,
-    GrB_Type type
+    // inputs
+    GrB_Type type,
+    int memlane
 ) ;
 
 #endif

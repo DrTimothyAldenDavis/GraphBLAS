@@ -1357,7 +1357,7 @@
 
 #define GB_SUBASSIGN_IXJ_SLICE                                              \
     GB_OK (GB_subassign_IxJ_slice (&TaskList, &TaskList_mem, &ntasks,       \
-        &nthreads, nI, nJ, Werk)) ;                                         \
+        &nthreads, nI, nJ, memlane, Werk)) ;                                \
     GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------

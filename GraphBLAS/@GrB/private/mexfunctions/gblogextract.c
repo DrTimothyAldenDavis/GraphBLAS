@@ -191,8 +191,8 @@ void mexFunction
 
     // Kx = uint64 (0:mnz-1)
     size_t Kx_memsize = (MAX (mnz, 1) * sizeof (uint64_t)) ;
-    uint64_t Kx_mem = GB_mem (0, Kx_memsize) ;
-    uint64_t *Kx = mxMalloc (Kx_memsize) ;
+    uint64_t Kx_mem = GB_mem (GB_MEMLANE_MATLAB, Kx_memsize) ;
+    uint64_t *Kx = mxMalloc (Kx_memsize) ;  // same as GB_MEMLANE_MATLAB
     GB_helper7 (Kx, mnz) ;
 
     // add a new K->x to K

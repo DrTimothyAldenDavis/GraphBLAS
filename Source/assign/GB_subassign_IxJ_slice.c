@@ -59,12 +59,13 @@ GrB_Info GB_subassign_IxJ_slice
 (
     // output:
     GB_task_struct **p_TaskList,    // array of structs
-    uint64_t *p_TaskList_mem,        // size of TaskList
+    uint64_t *p_TaskList_mem,       // size of TaskList
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     // input:
     const int64_t nI,
     const int64_t nJ,
+    int memlane,                    // memlane to use
     GB_Werk Werk
 )
 #endif
@@ -81,7 +82,6 @@ GB_CALLBACK_SUBASSIGN_IXJ_SLICE_PROTO (GB_subassign_IxJ_slice)
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;
 
-    int memlane = 0 ;           // FIXME memlane : make parameter
     uint64_t mem = GB_mem (memlane, 0) ;
 
     (*p_TaskList  ) = NULL ;

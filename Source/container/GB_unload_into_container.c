@@ -30,7 +30,7 @@ GrB_Info GB_unload_into_container   // GrB_Matrix -> GxB_Container
     GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A to unload into Container", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (Container->Y, "Container->Y before unload", GB0) ;
-    GB_CHECK_CONTAINER (Container) ;
+    GB_CHECK_CONTAINER (Container, Container->memlane) ;
 
     //--------------------------------------------------------------------------
     // finish any pending work, but permit A to still be jumbled

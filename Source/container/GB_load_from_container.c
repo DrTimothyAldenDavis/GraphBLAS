@@ -39,7 +39,7 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
     GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A to load from Container", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (Container->Y, "Container->Y before load", GB0) ;
-    GB_CHECK_CONTAINER (Container) ;
+    GB_CHECK_CONTAINER (Container, Container->memlane) ;
 
     //--------------------------------------------------------------------------
     // free any prior content of A
@@ -61,8 +61,6 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
     A->vlen = (A->is_csc) ? nrows : ncols ;
     A->vdim = (A->is_csc) ? ncols : nrows ;
 
-//  A->nvec_nonempty = (A->is_csc) ?
-//      Container->ncols_nonempty : Container->nrows_nonempty ;
     GB_nvec_nonempty_set (A, (A->is_csc) ?
         Container->ncols_nonempty : Container->nrows_nonempty) ;
 
