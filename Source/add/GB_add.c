@@ -190,7 +190,8 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
             // from phase0:
             Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh, Cp_is_32, Cj_is_32,
             // original input:
-            (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Werk)) ;
+            (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, memlane,
+            Werk)) ;
 
     }
     else

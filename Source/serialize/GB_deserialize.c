@@ -39,7 +39,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     (*Chandle) = NULL ;
     GrB_Matrix C = NULL, T = NULL ;
 
-    int memlane = 0 ;       // FIXME memlane from Context
+    int memlane = GB_Context_memlane ( ) ;
 
     //--------------------------------------------------------------------------
     // read the content of the header (160 bytes)

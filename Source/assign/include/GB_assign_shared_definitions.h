@@ -1317,7 +1317,7 @@
         &TaskList, &TaskList_mem, &ntasks, &nthreads, C,                    \
         I, GB_I_IS_32, nI, GB_I_KIND, Icolon,                               \
         J, GB_J_IS_32, nJ, GB_J_KIND, Jcolon,                               \
-        M, Werk)) ;                                                         \
+        M, memlane, Werk)) ;                                                \
     GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------

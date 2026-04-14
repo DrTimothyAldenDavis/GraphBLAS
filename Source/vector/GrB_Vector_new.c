@@ -40,7 +40,7 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
         return (GrB_INVALID_VALUE) ;
     }
 
-    int memlane = 0 ;   // FIXME memlane from Context
+    int memlane = GB_Context_memlane ( ) ;
 
     //--------------------------------------------------------------------------
     // create the vector

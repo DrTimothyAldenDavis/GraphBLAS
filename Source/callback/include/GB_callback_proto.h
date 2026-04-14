@@ -152,6 +152,7 @@ GrB_Info GX_subassign_one_slice     /* slice M for subassign_05, 06n, 07 */ \
     const int Jkind,                                                        \
     const int64_t Jcolon [3],                                               \
     const GrB_Matrix M,             /* matrix to slice */                   \
+    const int memlane,              /* memlane to use */                    \
     GB_Werk Werk                                                            \
 )
 

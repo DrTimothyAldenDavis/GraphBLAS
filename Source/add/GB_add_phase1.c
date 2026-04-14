@@ -47,6 +47,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     const bool Mask_comp,       // if true, use !M
     const GrB_Matrix A,
     const GrB_Matrix B,
+    const int memlane,
     GB_Werk Werk
 )
 {
@@ -75,7 +76,6 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
 
     ASSERT (A->vdim == B->vdim) ;
 
-    int memlane = 0 ;   // FIXME memlane param
     uint64_t mem = GB_mem (memlane, 0) ;
 
     //--------------------------------------------------------------------------

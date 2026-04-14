@@ -25,7 +25,7 @@ GrB_Info GrB_Descriptor_new     // create a new descriptor
     GB_RETURN_IF_NULL (descriptor) ;
     (*descriptor) = NULL ;
 
-    int memlane = 0 ;   // FIXME memlane get from Context
+    int memlane = GB_Context_memlane ( ) ;
     uint64_t mem = GB_mem (memlane, 0) ;
 
     //--------------------------------------------------------------------------

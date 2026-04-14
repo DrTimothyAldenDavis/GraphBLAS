@@ -64,7 +64,9 @@ GrB_Info GrB_Semiring_new           // create a semiring
     // allocate the semiring
     //--------------------------------------------------------------------------
 
-    uint64_t header_mem = 0 ;   // FIXME memlane : use Context
+    int memlane = GB_Context_memlane ( ) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+    uint64_t header_mem = mem ;
     (*semiring) = GB_MALLOC_MEMORY (1, sizeof (struct GB_Semiring_opaque),
         &header_mem) ;
     if (*semiring == NULL)

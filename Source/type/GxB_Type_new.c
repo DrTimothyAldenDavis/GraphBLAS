@@ -53,7 +53,7 @@ GrB_Info GxB_Type_new
     GB_RETURN_IF_NULL (type) ;
     GB_BURBLE_START ("GxB_Type_new") ;
 
-    int memlane = 0 ;   // FIXME memlane from Context
+    int memlane = GB_Context_memlane ( ) ;
     uint64_t mem = GB_mem (memlane, 0) ;
 
     GrB_Info info ;
@@ -86,7 +86,7 @@ GrB_Info GxB_Type_new
     t->size = sizeof_type ;
     t->code = GB_UDT_code ;                 // user-defined type
     memset (t->name, 0, GxB_MAX_NAME_LEN) ; // no name yet
-    t->defn = NULL ; t->defn_mem = 0 ;      // FIXME memlane
+    t->defn = NULL ; t->defn_mem = 0 ;      // no memlane yet
     t->print_function = NULL ;              // no function to print type
 
     //--------------------------------------------------------------------------
@@ -118,8 +118,8 @@ GrB_Info GxB_Type_new
         size_t defn_len = strlen (type_defn) ;
 
         // allocate space for the typedef
-        t->defn = GB_MALLOC_MEMORY (defn_len+1, sizeof (char),
-            &(t->defn_mem)) ;
+        t->defn_mem = mem ;
+        t->defn = GB_MALLOC_MEMORY (defn_len+1, sizeof (char), &(t->defn_mem)) ;
         if (t->defn == NULL)
         { 
             // out of memory
