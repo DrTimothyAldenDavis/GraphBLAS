@@ -95,8 +95,7 @@ GrB_Info GB_vector_unload
     (*X_mem) = V->x_mem ;
     (*type) = V->type ;
     (*readonly) = V->x_shallow  && (V->x != NULL) ;
-    V->x = NULL ;
-    V->x_mem = 0 ;
+    V->x = NULL ; V->x_mem = 0 ;
     V->x_shallow = false ;
 
     //--------------------------------------------------------------------------

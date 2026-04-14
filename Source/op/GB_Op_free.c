@@ -36,7 +36,7 @@ GrB_Info GB_Op_free             // free a user-created op
             if (GB_memsize (header_mem) > 0)
             { 
                 op->magic = GB_FREED ;  // to help detect dangling pointers
-                op->header_mem = 0 ;
+                op->header_mem = 0 ;    // header is free
                 GB_FREE_MEMORY (op_handle, header_mem) ;
             }
         }

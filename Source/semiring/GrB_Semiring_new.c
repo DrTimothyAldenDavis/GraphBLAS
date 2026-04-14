@@ -35,7 +35,7 @@
 
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_FREE_MEMORY (semiring, header_mem) ;  \
+    GB_FREE_MEMORY (semiring, header_mem) ; \
 }
 
 GrB_Info GrB_Semiring_new           // create a semiring
@@ -64,7 +64,7 @@ GrB_Info GrB_Semiring_new           // create a semiring
     // allocate the semiring
     //--------------------------------------------------------------------------
 
-    uint64_t header_mem = 0 ;
+    uint64_t header_mem = 0 ;   // FIXME memlane : use Context
     (*semiring) = GB_MALLOC_MEMORY (1, sizeof (struct GB_Semiring_opaque),
         &header_mem) ;
     if (*semiring == NULL)

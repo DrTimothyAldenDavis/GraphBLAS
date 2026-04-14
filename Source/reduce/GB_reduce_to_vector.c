@@ -164,12 +164,13 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             // leading "1" character in its name.  So "reduce_1st" must be
             // unique.
             op = &op_header ;
-            op->header_mem = 0 ;    // static header for binary op
+            op->header_mem = 0 ;        // static header for binary op
             info = GB_binop_new (op, NULL, // op->binop_func. NULL for FIRST_UDT
                 ztype, ztype, ztype,    // ztype is user-defined
                 "1st",                  // a simple name for FIRST_UDT
-                NULL,   // no op->defn for the FIRST_UDT operator
-                GB_FIRST_binop_code) ;  // using a built-in opcode
+                NULL,                   // no op->defn for FIRST_UDT
+                GB_FIRST_binop_code,    // using a built-in opcode
+                0) ;                    // memlane not used
             break ;
     }
 

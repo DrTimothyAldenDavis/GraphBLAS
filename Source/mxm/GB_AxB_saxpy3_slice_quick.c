@@ -42,7 +42,7 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     // allocate the task
     //--------------------------------------------------------------------------
 
-    uint64_t SaxpyTasks_mem = 0 ;
+    uint64_t SaxpyTasks_mem = 0 ;   // FIXME memlane
     GB_saxpy3task_struct
         *SaxpyTasks = GB_MALLOC_MEMORY (1, sizeof (GB_saxpy3task_struct),
             &SaxpyTasks_mem) ;

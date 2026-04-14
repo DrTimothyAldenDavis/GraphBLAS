@@ -203,8 +203,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
 
     C->user_name = C_user_name ;
     C->user_name_mem = C_user_name_mem ;
-    C_user_name = NULL ;
-    C_user_name_mem = 0 ;
+    C_user_name = NULL ; C_user_name_mem = 0 ;
 
     //--------------------------------------------------------------------------
     // return the result

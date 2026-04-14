@@ -372,10 +372,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         }
         else
         {
-            A->p = NULL ;
-            A->i = NULL ;
-            A->p_mem = 0 ;
-            A->i_mem = 0 ;
+            A->p = NULL ; A->p_mem = 0 ;    // OK null
+            A->i = NULL ; A->i_mem = 0 ;    // OK null
             A->p_shallow = false ;
             A->i_shallow = false ;
         }

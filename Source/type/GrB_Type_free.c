@@ -31,8 +31,8 @@ GrB_Info GrB_Type_free          // free a user-defined type
             uint64_t header_mem = t->header_mem ;
             if (GB_memsize (header_mem) > 0)
             {
-                t->magic = GB_FREED ;  // to help detect dangling pointers
-                t->header_mem = 0 ;
+                t->magic = GB_FREED ;   // to help detect dangling pointers
+                t->header_mem = 0 ;     // header is freed
                 GB_FREE_MEMORY (type, header_mem) ;
             }
         }

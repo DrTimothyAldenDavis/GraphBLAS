@@ -38,7 +38,9 @@ GrB_Info GxB_BinaryOp_new_IndexOp
     // allocate the binary op
     //--------------------------------------------------------------------------
 
-    uint64_t header_mem = 0 ;       // always use memlane = 0
+    int memlane = GB_Context_memlane ( ) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+    uint64_t header_mem = mem ;
     GrB_BinaryOp
         binop = GB_CALLOC_MEMORY (1, sizeof (struct GB_BinaryOp_opaque),
             &header_mem) ;
@@ -57,10 +59,8 @@ GrB_Info GxB_BinaryOp_new_IndexOp
     memcpy (binop, idxbinop, sizeof (struct GB_BinaryOp_opaque)) ;
 
     // remove the components owned by the index binary op
-    binop->user_name = NULL ;
-    binop->user_name_mem = 0 ;
-    binop->defn = NULL ;
-    binop->defn_mem = 0 ;
+    binop->user_name = NULL ; binop->user_name_mem = 0 ;
+    binop->defn = NULL ; binop->defn_mem = 0 ;
 
     bool jitable = (idxbinop->hash != UINT64_MAX) ;
 
@@ -69,7 +69,7 @@ GrB_Info GxB_BinaryOp_new_IndexOp
         binop->name, &(binop->name_len), &(binop->hash),
         &(binop->defn), &(binop->defn_mem),
         // input:
-        idxbinop->name, idxbinop->defn, true, jitable) ;
+        idxbinop->name, idxbinop->defn, true, jitable, memlane) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

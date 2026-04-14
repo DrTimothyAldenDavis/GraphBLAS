@@ -88,7 +88,9 @@ GrB_Info GB_Monoid_new          // create a monoid
     //--------------------------------------------------------------------------
 
     // allocate the monoid
-    uint64_t header_mem = 0 ;       // always use memlane = 0
+    int memlane = GB_Context_memlane ( ) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+    uint64_t header_mem = mem ;
     (*monoid) = GB_MALLOC_MEMORY (1, sizeof (struct GB_Monoid_opaque),
         &header_mem) ;
     if (*monoid == NULL)
@@ -101,14 +103,11 @@ GrB_Info GB_Monoid_new          // create a monoid
     GrB_Monoid mon = *monoid ;
     mon->magic = GB_MAGIC ;
     mon->header_mem = header_mem ;
-    mon->user_name = NULL ;                 // user_name for GrB_get/GrB_set
-    mon->user_name_mem = 0 ;
+    mon->user_name = NULL ; mon->user_name_mem = 0 ;
     mon->op = op ;
     size_t zsize = op->ztype->size ;
-    mon->identity = NULL ;                  // defined below (if present)
-    mon->terminal = NULL ;                  // defined below (if present)
-    mon->identity_mem = 0 ;
-    mon->terminal_mem = 0 ;
+    mon->identity = NULL ; mon->identity_mem = 0 ;  // FIXME memlane
+    mon->terminal = NULL ; mon->terminal_mem = 0 ;  // FIXME memlane
     bool builtin = false ;  // set true below if using a builtin binary op
     mon->hash = 0 ;         // builtin monoids have a hash value of 0
 

@@ -67,8 +67,8 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    int64_t *Ap_new = NULL ; uint64_t Ap_new_mem = 0 ;   // memlane = 0
-    int64_t *Ah_new = NULL ; uint64_t Ah_new_mem = 0 ;   // memlane = 0
+    int64_t *Ap_new = NULL ; uint64_t Ap_new_mem = 0 ;   // FIXME memlane = 0
+    int64_t *Ah_new = NULL ; uint64_t Ah_new_mem = 0 ;   // FIXME memlane = 0
     ASSERT (A != NULL) ;
     GB_RETURN_IF_NULL (*A) ;
 

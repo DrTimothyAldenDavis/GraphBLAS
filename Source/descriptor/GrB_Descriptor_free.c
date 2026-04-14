@@ -30,9 +30,9 @@ GrB_Info GrB_Descriptor_free            // free a descriptor
             if (GB_memsize (header_mem) > 0)
             { 
                 GB_FREE_MEMORY (&(desc->logger), desc->logger_mem) ;
-                desc->logger_mem = 0 ;
-                desc->magic = GB_FREED ;  // to help detect dangling pointers
-                desc->header_mem = 0 ;
+                desc->logger_mem = 0 ;      // logger is freed
+                desc->magic = GB_FREED ;    // to help detect dangling pointers
+                desc->header_mem = 0 ;      // header is freed
                 GB_FREE_MEMORY (descriptor, header_mem) ;
             }
         }

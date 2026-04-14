@@ -75,13 +75,16 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
 
     ASSERT (A->vdim == B->vdim) ;
 
+    int memlane = 0 ;   // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // allocate the result
     //--------------------------------------------------------------------------
 
     (*Cp_handle) = NULL ;
     GB_MDECL (Cp, , u) ;
-    uint64_t Cp_mem = 0 ;  // FIXME: memlane
+    uint64_t Cp_mem = mem ;
     uint64_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     Cp = GB_CALLOC_MEMORY (GB_IMAX (2, Cnvec+1), cpsize, &Cp_mem) ;
     if (Cp == NULL)

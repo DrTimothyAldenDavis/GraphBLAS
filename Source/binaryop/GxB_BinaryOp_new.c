@@ -44,7 +44,9 @@ GrB_Info GxB_BinaryOp_new
     // allocate the binary op
     //--------------------------------------------------------------------------
 
-    uint64_t header_mem = 0 ;       // always use memlane = 0
+    int memlane = GB_Context_memlane ( ) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+    uint64_t header_mem = mem ;
     GrB_BinaryOp op = GB_CALLOC_MEMORY (1, sizeof (struct GB_BinaryOp_opaque),
         &header_mem) ;
     if (op == NULL)
@@ -59,7 +61,7 @@ GrB_Info GxB_BinaryOp_new
     //--------------------------------------------------------------------------
 
     GrB_Info info = GB_binop_new (op, function, ztype, xtype, ytype,
-        binop_name, binop_defn, GB_USER_binop_code) ;
+        binop_name, binop_defn, GB_USER_binop_code, memlane) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

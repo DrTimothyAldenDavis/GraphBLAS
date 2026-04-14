@@ -82,14 +82,12 @@ GrB_Info GxB_Type_new
 
     // initialize the type
     t->header_mem = header_mem ;
-    t->user_name = NULL ;
-    t->user_name_mem = 0 ;
+    t->user_name = NULL ; t->user_name_mem = 0 ;
     t->size = sizeof_type ;
-    t->code = GB_UDT_code ;         // user-defined type
-    memset (t->name, 0, GxB_MAX_NAME_LEN) ;   // no name yet
-    t->defn = NULL ;                // no definition yet
-    t->defn_mem = 0 ;
-    t->print_function = NULL ;      // no function to print type
+    t->code = GB_UDT_code ;                 // user-defined type
+    memset (t->name, 0, GxB_MAX_NAME_LEN) ; // no name yet
+    t->defn = NULL ; t->defn_mem = 0 ;      // FIXME memlane
+    t->print_function = NULL ;              // no function to print type
 
     //--------------------------------------------------------------------------
     // get the name

@@ -106,10 +106,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     // basic information
     A->magic = GB_MAGIC2 ;                 // object is not yet valid
     A->type = type ;
-    A->user_name = NULL ;
-    A->user_name_mem = 0 ;      // no user_name yet
-    A->logger = NULL ;          // no error logged yet
-    A->logger_mem = 0 ;
+    A->user_name = NULL ; A->user_name_mem = 0 ;    // no user_name yet
+    A->logger = NULL ; A->logger_mem = 0 ;          // no error logged yet
 
     // CSR/CSC format
     A->is_csc = is_csc ;

@@ -180,6 +180,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     // C = A(I,J) where C and A are both sparse or hypersparse
     //--------------------------------------------------------------------------
 
+    // FIXME memlane:
     void *Cp       = NULL ; uint64_t Cp_mem = 0 ;
     void *Ch       = NULL ; uint64_t Ch_mem = 0 ;
     void *Ap_start = NULL ; uint64_t Ap_start_mem = 0 ;

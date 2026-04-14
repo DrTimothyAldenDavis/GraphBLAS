@@ -52,7 +52,8 @@ GB_Operator GB_unop_identity    // return IDENTITY operator, or NULL on error
                 type, type,     // type is user-defined
                 type->name,     // name is same as the type
                 NULL,           // no op->defn
-                GB_IDENTITY_unop_code) ;    // using a built-in opcode
+                GB_IDENTITY_unop_code,  // using a built-in opcode
+                GB_MEMLANE_DEFAULT) ;   // memlane not used
             ASSERT (info == GrB_SUCCESS) ;
             return ((GB_Operator) op) ;
         }

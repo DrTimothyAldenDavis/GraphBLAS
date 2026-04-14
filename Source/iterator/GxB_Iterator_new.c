@@ -13,7 +13,7 @@ GrB_Info GxB_Iterator_new (GxB_Iterator *iterator)
 {
     GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (iterator) ;
-    uint64_t header_mem = 0 ;   // always using memlane = 0
+    uint64_t header_mem = 0 ;   // FIXME memlane
     (*iterator) = GB_CALLOC_MEMORY (1, sizeof (struct GB_Iterator_opaque),
         &header_mem) ;
     if (*iterator == NULL)

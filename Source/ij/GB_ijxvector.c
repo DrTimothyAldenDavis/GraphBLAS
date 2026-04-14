@@ -397,8 +397,7 @@ GrB_Info GB_ijxvector
         // replace I with the newly-allocated and expanded I2
         I = I2 ;
         I_mem = I2_mem ;
-        I2 = NULL ;
-        I2_mem = 0 ;
+        I2 = NULL ; I2_mem = 0 ;
         // the list I is no longer iso
         iso = false ;
     }
@@ -469,8 +468,7 @@ GrB_Info GB_ijxvector
         }
         I = I2 ;
         I_mem = I2_mem ;
-        I2 = NULL ;
-        I2_mem = 0 ;
+        I2 = NULL ; I2_mem = 0 ;
         I_type = I_target_type ;
     }
 

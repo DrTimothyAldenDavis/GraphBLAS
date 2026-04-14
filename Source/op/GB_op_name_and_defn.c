@@ -27,7 +27,8 @@ GrB_Info GB_op_name_and_defn
     const char *input_name,     // user-provided name, may be NULL
     const char *input_defn,     // user-provided name, may be NULL
     bool user_op,               // if true, a user-defined op
-    bool jitable                // if true, the op can be JIT'd
+    bool jitable,               // if true, the op can be JIT'd
+    int memlane
 )
 {
 
@@ -41,7 +42,7 @@ GrB_Info GB_op_name_and_defn
     ASSERT (op_defn != NULL) ;
     ASSERT (op_defn_mem != NULL) ;
     (*op_defn) = NULL ;
-    (*op_defn_mem) = 0 ;        // always use memlane = 0
+    (*op_defn_mem) = 0 ;
 
     //--------------------------------------------------------------------------
     // get the name of the operator
@@ -67,7 +68,8 @@ GrB_Info GB_op_name_and_defn
     //--------------------------------------------------------------------------
 
     char *defn = NULL ;
-    uint64_t defn_mem = 0 ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+    uint64_t defn_mem = mem ;
     uint64_t defn_len = 0 ;
 
     if (input_defn != NULL)

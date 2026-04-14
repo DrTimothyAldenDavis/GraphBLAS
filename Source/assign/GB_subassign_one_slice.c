@@ -91,6 +91,9 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
 
     ASSERT (!GB_JUMBLED (M)) ;
 
+    int memlane = 0 ;   // FIXME memlane param
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     (*p_TaskList  ) = NULL ;
     (*p_ntasks    ) = 0 ;
     (*p_nthreads  ) = 1 ;
@@ -135,7 +138,7 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
     GB_WERK_DECLARE (Coarse, int64_t) ;     // size ntasks1+1
     int ntasks1 = 0 ;
     int nthreads = GB_nthreads (mnz, chunk, nthreads_max) ;
-    GB_task_struct *restrict TaskList = NULL ; uint64_t TaskList_mem = 0 ;
+    GB_task_struct *restrict TaskList = NULL ; uint64_t TaskList_mem = mem ;
     int max_ntasks = 0 ;
     int ntasks = 0 ;
     int ntasks0 = (nthreads == 1) ? 1 : (32 * nthreads) ;

@@ -1765,9 +1765,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         // transplant Sx (aliased to W_2) into T->x; W_2 is not freed when done
         T->x = Sx ;
         T->x_mem = W_2_mem ;
-        W_2 = NULL ;
-        W_2_mem = 0 ;
         Sx = NULL ;
+        W_2 = NULL ; W_2_mem = 0 ;
     }
     #endif
 

@@ -46,10 +46,10 @@ GrB_Info GrB_Descriptor_new     // create a new descriptor
     GrB_Descriptor desc = *descriptor ;
     desc->magic = GB_MAGIC ;
     desc->header_mem = header_mem ;
-    desc->user_name = NULL ;       // user_name for GrB_get/GrB_set
-    desc->user_name_mem = 0 ;
-    desc->logger = NULL ;          // error string
-    desc->logger_mem = 0 ;
+    // user_name for GrB_get/GrB_set:
+    desc->user_name = NULL ; desc->user_name_mem = 0 ;
+    // error string:
+    desc->logger = NULL ; desc->logger_mem = 0 ;
     desc->out  = GxB_DEFAULT ;     // descriptor for output
     desc->mask = GxB_DEFAULT ;     // descriptor for the mask input
     desc->in0  = GxB_DEFAULT ;     // descriptor for the first input

@@ -52,7 +52,8 @@ GrB_Info GB_entry_check     // print a single value
     FILE *f,                // file to print to
     // for user-defined types only:
     char **string_handle,   // string buffer for printing
-    uint64_t *string_mem    // memsize and memlane (0) of the string buffer
+    uint64_t *string_mem,   // memsize and memlane of the string buffer
+    int memlane
 )
 {
 
@@ -159,7 +160,8 @@ GrB_Info GB_entry_check     // print a single value
                     { 
                         // allocate the string buffer with its initial size;
                         // it is not freed here but in the caller
-                        (*string_mem) = 0 ;     // always use memlane 0
+                        uint64_t mem = GB_mem (memlane, 0) ;
+                        (*string_mem) = mem ;
                         (*string_handle) = GB_MALLOC_MEMORY (1024,
                             sizeof (char), string_mem) ;
                         if ((*string_handle) == NULL)
@@ -169,11 +171,8 @@ GrB_Info GB_entry_check     // print a single value
                     }
                     for (int k = 0 ; k < 32 ; k++)
                     { 
-//                      printf ("try k = %d\n", k) ;
                         int64_t result = pfunc (*string_handle,
                             (size_t) GB_memsize (*string_mem), x, pr_verbose) ;
-//                      printf ("now string has memsize %ld\n",
-//                          GB_memsize (*string_mem)) ;
                         if (result < 0)
                         { 
                             // something went completely wrong

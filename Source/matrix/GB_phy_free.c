@@ -39,8 +39,7 @@ void GB_phy_free                // free A->p, A->h, and A->Y of a matrix
     { 
         GB_FREE_MEMORY (&(A->p), A->p_mem) ;
     }
-    A->p = NULL ;
-    A->p_mem = 0 ;
+    A->p = NULL ; A->p_mem = 0 ;
     A->p_shallow = false ;
 
     // free A->h and A->Y

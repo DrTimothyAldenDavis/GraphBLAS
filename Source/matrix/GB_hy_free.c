@@ -22,8 +22,7 @@ void GB_hy_free                 // free A-h and A->Y of a matrix
         { 
             GB_FREE_MEMORY (&(A->h), A->h_mem) ;
         }
-        A->h = NULL ;
-        A->h_mem = 0 ;
+        A->h = NULL ; A->h_mem = 0 ;
         A->h_shallow = false ;
         GB_hyper_hash_free (A) ;
     }

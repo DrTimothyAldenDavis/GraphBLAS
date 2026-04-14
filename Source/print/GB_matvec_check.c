@@ -38,7 +38,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     bool is_bitmap = GB_IS_BITMAP (A) ;
     bool is_sparse = GB_IS_SPARSE (A) ;
     char *string = NULL ;
-    uint64_t string_mem = 0 ;   // always use memlane 0
+    uint64_t string_mem = 0 ;   // set by GB_entry_check
+    int memlane = GB_Context_memlane ( ) ;
 
     bool skip_zombie_checks = false ;
     if (pr > 5)
@@ -545,7 +546,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         GBPR0 ("  iso value: ") ;
         if (pr > 0)
         { 
-            info = GB_entry_check (A->type, A->x, pr, f, &string, &string_mem) ;
+            info = GB_entry_check (A->type, A->x, pr, f, &string, &string_mem,
+                memlane) ;
             if (info != GrB_SUCCESS)
             { 
                 GB_FREE_MEMORY (&string, string_mem) ;
@@ -740,7 +742,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                     GB_void *Ax = (GB_void *) A->x ;
                     info = GB_entry_check (A->type,
                         Ax + (A->iso ? 0 : (p * (A->type->size))), pr, f,
-                        &string, &string_mem) ;
+                        &string, &string_mem, memlane) ;
                     if (info != GrB_SUCCESS)
                     { 
                         GB_FREE_MEMORY (&string, string_mem) ;
@@ -896,7 +898,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 { 
                     info = GB_entry_check (Pending->type,
                         Pending_x +(k * Pending->type->size), pr, f,
-                        &string, &string_mem) ;
+                        &string, &string_mem, memlane) ;
                     if (info != GrB_SUCCESS)
                     { 
                         GB_FREE_MEMORY (&string, string_mem) ;

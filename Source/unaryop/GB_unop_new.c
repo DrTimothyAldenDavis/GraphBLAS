@@ -24,7 +24,8 @@ GrB_Info GB_unop_new
     GrB_Type xtype,                 // type of input x
     const char *unop_name,          // name of the user function
     const char *unop_defn,          // definition of the user function
-    const GB_Opcode opcode          // opcode for the function
+    const GB_Opcode opcode,         // opcode for the function
+    int memlane
 )
 { 
 
@@ -42,8 +43,7 @@ GrB_Info GB_unop_new
     //--------------------------------------------------------------------------
 
     op->magic = GB_MAGIC ;
-    op->user_name = NULL ;
-    op->user_name_mem = 0 ;
+    op->user_name = NULL ; op->user_name_mem = 0 ;
     op->xtype = xtype ;
     op->ztype = ztype ;
     op->ytype = NULL ;
@@ -53,8 +53,7 @@ GrB_Info GB_unop_new
     op->binop_function = NULL ;
     op->idxbinop_function = NULL ;
     op->theta_type = NULL ;
-    op->theta = NULL ;
-    op->theta_mem = 0 ;
+    op->theta = NULL ; op->theta_mem = 0 ;
 
     op->opcode = opcode ;
 
@@ -71,6 +70,6 @@ GrB_Info GB_unop_new
         // output:
         op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_mem),
         // input:
-        unop_name, unop_defn, opcode == GB_USER_unop_code, jitable)) ;
+        unop_name, unop_defn, opcode == GB_USER_unop_code, jitable, memlane)) ;
 }
 

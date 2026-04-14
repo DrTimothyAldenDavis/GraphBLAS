@@ -47,7 +47,9 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     // allocate the index_unary op
     //--------------------------------------------------------------------------
 
-    uint64_t header_mem = 0 ;       // always use memlane = 0
+    int memlane = GB_Context_memlane ( ) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+    uint64_t header_mem = mem ;
     GrB_IndexUnaryOp
         op = GB_CALLOC_MEMORY (1, sizeof (struct GB_IndexUnaryOp_opaque),
             &header_mem) ;
@@ -63,8 +65,7 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     //--------------------------------------------------------------------------
 
     op->magic = GB_MAGIC ;
-    op->user_name = NULL ;
-    op->user_name_mem = 0 ;
+    op->user_name = NULL ; op->user_name_mem = 0 ;
     op->ztype = ztype ;
     op->xtype = xtype ;
     op->ytype = ytype ;      // thunk type
@@ -74,8 +75,7 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     op->binop_function = NULL ;
     op->idxbinop_function = NULL ;
     op->theta_type = NULL ;
-    op->theta = NULL ;
-    op->theta_mem = 0 ;
+    op->theta = NULL ; op->theta_mem = 0 ;
 
     op->opcode = GB_USER_idxunop_code ;
 
@@ -93,7 +93,7 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
         // output:
         op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_mem),
         // input:
-        idxop_name, idxop_defn, true, jitable) ;
+        idxop_name, idxop_defn, true, jitable, memlane) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

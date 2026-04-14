@@ -29,8 +29,8 @@ GrB_Info GrB_Semiring_free          // free a user-created semiring
             uint64_t header_mem = s->header_mem ;
             if (GB_memsize (header_mem) > 0)
             { 
-                s->magic = GB_FREED ;  // to help detect dangling pointers
-                s->header_mem = 0 ;
+                s->magic = GB_FREED ;   // to help detect dangling pointers
+                s->header_mem = 0 ;     // header is freed
                 GB_FREE_MEMORY (semiring, header_mem) ;
             }
         }

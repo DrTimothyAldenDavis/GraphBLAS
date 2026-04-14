@@ -39,7 +39,7 @@ GrB_Info GxB_Context_free           // free a Context
             if (GB_memsize (header_mem) > 0)
             { 
                 Context->magic = GB_FREED ;  // to help detect dangling pointers
-                Context->header_mem = 0 ;
+                Context->header_mem = 0 ;    // header will be freed
                 GB_FREE_MEMORY (Context_handle, header_mem) ;
             }
         }

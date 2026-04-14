@@ -33,7 +33,8 @@ GrB_Info GB_op_name_and_defn
     const char *input_name,     // user-provided name, may be NULL
     const char *input_defn,     // user-provided name, may be NULL
     bool user_op,               // if true, a user-defined op
-    bool jitable                // if true, the op can be JIT'd
+    bool jitable,               // if true, the op can be JIT'd
+    int memlane
 ) ;
 
 #endif

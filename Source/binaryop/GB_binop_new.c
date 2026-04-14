@@ -26,7 +26,8 @@ GrB_Info GB_binop_new
     GrB_Type ytype,                 // type of input y
     const char *binop_name,         // name of the user function
     const char *binop_defn,         // definition of the user function
-    const GB_Opcode opcode          // opcode for the function
+    const GB_Opcode opcode,         // opcode for the function
+    int memlane
 )
 { 
 
@@ -45,8 +46,7 @@ GrB_Info GB_binop_new
     //--------------------------------------------------------------------------
 
     op->magic = GB_MAGIC ;
-    op->user_name = NULL ;
-    op->user_name_mem = 0 ;             // always use memlane = 0
+    op->user_name = NULL ; op->user_name_mem = 0 ;
     op->ztype = ztype ;
     op->xtype = xtype ;
     op->ytype = ytype ;
@@ -55,8 +55,7 @@ GrB_Info GB_binop_new
     op->binop_function = function ;     // NULL for GB_reduce_to_vector
     op->idxbinop_function = NULL ;
     op->theta_type = NULL ;
-    op->theta = NULL ;
-    op->theta_mem = 0 ;                 // always use memlane = 0
+    op->theta = NULL ; op->theta_mem = 0 ;
     op->opcode = opcode ;
 
     //--------------------------------------------------------------------------
@@ -73,6 +72,7 @@ GrB_Info GB_binop_new
         // output:
         op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_mem),
         // input:
-        binop_name, binop_defn, opcode == GB_USER_binop_code, jitable)) ;
+        binop_name, binop_defn, opcode == GB_USER_binop_code, jitable,
+        memlane)) ;
 }
 

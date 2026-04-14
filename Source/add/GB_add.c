@@ -94,6 +94,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     ASSERT (C != NULL) ;
     int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
 
     ASSERT (mask_applied != NULL) ;
     (*mask_applied) = false ;
@@ -110,14 +111,14 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     int64_t Cnvec = 0, Cnvec_nonempty = 0  ;
-    void *Cp = NULL ; size_t Cp_mem = 0 ;
-    void *Ch = NULL ; size_t Ch_mem = 0 ;
-    int64_t *C_to_M = NULL ; size_t C_to_M_mem = 0 ;
-    int64_t *C_to_A = NULL ; size_t C_to_A_mem = 0 ;
-    int64_t *C_to_B = NULL ; size_t C_to_B_mem = 0 ;
+    void *Cp = NULL ; uint64_t Cp_mem = mem ;
+    void *Ch = NULL ; uint64_t Ch_mem = mem ;
+    int64_t *C_to_M = NULL ; uint64_t C_to_M_mem = mem ;
+    int64_t *C_to_A = NULL ; uint64_t C_to_A_mem = mem ;
+    int64_t *C_to_B = NULL ; uint64_t C_to_B_mem = mem ;
     bool Ch_is_Mh ;
     int C_ntasks = 0, C_nthreads ;
-    GB_task_struct *TaskList = NULL ; size_t TaskList_mem = 0 ;
+    GB_task_struct *TaskList = NULL ; uint64_t TaskList_mem = mem ;
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
 
     //--------------------------------------------------------------------------

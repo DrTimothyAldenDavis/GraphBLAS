@@ -298,8 +298,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         // transplant Cwork as C->i, and allocate just C->x
         C->i = (void *) Cwork ;
         C->i_mem = Cwork_mem ;
-        Cwork = NULL ;
-        Cwork_mem = 0 ;
+        Cwork = NULL ; Cwork_mem = 0 ;
         C->x = GB_XALLOC_MEMORY (false, C_iso, cnz+1, C->type->size,
             &(C->x_mem)) ;
     }
@@ -309,8 +308,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         C->i = GB_MALLOC_MEMORY (cnz+1, cisize, &(C->i_mem)) ;
         C->x = (void *) Cwork ;
         C->x_mem = Cwork_mem ;
-        Cwork = NULL ;
-        Cwork_mem = 0 ;
+        Cwork = NULL ; Cwork_mem = 0 ;
     }
     else
     { 
