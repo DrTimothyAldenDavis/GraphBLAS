@@ -175,6 +175,7 @@ GrB_Info GX_add_phase0          /* find vectors in C for C=A+B or C<M>=A+B*/\
     const GrB_Matrix M,         /* optional mask, may be NULL; not compl */ \
     const GrB_Matrix A,         /* first input matrix */                    \
     const GrB_Matrix B,         /* second input matrix */                   \
+    int memlane,                /* memlane to use */                        \
     GB_Werk Werk                                                            \
 )
 

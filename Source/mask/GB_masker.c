@@ -150,7 +150,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         // input/output to phase0:
         &R_sparsity,
         // original input:
-        M, C, Z, Werk)) ;
+        M, C, Z, memlane, Werk)) ;
 
     GBURBLE ("masker:(%s:%s%s%s%s%s=%s) ",
         GB_sparsity_char (R_sparsity),

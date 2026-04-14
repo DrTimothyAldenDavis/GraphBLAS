@@ -93,6 +93,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     GrB_Info info ;
 
     ASSERT (C != NULL) ;
+    int memlane = GB_memlane (C->header_mem) ;
 
     ASSERT (mask_applied != NULL) ;
     (*mask_applied) = false ;
@@ -150,7 +151,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         // input/output to phase0:
         &C_sparsity,
         // original input:
-        (apply_mask) ? M : NULL, A, B, Werk)) ;
+        (apply_mask) ? M : NULL, A, B, memlane, Werk)) ;
 
     GBURBLE ("add:(%s<%s%s>=%s+%s) ",
         GB_sparsity_char (C_sparsity),

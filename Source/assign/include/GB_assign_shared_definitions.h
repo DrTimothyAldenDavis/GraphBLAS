@@ -209,14 +209,17 @@
 
 #define GB_EMPTY_TASKLIST                                                   \
     GrB_Info info ;                                                         \
+    ASSERT (C != NULL) ;                                                    \
+    int memlane = GB_memlane (C->header_mem) ;                              \
+    uint64_t mem = GB_mem (memlane, 0) ;                                    \
     int taskid, ntasks = 0, nthreads = 0 ;                                  \
-    GB_task_struct *TaskList = NULL ; uint64_t TaskList_mem = 0 ;           \
+    GB_task_struct *TaskList = NULL ; uint64_t TaskList_mem = mem ;         \
     GB_WERK_DECLARE (Npending, int64_t) ;                                   \
-    GB_MDECL (Zh, , u) ; uint64_t Zh_mem = 0 ;                              \
-    int64_t *restrict Z_to_X = NULL ; uint64_t Z_to_X_mem = 0 ;             \
-    int64_t *restrict Z_to_S = NULL ; uint64_t Z_to_S_mem = 0 ;             \
-    int64_t *restrict Z_to_A = NULL ; uint64_t Z_to_A_mem = 0 ;             \
-    int64_t *restrict Z_to_M = NULL ; uint64_t Z_to_M_mem = 0 ;
+    GB_MDECL (Zh, , u) ; uint64_t Zh_mem = mem ;                            \
+    int64_t *restrict Z_to_X = NULL ; uint64_t Z_to_X_mem = mem ;           \
+    int64_t *restrict Z_to_S = NULL ; uint64_t Z_to_S_mem = mem ;           \
+    int64_t *restrict Z_to_A = NULL ; uint64_t Z_to_A_mem = mem ;           \
+    int64_t *restrict Z_to_M = NULL ; uint64_t Z_to_M_mem = mem
 
 //------------------------------------------------------------------------------
 // GB_GET_C: get the C matrix (cannot be bitmap)
@@ -1337,7 +1340,7 @@
     GB_OK (GB_add_phase0 (                                                  \
         &Znvec, &Zh, &Zh_mem, NULL, NULL, &Z_to_X, &Z_to_X_mem,             \
         &Z_to_S, &Z_to_S_mem, NULL, &Zp_is_32, &Zj_is_32, &Zi_is_32,        \
-        &Z_sparsity, NULL, X, S, Werk)) ;                                   \
+        &Z_sparsity, NULL, X, S, memlane, Werk)) ;                          \
     GB_IPTR (Zh, Zj_is_32) ;                                                \
     GB_OK (GB_ewise_slice (                                                 \
         &TaskList, &TaskList_mem, &ntasks, &nthreads,                       \
@@ -1775,10 +1778,12 @@
 #define GB_GET_C_A_SCALAR_FOR_BITMAP                                        \
     GrB_Info info ;                                                         \
     /* workspace: */                                                        \
+    int memlane = GB_memlane (C->header_mem) ;                              \
+    uint64_t mem = GB_mem (memlane, 0) ;                                    \
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;                               \
     int M_ntasks = 0, M_nthreads = 0 ;                                      \
     GB_task_struct *TaskList_IxJ = NULL ;                                   \
-    uint64_t TaskList_IxJ_mem = 0 ;     /* FIXME: memlane */                \
+    uint64_t TaskList_IxJ_mem = mem ;                                       \
     int ntasks_IxJ = 0, nthreads_IxJ = 0 ;                                  \
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;                               \
     int A_ntasks = 0, A_nthreads = 0 ;                                      \

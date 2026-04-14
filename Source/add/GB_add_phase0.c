@@ -135,8 +135,8 @@ static inline bool GB_allocate_result
 //      const GrB_Matrix M,         // optional mask, may be NULL; not compl.
 //      const GrB_Matrix A,         // first input matrix
 //      const GrB_Matrix B,         // second input matrix
+//      int memlane,                // memlane to use
 //      GB_Werk Werk
-//      FIXME memlane: add memlane parameter here
 //  )
 
 GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
@@ -177,7 +177,6 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim)) ;
     ASSERT (GB_IMPLIES (M != NULL, A->vlen == M->vlen)) ;
 
-    int memlane = 0 ;       // FIXME memlane : add param
     uint64_t mem = GB_mem (memlane, 0) ;
 
     //--------------------------------------------------------------------------
