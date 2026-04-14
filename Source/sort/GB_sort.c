@@ -429,7 +429,7 @@ GrB_Info GB_sort
             if (!sort_in_place)
             { 
                 // C = A
-                GB_OK (GB_dup_worker (&C, A_iso, A, true, atype)) ;
+                GB_OK (GB_dup_worker (&C, A_iso, A, true, atype, memlane)) ;
             }
         }
         else
@@ -456,7 +456,7 @@ GrB_Info GB_sort
             if (!sort_in_place)
             { 
                 // C = A
-                GB_OK (GB_dup_worker (&C, A_iso, A, true, atype)) ;
+                GB_OK (GB_dup_worker (&C, A_iso, A, true, atype, memlane)) ;
             }
         }
         else

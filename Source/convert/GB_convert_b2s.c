@@ -34,8 +34,8 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
     const bool Ci_is_32,        // if true, Ci is uint32_t; otherwise uint64_t
     const GrB_Type ctype,       // type of Cx
     const GrB_Matrix A,         // matrix to extract; not modified
+    const int memlane,
     GB_Werk Werk
-    // FIXME memlane param
 )
 {
 
@@ -49,7 +49,6 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
     ASSERT_TYPE_OK (ctype, "ctype for b2s", GB0) ;
     ASSERT ((Cp_is_32 && A->nvals < UINT32_MAX) || !Cp_is_32) ;
 
-    int memlane = 0 ;   // FIXME memlane param
     uint64_t mem = GB_mem (memlane, 0) ;
 
     //--------------------------------------------------------------------------

@@ -51,6 +51,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     GrB_Info info ;
     GrB_Matrix A = NULL ;
     ASSERT_MATRIX_OK (C, "C input to concat sparse", GB0) ;
+
     int memlane = GB_memlane (C->header_mem) ;
     uint64_t mem = GB_mem (memlane, 0) ;
 
@@ -166,7 +167,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 if (T == NULL)
                 {
                     // copy A into T
-                    GB_OK (GB_dup_worker (&T, A->iso, A, true, NULL)) ;
+                    GB_OK (GB_dup_worker (&T, A->iso, A, true, NULL, memlane)) ;
                     // save T in array S
                     if (csc)
                     { 

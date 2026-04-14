@@ -142,7 +142,7 @@ static GrB_Info GB_export_worker  // export a matrix
         else
         { 
             // T = A
-            GB_OK (GB_dup_worker (&T, A->iso, A, true, A->type)) ;
+            GB_OK (GB_dup_worker (&T, A->iso, A, true, A->type, memlane)) ;
         }
 
         switch (format)

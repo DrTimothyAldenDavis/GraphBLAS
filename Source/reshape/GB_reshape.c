@@ -174,7 +174,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         else
         { 
             // copy T into C
-            GB_OK (GB_dup (&C, T, Werk)) ;
+            GB_OK (GB_dup (&C, T, memlane, Werk)) ;
         }
 
     }
@@ -194,7 +194,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         else
         { 
             // copy T into C
-            GB_OK (GB_dup (&C, T, Werk)) ;
+            GB_OK (GB_dup (&C, T, memlane, Werk)) ;
         }
 
         // change the size of C

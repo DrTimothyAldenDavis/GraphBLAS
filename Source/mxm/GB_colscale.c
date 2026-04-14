@@ -59,6 +59,8 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     ASSERT (A->vdim == D->vlen) ;
     ASSERT (GB_is_diagonal (D)) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+
     ASSERT (!GB_IS_BITMAP (A)) ;        // TODO: ok for now
     ASSERT (!GB_IS_BITMAP (D)) ;
     ASSERT (!GB_IS_FULL (D)) ;
@@ -99,7 +101,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     //--------------------------------------------------------------------------
 
     // allocate C->x but do not initialize it
-    GB_OK (GB_dup_worker (&C, C_iso, A, false, ztype)) ;
+    GB_OK (GB_dup_worker (&C, C_iso, A, false, ztype, memlane)) ;
     info = GrB_NO_VALUE ;
     ASSERT (C->type == ztype) ;
 

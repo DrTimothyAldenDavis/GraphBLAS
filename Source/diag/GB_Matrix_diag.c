@@ -66,7 +66,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     if (GB_IS_BITMAP (V_in))
     { 
         // make a deep copy of V_in and convert to CSC
-        GB_OK (GB_dup_worker (&T, V_in->iso, V_in, true, NULL)) ;
+        GB_OK (GB_dup_worker (&T, V_in->iso, V_in, true, NULL, memlane)) ;
         GB_OK (GB_convert_bitmap_to_sparse (T, Werk)) ;
         V = T ;
     }

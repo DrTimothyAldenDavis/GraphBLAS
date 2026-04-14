@@ -292,7 +292,8 @@ GrB_Info GB_ijxvector
                     return (GrB_OUT_OF_MEMORY) ;
                 }
                 GB_OK (GB_convert_b2s (Cp, NULL, NULL, /* Cx: */ I, NULL,
-                    false, false, false, List->type, (GrB_Matrix) List, Werk)) ;
+                    false, false, false, List->type, (GrB_Matrix) List,
+                    memlane, Werk)) ;
             }
             I_type = List->type ;
         }
@@ -308,7 +309,7 @@ GrB_Info GB_ijxvector
             }
             GB_OK (GB_convert_b2s (Cp, /* Ci: */ I, NULL, NULL, NULL,
                 false, false, I_type == GrB_UINT32, List->type,
-                (GrB_Matrix) List, Werk)) ;
+                (GrB_Matrix) List, memlane, Werk)) ;
         }
 
     }

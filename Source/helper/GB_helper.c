@@ -470,6 +470,7 @@ void GB_helper_container_new (void)         // allocate the global Container
         Container->ncols_nonempty = -1 ;
         Container->format = GxB_FULL ;
         Container->orientation = GrB_ROWMAJOR ;
+        Container->memlane = GB_MEMLANE_DEFAULT ;
     }
 }
 

@@ -140,7 +140,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         else if (A->Y_shallow || GB_is_shallow (A->Y))
         { 
             // A->Y is shallow, so create a deep copy for C
-            GB_OK (GB_dup (&(C->Y), A->Y, Werk)) ;
+            GB_OK (GB_dup (&(C->Y), A->Y, memlane, Werk)) ;
         }
         else
         { 

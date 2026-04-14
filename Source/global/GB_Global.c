@@ -900,8 +900,10 @@ void GB_Global_free_function (void *p, int memlane)
 void * GB_Global_persistent_malloc (uint64_t memsize)
 {
     // malloc persistent memory
-    void *p = GB_Global.malloc_function [GB_MEMLANE_MATLAB] (memsize) ;
-    GB_Global_persistent_make (p) ;
+//  void *p = GB_Global.malloc_function [GB_MEMLANE_MATLAB] (memsize) ;
+//  GB_Global_persistent_make (p) ;
+    /* FIXME HACK: */ void *p = malloc (memsize) ;
+        // printf ("persistent malloc %p\n", p) ;
     return (p) ;
 }
 
@@ -910,7 +912,7 @@ void GB_Global_persistent_make (void *p)
     if (p != NULL && GB_Global.persistent_function != NULL)
     { 
         // tell MATLAB to make this memory persistent
-        GB_Global.persistent_function (p) ;
+// FIXME HACK:      GB_Global.persistent_function (p) ;
     }
 }
 
@@ -925,7 +927,9 @@ void GB_Global_persistent_free (void **p)
     // free persistent memory
     if (p != NULL && *p != NULL)
     { 
-        GB_Global.free_function [GB_MEMLANE_MATLAB] (*p) ;
+//      GB_Global.free_function [GB_MEMLANE_MATLAB] (*p) ;
+        // printf ("persistent free %p\n", *p) ;
+    /* FIXME HACK: */ free (*p) ;
     }
     (*p) = NULL ;
 }

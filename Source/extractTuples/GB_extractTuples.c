@@ -144,7 +144,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         // to add to I and J.
 
         GB_OK (GB_convert_b2s (Cp, I, J, (GB_void *) X, NULL,
-            Cp_is_32, J_is_32, I_is_32, xtype, A, Werk)) ;
+            Cp_is_32, J_is_32, I_is_32, xtype, A, memlane, Werk)) ;
 
         if (A->iso && X != NULL)
         { 

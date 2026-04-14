@@ -31,8 +31,8 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     const bool numeric,     // if true, duplicate the numeric values; if A is
                             // iso, only the first entry is copied, regardless
                             // of C_iso on input
-    const GrB_Type ctype    // type of C, if numeric is false
-    // FIXME memlane param
+    const GrB_Type ctype,   // type of C, if numeric is false
+    const int memlane
 )
 {
 
@@ -47,7 +47,6 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
 
-    int memlane = 0 ;   // FIXME memlane param
     uint64_t mem = GB_mem (memlane, 0) ;
 
     //--------------------------------------------------------------------------
