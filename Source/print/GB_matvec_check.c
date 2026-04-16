@@ -362,7 +362,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         {
             GBPR ("  header (%p)", (void *) A) ;
         }
-        GBPR (" number of memory blocks: " GBd "\n", nallocs) ;
+        GBPR (" header size: %d\n", (int) sizeof (struct GB_Matrix_opaque)) ;
+        GBPR ("  number of memory blocks: " GBd "\n", nallocs) ;
         GBPR ("  deep: " GBu " shallow: " GBu " total: " GBu "\n",
             (uint64_t) mem_deep, (uint64_t) mem_shallow,
             (uint64_t) (mem_deep + mem_shallow)) ;

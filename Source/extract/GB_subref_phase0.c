@@ -223,8 +223,8 @@ GrB_Info GB_subref_phase0
     const void *J,          // index list for C = A(I,J), or GrB_ALL, etc.
     const bool J_is_32,     // if true, I is 32-bit; else 64-bit
     const int64_t nj,       // length of J, or special
+    const int memlane,
     GB_Werk Werk
-    // FIXME memlane param
 )
 {
 
@@ -232,7 +232,6 @@ GrB_Info GB_subref_phase0
     // check inputs
     //--------------------------------------------------------------------------
 
-    int memlane = 0 ;   // FIXME memlane param
     uint64_t mem = GB_mem (memlane, 0) ;
 
     ASSERT_MATRIX_OK (A, "A for subref phase 0", GB0) ;

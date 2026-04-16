@@ -32,6 +32,7 @@
 // input.
 
 #include "GB.h"
+#define GB_FREE_ALL ;
 
 GrB_Info GB_new                 // create matrix, except for indices & values
 (
@@ -50,7 +51,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     bool p_is_32,               // if true, A->p is 32 bit; 64 bit otherwise
     bool j_is_32,               // if true, A->h and A->Y are 32 bit; else 64
     bool i_is_32,               // if true, A->i is 32 bit; 64 bit otherwise
-    int memlane                 // memlane for the matrix
+    int memlane
 )
 {
 
@@ -58,6 +59,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (Ahandle != NULL) ;
     ASSERT_TYPE_OK (type, "type for GB_new", GB0) ;
     ASSERT (vlen >= 0 && vlen <= GB_NMAX)
@@ -85,19 +87,13 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     if ((*Ahandle) == NULL)
     {
         // allocate a new header in the memlane
-        uint64_t header_mem = mem ;
-        (*Ahandle) = GB_CALLOC_MEMORY (1, sizeof (struct GB_Matrix_opaque),
-            &header_mem) ;
-        if (*Ahandle == NULL)
-        { 
-            // out of memory
-            return (GrB_OUT_OF_MEMORY) ;
-        }
+        GB_OK (GB_matrix_header_new (Ahandle, memlane)) ;
         allocated_header = true ;
-        (*Ahandle)->header_mem = header_mem ;
     }
 
+    // content is allocated in data_memlane
     GrB_Matrix A = *Ahandle ;
+    A->data_memlane = memlane ;
 
     //--------------------------------------------------------------------------
     // initialize the matrix header

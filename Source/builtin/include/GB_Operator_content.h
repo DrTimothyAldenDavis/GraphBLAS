@@ -12,11 +12,11 @@
 
     int64_t magic ;         // for detecting uninitialized objects
     uint64_t header_mem ;   // size of the malloc'd block for this struct, or 0,
-                            // and memlane = 0
+                            // and memlane
     // ---------------------//
     char *user_name ;       // user name for GrB_get/GrB_set
     uint64_t user_name_mem ; // allocated size of user_name for GrB_get/GrB_set
-                            // and memlane = 0
+                            // and memlane
     // ---------------------//
 
     GrB_Type ztype ;        // type of z
@@ -34,7 +34,7 @@
     GB_Opcode opcode ;      // operator opcode
     char *defn ;            // function definition
     uint64_t defn_mem ;     // allocated size of the definition,
-                            // and memlane = 0
+                            // and memlane
 
     uint64_t hash ;         // if 0, operator uses only builtin ops and types
 

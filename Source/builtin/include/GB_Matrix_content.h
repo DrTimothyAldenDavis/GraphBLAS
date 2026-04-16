@@ -459,7 +459,7 @@ uint64_t nzombies ;     // number of zombies marked for deletion
 float hyper_switch ;    // controls conversion hyper to/from sparse
 float bitmap_switch ;   // controls conversion sparse to/from bitmap
 
-// the remaining content of this struct is 17 bytes
+// the remaining content of this struct is 18 bytes
 
 // 5 bytes:
 int8_t sparsity_control ;   // controls sparsity structure: hypersparse,
@@ -537,6 +537,25 @@ bool iso ;          // true if all entries have the same value and only a
 bool p_is_32 ;  // true if A->p is 32-bit, false if 64
 bool j_is_32 ;  // true if A->h and A->Y->[pix] are 32-bit, false if 64
 bool i_is_32 ;  // true if A->i is 32-bit, false if 64
+
+//------------------------------------------------------------------------------
+// memlane control
+//------------------------------------------------------------------------------
+
+// The A->[p,h,Y,b,i,x,Pending] data is allocated in A->data_memlane by default.
+// A->data_memlane and the A->Y->data_memlane values will always be identical.
+// These arrays can temporarily appear on other memlanes, which may occur if
+// they are transplanted from other matrices.  GrB_wait will move them to the
+// desired memlane (A->data_memlane) if they are not already there.  Thus, in
+// matrix with no pending work, A->data_memlane and GB_memlane (A->[p,etc]_mem),
+// GB_memlane (A->Y->[p...]_mem), and GB_memlane (A->Pending->[ijx,header]_mem)
+// state will all match.
+
+// The header of the matrix (in GB_memlane (A->header_mem)) and A->data_memlane
+// can differ, and this is not revised by GrB_wait.  Changing the memlane of
+// the header requires a malloc/copy/free, and thus changes the pointer *A.
+
+uint8_t data_memlane ;
 
 //------------------------------------------------------------------------------
 // iterating through a matrix

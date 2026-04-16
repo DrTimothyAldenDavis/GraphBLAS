@@ -119,6 +119,9 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     ASSERT (GB_JUMBLED_OK (A)) ;    // A is sorted, below, if jumbled on input
     ASSERT (GB_PENDING_OK (A)) ;
 
+    int memlane = GB_memlane (C->header_mem) ;
+    uint64_t mem = GB_mem (memlane, 0) ;
+
     //--------------------------------------------------------------------------
     // determine the type of C
     //--------------------------------------------------------------------------
@@ -180,13 +183,12 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     // C = A(I,J) where C and A are both sparse or hypersparse
     //--------------------------------------------------------------------------
 
-    // FIXME memlane:
-    void *Cp       = NULL ; uint64_t Cp_mem = 0 ;
-    void *Ch       = NULL ; uint64_t Ch_mem = 0 ;
-    void *Ap_start = NULL ; uint64_t Ap_start_mem = 0 ;
-    void *Ap_end   = NULL ; uint64_t Ap_end_mem = 0 ;
-    uint64_t *Cwork = NULL ; uint64_t Cwork_mem = 0 ;
-    GB_task_struct *TaskList = NULL ; uint64_t TaskList_mem = 0 ;
+    void *Cp       = NULL ; uint64_t Cp_mem = mem ;
+    void *Ch       = NULL ; uint64_t Ch_mem = mem ;
+    void *Ap_start = NULL ; uint64_t Ap_start_mem = mem ;
+    void *Ap_end   = NULL ; uint64_t Ap_end_mem = mem ;
+    uint64_t *Cwork = NULL ; uint64_t Cwork_mem = mem ;
+    GB_task_struct *TaskList = NULL ; uint64_t TaskList_mem = mem ;
     int64_t Cnvec = 0, nI = 0, nJ, Icolon [3], Cnvec_nonempty ;
     bool post_sort, need_qsort, Cp_is_32, Cj_is_32, Ci_is_32 ;
     int Ikind, ntasks, nthreads ;
@@ -211,7 +213,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         &Ch, &Cj_is_32, &Ci_is_32, &Ch_mem, &Ap_start, &Ap_start_mem,
         &Ap_end, &Ap_end_mem, &Cnvec, &need_qsort, &Ikind, &nI, Icolon, &nJ,
         // original input:
-        A, I, I_is_32, ni, J, J_is_32, nj, Werk)) ;
+        A, I, I_is_32, ni, J, J_is_32, nj, memlane, Werk)) ;
 
     //--------------------------------------------------------------------------
     // phase1: split C=A(I,J) into tasks for phase2 and phase3
@@ -227,7 +229,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         // computed by phase0:
         Ap_start, Ap_end, Cnvec, need_qsort, Ikind, nI, Icolon,
         // original input:
-        A->vlen, GB_nnz (A), A->p_is_32, I, I_is_32, Werk)) ;
+        A->vlen, GB_nnz (A), A->p_is_32, I, I_is_32, memlane, Werk)) ;
 
     //--------------------------------------------------------------------------
     // phase2: count the number of entries in each vector of C
@@ -241,7 +243,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         // computed by phase0:
         Ap_start, Ap_end, Cnvec, need_qsort, Ikind, nI, Icolon, nJ,
         // original input:
-        A, I, I_is_32, symbolic, Werk)) ;
+        A, I, I_is_32, symbolic, memlane, Werk)) ;
 
     //--------------------------------------------------------------------------
     // phase3: compute the entries (indices and values) in each vector of C

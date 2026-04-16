@@ -84,8 +84,8 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     const bool Ap_is_32,        // if true, Ap_start/end are 32-bit; else 64
     const void *I,
     const bool I_is_32,         // if true, I is 32-bit; else 64 bit
+    const int memlane,
     GB_Werk Werk
-    // FIXME memlane param
 )
 {
 
@@ -105,7 +105,6 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     ASSERT ((Cnvec > 0) == (Ap_start != NULL)) ;
     ASSERT ((Cnvec > 0) == (Ap_end != NULL)) ;
 
-    int memlane = 0 ;   // FIXME memlane param
     uint64_t mem = GB_mem (memlane, 0) ;
 
     (*p_TaskList) = NULL ;

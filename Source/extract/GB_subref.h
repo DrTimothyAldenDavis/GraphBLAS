@@ -55,6 +55,7 @@ GrB_Info GB_subref_phase0
     const void *J,          // index list for C = A(I,J), or GrB_ALL, etc.
     const bool J_is_32,     // if true, I is 32-bit; else 64-bit
     const int64_t nj,       // length of J, or special
+    const int memlane,
     GB_Werk Werk
 ) ;
 
@@ -94,6 +95,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     const bool Ap_is_32,        // if true, Ap_start/end are 32-bit; else 64
     const void *I,
     const bool I_is_32,         // if true, I is 32-bit; else 64 bit
+    const int memlane,
     GB_Werk Werk
 ) ;
 
@@ -125,6 +127,7 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     const void *I,              // index list for C = A(I,J), or GrB_ALL, etc.
     const bool I_is_32,         // if true, I is 32-bit; else 64-bit
     const bool symbolic,
+    const int memlane,
     GB_Werk Werk
 ) ;
 

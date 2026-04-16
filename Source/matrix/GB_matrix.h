@@ -112,23 +112,25 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
 // GB_matrix_header_new
 //------------------------------------------------------------------------------
 
-// Allocate an empty matrix header
+// Allocate an empty matrix header; assumes GB_memlane (A->header_mem) and
+// A->data_memlane are the same.  This can be revised by the caller after this
+// method returns.
 
 static inline GrB_Info GB_matrix_header_new
 (
     GrB_Matrix *Ahandle,
-    int memlane
+    int memlane     // for both A->header_mem and A->data_memlane;
 )
 {
     ASSERT (Ahandle != NULL) ;
     uint64_t header_mem = GB_mem (memlane, 0) ;
-    (*Ahandle) = (GrB_Matrix) GB_CALLOC_MEMORY (1,
-        sizeof (struct GB_Matrix_opaque), &header_mem) ;
+    (*Ahandle) = (GrB_Matrix) GB_CALLOC_MEMORY (1, sizeof (struct GB_Matrix_opaque), &header_mem) ;
     if (*Ahandle == NULL)
     {
         return (GrB_OUT_OF_MEMORY) ;
     }
     (*Ahandle)->header_mem = header_mem ;
+    (*Ahandle)->data_memlane = memlane ;
     (*Ahandle)->magic = GB_MAGIC2 ;
     return (GrB_SUCCESS) ;
 }
