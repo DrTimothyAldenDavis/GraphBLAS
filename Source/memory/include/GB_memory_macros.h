@@ -23,28 +23,28 @@
 #define GB_MEMLANE_RMM 0        /* FIXME: Rapids will be on lane 1 */
 #define GB_MEMLANE_MATLAB 0     /* FIXME: mxMalloc will be on lane 2 */
 
-GB_STATIC_INLINE int GB_memlane (uint64_t mem)
+GB_STATIC_INLINE_BOTH int GB_memlane (uint64_t mem)
 {
     // return the high order byte, containing the memlane
     int memlane = (mem >> 56) ;
     return (memlane) ;
 }
 
-GB_STATIC_INLINE uint64_t GB_memsize (uint64_t mem)
+GB_STATIC_INLINE_BOTH uint64_t GB_memsize (uint64_t mem)
 {
     // return the 7 low order bytes, containing the memsize
     uint64_t memsize = mem & ((uint64_t) 0x00ffffffffffffffL) ;
     return (memsize) ;
 }
 
-GB_STATIC_INLINE uint64_t GB_mem (int memlane, uint64_t memsize)
+GB_STATIC_INLINE_BOTH uint64_t GB_mem (int memlane, uint64_t memsize)
 {
     // combine the memlane and memsize into the _mem state
     uint64_t mem = ((uint64_t) memlane) << 56 | memsize ;
     return (mem) ;
 }
 
-GB_STATIC_INLINE uint64_t GB_memlane_change (int memlane, uint64_t mem)
+GB_STATIC_INLINE_BOTH uint64_t GB_memlane_change (int memlane, uint64_t mem)
 {
     // change the memlane of an object, keeping the memsize the same,
     // and return the new mem state

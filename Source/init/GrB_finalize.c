@@ -38,7 +38,7 @@ GrB_Info GrB_finalize ( )
     #if defined ( GRAPHBLAS_HAS_CUDA )
     {
         // finalize the GPUs
-        GB_OK (GB_cuda_finalize ( )) ;
+        GB_cuda_finalize ( ) ;
     }
     #endif
 

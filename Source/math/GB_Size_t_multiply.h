@@ -12,7 +12,7 @@
 #ifndef GB_SIZE_T_MULTIPLY_H
 #define GB_SIZE_T_MULTIPLY_H
 
-GB_STATIC_INLINE bool GB_Size_t_multiply     // true if ok, false if overflow
+GB_STATIC_INLINE_BOTH bool GB_Size_t_multiply // true if ok, false if overflow
 (
     size_t *c,              // c = a*b, or zero if overflow occurs
     const size_t a,

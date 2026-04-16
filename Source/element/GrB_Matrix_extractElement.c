@@ -136,7 +136,7 @@ GrB_Info GrB_Matrix_extractElement_Scalar   // S = A(i,j)
 // have zombies.  Pending tuples are ignored and not searched; the method
 // returns false if A(i,j) is a pending tuple.
 
-GB_STATIC_INLINE void GB_Matrix_find_entry
+static inline void GB_Matrix_find_entry
 (
     // output:
     int64_t *pleft,     // position of the entry, if A(i,j) found

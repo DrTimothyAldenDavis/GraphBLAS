@@ -135,7 +135,7 @@ GrB_Info GrB_Vector_extractElement_Scalar   // S = V(i,j)
 // have zombies.  Pending tuples are ignored and not searched; the method
 // returns false if V(i) is a pending tuple.
 
-GB_STATIC_INLINE void GB_Vector_find_entry
+static inline void GB_Vector_find_entry
 (
     // output:
     int64_t *pleft,     // position of the entry, if V(i) found
