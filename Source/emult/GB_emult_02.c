@@ -96,7 +96,9 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
 
     GrB_Info info ;
     ASSERT (C != NULL) ;
-    int memlane = GB_memlane (C->header_mem) ;
+
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for emult_02", GB0) ;
     ASSERT_MATRIX_OK (A, "A for emult_02", GB0) ;
@@ -170,7 +172,8 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     GB_OK (GB_new (&C, // sparse or hyper (same as A), existing header
         ctype, vlen, vdim, GB_ph_calloc, C_is_csc,
         C_sparsity, A->hyper_switch, nvec,
-        A->p_is_32, A->j_is_32, A->i_is_32, memlane)) ;
+        A->p_is_32, A->j_is_32, A->i_is_32,
+        header_memlane, data_memlane)) ;
 
     ASSERT (C->p_is_32 == A->p_is_32) ;
     ASSERT (C->j_is_32 == A->j_is_32) ;

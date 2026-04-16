@@ -70,7 +70,8 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     GrB_Info info ;
     ASSERT (C != NULL) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for dot A'*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ;
@@ -118,7 +119,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
             info = GB_new_bix (&C, // existing header
                 ztype, A->vdim, B->vdim, GB_ph_null, true, GxB_FULL, false,
                 GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true,
-                /* OK: */ false, false, false, memlane) ;
+                /* OK: */ false, false, false, header_memlane, data_memlane) ;
             if (info == GrB_SUCCESS)
             { 
                 C->magic = GB_MAGIC ;
@@ -172,7 +173,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         return (GB_new (&C, // auto sparsity, existing header
             ztype, A->vdim, B->vdim, GB_ph_calloc, true, GxB_AUTO_SPARSITY,
             GB_Global_hyper_switch_get ( ), 1, Cp_is_32, Cj_is_32, Ci_is_32,
-            memlane)) ;
+            header_memlane, data_memlane)) ;
     }
 
     //--------------------------------------------------------------------------

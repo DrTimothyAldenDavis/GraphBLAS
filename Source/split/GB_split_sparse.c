@@ -49,8 +49,9 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    int memlane = GB_memlane (A->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int header_memlane = GB_memlane (A->header_mem) ;
+    int data_memlane = A->data_memlane ;
+    uint64_t mem = GB_mem (data_memlane, 0) ;
 
     int sparsity_control = A->sparsity_control ;
     float hyper_switch = A->hyper_switch ;
@@ -165,7 +166,8 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             C = NULL ;
             GB_OK (GB_new (&C, // new header
                 atype, cvlen, cvdim, GB_ph_malloc, csc, A_sparsity,
-                hyper_switch, cnvec, Cp_is_32, Cj_is_32, Ci_is_32, memlane)) ;
+                hyper_switch, cnvec, Cp_is_32, Cj_is_32, Ci_is_32,
+                header_memlane, data_memlane)) ;
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
             C->nvec = cnvec ;

@@ -110,8 +110,8 @@ GrB_Info axb (GB_Werk Werk)
         }
     }
 
-    GB_matrix_header_new (&T, GB_MEMLANE_MATLAB) ;
-    GB_matrix_header_new (&MT, GB_MEMLANE_MATLAB) ;
+    GB_matrix_header_new (&T, GB_MEMLANE_MATLAB, GB_MEMLANE_MATLAB) ;
+    GB_matrix_header_new (&MT, GB_MEMLANE_MATLAB, GB_MEMLANE_MATLAB) ;
     if (T == NULL || MT == NULL)
     {
         GrB_BinaryOp_free_(&My_rdiv2) ;

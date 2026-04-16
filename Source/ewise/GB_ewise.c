@@ -66,7 +66,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     ASSERT_MATRIX_OK (A, "A for GB_ewise", GB0) ;
     ASSERT_MATRIX_OK (B, "B for GB_ewise", GB0) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
 
     // T has the same type as the output z for z=op(a,b)
     GrB_BinaryOp op = op_in ;
@@ -236,7 +237,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     { 
         // MT = (bool) M'
         GBURBLE ("(M transpose) ") ;
-        GB_OK (GB_matrix_header_new (&MT, memlane)) ;
+        GB_OK (GB_matrix_header_new (&MT, header_memlane, data_memlane)) ;
         GB_OK (GB_transpose_cast (MT, GrB_BOOL, T_is_csc, M, Mask_struct,
             Werk)) ;
         M1 = MT ;
@@ -259,7 +260,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     { 
         // AT = (xtype) A' or AT = (xtype) one (A')
         GBURBLE ("(A transpose) ") ;
-        GB_OK (GB_matrix_header_new (&AT, memlane)) ;
+        GB_OK (GB_matrix_header_new (&AT, header_memlane, data_memlane)) ;
         GB_OK (GB_transpose_cast (AT, op->xtype, T_is_csc, A, A_is_pattern,
             Werk)) ;
         A1 = AT ;
@@ -271,7 +272,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     { 
         // BT = (ytype) B' or BT = (ytype) one (B')
         GBURBLE ("(B transpose) ") ;
-        GB_OK (GB_matrix_header_new (&BT, memlane)) ;
+        GB_OK (GB_matrix_header_new (&BT, header_memlane, data_memlane)) ;
         GB_OK (GB_transpose_cast (BT, op->ytype, T_is_csc, B, B_is_pattern,
             Werk)) ;
         B1 = BT ;
@@ -367,7 +368,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     //--------------------------------------------------------------------------
 
     bool mask_applied = false ;
-    GB_OK (GB_matrix_header_new (&T, memlane)) ;
+    GB_OK (GB_matrix_header_new (&T, header_memlane, data_memlane)) ;
 
     if (eWiseAdd)
     { 

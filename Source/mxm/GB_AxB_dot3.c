@@ -54,8 +54,10 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     GrB_Info info ;
     ASSERT (C != NULL) ;
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
+    uint64_t mem = GB_mem (data_memlane, 0) ;
 
     ASSERT_MATRIX_OK (M, "M for dot3 A'*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for dot3 A'*B", GB0) ;
@@ -184,7 +186,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     GB_OK (GB_new (&C, // sparse or hyper (from M), existing header
         ctype, cvlen, cvdim, GB_ph_malloc, true,
         C_sparsity, M->hyper_switch, cnvec,
-        Cp_is_32, Cj_is_32, Ci_is_32, memlane)) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane)) ;
 
     GB_Ch_DECLARE (Ch, ) ; GB_Ch_PTR (Ch, C) ;
 

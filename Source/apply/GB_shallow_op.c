@@ -45,8 +45,10 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     //--------------------------------------------------------------------------
 
     ASSERT (C != NULL) ;
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
+    uint64_t mem = GB_mem (data_memlane, 0) ;
+
     ASSERT_MATRIX_OK (A, "A for shallow_op", GB0) ;
     ASSERT_OP_OK (op, "unop/binop for shallow_op", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;
@@ -96,7 +98,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     info = GB_new (&C, // any sparsity, existing header
         ztype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         GB_sparsity (A), A->hyper_switch, 0,
-        A->p_is_32, A->j_is_32, A->i_is_32, memlane) ;
+        A->p_is_32, A->j_is_32, A->i_is_32, header_memlane, data_memlane) ;
     ASSERT (info == GrB_SUCCESS) ;
 
     //--------------------------------------------------------------------------

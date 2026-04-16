@@ -59,7 +59,8 @@ GrB_Info GB_subassign_02
     GrB_Info info ;
     GrB_Matrix S = NULL ;
 
-    int memlane = GB_memlane (C->header_mem) ;
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
 
     ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
@@ -69,7 +70,7 @@ GrB_Info GB_subassign_02
     // S = C(I,J)
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_matrix_header_new (&S, memlane)) ;
+    GB_OK (GB_matrix_header_new (&S, header_memlane, data_memlane)) ;
     GB_OK (GB_subassign_symbolic (S, C, I, I_is_32, ni, J, J_is_32, nj, true,
         Werk)) ;
 

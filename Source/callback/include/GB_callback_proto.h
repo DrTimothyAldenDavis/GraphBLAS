@@ -152,7 +152,7 @@ GrB_Info GX_subassign_one_slice     /* slice M for subassign_05, 06n, 07 */ \
     const int Jkind,                                                        \
     const int64_t Jcolon [3],                                               \
     const GrB_Matrix M,             /* matrix to slice */                   \
-    const int memlane,              /* memlane to use */                    \
+    const int data_memlane,         /* memlane to use */                    \
     GB_Werk Werk                                                            \
 )
 
@@ -176,7 +176,7 @@ GrB_Info GX_add_phase0          /* find vectors in C for C=A+B or C<M>=A+B*/\
     const GrB_Matrix M,         /* optional mask, may be NULL; not compl */ \
     const GrB_Matrix A,         /* first input matrix */                    \
     const GrB_Matrix B,         /* second input matrix */                   \
-    int memlane,                /* memlane to use */                        \
+    int data_memlane,           /* memlane to use */                        \
     GB_Werk Werk                                                            \
 )
 
@@ -213,7 +213,7 @@ GrB_Info GX_subassign_IxJ_slice                                             \
     /* input: */                                                            \
     const int64_t nI,                                                       \
     const int64_t nJ,                                                       \
-    int memlane,                /* memlane to use */                        \
+    int data_memlane,               /* memlane to use */                    \
     GB_Werk Werk                                                            \
 )
 
@@ -300,7 +300,8 @@ GrB_Info GX_new_bix     /* create a new matrix, incl. A->b, A->i, A->x */   \
     bool p_is_32,               /* if true, A->p is 32 bit; else 64 */      \
     bool j_is_32,               /* if true, A->h, A->Y are 32 bit else 64 */\
     bool i_is_32,               /* if true, A->i is 32 bit; else 64 */      \
-    int memlane                 /* memlane for the matrix */                \
+    const int header_memlane,   /* memlane for header, if allocated */      \
+    const int data_memlane      /* memlane for matrix data */               \
 )
 
 #define GB_CALLBACK_MATRIX_FREE_PROTO(GX_Matrix_free)                       \

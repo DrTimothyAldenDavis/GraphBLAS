@@ -73,7 +73,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
 
     ASSERT (C != NULL) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
 
     ASSERT_MATRIX_OK_OR_NULL (M_in, "M for dot A'*B", GB0) ;
     ASSERT_MATRIX_OK (A_in, "A for dot A'*B", GB0) ;
@@ -132,7 +133,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     if (A_is_hyper)
     { 
         // A = hypershallow version of A_in
-        GB_OK (GB_matrix_header_new (&Awork, memlane)) ;
+        GB_OK (GB_matrix_header_new (&Awork, header_memlane, data_memlane)) ;
         A = GB_hyper_shallow (Awork, A_in) ;
     }
     else
@@ -144,7 +145,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     if (B_is_hyper)
     { 
         // B = hypershallow version of B_in
-        GB_OK (GB_matrix_header_new (&Bwork, memlane)) ;
+        GB_OK (GB_matrix_header_new (&Bwork, header_memlane, data_memlane)) ;
         B = GB_hyper_shallow (Bwork, B_in) ;
     }
     else
@@ -178,7 +179,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     { 
         // Mwork = M_in (Ah, Bh)
         // if Mask_struct then Mwork is extracted as iso
-        GB_OK (GB_matrix_header_new (&Mwork, memlane)) ;
+        GB_OK (GB_matrix_header_new (&Mwork, header_memlane, data_memlane)) ;
         GB_OK (GB_subref (Mwork, Mask_struct, M_in->is_csc, M_in,
             (A_is_hyper) ? Ah : GrB_ALL, A->j_is_32, cvlen,
             (B_is_hyper) ? Bh : GrB_ALL, B->j_is_32, cvdim,
@@ -368,7 +369,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     GB_OK (GB_new_bix (&C, // bitmap/full, existing header
         ctype, cvlen, cvdim, GB_ph_malloc, true, C_sparsity,
         M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true, C_iso,
-        Cp_is_32, Cj_is_32, Ci_is_32, memlane)) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane)) ;
 
     //--------------------------------------------------------------------------
     // if M is sparse/hyper, scatter it into the C bitmap

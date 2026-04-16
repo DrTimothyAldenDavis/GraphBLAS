@@ -59,8 +59,9 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
+    uint64_t mem = GB_mem (data_memlane, 0) ;
 
     //--------------------------------------------------------------------------
     // workspace for assign/template/GB_bitmap_assign_IxJ_template.c
@@ -126,7 +127,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     GB_OK (GB_new_bix (&C, // bitmap or full, existing header
         ctype, nI, nJ, GB_ph_null, C_is_csc,
         sparsity, true, A->hyper_switch, -1, cnzmax, true, C_iso,
-        /* OK: */ false, false, false, memlane)) ;
+        /* OK: */ false, false, false, header_memlane, data_memlane)) ;
 
     //--------------------------------------------------------------------------
     // get C

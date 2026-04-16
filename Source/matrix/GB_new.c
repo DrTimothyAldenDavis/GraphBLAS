@@ -51,7 +51,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     bool p_is_32,               // if true, A->p is 32 bit; 64 bit otherwise
     bool j_is_32,               // if true, A->h and A->Y are 32 bit; else 64
     bool i_is_32,               // if true, A->i is 32 bit; 64 bit otherwise
-    int memlane
+    const int header_memlane,   // memlane for header, if allocated
+    const int data_memlane      // memlane for matrix data
 )
 {
 
@@ -82,18 +83,15 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     // allocate the matrix header, if not already allocated on input
     //--------------------------------------------------------------------------
 
-    uint64_t mem = GB_mem (memlane, 0) ;
+    uint64_t mem = GB_mem (data_memlane, 0) ;
     bool allocated_header = false ;
     if ((*Ahandle) == NULL)
     {
-        // allocate a new header in the memlane
-        GB_OK (GB_matrix_header_new (Ahandle, memlane)) ;
+        // allocate a new header in the header_memlane
+        GB_OK (GB_matrix_header_new (Ahandle, header_memlane, data_memlane)) ;
         allocated_header = true ;
     }
-
-    // content is allocated in data_memlane
     GrB_Matrix A = *Ahandle ;
-    A->data_memlane = memlane ;
 
     //--------------------------------------------------------------------------
     // initialize the matrix header

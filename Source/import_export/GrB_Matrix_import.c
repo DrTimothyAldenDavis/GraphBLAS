@@ -271,7 +271,8 @@ static GrB_Info GB_import_worker   // import a matrix of any type
                 GB_OK (GB_new (A, // new header
                     type, vlen, vdim, GB_ph_null, is_csc, GxB_AUTO_SPARSITY,
                     GB_Global_hyper_switch_get ( ), 0,
-                    /* OK; 64-bit only: */ false, false, false, memlane)) ;
+                    /* OK; 64-bit only: */ false, false, false,
+                    memlane, memlane)) ;
 
                 // build A from the input triplets
                 GB_OK (GB_builder (

@@ -214,7 +214,7 @@ void mexFunction
     // get flipxy
     GET_SCALAR (3, bool, flipxy, false) ;
 
-    GB_matrix_header_new (&C, /* FIXME memlane: */ 0) ;
+    GB_matrix_header_new (&C, /* FIXME memlane: */ 0, 0) ;
 
     if (A->type == Complex)
     {

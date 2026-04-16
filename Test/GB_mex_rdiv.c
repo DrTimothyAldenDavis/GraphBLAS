@@ -85,7 +85,7 @@ GrB_Info axb (GB_Werk Werk, bool cprint)
         return (info) ;
     }
 
-    GB_matrix_header_new (&MT, GB_MEMLANE_MATLAB) ;
+    GB_matrix_header_new (&MT, GB_MEMLANE_MATLAB, GB_MEMLANE_MATLAB) ;
     if (MT == NULL)
     {
         GrB_BinaryOp_free_(&My_rdiv) ;
@@ -205,7 +205,7 @@ void mexFunction
         mexErrMsgTxt ("invalid dimensions") ;
     }
 
-    GB_matrix_header_new (&C, GB_MEMLANE_MATLAB) ;
+    GB_matrix_header_new (&C, GB_MEMLANE_MATLAB, GB_MEMLANE_MATLAB) ;
     METHOD (axb (Werk, cprint)) ;
 
     // return C

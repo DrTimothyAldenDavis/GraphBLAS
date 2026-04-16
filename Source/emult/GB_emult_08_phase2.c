@@ -82,7 +82,8 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
 
     ASSERT (C != NULL) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
 
     ASSERT_BINARYOP_OK (op, "op for emult phase2", GB0) ;
     ASSERT_MATRIX_OK (A, "A for emult 08 phase2", GB0) ;
@@ -152,7 +153,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     GrB_Info info = GB_new_bix (&C, // sparse/hyper, existing header
         ctype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso,
-        Cp_is_32, Cj_is_32, Ci_is_32, memlane) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B

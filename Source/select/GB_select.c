@@ -54,7 +54,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     ASSERT_MATRIX_OK (A, "A input for GB_select", GB0) ;
     ASSERT_SCALAR_OK (Thunk, "Thunk for GB_select", GB0) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
 
     GrB_Matrix T = NULL ;
 
@@ -368,7 +369,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     // create T
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_matrix_header_new (&T, memlane)) ;
+    GB_OK (GB_matrix_header_new (&T, header_memlane, data_memlane)) ;
 
     if (make_copy)
     { 
@@ -386,7 +387,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         GB_OK (GB_new (&T, // auto (sparse or hyper), existing header
             A->type, A->vlen, A->vdim, GB_ph_calloc, A_csc,
             GxB_SPARSE + GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ), 1,
-            Cp_is_32, Cj_is_32, Ci_is_32, memlane)) ;
+            Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane)) ;
     }
     else
     { 

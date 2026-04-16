@@ -47,8 +47,9 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
 
     GrB_Info info = GrB_SUCCESS ;
 
-    int memlane = 0 ;   // FIXME memlane param
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int header_memlane = 0 ;    // FIXME memlane param
+    int data_memlane = 0 ;      // FIXME memlane param
+    uint64_t mem = GB_mem (data_memlane, 0) ;
 
     GrB_Matrix R = NULL ;
     GB_MDECL (W, , u) ; uint64_t W_mem = mem ;
@@ -87,7 +88,8 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     // create R: rvdim-by-rvlen (avlen-by-nI), held by row, iso-valued
     GB_OK (GB_new (&R,  // new dynamic header, do not allocate content
         GrB_UINT64, rvlen, rvdim, GB_ph_null, false, GxB_HYPERSPARSE, -1, 0,
-        Rp_is_32, Rj_is_32, Ri_is_32, memlane)) ;
+        Rp_is_32, Rj_is_32, Ri_is_32,
+        header_memlane, data_memlane)) ;
 
     uint64_t S_input [1] ;
     S_input [0] = 1 ;

@@ -40,12 +40,13 @@ GrB_Info GrB_Scalar_new     // create a new GrB_Scalar with no entries
     GB_determine_pji_is_32 (&Sp_is_32, &Sj_is_32, &Si_is_32,
         GxB_SPARSE, 1, 1, 1, NULL) ;
 
-    int memlane = GB_Context_memlane ( ) ;
+    int header_memlane = GB_Context_memlane ( ) ;       // FIXME memlane
+    int data_memlane = GB_Context_memlane ( ) ;     // FIXME memlane
 
     GB_OK (GB_new ((GrB_Matrix *) s, // new user header
         type, 1, 1, GB_ph_calloc, true, GxB_SPARSE,
         GB_Global_hyper_switch_get ( ), 1, Sp_is_32, Sj_is_32, Si_is_32,
-        memlane)) ;
+        header_memlane, data_memlane)) ;
 
     return (GrB_SUCCESS) ;
 }

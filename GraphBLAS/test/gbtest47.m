@@ -61,13 +61,16 @@ assert (c1 == c2) ;
 try
     x = vpa (1) ; %#ok<*NASGU>
     have_symbolic = true ;
+    fprintf ('\nwith symoblic toolbox\n') ;
 catch
     % symbolic toolbox not available
     have_symbolic = false ;
+    fprintf ('\nno symoblic toolbox\n') ;
 end
 
+
 for trial = 1:40
-    fprintf ('.') ;
+    fprintf ('(%d)', trial) ;
 
     A = rand (4) ;
     A (A > .5) = 0 ;
@@ -165,6 +168,8 @@ for trial = 1:40
     assert (isequal (d1, d2)) ;
     assert (isequal (double (d1), sparse (double (d3)))) ;
 
+    fprintf ('[') ;
+
     % requires vpa in the Symbolic toolbox:
     if (have_symbolic)
         Huge = GrB (2^30, 2^30) ;
@@ -172,6 +177,7 @@ for trial = 1:40
         assert (logical (e == 2^60)) ;
     end
 
+    fprintf (']') ;
 end
 
 fprintf ('\ngbtest47: all tests passed\n') ;

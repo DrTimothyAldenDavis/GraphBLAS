@@ -215,7 +215,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             //------------------------------------------------------------------
 
             ASSERT_MATRIX_OK (M, "big mask", GB0) ;
-            GB_OK (GB_matrix_header_new (&SubMask, memlane)) ;
+            GB_OK (GB_matrix_header_new (&SubMask, /* FIXME memlane: */ memlane, memlane)) ;
 
             const void *I_SubMask = I ; int64_t ni_SubMask = ni ;
             const void *J_SubMask = J ; int64_t nj_SubMask = nj ;

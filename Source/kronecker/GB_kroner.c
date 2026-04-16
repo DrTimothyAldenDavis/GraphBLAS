@@ -50,7 +50,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     GrB_Info info ;
     ASSERT (C != NULL) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
 
     GrB_Matrix Awork = NULL, Bwork = NULL ;
 
@@ -73,7 +74,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (A))
     { 
         GBURBLE ("A:") ;
-        GB_OK (GB_dup_worker (&Awork, A->iso, A, true, NULL, memlane)) ;
+        GB_OK (GB_dup_worker (&Awork, A->iso, A, true, NULL,
+            /* FIXME memlane */ header_memlane)) ;
         ASSERT_MATRIX_OK (Awork, "dup Awork for kron (A,B)", GB0) ;
         GB_OK (GB_convert_bitmap_to_sparse (Awork, Werk)) ;
         ASSERT_MATRIX_OK (Awork, "to sparse, Awork for kron (A,B)", GB0) ;
@@ -84,7 +86,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (B))
     { 
         GBURBLE ("B:") ;
-        GB_OK (GB_dup_worker (&Bwork, B->iso, B, true, NULL, memlane)) ;
+        GB_OK (GB_dup_worker (&Bwork, B->iso, B, true, NULL, 
+            /* FIXME memlane */ header_memlane)) ;
         ASSERT_MATRIX_OK (Bwork, "dup Bwork for kron (A,B)", GB0) ;
         GB_OK (GB_convert_bitmap_to_sparse (Bwork, Werk)) ;
         ASSERT_MATRIX_OK (Bwork, "to sparse, Bwork for kron (A,B)", GB0) ;
@@ -167,7 +170,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     GB_OK (GB_new_bix (&C, // full, sparse, or hyper; existing header
         ctype, (int64_t) cvlen, (int64_t) cvdim, GB_ph_malloc, C_is_csc,
         C_sparsity, true, B->hyper_switch, cnvec, cnzmax, true, C_iso,
-        Cp_is_32, Cj_is_32, Ci_is_32, memlane)) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane)) ;
 
     //--------------------------------------------------------------------------
     // compute the column counts of C: Cp and Ch if C is hypersparse

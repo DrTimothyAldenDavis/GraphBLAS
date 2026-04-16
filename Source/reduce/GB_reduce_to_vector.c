@@ -54,7 +54,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     ASSERT (GB_VECTOR_OK (C)) ;
     ASSERT (GB_IMPLIES (M_in != NULL, GB_VECTOR_OK (M_in))) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
 
     // get the descriptor
     GrB_Info info ;
@@ -112,7 +113,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     int64_t m = A_transpose ? GB_NROWS (A) : GB_NCOLS (A) ;
     GB_OK (GB_new (&B, // full, new header
         ztype, m, 1, GB_ph_null, true, GxB_FULL, GB_NEVER_HYPER, 1,
-        /* OK: */ false, false, false, memlane)) ;
+        /* OK: */ false, false, false, header_memlane, data_memlane)) ;
     B->magic = GB_MAGIC ;
     B->iso = true ;
     size_t zsize = ztype->size ;

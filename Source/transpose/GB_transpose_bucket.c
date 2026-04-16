@@ -84,8 +84,9 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
+    uint64_t mem = GB_mem (data_memlane, 0) ;
 
     // if op is NULL, then no operator is applied
 
@@ -137,7 +138,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     GB_OK (GB_new_bix (&C, // sparse, existing header
         ctype, avdim, avlen, GB_ph_malloc, C_is_csc, GxB_SPARSE, true,
         A->hyper_switch, avlen, anz, true, C_iso,
-        Cp_is_32, Cj_is_32, Ci_is_32, memlane)) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane)) ;
 
     C->nvals = anz ;
     size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;

@@ -49,7 +49,8 @@ GrB_Info GB_Vector_subassign_scalar // w(I)><Mask> = accum (w(I),s)
     GB_RETURN_IF_NULL (I) ;
     GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
 
-    int memlane = GB_memlane (w->header_mem) ;
+    int header_memlane = GB_memlane (w->header_mem) ;
+    int data_memlane = w->data_memlane ;
 
     ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (mask == NULL || GB_VECTOR_OK (mask)) ;
@@ -147,7 +148,7 @@ GrB_Info GB_Vector_subassign_scalar // w(I)><Mask> = accum (w(I),s)
         GB_OK (GB_new (&A,  // new header
             scalar->type, nI, 1, GB_ph_calloc, true, GxB_AUTO_SPARSITY,
             GB_HYPER_SWITCH_DEFAULT, 1, /* OK: */ false, false, false,
-            memlane)) ;
+            header_memlane, data_memlane)) ;
         info = GB_subassign (
             (GrB_Matrix) w, C_replace,      // w vector and its descriptor
             M, Mask_comp, Mask_struct,      // mask matrix and its descriptor

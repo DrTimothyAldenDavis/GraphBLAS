@@ -342,9 +342,18 @@ GrB_Info GB_sort
         return (GrB_NULL_POINTER) ;
     }
 
-    int memlane = (C != NULL) ? GB_memlane (C->header_mem) :
-                                GB_memlane (P->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int header_memlane, data_memlane ;
+    if (C != NULL)
+    {
+        header_memlane = GB_memlane (C->header_mem) ;
+        data_memlane = C->data_memlane ;
+    }
+    else
+    {
+        header_memlane = GB_memlane (P->header_mem) ;
+        data_memlane = P->data_memlane ;
+    }
+    uint64_t mem = GB_mem (data_memlane, 0) ;
 
     GrB_Matrix T = NULL ;
     GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
@@ -416,7 +425,7 @@ GrB_Info GB_sort
     if (C_is_NULL)
     { 
         // C is a temporary matrix, which is freed when done
-        GB_OK (GB_matrix_header_new (&T, memlane)) ;
+        GB_OK (GB_matrix_header_new (&T, header_memlane, data_memlane)) ;
         C = T ;
     }
 
@@ -429,7 +438,8 @@ GrB_Info GB_sort
             if (!sort_in_place)
             { 
                 // C = A
-                GB_OK (GB_dup_worker (&C, A_iso, A, true, atype, memlane)) ;
+                GB_OK (GB_dup_worker (&C, A_iso, A, true, atype,
+                    /* FIXME memlane */ header_memlane)) ;
             }
         }
         else
@@ -456,7 +466,8 @@ GrB_Info GB_sort
             if (!sort_in_place)
             { 
                 // C = A
-                GB_OK (GB_dup_worker (&C, A_iso, A, true, atype, memlane)) ;
+                GB_OK (GB_dup_worker (&C, A_iso, A, true, atype,
+                /* FIXME memlane */ header_memlane)) ;
             }
         }
         else

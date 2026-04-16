@@ -62,8 +62,10 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
     ASSERT (Thandle != NULL) ;
     GrB_Matrix T = (*Thandle) ;     // just the header of T is given on input
     ASSERT (T != NULL) ;
-    int memlane = GB_memlane (T->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+
+    int header_memlane = GB_memlane (T->header_mem) ;
+    int data_memlane = T->data_memlane ;
+    uint64_t mem = GB_mem (data_memlane, 0) ;
 
     void *iwork = NULL ; uint64_t iwork_mem = mem ;
     void *jwork = NULL ; uint64_t jwork_mem = mem ;
@@ -117,7 +119,7 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
     info = GB_new (Thandle, // hyper, existing header
         ctype, avdim, avlen, GB_ph_null, C_is_csc,
         GxB_HYPERSPARSE, A_hyper_switch, 0,
-        Cp_is_32, Cj_is_32, Ci_is_32, memlane) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane) ;
     ASSERT (info == GrB_SUCCESS) ;
 
     // if in_place, the prior A->p and A->h can now be freed

@@ -33,7 +33,6 @@ GrB_Info GB_cuda_select_sparse
     GrB_Info info = GrB_NO_VALUE ;
     ASSERT (C != NULL) ;
     ASSERT (A != NULL) ;
-    int memlane = GB_memlane (C->header_mem) ;
 
     GBURBLE ("(select sparse on cuda) ") ;
     printf ("\nblockdim1: %d chunksize1: %d\n",
@@ -65,7 +64,7 @@ GrB_Info GB_cuda_select_sparse
     GB_OK (GB_new (&C, // sparse or hyper (from A), existing header
         A->type, A->vlen, A->vdim, GB_ph_calloc, A->is_csc,
         csparsity, A->hyper_switch, /* C->plen: revised later: */ 1,
-        Cp_is_32, Cj_is_32, Ci_is_32, memlane)) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, GB_MEMLANE_RMM, GB_MEMLANE_RMM)) ;
 
     C->iso = C_iso ;
 

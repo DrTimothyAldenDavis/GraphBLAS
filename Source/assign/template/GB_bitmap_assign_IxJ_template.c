@@ -39,7 +39,8 @@
     if (TaskList_IxJ == NULL)
     { 
         GB_OK (GB_subassign_IxJ_slice (&TaskList_IxJ, &TaskList_IxJ_mem,
-            &ntasks_IxJ, &nthreads_IxJ, nI, nJ, memlane, Werk)) ;
+            &ntasks_IxJ, &nthreads_IxJ, nI, nJ,
+            /* FIXME memlane */ data_memlane, Werk)) ;
     }
 
     //--------------------------------------------------------------------------

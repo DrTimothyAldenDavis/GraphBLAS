@@ -66,7 +66,8 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     ASSERT_MATRIX_OK (B, "B for GB_kron", GB0) ;
 
     ASSERT (C != NULL) ;
-    int memlane = GB_memlane (C->header_mem) ;
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
 
     // check domains and dimensions for C<M> = accum (C,T)
     GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, op->ztype,
@@ -132,7 +133,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     { 
         // AT = A' and typecast to op->xtype
         GBURBLE ("(A transpose) ") ;
-        GB_OK (GB_matrix_header_new (&AT, memlane)) ;
+        GB_OK (GB_matrix_header_new (&AT, header_memlane, data_memlane)) ;
         GB_OK (GB_transpose_cast (AT, op->xtype, T_is_csc, A, A_is_pattern,
             Werk)) ;
         ASSERT_MATRIX_OK (AT, "AT kron", GB0) ;
@@ -142,7 +143,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     { 
         // BT = B' and typecast to op->ytype
         GBURBLE ("(B transpose) ") ;
-        GB_OK (GB_matrix_header_new (&BT, memlane)) ;
+        GB_OK (GB_matrix_header_new (&BT, header_memlane, data_memlane)) ;
         GB_OK (GB_transpose_cast (BT, op->ytype, T_is_csc, B, B_is_pattern,
             Werk)) ;
         ASSERT_MATRIX_OK (BT, "BT kron", GB0) ;
@@ -152,7 +153,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     // T = kron(A,B)
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_matrix_header_new (&T, memlane)) ;
+    GB_OK (GB_matrix_header_new (&T, header_memlane, data_memlane)) ;
     GB_OK (GB_kroner (T, T_is_csc, op, flipij,
         A_transpose ? AT : A, A_is_pattern,
         B_transpose ? BT : B, B_is_pattern, Werk)) ;

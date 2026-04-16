@@ -61,7 +61,8 @@ GrB_Info GB_subassign_08s_and_16
     GrB_Info info ;
 
     ASSERT (C != NULL) ;
-    int memlane = GB_memlane (C->header_mem) ;
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
 
     GrB_Matrix S = NULL ;
     ASSERT (!GB_IS_BITMAP (C)) ;
@@ -74,7 +75,7 @@ GrB_Info GB_subassign_08s_and_16
     // S = C(I,J)
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_matrix_header_new (&S, memlane)) ;
+    GB_OK (GB_matrix_header_new (&S, header_memlane, data_memlane)) ;
     GB_OK (GB_subassign_symbolic (S, C, I, I_is_32, ni, J, J_is_32, nj, true,
         Werk)) ;
 

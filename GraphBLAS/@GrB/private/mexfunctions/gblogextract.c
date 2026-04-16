@@ -183,7 +183,7 @@ void mexFunction
 
     // K is a shallow copy of M, except for its numerical values
     GrB_Matrix K = NULL ;
-    OK (GB_matrix_header_new (&K, /* memlane: */ 0)) ;
+    OK (GB_matrix_header_new (&K, GB_MEMLANE_MATLAB, GB_MEMLANE_MATLAB)) ;
 
     OK (GB_shallow_copy (K, GxB_BY_COL, M, NULL)) ;
     OK (GrB_Matrix_get_INT32 (K, &sparsity, GxB_SPARSITY_STATUS)) ;

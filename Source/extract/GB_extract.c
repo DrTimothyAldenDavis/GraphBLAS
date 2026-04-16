@@ -60,7 +60,8 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_Matrix_extract", GB0) ;
     ASSERT_MATRIX_OK (A, "A input for GB_Matrix_extract", GB0) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
 
     // check domains and dimensions for C<M> = accum (C,T)
     GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, A->type,
@@ -178,7 +179,7 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
 
     // TODO::: iso:  if accum is PAIR, extract T as iso
 
-    GB_OK (GB_matrix_header_new (&T, memlane)) ;
+    GB_OK (GB_matrix_header_new (&T, header_memlane, data_memlane)) ;
     GB_OK (GB_subref (T, false, T_is_csc, A,
         I, I_is_32, ni, J, J_is_32, nj, false, Werk)) ;
     ASSERT_MATRIX_OK (T, "T extracted", GB0) ;

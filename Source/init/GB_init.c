@@ -107,8 +107,7 @@ GrB_Info GB_init            // start up GraphBLAS
             calloc_function  = NULL ;           // using malloc_function
             realloc_function = NULL ;           // using malloc/free instead
             free_function    = rmm_wrap_free ;
-            // the rmm_wrap methods are not thread-safe
-            malloc_is_thread_safe = false ;
+            malloc_is_thread_safe = false ;     // rmm_wrap* not thread-safe
         }
     }
     #else

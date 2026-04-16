@@ -158,19 +158,26 @@ else
     libgraphblas = '-lgraphblas' ;
 end
 
+  silent = '-silent' ;      % completely silent
+% silent = '-v' ;           % extremely verbose
+
 % determine if the compiler supports C99 or MSVC complex types
 try
     % try C99 complex types
+    fprintf ('try C99 complex:\n') ;
     cflag = ' -DGxB_HAVE_COMPLEX_C99=1' ;
-    mexcmd = sprintf ('mex -silent %s %s complex/check_mex_complex.c', ...
-        flags, cflag) ;
+    mexcmd = sprintf ('mex %s %s %s complex/check_mex_complex.c', ...
+        silent, flags, cflag) ;
+    % fprintf ('mexcmd: %s\n', mexcmd) ;
     eval (mexcmd) ;
-catch
+catch me
     % try MSVC complex types
+    fprintf ('try MSVC complex:\n') ;
     try
         cflag = ' -DGxB_HAVE_COMPLEX_MSVC=1' ;
-        mexcmd = sprintf ('mex -silent %s %s complex/check_mex_complex.c', ...
-            flags, cflag) ;
+        mexcmd = sprintf ('mex %s %s %s complex/check_mex_complex.c', ...
+            silent, flags, cflag) ;
+        % fprintf ('mexcmd: %s\n', mexcmd) ;
         eval (mexcmd) ;
     catch me
         me
@@ -226,7 +233,8 @@ for k = 1:length (cfiles)
     if (make_all || tc > tobj || htime > tobj)
         % compile the cfile
         % fprintf ('%s\n', cfile) ;
-        mexcmd = sprintf ('mex -c %s -silent %s ''%s''', flags, inc, cfile) ;
+        mexcmd = sprintf ('mex -c %s %s %s ''%s''', ...
+            silent, flags, inc, cfile) ;
         % fprintf ('%s\n', mexcmd) ;
         fprintf ('.') ;
         eval (mexcmd) ;
@@ -265,8 +273,8 @@ for k = 1:length (mexfunctions)
     % compile if it is newer than its object file, or if any cfile was compiled
     if (make_all || tc > tobj || any_c_compiled)
         % compile the mexFunction
-        mexcmd = sprintf ('mex %s -silent %s %s ''%s'' %s %s', ...
-            Lflags, flags, inc, mexfunction, objlist, libgraphblas) ;
+        mexcmd = sprintf ('mex %s %s %s %s ''%s'' %s %s', ...
+            Lflags, silent, flags, inc, mexfunction, objlist, libgraphblas) ;
         % fprintf ('%s\n', mexcmd) ;
         fprintf (':') ;
         eval (mexcmd) ;

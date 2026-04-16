@@ -41,7 +41,8 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
     GrB_Matrix T = NULL ;
 
     ASSERT (C != NULL) ;
-    int memlane = GB_memlane (C->header_mem) ;
+    int header_memlane = GB_memlane (C->header_mem) ;
+    int data_memlane = C->data_memlane ;
 
     GrB_Type ctype = C->type ;
     int64_t cvlen = C->vlen ;
@@ -96,7 +97,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
             if (csc != A->is_csc)
             { 
                 // T = (ctype) A', not in-place
-                GB_OK (GB_matrix_header_new (&T, memlane)) ;
+                GB_OK (GB_matrix_header_new (&T, header_memlane, data_memlane));
                 GB_OK (GB_transpose_cast (T, ctype, csc, A, false, Werk)) ;
                 A = T ;
                 GB_MATRIX_WAIT (A) ;

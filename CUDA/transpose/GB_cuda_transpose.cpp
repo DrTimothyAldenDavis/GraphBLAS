@@ -64,8 +64,7 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     ASSERT (Thandle != NULL) ;
     GrB_Matrix T = (*Thandle) ;     // just the header of T is given on input
     ASSERT (T != NULL) ;
-    int memlane = GB_memlane (T->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    uint64_t mem = GB_mem (GB_MEMLANE_RMM, 0) ;
 
     cudaStream_t stream = nullptr ;
     GB_void *Key_input = NULL ;
@@ -140,7 +139,7 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     info = GB_new (Thandle, // hyper, existing header
         ctype, avdim, avlen, GB_ph_null, C_is_csc,
         GxB_HYPERSPARSE, A_hyper_switch, 0,
-        Cp_is_32, Cj_is_32, Ci_is_32, memlane) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, GB_MEMLANE_RMM, GB_MEMLANE_RMM) ;
     ASSERT (info == GrB_SUCCESS) ;
 
     GB_void *X = NULL ;

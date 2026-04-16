@@ -42,8 +42,9 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     ASSERT (!GB_any_aliased (A, V)) ;       // A and V cannot be aliased
     ASSERT (!GB_IS_HYPERSPARSE (V)) ;       // vectors cannot be hypersparse
 
-    int memlane = GB_memlane (V->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int header_memlane = GB_memlane (V->header_mem) ;
+    int data_memlane = V->data_memlane ;
+    uint64_t mem = GB_mem (data_memlane, 0) ;
 
     GrB_Matrix T = NULL ;
 
@@ -107,7 +108,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
 
     struct GB_Scalar_opaque scalar_header ;
     GrB_Scalar scalar = GB_Scalar_wrap (&scalar_header, GrB_INT64, &k) ;
-    GB_OK (GB_matrix_header_new (&T, memlane)) ;
+    GB_OK (GB_matrix_header_new (&T, header_memlane, data_memlane)) ;
     GB_OK (GB_selector (T, GrB_DIAG, false, A, scalar, Werk)) ;
     GB_OK (GB_convert_any_to_hyper (T, Werk)) ;
     GB_MATRIX_WAIT (T) ;
@@ -127,7 +128,8 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
 
     GB_OK (GB_new (&V, // existing header
         vtype, n, 1, GB_ph_malloc, true, GxB_SPARSE,
-        GxB_NEVER_HYPER, 1, Vp_is_32, Vj_is_32, Vi_is_32, memlane)) ;
+        GxB_NEVER_HYPER, 1, Vp_is_32, Vj_is_32, Vi_is_32,
+        header_memlane, data_memlane)) ;
 
     V->sparsity_control = sparsity_control ;
     V->bitmap_switch = bitmap_switch ;

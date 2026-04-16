@@ -2136,14 +2136,14 @@ void mexFunction
     GB_Matrix_check (HugeRow, "huge row", G3, NULL) ;
     GxB_Matrix_fprint (HugeRow, "HugeRow", G3, ff) ;
 
-    GrB_Matrix HugeMatrix = NULL ;
-    OK (GB_matrix_header_new (&HugeMatrix, GB_MEMLANE_MATLAB)) ;
+    GrB_Matrix HugeMat = NULL ;
+    OK (GB_matrix_header_new (&HugeMat, GB_MEMLANE_MATLAB, GB_MEMLANE_MATLAB)) ;
 
-    OK (GB_AxB_dot2 (HugeMatrix, false, NULL, NULL, false, false,
+    OK (GB_AxB_dot2 (HugeMat, false, NULL, NULL, false, false,
         false, HugeRow, HugeRow, GxB_PLUS_TIMES_FP64, false, Werk)) ;
 
-    GxB_Matrix_fprint (HugeMatrix, "HugeMatrix", G3, ff) ;
-    GrB_Matrix_free_(&HugeMatrix) ;
+    GxB_Matrix_fprint (HugeMat, "HugeMat", G3, ff) ;
+    GrB_Matrix_free_(&HugeMat) ;
     GrB_Matrix_free_(&HugeRow) ;
 
     //--------------------------------------------------------------------------
@@ -4929,7 +4929,7 @@ void mexFunction
     Werk->where = "GB_shallow_op" ;
 
     GrB_Matrix Q = NULL ;
-    OK (GB_matrix_header_new (&Q, GB_MEMLANE_MATLAB)) ;
+    OK (GB_matrix_header_new (&Q, GB_MEMLANE_MATLAB, GB_MEMLANE_MATLAB)) ;
     OK (GB_shallow_op (Q, true, (GB_Operator) GrB_AINV_FP32, NULL, NULL,
         false, C, Werk)) ;
     OK (GB_Matrix_check (Q, "Q empty, float", G3, NULL)) ;

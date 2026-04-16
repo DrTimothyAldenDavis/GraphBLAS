@@ -200,8 +200,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
     ASSERT (J_work_mem_handle != NULL) ;
     ASSERT (S_work_mem_handle != NULL) ;
 
-    int memlane = GB_memlane (T->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int header_memlane = GB_memlane (T->header_mem) ;
+    int data_memlane = T->data_memlane ;
+    uint64_t mem = GB_mem (data_memlane, 0) ;
 
     //--------------------------------------------------------------------------
     // get Sx
@@ -919,7 +920,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     GB_OK (GB_new (&T, // always hyper, existing header
         ttype, vlen, vdim, GB_ph_malloc, is_csc,
         GxB_HYPERSPARSE, GB_ALWAYS_HYPER, tnvec,
-        Tp_is_32, Tj_is_32, Ti_is_32, memlane)) ;
+        Tp_is_32, Tj_is_32, Ti_is_32, header_memlane, data_memlane)) ;
 
     ASSERT (T->p != NULL) ;
     ASSERT (T->h != NULL) ;
