@@ -52,6 +52,11 @@ GrB_Info GB_cuda_init (void)
             // of the work.  Alternatively, move GB_cuda_init here (if so,
             // ensure that it doesn't depend on any other initializations
             // below).
+            // 256 MB and ~100 GB:
+
+            // FIXME: init size: 4GB
+            // max size:  .80 * CPU mem
+
             256 * 1000000L, 1024 * 100000000L /*, 1 */) ; // FIXME: ask GPU(s)
     }
 
