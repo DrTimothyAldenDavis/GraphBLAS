@@ -37,7 +37,9 @@ using namespace cooperative_groups ;
 
 // for internal static inline functions
 #undef  GB_STATIC_INLINE
-#define GB_STATIC_INLINE static __device__ __inline__
+#define GB_STATIC_INLINE      static __device__ __inline__
+#undef  GB_STATIC_INLINE_BOTH
+#define GB_STATIC_INLINE_BOTH static __forceinline__ __host__ __device__
 
 //------------------------------------------------------------------------------
 // subset of GraphBLAS.h

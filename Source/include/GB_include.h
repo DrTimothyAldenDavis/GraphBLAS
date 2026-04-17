@@ -54,8 +54,8 @@
 
 // for internal static inline functions (will be redefined for CUDA)
 #undef  GB_STATIC_INLINE
-#undef  GB_STATIC_INLINE_BOTH
 #define GB_STATIC_INLINE      static inline
+#undef  GB_STATIC_INLINE_BOTH
 #define GB_STATIC_INLINE_BOTH static inline
 
 //------------------------------------------------------------------------------
