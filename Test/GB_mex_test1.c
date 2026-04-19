@@ -669,14 +669,6 @@ void mexFunction
     GB_free_memory ((void **) &p, nbytes) ;
     CHECK (p == NULL) ;
 
-    CHECK (!GB_Global_malloc_is_thread_safe_get (0)) ;
-    GB_Global_malloc_is_thread_safe_set (true, 0) ;
-    GB_Global_malloc_is_thread_safe_set (true, 1) ;
-    CHECK (GB_Global_malloc_is_thread_safe_get (0)) ;
-    GB_Global_malloc_is_thread_safe_set (false, 0) ;
-    GB_Global_malloc_is_thread_safe_set (false, 1) ;
-    CHECK (!GB_Global_malloc_is_thread_safe_get (0)) ;
-
     GB_Global_malloc_tracking_set (true) ;
 
     //--------------------------------------------------------------------------

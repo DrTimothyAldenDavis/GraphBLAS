@@ -23,6 +23,10 @@
 #define GB_MEMLANE_RMM 0        /* FIXME: Rapids will be on lane 1 */
 #define GB_MEMLANE_MATLAB 0     /* FIXME: mxMalloc will be on lane 2 */
 
+#define GB_ARENA_DEFAULT 0
+#define GB_ARENA_RMM 0          /* FIXME: Rapids will be on lane 1 */
+#define GB_ARENA_MATLAB 0       /* FIXME: mxMalloc will be on lane 2 */
+
 GB_STATIC_INLINE_BOTH int GB_memlane (uint64_t mem)
 {
     // return the high order byte, containing the memlane

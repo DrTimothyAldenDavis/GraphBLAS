@@ -363,5 +363,12 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     GB_Werk Werk
 ) ;
 
+//------------------------------------------------------------------------------
+// thread-safe wrappers for Rapids rmm_wrap_* memory allocators
+//------------------------------------------------------------------------------
+
+void *GB_rmm_malloc (size_t s) ;
+void  GB_rmm_free (void *) ;
+
 #endif
 

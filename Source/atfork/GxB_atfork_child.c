@@ -104,8 +104,6 @@ void GxB_atfork_child (void)
     GB_Global_malloc_function_set (GB_child_malloc, 1) ;
     GB_Global_free_function_set (GB_child_free, 0) ;
     GB_Global_free_function_set (GB_child_free, 1) ;
-    GB_Global_malloc_is_thread_safe_set (true, 0) ;
-    GB_Global_malloc_is_thread_safe_set (true, 1) ;
 
     // calloc and realloc can be NULL; GraphBLAS will call malloc instead
     GB_Global_realloc_function_set ((GB_realloc_function_t) NULL, 0) ;

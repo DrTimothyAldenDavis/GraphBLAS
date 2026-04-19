@@ -82,7 +82,7 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     {
         return (GB_init (mode,              // blocking or non-blocking mode
             // RMM C memory management functions
-            rmm_wrap_malloc, NULL, NULL, rmm_wrap_free, Werk)) ;
+            GB_rmm_malloc, NULL, NULL, GB_rmm_free, Werk)) ;
     }
 #endif
 

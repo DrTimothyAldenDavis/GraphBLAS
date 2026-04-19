@@ -18,10 +18,6 @@ void gb_defaults (void)     // set global GraphBLAS defaults for MATLAB
     // for debug only
     GB_Global_abort_set (gb_abort) ;
 
-    // mxMalloc, mxCalloc, mxRealloc, and mxFree are not thread safe
-    GB_Global_malloc_is_thread_safe_set (false, 0) ;
-    GB_Global_malloc_is_thread_safe_set (false, 1) ;
-
     // must use mexPrintf to print to Command Window
     OK (GrB_Global_set_VOID (GrB_GLOBAL, (void *) mexPrintf, GxB_PRINTF,
         sizeof (function_pointer))) ;

@@ -66,9 +66,6 @@ void     GB_Global_free_function_set (GB_free_function_t free_function, int meml
 void  *  GB_Global_free_function_get (int memlane) ;
 void     GB_Global_free_function (void *p, int memlane) ;
 
-void     GB_Global_malloc_is_thread_safe_set (bool malloc_is_thread_safe, int memlane) ;
-bool     GB_Global_malloc_is_thread_safe_get (int memlane) ;
-
 void     GB_Global_malloc_tracking_set (bool malloc_tracking) ;
 bool     GB_Global_malloc_tracking_get (void) ;
 

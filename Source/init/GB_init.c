@@ -31,8 +31,7 @@
 // The calloc function pointer is also optional and can be NULL.
 
 // If the mode is GxB_BLOCKING_GPU or GxB_NONBLOCKING_GPU, the 4 function
-// pointers are ignored, and rmm_wrap_malloc/.../rmm_wrap_free are used
-// instead.
+// pointers are ignored, and GB_rmm_malloc/GB_rmm_free are used instead.
 
 #define GB_FREE_ALL ;
 #include "GB.h"
@@ -90,10 +89,8 @@ GrB_Info GB_init            // start up GraphBLAS
     // establish malloc/calloc/realloc/free
     //--------------------------------------------------------------------------
 
-    bool malloc_is_thread_safe = true ;
-
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    // FIXME: use rmm_wrap_malloc etc for memlane 1
+    // FIXME: use GB_rmm_malloc etc for memlane 1
     GB_Global_gpu_count_set (true) ;
     int gpu_count = GB_Global_gpu_count_get ( ) ;
     printf ("GB_init: gpu_count: %d\n", gpu_count) ;
@@ -102,12 +99,11 @@ GrB_Info GB_init            // start up GraphBLAS
         mode = GxB_NONBLOCKING_GPU ;    // HACK FIXME : force GPU to be used
         if (mode == GxB_NONBLOCKING_GPU || mode == GxB_BLOCKING_GPU)
         {
-            // ignore the memory management function pointers and use rmm_wrap_*
-            malloc_function  = rmm_wrap_malloc ;
+            // ignore the memory management function pointers and use GB_rmm_*
+            malloc_function  = GB_rmm_malloc ;
             calloc_function  = NULL ;           // using malloc_function
             realloc_function = NULL ;           // using malloc/free instead
-            free_function    = rmm_wrap_free ;
-            malloc_is_thread_safe = false ;     // rmm_wrap* not thread-safe
+            free_function    = GB_rmm_free ;
         }
     }
     #else
@@ -127,7 +123,6 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_realloc_function_set (realloc_function, 0) ; // ok if NULL
     GB_Global_free_function_set    (free_function   , 0) ; // cannot be NULL
 
-    GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe, 0) ;
     GB_Global_memtable_clear ( ) ;
 
     GB_Global_malloc_tracking_set (false) ;
