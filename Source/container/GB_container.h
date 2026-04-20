@@ -12,22 +12,23 @@
 
 #include "GB.h"
 
+// FIXME: make these macros functions instead
 // ensure a Container->component exists and is valid
-#define GB_CHECK_CONTAINER_COMPONENT(Container,component,type,memlane)       \
-    if (Container->component == NULL)                                        \
-    {                                                                        \
-        GB_OK (GB_container_component_new (&(Container->component), type,    \
-            memlane)) ;                                                      \
-    }                                                                        \
-    GB_RETURN_IF_INVALID (Container->component) ;                            \
+#define GB_CHECK_COMPONENT(Container,component,type,header_arena,data_arena)\
+    if (Container->component == NULL)                                       \
+    {                                                                       \
+        GB_OK (GB_container_component_new (&(Container->component), type,   \
+            header_arena, data_arena)) ;                                    \
+    }                                                                       \
+    GB_RETURN_IF_INVALID (Container->component) ;                           \
     ASSERT_VECTOR_OK (Container->component, "Container component", GB0) ;
 
-#define GB_CHECK_CONTAINER(Container,memlane)                           \
-    GB_CHECK_CONTAINER_COMPONENT (Container, p, GrB_UINT32, memlane) ;  \
-    GB_CHECK_CONTAINER_COMPONENT (Container, h, GrB_UINT32, memlane) ;  \
-    GB_CHECK_CONTAINER_COMPONENT (Container, b, GrB_INT8  , memlane) ;  \
-    GB_CHECK_CONTAINER_COMPONENT (Container, i, GrB_UINT32, memlane) ;  \
-    GB_CHECK_CONTAINER_COMPONENT (Container, x, GrB_BOOL  , memlane) ;
+#define GB_CHECK_CONTAINER(Container,header_arena,data_arena)                 \
+    GB_CHECK_COMPONENT (Container, p, GrB_UINT32, header_arena, data_arena) ; \
+    GB_CHECK_COMPONENT (Container, h, GrB_UINT32, header_arena, data_arena) ; \
+    GB_CHECK_COMPONENT (Container, b, GrB_INT8  , header_arena, data_arena) ; \
+    GB_CHECK_COMPONENT (Container, i, GrB_UINT32, header_arena, data_arena) ; \
+    GB_CHECK_COMPONENT (Container, x, GrB_BOOL  , header_arena, data_arena) ;
 
 void GB_vector_load
 (
@@ -38,7 +39,7 @@ void GB_vector_load
     GrB_Type type,          // type of X
     uint64_t n,             // # of entries in X
     uint64_t X_mem,         // memsize of X in bytes (>= n*(sizeof the type))
-                            // and memlane
+                            // and arena
     bool readonly           // if true, X is treated as readonly
 ) ;
 
@@ -51,7 +52,7 @@ GrB_Info GB_vector_unload
     GrB_Type *type,         // type of X
     uint64_t *n,            // # of entries in X
     uint64_t *X_mem,        // memsize of X in bytes (>= n*(sizeof the type))
-                            // and memlane
+                            // and arena
     bool *readonly,         // if true, X is treated as readonly
     GB_Werk Werk
 ) ;
@@ -81,7 +82,8 @@ GrB_Info GB_container_component_new
     GrB_Vector *component,
     // inputs
     GrB_Type type,
-    int memlane
+    int header_arena,
+    int data_arena
 ) ;
 
 #endif

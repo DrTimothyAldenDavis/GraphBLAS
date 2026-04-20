@@ -47,8 +47,8 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     // allocate the index_unary op
     //--------------------------------------------------------------------------
 
-    int memlane = GB_Context_memlane ( ) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int header_arena = GB_Context_header_arena ( ) ;
+    uint64_t mem = GB_mem (header_arena, 0) ;
     uint64_t header_mem = mem ;
     GrB_IndexUnaryOp
         op = GB_CALLOC_MEMORY (1, sizeof (struct GB_IndexUnaryOp_opaque),
@@ -93,7 +93,7 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
         // output:
         op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_mem),
         // input:
-        idxop_name, idxop_defn, true, jitable, memlane) ;
+        idxop_name, idxop_defn, true, jitable, header_arena) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

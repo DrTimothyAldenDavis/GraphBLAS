@@ -110,9 +110,8 @@ GrB_Info GB_assign_prep
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_assign_prep", GB0) ;
     ASSERT (scalar_code <= GB_UDT_code) ;
 
-    int header_memlane = GB_memlane (C_in->header_mem) ;
-    int data_memlane = C_in->data_memlane ;
-    uint64_t mem = GB_mem (data_memlane, 0) ;
+    int data_arena = C_in->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     GrB_Matrix Cwork = NULL ;
     GrB_Matrix Mwork = NULL ;
@@ -700,7 +699,7 @@ GrB_Info GB_assign_prep
         // TODO: if accum is present and it does not depend on the values of
         // A,  construct AT as iso.
         GBURBLE ("(A transpose) ") ;
-        GB_OK (GB_matrix_header_new (&AT, header_memlane, data_memlane)) ;
+        GB_OK (GB_matrix_header_new (&AT, data_arena, data_arena)) ;
         GB_OK (GB_transpose_cast (AT, A->type, C_is_csc, A, false, Werk)) ;
         GB_MATRIX_WAIT (AT) ;       // A cannot be jumbled
         A = AT ;
@@ -729,7 +728,7 @@ GrB_Info GB_assign_prep
             // MT = M' to conform M to the same CSR/CSC format as C,
             // and typecast to boolean.
             GBURBLE ("(M transpose) ") ;
-            GB_OK (GB_matrix_header_new (&MT, header_memlane, data_memlane)) ;
+            GB_OK (GB_matrix_header_new (&MT, data_arena, data_arena)) ;
             GB_OK (GB_transpose_cast (MT, GrB_BOOL, C_is_csc, M, Mask_struct,
                 Werk)) ;
             GB_MATRIX_WAIT (MT) ;       // M cannot be jumbled
@@ -875,7 +874,7 @@ GrB_Info GB_assign_prep
         if (!scalar_expansion)
         { 
             // Awork = A (Iinv, Jinv)
-            GB_OK (GB_matrix_header_new (&Awork, header_memlane, data_memlane)) ;
+            GB_OK (GB_matrix_header_new (&Awork, data_arena, data_arena)) ;
             GB_OK (GB_subref (Awork, false, A->is_csc, A,
                 Iinv, I2k_is_32, ni,
                 Jinv, J2k_is_32, nj,
@@ -894,7 +893,7 @@ GrB_Info GB_assign_prep
         { 
             // Mwork = M (Iinv, Jinv)
             // if Mask_struct then Mwork is extracted as iso
-            GB_OK (GB_matrix_header_new (&Mwork, header_memlane, data_memlane)) ;
+            GB_OK (GB_matrix_header_new (&Mwork, data_arena, data_arena)) ;
             GB_OK (GB_subref (Mwork, Mask_struct, M->is_csc, M,
                 Iinv, I2k_is_32, ni,
                 Jinv, J2k_is_32, nj,
@@ -1045,7 +1044,7 @@ GrB_Info GB_assign_prep
                 ctype, C->vlen, C->vdim, GB_ph_calloc, C_is_csc,
                 sparsity, C->hyper_switch, 1,
                 C->p_is_32, C->j_is_32, C->i_is_32,
-                header_memlane, data_memlane)) ;
+                data_arena, data_arena)) ;
             GBURBLE ("(C alias cleared; C_replace early) ") ;
             (*C_replace) = false ;
         }
@@ -1084,7 +1083,7 @@ if (C==A && !GB_any_aliased (C, M) && Mask_struct && Mask_comp && whole_C_matrix
             ASSERT (!GB_PENDING (C)) ;
             // Cwork = duplicate of C, which must be freed when done
             GB_OK (GB_dup_worker (&Cwork, C->iso, C, true, NULL,
-                /* FIXME memlane: */ header_memlane)) ;
+                data_arena, data_arena)) ;
         }
         // Cwork must be transplanted back into C when done
         C = Cwork ;

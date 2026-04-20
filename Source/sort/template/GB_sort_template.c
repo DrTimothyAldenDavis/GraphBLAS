@@ -688,8 +688,8 @@ static GrB_Info GB_SORT (mtx)
     ASSERT (op->xtype == op->ytype) ;
     #endif
 
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     //--------------------------------------------------------------------------
     // get callback functions

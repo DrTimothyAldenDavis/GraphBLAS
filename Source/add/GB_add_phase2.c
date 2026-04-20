@@ -106,8 +106,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_JUMBLED (B)) ;
 
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
+    int header_arena = GB_arena (C->header_mem) ;
+    int data_arena = C->data_arena ;
 
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
@@ -268,7 +268,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     GrB_Info info = GB_new_bix (&C, // any sparsity, existing header
         ctype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso,
-        Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, header_arena, data_arena) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
@@ -281,7 +281,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // add Cp as the vector pointers for C, from GB_add_phase1
     if (C_is_sparse_or_hyper)
     { 
-//      C->nvec_nonempty = Cnvec_nonempty ;
         GB_nvec_nonempty_set (C, Cnvec_nonempty) ;
         C->p = Cp ; C->p_mem = Cp_mem ;
         (*Cp_handle) = NULL ;

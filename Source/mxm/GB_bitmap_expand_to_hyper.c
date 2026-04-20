@@ -41,8 +41,8 @@ GrB_Info GB_bitmap_expand_to_hyper
     ASSERT_MATRIX_OK (A, "A for expand C from bitmap/full to hyper", GB0) ;
     ASSERT_MATRIX_OK (B, "B for expand C from bitmap/full to hyper", GB0) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
 

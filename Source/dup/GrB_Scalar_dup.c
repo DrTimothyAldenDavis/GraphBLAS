@@ -27,13 +27,15 @@ GrB_Info GrB_Scalar_dup     // make an exact copy of a GrB_Scalar
 
     ASSERT (GB_SCALAR_OK (t)) ;
 
-    int memlane = GB_Context_memlane ( ) ;
+    int header_arena = GB_Context_header_arena ( ) ;
+    int data_arena = GB_Context_data_arena ( ) ;
 
     //--------------------------------------------------------------------------
     // duplicate the GrB_Scalar
     //--------------------------------------------------------------------------
 
-    return (GB_dup ((GrB_Matrix *) s, (GrB_Matrix) t, memlane, Werk)) ;
+    return (GB_dup ((GrB_Matrix *) s, (GrB_Matrix) t,
+        header_arena, data_arena, Werk)) ;
 }
 
 //------------------------------------------------------------------------------

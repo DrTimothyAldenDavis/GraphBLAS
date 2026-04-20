@@ -29,7 +29,7 @@ typedef GB_JIT_KERNEL_USER_TYPE_PROTO ((*GB_user_type_f)) ;
 // The strings are also global variables, and are used for filenames,
 // directories, and JIT compilation commands, flags, and settings.
 
-// All objects are allocated in memlane 0 using persistent memory.
+// All objects are allocated in arena 0 using persistent memory.
 
 #ifdef GBCOVER
 // use a smaller JIT table size during test coverage

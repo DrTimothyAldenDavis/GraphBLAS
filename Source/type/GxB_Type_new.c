@@ -53,8 +53,8 @@ GrB_Info GxB_Type_new
     GB_RETURN_IF_NULL (type) ;
     GB_BURBLE_START ("GxB_Type_new") ;
 
-    int memlane = GB_Context_memlane ( ) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int header_arena = GB_Context_header_arena ( ) ;
+    uint64_t mem = GB_mem (header_arena, 0) ;
 
     GrB_Info info ;
     (*type) = NULL ;
@@ -86,7 +86,7 @@ GrB_Info GxB_Type_new
     t->size = sizeof_type ;
     t->code = GB_UDT_code ;                 // user-defined type
     memset (t->name, 0, GxB_MAX_NAME_LEN) ; // no name yet
-    t->defn = NULL ; t->defn_mem = 0 ;      // no memlane yet
+    t->defn = NULL ; t->defn_mem = 0 ;      // no arena yet
     t->print_function = NULL ;              // no function to print type
 
     //--------------------------------------------------------------------------

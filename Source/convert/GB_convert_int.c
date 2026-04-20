@@ -59,6 +59,10 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
         return (GrB_SUCCESS) ;
     }
 
+    int header_arena = GB_arena (A->header_mem) ;
+    int data_arena = A->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
+
     int64_t anz = GB_nnz (A) ;
     if (determine)
     {
@@ -103,20 +107,19 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     // allocate new space for A->[phi] and Y->[pix] if present
     //--------------------------------------------------------------------------
 
-    // Y is not converted via a recurisive call to this method.  Instead, it is
+    // Y is not converted via a recursive call to this method.  Instead, it is
     // converted directly below.  This is because Y->x must also be converted,
     // and also so that the conversion will be all-or-nothing, if out of
     // memory.
 
-    // FIXME: memlane
-    void *Ap_new = NULL ; uint64_t Ap_new_mem = 0 ;
-    void *Ah_new = NULL ; uint64_t Ah_new_mem = 0 ;
-    void *Ai_new = NULL ; uint64_t Ai_new_mem = 0 ;
-    void *Yp_new = NULL ; uint64_t Yp_new_mem = 0 ;
-    void *Yi_new = NULL ; uint64_t Yi_new_mem = 0 ;
-    void *Yx_new = NULL ; uint64_t Yx_new_mem = 0 ;
-    void *Pending_i_new = NULL ; uint64_t Pending_i_new_mem = 0 ;
-    void *Pending_j_new = NULL ; uint64_t Pending_j_new_mem = 0 ;
+    void *Ap_new = NULL ; uint64_t Ap_new_mem = mem ;
+    void *Ah_new = NULL ; uint64_t Ah_new_mem = mem ;
+    void *Ai_new = NULL ; uint64_t Ai_new_mem = mem ;
+    void *Yp_new = NULL ; uint64_t Yp_new_mem = mem ;
+    void *Yi_new = NULL ; uint64_t Yi_new_mem = mem ;
+    void *Yx_new = NULL ; uint64_t Yx_new_mem = mem ;
+    void *Pending_i_new = NULL ; uint64_t Pending_i_new_mem = mem ;
+    void *Pending_j_new = NULL ; uint64_t Pending_j_new_mem = mem ;
     bool has_Pending_i = (Pending != NULL) && (Pending->i != NULL) ;
     bool has_Pending_j = (Pending != NULL) && (Pending->j != NULL) ;
 

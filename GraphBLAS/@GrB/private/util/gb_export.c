@@ -96,6 +96,8 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
         // ensure the matrix is not iso-valued
         OK (GrB_Matrix_set_INT32 (C, 0, GxB_ISO)) ;
 
+        // FIXME arena: change data arena of C to MATLAB
+
         // unload C into the Container and free C
         GxB_Container Container = GB_helper_container ( ) ;
         CHECK_ERROR (Container == NULL, "internal error 911a") ;
@@ -114,13 +116,13 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
         void *Cx = NULL ;
         GrB_Type ctype = NULL ;
         uint64_t Cx_memsize, xlen ;
-        int ignore = 0 ;
+        int handling = 0 ;
         OK (GxB_Vector_unload (Container->x, &Cx, &ctype, &xlen, &Cx_memsize,
-            &ignore, NULL)) ;
-        if (ignore != GrB_DEFAULT)
+            &handling, NULL)) ;
+        if (handling != GrB_DEFAULT + GB_ARENA_MATLAB)
         {
-            printf ("handling %d\n", ignore) ;
-            mexErrMsgIdAndTxt ("GrB:memlane", "memlane invalid (2)") ;
+            printf ("handling %d\n", handling) ;
+            mexErrMsgIdAndTxt ("GrB:arena", "arena invalid (2)") ;
         }
         // export Cx as a dense nrows-by-ncols MATLAB matrix
         return (gb_export_to_mxfull (&Cx, nrows, ncols, ctype)) ;

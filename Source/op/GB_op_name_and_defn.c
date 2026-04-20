@@ -28,7 +28,7 @@ GrB_Info GB_op_name_and_defn
     const char *input_defn,     // user-provided name, may be NULL
     bool user_op,               // if true, a user-defined op
     bool jitable,               // if true, the op can be JIT'd
-    int memlane
+    int header_arena
 )
 {
 
@@ -68,7 +68,7 @@ GrB_Info GB_op_name_and_defn
     //--------------------------------------------------------------------------
 
     char *defn = NULL ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    uint64_t mem = GB_mem (header_arena, 0) ;
     uint64_t defn_mem = mem ;
     uint64_t defn_len = 0 ;
 

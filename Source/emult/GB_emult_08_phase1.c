@@ -45,8 +45,8 @@ GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,
     const GrB_Matrix B,
+    const int data_arena,           // arena for the C matrix data
     GB_Werk Werk
-    // FIXME memlane param
 )
 {
 
@@ -54,8 +54,7 @@ GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
     // check inputs
     //--------------------------------------------------------------------------
 
-    int memlane = 0 ;       // FIXME memlane param
-    uint64_t mem = GB_mem (memlane, 0) ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Cp_mem_handle != NULL) ;

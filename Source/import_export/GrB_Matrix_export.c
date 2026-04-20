@@ -58,8 +58,7 @@ static GrB_Info GB_export_worker  // export a matrix
     GrB_Matrix A = A_input ;
     GrB_Matrix T = NULL ;
 
-    int header_memlane = GB_memlane (A->header_mem) ;
-    int data_memlane = A->data_memlane ;
+    int data_arena = A->data_arena ;
 
     switch (format)
     {
@@ -136,7 +135,7 @@ static GrB_Info GB_export_worker  // export a matrix
         if (is_csc != csc_requested)
         { 
             // T = A'
-            GB_OK (GB_matrix_header_new (&T, header_memlane, data_memlane)) ;
+            GB_OK (GB_matrix_header_new (&T, data_arena, data_arena)) ;
             GB_OK (GB_transpose_cast (T, A->type, csc_requested, A, false,
                 Werk)) ;
         }
@@ -144,7 +143,7 @@ static GrB_Info GB_export_worker  // export a matrix
         { 
             // T = A
             GB_OK (GB_dup_worker (&T, A->iso, A, true, A->type,
-                /* FIXME memlane */ header_memlane)) ;
+                data_arena, data_arena)) ;
         }
 
         switch (format)

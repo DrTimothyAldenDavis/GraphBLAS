@@ -50,7 +50,8 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
+    int header_arena = GB_arena (C->header_mem) ;
+    int data_arena = C->data_arena ;
 
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples
@@ -114,7 +115,8 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         bool C_is_csc = C->is_csc ;
         GB_phybix_free (C) ;
         // copy the pattern, not the values
-        GB_OK (GB_dup_worker (&C, C_iso, A, false, C->type, memlane)) ;
+        GB_OK (GB_dup_worker (&C, C_iso, A, false, C->type,
+            header_arena, data_arena)) ;
         C->is_csc = C_is_csc ;      // do not change the CSR/CSC format of C
         // GB_assign_prep has assigned the C->x iso value, but this has just
         // been cleared, so it needs to be reassigned below by GB_cast_matrix.

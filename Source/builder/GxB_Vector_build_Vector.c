@@ -51,15 +51,14 @@ GrB_Info GxB_Vector_build_Vector // build a vector from (I,X) tuples
     ASSERT (GB_VECTOR_OK (I_vector)) ;
     ASSERT (GB_VECTOR_OK (X_vector)) ;
 
-    int memlane = GB_memlane (w->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = w->data_arena ;
 
     //--------------------------------------------------------------------------
     // finish any pending work
     //--------------------------------------------------------------------------
 
     void *I = NULL, *X = NULL ;
-    uint64_t I_mem = mem, X_mem = mem ;
+    uint64_t I_mem = 0, X_mem = 0 ;     // set by GB_ijxvector
 
     GB_MATRIX_WAIT (I_vector) ;
     GB_MATRIX_WAIT (X_vector) ;
@@ -80,9 +79,9 @@ GrB_Info GxB_Vector_build_Vector // build a vector from (I,X) tuples
     GrB_Type I_type = NULL, X_type = NULL ;
     bool need_copy = (w == I_vector || w == X_vector) ;
     GB_OK (GB_ijxvector (I_vector, need_copy, 0, desc, true,
-        &I, &ni, &I_mem, &I_type, Werk)) ;
+        &I, &ni, &I_mem, &I_type, data_arena, Werk)) ;
     GB_OK (GB_ijxvector (X_vector, need_copy, 2, desc, true,
-        &X, &nx, &X_mem, &X_type, Werk)) ;
+        &X, &nx, &X_mem, &X_type, data_arena, Werk)) ;
     bool I_is_32 = (I_type == GrB_UINT32) ;
 
     // FUTURE: if they come from List->i, then I,X are known to be sorted

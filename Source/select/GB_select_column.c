@@ -45,8 +45,8 @@ GrB_Info GB_select_column
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
+    int header_arena = GB_arena (C->header_mem) ;
+    int data_arena = C->data_arena ;
 
     //--------------------------------------------------------------------------
     // get A
@@ -159,7 +159,7 @@ GrB_Info GB_select_column
         return (GB_new (&C, // auto (sparse or hyper), existing header
             A->type, avlen, avdim, GB_ph_calloc, true,
             GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1,
-            Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane)) ;
+            Cp_is_32, Cj_is_32, Ci_is_32, header_arena, data_arena)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -170,7 +170,7 @@ GrB_Info GB_select_column
     GB_OK (GB_new_bix (&C, // sparse or hyper (from A), existing header
         A->type, avlen, avdim, GB_ph_malloc, true, csparsity, false,
         A->hyper_switch, cnvec, cnz, true, A_iso,
-        Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane)) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, header_arena, data_arena)) ;
 
     ASSERT (Cp_is_32 == C->p_is_32) ;
     ASSERT (Cj_is_32 == C->j_is_32) ;

@@ -31,7 +31,7 @@ void mexFunction
 )
 {
     GrB_Matrix C = NULL ;
-    GB_matrix_header_new (&C, GB_MEMLANE_MATLAB, GB_MEMLANE_MATLAB) ;
+    GB_matrix_header_new (&C, GB_ARENA_MATLAB, GB_ARENA_MATLAB) ;
 
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix A = NULL ;

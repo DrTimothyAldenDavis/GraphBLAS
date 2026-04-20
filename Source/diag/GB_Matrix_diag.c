@@ -42,9 +42,9 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
 
     GrB_Matrix T = NULL ;
 
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
-    uint64_t mem = GB_mem (data_memlane, 0) ;
+    int header_arena = GB_arena (C->header_mem) ;
+    int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     GrB_Type ctype = C->type ;
     int64_t n = V_in->vlen + GB_IABS (k) ;     // C must be n-by-n
@@ -69,7 +69,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     { 
         // make a deep copy of V_in and convert to CSC
         GB_OK (GB_dup_worker (&T, V_in->iso, V_in, true, NULL,
-            /* FIXME memlane: */ header_memlane)) ;
+            header_arena, data_arena)) ;
         GB_OK (GB_convert_bitmap_to_sparse (T, Werk)) ;
         V = T ;
     }
@@ -104,7 +104,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     GB_OK (GB_new_bix (&C, // existing header
         ctype, n, n, GB_ph_malloc, csc, C_sparsity, false,
         C->hyper_switch, vnz, vnz, true, C_iso, Cp_is_32, Cj_is_32, Ci_is_32,
-        header_memlane, data_memlane)) ;
+        header_arena, data_arena)) ;
     C->sparsity_control = sparsity_control ;
     C->bitmap_switch = bitmap_switch ;
 

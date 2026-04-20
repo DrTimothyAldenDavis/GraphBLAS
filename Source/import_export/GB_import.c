@@ -10,7 +10,9 @@
 // This method takes O(1) time and memory, unless secure is true (used
 // when the input data is not trusted).
 
-// The input arrays are assumed to be in memlane 0
+// The input arrays are assumed to be in arena 0
+
+// FIXME arena: or use GB_Context_header_arena and GB_Context_data_arena
 
 #include "import_export/GB_export.h"
 
@@ -28,19 +30,19 @@ GrB_Info GB_import      // import/pack a matrix in any format
 
     // the 5 arrays:
     uint64_t **Ap,      // pointers, for sparse and hypersparse formats.
-    uint64_t Ap_memsize,   // size of Ap in bytes (memlane = 0)
+    uint64_t Ap_memsize,   // size of Ap in bytes (arena = 0)
 
     uint64_t **Ah,      // vector indices for hypersparse matrices
-    uint64_t Ah_memsize,   // size of Ah in bytes (memlane = 0)
+    uint64_t Ah_memsize,   // size of Ah in bytes (arena = 0)
 
     int8_t **Ab,        // bitmap, for bitmap format only.
-    uint64_t Ab_memsize,   // size of Ab in bytes (memlane = 0)
+    uint64_t Ab_memsize,   // size of Ab in bytes (arena = 0)
 
     uint64_t **Ai,      // indices for hyper and sparse formats
-    uint64_t Ai_memsize,   // size of Ai in bytes (memlane = 0)
+    uint64_t Ai_memsize,   // size of Ai in bytes (arena = 0)
 
     void **Ax,          // values
-    uint64_t Ax_memsize,   // size of Ax in bytes (memlane = 0)
+    uint64_t Ax_memsize,   // size of Ax in bytes (arena = 0)
 
     // additional information for specific formats:
     uint64_t nvals,     // # of entries for bitmap format, or for a vector
@@ -66,7 +68,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL (A) ;
-    int memlane = 0 ;       // this method assumes memlane 0
+    int arena = GB_ARENA_DEFAULT ;  // this method assumes arena 0
 
     if (!packing)
     { 
@@ -214,7 +216,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
         type, vlen, vdim, is_sparse_vector ? GB_ph_calloc : GB_ph_null,
         is_csc, sparsity, GB_Global_hyper_switch_get ( ), nvec,
         /* OK, import as all-64-bit: */ false, false, false,
-        memlane, memlane) ;
+        /* assumes GB_ARENA_DEFAULT: */ arena, arena) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -236,7 +238,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
 
             // import A->h, then fall through to sparse case
             (*A)->h = (*Ah) ; (*Ah) = NULL ;
-            (*A)->h_mem = GB_mem (memlane, Ah_memsize) ;
+            (*A)->h_mem = GB_mem (arena, Ah_memsize) ;
             if (add_to_memtable)
             { 
                 // for debugging only
@@ -262,7 +264,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
             { 
                 // import A->p, unless already created for a sparse CSC vector
                 (*A)->p = (*Ap) ; (*Ap) = NULL ;        // OK; 64-bit only
-                (*A)->p_mem = GB_mem (memlane, Ap_memsize) ;
+                (*A)->p_mem = GB_mem (arena, Ap_memsize) ;
                 if (add_to_memtable)
                 { 
                     // for debugging only
@@ -273,7 +275,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
 
             // import A->i
             (*A)->i = (*Ai) ; (*Ai) = NULL ;    // OK; 64-bit only
-            (*A)->i_mem = GB_mem (memlane, Ai_memsize) ;
+            (*A)->i_mem = GB_mem (arena, Ai_memsize) ;
             if (add_to_memtable)
             { 
                 // for debugging only
@@ -287,7 +289,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
 
             // import A->b
             (*A)->b = (*Ab) ; (*Ab) = NULL ;
-            (*A)->b_mem = GB_mem (memlane, Ab_memsize) ;
+            (*A)->b_mem = GB_mem (arena, Ab_memsize) ;
             if (add_to_memtable)
             { 
                 // for debugging only
@@ -306,7 +308,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     { 
         // import A->x
         (*A)->x = (*Ax) ; (*Ax) = NULL ;
-        (*A)->x_mem = GB_mem (memlane, Ax_memsize) ;
+        (*A)->x_mem = GB_mem (arena, Ax_memsize) ;
         if (add_to_memtable)
         { 
             // for debugging only

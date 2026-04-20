@@ -19,7 +19,7 @@ GrB_Info GB_unop_new
     const char *unop_name,          // name of the user function
     const char *unop_defn,          // definition of the user function
     const GB_Opcode opcode,         // opcode for the function
-    int memlane
+    int header_arena
 ) ;
 
 GB_Operator GB_unop_identity    // return IDENTITY operator, or NULL on error

@@ -68,8 +68,8 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     void *J = NULL ;                // Rows, Cols, or J2
     bool I_is_32, J_is_32 ;
 
-    int memlane = GB_memlane (C_in->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = C_in->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     // temporary matrices and arrays
     GrB_Matrix Cwork = NULL ;

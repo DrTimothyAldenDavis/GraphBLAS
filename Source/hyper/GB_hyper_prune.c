@@ -38,8 +38,8 @@ GrB_Info GB_hyper_prune
         return (GrB_SUCCESS) ;
     }
 
-    int memlane = GB_memlane (A->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = A->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     //--------------------------------------------------------------------------
     // count # of empty vectors and check if pruning is needed

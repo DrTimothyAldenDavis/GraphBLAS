@@ -42,8 +42,8 @@ GrB_Info GB_select_bitmap
     ASSERT (opcode != GB_NONZOMBIE_idxunop_code) ;
     ASSERT (C != NULL) ;
 
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
+    int header_arena = GB_arena (C->header_mem) ;
+    int data_arena = C->data_arena ;
 
     //--------------------------------------------------------------------------
     // get A
@@ -61,7 +61,7 @@ GrB_Info GB_select_bitmap
     GB_OK (GB_new_bix (&C, // always bitmap, existing header
         A->type, A->vlen, A->vdim, GB_ph_calloc, true,
         GxB_BITMAP, false, A->hyper_switch, -1, anz, true, C_iso,
-        /* OK: */ false, false, false, header_memlane, data_memlane)) ;
+        /* OK: */ false, false, false, header_arena, data_arena)) ;
 
     ASSERT (GxB_BITMAP == GB_sparsity (C)) ;
 

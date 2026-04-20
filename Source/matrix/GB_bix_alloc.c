@@ -43,8 +43,8 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
     ASSERT (GB_IMPLIES (sparsity == GxB_FULL || sparsity == GxB_BITMAP,
         !(A->p_is_32) && !(A->j_is_32) && !(A->i_is_32))) ;
 
-    int memlane = GB_memlane (A->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = A->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     //--------------------------------------------------------------------------
     // allocate the A->b, A->x, and A->i content of the matrix

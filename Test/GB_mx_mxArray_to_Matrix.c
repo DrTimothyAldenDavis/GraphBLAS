@@ -68,8 +68,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     GrB_Matrix A = NULL ;
     GrB_Matrix T = NULL ;
 
-    int header_memlane = GB_MEMLANE_MATLAB ;
-    int data_memlane = GB_MEMLANE_MATLAB ;
+    int header_arena = GB_ARENA_MATLAB ;
+    int data_arena = GB_ARENA_MATLAB ;
 
     if (A_matlab == NULL)
     {
@@ -319,7 +319,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         info = GB_new (&A, // sparse or full, new header
             atype_out, (uint64_t) nrows, (uint64_t) ncols,
             GB_ph_calloc, is_csc, sparsity, GxB_HYPER_DEFAULT, 0,
-            p_is_32, j_is_32, i_is_32, header_memlane, data_memlane) ;
+            p_is_32, j_is_32, i_is_32, header_arena, data_arena) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;
@@ -354,7 +354,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             atype_out, (uint64_t) nrows, (uint64_t) ncols,
             GB_ph_null, is_csc, sparsity, GxB_HYPER_DEFAULT, 0,
             /* must be false (MATLAB matrices are 64/64 bit): */
-            false, false, false, header_memlane, data_memlane) ;
+            false, false, false, header_arena, data_arena) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;

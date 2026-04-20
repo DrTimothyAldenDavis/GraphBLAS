@@ -56,8 +56,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     // the ctype and A->type must be compatible.  C->type is ignored
     ASSERT (GB_Type_compatible (ctype, A->type)) ;
@@ -140,7 +140,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         else if (A->Y_shallow || GB_is_shallow (A->Y))
         { 
             // A->Y is shallow, so create a deep copy for C
-            GB_OK (GB_dup (&(C->Y), A->Y, memlane, Werk)) ;
+            GB_OK (GB_dup (&(C->Y), A->Y, data_arena, data_arena, Werk)) ;
         }
         else
         { 

@@ -15,7 +15,7 @@
 void GB_serialize_free_blocks
 (
     GB_blocks **Blocks_handle,      // array of size nblocks
-    uint64_t Blocks_mem,            // memsize and memlane of Blocks
+    uint64_t Blocks_mem,            // memsize and arena of Blocks
     int32_t nblocks                 // # of blocks, or zero if no blocks
 )
 {

@@ -36,8 +36,9 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     int64_t avlen,              // length of the vectors of A
     // outputs:
     GrB_Matrix *R_handle,       // R = inverse (I)
+    // workspace
+    const int data_arena,
     GB_Werk Werk
-    // FIXME memlane param
 )
 {
 
@@ -47,9 +48,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
 
     GrB_Info info = GrB_SUCCESS ;
 
-    int header_memlane = 0 ;    // FIXME memlane param
-    int data_memlane = 0 ;      // FIXME memlane param
-    uint64_t mem = GB_mem (data_memlane, 0) ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     GrB_Matrix R = NULL ;
     GB_MDECL (W, , u) ; uint64_t W_mem = mem ;
@@ -89,7 +88,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     GB_OK (GB_new (&R,  // new dynamic header, do not allocate content
         GrB_UINT64, rvlen, rvdim, GB_ph_null, false, GxB_HYPERSPARSE, -1, 0,
         Rp_is_32, Rj_is_32, Ri_is_32,
-        header_memlane, data_memlane)) ;
+        data_arena, data_arena)) ;
 
     uint64_t S_input [1] ;
     S_input [0] = 1 ;

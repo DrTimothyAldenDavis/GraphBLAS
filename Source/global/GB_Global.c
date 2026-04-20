@@ -60,10 +60,10 @@ typedef struct
     // All threads must use the same malloc/realloc/free functions.
     // They default to the C11 functions, but can be defined by GxB_init.
 
-    GB_malloc_function_t malloc_function [GB_MEMLANES] ; // required
-    GB_calloc_function_t calloc_function [GB_MEMLANES] ; // may be NULL; unused
-    GB_realloc_function_t realloc_function [GB_MEMLANES] ; // may be NULL
-    GB_free_function_t free_function [GB_MEMLANES] ;     // required
+    GB_malloc_function_t malloc_function [GB_NARENAS] ;   // required
+    GB_calloc_function_t calloc_function [GB_NARENAS] ;   // may be NULL; unused
+    GB_realloc_function_t realloc_function [GB_NARENAS] ; // may be NULL
+    GB_free_function_t free_function [GB_NARENAS] ;       // required
 
     //--------------------------------------------------------------------------
     // tell MATLAB to make memory persistent
@@ -137,7 +137,7 @@ typedef struct
     #define GB_MEMTABLE_SIZE 10000
     GB_void *memtable_p [GB_MEMTABLE_SIZE] ;
     uint64_t memtable_memsize [GB_MEMTABLE_SIZE] ;
-    int      memtable_memlane [GB_MEMTABLE_SIZE] ;
+    int      memtable_arena   [GB_MEMTABLE_SIZE] ;
     #endif
     int nmemtable ;
 
@@ -556,10 +556,10 @@ void GB_Global_memtable_dump (void)
         GB_Global.nmemtable, GB_Global.nmalloc) ;
     for (int k = 0 ; k < GB_Global.nmemtable ; k++)
     {
-        GBMDUMP ("  %4d: %12p : %ld lane: %d\n", k,
+        GBMDUMP ("  %4d: %12p : %ld arena: %d\n", k,
             GB_Global.memtable_p [k],
             GB_Global.memtable_memsize [k],
-            GB_Global.memtable_memlane [k]) ;
+            GB_Global.memtable_arena   [k]) ;
     }
     #endif
 }
@@ -586,9 +586,9 @@ void GB_Global_memtable_add (void *p, uint64_t mem)
 
     #ifdef GB_MEMTABLE_DEBUG
     uint64_t memsize = GB_memsize (mem) ;
-    int memlane = GB_memlane (mem) ;
+    int arena = GB_arena (mem) ;
     bool fail = false ;
-    GBMDUMP ("memtable add %p memsize %ld memlane %d\n", p, memsize, memlane) ;
+    GBMDUMP ("memtable add %p memsize %ld arena %d\n", p, memsize, arena) ;
     GB_OPENMP_LOCK_SET (3)  // memtable (debug only)
     {
         int n = GB_Global.nmemtable ;
@@ -599,8 +599,8 @@ void GB_Global_memtable_add (void *p, uint64_t mem)
             {
                 if (p == GB_Global.memtable_p [i])
                 {
-                    GBDUMP ("\nFAIL add duplicate %p memsize %ld lane %d\n",
-                        p, memsize, memlane) ;
+                    GBDUMP ("\nFAIL add duplicate %p memsize %ld arena %d\n",
+                        p, memsize, arena) ;
                     GB_Global_memtable_dump ( ) ;
                     fail = true ;
                     break ;
@@ -611,7 +611,7 @@ void GB_Global_memtable_add (void *p, uint64_t mem)
         {
             GB_Global.memtable_p [n] = p ;
             GB_Global.memtable_memsize [n] = memsize ;
-            GB_Global.memtable_memlane [n] = memlane ;
+            GB_Global.memtable_arena   [n] = arena ;
             GB_Global.nmemtable++ ;
         }
     }
@@ -654,10 +654,10 @@ uint64_t GB_Global_memtable_memsize (void *p)
     return (memsize) ;
 }
 
-// get the memlane of a malloc'd block
-int GB_Global_memtable_memlane (void *p)
+// get the arena of a malloc'd block
+int GB_Global_memtable_arena (void *p)
 {
-    int memlane = 0 ;
+    int arena = 0 ;
 
     #ifdef GB_MEMTABLE_DEBUG
     if (p == NULL) return (0) ;
@@ -669,7 +669,7 @@ int GB_Global_memtable_memlane (void *p)
         {
             if (p == GB_Global.memtable_p [i])
             {
-                memlane = GB_Global.memtable_memlane [i] ;
+                arena = GB_Global.memtable_arena [i] ;
                 found = true ;
                 break ;
             }
@@ -684,7 +684,7 @@ int GB_Global_memtable_memlane (void *p)
     }
     #endif
 
-    return (memlane) ;
+    return (arena) ;
 }
 
 // test if a malloc'd block is in the table
@@ -735,7 +735,7 @@ void GB_Global_memtable_remove (void *p)
                 // found p in the table; remove it
                 GB_Global.memtable_p [i] = GB_Global.memtable_p [n-1] ;
                 GB_Global.memtable_memsize [i] = GB_Global.memtable_memsize [n-1] ;
-                GB_Global.memtable_memlane [i] = GB_Global.memtable_memlane [n-1] ;
+                GB_Global.memtable_arena [i] = GB_Global.memtable_arena [n-1] ;
                 GB_Global.nmemtable -- ;
                 found = true ;
                 break ;
@@ -762,22 +762,22 @@ void GB_Global_memtable_remove (void *p)
 void GB_Global_malloc_function_set
 (
     GB_malloc_function_t malloc_function,
-    int memlane
+    int arena
 )
 { 
-    GB_Global.malloc_function [memlane] = malloc_function ;
+    GB_Global.malloc_function [arena] = malloc_function ;
 }
 
-void * GB_Global_malloc_function_get (int memlane)
+void * GB_Global_malloc_function_get (int arena)
 { 
-    return ((void *) GB_Global.malloc_function [memlane] ) ;
+    return ((void *) GB_Global.malloc_function [arena] ) ;
 }
 
-void * GB_Global_malloc_function (uint64_t memsize, int memlane)
+void * GB_Global_malloc_function (uint64_t memsize, int arena)
 { 
     void *p = NULL ;
-    p = GB_Global.malloc_function [memlane] (memsize) ;
-    GB_Global_memtable_add (p, GB_mem (memlane, memsize)) ;
+    p = GB_Global.malloc_function [arena] (memsize) ;
+    GB_Global_memtable_add (p, GB_mem (arena, memsize)) ;
     return (p) ;
 }
 
@@ -788,15 +788,15 @@ void * GB_Global_malloc_function (uint64_t memsize, int memlane)
 void GB_Global_calloc_function_set
 (
     GB_calloc_function_t calloc_function,
-    int memlane
+    int arena
 )
 { 
-    GB_Global.calloc_function [memlane] = calloc_function ;
+    GB_Global.calloc_function [arena] = calloc_function ;
 }
 
-void * GB_Global_calloc_function_get (int memlane)
+void * GB_Global_calloc_function_get (int arena)
 { 
-    return ((void *) GB_Global.calloc_function [memlane]) ;
+    return ((void *) GB_Global.calloc_function [arena]) ;
 }
 
 //------------------------------------------------------------------------------
@@ -806,30 +806,30 @@ void * GB_Global_calloc_function_get (int memlane)
 void GB_Global_realloc_function_set
 (
     GB_realloc_function_t realloc_function,
-    int memlane
+    int arena
 )
 { 
-    GB_Global.realloc_function [memlane] = realloc_function ;
+    GB_Global.realloc_function [arena] = realloc_function ;
 }
 
-void * GB_Global_realloc_function_get (int memlane)
+void * GB_Global_realloc_function_get (int arena)
 { 
-    return ((void *) GB_Global.realloc_function [memlane]) ;
+    return ((void *) GB_Global.realloc_function [arena]) ;
 }
 
-bool GB_Global_realloc_function_have (int memlane)
+bool GB_Global_realloc_function_have (int arena)
 { 
-    return (GB_Global.realloc_function [memlane] != NULL) ;
+    return (GB_Global.realloc_function [arena] != NULL) ;
 }
 
-void * GB_Global_realloc_function (void *p, uint64_t memsize, int memlane)
+void * GB_Global_realloc_function (void *p, uint64_t memsize, int arena)
 { 
     void *pnew = NULL ;
-    pnew = GB_Global.realloc_function [memlane] (p, memsize) ;
+    pnew = GB_Global.realloc_function [arena] (p, memsize) ;
     if (pnew != NULL)
     {
         GB_Global_memtable_remove (p) ;
-        GB_Global_memtable_add (pnew, GB_mem (memlane, memsize)) ;
+        GB_Global_memtable_add (pnew, GB_mem (arena, memsize)) ;
     }
     return (pnew) ;
 }
@@ -838,19 +838,19 @@ void * GB_Global_realloc_function (void *p, uint64_t memsize, int memlane)
 // free_function
 //------------------------------------------------------------------------------
 
-void GB_Global_free_function_set (GB_free_function_t free_function, int memlane)
+void GB_Global_free_function_set (GB_free_function_t free_function, int arena)
 { 
-    GB_Global.free_function [memlane] = free_function ;
+    GB_Global.free_function [arena] = free_function ;
 }
 
-void * GB_Global_free_function_get (int memlane)
+void * GB_Global_free_function_get (int arena)
 { 
-    return ((void *) GB_Global.free_function [memlane]) ;
+    return ((void *) GB_Global.free_function [arena]) ;
 }
 
-void GB_Global_free_function (void *p, int memlane)
+void GB_Global_free_function (void *p, int arena)
 { 
-    GB_Global.free_function [memlane] (p) ;
+    GB_Global.free_function [arena] (p) ;
     GB_Global_memtable_remove (p) ;
 }
 
@@ -865,7 +865,7 @@ void GB_Global_free_function (void *p, int memlane)
 void * GB_Global_persistent_malloc (uint64_t memsize)
 {
     // malloc persistent memory
-//  void *p = GB_Global.malloc_function [GB_MEMLANE_MATLAB] (memsize) ;
+//  void *p = GB_Global.malloc_function [GB_ARENA_MATLAB] (memsize) ;
 //  GB_Global_persistent_make (p) ;
     /* FIXME HACK: */ void *p = malloc (memsize) ;
     return (p) ;
@@ -891,7 +891,7 @@ void GB_Global_persistent_free (void **p)
     // free persistent memory
     if (p != NULL && *p != NULL)
     { 
-//      GB_Global.free_function [GB_MEMLANE_MATLAB] (*p) ;
+//      GB_Global.free_function [GB_ARENA_MATLAB] (*p) ;
     /* FIXME HACK: */ free (*p) ;
     }
     (*p) = NULL ;

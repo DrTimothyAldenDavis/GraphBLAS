@@ -59,8 +59,9 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     //--------------------------------------------------------------------------
 
     ASSERT (C != NULL) ;
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+
+    int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (Rp_handle != NULL) ;
     ASSERT (Rp_mem_handle != NULL) ;

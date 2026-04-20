@@ -27,7 +27,8 @@ GrB_Info GrB_Vector_dup     // make an exact copy of a vector
     GB_WHERE_1 (u, "GrB_Vector_dup (&w, u)") ;
     GB_BURBLE_START ("GrB_Vector_dup") ;
 
-    int memlane = GB_Context_memlane ( ) ;
+    int header_arena = GB_Context_header_arena ( ) ;
+    int data_arena = GB_Context_data_arena ( ) ;
 
     ASSERT (GB_VECTOR_OK (u)) ;
 
@@ -35,7 +36,8 @@ GrB_Info GrB_Vector_dup     // make an exact copy of a vector
     // duplicate the vector
     //--------------------------------------------------------------------------
 
-    info = GB_dup ((GrB_Matrix *) w, (GrB_Matrix) u, memlane, Werk) ;
+    info = GB_dup ((GrB_Matrix *) w, (GrB_Matrix) u,
+        header_arena, data_arena, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

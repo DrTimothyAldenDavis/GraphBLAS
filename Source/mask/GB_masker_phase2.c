@@ -111,8 +111,8 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     ASSERT (Rp_handle != NULL) ;
     ASSERT (Rh_handle != NULL) ;
 
-    int header_memlane = GB_memlane (R->header_mem) ;
-    int data_memlane = R->data_memlane ;
+    int header_arena = GB_arena (R->header_mem) ;
+    int data_arena = R->data_arena ;
 
     GB_MDECL (Rp, , u) ;
     Rp = (*Rp_handle) ;
@@ -157,7 +157,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     GrB_Info info = GB_new_bix (&R, // any sparsity, existing header
         C->type, C->vlen, C->vdim, GB_ph_null, R_is_csc,
         R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, R_iso,
-        Rp_is_32, Rj_is_32, Ri_is_32, header_memlane, data_memlane) ;
+        Rp_is_32, Rj_is_32, Ri_is_32, header_arena, data_arena) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free R_to_M, R_to_C, R_to_Z

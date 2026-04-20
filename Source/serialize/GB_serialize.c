@@ -40,8 +40,8 @@
     }                                           \
 }
 
-// FIXME: use memlane = GB_memlane (A->header_mem) by default; and add new
-// methods where the memlane of the blob can be provided on input.
+// FIXME arena: use arena = A->data_arena by default; and add new
+// methods where the arena of the blob can be provided on input.
 
 GrB_Info GB_serialize               // serialize a matrix into a blob
 (
@@ -66,8 +66,8 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     ASSERT (blob_memsize_handle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for serialize", GB0) ;
 
-    int memlane = GB_memlane (A->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = A->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     uint64_t blob_mem = mem ;
 

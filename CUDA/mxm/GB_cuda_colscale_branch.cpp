@@ -23,7 +23,7 @@ bool GB_cuda_colscale_branch
 
     if (A->header_mem == 0 || D->header_mem == 0)
     {
-        // FIXME memlane: check all of A, D
+        // FIXME arena: check all of A, D
         return (false) ;
     }
 

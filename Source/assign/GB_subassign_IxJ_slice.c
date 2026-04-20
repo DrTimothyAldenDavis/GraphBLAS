@@ -65,7 +65,7 @@ GrB_Info GB_subassign_IxJ_slice
     // input:
     const int64_t nI,
     const int64_t nJ,
-    int data_memlane,               // memlane to use
+    int data_arena,                 // arena to use
     GB_Werk Werk
 )
 #endif
@@ -82,7 +82,7 @@ GB_CALLBACK_SUBASSIGN_IXJ_SLICE_PROTO (GB_subassign_IxJ_slice)
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;
 
-    uint64_t mem = GB_mem (data_memlane, 0) ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     (*p_TaskList  ) = NULL ;
     (*p_TaskList_mem) = mem ;

@@ -71,7 +71,7 @@ GrB_Info GB_serialize_array
 void GB_serialize_free_blocks
 (
     GB_blocks **Blocks_handle,      // array of size nblocks
-    uint64_t Blocks_mem,            // memsize and memlane of Blocks
+    uint64_t Blocks_mem,            // memsize and arena of Blocks
     int32_t nblocks                 // # of blocks, or zero if no blocks
 ) ;
 
@@ -91,7 +91,7 @@ GrB_Info GB_deserialize_from_blob
 (
     // output:
     GB_void **X_handle,         // uncompressed output array
-    uint64_t *X_mem_handle,     // memsize and memlane of X as allocated
+    uint64_t *X_mem_handle,     // memsize and arena of X as allocated
     // input:
     int64_t X_len,              // size of X in bytes
     const GB_void *blob,        // serialized blob of size blob_memsize

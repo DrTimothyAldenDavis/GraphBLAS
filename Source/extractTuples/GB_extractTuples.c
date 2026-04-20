@@ -49,8 +49,9 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     GrB_Info info ;
 
     ASSERT (A != NULL) ;
-    int memlane = GB_memlane (A->header_mem) ;  // FIXME memlane: or param?
-    uint64_t mem = GB_mem (memlane, 0) ;
+
+    int data_arena = A->data_arena ;            // FIXME arena: param?
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     void *Cp = NULL ; uint64_t Cp_mem = mem ;
     ASSERT_MATRIX_OK (A, "A to extract", GB0) ;
@@ -144,7 +145,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         // to add to I and J.
 
         GB_OK (GB_convert_b2s (Cp, I, J, (GB_void *) X, NULL,
-            Cp_is_32, J_is_32, I_is_32, xtype, A, memlane, Werk)) ;
+            Cp_is_32, J_is_32, I_is_32, xtype, A, data_arena, Werk)) ;
 
         if (A->iso && X != NULL)
         { 

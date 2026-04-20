@@ -25,7 +25,7 @@ GrB_Info GB_unop_new
     const char *unop_name,          // name of the user function
     const char *unop_defn,          // definition of the user function
     const GB_Opcode opcode,         // opcode for the function
-    int memlane
+    int header_arena
 )
 { 
 
@@ -70,6 +70,7 @@ GrB_Info GB_unop_new
         // output:
         op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_mem),
         // input:
-        unop_name, unop_defn, opcode == GB_USER_unop_code, jitable, memlane)) ;
+        unop_name, unop_defn, opcode == GB_USER_unop_code, jitable,
+        header_arena)) ;
 }
 

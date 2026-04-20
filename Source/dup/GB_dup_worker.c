@@ -32,7 +32,8 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
                             // iso, only the first entry is copied, regardless
                             // of C_iso on input
     const GrB_Type ctype,   // type of C, if numeric is false
-    const int memlane
+    const int header_arena,
+    const int data_arena
 )
 {
 
@@ -47,7 +48,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
 
-    uint64_t mem = GB_mem (memlane, 0) ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -101,8 +102,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     GB_OK (GB_new_bix (Chandle, // can be new or existing header
         numeric ? atype : ctype, A->vlen, A->vdim, GB_ph_malloc, A->is_csc,
         GB_sparsity (A), false, A->hyper_switch, A->plen, anz, true, C_iso,
-        A->p_is_32, A->j_is_32, A->i_is_32,
-        /* FIXME memlane: */ memlane, memlane)) ;
+        A->p_is_32, A->j_is_32, A->i_is_32, header_arena, data_arena)) ;
     C = (*Chandle) ;
 
     //--------------------------------------------------------------------------

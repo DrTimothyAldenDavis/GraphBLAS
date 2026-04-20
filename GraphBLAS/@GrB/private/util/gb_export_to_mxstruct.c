@@ -33,6 +33,10 @@
 
 // This function accesses GB_methods inside GraphBLAS.
 
+// FIXME arena: for GraphBLAS 10.4.0: just export as a single uint8_t
+// arrays containing the A header.  Remainder (even A->Y header) are
+// in the default arena 0 (malloc/free).  Do not use a struct.
+
 #include "gb_interface.h"
 
 // for hypersparse, sparse, or full matrices
@@ -134,35 +138,35 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     if (ro != GrB_DEFAULT)
     {
         printf ("handling %d\n", ro) ;
-        mexErrMsgIdAndTxt ("GrB:memlane", "memlane invalid (6)") ;
+        mexErrMsgIdAndTxt ("GrB:arena", "arena invalid (6)") ;
     }
     OK (GxB_Vector_unload (Container->h, &Ah, &Ah_type, &Ah_len, &Ah_memsize,
         &ro, NULL)) ;
     if (ro != GrB_DEFAULT)
     {
         printf ("handling %d Ah %p\n", ro, Ah) ;
-        mexErrMsgIdAndTxt ("GrB:memlane", "memlane invalid (7)") ;
+        mexErrMsgIdAndTxt ("GrB:arena", "arena invalid (7)") ;
     }
     OK (GxB_Vector_unload (Container->b, &Ab, &Ab_type, &Ab_len, &Ab_memsize,
         &ro, NULL)) ;
     if (ro != GrB_DEFAULT)
     {
         printf ("handling %d\n", ro) ;
-        mexErrMsgIdAndTxt ("GrB:memlane", "memlane invalid (8)") ;
+        mexErrMsgIdAndTxt ("GrB:arena", "arena invalid (8)") ;
     }
     OK (GxB_Vector_unload (Container->i, &Ai, &Ai_type, &Ai_len, &Ai_memsize,
         &ro, NULL)) ;
     if (ro != GrB_DEFAULT)
     {
         printf ("handling %d\n", ro) ;
-        mexErrMsgIdAndTxt ("GrB:memlane", "memlane invalid (9)") ;
+        mexErrMsgIdAndTxt ("GrB:arena", "arena invalid (9)") ;
     }
     OK (GxB_Vector_unload (Container->x, &Ax, &Ax_type, &Ax_len, &Ax_memsize,
         &ro, NULL)) ;
     if (ro != GrB_DEFAULT)
     {
         printf ("handling %d\n", ro) ;
-        mexErrMsgIdAndTxt ("GrB:memlane", "memlane invalid (10)") ;
+        mexErrMsgIdAndTxt ("GrB:arena", "arena invalid (10)") ;
     }
 
     // get the Y matrix from the Container
@@ -182,21 +186,21 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
         if (ro != GrB_DEFAULT)
         {
             printf ("handling %d\n", ro) ;
-            mexErrMsgIdAndTxt ("GrB:memlane", "memlane invalid (11)") ;
+            mexErrMsgIdAndTxt ("GrB:arena", "arena invalid (11)") ;
         }
         OK (GxB_Vector_unload (Container->i, &Yi, &Yi_type, &Yi_len,
             &Yi_memsize, &ro, NULL)) ;
         if (ro != GrB_DEFAULT)
         {
             printf ("handling %d\n", ro) ;
-            mexErrMsgIdAndTxt ("GrB:memlane", "memlane invalid (12)") ;
+            mexErrMsgIdAndTxt ("GrB:arena", "arena invalid (12)") ;
         }
         OK (GxB_Vector_unload (Container->x, &Yx, &Yx_type, &Yx_len,
             &Yx_memsize, &ro, NULL)) ;
         if (ro != GrB_DEFAULT)
         {
             printf ("handling %d\n", ro) ;
-            mexErrMsgIdAndTxt ("GrB:memlane", "memlane invalid (13)") ;
+            mexErrMsgIdAndTxt ("GrB:arena", "arena invalid (13)") ;
         }
         yncols = Container->ncols ;
     }

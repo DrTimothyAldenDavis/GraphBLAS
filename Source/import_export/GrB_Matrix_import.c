@@ -51,8 +51,9 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     GB_RETURN_IF_NULL (Ax) ;
     ASSERT_TYPE_OK (type, "type for GrB_Matrix_import", GB0) ;
     GrB_Info info ;
-    int memlane = 0 ;       // FIXME: get memlane from the Context
-    uint64_t mem = GB_mem (memlane, 0) ;
+
+    int arena = 0 ;       // FIXME arena: or get arena from the Context
+    uint64_t mem = GB_mem (arena, 0) ;
 
     // GrB_Matrix_import has no descritptor so it only supports a secure import
     bool fast_import = false ;
@@ -272,7 +273,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
                     type, vlen, vdim, GB_ph_null, is_csc, GxB_AUTO_SPARSITY,
                     GB_Global_hyper_switch_get ( ), 0,
                     /* OK; 64-bit only: */ false, false, false,
-                    memlane, memlane)) ;
+                    arena, arena)) ;
 
                 // build A from the input triplets
                 GB_OK (GB_builder (

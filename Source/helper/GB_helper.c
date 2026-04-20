@@ -24,23 +24,6 @@ bool GB_factory_kernels_enabled = true ;
     int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
 
 //------------------------------------------------------------------------------
-// GB_ALLOCATE_WORK: allocate per-thread workspace
-//------------------------------------------------------------------------------
-
-#define GB_ALLOCATE_WORK(work_type)                                         \
-    size_t Work_mem = GB_MEMLANE_MATLAB ;                                   \
-    work_type *Work = GB_MALLOC_MEMORY (nthreads, sizeof (work_type),       \
-        &Work_mem) ;                                                        \
-    if (Work == NULL) return (false) ;
-
-//------------------------------------------------------------------------------
-// GB_FREE_WORKSPACE: free per-thread workspace
-//------------------------------------------------------------------------------
-
-#define GB_FREE_WORKSPACE                                                   \
-    GB_FREE_MEMORY (&Work, Work_mem) ;
-
-//------------------------------------------------------------------------------
 // GB_helper5: construct pattern of S for gblogassign
 //------------------------------------------------------------------------------
 
@@ -142,11 +125,13 @@ double GB_helper10       // norm (x-y,p), or -1 on error
     }
 
     //--------------------------------------------------------------------------
-    // allocate workspace and determine # of threads to use
+    // determine # of threads to use
     //--------------------------------------------------------------------------
 
     GB_NTHREADS_HELPER (n) ;
-    GB_ALLOCATE_WORK (double) ;
+    #define GB_HELPER10_MAX_NTHREADS 1024
+    nthreads = GB_IMIN (nthreads, GB_HELPER10_MAX_NTHREADS) ;
+    double Work [GB_HELPER10_MAX_NTHREADS] ;
 
     #define xx(k) x [x_iso ? 0 : k]
     #define yy(k) y [y_iso ? 0 : k]
@@ -409,10 +394,9 @@ double GB_helper10       // norm (x-y,p), or -1 on error
     }
 
     //--------------------------------------------------------------------------
-    // free workspace and return result
+    // return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORKSPACE ;
     return (s) ;
 }
 
@@ -425,11 +409,11 @@ static GxB_Container Container = NULL ;
 static GrB_Vector GB_helper_component (void)
 {
     size_t s = sizeof (struct GB_Vector_opaque) ;
-    GrB_Vector p = GB_Global_persistent_malloc (s) ;  // with GB_MEMLANE_MATLAB
+    GrB_Vector p = GB_Global_persistent_malloc (s) ;  // with GB_ARENA_DEFAULT
     if (p != NULL)
     {
         memset (p, 0, s) ;
-        p->header_mem = GB_mem (GB_MEMLANE_MATLAB, s) ;
+        p->header_mem = GB_mem (GB_ARENA_DEFAULT, s) ;  // FIXME arena
         p->type = GrB_BOOL ;
         p->is_csc = true ;
         p->plen = -1 ;
@@ -454,7 +438,7 @@ void GB_helper_container_new (void)         // allocate the global Container
 
     // allocate a new Container
     size_t s = sizeof (struct GxB_Container_struct) ;
-    Container = GB_Global_persistent_malloc (s) ;   // with GB_MEMLANE_MATLAB
+    Container = GB_Global_persistent_malloc (s) ;   // with GB_ARENA_DEFAULT
     printf ("new persistent container: %p\n", Container) ;
     if (Container != NULL)
     {
@@ -470,7 +454,7 @@ void GB_helper_container_new (void)         // allocate the global Container
         Container->ncols_nonempty = -1 ;
         Container->format = GxB_FULL ;
         Container->orientation = GrB_ROWMAJOR ;
-        Container->memlane = GB_MEMLANE_DEFAULT ;
+        Container->header_arena = GB_ARENA_DEFAULT ;  // FIXME arena
     }
 }
 

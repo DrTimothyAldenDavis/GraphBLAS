@@ -18,12 +18,11 @@ GrB_Info GB_user_name_set
     const char *new_name,           // new name for the object
     const bool only_once            // if true, the name of the object can
                                     // only be set once
-    // FIXME memlane
 )
 { 
 
-    int memlane = 0 ;       // FIXME memlane param
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int header_arena = 0 ;       // FIXME arena: param
+    uint64_t mem = GB_mem (header_arena, 0) ;
 
     if (only_once && (*object_user_name) != NULL)
     { 

@@ -63,8 +63,8 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Ch_handle != NULL) ;
 
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
+    int header_arena = GB_arena (C->header_mem) ;
+    int data_arena = C->data_arena ;
 
     GB_MDECL (Cp, const, u) ;
     Cp = (*Cp_handle) ;
@@ -130,7 +130,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     GrB_Info info = GB_new_bix (&C, // sparse or hyper, existing header
         ctype, nI, nJ, GB_ph_null, C_is_csc,
         sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso,
-        Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, header_arena, data_arena) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

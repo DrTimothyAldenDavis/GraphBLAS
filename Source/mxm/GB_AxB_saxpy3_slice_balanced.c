@@ -218,8 +218,9 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     GrB_Info info ;
 
     ASSERT (C != NULL) ;
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+
+    int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     (*apply_mask) = false ;
     (*M_in_place) = false ;

@@ -88,8 +88,8 @@ GrB_Info GB_Monoid_new          // create a monoid
     //--------------------------------------------------------------------------
 
     // allocate the monoid
-    int memlane = GB_Context_memlane ( ) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int header_arena = GB_Context_header_arena ( ) ;
+    uint64_t mem = GB_mem (header_arena, 0) ;
     uint64_t header_mem = mem ;
     (*monoid) = GB_MALLOC_MEMORY (1, sizeof (struct GB_Monoid_opaque),
         &header_mem) ;
@@ -106,8 +106,8 @@ GrB_Info GB_Monoid_new          // create a monoid
     mon->user_name = NULL ; mon->user_name_mem = 0 ;
     mon->op = op ;
     size_t zsize = op->ztype->size ;
-    mon->identity = NULL ; mon->identity_mem = 0 ;  // FIXME memlane
-    mon->terminal = NULL ; mon->terminal_mem = 0 ;  // FIXME memlane
+    mon->identity = NULL ; mon->identity_mem = mem ;
+    mon->terminal = NULL ; mon->terminal_mem = mem ;
     bool builtin = false ;  // set true below if using a builtin binary op
     mon->hash = 0 ;         // builtin monoids have a hash value of 0
 
@@ -122,7 +122,7 @@ GrB_Info GB_Monoid_new          // create a monoid
         if (mon->identity == NULL)                                          \
         {                                                                   \
             /* out of memory */                                             \
-            GB_FREE_MEMORY (&(mon->terminal), mon->terminal_mem) ;          \
+            GB_FREE_MEMORY (&(mon->terminal), mon->identity_mem) ;          \
             GB_FREE_MEMORY (monoid, header_mem) ;                           \
             return (GrB_OUT_OF_MEMORY) ;                                    \
         }                                                                   \

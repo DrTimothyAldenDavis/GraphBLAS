@@ -36,7 +36,7 @@ bool GB_cuda_AxB_dot3_branch
 
     if (A->header_mem == 0 || B->header_mem == 0 || M->header_mem == 0)
     {
-        // FIXME memlane: check all of A, B, and M
+        // FIXME arena: check all of A, B, and M
         return (false) ;
     }
 

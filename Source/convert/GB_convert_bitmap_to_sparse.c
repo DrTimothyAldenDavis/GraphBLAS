@@ -37,8 +37,8 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     ASSERT (!GB_JUMBLED (A)) ;      // bitmap is never jumbled
     ASSERT (!GB_ZOMBIES (A)) ;      // bitmap never has zomies
 
-    int memlane = GB_memlane (A->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = A->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     //--------------------------------------------------------------------------
     // allocate Cp, Ci, and Cx
@@ -91,7 +91,7 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     // Cx and A->x always have the same type.
     // The values are not converted if A is iso (Cx is NULL).
     GB_OK (GB_convert_b2s (Cp, Ci, NULL, Cx, &cnvec_nonempty,
-        Cp_is_32, false, Ci_is_32, A->type, A, memlane, Werk)) ;
+        Cp_is_32, false, Ci_is_32, A->type, A, data_arena, Werk)) ;
 
     //--------------------------------------------------------------------------
     // free prior content of A and transplant the new content
@@ -119,7 +119,6 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     A->nvals = anvals ;
     A->plen = avdim ;
     A->nvec = avdim ;
-//  A->nvec_nonempty = cnvec_nonempty ;
     GB_nvec_nonempty_set (A, cnvec_nonempty) ;
     A->magic = GB_MAGIC ;
 

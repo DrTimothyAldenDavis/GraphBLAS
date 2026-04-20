@@ -30,8 +30,8 @@ GrB_Info GxB_Context_new            // create a new Context
     // create the Context
     //--------------------------------------------------------------------------
 
-    int memlane = GB_Context_memlane ( ) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int header_arena = GB_Context_header_arena ( ) ;
+    uint64_t mem = GB_mem (header_arena, 0) ;
 
     // allocate the Context
     uint64_t header_mem = mem ;

@@ -63,7 +63,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
 (
     // output:
     GB_task_struct **p_TaskList,    // array of structs
-    uint64_t *p_TaskList_mem,       // memsize of TaskList and memlane
+    uint64_t *p_TaskList_mem,       // memsize of TaskList and arena
     int *p_ntasks,              // # of tasks constructed
     int *p_nthreads,            // # of threads for subref operation
     bool *p_post_sort,          // true if a final post-sort is needed
@@ -84,7 +84,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     const bool Ap_is_32,        // if true, Ap_start/end are 32-bit; else 64
     const void *I,
     const bool I_is_32,         // if true, I is 32-bit; else 64 bit
-    const int memlane,
+    const int data_arena,       // workspace arena
     GB_Werk Werk
 )
 {
@@ -105,7 +105,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     ASSERT ((Cnvec > 0) == (Ap_start != NULL)) ;
     ASSERT ((Cnvec > 0) == (Ap_end != NULL)) ;
 
-    uint64_t mem = GB_mem (memlane, 0) ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     (*p_TaskList) = NULL ;
     (*p_TaskList_mem) = 0 ;
@@ -221,7 +221,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
 
     if (need_I_inverse)
     { 
-        GB_OK (GB_I_inverse (I, I_is_32, nI, avlen, &R, Werk)) ;
+        GB_OK (GB_I_inverse (I, I_is_32, nI, avlen, &R, data_arena, Werk)) ;
     }
 
     //--------------------------------------------------------------------------

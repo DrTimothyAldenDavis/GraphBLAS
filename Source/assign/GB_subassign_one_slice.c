@@ -67,7 +67,7 @@ GrB_Info GB_subassign_one_slice     // slice M for subassign_05, 06n, 07
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,             // matrix to slice
-    const int data_memlane,
+    const int data_arena,
     GB_Werk Werk
 )
 #endif
@@ -92,7 +92,7 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
 
     ASSERT (!GB_JUMBLED (M)) ;
 
-    uint64_t mem = GB_mem (data_memlane, 0) ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     (*p_TaskList  ) = NULL ;
     (*p_ntasks    ) = 0 ;

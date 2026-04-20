@@ -27,7 +27,7 @@ bool GB_cuda_transpose_branch
 
     if (A->header_mem == 0)
     {
-        // FIXME memlane: check all of A
+        // FIXME arena: check all of A
         return (false) ;
     }
 

@@ -32,7 +32,7 @@ bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
 
     if (A->header_mem == 0)
     {
-        // FIXME memlane: check all of A
+        // FIXME arena: check all of A
         return (false) ;
     }
 

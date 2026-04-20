@@ -41,8 +41,8 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     GrB_Matrix A = NULL ;
     ASSERT_MATRIX_OK (C, "C input to concat hyper", GB0) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     GrB_Type ctype = C->type ;
     int64_t cvlen = C->vlen ;

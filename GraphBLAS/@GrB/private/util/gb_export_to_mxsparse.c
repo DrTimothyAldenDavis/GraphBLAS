@@ -176,6 +176,8 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         // ensure the matrix is not iso-valued
         OK (GrB_Matrix_set_INT32 (T, 0, GxB_ISO)) ;
 
+        // FIXME arena: set data_arena of T to MATLAB
+
         // unload T into a Container and free T
         GxB_Container Container = GB_helper_container ( ) ;
         CHECK_ERROR (Container == NULL, "internal error 911") ;
@@ -193,27 +195,27 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
 
         // unload the Container GrB_Vectors into raw C arrays Tp, Ti, and Tx
         GrB_Type Tp_type, Ti_type, Tx_type ;
-        int ignore = 0 ;
+        int handling = 0 ;
         OK (GxB_Vector_unload (Container->p, (void **) &Tp, &Tp_type, &plen,
-            &Tp_memsize, &ignore, NULL)) ;
-        if (ignore != GrB_DEFAULT)
+            &Tp_memsize, &handling, NULL)) ;
+        if (handling != GrB_DEFAULT + GB_ARENA_MATLAB)
         {
-            printf ("handling %d\n", ignore) ;
-            mexErrMsgIdAndTxt ("GrB:memlane", "memlane invalid (3)") ;
+            printf ("handling %d\n", handling) ;
+            mexErrMsgIdAndTxt ("GrB:arena", "arena invalid (3)") ;
         }
         OK (GxB_Vector_unload (Container->i, (void **) &Ti, &Ti_type, &ilen,
-            &Ti_memsize, &ignore, NULL)) ;
-        if (ignore != GrB_DEFAULT)
+            &Ti_memsize, &handling, NULL)) ;
+        if (handling != GrB_DEFAULT + GB_ARENA_MATLAB)
         {
-            printf ("handling %d\n", ignore) ;
-            mexErrMsgIdAndTxt ("GrB:memlane", "memlane invalid (4)") ;
+            printf ("handling %d\n", handling) ;
+            mexErrMsgIdAndTxt ("GrB:arena", "arena invalid (4)") ;
         }
         OK (GxB_Vector_unload (Container->x, (void **) &Tx, &Tx_type, &xlen,
-            &Tx_memsize, &ignore, NULL)) ;
-        if (ignore != GrB_DEFAULT)
+            &Tx_memsize, &handling, NULL)) ;
+        if (handling != GrB_DEFAULT + GB_ARENA_MATLAB)
         {
-            printf ("handling %d\n", ignore) ;
-            mexErrMsgIdAndTxt ("GrB:memlane", "memlane invalid (5)") ;
+            printf ("handling %d\n", handling) ;
+            mexErrMsgIdAndTxt ("GrB:arena", "arena invalid (5)") ;
         }
 
         // ensure the types are correct; this 'cannot' fail but check anyway

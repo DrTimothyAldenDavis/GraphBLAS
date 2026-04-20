@@ -58,7 +58,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     const bool Mask_comp,       // if true, use !M
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int data_memlane,
+    const int data_arena,
     GB_Werk Werk
 ) ;
 

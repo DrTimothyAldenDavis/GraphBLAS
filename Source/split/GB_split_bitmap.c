@@ -37,8 +37,8 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
     ASSERT (GB_IS_BITMAP (A)) ;
     GrB_Matrix C = NULL ;
 
-    int header_memlane = GB_memlane (A->header_mem) ;
-    int data_memlane = A->data_memlane ;
+    int header_arena = GB_Context_header_arena ( ) ;
+    int data_arena = GB_Context_data_arena ( ) ;
 
     int sparsity_control = A->sparsity_control ;
     float hyper_switch = A->hyper_switch ;
@@ -88,7 +88,7 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
             GB_OK (GB_new_bix (&C, // new header
                 atype, cvlen, cvdim, GB_ph_null, csc, GxB_BITMAP, false,
                 hyper_switch, 0, cnzmax, true, A_iso,
-                /* OK: */ false, false, false, header_memlane, data_memlane)) ;
+                /* OK: */ false, false, false, header_arena, data_arena)) ;
             int8_t *restrict Cb = C->b ;
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;

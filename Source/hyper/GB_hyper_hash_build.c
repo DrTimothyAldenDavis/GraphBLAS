@@ -44,9 +44,8 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
         return (GrB_SUCCESS) ;
     }
 
-    int header_memlane = GB_memlane (A->header_mem) ;
-    int data_memlane = A->data_memlane ;
-    uint64_t mem = GB_mem (data_memlane, 0) ;
+    int data_arena = A->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     GrB_Info info ;
     GB_MDECL (I_work, , u) ; uint64_t I_work_mem = mem ;
@@ -79,7 +78,7 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
     GB_OK (GB_new (&(A->Y), // new dynamic header, do not allocate any content
         GrB_UINT64, yvlen, yvdim, GB_ph_null, true, GxB_SPARSE, -1, 0,
         Aj_is_32, Aj_is_32, Aj_is_32,
-        header_memlane, data_memlane)) ;
+        data_arena, data_arena)) ;
     GrB_Matrix Y = A->Y ;
 
     //--------------------------------------------------------------------------

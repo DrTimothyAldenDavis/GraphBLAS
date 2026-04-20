@@ -18,7 +18,7 @@ void GB_vector_load
     GrB_Type type,          // type of X
     uint64_t n,             // # of entries in X
     uint64_t X_mem,         // memsize of X in bytes (>= n*(sizeof the type))
-                            // and memlane
+                            // and arena
     bool readonly           // if true, X is treated as readonly
 )
 {
@@ -38,7 +38,6 @@ void GB_vector_load
     V->vlen = n ;
     V->vdim = 1 ;
     V->nvec = 1 ;
-//  V->nvec_nonempty = (n == 0) ? 0 : 1 ;
     GB_nvec_nonempty_set ((GrB_Matrix) V, (n == 0) ? 0 : 1) ;
     V->nvals = n ;
     V->sparsity_control = V->sparsity_control | GxB_FULL ;
@@ -55,7 +54,7 @@ void GB_vector_load
 
     V->x = (*X) ;
     V->x_shallow = (V->x == NULL) ? false : readonly ;
-    V->x_mem = X_mem ;
+    V->x_mem = X_mem ;      // memsize and data_arena
     if (!readonly)
     { 
         // tell the caller that X has been moved into V

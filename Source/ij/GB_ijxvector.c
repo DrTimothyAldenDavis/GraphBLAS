@@ -140,8 +140,8 @@ GrB_Info GB_ijxvector
                             // assign, subassign, extract, or for build with
                             // the descriptor uses the indices.  For build,
                             // this is List->type when using the values.
+    int data_arena,
     GB_Werk Werk                            
-    // FIXME memlane
 )
 {
 
@@ -151,9 +151,7 @@ GrB_Info GB_ijxvector
 
     GrB_Info info ;
 
-    int header_memlane = 0 ;  // FIXME memlane: make param
-    int data_memlane = 0 ;  // FIXME memlane: make param
-    uint64_t mem = GB_mem (data_memlane, 0) ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (I_handle != NULL) ;
     ASSERT (ni_handle != NULL) ;
@@ -293,7 +291,7 @@ GrB_Info GB_ijxvector
                 }
                 GB_OK (GB_convert_b2s (Cp, NULL, NULL, /* Cx: */ I, NULL,
                     false, false, false, List->type, (GrB_Matrix) List,
-                    /* FIXME memlane */ header_memlane, Werk)) ;
+                    data_arena, Werk)) ;
             }
             I_type = List->type ;
         }
@@ -309,7 +307,7 @@ GrB_Info GB_ijxvector
             }
             GB_OK (GB_convert_b2s (Cp, /* Ci: */ I, NULL, NULL, NULL,
                 false, false, I_type == GrB_UINT32, List->type,
-                (GrB_Matrix) List, /* FIXME memlane */ header_memlane, Werk)) ;
+                (GrB_Matrix) List, data_arena, Werk)) ;
         }
 
     }
@@ -445,7 +443,7 @@ GrB_Info GB_ijxvector
         // Create an ni-by-1 matrix T containing the values of I
         GB_OK (GB_new (&T, // new header
             I_type, ni, 1, GB_ph_null, true, GxB_FULL, 0, 0,
-            false, false, false, header_memlane, data_memlane)) ;
+            false, false, false, data_arena, data_arena)) ;
         GB_vector_load ((GrB_Vector) T, &I, I_type, ni, ni * (I_type->size),
             true) ;
         ASSERT_MATRIX_OK (T, "T for typecast to I", GB0) ;

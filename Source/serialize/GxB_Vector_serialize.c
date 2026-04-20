@@ -55,8 +55,8 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
     GB_WHERE_1 (u, "GxB_Vector_serialize (&blob, &blob_memsize, u, desc)") ;
     GB_BURBLE_START ("GxB_Vector_serialize") ;
 
-    int memlane = GB_memlane (u->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = u->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 

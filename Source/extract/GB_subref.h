@@ -55,7 +55,7 @@ GrB_Info GB_subref_phase0
     const void *J,          // index list for C = A(I,J), or GrB_ALL, etc.
     const bool J_is_32,     // if true, I is 32-bit; else 64-bit
     const int64_t nj,       // length of J, or special
-    const int memlane,
+    const int data_arena,
     GB_Werk Werk
 ) ;
 
@@ -67,6 +67,8 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     int64_t avlen,              // length of the vectors of A
     // outputs:
     GrB_Matrix *R_handle,       // R = inverse (I)
+    // workspace
+    const int data_arena,
     GB_Werk Werk
 ) ;
 
@@ -74,7 +76,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
 (
     // output:
     GB_task_struct **p_TaskList,    // array of structs
-    uint64_t *p_TaskList_mem,        // size of TaskList
+    uint64_t *p_TaskList_mem,       // memsize of TaskList and arena
     int *p_ntasks,              // # of tasks constructed
     int *p_nthreads,            // # of threads for subref operation
     bool *p_post_sort,          // true if a final post-sort is needed
@@ -95,7 +97,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     const bool Ap_is_32,        // if true, Ap_start/end are 32-bit; else 64
     const void *I,
     const bool I_is_32,         // if true, I is 32-bit; else 64 bit
-    const int memlane,
+    const int data_arena,       // workspace arena
     GB_Werk Werk
 ) ;
 
@@ -127,7 +129,7 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     const void *I,              // index list for C = A(I,J), or GrB_ALL, etc.
     const bool I_is_32,         // if true, I is 32-bit; else 64-bit
     const bool symbolic,
-    const int memlane,
+    const int data_arena,
     GB_Werk Werk
 ) ;
 

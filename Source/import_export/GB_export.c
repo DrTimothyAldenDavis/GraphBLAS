@@ -34,19 +34,19 @@ GrB_Info GB_export      // export/unpack a matrix in any format
 
     // the 5 arrays:
     uint64_t **Ap,      // pointers
-    uint64_t *Ap_memsize,  // size of Ap in bytes (memlane = 0)
+    uint64_t *Ap_memsize,  // size of Ap in bytes (arena = 0)
 
     uint64_t **Ah,      // vector indices
-    uint64_t *Ah_memsize,  // size of Ah in bytes (memlane = 0)
+    uint64_t *Ah_memsize,  // size of Ah in bytes (arena = 0)
 
     int8_t **Ab,        // bitmap
-    uint64_t *Ab_memsize,  // size of Ab in bytes (memlane = 0)
+    uint64_t *Ab_memsize,  // size of Ab in bytes (arena = 0)
 
     uint64_t **Ai,      // indices
-    uint64_t *Ai_memsize,  // size of Ai in bytes (memlane = 0)
+    uint64_t *Ai_memsize,  // size of Ai in bytes (arena = 0)
 
     void **Ax,          // values
-    uint64_t *Ax_memsize,  // size of Ax in bytes (memlane = 0)
+    uint64_t *Ax_memsize,  // size of Ax in bytes (arena = 0)
 
     // additional information for specific formats:
     uint64_t *nvals,    // # of entries for bitmap format.
@@ -67,12 +67,16 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    int64_t *Ap_new = NULL ; uint64_t Ap_new_mem = 0 ;   // FIXME memlane = 0
-    int64_t *Ah_new = NULL ; uint64_t Ah_new_mem = 0 ;   // FIXME memlane = 0
+    int data_arena = GB_ARENA_DEFAULT ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
+
+    int64_t *Ap_new = NULL ; uint64_t Ap_new_mem = mem ;
+    int64_t *Ah_new = NULL ; uint64_t Ah_new_mem = mem ;
     ASSERT (A != NULL) ;
     GB_RETURN_IF_NULL (*A) ;
 
-    // FIXME: ensure all components of the matrix are in memlane 0
+    // FIXME arena: ensure all components of the matrix are in arena 0,
+    // or use GB_Context_data_arena ( ).
 
     // ensure the matrix is all-64-bit
     GB_OK (GB_convert_int (*A, false, false, false, false)) ;
@@ -183,7 +187,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     GBMDUMP ("export A->x from memtable: %p\n", (*A)->x) ;
     GB_Global_memtable_remove ((*A)->x) ;
     (*Ax) = (*A)->x ; (*A)->x = NULL ;
-    (*Ax_memsize) = GB_memsize ((*A)->x_mem) ;    // FIXME: move to memlane = 0
+    (*Ax_memsize) = GB_memsize ((*A)->x_mem) ;
 
     switch (s)
     {
@@ -194,7 +198,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
             GBMDUMP ("export A->h from memtable: %p\n", (*A)->h) ;
             GB_Global_memtable_remove ((*A)->h) ;
             (*Ah) = (uint64_t *) ((*A)->h) ; (*A)->h = NULL ;
-            (*Ah_memsize) = GB_memsize ((*A)->h_mem) ; // FIXME to memlane 0
+            (*Ah_memsize) = GB_memsize ((*A)->h_mem) ;
             // fall through to the sparse case
 
         case GxB_SPARSE : 
@@ -214,14 +218,14 @@ GrB_Info GB_export      // export/unpack a matrix in any format
                 GBMDUMP ("export A->p from memtable: %p\n", (*A)->p) ;
                 GB_Global_memtable_remove ((*A)->p) ;
                 (*Ap) = (uint64_t *) ((*A)->p) ; (*A)->p = NULL ;
-                (*Ap_memsize) = GB_memsize ((*A)->p_mem) ; // FIXME to memlane 0
+                (*Ap_memsize) = GB_memsize ((*A)->p_mem) ;
             }
 
             // export A->i
             GBMDUMP ("export A->i from memtable: %p\n", (*A)->i) ;
             GB_Global_memtable_remove ((*A)->i) ;
             (*Ai) = (uint64_t *) ((*A)->i) ; (*A)->i = NULL ;
-            (*Ai_memsize) = GB_memsize ((*A)->i_mem) ; // FIXME to memlane 0
+            (*Ai_memsize) = GB_memsize ((*A)->i_mem) ;
             break ;
 
         case GxB_BITMAP : 
@@ -231,7 +235,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
             GBMDUMP ("export A->b from memtable: %p\n", (*A)->b) ;
             GB_Global_memtable_remove ((*A)->b) ;
             (*Ab) = (*A)->b ; (*A)->b = NULL ;
-            (*Ab_memsize) = GB_memsize ((*A)->b_mem) ; // FIXME to memlane 0
+            (*Ab_memsize) = GB_memsize ((*A)->b_mem) ;
 
         case GxB_FULL : 
 

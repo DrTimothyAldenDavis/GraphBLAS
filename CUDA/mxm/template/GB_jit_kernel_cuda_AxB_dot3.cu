@@ -208,7 +208,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
     // dense-dense case requires no workspace
     #else
     // sparse-sparse, sparse-dense, and dense-sparse requires workspace
-    uint64_t mem = GB_mem (GB_MEMLANE_RMM, 0) ;
+    uint64_t mem = GB_mem (GB_ARENA_RMM, 0) ;
     int64_t *Nanobuckets = NULL ; uint64_t Nb_mem  = mem ;
     int64_t *Blockbucket = NULL ; uint64_t Bb_mem  = mem ;
     int64_t *Bucket = NULL      ; uint64_t Bu_mem  = mem ;

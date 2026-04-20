@@ -16,7 +16,8 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
     GrB_Type type,              // type of matrix to create
     uint64_t nrows,             // matrix dimension is nrows-by-ncols
     uint64_t ncols,
-    int memlane                 // memlane for the matrix
+    int header_arena,           // arena for the matrix header
+    int data_arena              // arena for the matrix data
 ) ;
 
 GrB_Info GB_new                 // create matrix, except for indices & values
@@ -36,8 +37,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     bool p_is_32,               // if true, A->p is 32 bit; 64 bit otherwise
     bool j_is_32,               // if true, A->h and A->Y are 32 bit; else 64
     bool i_is_32,               // if true, A->i is 32 bit; 64 bit otherwise
-    const int header_memlane,   // memlane for header, if allocated
-    const int data_memlane      // memlane for matrix data
+    const int header_arena,     // arena for header, if allocated
+    const int data_arena        // arena for matrix data
 ) ;
 
 /*
@@ -59,7 +60,9 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     const bool A_iso,           // if true, allocate A as iso
     bool p_is_32,               // if true, A->p is 32 bit; 64 bit otherwise
     bool j_is_32,               // if true, A->h and A->Y are 32 bit; else 64
-    bool i_is_32                // if true, A->i is 32 bit; 64 bit otherwise
+    bool i_is_32,               // if true, A->i is 32 bit; 64 bit otherwise
+    const int header_arena,     // arena for header, if allocated
+    const int data_arena        // arena for matrix data
 ) ;
 */
 
@@ -118,19 +121,19 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
 static inline GrB_Info GB_matrix_header_new
 (
     GrB_Matrix *Ahandle,
-    const int header_memlane,
-    const int data_memlane
+    const int header_arena,
+    const int data_arena
 )
 {
     ASSERT (Ahandle != NULL) ;
-    uint64_t header_mem = GB_mem (header_memlane, 0) ;
+    uint64_t header_mem = GB_mem (header_arena, 0) ;
     (*Ahandle) = (GrB_Matrix) GB_CALLOC_MEMORY (1, sizeof (struct GB_Matrix_opaque), &header_mem) ;
     if (*Ahandle == NULL)
     {
         return (GrB_OUT_OF_MEMORY) ;
     }
     (*Ahandle)->header_mem = header_mem ;
-    (*Ahandle)->data_memlane = data_memlane ;
+    (*Ahandle)->data_arena = data_arena ;
     (*Ahandle)->magic = GB_MAGIC2 ;
     return (GrB_SUCCESS) ;
 }

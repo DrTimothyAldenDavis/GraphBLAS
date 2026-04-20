@@ -33,15 +33,15 @@
 
 int64_t magic ;         // for detecting uninitialized objects
 uint64_t header_mem ;   // memsize of the malloc'd block for this struct, or 0,
-                        // and memlane
+                        // and arena
 // ---------------------//
 char *user_name ;       // user name for GrB_get/GrB_set
 uint64_t user_name_mem ;// memsize of user_name for GrB_get/GrB_set,
-                        // and memlane
+                        // and arena
 // ---------------------//
 char *logger ;          // error logger string
 uint64_t logger_mem ;   // memsize of the malloc'd block for logger, or 0,
-                        // and memlane
+                        // and arena
 // ---------------------//
 
 // The remaining items are specific the GrB_Matrix, GrB_Vector and GrB_Scalar
@@ -231,11 +231,11 @@ void *x ;               // values:   size >= max(anz*A->type->size,1), or
 int8_t *b ;             // bitmap:   size >= max(anz,1)
 int64_t nvals ;         // nvals(A) if A is sparse, hypersparse, or bitmap
 
-uint64_t p_mem ;    // size of A->p in bytes, zero if A->p is NULL, and memlane
-uint64_t h_mem ;    // size of A->h in bytes, zero if A->h is NULL, and memlane
-uint64_t b_mem ;    // size of A->b in bytes, zero if A->b is NULL, and memlane
-uint64_t i_mem ;    // size of A->i in bytes, zero if A->i is NULL, and memlane
-uint64_t x_mem ;    // size of A->x in bytes, zero if A->x is NULL, and memlane
+uint64_t p_mem ;    // size of A->p in bytes, zero if A->p is NULL, and arena
+uint64_t h_mem ;    // size of A->h in bytes, zero if A->h is NULL, and arena
+uint64_t b_mem ;    // size of A->b in bytes, zero if A->b is NULL, and arena
+uint64_t i_mem ;    // size of A->i in bytes, zero if A->i is NULL, and arena
+uint64_t x_mem ;    // size of A->x in bytes, zero if A->x is NULL, and arena
 
 //------------------------------------------------------------------------------
 // hashing the hypersparse list
@@ -539,23 +539,27 @@ bool j_is_32 ;  // true if A->h and A->Y->[pix] are 32-bit, false if 64
 bool i_is_32 ;  // true if A->i is 32-bit, false if 64
 
 //------------------------------------------------------------------------------
-// memlane control
+// arena control
 //------------------------------------------------------------------------------
 
-// The A->[p,h,Y,b,i,x,Pending] data is allocated in A->data_memlane by default.
-// A->data_memlane and the A->Y->data_memlane values will always be identical.
-// These arrays can temporarily appear on other memlanes, which may occur if
-// they are transplanted from other matrices.  GrB_wait will move them to the
-// desired memlane (A->data_memlane) if they are not already there.  Thus, in
-// matrix with no pending work, A->data_memlane and GB_memlane (A->[p,etc]_mem),
-// GB_memlane (A->Y->[p...]_mem), and GB_memlane (A->Pending->[ijx,header]_mem)
+// The A->[p,h,Y,b,i,x,Pending] data is allocated in A->data_arena by default.
+// A->data_arena and the A->Y->data_arena values will always be identical.
+// These arrays can temporarily appear on other arenas, which may occur if they
+// are transplanted from other matrices.  GrB_wait will move them to the
+// desired arena (A->data_arena) if they are not already there.  Thus, in
+// matrix with no pending work, A->data_arena, GB_arena (A->[p,etc]_mem),
+// GB_arena (A->Y->[p...header]_mem), and GB_arena (A->Pending->[*]_mem)
 // state will all match.
 
-// The header of the matrix (in GB_memlane (A->header_mem)) and A->data_memlane
-// can differ, and this is not revised by GrB_wait.  Changing the memlane of
+// The header of the matrix (in GB_arena (A->header_mem)) and A->data_arena
+// can differ, and this is not revised by GrB_wait.  Changing the arena of
 // the header requires a malloc/copy/free, and thus changes the pointer *A.
 
-uint8_t data_memlane ;
+// GrB_get can return the header_area = GB_area (A->header_mem) and the
+// A->data_arena.  GrB_set can only modify A->data_arena.  GxB_*_arena_set can
+// modify both.
+
+uint8_t data_arena ;
 
 //------------------------------------------------------------------------------
 // iterating through a matrix

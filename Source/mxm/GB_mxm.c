@@ -50,8 +50,8 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GrB_Info info ;
 
     ASSERT (C != NULL) ;
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
+
+    int data_arena = C->data_arena ;
 
     GrB_Matrix MT = NULL, T = NULL ;
 
@@ -138,8 +138,8 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // semiring->add->ztype if accum is not present.  To compute in-place,
     // C must also not be transposed, and it cannot be aliased with M, A, or B.
 
-    GB_OK (GB_matrix_header_new (&T,  header_memlane, data_memlane)) ;
-    GB_OK (GB_matrix_header_new (&MT, header_memlane, data_memlane)) ;
+    GB_OK (GB_matrix_header_new (&T,  data_arena, data_arena)) ;
+    GB_OK (GB_matrix_header_new (&MT, data_arena, data_arena)) ;
 
     bool mask_applied = false ;
     bool done_in_place = false ;

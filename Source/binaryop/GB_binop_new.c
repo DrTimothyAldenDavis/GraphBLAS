@@ -27,7 +27,7 @@ GrB_Info GB_binop_new
     const char *binop_name,         // name of the user function
     const char *binop_defn,         // definition of the user function
     const GB_Opcode opcode,         // opcode for the function
-    int memlane
+    int header_arena
 )
 { 
 
@@ -73,6 +73,6 @@ GrB_Info GB_binop_new
         op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_mem),
         // input:
         binop_name, binop_defn, opcode == GB_USER_binop_code, jitable,
-        memlane)) ;
+        header_arena)) ;
 }
 

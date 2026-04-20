@@ -153,7 +153,7 @@ GrB_Info GB_AxB_dot3_slice
 (
     // output:
     GB_task_struct **p_TaskList,    // array of structs
-    uint64_t *p_TaskList_mem,       // memsize and memlane of TaskList
+    uint64_t *p_TaskList_mem,       // memsize and arena of TaskList
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     // input:
@@ -167,7 +167,7 @@ GrB_Info GB_AxB_dot3_one_slice
 (
     // output:
     GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
-    uint64_t *p_TaskList_mem,       // memsize and memlane of TaskList
+    uint64_t *p_TaskList_mem,       // memsize and arena of TaskList
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     // input:

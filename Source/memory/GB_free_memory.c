@@ -20,7 +20,7 @@ void GB_free_memory         /* free memory */
     /* input/output */
     void **p,               /* pointer to block of memory to free */
     /* input */
-    uint64_t mem            /* memsize (in bytes) and memlane */
+    uint64_t mem            /* memsize (in bytes) and arena */
 )
 #endif
 
@@ -29,10 +29,10 @@ GB_CALLBACK_FREE_MEMORY_PROTO (GB_free_memory)
     if (p != NULL && (*p) != NULL)
     { 
         uint64_t memsize = GB_memsize (mem) ;
-        int memlane = GB_memlane (mem) ;
+        int arena = GB_arena (mem) ;
         MEMTABLE_ASSERT (memsize == GB_Global_memtable_memsize (*p)) ;
-        MEMTABLE_ASSERT (memlane == GB_Global_memtable_memlane (*p)) ;
-        GB_Global_free_function (*p, memlane) ;
+        MEMTABLE_ASSERT (arena == GB_Global_memtable_arena (*p)) ;
+        GB_Global_free_function (*p, arena) ;
         #ifdef GB_MEMDUMP
         GB_Global_memtable_dump ( ) ;
         #endif

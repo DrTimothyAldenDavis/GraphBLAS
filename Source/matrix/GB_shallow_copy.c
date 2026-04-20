@@ -21,10 +21,10 @@
 
 // Compare this function with GB_shallow_op.c.
 
-// FIXME memlane: make a simpler method that just copies the entire header into
-// a new header_memlane, and tags all pointers as shallow.  use this for CUDA
-// so it can access a matrix with a header_memlane outside of RMM, and where
-// the data_memlane is RMM.
+// FIXME arena: make a simpler method that just copies the entire header into
+// a new header_arena, and tags all pointers as shallow.  use this for CUDA
+// so it can access a matrix with a header_arena outside of RMM, and where
+// the data_arena is RMM.
 
 #include "GB.h"
 
@@ -50,8 +50,8 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
 
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
+    int header_arena = GB_arena (C->header_mem) ;
+    int data_arena = C->data_arena ;
 
     //--------------------------------------------------------------------------
     // construct a shallow copy of A for the pattern of C
@@ -65,7 +65,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     GB_new (&C, // sparse or hyper, existing header
         A->type, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         GB_sparsity (A), A->hyper_switch, 0,
-        A->p_is_32, A->j_is_32, A->i_is_32, header_memlane, data_memlane) ;
+        A->p_is_32, A->j_is_32, A->i_is_32, header_arena, data_arena) ;
     ASSERT (info == GrB_SUCCESS) ;
 
     //--------------------------------------------------------------------------

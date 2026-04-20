@@ -64,9 +64,9 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
 
     ASSERT (C != NULL) ;
 
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
-    uint64_t mem = GB_mem (data_memlane, 0) ;
+    int header_arena = GB_arena (C->header_mem) ;
+    int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for bitmap saxpy A*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ;
@@ -124,7 +124,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
     GB_OK (GB_new_bix (&C, // existing header
         ctype, A->vlen, B->vdim, GB_ph_null, true, GxB_BITMAP, true,
         GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, C_iso,
-        /* OK: */ false, false, false, header_memlane, data_memlane)) ;
+        /* OK: */ false, false, false, header_arena, data_arena)) ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------

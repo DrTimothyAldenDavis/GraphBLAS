@@ -50,7 +50,8 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     ASSERT (D->vdim == B->vlen) ;
     ASSERT (GB_is_diagonal (D)) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
+    int header_arena = GB_arena (C->header_mem) ;
+    int data_arena = C->data_arena ;
 
     ASSERT (!GB_IS_BITMAP (D)) ;        // bitmap or full: not needed
     ASSERT (!GB_IS_BITMAP (B)) ;
@@ -90,7 +91,8 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     //--------------------------------------------------------------------------
 
     // allocate C->x but do not initialize it
-    GB_OK (GB_dup_worker (&C, C_iso, B, false, ztype, memlane)) ;
+    GB_OK (GB_dup_worker (&C, C_iso, B, false, ztype,
+        header_arena, data_arena)) ;
     info = GrB_NO_VALUE ;
     ASSERT (C->type == ztype) ;
 

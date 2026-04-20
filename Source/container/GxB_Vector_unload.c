@@ -32,8 +32,8 @@
 // method removes X from the debug memtable, since X is being returned to the
 // user application.
 
-// The array output X is returned in memlane = 0 or 1 as defined by the 
-// handling output parameter.
+// The array output X is returned in the arena defined by the handling output
+// parameter.
 
 #include "GB_container.h"
 #define GB_FREE_ALL ;
@@ -76,8 +76,8 @@ GrB_Info GxB_Vector_unload
         // global memtable
         GB_Global_memtable_remove (*X)  ;
     }
-    int memlane = GB_memlane (X_mem) ;
-    (*handling) = (readonly ? GxB_IS_READONLY : GrB_DEFAULT) + memlane ;
+    int data_arena = GB_arena (X_mem) ;
+    (*handling) = (readonly ? GxB_IS_READONLY : GrB_DEFAULT) + data_arena ;
     (*X_memsize) = GB_memsize (X_mem) ;
     return (GrB_SUCCESS) ;
 }

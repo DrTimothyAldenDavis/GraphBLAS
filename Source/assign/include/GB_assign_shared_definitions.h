@@ -210,9 +210,9 @@
 #define GB_EMPTY_TASKLIST                                                   \
     GrB_Info info ;                                                         \
     ASSERT (C != NULL) ;                                                    \
-    int header_memlane = GB_memlane (C->header_mem) ;                       \
-    int data_memlane = C->data_memlane ;                                    \
-    uint64_t mem = GB_mem (data_memlane, 0) ;                               \
+    int header_arena = GB_arena (C->header_mem) ;  /* FIXME arena: needed?*/\
+    int data_arena = C->data_arena ;                                        \
+    uint64_t mem = GB_mem (data_arena, 0) ;                                 \
     int taskid, ntasks = 0, nthreads = 0 ;                                  \
     GB_task_struct *TaskList = NULL ; uint64_t TaskList_mem = mem ;         \
     GB_WERK_DECLARE (Npending, int64_t) ;                                   \
@@ -1318,7 +1318,7 @@
         &TaskList, &TaskList_mem, &ntasks, &nthreads, C,                    \
         I, GB_I_IS_32, nI, GB_I_KIND, Icolon,                               \
         J, GB_J_IS_32, nJ, GB_J_KIND, Jcolon,                               \
-        M, data_memlane, Werk)) ;                                           \
+        M, data_arena, Werk)) ;                                             \
     GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------
@@ -1341,7 +1341,7 @@
     GB_OK (GB_add_phase0 (                                                  \
         &Znvec, &Zh, &Zh_mem, NULL, NULL, &Z_to_X, &Z_to_X_mem,             \
         &Z_to_S, &Z_to_S_mem, NULL, &Zp_is_32, &Zj_is_32, &Zi_is_32,        \
-        &Z_sparsity, NULL, X, S, data_memlane, Werk)) ;                     \
+        &Z_sparsity, NULL, X, S, data_arena, Werk)) ;                       \
     GB_IPTR (Zh, Zj_is_32) ;                                                \
     GB_OK (GB_ewise_slice (                                                 \
         &TaskList, &TaskList_mem, &ntasks, &nthreads,                       \
@@ -1358,7 +1358,7 @@
 
 #define GB_SUBASSIGN_IXJ_SLICE                                              \
     GB_OK (GB_subassign_IxJ_slice (&TaskList, &TaskList_mem, &ntasks,       \
-        &nthreads, nI, nJ, data_memlane, Werk)) ;                           \
+        &nthreads, nI, nJ, data_arena, Werk)) ;                             \
     GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------
@@ -1779,9 +1779,9 @@
 #define GB_GET_C_A_SCALAR_FOR_BITMAP                                        \
     GrB_Info info ;                                                         \
     /* workspace: */                                                        \
-    int header_memlane = GB_memlane (C->header_mem) ;                       \
-    int data_memlane = C->data_memlane ;                                    \
-    uint64_t mem = GB_mem (data_memlane, 0) ;                               \
+    int header_arena = GB_arena (C->header_mem) ;  /* FIXME arena: needed?*/\
+    int data_arena = C->data_arena ;                                        \
+    uint64_t mem = GB_mem (data_arena, 0) ;                                 \
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;                               \
     int M_ntasks = 0, M_nthreads = 0 ;                                      \
     GB_task_struct *TaskList_IxJ = NULL ;                                   \

@@ -223,7 +223,7 @@ GrB_Info GB_subref_phase0
     const void *J,          // index list for C = A(I,J), or GrB_ALL, etc.
     const bool J_is_32,     // if true, I is 32-bit; else 64-bit
     const int64_t nj,       // length of J, or special
-    const int memlane,
+    const int data_arena,
     GB_Werk Werk
 )
 {
@@ -232,7 +232,7 @@ GrB_Info GB_subref_phase0
     // check inputs
     //--------------------------------------------------------------------------
 
-    uint64_t mem = GB_mem (memlane, 0) ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT_MATRIX_OK (A, "A for subref phase 0", GB0) ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;

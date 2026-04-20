@@ -22,7 +22,7 @@ bool GB_cuda_apply_binop_branch
 
     if (A->header_mem == 0)
     {
-        // FIXME memlane: check all of A
+        // FIXME arena: check all of A
         return (false) ;
     }
 

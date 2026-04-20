@@ -62,9 +62,9 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
     GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A for reshape", GB0) ;
 
-    int header_memlane = GB_memlane (A->header_mem) ;
-    int data_memlane = A->data_memlane ;
-    uint64_t mem = GB_mem (data_memlane, 0) ;
+    int header_arena = GB_arena (A->header_mem) ;
+    int data_arena = A->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     GB_MDECL (I_work, , u) ; uint64_t I_work_mem = mem ;
     GB_MDECL (J_work, , u) ; uint64_t J_work_mem = mem ;
@@ -123,7 +123,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
                 type, A->vdim, A->vlen, GB_ph_null, by_col, GxB_AUTO_SPARSITY,
                 GB_Global_hyper_switch_get ( ), 0,
                 A->p_is_32, A->j_is_32, A->i_is_32,
-                header_memlane, data_memlane)) ;
+                data_arena, data_arena)) ;
             GB_OK (GB_transpose_cast (T, type, by_col, A, false, Werk)) ;
             // now T can be reshaped in-place to construct C
             in_place = true ;
@@ -176,7 +176,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         else
         { 
             // copy T into C
-            GB_OK (GB_dup (&C, T, /* FIXME memlane: */ header_memlane, Werk)) ;
+            GB_OK (GB_dup (&C, T, header_arena, data_arena, Werk)) ;
         }
 
     }
@@ -196,14 +196,13 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         else
         { 
             // copy T into C
-            GB_OK (GB_dup (&C, T, /* FIXME memlane: */ header_memlane, Werk)) ;
+            GB_OK (GB_dup (&C, T, header_arena, data_arena, Werk)) ;
         }
 
         // change the size of C
         C->vlen = vlen_new ;
         C->vdim = vdim_new ;
         C->nvec = vdim_new ;
-//      C->nvec_nonempty = (vlen_new == 0) ? 0 : vdim_new ;
         GB_nvec_nonempty_set (C, (vlen_new == 0) ? 0 : vdim_new) ;
 
     }
@@ -273,7 +272,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             GB_OK (GB_new (&C, // new header
                 type, vlen_new, vdim_new, GB_ph_null, T_is_csc,
                 GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 0,
-                Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane)) ;
+                Cp_is_32, Cj_is_32, Ci_is_32, header_arena, data_arena)) ;
 
             // allocate new space for the future C->i
             I_work = GB_MALLOC_MEMORY (nvals, iwsize, &I_work_mem) ;

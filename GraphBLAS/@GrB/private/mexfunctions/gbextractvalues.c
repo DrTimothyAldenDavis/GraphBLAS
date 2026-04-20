@@ -52,17 +52,18 @@ void mexFunction
 
     void *X = NULL ;
     GrB_Type xtype = NULL ;
-    int ignore = 0 ;
+    int handling = 0 ;
     uint64_t X_memsize = 0 ;
     GrB_Vector X_vector = NULL ;
     OK (GrB_Vector_new (&X_vector, GrB_FP64, 0)) ;
+    // FIXME arena: set X_vector data_arena to MATLAB
     OK (GxB_Matrix_extractTuples_Vector (NULL, NULL, X_vector, A, NULL)) ;
-    OK (GxB_Vector_unload (X_vector, &X, &xtype, &nvals, &X_memsize, &ignore,
+    OK (GxB_Vector_unload (X_vector, &X, &xtype, &nvals, &X_memsize, &handling,
         NULL)) ;
-    if (ignore != GrB_DEFAULT)
+    if (handling != GrB_DEFAULT + GB_ARENA_MATLAB)
     {
-        printf ("handling %d\n", ignore) ;
-        mexErrMsgIdAndTxt ("GrB:memlane", "memlane invalid (1)") ;
+        printf ("handling %d\n", handling) ;
+        mexErrMsgIdAndTxt ("GrB:arena", "arena invalid (1)") ;
     }
     pargout [0] = gb_export_to_mxfull (&X, nvals, 1, xtype) ;
 

@@ -403,6 +403,8 @@ const char *GB_status_code (GrB_Info info) ;
 // GB_VECTOR_OK, GB_SCALAR_OK: check if typecast from GrB_Matrix is OK
 //------------------------------------------------------------------------------
 
+// FIXME: move these macros elsewhere
+
 // The internal content of a GrB_Matrix and GrB_Vector are identical, and
 // inside SuiteSparse:GraphBLAS, they can be typecasted between each other.
 // This typecasting feature should not be done in user code, however, since it
@@ -413,9 +415,8 @@ const char *GB_status_code (GrB_Info info) ;
 
 // GB_VECTOR_OK(v) is used mainly for assertions, but also to determine when it
 // is safe to typecast an n-by-1 GrB_Matrix (in standard CSC format) into a
-// GrB_Vector.  This is not done in the main SuiteSparse:GraphBLAS library, but
-// in the GraphBLAS/Test directory only.  The macro is also used in
-// GB_Vector_check, to ensure the content of a GrB_Vector is valid.
+// GrB_Vector.  The macro is also used in GB_Vector_check, to ensure the
+// content of a GrB_Vector is valid.
 
 #define GB_VECTOR_OK(v)                     \
 (                                           \

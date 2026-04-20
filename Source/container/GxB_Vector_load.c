@@ -27,8 +27,8 @@
 
 // The handling parameter can be one of:
 //
-//      GrB_DEFAULT + memlane
-//      GxB_IS_READONLY + memlane
+//      GrB_DEFAULT + data_arena
+//      GxB_IS_READONLY + data_arena
 
 #include "GB_container.h"
 
@@ -67,19 +67,23 @@ GrB_Info GxB_Vector_load
     }
     ASSERT_VECTOR_OK (V, "V to load (contents mostly ignored)", GB0) ;
 
-    int memlane ;
+    int data_arena ;
     bool readonly ;
 
     switch (handling)
     {
-        case GrB_DEFAULT       : memlane = 0 ; readonly = false ; break ;
-        case GrB_DEFAULT+1     : memlane = 1 ; readonly = false ; break ;
-        case GxB_IS_READONLY   : memlane = 0 ; readonly = true  ; break ;
-        case GxB_IS_READONLY+1 : memlane = 1 ; readonly = true  ; break ;
+        case GrB_DEFAULT       : data_arena = 0 ; readonly = false ; break ;
+        case GrB_DEFAULT+1     : data_arena = 1 ; readonly = false ; break ;
+        case GrB_DEFAULT+2     : data_arena = 2 ; readonly = false ; break ;
+        case GrB_DEFAULT+3     : data_arena = 3 ; readonly = false ; break ;
+        case GxB_IS_READONLY   : data_arena = 0 ; readonly = true  ; break ;
+        case GxB_IS_READONLY+1 : data_arena = 1 ; readonly = true  ; break ;
+        case GxB_IS_READONLY+2 : data_arena = 2 ; readonly = true  ; break ;
+        case GxB_IS_READONLY+3 : data_arena = 3 ; readonly = true  ; break ;
         default : return (GrB_INVALID_VALUE) ;  // invalid handling
     }
 
-    uint64_t X_mem = GB_mem (memlane, X_memsize) ;
+    uint64_t X_mem = GB_mem (data_arena, X_memsize) ;
 
     //--------------------------------------------------------------------------
     // clear prior content of V and load X, making V a dense GrB_Vector

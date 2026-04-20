@@ -41,11 +41,10 @@ GrB_Info GxB_Col_subassign_Vector   // C(I,j)<M> = accum (C(I,j),u)
         "GxB_Col_subassign_Vector (C, M, accum, u, I, ni, j, desc)") ;
     GB_BURBLE_START ("GxB_subassign") ;
 
+    int data_arena = C->data_arena ;
+
     ASSERT (mask == NULL || GB_VECTOR_OK (mask)) ;
     ASSERT (GB_VECTOR_OK (u)) ;
-
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
@@ -63,7 +62,7 @@ GrB_Info GxB_Col_subassign_Vector   // C(I,j)<M> = accum (C(I,j),u)
     int64_t ni = 0 ;
     GrB_Type I_type = NULL ;
     GB_OK (GB_ijxvector (I_vector, false, 0, desc, false,
-        &I, &ni, &I_mem, &I_type, Werk)) ;
+        &I, &ni, &I_mem, &I_type, data_arena, Werk)) ;
     bool I_is_32 = (I_type == GrB_UINT32) ;
 
     //--------------------------------------------------------------------------

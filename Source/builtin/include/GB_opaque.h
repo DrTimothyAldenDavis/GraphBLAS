@@ -362,11 +362,11 @@ struct GB_Type_opaque       // content of GrB_Type
 {
     int64_t magic ;         // for detecting uninitialized objects
     uint64_t header_mem ;   // size of the malloc'd block for this struct, or 0,
-                            // and memlane
+                            // and arena
     // ---------------------//
     char *user_name ;       // user name for GrB_get/GrB_set
     uint64_t user_name_mem ; // allocated size of user_name for GrB_get/GrB_set
-                            // and memlane
+                            // and arena
     // ---------------------//
     uint64_t size ;         // size of the type
     GB_Type_code code ;     // the type code
@@ -374,7 +374,7 @@ struct GB_Type_opaque       // content of GrB_Type
     char name [GxB_MAX_NAME_LEN] ;  // JIT C name of the type
     char *defn ;            // type definition
     uint64_t defn_mem ;     // allocated size of the definition,
-                            // and memlane
+                            // and arena
     uint64_t hash ;         // if 0, type is builtin.
                             // if UINT64_MAX, the type cannot be JIT'd.
     GxB_print_function print_function ; // for printing user-defined types
@@ -418,17 +418,17 @@ struct GB_Monoid_opaque     // content of GrB_Monoid
 {
     int64_t magic ;         // for detecting uninitialized objects
     uint64_t header_mem ;   // size of the malloc'd block for this struct, or 0,
-                            // and memlane
+                            // and arena
     // ---------------------//
     char *user_name ;       // user name for GrB_get/GrB_set
     uint64_t user_name_mem ; // allocated size of user_name for GrB_get/GrB_set
-                            // and memlane
+                            // and arena
     // ---------------------//
     GrB_BinaryOp op ;       // binary operator of the monoid
     void *identity ;        // identity of the monoid; type is op->ztype
     void *terminal ;        // early-exit (NULL if no value); type is op->ztype
-    uint64_t identity_mem ; // allocated size of identity, or 0, and memlane
-    uint64_t terminal_mem ; // allocated size of terminal, or 0, and memlane
+    uint64_t identity_mem ; // allocated size of identity, or 0, and arena
+    uint64_t terminal_mem ; // allocated size of terminal, or 0, and arena
     uint64_t hash ;         // if 0, monoid uses only builtin ops and types.
                             // if UINT64_MAX, the monoid cannot be JIT'd.
 } ;
@@ -437,17 +437,17 @@ struct GB_Semiring_opaque   // content of GrB_Semiring
 {
     int64_t magic ;         // for detecting uninitialized objects
     uint64_t header_mem ;   // size of the malloc'd block for this struct, or 0,
-                            // and memlane
+                            // and arena
     // ---------------------//
     char *user_name ;       // user name for GrB_get/GrB_set
     uint64_t user_name_mem ; // allocated size of user_name for GrB_get/GrB_set
-                            // and memlane
+                            // and arena
     // ---------------------//
     GrB_Monoid add ;        // add operator of the semiring
     GrB_BinaryOp multiply ; // multiply operator of the semiring
     char *name ;            // name of the semiring; NULL for builtin
     int32_t name_len ;      // length of name; 0 for builtin
-    uint64_t name_mem ;     // allocated size of the name, and memlane
+    uint64_t name_mem ;     // allocated size of the name, and arena
     uint64_t hash ;         // if 0, semiring uses only builtin ops and types
 } ;
 
@@ -456,15 +456,15 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     // first 6 items exactly match GrB_Matrix, GrB_Vector, GrB_Scalar structs:
     int64_t magic ;         // for detecting uninitialized objects
     uint64_t header_mem ;   // size of the malloc'd block for this struct, or 0,
-                            // and memlane
+                            // and arena
     // ---------------------//
     char *user_name ;       // user name for GrB_get/GrB_set
     uint64_t user_name_mem ; // allocated size of user_name for GrB_get/GrB_set
-                            // and memlane
+                            // and arena
     // ---------------------//
     char *logger ;          // error logger string
     uint64_t logger_mem ;   // memsize of the malloc'd block for logger, or 0,
-                            // and memlane
+                            // and arena
     // ---------------------//
     // specific to the descriptor struct:
     GrB_Desc_Value out ;    // output descriptor
@@ -486,11 +486,11 @@ struct GB_Context_opaque    // content of GxB_Context
 {
     int64_t magic ;         // for detecting uninitialized objects
     uint64_t header_mem ;   // size of the malloc'd block for this struct, or 0,
-                            // and memlane
+                            // and arena
     // ---------------------//
     char *user_name ;       // user name for GrB_get/GrB_set
     uint64_t user_name_mem ; // allocated size of user_name for GrB_get/GrB_set
-                            // and memlane
+                            // and arena
     // ---------------------//
     // OpenMP thread(s):
     double chunk ;          // chunk size for # of threads for small problems
@@ -500,8 +500,9 @@ struct GB_Context_opaque    // content of GxB_Context
                             // (in range 0 to GB_MAX_NGPUS)
     uint16_t gpu_ids [GB_MAX_NGPUS] ;   // using GPUs gpu_ids [0..ngpus-1],
                             // or no GPU if ngpus == 0.
-    // memlane:
-    int32_t memlane ;       // memory allocator to use
+    // arena:
+    int32_t header_arena ;  // memory allocator to use for headers
+    int32_t data_arena ;    // memory allocator to use for matrix data
 } ;
 
 //------------------------------------------------------------------------------
@@ -515,16 +516,16 @@ struct GB_Context_opaque    // content of GxB_Context
 struct GB_Pending_struct    // list of pending tuples for a matrix
 {
     uint64_t header_mem ;   // size of the malloc'd block for this struct, or 0,
-                            // and memlane
+                            // and arena
     int64_t n ;         // number of pending tuples to add to matrix
     int64_t nmax ;      // size of i,j,x
     bool sorted ;       // true if pending tuples are in sorted order
     void *i ;           // row indices of pending tuples
-    uint64_t i_mem ;    // allocated size of i, and memlane
+    uint64_t i_mem ;    // allocated size of i, and arena
     void *j ;           // col indices of pending tuples; NULL if A->vdim <= 1
-    uint64_t j_mem ;    // allocated size of j, and memlane
+    uint64_t j_mem ;    // allocated size of j, and arena
     GB_void *x ;        // values of pending tuples
-    uint64_t x_mem ;    // allocated size of x, and memlane
+    uint64_t x_mem ;    // allocated size of x, and arena
     GrB_Type type ;     // the type of x
     uint64_t size ;     // type->size
     GrB_BinaryOp op ;   // operator to assemble pending tuples

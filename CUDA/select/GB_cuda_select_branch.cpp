@@ -32,7 +32,7 @@ bool GB_cuda_select_branch
 
     if (A->header_mem == 0)
     {
-        // FIXME memlane: check all of A
+        // FIXME arena: check all of A
         return (false) ;
     }
 

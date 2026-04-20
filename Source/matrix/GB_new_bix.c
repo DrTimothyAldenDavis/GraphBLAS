@@ -52,8 +52,8 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     bool p_is_32,               // if true, A->p is 32 bit; 64 bit otherwise
     bool j_is_32,               // if true, A->h and A->Y are 32 bit; else 64
     bool i_is_32,               // if true, A->i is 32 bit; 64 bit otherwise
-    const int header_memlane,   // memlane for header, if allocated
-    const int data_memlane      // memlane for matrix data
+    const int header_arena,     // arena for header, if allocated
+    const int data_arena,       // arena for matrix data
 )
 #endif
 
@@ -81,7 +81,7 @@ GB_CALLBACK_NEW_BIX_PROTO (GB_new_bix)
 
     GrB_Info info = GB_new (Ahandle, // either new or existing header
         type, vlen, vdim, Ap_option, is_csc, sparsity, hyper_switch, plen,
-        p_is_32, j_is_32, i_is_32, header_memlane, data_memlane) ;
+        p_is_32, j_is_32, i_is_32, header_arena, data_arena) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory.

@@ -82,8 +82,8 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
 
     ASSERT (C != NULL) ;
 
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
+    int header_arena = GB_arena (C->header_mem) ;
+    int data_arena = C->data_arena ;
 
     ASSERT_BINARYOP_OK (op, "op for emult phase2", GB0) ;
     ASSERT_MATRIX_OK (A, "A for emult 08 phase2", GB0) ;
@@ -153,7 +153,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     GrB_Info info = GB_new_bix (&C, // sparse/hyper, existing header
         ctype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso,
-        Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, header_arena, data_arena) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
@@ -167,7 +167,6 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     ASSERT (C->i_is_32 == Ci_is_32) ;
 
     // transplant Cp into C as the vector pointers, from GB_emult_08_phase1
-//  C->nvec_nonempty = Cnvec_nonempty ;
     GB_nvec_nonempty_set (C, Cnvec_nonempty) ;
     C->p = Cp ; C->p_mem = Cp_mem ;
     C->nvals = cnz ;

@@ -43,8 +43,9 @@ GrB_Info GB_selector
     GrB_Info info ;
 
     ASSERT (C != NULL) ;
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+
+    int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT_INDEXUNARYOP_OK (op, "idxunop for GB_selector", GB0) ;
     ASSERT_SCALAR_OK (Thunk, "Thunk for GB_selector", GB0) ;

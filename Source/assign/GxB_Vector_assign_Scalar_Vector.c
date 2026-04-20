@@ -36,24 +36,24 @@ GrB_Info GxB_Vector_assign_Scalar_Vector   // w<mask>(I) = accum (w(I),x)
     // check inputs
     //--------------------------------------------------------------------------
 
+    GB_RETURN_IF_NULL (w) ;
+    GB_RETURN_IF_NULL (scalar) ;
     GB_WHERE4 (w, mask, scalar, I_vector,
         "GxB_Vector_assign_Scalar_Vector (w, M, accum, s, I, desc)") ;
     GB_BURBLE_START ("GxB_Vector_assign_Scalar_Vector") ;
 
-    ASSERT (w != NULL) ;
-    int memlane = GB_memlane (w->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = w->data_arena ;
 
     //--------------------------------------------------------------------------
     // get the index vectors
     //--------------------------------------------------------------------------
 
     void *I = NULL ;
-    uint64_t I_mem = mem ;
+    uint64_t I_mem = 0 ;            // set by GB_ijxvector
     int64_t ni = 0 ;
     GrB_Type I_type = NULL ;
     GB_OK (GB_ijxvector (I_vector, (w == I_vector), 0, desc, false,
-        &I, &ni, &I_mem, &I_type, Werk)) ;
+        &I, &ni, &I_mem, &I_type, data_arena, Werk)) ;
     bool I_is_32 = (I_type == GrB_UINT32) ;
 
     //--------------------------------------------------------------------------

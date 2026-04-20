@@ -32,8 +32,8 @@ GrB_Info GB_extractTuples_prep
         return (GrB_SUCCESS) ;
     }
 
-    int memlane = GB_memlane (V->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = V->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     //--------------------------------------------------------------------------
     // quick return if V already has the right properties

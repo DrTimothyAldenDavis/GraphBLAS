@@ -43,7 +43,7 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     const void *I,              // index list for C = A(I,J), or GrB_ALL, etc.
     const bool I_is_32,         // if true, I is 32-bit; else 64-bit
     const bool symbolic,
-    const int memlane,
+    const int data_arena,
     GB_Werk Werk
 )
 {
@@ -52,7 +52,7 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     // check inputs
     //--------------------------------------------------------------------------
 
-    uint64_t mem = GB_mem (memlane, 0) ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Cp_mem_handle != NULL) ;

@@ -148,9 +148,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     ASSERT (C != NULL) ;
 
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
-    uint64_t mem = GB_mem (data_memlane, 0) ;
+    int header_arena = GB_arena (C->header_mem) ;
+    int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy3 A*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ;
@@ -233,7 +233,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GB_OK (GB_new (&C, // sparse or hyper, existing header
         ctype, cvlen, cvdim, GB_ph_malloc, true,
         C_sparsity, B->hyper_switch, cnvec, Cp_is_32, Cj_is_32, Ci_is_32,
-        header_memlane, data_memlane)) ;
+        header_arena, data_arena)) ;
 
     C->iso = C_iso ;
 

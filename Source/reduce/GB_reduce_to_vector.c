@@ -54,8 +54,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     ASSERT (GB_VECTOR_OK (C)) ;
     ASSERT (GB_IMPLIES (M_in != NULL, GB_VECTOR_OK (M_in))) ;
 
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
+    int data_arena = C->data_arena ;
 
     // get the descriptor
     GrB_Info info ;
@@ -113,11 +112,11 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     int64_t m = A_transpose ? GB_NROWS (A) : GB_NCOLS (A) ;
     GB_OK (GB_new (&B, // full, new header
         ztype, m, 1, GB_ph_null, true, GxB_FULL, GB_NEVER_HYPER, 1,
-        /* OK: */ false, false, false, header_memlane, data_memlane)) ;
+        /* OK: */ false, false, false, data_arena, data_arena)) ;
     B->magic = GB_MAGIC ;
     B->iso = true ;
     size_t zsize = ztype->size ;
-    GB_void bscalar [GB_VLA(zsize)] ;   // FIXME allocate this in memlane
+    GB_void bscalar [GB_VLA(zsize)] ;   // FIXME arena: allocate in data_arena
     memset (bscalar, 0, zsize) ;
     B->x = bscalar ;
     B->x_shallow = true ;
@@ -130,6 +129,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     struct GB_BinaryOp_opaque op_header ;
     GrB_BinaryOp op ;
+    info = GrB_SUCCESS ;        // GB_binop_new cannot fail
 
     switch (ztype->code)
     {
@@ -171,7 +171,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
                 "1st",                  // a simple name for FIRST_UDT
                 NULL,                   // no op->defn for FIRST_UDT
                 GB_FIRST_binop_code,    // using a built-in opcode
-                0) ;                    // memlane not used
+                GB_ARENA_DEFAULT) ;     // arena not used (static header)
             break ;
     }
 

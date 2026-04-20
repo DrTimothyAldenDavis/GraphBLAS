@@ -39,8 +39,8 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     (*Chandle) = NULL ;
     GrB_Matrix C = NULL, T = NULL ;
 
-    int header_memlane = GB_Context_memlane ( ) ;   // FIXME
-    int data_memlane = GB_Context_memlane ( ) ; // FIXME
+    int header_arena = GB_Context_header_arena ( ) ;
+    int data_arena = GB_Context_data_arena ( ) ;
 
     //--------------------------------------------------------------------------
     // read the content of the header (160 bytes)
@@ -177,7 +177,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     GB_OK (GB_new (&C,  // new header (C is NULL on input)
         ctype, vlen, vdim, GB_ph_null, is_csc,
         sparsity, hyper_switch, nvec, Cp_is_32, Cj_is_32, Ci_is_32,
-        header_memlane, data_memlane)) ;
+        header_arena, data_arena)) ;
 
     C->nvec = nvec ;
 //  C->nvec_nonempty = nvec_nonempty ;

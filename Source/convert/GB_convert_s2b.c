@@ -27,7 +27,7 @@
     GB_FREE_MEMORY (&Cb, Cb_mem) ;          \
 }
 
-GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
+GrB_Info GB_convert_s2b         // convert sparse/hypersparse to bitmap
 (
     GrB_Matrix A,               // matrix to convert from sparse to bitmap
     GB_Werk Werk
@@ -41,8 +41,9 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
     GrB_Info info ;
 
     ASSERT (A != NULL) ;
-    int memlane = GB_memlane (A->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+
+    int data_arena = A->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     int8_t  *restrict Cb      = NULL ; uint64_t Cb_mem = mem ;

@@ -159,9 +159,9 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
             char *string = NULL ;
             uint64_t string_mem = 0 ;   // set by GB_entry_check
             GBPR ("    theta: [ ") ;
-            int memlane = GB_Context_memlane ( ) ;
+            int header_arena = GB_Context_header_arena ( ) ;
             info = GB_entry_check (op->theta_type, op->theta, pr, f,
-                &string, &string_mem, memlane) ;
+                &string, &string_mem, header_arena) ;
             GB_FREE_MEMORY (&string, string_mem) ;
             if (info != GrB_SUCCESS) return (info) ;
             GBPR ("]") ;

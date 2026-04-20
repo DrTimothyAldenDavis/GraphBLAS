@@ -36,13 +36,12 @@ GrB_Info GB_AxB_dot3_one_slice
 (
     // output:
     GB_task_struct **p_TaskList,    // array of structs
-    uint64_t *p_TaskList_mem,       // memsize and memlane of TaskList
+    uint64_t *p_TaskList_mem,       // memsize and arena of TaskList
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     // input:
     const GrB_Matrix M,             // matrix to slice
     GB_Werk Werk
-    // FIXME memlane param
 )
 {
 
@@ -50,8 +49,8 @@ GrB_Info GB_AxB_dot3_one_slice
     // check inputs
     //--------------------------------------------------------------------------
 
-    int memlane = 0 ;       // FIXME memlane param
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = 0 ;       // FIXME arena param
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (p_TaskList != NULL) ;
     ASSERT (p_TaskList_mem != NULL) ;

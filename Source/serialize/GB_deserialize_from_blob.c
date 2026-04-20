@@ -44,8 +44,8 @@ GrB_Info GB_deserialize_from_blob
     // check inputs
     //--------------------------------------------------------------------------
 
-    int memlane = 0 ;           // FIXME memlane param
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = 0 ;           // FIXME arena param
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (blob != NULL) ;
     ASSERT (s_handle != NULL) ;

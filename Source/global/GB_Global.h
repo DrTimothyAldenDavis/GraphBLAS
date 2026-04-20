@@ -50,21 +50,21 @@ bool     GB_Global_is_csc_get (void) ;
 void     GB_Global_abort_set (void (* abort_function) (void)) ;
 void     GB_Global_abort (void) ;
 
-void     GB_Global_malloc_function_set (GB_malloc_function_t malloc_function, int memlane) ;
-void  *  GB_Global_malloc_function_get (int memlane) ;
-void  *  GB_Global_malloc_function (uint64_t memsize, int memlane) ;
+void     GB_Global_malloc_function_set (GB_malloc_function_t malloc_function, int arena) ;
+void  *  GB_Global_malloc_function_get (int arena) ;
+void  *  GB_Global_malloc_function (uint64_t memsize, int arena) ;
 
-void     GB_Global_calloc_function_set (GB_calloc_function_t calloc_function, int memlane) ;
-void  *  GB_Global_calloc_function_get (int memlane) ;
+void     GB_Global_calloc_function_set (GB_calloc_function_t calloc_function, int arena) ;
+void  *  GB_Global_calloc_function_get (int arena) ;
 
-void     GB_Global_realloc_function_set (GB_realloc_function_t realloc_function, int memlane) ;
-void  *  GB_Global_realloc_function_get (int memlane) ;
-void  *  GB_Global_realloc_function (void *p, uint64_t memsize, int memlane) ;
-bool     GB_Global_realloc_function_have (int memlane) ;
+void     GB_Global_realloc_function_set (GB_realloc_function_t realloc_function, int arena) ;
+void  *  GB_Global_realloc_function_get (int arena) ;
+void  *  GB_Global_realloc_function (void *p, uint64_t memsize, int arena) ;
+bool     GB_Global_realloc_function_have (int arena) ;
 
-void     GB_Global_free_function_set (GB_free_function_t free_function, int memlane) ;
-void  *  GB_Global_free_function_get (int memlane) ;
-void     GB_Global_free_function (void *p, int memlane) ;
+void     GB_Global_free_function_set (GB_free_function_t free_function, int arena) ;
+void  *  GB_Global_free_function_get (int arena) ;
+void     GB_Global_free_function (void *p, int arena) ;
 
 void     GB_Global_malloc_tracking_set (bool malloc_tracking) ;
 bool     GB_Global_malloc_tracking_get (void) ;
@@ -118,7 +118,7 @@ void     GB_Global_memtable_dump (void) ;
 void     GB_Global_memtable_clear (void) ;
 void     GB_Global_memtable_add (void *p, uint64_t mem) ;
 uint64_t GB_Global_memtable_memsize (void *p) ;
-int      GB_Global_memtable_memlane (void *p) ;
+int      GB_Global_memtable_arena (void *p) ;
 void     GB_Global_memtable_remove (void *p) ;
 bool     GB_Global_memtable_find (void *p) ;
 

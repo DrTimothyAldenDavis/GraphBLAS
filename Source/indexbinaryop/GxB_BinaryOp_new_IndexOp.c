@@ -38,8 +38,8 @@ GrB_Info GxB_BinaryOp_new_IndexOp
     // allocate the binary op
     //--------------------------------------------------------------------------
 
-    int memlane = GB_Context_memlane ( ) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int header_arena = GB_Context_header_arena ( ) ;
+    uint64_t mem = GB_mem (header_arena, 0) ;
     uint64_t header_mem = mem ;
     GrB_BinaryOp
         binop = GB_CALLOC_MEMORY (1, sizeof (struct GB_BinaryOp_opaque),
@@ -69,7 +69,7 @@ GrB_Info GxB_BinaryOp_new_IndexOp
         binop->name, &(binop->name_len), &(binop->hash),
         &(binop->defn), &(binop->defn_mem),
         // input:
-        idxbinop->name, idxbinop->defn, true, jitable, memlane) ;
+        idxbinop->name, idxbinop->defn, true, jitable, header_arena) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

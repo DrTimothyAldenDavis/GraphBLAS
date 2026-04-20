@@ -84,6 +84,7 @@ GrB_Info GB_ijxvector
                             // assign, subassign, extract, or for build with
                             // the descriptor uses the indices.  For build,
                             // this is List->type when using the values.
+    int data_arena,
     GB_Werk Werk                            
 ) ;
 

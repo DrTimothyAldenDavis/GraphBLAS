@@ -46,8 +46,7 @@ GrB_Info GxB_Col_extract_Vector     // w<mask> = accum (w, A(I,j))
         "GxB_Col_extract_Vector (w, M, accum, A, I, j, desc)") ;
     GB_BURBLE_START ("GrB_extract") ;
 
-    int memlane = GB_memlane (w->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = w->data_arena ;
 
     ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (GB_IMPLIES (mask != NULL, GB_VECTOR_OK (mask))) ;
@@ -72,11 +71,11 @@ GrB_Info GxB_Col_extract_Vector     // w<mask> = accum (w, A(I,j))
     //--------------------------------------------------------------------------
 
     void *I = NULL ;
-    uint64_t I_mem = mem ;
+    uint64_t I_mem = 0 ;            // set in GB_ijxvector
     int64_t ni = 0 ;
     GrB_Type I_type = NULL ;
     GB_OK (GB_ijxvector (I_vector, (w == I_vector), 0, desc, false,
-        &I, &ni, &I_mem, &I_type, Werk)) ;
+        &I, &ni, &I_mem, &I_type, data_arena, Werk)) ;
     bool I_is_32 = (I_type == GrB_UINT32) ;
 
     //--------------------------------------------------------------------------

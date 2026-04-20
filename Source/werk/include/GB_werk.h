@@ -64,7 +64,7 @@ typedef GB_Werk_struct *GB_Werk ;
 void *GB_werk_push    // return pointer to newly allocated space
 (
     // output
-    uint64_t *mem,          // memsize and memlane of allocated space
+    uint64_t *mem,          // memsize and arena of allocated space
     bool *on_stack,         // true if werkspace is from Werk stack
     // input
     uint64_t nitems,        // # of items to allocate
@@ -87,7 +87,7 @@ void *GB_werk_pop     // free the top block of werkspace memory
 (
     // input/output
     void *p,                    // werkspace to free
-    uint64_t *mem,              // memsize and memlane of p
+    uint64_t *mem,              // memsize and arena of p
     // input
     bool on_stack,              // true if werkspace is from Werk stack
     uint64_t nitems,            // # of items to allocate
@@ -104,7 +104,7 @@ void *GB_werk_pop     // free the top block of werkspace memory
 #define GB_WERK_DECLARE(X,type)                                     \
     type *restrict X = NULL ;                                       \
     bool X ## _on_stack = false ;                                   \
-    uint64_t X ## _nitems = 0, X ## _mem = 0 ; /* FIXME memlane */
+    uint64_t X ## _nitems = 0, X ## _mem = 0 ; /* FIXME arena */
 
 // push werkspace X
 #define GB_WERK_PUSH(X,nitems,type)                                 \

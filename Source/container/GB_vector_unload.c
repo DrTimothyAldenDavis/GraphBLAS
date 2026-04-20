@@ -44,7 +44,7 @@ GrB_Info GB_vector_unload
     GrB_Type *type,         // type of X
     uint64_t *n,            // # of entries in X
     uint64_t *X_mem,        // memsize of X in bytes (>= n*(sizeof the type))
-                            // and memlane
+                            // and arena
     bool *readonly,         // if true, X is treated as readonly
     GB_Werk Werk
 )
@@ -92,7 +92,7 @@ GrB_Info GB_vector_unload
 
     (*X) = V->x ;
     (*n) = V->vlen ;
-    (*X_mem) = V->x_mem ;
+    (*X_mem) = V->x_mem ;       // including memsize and arena
     (*type) = V->type ;
     (*readonly) = V->x_shallow  && (V->x != NULL) ;
     V->x = NULL ; V->x_mem = 0 ;

@@ -25,8 +25,8 @@ GrB_Info GrB_Descriptor_new     // create a new descriptor
     GB_RETURN_IF_NULL (descriptor) ;
     (*descriptor) = NULL ;
 
-    int memlane = GB_Context_memlane ( ) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int header_arena = GB_Context_header_arena ( ) ;
+    uint64_t mem = GB_mem (header_arena, 0) ;
 
     //--------------------------------------------------------------------------
     // create the descriptor

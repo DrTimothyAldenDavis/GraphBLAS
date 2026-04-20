@@ -26,9 +26,9 @@ GrB_Info GB_serialize_array
 (
     // output:
     GB_blocks **Blocks_handle,          // Blocks: array of size nblocks+1
-    uint64_t *Blocks_mem_handle,        // memsize and memlane of Blocks
+    uint64_t *Blocks_mem_handle,        // memsize and arena of Blocks
     uint64_t **Sblocks_handle,          // Sblocks: array of size nblocks+1
-    uint64_t *Sblocks_mem_handle,       // memsize and memlane of Sblocks
+    uint64_t *Sblocks_mem_handle,       // memsize and arena of Sblocks
     int32_t *nblocks_handle,            // # of blocks
     int32_t *method_used,               // method used
     uint64_t *compressed_memsize,       // size of compressed block, or upper
@@ -48,8 +48,8 @@ GrB_Info GB_serialize_array
     // check inputs
     //--------------------------------------------------------------------------
 
-    int memlane = 0 ;   // FIXME memlane param
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = 0 ;   // FIXME arena param
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (Blocks_handle != NULL) ;
     ASSERT (Blocks_mem_handle != NULL) ;
@@ -198,11 +198,11 @@ GrB_Info GB_serialize_array
         else
         { 
             // allocate the block
-            uint64_t mem = 0 ;  // FIXME memlane
-            GB_void *p = GB_MALLOC_MEMORY (s, sizeof (GB_void), &mem) ;
+            uint64_t p_mem = mem ;
+            GB_void *p = GB_MALLOC_MEMORY (s, sizeof (GB_void), &p_mem) ;
             ok = (p != NULL) ;
             Blocks [blockid].p = p ;
-            Blocks [blockid].p_mem = mem ;
+            Blocks [blockid].p_mem = p_mem ;
         }
     }
 

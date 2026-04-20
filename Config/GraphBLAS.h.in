@@ -1476,15 +1476,26 @@ GB_GLOBAL GrB_IndexUnaryOp
 // for floating-point types). They only affect the time and memory usage of the
 // computations.
 
-/* FIXME: add GrB get/set to move a matrix between memlanes:
+/* FIXME arena: add GrB get/set to move a matrix between arenas:
 
-    GrB_Matrix_set_INT32 (A, memlane, GxB_MEMLANE) ;
-    GrB_Vector_set_INT32 (V, memlane, GxB_MEMLANE) ;
-    GrB_Scalar_set_INT32 (S, memlane, GxB_MEMLANE) ;
+    changes the data arena only:
+    GrB_Matrix_set_INT32 (A, arena, GxB_DATA_ARENA) ;
+    GrB_Vector_set_INT32 (V, arena, GxB_DATA_ARENA) ;
+    GrB_Scalar_set_INT32 (S, arena, GxB_DATA_ARENA) ;
 
-    GrB_Matrix_get_INT32 (A, &memlane, GxB_MEMLANE) ;
-    GrB_Vector_get_INT32 (V, &memlane, GxB_MEMLANE) ;
-    GrB_Scalar_get_INT32 (S, &memlane, GxB_MEMLANE) ;
+    get the data or header arena:
+    GrB_Matrix_get_INT32 (A, &arena, GxB_DATA_ARENA) ;
+    GrB_Vector_get_INT32 (V, &arena, GxB_DATA_ARENA) ;
+    GrB_Scalar_get_INT32 (S, &arena, GxB_DATA_ARENA) ;
+
+    GrB_Matrix_get_INT32 (A, &arena, GxB_HEADER_ARENA) ;
+    GrB_Vector_get_INT32 (V, &arena, GxB_HEADER_ARENA) ;
+    GrB_Scalar_get_INT32 (S, &arena, GxB_HEADER_ARENA) ;
+
+    to change both header and data arena:
+    GxB_Matrix_arena_set (&A, header_arena, data_arena) ;
+    GxB_Vector_arena_set (&V, header_arena, data_arena) ;
+    GxB_Scalar_arena_set (&S, header_arena, data_arena) ;
 */
 
 typedef enum    // GxB_Option_Field ;
@@ -2829,8 +2840,7 @@ GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
 
 #ifndef GRAPHBLAS_VANILLA
 
-// FIXME: GxB_init sets malloc/calloc/realloc/free for memlane 0;
-// CUDA always uses RMM for lane 1.
+// FIXME arena: GxB_init sets malloc/calloc/realloc/free for arena 0;
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 (
     int mode,               // blocking or non-blocking mode (GrB_Mode)
@@ -6530,7 +6540,7 @@ struct GxB_Container_struct
     int32_t format ;                // GxB_HYPERSPARSE, GxB_SPARSE, GxB_BITMAP,
                                     // or GxB_FULL
     int32_t orientation ;           // GrB_ROWMAJOR or GrB_COLMAJOR
-    int32_t memlane ;               // memlane of the Container struct itself,
+    int32_t header_arena ;          // arena of the Container struct itself,
                                     // for GxB_Container_free.  Do NOT modify.
     uint32_t u32_future [13] ;      // for future expansion
 
@@ -6602,7 +6612,7 @@ GrB_Info GxB_Vector_load
     int handling,           // GrB_DEFAULT (0): transfer ownership to GraphBLAS
                             // GxB_IS_READONLY: X treated as readonly;
                             //      ownership kept by the user application
-                            // handling+memlane is returned
+                            // handling+arena is returned
     const GrB_Descriptor desc   // currently unused; for future expansion
 ) ;
 
@@ -6831,7 +6841,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 // level 1).
 
 #ifndef GRAPHBLAS_VANILLA
-// FIXME: GxB_Matrix_serialize: **blob_handle: assume memlane 0
+// FIXME arena: GxB_Matrix_serialize: **blob_handle: use Context data arena
 GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 (
     // output:
@@ -6856,7 +6866,7 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 ) ;
 
 #ifndef GRAPHBLAS_VANILLA
-// FIXME: GxB_Vector_serialize: **blob_handle: assume memlane 0
+// FIXME arena: GxB_Vector_serialize: **blob_handle: use Context data arena
 GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
 (
     // output:
@@ -6882,8 +6892,7 @@ GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
 // deserialize methods simply add the descriptor, which allows for optional
 // control of the # of threads used to deserialize the blob.
 
-// FIXME: what memlane to deserialize to?
-
+// FIXME arena: deserialize to Context header and data arenas
 #ifndef GRAPHBLAS_VANILLA
 GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
 (
@@ -7125,7 +7134,6 @@ struct GB_Iterator_opaque
 
     // only changes when the iterator is created:
     size_t header_size ;        // size of this iterator object in bytes
-                                // (always using memlane of 0)
 
     // these components only change when the iterator is attached:
     int64_t pmax ;              // avlen*avdim for bitmap; nvals(A) otherwise
@@ -7144,9 +7152,14 @@ struct GB_Iterator_opaque
     const void     *GB_restrict Ax ;   // values for all 4 data structures
 
     size_t type_size ;          // size of the type of A
-    int A_sparsity ;            // sparse, hyper, bitmap, or full
+    int32_t A_sparsity ;        // sparse, hyper, bitmap, or full
     bool iso ;                  // true if A is iso-valued, false otherwise
     bool by_col ;               // true if A is held by column, false if by row
+
+    // added in GraphBLAS 10.4.0:
+    bool reserved_bool [2] ;    // reserved for future use
+    int32_t header_arena ;      // arena for the iterator struct itself
+    uint64_t reserved [8] ;     // reserved for future use
 } ;
 
 // GxB_Iterator_new: create a new iterator, not attached to any matrix/vector

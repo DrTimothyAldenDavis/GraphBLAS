@@ -85,8 +85,8 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
 
     ASSERT (R != NULL) ;
 
-    int memlane = GB_memlane (R->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = R->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT_MATRIX_OK (M, "M for masker", GB0) ;
     ASSERT (!GB_PENDING (M)) ;
@@ -150,7 +150,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         // input/output to phase0:
         &R_sparsity,
         // original input:
-        M, C, Z, memlane, Werk)) ;
+        M, C, Z, data_arena, Werk)) ;
 
     GBURBLE ("masker:(%s:%s%s%s%s%s=%s) ",
         GB_sparsity_char (R_sparsity),

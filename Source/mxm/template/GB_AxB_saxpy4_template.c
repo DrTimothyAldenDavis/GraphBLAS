@@ -187,7 +187,7 @@
 
         // allocate workspace to implement the atomic update
         #if !GB_Z_HAS_ATOMIC_UPDATE
-        int8_t *restrict Wf = NULL ; uint64_t Wf_mem = 0 ;  // FIXME memlane
+        int8_t *restrict Wf = NULL ; uint64_t Wf_mem = 0 ;  // FIXME arena
         Wf = GB_CALLOC_MEMORY (C->vlen * C->vdim, sizeof (int8_t), &Wf_mem) ;
         if (Wf == NULL)
         { 

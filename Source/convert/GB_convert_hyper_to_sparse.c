@@ -47,8 +47,8 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         return (GrB_SUCCESS) ;
     }
 
-    int memlane = GB_memlane (A->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = A->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     //--------------------------------------------------------------------------
     // convert A from hypersparse to sparse
@@ -82,7 +82,6 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
             memset (A->p, 0, 2 * psize) ;
             A->nvec = 1 ;
         }
-//      A->nvec_nonempty = (anz > 0) ? 1 : 0 ;
         GB_nvec_nonempty_set (A, (anz > 0) ? 1 : 0) ;
 
         GB_hy_free (A) ;
@@ -276,7 +275,6 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         A->p = Ap_new ; A->p_mem = Ap_new_mem ;
         A->h = NULL ;
         A->nvec = n ;
-//      A->nvec_nonempty = nvec_nonempty ;
         GB_nvec_nonempty_set (A, nvec_nonempty) ;
         A->plen = n ;
         A->p_shallow = false ;

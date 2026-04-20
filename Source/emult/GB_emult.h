@@ -72,6 +72,7 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
+    const int data_arena,           // arena for the C matrix data
     GB_Werk Werk
 ) ;
 
@@ -99,6 +100,7 @@ GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,
     const GrB_Matrix B,
+    const int data_arena,           // arena for the C matrix data
     GB_Werk Werk
 ) ;
 

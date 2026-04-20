@@ -47,7 +47,7 @@ bool GB_cuda_builder_branch
 
     if (C->header_mem == 0)
     {
-        // FIXME memlane: check all of C
+        // FIXME arena: check all of C
         return (false) ;
     }
 

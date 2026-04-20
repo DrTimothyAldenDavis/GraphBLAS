@@ -1052,7 +1052,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     GrB_Matrix T = NULL ;
     GrB_Info info = GrB_SUCCESS ;
 
-    uint64_t mem = GB_mem (GB_MEMLANE_RMM, 0) ;
+    uint64_t mem = GB_mem (GB_ARENA_RMM, 0) ;
 
     // workspace needed for CUB radix sort of (Key_in,X):
     void *W_0 = NULL ; uint64_t W_0_mem = mem ;    // size nvals+1: Key_in
@@ -1752,7 +1752,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         /* p_is_32: */ (GB_Tp_BITS == 32),
         /* j_is_32: */ (GB_Tj_BITS == 32),
         /* i_is_32: */ (GB_Ti_BITS == 32),
-        GB_MEMLANE_RMM, GB_MEMLANE_RMM)) ;
+        GB_ARENA_RMM, GB_ARENA_RMM)) ;
 
     T->nvals = tnz ;
     T->magic = GB_MAGIC ;

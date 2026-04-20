@@ -33,13 +33,13 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    ASSERT (A != NULL) ;
     bool is_hyper = GB_IS_HYPERSPARSE (A) ;
     bool is_full = GB_IS_FULL (A) ;
     bool is_bitmap = GB_IS_BITMAP (A) ;
     bool is_sparse = GB_IS_SPARSE (A) ;
     char *string = NULL ;
     uint64_t string_mem = 0 ;   // set by GB_entry_check
-    int memlane = GB_Context_memlane ( ) ;
 
     bool skip_zombie_checks = false ;
     if (pr > 5)
@@ -360,9 +360,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         }
         else
         {
-            GBPR ("  header (%p)", (void *) A) ;
+            GBPR ("  header (%p) arena: (%d,%d) size: " GBu, (void *) A,
+                GB_arena (A->header_mem), A->data_arena,
+                GB_memsize (A->header_mem)) ;
         }
-        GBPR (" header size: %d\n", (int) sizeof (struct GB_Matrix_opaque)) ;
+        GBPR (" struct size: %d\n", (int) sizeof (struct GB_Matrix_opaque)) ;
         GBPR ("  number of memory blocks: " GBd "\n", nallocs) ;
         GBPR ("  deep: " GBu " shallow: " GBu " total: " GBu "\n",
             (uint64_t) mem_deep, (uint64_t) mem_shallow,
@@ -388,16 +390,16 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     #if GB_DEVELOPER
     if (pr_short || pr_complete)
     {
-        GBPR ("  ->h: %p shallow: %d size: " GBu " lane: %d\n",
-            A->h, A->h_shallow, GB_memsize (A->h_mem), GB_memlane (A->h_mem)) ;
-        GBPR ("  ->p: %p shallow: %d size: " GBu " lane: %d\n",
-            A->p, A->p_shallow, GB_memsize (A->p_mem), GB_memlane (A->p_mem)) ;
-        GBPR ("  ->i: %p shallow: %d size: " GBu " lane: %d\n",
-            A->i, A->i_shallow, GB_memsize (A->i_mem), GB_memlane (A->i_mem)) ;
-        GBPR ("  ->b: %p shallow: %d size: " GBu " lane: %d\n",
-            A->b, A->b_shallow, GB_memsize (A->b_mem), GB_memlane (A->b_mem)) ;
-        GBPR ("  ->x: %p shallow: %d size: " GBu " lane: %d\n",
-            A->x, A->x_shallow, GB_memsize (A->x_mem), GB_memlane (A->x_mem)) ;
+        GBPR ("  ->h: %p shallow: %d size: " GBu " arena: %d\n",
+            A->h, A->h_shallow, GB_memsize (A->h_mem), GB_arena (A->h_mem)) ;
+        GBPR ("  ->p: %p shallow: %d size: " GBu " arena: %d\n",
+            A->p, A->p_shallow, GB_memsize (A->p_mem), GB_arena (A->p_mem)) ;
+        GBPR ("  ->i: %p shallow: %d size: " GBu " arena: %d\n",
+            A->i, A->i_shallow, GB_memsize (A->i_mem), GB_arena (A->i_mem)) ;
+        GBPR ("  ->b: %p shallow: %d size: " GBu " arena: %d\n",
+            A->b, A->b_shallow, GB_memsize (A->b_mem), GB_arena (A->b_mem)) ;
+        GBPR ("  ->x: %p shallow: %d size: " GBu " arena: %d\n",
+            A->x, A->x_shallow, GB_memsize (A->x_mem), GB_arena (A->x_mem)) ;
         GBPR ("  ->Y: %p shallow: %d no_hyper_hash: %d\n",
             (void *) (A->Y), A->Y_shallow, A->no_hyper_hash) ;
     }
@@ -537,8 +539,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         if (A->x == NULL || GB_memsize (A->x_mem) < A->type->size)
         { 
             #if GB_DEVELOPER
-            GBPR0 ("A->x %p size %ld lane %d typesize %d\n", A->x,
-                GB_memsize (A->x_mem), GB_memlane (A->x_mem),
+            GBPR0 ("A->x %p size %ld arena %d typesize %d\n", A->x,
+                GB_memsize (A->x_mem), GB_arena (A->x_mem),
                 (int) A->type->size) ;
             #endif
             GBPR0 ("  invalid iso matrix\n") ;
@@ -548,7 +550,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         if (pr > 0)
         { 
             info = GB_entry_check (A->type, A->x, pr, f, &string, &string_mem,
-                memlane) ;
+                A->data_arena) ;
             if (info != GrB_SUCCESS)
             { 
                 GB_FREE_MEMORY (&string, string_mem) ;
@@ -743,7 +745,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                     GB_void *Ax = (GB_void *) A->x ;
                     info = GB_entry_check (A->type,
                         Ax + (A->iso ? 0 : (p * (A->type->size))), pr, f,
-                        &string, &string_mem, memlane) ;
+                        &string, &string_mem, A->data_arena) ;
                     if (info != GrB_SUCCESS)
                     { 
                         GB_FREE_MEMORY (&string, string_mem) ;
@@ -899,7 +901,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 { 
                     info = GB_entry_check (Pending->type,
                         Pending_x +(k * Pending->type->size), pr, f,
-                        &string, &string_mem, memlane) ;
+                        &string, &string_mem, A->data_arena) ;
                     if (info != GrB_SUCCESS)
                     { 
                         GB_FREE_MEMORY (&string, string_mem) ;

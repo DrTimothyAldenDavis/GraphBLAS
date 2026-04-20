@@ -26,8 +26,8 @@ bool GB_Pending_alloc       // create a list of pending tuples
     ASSERT (C != NULL) ;
     ASSERT (C->Pending == NULL) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     //--------------------------------------------------------------------------
     // allocate the Pending header

@@ -57,15 +57,14 @@ GrB_Info GxB_Matrix_build_Vector // build a matrix from (I,J,X) tuples
     ASSERT_VECTOR_OK (J_vector, "J_vector for build", GB0) ;
     ASSERT_VECTOR_OK (X_vector, "X_vector for build", GB0) ;
 
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = C->data_arena ;
 
     //--------------------------------------------------------------------------
     // finish any pending work
     //--------------------------------------------------------------------------
 
     void *I = NULL, *J = NULL, *X = NULL ;
-    uint64_t I_mem = mem, J_mem = mem, X_mem = mem ;
+    uint64_t I_mem = 0, J_mem = 0, X_mem = 0 ;      // set by GB_ijxvector
 
     GB_MATRIX_WAIT (I_vector) ;
     GB_MATRIX_WAIT (J_vector) ;
@@ -87,11 +86,11 @@ GrB_Info GxB_Matrix_build_Vector // build a matrix from (I,J,X) tuples
     int64_t ni = 0, nj = 0, nx = 0 ;
     GrB_Type I_type = NULL, J_type = NULL, X_type = NULL ;
     GB_OK (GB_ijxvector (I_vector, false, 0, desc, true,
-        &I, &ni, &I_mem, &I_type, Werk)) ;
+        &I, &ni, &I_mem, &I_type, data_arena, Werk)) ;
     GB_OK (GB_ijxvector (J_vector, false, 1, desc, true,
-        &J, &nj, &J_mem, &J_type, Werk)) ;
+        &J, &nj, &J_mem, &J_type, data_arena, Werk)) ;
     GB_OK (GB_ijxvector (X_vector, false, 2, desc, true,
-        &X, &nx, &X_mem, &X_type, Werk)) ;
+        &X, &nx, &X_mem, &X_type, data_arena, Werk)) ;
     bool I_is_32 = (I_type == GrB_UINT32) ;
     bool J_is_32 = (J_type == GrB_UINT32) ;
 

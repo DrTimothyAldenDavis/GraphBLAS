@@ -148,8 +148,8 @@ GrB_Info ewise
     // get the current free function
     //--------------------------------------------------------------------------
 
-    int memlane = 0 ;
-    free_function = GB_Global_free_function_get (memlane) ;
+    int arena = 0 ; // FIXME arena
+    free_function = GB_Global_free_function_get (arena) ;
 
     //--------------------------------------------------------------------------
     // create bitmap format of A, A', and T
@@ -165,19 +165,19 @@ GrB_Info ewise
     OK (GrB_transpose (b, NULL, NULL, b, NULL)) ;
 
     // extract a in bitmap CSC format
-    OK (GxB_Matrix_unpack_BitmapC (a, &Ab, (void **) &Ax, &Ab_memsize, &Ax_memsize,
-        NULL, &A_nvals, NULL)) ;
+    OK (GxB_Matrix_unpack_BitmapC (a, &Ab, (void **) &Ax,
+        &Ab_memsize, &Ax_memsize, NULL, &A_nvals, NULL)) ;
     GrB_Matrix_free (&a) ;
 
     // extract b in bitmap CSC format
-    OK (GxB_Matrix_unpack_BitmapC (b, &Bb, (void **) &Bx, &Bb_memsize, &Bx_memsize,
-        NULL, &B_nvals, NULL)) ;
+    OK (GxB_Matrix_unpack_BitmapC (b, &Bb, (void **) &Bx,
+        &Bb_memsize, &Bx_memsize, NULL, &B_nvals, NULL)) ;
     GrB_Matrix_free (&b) ;
 
     // create T and extract in bitmap CSC format
     OK (GrB_Matrix_new (&T, GrB_FP64, n, n)) ;
-    OK (GxB_Matrix_unpack_BitmapC (T, &Tb, (void **) &Tx, &Tb_memsize, &Tx_memsize,
-        NULL, &T_nvals, NULL)) ;
+    OK (GxB_Matrix_unpack_BitmapC (T, &Tb, (void **) &Tx,
+        &Tb_memsize, &Tx_memsize, NULL, &T_nvals, NULL)) ;
 
     //--------------------------------------------------------------------------
     // t = op (a,b,theta)
@@ -236,7 +236,7 @@ GrB_Info ewise
                         tb = 1 ;
                         break ;
                     case 1 :    // union
-                        gb_test37_idxbinop (&tx, alpha, i, j, &bx, i, j, theta) ;
+                        gb_test37_idxbinop (&tx, alpha, i, j, &bx, i, j, theta);
                         tb = 1 ;
                         break ;
                     default:

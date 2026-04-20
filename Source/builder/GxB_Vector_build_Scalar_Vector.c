@@ -38,8 +38,8 @@ GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL (w) ;
-    GB_RETURN_IF_NULL (scalar) ;
     GB_RETURN_IF_NULL (I_vector) ;
+    GB_RETURN_IF_NULL (scalar) ;
     GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
     GB_WHERE3 (w, scalar, I_vector,
         "GxB_Vector_build_Scalar_Vector (w, I, scalar, desc)") ;
@@ -47,15 +47,14 @@ GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
     ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (GB_VECTOR_OK (I_vector)) ;
 
-    int memlane = GB_memlane (w->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = w->data_arena ;
 
     //--------------------------------------------------------------------------
     // finish any pending work
     //--------------------------------------------------------------------------
 
     void *I = NULL ;
-    uint64_t I_mem = mem ;
+    uint64_t I_mem = 0 ;        // set by GB_ijxvector
 
     GB_MATRIX_WAIT (scalar) ;
     if (GB_nnz ((GrB_Matrix) scalar) != 1)
@@ -71,7 +70,7 @@ GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
     GrB_Type I_type = NULL ;
     bool need_copy = (w == I_vector) ;
     GB_OK (GB_ijxvector (I_vector, need_copy, 0, desc, true,
-        &I, &ni, &I_mem, &I_type, Werk)) ;
+        &I, &ni, &I_mem, &I_type, data_arena, Werk)) ;
     bool I_is_32 = (I_type == GrB_UINT32) ;
 
     //--------------------------------------------------------------------------

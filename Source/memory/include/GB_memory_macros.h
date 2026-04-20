@@ -11,27 +11,23 @@
 #define GB_MEMORY_MACROS_H
 
 //------------------------------------------------------------------------------
-// memory lanes
+// memory arenas
 //------------------------------------------------------------------------------
 
 // The 8-byte mem (p_mem when refering to an object p) of a malloc'd object
-// contains the memlane in the high order byte, and the memsize in the lower 7
+// contains the arena in the high order byte, and the memsize in the lower 7
 // bytes.
 
-#define GB_MEMLANES 4           /* total # of memlanes */
-#define GB_MEMLANE_DEFAULT 0
-#define GB_MEMLANE_RMM 0        /* FIXME: Rapids will be on lane 1 */
-#define GB_MEMLANE_MATLAB 0     /* FIXME: mxMalloc will be on lane 2 */
-
+#define GB_NARENAS 4            /* total # of arenas */
 #define GB_ARENA_DEFAULT 0
-#define GB_ARENA_RMM 0          /* FIXME: Rapids will be on lane 1 */
-#define GB_ARENA_MATLAB 0       /* FIXME: mxMalloc will be on lane 2 */
+#define GB_ARENA_RMM 0          /* FIXME arena: Rapids will be on arena 1 */
+#define GB_ARENA_MATLAB 0       /* FIXME arena: mxMalloc will be on arena 2 */
 
-GB_STATIC_INLINE_BOTH int GB_memlane (uint64_t mem)
+GB_STATIC_INLINE_BOTH int GB_arena (uint64_t mem)
 {
-    // return the high order byte, containing the memlane
-    int memlane = (mem >> 56) ;
-    return (memlane) ;
+    // return the high order byte, containing the arena
+    int arena = (mem >> 56) ;
+    return (arena) ;
 }
 
 GB_STATIC_INLINE_BOTH uint64_t GB_memsize (uint64_t mem)
@@ -41,19 +37,11 @@ GB_STATIC_INLINE_BOTH uint64_t GB_memsize (uint64_t mem)
     return (memsize) ;
 }
 
-GB_STATIC_INLINE_BOTH uint64_t GB_mem (int memlane, uint64_t memsize)
+GB_STATIC_INLINE_BOTH uint64_t GB_mem (int arena, uint64_t memsize)
 {
-    // combine the memlane and memsize into the _mem state
-    uint64_t mem = ((uint64_t) memlane) << 56 | memsize ;
+    // combine the arena and memsize into the _mem state
+    uint64_t mem = ((uint64_t) arena) << 56 | memsize ;
     return (mem) ;
-}
-
-GB_STATIC_INLINE_BOTH uint64_t GB_memlane_change (int memlane, uint64_t mem)
-{
-    // change the memlane of an object, keeping the memsize the same,
-    // and return the new mem state
-    uint64_t memsize = GB_memsize (mem) ;
-    return (GB_mem (memlane, memsize)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -69,9 +57,9 @@ GB_STATIC_INLINE_BOTH uint64_t GB_memlane_change (int memlane, uint64_t mem)
         if (p != NULL && (*(p)) != NULL)                                    \
         {                                                                   \
             uint64_t memsize = GB_memsize (mem) ;                           \
-            int memlane = GB_memlane (mem) ;                                \
-            GBMDUMP ("free    %p %8lu lane:%d (%s, line %d)\n",             \
-                (void *) (*p), memsize, memlane, __FILE__, __LINE__) ;      \
+            int arena = GB_arena (mem) ;                                    \
+            GBMDUMP ("free    %p %8lu arena:%d (%s, line %d)\n",            \
+                (void *) (*p), memsize, arena, __FILE__, __LINE__) ;        \
         }                                                                   \
         GB_free_memory ((void **) p, mem) ;                                 \
     }

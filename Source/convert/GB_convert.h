@@ -122,7 +122,7 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
     const bool Ci_is_32,        // if true, Ci is uint32_t; otherwise uint64_t
     const GrB_Type ctype,       // type of Cx
     const GrB_Matrix A,         // matrix to extract; not modified
-    const int memlane,
+    const int data_arena,       // arena for workspace
     GB_Werk Werk
 ) ;
 

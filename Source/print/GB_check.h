@@ -34,8 +34,8 @@ GrB_Info GB_entry_check     // print a single value
     FILE *f,                // file to print to
     // for user-defined types only:
     char **string_handle,   // string buffer for printing
-    uint64_t *string_mem,   // memsize and memlane (0) of the string buffer
-    int memlane
+    uint64_t *string_mem,   // memsize and arena of the string buffer
+    int data_arena
 ) ;
 
 GrB_Info GB_Type_check      // check a GraphBLAS Type

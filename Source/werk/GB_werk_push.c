@@ -16,7 +16,7 @@
 void *GB_werk_push    // return pointer to newly allocated space
 (
     // output
-    uint64_t *p_mem,        // memsize and memlane of allocated space
+    uint64_t *p_mem,        // memsize and arena of allocated space
     bool *on_stack,         // true if werkspace is from Werk stack
     // input
     uint64_t nitems,        // # of items to allocate
@@ -35,8 +35,8 @@ GB_CALLBACK_WERK_PUSH_PROTO (GB_werk_push)
     ASSERT (on_stack != NULL) ;
     ASSERT (p_mem != NULL) ;
 
-    int memlane = 0 ;   // FIXME memlane from Context
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = 0 ;   // FIXME arena from Context
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     //--------------------------------------------------------------------------
     // determine where to allocate the werkspace

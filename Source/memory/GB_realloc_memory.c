@@ -33,10 +33,10 @@
 //          p points to the old block, and p_mem is left
 //          unchanged.  This case never occurs if nitems_new < nitems_old.
 //      }
-//      on output, p_mem is set to the actual memsize and memlane of the block
+//      on output, p_mem is set to the actual memsize and arena of the block
 //      of memory
 
-// The memlane of the object is not changed.
+// The arena of the object is not changed.
 
 #include "GB.h"
 
@@ -47,7 +47,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     uint64_t size_of_item,  // size of each item
     // input/output
     void *p,                // old object to reallocate
-    uint64_t *p_mem,        // memsize and memlane of object p to reallocate
+    uint64_t *p_mem,        // memsize and arena of object p to reallocate
     // output
     bool *ok                // true if successful, false otherwise
 )
@@ -72,7 +72,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     size_of_item = GB_IMAX (1, size_of_item) ;
 
     uint64_t oldsize_allocated = GB_memsize (*p_mem) ;
-    int memlane = GB_memlane (*p_mem) ;
+    int arena = GB_arena (*p_mem) ;
     MEMTABLE_ASSERT (oldsize_allocated == GB_Global_memtable_memsize (p)) ;
 
     // make sure at least one item is allocated
@@ -111,9 +111,9 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     //--------------------------------------------------------------------------
 
     void *pnew = NULL ;
-    uint64_t pnew_mem = GB_mem (memlane, 0) ;
+    uint64_t pnew_mem = GB_mem (arena, 0) ;
 
-    if (!GB_Global_realloc_function_have (memlane))
+    if (!GB_Global_realloc_function_have (arena))
     {
 
         //----------------------------------------------------------------------
@@ -148,8 +148,8 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         { 
             GBMDUMP ("realloc %p oldsize %8ld newsize %8ld: ",
                 p, oldsize, newsize) ;
-            pnew = GB_Global_realloc_function (p, newsize, memlane) ;
-            pnew_mem = GB_mem (memlane, newsize) ;
+            pnew = GB_Global_realloc_function (p, newsize, arena) ;
+            pnew_mem = GB_mem (arena, newsize) ;
             #ifdef GB_MEMDUMP
             GB_Global_memtable_dump ( ) ;
             #endif
@@ -179,7 +179,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     else
     { 
         // realloc succeeded; change p_mem to reflect the reallocated memsize;
-        // the memlane is unchanged.
+        // the arena is unchanged.
         p = pnew ;
         (*ok) = true ;
         (*p_mem) = pnew_mem ;

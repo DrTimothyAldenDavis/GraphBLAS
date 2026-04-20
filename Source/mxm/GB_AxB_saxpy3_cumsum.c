@@ -20,8 +20,9 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
     //--------------------------------------------------------------------------
 
     ASSERT (C != NULL) ;
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+
+    int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (!GB_IS_FULL (C)) ;

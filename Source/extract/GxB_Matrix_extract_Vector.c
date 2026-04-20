@@ -45,8 +45,7 @@ GrB_Info GxB_Matrix_extract_Vector  // C<M> = accum (C, A(I,J))
         "GxB_Matrix_extract_Vector (C, M, accum, A, I, J, desc)") ;
     GB_BURBLE_START ("GrB_extract") ;
 
-    int memlane = GB_memlane (C->header_mem) ;
-    uint64_t mem = GB_mem (memlane, 0) ;
+    int data_arena = C->data_arena ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
@@ -60,13 +59,13 @@ GrB_Info GxB_Matrix_extract_Vector  // C<M> = accum (C, A(I,J))
     //--------------------------------------------------------------------------
 
     void *I = NULL, *J = NULL ;
-    uint64_t I_mem = mem, J_mem = mem ;
+    uint64_t I_mem = 0, J_mem = 0 ;     // set in GB_ijxvector
     int64_t ni = 0, nj = 0 ;
     GrB_Type I_type = NULL, J_type = NULL ;
     GB_OK (GB_ijxvector (I_vector, false, 0, desc, false,
-        &I, &ni, &I_mem, &I_type, Werk)) ;
+        &I, &ni, &I_mem, &I_type, data_arena, Werk)) ;
     GB_OK (GB_ijxvector (J_vector, false, 1, desc, false,
-        &J, &nj, &J_mem, &J_type, Werk)) ;
+        &J, &nj, &J_mem, &J_type, data_arena, Werk)) ;
     bool I_is_32 = (I_type == GrB_UINT32) ;
     bool J_is_32 = (J_type == GrB_UINT32) ;
 

@@ -125,8 +125,7 @@ GrB_Info GB_build               // build matrix
     GrB_Matrix T = NULL ;
     ASSERT (C != NULL) ;
 
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
+    int data_arena = C->data_arena ;
 
     GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
     if (GB_nnz (C) > 0 || GB_PENDING (C))
@@ -331,7 +330,7 @@ GrB_Info GB_build               // build matrix
         void *no_J_work = NULL ; uint64_t J_work_mem = 0 ;      // not used
         GB_void *no_X_work = NULL ; uint64_t X_work_mem = 0 ;   // not used
 
-        GB_OK (GB_matrix_header_new (&T, header_memlane, data_memlane)) ;
+        GB_OK (GB_matrix_header_new (&T, data_arena, data_arena)) ;
         GB_OK (GB_builder (
             T,                      // create T using a existing header
             ttype,                  // the type of T

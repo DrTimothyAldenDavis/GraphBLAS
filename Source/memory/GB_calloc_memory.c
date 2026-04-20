@@ -21,7 +21,7 @@ static inline void *GB_calloc_helper
     uint64_t *memsize,      // on input: # of bytes requested
                             // on output: # of bytes actually allocated
     // input
-    int memlane
+    int arena
 )
 {
     void *p = NULL ;
@@ -29,10 +29,10 @@ static inline void *GB_calloc_helper
     // make sure the block is at least 8 bytes in size
     (*memsize) = GB_IMAX (*memsize, 8) ;
 
-    p = GB_Global_malloc_function (*memsize, memlane) ;
+    p = GB_Global_malloc_function (*memsize, arena) ;
 
     #ifdef GB_MEMDUMP
-    GBMDUMP ("calloc  %p %8ld: lane:%d ", p, *memsize, memlane) ;
+    GBMDUMP ("calloc  %p %8ld: arena:%d ", p, *memsize, arena) ;
     GB_Global_memtable_dump ( ) ;
     #endif
 
@@ -57,7 +57,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
     uint64_t nitems,        // number of items to allocate
     uint64_t size_of_item,  // sizeof each item
     // input/output
-    uint64_t *mem           // # of bytes actually allocated, and memlane
+    uint64_t *mem           // # of bytes actually allocated, and arena
 )
 #endif
 
@@ -72,7 +72,7 @@ GB_CALLBACK_CALLOC_MEMORY_PROTO (GB_calloc_memory)
 
     void *p ;
     uint64_t memsize = 0 ;
-    int memlane = GB_memlane (*mem) ;
+    int arena = GB_arena (*mem) ;
 
     // make sure at least one item is allocated
     nitems = GB_IMAX (1, nitems) ;
@@ -84,7 +84,7 @@ GB_CALLBACK_CALLOC_MEMORY_PROTO (GB_calloc_memory)
     if (!ok || nitems > GB_NMAX || size_of_item > GB_NMAX)
     { 
         // overflow
-        (*mem) = GB_mem (memlane, 0) ;
+        (*mem) = GB_mem (arena, 0) ;
         return (NULL) ;
     }
 
@@ -113,7 +113,7 @@ GB_CALLBACK_CALLOC_MEMORY_PROTO (GB_calloc_memory)
         }
         else
         { 
-            p = GB_calloc_helper (&memsize, memlane) ;
+            p = GB_calloc_helper (&memsize, arena) ;
         }
 
     }
@@ -124,7 +124,7 @@ GB_CALLBACK_CALLOC_MEMORY_PROTO (GB_calloc_memory)
         // normal use, in production
         //----------------------------------------------------------------------
 
-        p = GB_calloc_helper (&memsize, memlane) ;
+        p = GB_calloc_helper (&memsize, arena) ;
     }
 
     //--------------------------------------------------------------------------
@@ -135,9 +135,9 @@ GB_CALLBACK_CALLOC_MEMORY_PROTO (GB_calloc_memory)
     if (p != NULL)
     {
         MEMTABLE_ASSERT (memsize == GB_Global_memtable_memsize (p)) ;
-        MEMTABLE_ASSERT (memlane == GB_Global_memtable_memlane (p)) ;
+        MEMTABLE_ASSERT (arena == GB_Global_memtable_arena (p)) ;
     }
-    (*mem) = GB_mem (memlane, memsize) ;
+    (*mem) = GB_mem (arena, memsize) ;
     return (p) ;
 }
 

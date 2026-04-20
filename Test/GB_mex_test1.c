@@ -644,7 +644,7 @@ void mexFunction
 
     OK (GrB_Matrix_new (&A, GrB_BOOL, 10000, 10000)) ;
     GrB_Matrix Q = NULL ;
-    GB_matrix_header_new (&Q, GB_MEMLANE_MATLAB, GB_MEMLANE_MATLAB) ;
+    GB_matrix_header_new (&Q, GB_ARENA_MATLAB, GB_ARENA_MATLAB) ;
     OK (GB_shallow_copy (Q, A->is_csc, A, NULL)) ;      // A is empty, not iso
     OK (GxB_Matrix_fprint_(Q, GxB_COMPLETE, NULL)) ;
     GrB_Matrix_free_(&A) ;

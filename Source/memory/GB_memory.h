@@ -30,7 +30,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     uint64_t size_of_item,  // size of each item
     // input/output
     void *p,                // old object to reallocate
-    uint64_t *p_mem,        // memsize and memlane of object p to reallocate
+    uint64_t *p_mem,        // memsize and arena of object p to reallocate
     // output
     bool *ok                // true if successful, false otherwise
 ) ;
@@ -43,7 +43,7 @@ void *GB_xalloc_memory      // return the newly-allocated space
     uint64_t nentries,      // # of entries to allocate if non iso
     uint64_t sizeof_entry,  // size of each entry
     // input/output
-    uint64_t *mem           // resulting memsize and memlane
+    uint64_t *mem           // resulting memsize and arena
 ) ;
 
 //------------------------------------------------------------------------------

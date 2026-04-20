@@ -39,7 +39,7 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
     GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A to load from Container", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (Container->Y, "Container->Y before load", GB0) ;
-    GB_CHECK_CONTAINER (Container, Container->memlane) ;
+    GB_CHECK_CONTAINER (Container, Container->header_arena, A->data_arena) ;
 
     //--------------------------------------------------------------------------
     // free any prior content of A

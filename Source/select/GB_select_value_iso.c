@@ -46,8 +46,8 @@ GrB_Info GB_select_value_iso
          && op->opcode <= GB_VALUELE_idxunop_code)
     ASSERT (C != NULL) ;
 
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
+    int header_arena = GB_arena (C->header_mem) ;
+    int data_arena = C->data_arena ;
 
     //--------------------------------------------------------------------------
     // determine if C is empty or a copy of A
@@ -93,7 +93,7 @@ GrB_Info GB_select_value_iso
         return (GB_new (&C, // existing header
             A->type, A->vlen, A->vdim, GB_ph_calloc, true,
             GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1,
-            Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane)) ;
+            Cp_is_32, Cj_is_32, Ci_is_32, header_arena, data_arena)) ;
     }
     else
     { 

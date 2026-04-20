@@ -67,8 +67,8 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     GrB_Info info ;
     ASSERT (C != NULL) ;
 
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
+    int header_arena = GB_arena (C->header_mem) ;
+    int data_arena = C->data_arena ;
 
     ASSERT_MATRIX_OK (M, "M for emult_04", GB0) ;
     ASSERT_MATRIX_OK (A, "A for emult_04", GB0) ;
@@ -131,7 +131,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
         ctype, vlen, vdim, GB_ph_calloc, C_is_csc,
         C_sparsity, M->hyper_switch, nvec,
         M->p_is_32, M->j_is_32, M->i_is_32,
-        header_memlane, data_memlane)) ;
+        header_arena, data_arena)) ;
 
     GB_Cp_DECLARE (Cp, ) ; GB_Cp_PTR (Cp, C) ;
     GB_Ci_DECLARE (Ci, ) ; GB_Ci_PTR (Ci, C) ;

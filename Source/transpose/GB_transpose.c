@@ -78,15 +78,14 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     ASSERT (C != NULL) ;
     ASSERT (A != NULL) ;
 
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
-    uint64_t mem = GB_mem (data_memlane, 0) ;
+    int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     bool in_place = (A == C) ;
     GB_WERK_DECLARE (Count, uint64_t) ;
 
     GrB_Matrix T = NULL ;
-    GB_OK (GB_matrix_header_new (&T, header_memlane, data_memlane)) ;
+    GB_OK (GB_matrix_header_new (&T, data_arena, data_arena)) ;
 
     ASSERT_MATRIX_OK (A, "A input for GB_transpose", GB0) ;
     ASSERT_TYPE_OK_OR_NULL (ctype, "ctype for GB_transpose", GB0) ;
@@ -256,7 +255,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         GB_OK (GB_new_bix (&T, // hyper, existing header
             ctype, avdim, avlen, GB_ph_calloc, C_is_csc, GxB_HYPERSPARSE,
             true, A_hyper_switch, 1, 1, true, false,
-            Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane)) ;
+            Cp_is_32, Cj_is_32, Ci_is_32, data_arena, data_arena)) ;
         ASSERT_MATRIX_OK (T, "T empty", GB0) ;
 
     }
@@ -291,7 +290,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             info = GB_new (&T, // bitmap or full, existing header
                 ctype, avdim, avlen, GB_ph_null, C_is_csc,
                 T_sparsity, A_hyper_switch, 1, Cp_is_32, Cj_is_32, Ci_is_32,
-                header_memlane, data_memlane) ;
+                data_arena, data_arena) ;
             ASSERT (info == GrB_SUCCESS) ;
         }
         else
@@ -300,7 +299,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             GB_OK (GB_new_bix (&T, // bitmap or full, existing header
                 ctype, avdim, avlen, GB_ph_null, C_is_csc, T_sparsity, true,
                 A_hyper_switch, 1, anz_held, true, C_iso,
-                Cp_is_32, Cj_is_32, Ci_is_32, header_memlane, data_memlane)) ;
+                Cp_is_32, Cj_is_32, Ci_is_32, data_arena, data_arena)) ;
         }
 
         T->magic = GB_MAGIC ;
@@ -382,7 +381,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         info = GB_new (&T, // hyper; existing header
             ctype, 1, avlen, GB_ph_null, C_is_csc,
             GxB_HYPERSPARSE, A_hyper_switch, 0, Cp_is_32, Cj_is_32, Ci_is_32,
-            header_memlane, data_memlane) ;
+            data_arena, data_arena) ;
         ASSERT (info == GrB_SUCCESS) ;
 
         // allocate T->p, T->i, and optionally T->x, but not T->h
@@ -537,7 +536,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         info = GB_new (&T, // sparse; existing header
             ctype, avdim, 1, GB_ph_null, C_is_csc,
             GxB_SPARSE, A_hyper_switch, 0, Cp_is_32, Cj_is_32, Ci_is_32,
-            header_memlane, data_memlane) ;
+            data_arena, data_arena) ;
         ASSERT (info == GrB_SUCCESS) ;
 
         T->iso = C_iso ;    // OK
@@ -788,7 +787,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             if (T == NULL)
             {
                 // the CUDA branch may have freed the T header; reallocate it
-                GB_OK (GB_matrix_header_new (&T, header_memlane, data_memlane));
+                GB_OK (GB_matrix_header_new (&T, data_arena, data_arena)) ;
             }
 
             //------------------------------------------------------------------

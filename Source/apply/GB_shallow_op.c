@@ -45,9 +45,9 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     //--------------------------------------------------------------------------
 
     ASSERT (C != NULL) ;
-    int header_memlane = GB_memlane (C->header_mem) ;
-    int data_memlane = C->data_memlane ;
-    uint64_t mem = GB_mem (data_memlane, 0) ;
+    int header_arena = GB_arena (C->header_mem) ;
+    int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT_MATRIX_OK (A, "A for shallow_op", GB0) ;
     ASSERT_OP_OK (op, "unop/binop for shallow_op", GB0) ;
@@ -98,7 +98,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     info = GB_new (&C, // any sparsity, existing header
         ztype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         GB_sparsity (A), A->hyper_switch, 0,
-        A->p_is_32, A->j_is_32, A->i_is_32, header_memlane, data_memlane) ;
+        A->p_is_32, A->j_is_32, A->i_is_32, header_arena, data_arena) ;
     ASSERT (info == GrB_SUCCESS) ;
 
     //--------------------------------------------------------------------------
@@ -116,7 +116,6 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     C->i_is_32 = A->i_is_32 ;
     C->plen = A->plen ;                 // C and A have the same hyperlist sizes
     C->nvec = A->nvec ;
-//  C->nvec_nonempty = A->nvec_nonempty ;
     GB_nvec_nonempty_set (C, GB_nvec_nonempty_get (A)) ;
     C->jumbled = A->jumbled ;           // C is jumbled if A is jumbled
     C->nvals = A->nvals ;

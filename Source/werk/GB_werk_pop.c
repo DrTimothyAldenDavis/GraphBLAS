@@ -20,7 +20,7 @@ void *GB_werk_pop     // free the top block of werkspace memory
 (
     // input/output
     void *p,                    // werkspace to free
-    uint64_t *mem,              // memsize and memlane of p
+    uint64_t *mem,              // memsize and arena of p
     // input
     bool on_stack,              // true if werkspace is from Werk stack
     uint64_t nitems,            // # of items to allocate

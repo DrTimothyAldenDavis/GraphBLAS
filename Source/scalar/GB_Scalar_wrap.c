@@ -51,7 +51,7 @@ GrB_Scalar GB_Scalar_wrap   // create a new GrB_Scalar with one entry
     s->h = NULL ; s->h_mem = 0 ; s->h_shallow = false ;
     s->b = NULL ; s->b_mem = 0 ; s->b_shallow = false ;
     s->i = NULL ; s->i_mem = 0 ; s->i_shallow = false ;
-    s->x = Sx   ; s->x_mem = type->size ; // no memlane for static Sx entry
+    s->x = Sx   ; s->x_mem = GB_mem (0, type->size) ; // no arena for static Sx
     s->x_shallow = true ;
 
     s->Y = NULL ;

@@ -120,13 +120,13 @@ static inline bool GB_allocate_result
 //  (
 //      int64_t *p_Cnvec,           // # of vectors to compute in C
 //      void **Ch_handle,           // Ch: size Cnvec, or NULL
-//      uint64_t *Ch_mem_handle,            // memsize of Ch in bytes; memlane
+//      uint64_t *Ch_mem_handle,            // memsize of Ch in bytes; arena
 //      int64_t *restrict *C_to_M_handle,   // C_to_M: size Cnvec, or NULL
-//      uint64_t *C_to_M_mem_handle,        // memsize of C_to_M and memlane
+//      uint64_t *C_to_M_mem_handle,        // memsize of C_to_M and arena
 //      int64_t *restrict *C_to_A_handle,   // C_to_A: size Cnvec, or NULL
-//      uint64_t *C_to_A_mem_handle,        // memsize of C_to_A and memlane
+//      uint64_t *C_to_A_mem_handle,        // memsize of C_to_A and arena
 //      int64_t *restrict *C_to_B_handle,   // C_to_B: size Cnvec, or NULL
-//      uint64_t *C_to_B_mem_handle,        // memsize of C_to_A and memlane
+//      uint64_t *C_to_B_mem_handle,        // memsize of C_to_A and arena
 //      bool *p_Ch_is_Mh,           // if true, then Ch == Mh
 //      bool *p_Cp_is_32,           // if true, Cp is 32-bit; else 64-bit
 //      bool *p_Cj_is_32,           // if true, Ch is 32-bit; else 64-bit
@@ -135,7 +135,7 @@ static inline bool GB_allocate_result
 //      const GrB_Matrix M,         // optional mask, may be NULL; not compl.
 //      const GrB_Matrix A,         // first input matrix
 //      const GrB_Matrix B,         // second input matrix
-//      int data_memlane,           // memlane to use
+//      int data_arena,             // data arena to use
 //      GB_Werk Werk
 //  )
 
@@ -177,7 +177,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim)) ;
     ASSERT (GB_IMPLIES (M != NULL, A->vlen == M->vlen)) ;
 
-    uint64_t mem = GB_mem (data_memlane, 0) ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     //--------------------------------------------------------------------------
     // initializations and check for quick return

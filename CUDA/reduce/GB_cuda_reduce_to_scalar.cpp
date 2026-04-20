@@ -47,7 +47,7 @@ GrB_Info GB_cuda_reduce_to_scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    uint64_t mem = GB_mem (GB_MEMLANE_RMM, 0) ;
+    uint64_t mem = GB_mem (GB_ARENA_RMM, 0) ;
 
     GB_void *zscalar = NULL ;
     uint64_t zscalar_mem = mem ;
@@ -116,7 +116,7 @@ GrB_Info GB_cuda_reduce_to_scalar
             /* bitmap_calloc: */ false, /* hyper_switch: */ 0,
             /* plen: */ -1, /* nzmax: */ gridsz, /* numeric: */ true,
             /* iso: */ false, /* pji_is_32: */ false, false, false,
-            GB_MEMLANE_RMM, GB_MEMLANE_RMM)) ;
+            GB_ARENA_RMM, GB_ARENA_RMM)) ;
     }
 
     GBURBLE ("(cuda reduce launch %d threads in %d blocks)",

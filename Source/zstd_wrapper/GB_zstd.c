@@ -18,10 +18,10 @@
 
 void *ZSTD_malloc (size_t s)
 {
-    int memlane = 0 ;   // FIXME
+    int arena = 0 ;   // FIXME arena
     // printf ("calling ZSTD_malloc\n") ;
-    return (malloc (s)) ;       // FIXME use memlane 0; never mxMalloc
-    // return (GB_Global_malloc_function (s, memlane)) ;
+    return (malloc (s)) ;       // FIXME arena: use arena 0; never mxMalloc
+    // return (GB_Global_malloc_function (s, arena)) ;
 }
 
 void *ZSTD_calloc (size_t n, size_t s)
@@ -31,20 +31,20 @@ void *ZSTD_calloc (size_t n, size_t s)
     bool ok = GB_Size_t_multiply (&ns, n, s) ;
     if (!ok) return (NULL) ;
     // malloc the space and then use memset to clear it
-    int memlane = 0 ;   // FIXME
+    int arena = 0 ;   // FIXME arena
     // printf ("calling ZSTD_malloc for calloc\n") ;
-    // void *p = GB_Global_malloc_function (ns, memlane) ;
-    void *p = malloc (ns) ;     // FIXME: use memlane 0; never mxCalloc
+    // void *p = GB_Global_malloc_function (ns, arena) ;
+    void *p = malloc (ns) ;     // FIXME arena: use arena 0; never mxCalloc
     if (p != NULL) memset (p, 0, ns) ;
     return (p) ;
 }
 
 void ZSTD_free (void *p)
 {
-    int memlane = 0 ;   // FIXME
+    int arena = 0 ;   // FIXME arena
     // printf ("calling ZSTD_free\n") ;
-    // GB_Global_free_function (p, memlane) ;
-    free (p) ;      // FIXME: use memlane 0; never mxFree
+    // GB_Global_free_function (p, arena) ;
+    free (p) ;      // FIXME arena: use arena 0; never mxFree
 }
 
 // ZSTD uses switch statements with no default case.

@@ -183,7 +183,7 @@ void mexFunction
 
     // K is a shallow copy of M, except for its numerical values
     GrB_Matrix K = NULL ;
-    OK (GB_matrix_header_new (&K, GB_MEMLANE_MATLAB, GB_MEMLANE_MATLAB)) ;
+    OK (GB_matrix_header_new (&K, GB_ARENA_MATLAB, GB_ARENA_MATLAB)) ;
 
     OK (GB_shallow_copy (K, GxB_BY_COL, M, NULL)) ;
     OK (GrB_Matrix_get_INT32 (K, &sparsity, GxB_SPARSITY_STATUS)) ;
@@ -191,8 +191,8 @@ void mexFunction
 
     // Kx = uint64 (0:mnz-1)
     size_t Kx_memsize = (MAX (mnz, 1) * sizeof (uint64_t)) ;
-    uint64_t Kx_mem = GB_mem (GB_MEMLANE_MATLAB, Kx_memsize) ;
-    uint64_t *Kx = mxMalloc (Kx_memsize) ;  // same as GB_MEMLANE_MATLAB
+    uint64_t Kx_mem = GB_mem (GB_ARENA_MATLAB, Kx_memsize) ;
+    uint64_t *Kx = mxMalloc (Kx_memsize) ;  // same as GB_ARENA_MATLAB
     GB_helper7 (Kx, mnz) ;
 
     // add a new K->x to K
