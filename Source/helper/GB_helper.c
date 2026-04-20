@@ -404,7 +404,15 @@ double GB_helper10       // norm (x-y,p), or -1 on error
 // persistent Container
 //------------------------------------------------------------------------------
 
+// FIXME arena:  when mxMalloc/mxFree is moved to GB_ARENA_MATLAB,
+// change these methods to use GB_ARENA_DEFAULT.
+
 static GxB_Container Container = NULL ;
+
+GxB_Container GB_helper_container (void)    // return the global Container
+{
+    return (Container) ;
+}
 
 static GrB_Vector GB_helper_component (void)
 {
@@ -424,11 +432,6 @@ static GrB_Vector GB_helper_component (void)
     }
     ASSERT_VECTOR_OK (p, "container component", GB0) ;
     return (p) ;
-}
-
-GxB_Container GB_helper_container (void)    // return the global Container
-{
-    return (Container) ;
 }
 
 void GB_helper_container_new (void)         // allocate the global Container

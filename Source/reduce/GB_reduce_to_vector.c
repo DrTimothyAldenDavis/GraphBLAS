@@ -171,7 +171,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
                 "1st",                  // a simple name for FIRST_UDT
                 NULL,                   // no op->defn for FIRST_UDT
                 GB_FIRST_binop_code,    // using a built-in opcode
-                GB_ARENA_DEFAULT) ;     // arena not used (static header)
+                0) ;                    // arena not used (static header)
             break ;
     }
 

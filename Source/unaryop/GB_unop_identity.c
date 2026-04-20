@@ -53,7 +53,7 @@ GB_Operator GB_unop_identity    // return IDENTITY operator, or NULL on error
                 type->name,     // name is same as the type
                 NULL,           // no op->defn
                 GB_IDENTITY_unop_code,  // using a built-in opcode
-                GB_ARENA_DEFAULT) ;     // arena not used
+                0) ;            // arena not used (static header)
             ASSERT (info == GrB_SUCCESS) ;
             return ((GB_Operator) op) ;
         }

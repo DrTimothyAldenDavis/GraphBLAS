@@ -1476,7 +1476,7 @@ GB_GLOBAL GrB_IndexUnaryOp
 // for floating-point types). They only affect the time and memory usage of the
 // computations.
 
-/* FIXME: add GrB get/set to move a matrix between arenas:
+/* FIXME arena: add GrB get/set to move a matrix between arenas:
 
     changes the data arena only:
     GrB_Matrix_set_INT32 (A, arena, GxB_DATA_ARENA) ;
@@ -6841,7 +6841,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 // level 1).
 
 #ifndef GRAPHBLAS_VANILLA
-// FIXME: GxB_Matrix_serialize: **blob_handle: use Context data arena
+// FIXME arena: GxB_Matrix_serialize: **blob_handle: use Context data arena
 GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 (
     // output:
@@ -6866,7 +6866,7 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 ) ;
 
 #ifndef GRAPHBLAS_VANILLA
-// FIXME: GxB_Vector_serialize: **blob_handle: use Context data arena
+// FIXME arena: GxB_Vector_serialize: **blob_handle: use Context data arena
 GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
 (
     // output:
@@ -6892,7 +6892,7 @@ GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
 // deserialize methods simply add the descriptor, which allows for optional
 // control of the # of threads used to deserialize the blob.
 
-// FIXME: deserialize to Context header and data arenas
+// FIXME arena: deserialize to Context header and data arenas
 #ifndef GRAPHBLAS_VANILLA
 GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
 (

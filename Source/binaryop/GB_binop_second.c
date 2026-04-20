@@ -60,7 +60,7 @@ GrB_BinaryOp GB_binop_second    // return SECOND operator, or NULL on error
                 type->name,           // same name as type
                 NULL,                 // no op->defn for the SECOND_UDT operator
                 GB_SECOND_binop_code, // using a built-in opcode
-                GB_ARENA_DEFAULT) ;   // arena not used (static header)
+                0) ;                  // arena not used (static header)
             ASSERT (info == GrB_SUCCESS) ;
             if (GB_Global_burble_get ( ))
             { 
