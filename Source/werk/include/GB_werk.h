@@ -101,10 +101,10 @@ void *GB_werk_pop     // free the top block of werkspace memory
 //------------------------------------------------------------------------------
 
 // declare a werkspace X of a given type
-#define GB_WERK_DECLARE(X,type)                                     \
+#define GB_WERK_DECLARE(X,type,mem)                                 \
     type *restrict X = NULL ;                                       \
     bool X ## _on_stack = false ;                                   \
-    uint64_t X ## _nitems = 0, X ## _mem = 0 ; /* FIXME arena */
+    uint64_t X ## _nitems = 0, X ## _mem = mem ;
 
 // push werkspace X
 #define GB_WERK_PUSH(X,nitems,type)                                 \

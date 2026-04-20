@@ -239,6 +239,7 @@
 #define GB_conform GM_conform
 #define GB_conform_hyper GM_conform_hyper
 #define GB_container_component_new GM_container_component_new
+#define GB_Container_new GM_Container_new
 #define GB_Context_check GM_Context_check
 #define GB_Context_chunk_get GM_Context_chunk_get
 #define GB_Context_chunk GM_Context_chunk

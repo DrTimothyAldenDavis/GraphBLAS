@@ -68,6 +68,9 @@ GrB_Info GB_ijproperties        // check I and determine its properties
     ASSERT (limit <= GB_NMAX) ;
     int64_t imin, imax ;
 
+    int data_arena = 0 ;    // FIXME arena param
+    uint64_t mem = GB_mem (data_arena, 0) ;
+
     //--------------------------------------------------------------------------
     // scan I
     //--------------------------------------------------------------------------
@@ -204,8 +207,8 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         imax = -1 ;
 
         // allocate workspace for imin and imax
-        GB_WERK_DECLARE (Work_imin, int64_t) ;
-        GB_WERK_DECLARE (Work_imax, int64_t) ;
+        GB_WERK_DECLARE (Work_imin, int64_t, mem) ;
+        GB_WERK_DECLARE (Work_imax, int64_t, mem) ;
         GB_WERK_PUSH (Work_imin, ntasks, int64_t) ;
         GB_WERK_PUSH (Work_imax, ntasks, int64_t) ;
         if (Work_imin == NULL || Work_imax == NULL)

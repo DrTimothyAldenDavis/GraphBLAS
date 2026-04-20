@@ -306,7 +306,8 @@ static GrB_Info GB_msort_3_method    // sort array A of size 3-by-n
     GB_A1_t *restrict A_1,      // size n array
     GB_A2_t *restrict A_2,      // size n array
     const int64_t n,
-    int nthreads                // # of threads to use
+    int nthreads,               // # of threads to use
+    const int data_arena        // arena for workspace
 )
 {
 
@@ -332,7 +333,6 @@ static GrB_Info GB_msort_3_method    // sort array A of size 3-by-n
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    int data_arena = 0 ;   // FIXME arena param
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     GB_A0_t *restrict W_0 = NULL ; uint64_t W_0_mem = mem ;

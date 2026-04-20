@@ -93,6 +93,9 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // check inputs
     //--------------------------------------------------------------------------
 
+    int data_arena = 0 ;        // FIXME arena param
+    uint64_t mem = GB_mem (data_arena, 0) ;
+
     ASSERT_MATRIX_OK_OR_NULL (M, "M for flop count A*B", GB0) ;
     ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
@@ -186,8 +189,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // declare workspace
     //--------------------------------------------------------------------------
 
-    GB_WERK_DECLARE (Work, uint64_t) ;
-    GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (Work, uint64_t, mem) ;
+    GB_WERK_DECLARE (B_ek_slicing, int64_t, mem) ;
 
     //--------------------------------------------------------------------------
     // construct the parallel tasks

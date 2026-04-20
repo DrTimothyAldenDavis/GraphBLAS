@@ -115,8 +115,10 @@ void *GX_werk_pop     /* free the top block of werkspace memory */          \
 #define GB_CALLBACK_WERK_PUSH_PROTO(GX_werk_push)                           \
 void *GX_werk_push    /* return pointer to newly allocated space */         \
 (                                                                           \
+    /* input/output */                                                      \
+    uint64_t *p_mem,    /* input: arena to use, as GB_mem (data_arena, 0) */\
+                        /* output: memsize and arena of allocated space */  \
     /* output */                                                            \
-    uint64_t *p_mem,            /* memsize and arena of p */                \
     bool *on_stack,             /* true if werkspace is from Werk stack */  \
     /* input */                                                             \
     uint64_t nitems,            /* # of items to allocate */                \

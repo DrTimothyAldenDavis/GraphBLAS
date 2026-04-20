@@ -80,8 +80,13 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
-    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
+    ASSERT (R != NULL) ;
+    int header_arena = GB_arena (R->header_mem) ;
+    int data_arena = R->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
+
+    GB_WERK_DECLARE (C_ek_slicing, int64_t, mem) ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t, mem) ;
     int C_nthreads = 0, C_ntasks = 0 ;
     int M_nthreads = 0, M_ntasks = 0 ;
 
@@ -106,13 +111,8 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;
     ASSERT (C->type == Z->type) ;
 
-    ASSERT (R != NULL) ;
-
     ASSERT (Rp_handle != NULL) ;
     ASSERT (Rh_handle != NULL) ;
-
-    int header_arena = GB_arena (R->header_mem) ;
-    int data_arena = R->data_arena ;
 
     GB_MDECL (Rp, , u) ;
     Rp = (*Rp_handle) ;

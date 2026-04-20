@@ -718,7 +718,7 @@ static GrB_Info GB_SORT (mtx)
     int64_t    *restrict W   = NULL ; uint64_t W_mem   = mem ;
     int64_t *restrict C_skipped = NULL ;
     uint64_t C_skipped_mem = mem ;
-    GB_WERK_DECLARE (SortTasks, int64_t) ;
+    GB_WERK_DECLARE (SortTasks, int64_t, mem) ;
 
     #if GB_SORT_UDT
     // get typesize, and function pointers for operators and typecasting

@@ -232,6 +232,8 @@ GrB_Info GB_subref_phase0
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT_MATRIX_OK (A, "A for subref phase 0", GB0) ;
@@ -247,8 +249,7 @@ GrB_Info GB_subref_phase0
     ASSERT (I != NULL) ;
     ASSERT (J != NULL) ;
 
-    GrB_Info info ;
-    GB_WERK_DECLARE (Count, uint64_t) ;
+    GB_WERK_DECLARE (Count, uint64_t, mem) ;
     GB_MDECL (Ch, , u) ; uint64_t Ch_mem = mem ;
 
     void *Ap_start = NULL ; uint64_t Ap_start_mem = mem ;

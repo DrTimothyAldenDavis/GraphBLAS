@@ -38,6 +38,10 @@ GrB_Info GB_extract_vector_list // extract vector list from a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (A != NULL) ;
+    int data_arena = A->data_arena ;            // FIXME arena param instead
+    uint64_t mem = GB_mem (data_arena, 0) ;
+
     ASSERT (J != NULL) ;
     ASSERT (A != NULL) ;
     ASSERT (GB_JUMBLED_OK (A)) ;        // pattern not accessed
@@ -65,7 +69,7 @@ GrB_Info GB_extract_vector_list // extract vector list from a matrix
     // slice the entries for each task
     //--------------------------------------------------------------------------
 
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t, mem) ;
     int A_ntasks, A_nthreads ;
     GB_SLICE_MATRIX (A, 2) ;
 

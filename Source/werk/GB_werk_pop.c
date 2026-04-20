@@ -51,8 +51,9 @@ GB_CALLBACK_WERK_POP_PROTO (GB_werk_pop)
     else
     { 
         // werkspace was allocated from malloc
+        int data_arena = GB_arena (*mem) ;
         GB_free_memory (&p, *mem) ;
-        (*mem) = 0 ;
+        (*mem) = GB_mem (data_arena, 0) ;
     }
     return (NULL) ;                 // return NULL to indicate p was freed
 }

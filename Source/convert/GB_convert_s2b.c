@@ -45,7 +45,7 @@ GrB_Info GB_convert_s2b         // convert sparse/hypersparse to bitmap
     int data_arena = A->data_arena ;
     uint64_t mem = GB_mem (data_arena, 0) ;
 
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t, mem) ;
     int8_t  *restrict Cb      = NULL ; uint64_t Cb_mem = mem ;
     GB_void *restrict Cx_new  = NULL ; uint64_t Cx_mem = mem ;
     GB_void *restrict Ax_keep = NULL ;

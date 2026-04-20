@@ -138,5 +138,35 @@ static inline GrB_Info GB_matrix_header_new
     return (GrB_SUCCESS) ;
 }
 
+//------------------------------------------------------------------------------
+// GB_VECTOR_OK, GB_SCALAR_OK: check if typecast from GrB_Matrix is OK
+//------------------------------------------------------------------------------
+
+// The internal content of a GrB_Matrix and GrB_Vector are identical, and
+// inside SuiteSparse:GraphBLAS, they can be typecasted between each other.
+// This typecasting feature should not be done in user code, however, since it
+// is not supported in the API.  All GrB_Vector objects can be safely
+// typecasted into a GrB_Matrix, but not the other way around.  The GrB_Vector
+// object is more restrictive.  The GB_VECTOR_OK(v) macro defines the content
+// that all GrB_Vector objects must have.
+
+// GB_VECTOR_OK(v) is used mainly for assertions, but also to determine when it
+// is safe to typecast an n-by-1 GrB_Matrix (in standard CSC format) into a
+// GrB_Vector.  The macro is also used in GB_Vector_check, to ensure the
+// content of a GrB_Vector is valid.
+
+#define GB_VECTOR_OK(v)                     \
+(                                           \
+    ((v) != NULL) &&                        \
+    ((v)->is_csc == true) &&                \
+    ((v)->plen == 1 || (v)->plen == -1) &&  \
+    ((v)->vdim == 1) &&                     \
+    ((v)->nvec == 1) &&                     \
+    ((v)->h == NULL)                        \
+)
+
+// A GxB_Vector is a GrB_Vector of length 1
+#define GB_SCALAR_OK(v) (GB_VECTOR_OK(v) && ((v)->vlen == 1))
+
 #endif
 

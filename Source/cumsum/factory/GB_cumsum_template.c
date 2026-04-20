@@ -82,8 +82,8 @@
             //------------------------------------------------------------------
 
             // allocate workspace
-            GB_WERK_DECLARE (ws, uint64_t) ;
-            GB_WERK_DECLARE (wk, uint64_t) ;
+            GB_WERK_DECLARE (ws, uint64_t, mem) ;
+            GB_WERK_DECLARE (wk, uint64_t, mem) ;
             GB_WERK_PUSH (ws, nthreads, uint64_t) ;
             GB_WERK_PUSH (wk, nthreads, uint64_t) ;
             if (ws == NULL || wk == NULL)
@@ -200,7 +200,7 @@
             //------------------------------------------------------------------
 
             // allocate workspace
-            GB_WERK_DECLARE (ws, GB_WS_TYPE) ;
+            GB_WERK_DECLARE (ws, GB_WS_TYPE, mem) ;
             GB_WERK_PUSH (ws, nthreads, GB_WS_TYPE) ;
             if (ws == NULL)
             { 

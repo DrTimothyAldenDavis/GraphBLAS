@@ -33,6 +33,9 @@ bool GB_cumsum_float            // cumulative sum of an array
     ASSERT (count != NULL) ;
     ASSERT (n >= 0) ;
 
+    int data_arena = 0 ;        // FIXME arena param
+    uint64_t mem = GB_mem (data_arena, 0) ;
+
     //--------------------------------------------------------------------------
     // determine # of threads to use
     //--------------------------------------------------------------------------

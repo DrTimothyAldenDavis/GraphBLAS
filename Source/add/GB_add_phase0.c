@@ -212,7 +212,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     int64_t *restrict C_to_A = NULL ; uint64_t C_to_A_mem = mem ;
     int64_t *restrict C_to_B = NULL ; uint64_t C_to_B_mem = mem ;
 
-    GB_WERK_DECLARE (Work, int64_t) ;
+    GB_WERK_DECLARE (Work, int64_t, mem) ;
     int ntasks = 0 ;
 
     //--------------------------------------------------------------------------

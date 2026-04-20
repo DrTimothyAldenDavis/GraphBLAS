@@ -61,11 +61,12 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
 
     int header_arena = GB_arena (C->header_mem) ;
     int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (!GB_IS_BITMAP (A)) ;        // TODO: ok for now
     ASSERT (!GB_IS_BITMAP (D)) ;
     ASSERT (!GB_IS_FULL (D)) ;
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t, mem) ;
 
     GBURBLE ("(%s=%s*%s) ",
         GB_sparsity_char_matrix (A),    // C has the sparsity structure of A

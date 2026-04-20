@@ -96,9 +96,9 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
-    GB_WERK_DECLARE (A_slice, int64_t) ;            // size nthreads+1
-    GB_WERK_DECLARE (Workspaces, void *) ;          // size nworkspaces
-    GB_WERK_DECLARE (Workspaces_mems, uint64_t) ;   // size nworkspaces
+    GB_WERK_DECLARE (A_slice, int64_t, mem) ;            // size nthreads+1
+    GB_WERK_DECLARE (Workspaces, void *, mem) ;          // size nworkspaces
+    GB_WERK_DECLARE (Workspaces_mems, uint64_t, mem) ;   // size nworkspaces
 
     //--------------------------------------------------------------------------
     // get A

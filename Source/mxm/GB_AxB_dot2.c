@@ -72,9 +72,9 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     GrB_Info info ;
 
     ASSERT (C != NULL) ;
-
     int header_arena = GB_arena (C->header_mem) ;
     int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M_in, "M for dot A'*B", GB0) ;
     ASSERT_MATRIX_OK (A_in, "A for dot A'*B", GB0) ;
@@ -95,9 +95,9 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     GrB_Matrix M = NULL, Mwork = NULL ;
     GrB_Matrix A = NULL, Awork = NULL ;
     GrB_Matrix B = NULL, Bwork = NULL ;
-    GB_WERK_DECLARE (A_slice, int64_t) ;
-    GB_WERK_DECLARE (B_slice, int64_t) ;
-    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (A_slice, int64_t, mem) ;
+    GB_WERK_DECLARE (B_slice, int64_t, mem) ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t, mem) ;
 
     // GB_AxB_saxpy punts to this dot2 method for for C=A*B, and in this case,
     // A is bitmap or full, and B is hypersparse or sparse

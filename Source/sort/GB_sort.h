@@ -241,7 +241,8 @@ GrB_Info GB_msort_1     // sort array A of size 1-by-n
     void *restrict A_0,         // size n array
     bool A0_is_32,              // if true: A_0 is uint32, else uint64
     const int64_t n,
-    int nthreads_max            // max # of threads to use
+    int nthreads_max,           // max # of threads to use
+    const int data_arena        // arena for workspace
 ) ;
 
 GrB_Info GB_msort_2     // sort array A of size 2-by-n
@@ -251,7 +252,8 @@ GrB_Info GB_msort_2     // sort array A of size 2-by-n
     void *restrict A_1,         // size n array
     bool A1_is_32,              // if true: A_1 is uint32, else uint64
     const int64_t n,
-    int nthreads_max            // max # of threads to use
+    int nthreads_max,           // max # of threads to use
+    const int data_arena        // arena for workspace
 ) ;
 
 GrB_Info GB_msort_3     // sort array A of size 3-by-n
@@ -263,7 +265,8 @@ GrB_Info GB_msort_3     // sort array A of size 3-by-n
     void *restrict A_2,         // size n array
     bool A2_is_32,              // if true: A_2 is uint32, else uint64
     const int64_t n,
-    int nthreads_max            // max # of threads to use
+    int nthreads_max,           // max # of threads to use
+    const int data_arena        // arena for workspace
 ) ;
 
 //------------------------------------------------------------------------------

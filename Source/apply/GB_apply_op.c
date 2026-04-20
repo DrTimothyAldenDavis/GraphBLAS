@@ -53,7 +53,11 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     ASSERT_MATRIX_OK (A, "A input for GB_apply_op", GB0) ;
     ASSERT (GB_JUMBLED_OK (A)) ;        // A can be jumbled
     ASSERT (!GB_ZOMBIES (A)) ;
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+
+    int data_arena = 0 ;    // FIXME arena param
+    uint64_t mem = GB_mem (data_arena, 0) ;
+
+    GB_WERK_DECLARE (A_ek_slicing, int64_t, mem) ;
     ASSERT (GB_IMPLIES (op != NULL, ctype == op->ztype)) ;
     ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_apply_op", GB0) ;
 

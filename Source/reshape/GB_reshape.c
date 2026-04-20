@@ -73,7 +73,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
     bool I_work_is_32 = false ;
     bool J_work_is_32 = false ;
 
-    GB_WERK_DECLARE (T_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (T_ek_slicing, int64_t, mem) ;
     GrB_Matrix C = NULL, T = NULL ;
 
     bool in_place = (Chandle == NULL) ;

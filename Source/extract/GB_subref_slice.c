@@ -113,7 +113,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     (*p_Cwork_mem) = 0 ;
 
     uint64_t *restrict Cwork = NULL ; uint64_t Cwork_mem = mem ;
-    GB_WERK_DECLARE (Coarse, int64_t) ;     // size ntasks1+1
+    GB_WERK_DECLARE (Coarse, int64_t, mem) ;     // size ntasks1+1
     int ntasks1 = 0 ;
     GrB_Matrix R = NULL ;
 

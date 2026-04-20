@@ -262,7 +262,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    GB_WERK_DECLARE (Work, int64_t) ;
+    GB_WERK_DECLARE (Work, int64_t, mem) ;
     GB_WERK_PUSH (Work, 5*(nthreads+1), int64_t) ;
     if (Work == NULL)
     { 
@@ -678,12 +678,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
             { 
                 // K_work is NULL; only sort (j,i)
                 GB_OK (GB_msort_2 (J_work, J_is_32, I_work, I_is_32, nvals,
-                    nthreads)) ;
+                    nthreads, data_arena)) ;
             }
             else
             { 
                 GB_OK (GB_msort_3 (J_work, J_is_32, I_work, I_is_32,
-                    K_work, K_is_32, nvals, nthreads)) ;
+                    K_work, K_is_32, nvals, nthreads, data_arena)) ;
             }
 
         }
@@ -697,12 +697,13 @@ GrB_Info GB_builder                 // build a matrix from tuples
             if (S_iso)
             { 
                 // K_work is NULL; only sort (i)
-                GB_OK (GB_msort_1 (I_work, I_is_32, nvals, nthreads)) ;
+                GB_OK (GB_msort_1 (I_work, I_is_32, nvals,
+                    nthreads, data_arena)) ;
             }
             else
             { 
                 GB_OK (GB_msort_2 (I_work, I_is_32, K_work, K_is_32, nvals,
-                    nthreads)) ;
+                    nthreads, data_arena)) ;
             }
         }
     }

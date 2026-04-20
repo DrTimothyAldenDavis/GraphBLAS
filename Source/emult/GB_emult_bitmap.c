@@ -99,10 +99,11 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (C != NULL) ;
 
+    ASSERT (C != NULL) ;
     int header_arena = GB_arena (C->header_mem) ;
     int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT_MATRIX_OK (A, "A for bitmap emult ", GB0) ;
     ASSERT_MATRIX_OK (B, "B for bitmap emult ", GB0) ;
@@ -116,7 +117,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // declare workspace
     //--------------------------------------------------------------------------
 
-    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t, mem) ;
     int M_ntasks = 0 ; int M_nthreads = 0 ;
 
     //--------------------------------------------------------------------------

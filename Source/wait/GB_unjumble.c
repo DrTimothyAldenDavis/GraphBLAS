@@ -28,6 +28,9 @@ GrB_Info GB_unjumble        // unjumble a matrix
     ASSERT (!GB_ZOMBIES (A)) ;      // zombies must be killed first
     ASSERT (GB_PENDING_OK (A)) ;    // pending tuples are not modified
 
+    int data_arena = A->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
+
     GB_nvec_nonempty_update (A) ;
 
     if (!A->jumbled)
@@ -67,7 +70,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     // slice the work
     //--------------------------------------------------------------------------
 
-    GB_WERK_DECLARE (A_slice, int64_t) ;
+    GB_WERK_DECLARE (A_slice, int64_t, mem) ;
     GB_WERK_PUSH (A_slice, ntasks + 1, int64_t) ;
     if (A_slice == NULL)
     { 

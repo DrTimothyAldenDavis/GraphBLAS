@@ -215,7 +215,7 @@
     uint64_t mem = GB_mem (data_arena, 0) ;                                 \
     int taskid, ntasks = 0, nthreads = 0 ;                                  \
     GB_task_struct *TaskList = NULL ; uint64_t TaskList_mem = mem ;         \
-    GB_WERK_DECLARE (Npending, int64_t) ;                                   \
+    GB_WERK_DECLARE (Npending, int64_t, mem) ;                              \
     GB_MDECL (Zh, , u) ; uint64_t Zh_mem = mem ;                            \
     int64_t *restrict Z_to_X = NULL ; uint64_t Z_to_X_mem = mem ;           \
     int64_t *restrict Z_to_S = NULL ; uint64_t Z_to_S_mem = mem ;           \
@@ -1782,12 +1782,12 @@
     int header_arena = GB_arena (C->header_mem) ;  /* FIXME arena: needed?*/\
     int data_arena = C->data_arena ;                                        \
     uint64_t mem = GB_mem (data_arena, 0) ;                                 \
-    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;                               \
+    GB_WERK_DECLARE (M_ek_slicing, int64_t, mem) ;                          \
     int M_ntasks = 0, M_nthreads = 0 ;                                      \
     GB_task_struct *TaskList_IxJ = NULL ;                                   \
     uint64_t TaskList_IxJ_mem = mem ;                                       \
     int ntasks_IxJ = 0, nthreads_IxJ = 0 ;                                  \
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;                               \
+    GB_WERK_DECLARE (A_ek_slicing, int64_t, mem) ;                          \
     int A_ntasks = 0, A_nthreads = 0 ;                                      \
     /* C matrix: */                                                         \
     ASSERT_MATRIX_OK (C, "C for bitmap assign", GB0) ;                      \

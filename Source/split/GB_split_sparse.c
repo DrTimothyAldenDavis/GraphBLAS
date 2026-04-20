@@ -39,11 +39,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    int A_sparsity = GB_sparsity (A) ;
-    bool A_is_hyper = (A_sparsity == GxB_HYPERSPARSE) ;
-    ASSERT (A_is_hyper || A_sparsity == GxB_SPARSE) ;
-    GrB_Matrix C = NULL ;
-    GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
+
     ASSERT_MATRIX_OK (A, "A sparse for split", GB0) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
@@ -52,6 +48,12 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     int header_arena = GB_Context_header_arena ( ) ;
     int data_arena = GB_Context_data_arena ( ) ;
     uint64_t mem = GB_mem (data_arena, 0) ;
+
+    int A_sparsity = GB_sparsity (A) ;
+    bool A_is_hyper = (A_sparsity == GxB_HYPERSPARSE) ;
+    ASSERT (A_is_hyper || A_sparsity == GxB_SPARSE) ;
+    GrB_Matrix C = NULL ;
+    GB_WERK_DECLARE (C_ek_slicing, int64_t, mem) ;
 
     int sparsity_control = A->sparsity_control ;
     float hyper_switch = A->hyper_switch ;

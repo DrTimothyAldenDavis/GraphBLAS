@@ -95,7 +95,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
     (*p_nthreads  ) = 1 ;
 
     GB_MDECL (Cwork, , u) ; uint64_t Cwork_mem = mem ;
-    GB_WERK_DECLARE (Coarse, int64_t) ;     // size ntasks1+1
+    GB_WERK_DECLARE (Coarse, int64_t, mem) ;     // size ntasks1+1
     int ntasks1 = 0 ;
 
     //--------------------------------------------------------------------------

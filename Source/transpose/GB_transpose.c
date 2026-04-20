@@ -82,7 +82,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     bool in_place = (A == C) ;
-    GB_WERK_DECLARE (Count, uint64_t) ;
+    GB_WERK_DECLARE (Count, uint64_t, mem) ;
 
     GrB_Matrix T = NULL ;
     GB_OK (GB_matrix_header_new (&T, data_arena, data_arena)) ;

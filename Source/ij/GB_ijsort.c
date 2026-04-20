@@ -67,8 +67,8 @@ GrB_Info GB_ijsort
     ASSERT (I2k_is_32_handle != NULL) ;
     ASSERT (I2k_mem_handle != NULL) ;
 
-    int arena = 0 ;   // FIXME arena param
-    uint64_t mem = GB_mem (arena, 0) ;
+    int data_arena = 0 ;   // FIXME arena param
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     //--------------------------------------------------------------------------
     // declare workspace and get inputs
@@ -78,7 +78,7 @@ GrB_Info GB_ijsort
     GB_MDECL (I2k, , u) ; uint64_t I2k_mem = mem ;
     GB_MDECL (I1 , , u) ; uint64_t I1_mem  = mem ;
     GB_MDECL (I1k, , u) ; uint64_t I1k_mem = mem ;
-    GB_WERK_DECLARE (W, uint64_t) ;
+    GB_WERK_DECLARE (W, uint64_t, mem) ;
 
     ASSERT (ni > 1) ;
     int ntasks = 0 ;
@@ -144,7 +144,8 @@ GrB_Info GB_ijsort
     // sort [I1 I1k]
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_msort_2 (I1, I1_is_32, I1k, I1k_is_32, ni, nthreads)) ;
+    GB_OK (GB_msort_2 (I1, I1_is_32, I1k, I1k_is_32, ni, nthreads,
+        data_arena)) ;
 
     //--------------------------------------------------------------------------
     // count unique entries in I1

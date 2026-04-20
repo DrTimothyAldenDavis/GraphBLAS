@@ -108,10 +108,11 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     int header_arena = GB_arena (C->header_mem) ;
     int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
-    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
-    GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t, mem) ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t, mem) ;
+    GB_WERK_DECLARE (B_ek_slicing, int64_t, mem) ;
 
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Ch_handle != NULL) ;

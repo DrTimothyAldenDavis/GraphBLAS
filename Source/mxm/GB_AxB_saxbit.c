@@ -92,9 +92,9 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
 
     int8_t  *restrict Wf  = NULL ; uint64_t Wf_mem = mem ;
     GB_void *restrict Wcx = NULL ; uint64_t Wcx_mem = mem ;
-    GB_WERK_DECLARE (H_slice, int64_t) ;
-    GB_WERK_DECLARE (A_slice, int64_t) ;
-    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (H_slice, int64_t, mem) ;
+    GB_WERK_DECLARE (A_slice, int64_t, mem) ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t, mem) ;
 
     int M_nthreads = 0 ;
     int M_ntasks = 0 ;

@@ -15,8 +15,10 @@
 #ifdef comments_only
 void *GB_werk_push    // return pointer to newly allocated space
 (
+    // input/output
+    uint64_t *p_mem,        // input: arena to use, as GB_mem (data_arena, 0)
+                            // output: memsize and arena of allocated space
     // output
-    uint64_t *p_mem,        // memsize and arena of allocated space
     bool *on_stack,         // true if werkspace is from Werk stack
     // input
     uint64_t nitems,        // # of items to allocate
@@ -34,9 +36,6 @@ GB_CALLBACK_WERK_PUSH_PROTO (GB_werk_push)
 
     ASSERT (on_stack != NULL) ;
     ASSERT (p_mem != NULL) ;
-
-    int data_arena = 0 ;   // FIXME arena from Context
-    uint64_t mem = GB_mem (data_arena, 0) ;
 
     //--------------------------------------------------------------------------
     // determine where to allocate the werkspace
@@ -67,18 +66,19 @@ GB_CALLBACK_WERK_PUSH_PROTO (GB_werk_push)
     // allocate the werkspace
     //--------------------------------------------------------------------------
 
+    // FIXME arena: use -1 for the stack arena? and static space?
+
     if (*on_stack)
     { 
         // allocate the werkspace from the Werk stack
         GB_void *p = Werk->Stack + Werk->pwerk ;
         Werk->pwerk += (int) memsize ;
-        (*p_mem) = GB_mem (0, memsize) ;
+        (*p_mem) = GB_mem (0, memsize) ;    // on stack, not arena 0
         return ((void *) p) ;
     }
     else
     { 
         // allocate the werkspace from malloc
-        (*p_mem) = mem ;
         void *p = GB_MALLOC_MEMORY (nitems, size_of_item, p_mem) ;
         return (p) ;
     }

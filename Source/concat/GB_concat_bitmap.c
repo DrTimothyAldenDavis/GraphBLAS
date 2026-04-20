@@ -43,8 +43,9 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
 
     ASSERT (C != NULL) ;
     int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t, mem) ;
     GrB_Matrix T = NULL ;
 
     GrB_Type ctype = C->type ;

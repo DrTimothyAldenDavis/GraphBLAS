@@ -68,8 +68,8 @@ GrB_Info GB_select_sparse
 
     GrB_Info info ;
     void *Zp = NULL ; uint64_t Zp_mem = mem ;
-    GB_WERK_DECLARE (Work, uint64_t) ;
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (Work, uint64_t, mem) ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t, mem) ;
 
     GB_Opcode opcode = op->opcode ;
     const bool A_iso = A->iso ;

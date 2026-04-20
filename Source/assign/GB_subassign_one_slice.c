@@ -135,7 +135,7 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
     // allocate the initial TaskList
     //--------------------------------------------------------------------------
 
-    GB_WERK_DECLARE (Coarse, int64_t) ;     // size ntasks1+1
+    GB_WERK_DECLARE (Coarse, int64_t, mem) ;     // size ntasks1+1
     int ntasks1 = 0 ;
     int nthreads = GB_nthreads (mnz, chunk, nthreads_max) ;
     GB_task_struct *restrict TaskList = NULL ; uint64_t TaskList_mem = mem ;

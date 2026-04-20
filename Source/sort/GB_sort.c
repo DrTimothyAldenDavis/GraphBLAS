@@ -356,7 +356,7 @@ GrB_Info GB_sort
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     GrB_Matrix T = NULL ;
-    GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (C_ek_slicing, int64_t, mem) ;
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;

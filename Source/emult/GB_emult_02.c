@@ -95,10 +95,11 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (C != NULL) ;
 
+    ASSERT (C != NULL) ;
     int header_arena = GB_arena (C->header_mem) ;
     int data_arena = C->data_arena ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for emult_02", GB0) ;
     ASSERT_MATRIX_OK (A, "A for emult_02", GB0) ;
@@ -137,8 +138,8 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     // declare workspace
     //--------------------------------------------------------------------------
 
-    GB_WERK_DECLARE (Work, uint64_t) ;
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (Work, uint64_t, mem) ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t, mem) ;
 
     //--------------------------------------------------------------------------
     // get M, A, and B

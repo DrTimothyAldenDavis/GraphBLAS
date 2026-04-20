@@ -91,7 +91,7 @@ GrB_Info GB_AxB_dot3_one_slice
     // allocate the initial TaskList
     //--------------------------------------------------------------------------
 
-    GB_WERK_DECLARE (Coarse, int64_t) ;
+    GB_WERK_DECLARE (Coarse, int64_t, mem) ;
     int ntasks1 = 0 ;
     int nthreads = GB_nthreads (mnz, chunk, nthreads_max) ;
     GB_task_struct *restrict TaskList = NULL ;

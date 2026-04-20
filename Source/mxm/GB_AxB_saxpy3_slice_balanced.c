@@ -218,7 +218,6 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     GrB_Info info ;
 
     ASSERT (C != NULL) ;
-
     int data_arena = C->data_arena ;
     uint64_t mem = GB_mem (data_arena, 0) ;
 
@@ -263,10 +262,10 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     GB_saxpy3task_struct *restrict SaxpyTasks = NULL ;
     uint64_t SaxpyTasks_mem = mem ;
 
-    GB_WERK_DECLARE (Coarse_initial, int64_t) ; // initial coarse tasks
-    GB_WERK_DECLARE (Coarse_Work, int64_t) ;    // workspace for flop counts
-    GB_WERK_DECLARE (Fine_slice, int64_t) ;
-    GB_WERK_DECLARE (Fine_fl, int64_t) ;        // size max(nnz(B(:,j)))
+    GB_WERK_DECLARE (Coarse_initial, int64_t, mem) ; // initial coarse tasks
+    GB_WERK_DECLARE (Coarse_Work, int64_t, mem) ; // workspace for flop counts
+    GB_WERK_DECLARE (Fine_slice, int64_t, mem) ;
+    GB_WERK_DECLARE (Fine_fl, int64_t, mem) ;     // size max(nnz(B(:,j)))
 
     //--------------------------------------------------------------------------
     // get A, and B

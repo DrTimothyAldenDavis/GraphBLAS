@@ -72,7 +72,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         uint64_t Ap_old_mem = A->p_mem ;
         bool Ap_old_shallow = A->p_shallow ;
 
-        GB_WERK_DECLARE (Count, int64_t) ;
+        GB_WERK_DECLARE (Count, int64_t, mem) ;
         GB_WERK_PUSH (Count, ntasks+1, int64_t) ;
         if (Count == NULL)
         { 

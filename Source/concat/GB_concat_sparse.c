@@ -56,7 +56,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     int data_arena = C->data_arena ;
     uint64_t mem = GB_mem (data_arena, 0) ;
 
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t, mem) ;
     GB_MDECL (Work, , u) ; uint64_t Work_mem = mem ;
     GrB_Matrix *S = NULL ; uint64_t S_mem = mem ;
 
