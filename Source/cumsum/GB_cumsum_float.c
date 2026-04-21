@@ -22,6 +22,7 @@ bool GB_cumsum_float            // cumulative sum of an array
     float *restrict count,      // size n+1, input/output
     const int64_t n,
     int nthreads,
+    const int data_arena,       // arena for workspace
     GB_Werk Werk
 )
 {
@@ -33,7 +34,6 @@ bool GB_cumsum_float            // cumulative sum of an array
     ASSERT (count != NULL) ;
     ASSERT (n >= 0) ;
 
-    int data_arena = 0 ;        // FIXME arena param
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     //--------------------------------------------------------------------------

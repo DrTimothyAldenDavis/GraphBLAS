@@ -288,7 +288,8 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
     // replace Cwork with its cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cwork, Cwork_is_32, Cnvec, NULL, nthreads_for_Cwork, Werk) ;
+    GB_cumsum (Cwork, Cwork_is_32, Cnvec, NULL, nthreads_for_Cwork,
+        data_arena, Werk) ;
     double cwork = (double) GB_IGET (Cwork, Cnvec) ;
 
     //--------------------------------------------------------------------------

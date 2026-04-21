@@ -414,7 +414,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             // T->x = unop (A), binop (A,scalar), or binop (scalar,A), or
             // compute the iso value of T = 1, A, or scalar, without any op
             GB_OK (GB_apply_op ((GB_void *) T->x, ctype, C_code_iso, op,
-                scalar, binop_bind1st, flipij, A, Werk)) ;
+                scalar, binop_bind1st, flipij, A, data_arena, Werk)) ;
         }
         else if (ctype != atype)
         { 
@@ -576,7 +576,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             // T->x = unop (A), binop (A,scalar), or binop (scalar,A), or
             // compute the iso value of T = 1, A, or scalar, without any op
             GB_OK (GB_apply_op ((GB_void *) T->x, ctype, C_code_iso, op,
-                scalar, binop_bind1st, flipij, A, Werk)) ;
+                scalar, binop_bind1st, flipij, A, data_arena, Werk)) ;
         }
         else if (ctype != atype)
         { 
@@ -882,7 +882,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
         // the positional unary op is applied in-place: C->x = op (C)
         GB_OK (GB_apply_op ((GB_void *) C->x, ctype, GB_NON_ISO, op,
-            scalar, binop_bind1st, flipij, C, Werk)) ;
+            scalar, binop_bind1st, flipij, C, data_arena, Werk)) ;
 
     }
     else if (user_idxunop)
@@ -900,7 +900,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             // the user-defined index unary op is applied in-place: C->x = op
             // (C) where the type of C does not change
             GB_OK (GB_apply_op ((GB_void *) C->x, ctype, GB_NON_ISO, op,
-                scalar, binop_bind1st, flipij, C, Werk)) ;
+                scalar, binop_bind1st, flipij, C, data_arena, Werk)) ;
         }
         else // op is a user-defined index unary operator
         { 
@@ -928,7 +928,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             }
             // Cx_new = op (C)
             GB_OK (GB_apply_op (Cx_new, ctype, GB_NON_ISO, op,
-                scalar, false, flipij, C, Werk)) ;
+                scalar, false, flipij, C, data_arena, Werk)) ;
             // transplant Cx_new as C->x and finalize the type of C
             GB_FREE_MEMORY (&(C->x), C->x_mem) ;
             C->x = Cx_new ;

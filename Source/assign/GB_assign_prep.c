@@ -833,7 +833,7 @@ GrB_Info GB_assign_prep
             ASSERT (Ikind == GB_LIST) ;
             GB_OK (GB_ijsort (I, I_is_32, ni, imax,
                 &ni2, &I2 , &I2_is_32 , &I2_mem,
-                      &I2k, &I2k_is_32, &I2k_mem, Werk)) ;
+                      &I2k, &I2k_is_32, &I2k_mem, data_arena, Werk)) ;
             // Recheck the length and properties of the new I2.  This may
             // convert I2 to GB_ALL or GB_RANGE, after I2 has been sorted.
             GB_ijlength (I2, I2_is_32, ni2, C->vlen, &nI, &Ikind, Icolon) ;
@@ -855,7 +855,7 @@ GrB_Info GB_assign_prep
             ASSERT (Jkind == GB_LIST) ;
             GB_OK (GB_ijsort (J, J_is_32, nj, jmax,
                 &nj2, &J2 , &J2_is_32 , &J2_mem,
-                      &J2k, &J2k_is_32, &J2k_mem, Werk)) ;
+                      &J2k, &J2k_is_32, &J2k_mem, data_arena, Werk)) ;
             // Recheck the length and properties of the new J2.  This may
             // convert J2 to GB_ALL or GB_RANGE, after J2 has been sorted.
             GB_ijlength (J2, J2_is_32, nj2, C->vdim, &nJ, &Jkind, Jcolon) ;

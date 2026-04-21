@@ -202,7 +202,8 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     // replace Cwork with its cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cwork, false, Cnvec, NULL, nthreads_for_Cwork, Werk) ;
+    GB_cumsum (Cwork, false, Cnvec, NULL, nthreads_for_Cwork,
+        data_arena, Werk) ;
     double cwork = (double) Cwork [Cnvec] ;
 
     //--------------------------------------------------------------------------

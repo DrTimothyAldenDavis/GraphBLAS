@@ -111,7 +111,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     GB_task_cumsum (Cp, Cp_is_32, Cnvec, Cnvec_nonempty, TaskList,
-        C_ntasks, C_nthreads, Werk) ;
+        C_ntasks, C_nthreads, data_arena, Werk) ;
 
     //--------------------------------------------------------------------------
     // return the result

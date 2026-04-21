@@ -194,7 +194,7 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
     { 
         // Swork = op (A)
         info = GB_apply_op (Swork, ctype, C_code_iso, op, scalar,
-            binop_bind1st, flipij, A, Werk) ;
+            binop_bind1st, flipij, A, data_arena, Werk) ;
         ASSERT (info == GrB_SUCCESS) ;
         // GB_builder will not need to typecast Swork to T->x, and it
         // may choose to transplant it into T->x

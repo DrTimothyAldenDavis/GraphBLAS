@@ -55,7 +55,6 @@ GrB_Info GB_subassign_zombie
     GrB_Info info ;
 
     ASSERT (C != NULL) ;
-    int header_arena = GB_arena (C->header_mem) ;
     int data_arena = C->data_arena ;
 
     GrB_Matrix S = NULL ;

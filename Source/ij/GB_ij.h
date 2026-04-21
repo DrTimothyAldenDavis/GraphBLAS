@@ -54,14 +54,15 @@ GrB_Info GB_ijsort
     const int64_t ni,           // length I
     const int64_t imax,         // maximum value in I 
     // output:
-    int64_t *p_ni2,             // # of indices in I2
+    int64_t *p_ni2,             // # of indices in I2 and I2k
     void **p_I2,                // size ni2, where I2 [0..ni2-1] contains the
                                 // sorted indices with duplicates removed.
     bool *I2_is_32_handle,      // if I2_is_32 true, I2 is 32 bits; else 64 bits
-    uint64_t *I2_mem_handle,
+    uint64_t *I2_mem_handle,    // memsize and arena of I2 output
     void **p_I2k,               // output array of size ni2
     bool *I2k_is_32_handle,     // if I2k_is_32 true, I2 is 32 bits; else 64
-    uint64_t *I2k_mem_handle,
+    uint64_t *I2k_mem_handle,   // memsize and arena of I2k output
+    const int data_arena,       // arena for workspace and outputs I2 and I2k
     GB_Werk Werk
 ) ;
 

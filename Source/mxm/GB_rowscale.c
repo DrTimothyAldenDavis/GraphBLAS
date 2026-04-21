@@ -146,7 +146,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         }
         GB_OK (GB_apply_op (C->x, C->type, GB_NON_ISO,
             (GB_Operator) op,   // positional op
-            NULL, false, false, B, Werk)) ;
+            NULL, false, false, B, data_arena, Werk)) ;
         ASSERT_MATRIX_OK (C, "rowscale positional: C = D*B output", GB0) ;
         info = GrB_SUCCESS ;
 

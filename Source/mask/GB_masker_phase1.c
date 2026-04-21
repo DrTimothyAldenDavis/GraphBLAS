@@ -136,7 +136,7 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     //--------------------------------------------------------------------------
 
     GB_task_cumsum (Rp, Rp_is_32, Rnvec, Rnvec_nonempty, TaskList, R_ntasks,
-        R_nthreads, Werk) ;
+        R_nthreads, data_arena, Werk) ;
 
     //--------------------------------------------------------------------------
     // return the result

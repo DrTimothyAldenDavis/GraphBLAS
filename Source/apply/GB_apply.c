@@ -303,7 +303,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
             { 
                 // C->x = op (C->x) in place
                 info = GB_apply_op ((GB_void *) C->x, C->type, C_code_iso,
-                    op, scalar, binop_bind1st, flipij, C, Werk) ;
+                    op, scalar, binop_bind1st, flipij, C, data_arena, Werk) ;
             }
             if (info == GrB_SUCCESS && C_code_iso != GB_NON_ISO)
             { 

@@ -176,7 +176,7 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
         // Swork = op (A)
         // FIXME: tell GB_apply_op it "must" use the GPU
         info = GB_apply_op (Swork, ctype, C_code_iso, op, scalar,
-            binop_bind1st, flipij, A, Werk) ;
+            binop_bind1st, flipij, A, GB_ARENA_RMM, Werk) ;
         ASSERT (info == GrB_SUCCESS) ;
         // GB_cuda_builder will not need to typecast Swork to T->x, and it may
         // choose to transplant it into T->x

@@ -7,15 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// GrB_init or GxB_init must called before any other GraphBLAS
-// operation; all three rely on this internal function.  If GraphBLAS is used
-// by multiple user threads, only one can call GrB_init or GxB_init.
+// GrB_init or GxB_init must called before any other GraphBLAS operation; all
+// three rely on this internal function.  If GraphBLAS is used by multiple user
+// threads, only one can call GrB_init or GxB_init.
 
 // Result are undefined if multiple user threads simultaneously call GrB_init
 // or GxB_init.
 
-// GrB_finalize must be called as the last GraphBLAS operation.
-// Not even GrB_Matrix_free can be safely called after GrB_finalize.
+// GrB_finalize must be called as the last GraphBLAS operation.  Not even
+// GrB_Matrix_free can be safely called after GrB_finalize.  However,
+// GrB_init/GxB_init can be called after GrB_finalize, to start another
+// session of GraphBLAS.
 
 // GrB_init or GxB_init define the mode that GraphBLAS will use:  blocking or
 // non-blocking.  With blocking mode, all operations finish before returning to
@@ -90,7 +92,8 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    // FIXME arena: use GB_rmm_malloc etc for arena 1
+    // FIXME arena: use GB_rmm_malloc etc for GB_ARENA_RMM (arena: 1),
+    // which is reserved and cannot be modified by the user.
     GB_Global_gpu_count_set (true) ;
     int gpu_count = GB_Global_gpu_count_get ( ) ;
     printf ("GB_init: gpu_count: %d\n", gpu_count) ;

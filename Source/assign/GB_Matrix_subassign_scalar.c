@@ -51,7 +51,6 @@ GrB_Info GB_Matrix_subassign_scalar   // C(I,J)<M> = accum (C(I,J),s)
     GB_RETURN_IF_NULL (J) ;
     GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
 
-    int header_arena = GB_arena (C->header_mem) ;
     int data_arena = C->data_arena ;
     uint64_t mem = GB_mem (data_arena, 0) ;
 

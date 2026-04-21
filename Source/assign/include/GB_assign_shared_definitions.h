@@ -210,7 +210,6 @@
 #define GB_EMPTY_TASKLIST                                                   \
     GrB_Info info ;                                                         \
     ASSERT (C != NULL) ;                                                    \
-    int header_arena = GB_arena (C->header_mem) ;  /* FIXME arena: needed?*/\
     int data_arena = C->data_arena ;                                        \
     uint64_t mem = GB_mem (data_arena, 0) ;                                 \
     int taskid, ntasks = 0, nthreads = 0 ;                                  \
@@ -1779,7 +1778,6 @@
 #define GB_GET_C_A_SCALAR_FOR_BITMAP                                        \
     GrB_Info info ;                                                         \
     /* workspace: */                                                        \
-    int header_arena = GB_arena (C->header_mem) ;  /* FIXME arena: needed?*/\
     int data_arena = C->data_arena ;                                        \
     uint64_t mem = GB_mem (data_arena, 0) ;                                 \
     GB_WERK_DECLARE (M_ek_slicing, int64_t, mem) ;                          \

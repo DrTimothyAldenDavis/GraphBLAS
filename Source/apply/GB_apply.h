@@ -40,6 +40,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         bool binop_bind1st,         // if true, C=binop(s,A), else C=binop(A,s)
         bool flipij,                // if true, flip i,j for user idxunop
     const GrB_Matrix A,             // input matrix
+    const int data_arena,           // arena for workspace
     GB_Werk Werk
 ) ;
 

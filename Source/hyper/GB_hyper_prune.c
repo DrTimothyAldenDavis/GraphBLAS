@@ -108,7 +108,7 @@ GrB_Info GB_hyper_prune
     }
 
     int64_t nvec_new ;
-    GB_cumsum (W, A->j_is_32, nvec_old, &nvec_new, nthreads, Werk) ;
+    GB_cumsum (W, A->j_is_32, nvec_old, &nvec_new, nthreads, data_arena, Werk) ;
 
     //--------------------------------------------------------------------------
     // allocate the result

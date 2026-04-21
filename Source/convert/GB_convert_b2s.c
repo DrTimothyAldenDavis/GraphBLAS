@@ -195,7 +195,7 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
     // is < UINT32_MAX (see assertion above).
 
     int nth = GB_nthreads (avdim, chunk, nthreads_max) ;
-    GB_cumsum (Cp, Cp_is_32, avdim, cnvec_nonempty, nth, Werk) ;
+    GB_cumsum (Cp, Cp_is_32, avdim, cnvec_nonempty, nth, data_arena, Werk) ;
     ASSERT (GB_IGET (Cp, avdim) == A->nvals) ;
 
     //--------------------------------------------------------------------------

@@ -209,7 +209,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         }
 
         int64_t nvec_nonempty ;
-        GB_cumsum (Cp, Cp_is_32, cnvec, &nvec_nonempty, nthreads, Werk) ;
+        GB_cumsum (Cp, Cp_is_32, cnvec, &nvec_nonempty, nthreads,
+            data_arena, Werk) ;
         GB_nvec_nonempty_set (C, nvec_nonempty) ;
         C->nvals = GB_IGET (Cp, cnvec) ;
         if (C_is_hyper) C->nvec = cnvec ;

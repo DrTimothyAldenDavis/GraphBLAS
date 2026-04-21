@@ -218,7 +218,7 @@ static GrB_Info GB_export_worker  // export a matrix
             GB_OK (GB_extractTuples (
                 Ap, /* OK; 64-bit only: */ false,
                 Ai, /* OK; 64-bit only: */ false,
-                Ax, &nvals, A->type, A, Werk)) ;
+                Ax, &nvals, A->type, A, data_arena, Werk)) ;
             (*Ap_len) = nvals ;
             (*Ai_len) = nvals ;
             (*Ax_len) = nvals ;

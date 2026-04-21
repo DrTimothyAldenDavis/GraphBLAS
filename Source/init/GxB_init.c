@@ -11,11 +11,16 @@
 // GrB_finalize must be called as the last GraphBLAS operation.  GxB_init is
 // identical to GrB_init, except that it allows the user application to define
 // the malloc/calloc/realloc/free functions that SuiteSparse:GraphBLAS will
-// use.  The functions cannot be modified once GraphBLAS starts.
+// use for arena 0 (the default arena).  The functions cannot be modified once
+// GraphBLAS starts.
 
 // The calloc and realloc function pointers are optional and can be NULL.  If
-// calloc is NULL, it is not used, and malloc/memset are used instead.  If
+// calloc is currently not used, and malloc/memset are used instead.  If
 // realloc is NULL, it is not used, and malloc/memcpy/free are used instead.
+
+// The malloc/calloc/realloc/free functions passed to GxB_init are for
+// arena 0 (GB_ARENA_DEFAULT), and cannot be modified once set by GxB_init.
+// GraphBLAS uses this arena during initializations (for the JIT hash table).
 
 // Examples:
 //
@@ -38,9 +43,9 @@
 //      GxB_init (mode, scalable_malloc, scalable_calloc, scalable_realloc,
 //          scalable_free) ;
 //
-// To use CUDA and its RMM memory manager:
+// To use CUDA and its RMM memory manager in arena 0:
 //
-//      GxB_init (mode, rmm_malloc, NULL, rmm_realloc, rmm_free) ;
+//      GxB_init (mode, GB_rmm_malloc, NULL, NULL, GB_rmm_free) ;
 //
 //          where mode is GxB_BLOCKING_GPU or GxB_NONBLOCKING_GPU
 //
@@ -80,8 +85,9 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 #if defined ( GRAPHBLAS_HAS_CUDA )
     if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
     {
+        // FIXME arena: CUDA will have GB_rmm_malloc etc available in arena 1.
         return (GB_init (mode,              // blocking or non-blocking mode
-            // RMM C memory management functions
+            // thread-safe RMM C memory management functions:
             GB_rmm_malloc, NULL, NULL, GB_rmm_free, Werk)) ;
     }
 #endif

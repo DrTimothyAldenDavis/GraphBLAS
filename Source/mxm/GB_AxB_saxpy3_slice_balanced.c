@@ -714,7 +714,8 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
                         }
 
                         // cumulative sum of flops to compute A*B(:,j)
-                        GB_cumsum (Fine_fl, false, bjnz, NULL, nth, Werk) ;
+                        GB_cumsum (Fine_fl, false, bjnz, NULL, nth,
+                            data_arena, Werk) ;
 
                         // slice B(:,j) into fine tasks
                         int team_nfine =

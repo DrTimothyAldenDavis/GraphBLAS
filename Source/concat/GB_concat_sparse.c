@@ -254,7 +254,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     }
 
     int64_t C_nvec_nonempty ;
-    GB_cumsum (Cp, Cp_is_32, cvdim, &C_nvec_nonempty, nthreads_max, Werk) ;
+    GB_cumsum (Cp, Cp_is_32, cvdim, &C_nvec_nonempty, nthreads_max,
+        data_arena, Werk) ;
     ASSERT (cnz == GB_IGET (Cp, cvdim)) ;
     C->nvals = cnz ;
     GB_nvec_nonempty_set (C, C_nvec_nonempty) ;

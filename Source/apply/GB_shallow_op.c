@@ -201,7 +201,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     }
 
     GB_OK (GB_apply_op ((GB_void *) C->x, C->type, C_code_iso, op,
-        scalar, binop_bind1st, flipij, A, Werk)) ;
+        scalar, binop_bind1st, flipij, A, data_arena, Werk)) ;
 
     //--------------------------------------------------------------------------
     // return the result

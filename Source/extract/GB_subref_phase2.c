@@ -150,7 +150,7 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
 
     Cwork [Cnvec] = 0 ;
     GB_task_cumsum (Cwork, false, Cnvec, Cnvec_nonempty, TaskList, ntasks,
-        nthreads, Werk) ;
+        nthreads, data_arena, Werk) ;
     int64_t cnz = Cwork [Cnvec] ;
 
     //--------------------------------------------------------------------------

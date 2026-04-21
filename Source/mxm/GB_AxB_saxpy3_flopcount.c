@@ -466,7 +466,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
     // Bflops = cumsum ([0 Bflops]) ;
     ASSERT (Bflops [bnvec] == 0) ;
-    GB_cumsum (Bflops, false, bnvec, NULL, B_nthreads, Werk) ;
+    GB_cumsum (Bflops, false, bnvec, NULL, B_nthreads, data_arena, Werk) ;
     // Bflops [bnvec] is now the total flop count, including the time to
     // compute A*B and to handle the mask.  total_Mwork is part of this total
     // flop count, but is also returned separtely.

@@ -97,7 +97,7 @@ GrB_Info GB_AxB_dot3_slice
     //--------------------------------------------------------------------------
 
     int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
-    GB_cumsum_float (Cwork, cnz, nthreads, Werk) ;
+    GB_cumsum_float (Cwork, cnz, nthreads, data_arena, Werk) ;
     double total_work = (double) Cwork [cnz] ;
 
     //--------------------------------------------------------------------------

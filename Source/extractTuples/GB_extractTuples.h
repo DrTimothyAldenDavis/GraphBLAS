@@ -33,6 +33,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     uint64_t *p_nvals,          // I,J,X size on input; # tuples on output
     const GrB_Type xtype,       // type of array X
     const GrB_Matrix A,         // matrix to extract tuples from
+    const int data_arena,       // arena for workspace
     GB_Werk Werk
 ) ;
 

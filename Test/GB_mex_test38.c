@@ -89,14 +89,14 @@ void mexFunction
     int64_t kresult ;
     bool ok ;
 
-    ok = GB_cumsum (W, true, n, NULL, 1, Werk) ;
+    ok = GB_cumsum (W, true, n, NULL, 1, GB_ARENA_MATLAB, Werk) ;
     CHECK (!ok) ;
-    ok = GB_cumsum (W, true, n, NULL, 4, Werk) ;
+    ok = GB_cumsum (W, true, n, NULL, 4, GB_ARENA_MATLAB, Werk) ;
     CHECK (!ok) ;
 
-    ok = GB_cumsum (W, true, n, &kresult, 1, Werk) ;
+    ok = GB_cumsum (W, true, n, &kresult, 1, GB_ARENA_MATLAB, Werk) ;
     CHECK (!ok) ;
-    ok = GB_cumsum (W, true, n, &kresult, 4, Werk) ;
+    ok = GB_cumsum (W, true, n, &kresult, 4, GB_ARENA_MATLAB, Werk) ;
     CHECK (!ok) ;
 
     //--------------------------------------------------------------------------

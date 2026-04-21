@@ -101,6 +101,7 @@ void GB_task_cumsum
     GB_task_struct *restrict TaskList,  // array of structs
     const int ntasks,                   // # of tasks
     const int nthreads,                 // # of threads
+    const int data_arena,               // arena for workspace
     GB_Werk Werk
 ) ;
 

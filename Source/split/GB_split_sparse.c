@@ -234,7 +234,8 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             }
 
             int64_t nvec_nonempty ;
-            GB_cumsum (Cp, Cp_is_32, cnvec, &nvec_nonempty, nth, Werk) ;
+            GB_cumsum (Cp, Cp_is_32, cnvec, &nvec_nonempty, nth,
+                data_arena, Werk) ;
             GB_nvec_nonempty_set (C, nvec_nonempty) ;
             int64_t cnz = GB_IGET (Cp, cnvec) ;
 
