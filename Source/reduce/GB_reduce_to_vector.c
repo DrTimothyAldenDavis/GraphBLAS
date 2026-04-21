@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG    /* FIXME */
+
 // C<M> = accum (C,reduce(A)) where C is n-by-1.  Reduces a matrix A or A'
 // to a vector.
 
@@ -110,17 +112,18 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     // B is constructed in O(1) time and space, even though it is m-by-1.
     int64_t m = A_transpose ? GB_NROWS (A) : GB_NCOLS (A) ;
-    GB_OK (GB_new (&B, // full, new header
-        ztype, m, 1, GB_ph_null, true, GxB_FULL, GB_NEVER_HYPER, 1,
-        /* OK: */ false, false, false, data_arena, data_arena)) ;
+    GB_OK (GB_new_bix (&B, // full, new header
+        /* type: */ ztype, /* vlen, vdim: */ m, 1, 
+        /* Ap_option: */ GB_ph_null, /* is_csc: */ true,
+        /* sparsity: */ GxB_FULL, /* bitmap_calloc unused: */ false,
+        /* hyper_switch: */ GB_NEVER_HYPER, /* plen: */ 1,
+        /* nzmax: */ 1, /* numeric: */ true, /* iso: */ true,
+        /* pji_is_32: */ false, false, false,
+        /* header and data arena: */ data_arena, data_arena)) ;
+    ASSERT (B->iso) ;
+    ASSERT (!B->x_shallow) ;
     B->magic = GB_MAGIC ;
-    B->iso = true ;
-    size_t zsize = ztype->size ;
-    GB_void bscalar [GB_VLA(zsize)] ;   // FIXME arena: allocate in data_arena
-    memset (bscalar, 0, zsize) ;
-    B->x = bscalar ;
-    B->x_shallow = true ;
-    B->x_mem = GB_mem (0, zsize) ;
+    memset (B->x, 0, ztype->size) ;
     ASSERT_MATRIX_OK (B, "B for reduce-to-vector", GB0) ;
 
     //--------------------------------------------------------------------------

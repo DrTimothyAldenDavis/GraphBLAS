@@ -75,6 +75,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
     const bool Mask_comp,       // if true, mask is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
+    const int data_arena,       // arena for workspace
     GB_Werk Werk
 ) ;
 

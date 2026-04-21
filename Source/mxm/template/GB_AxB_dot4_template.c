@@ -436,7 +436,9 @@
         // C += A'*B: with workspace W for transposing B, one panel at a time
         //----------------------------------------------------------------------
 
-        uint64_t W_mem = 0 ;   // FIXME arena
+        int data_arena = C->data_arena ;            // for workspace only
+        uint64_t mem = GB_mem (data_arena, 0) ;
+        uint64_t W_mem = mem ;
         GB_B2TYPE *restrict W = NULL ;
         if (bvdim > 1)
         {

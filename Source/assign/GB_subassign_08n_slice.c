@@ -161,7 +161,7 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
     GB_OK (GB_ewise_slice (
         &TaskList, &TaskList_mem, &ntasks, &nthreads,
         Znvec, Zh_shallow, Zj_is_32, NULL, Z_to_A, Z_to_M, false,
-        NULL, A, M, Werk)) ;
+        NULL, A, M, data_arena, Werk)) ;
 
     GB_IPTR (Zh_shallow, Zj_is_32) ;
 

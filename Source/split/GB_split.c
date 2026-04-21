@@ -39,7 +39,7 @@ GrB_Info GB_split                   // split a matrix
     // set all Tiles to NULL
     GrB_Info info ;
 
-    int data_arena = 0 ;        // FIXME arena param
+    int data_arena = A->data_arena ;            // for workspace only
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (Tiles != NULL) ;

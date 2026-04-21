@@ -56,6 +56,7 @@
 //      const GrB_Matrix M,             // mask matrix to slice (optional)
 //      const GrB_Matrix A,             // matrix to slice
 //      const GrB_Matrix B,             // matrix to slice
+//      const int data_arena,           // arena for workspace
 //      GB_Werk Werk
 //  )
 
@@ -66,7 +67,6 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
     // check inputs
     //--------------------------------------------------------------------------
 
-    int data_arena = 0 ;   // FIXME arena param
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (p_TaskList != NULL) ;

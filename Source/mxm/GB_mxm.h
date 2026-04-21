@@ -172,6 +172,7 @@ GrB_Info GB_AxB_dot3_one_slice
     int *p_nthreads,                // # of threads to use
     // input:
     const GrB_Matrix M,             // matrix to slice
+    const int data_arena,           // arena for workspace
     GB_Werk Werk
 ) ;
 

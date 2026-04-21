@@ -103,7 +103,7 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
 
     // Construct the "row" indices of C, which are "column" indices of
     // A.  This array becomes the permanent T->i on output.
-    GB_OK (GB_extract_vector_list (iwork, Aj_is_32, A, Werk)) ;
+    GB_OK (GB_extract_vector_list (iwork, Aj_is_32, A, data_arena, Werk)) ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix and additional space (jwork and Swork)

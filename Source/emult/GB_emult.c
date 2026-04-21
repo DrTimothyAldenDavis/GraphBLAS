@@ -438,7 +438,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // computed by phase0:
         Cnvec, Ch, Cj_is_32, C_to_M, C_to_A, C_to_B, /* Ch_is_Mh: */ false,
         // original input:
-        (apply_mask) ? M : NULL, A, B, Werk)) ;
+        (apply_mask) ? M : NULL, A, B, data_arena, Werk)) ;
 
     // count the number of entries in each vector of C
     GB_OK (GB_emult_08_phase1 (
@@ -449,8 +449,8 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // from phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B, Cp_is_32, Cj_is_32,
         // original input:
-        (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, data_arena,
-        Werk)) ;
+        (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B,
+        data_arena, Werk)) ;
 
     //--------------------------------------------------------------------------
     // phase2: compute the entries (indices and values) in each vector of C

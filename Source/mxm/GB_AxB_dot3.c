@@ -246,7 +246,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
     GB_OK (GB_AxB_dot3_one_slice (&TaskList, &TaskList_mem, &ntasks, &nthreads,
-        M, Werk)) ;
+        M, data_arena, Werk)) ;
 
     //--------------------------------------------------------------------------
     // phase1: estimate the work to compute each entry in C

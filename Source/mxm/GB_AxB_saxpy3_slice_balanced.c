@@ -310,7 +310,8 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    GB_OK (GB_AxB_saxpy3_flopcount (&Mwork, Bflops, M, Mask_comp, A, B, Werk)) ;
+    GB_OK (GB_AxB_saxpy3_flopcount (&Mwork, Bflops, M, Mask_comp, A, B,
+        data_arena, Werk)) ;
     double total_flops = (double) Bflops [bnvec] ;
     double axbflops = total_flops - Mwork ;
     GBURBLE ("axbwork %g ", axbflops) ;

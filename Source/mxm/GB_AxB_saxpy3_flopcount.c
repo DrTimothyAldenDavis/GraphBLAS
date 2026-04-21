@@ -85,6 +85,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
     const bool Mask_comp,       // if true, mask is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
+    const int data_arena,       // arena for workspace
     GB_Werk Werk
 )
 {
@@ -93,7 +94,6 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // check inputs
     //--------------------------------------------------------------------------
 
-    int data_arena = 0 ;        // FIXME arena param
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for flop count A*B", GB0) ;

@@ -194,7 +194,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
             // computed by phase0:
             Rnvec, Rh, Rj_is_32, R_to_M, R_to_C, R_to_Z, /* Rh_is_Mh: */ false,
             // original input:
-            M, C, Z, Werk) ;
+            M, C, Z, data_arena, Werk) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory; free everything allocated by GB_add_phase0

@@ -3713,14 +3713,14 @@ void mexFunction
 
     expected = GrB_NULL_POINTER ;
 
-    ERR (GB_entry_check (NULL, NULL, 5, NULL, NULL, NULL, 0)) ;
-    ERR (GB_entry_check (NULL, X, 5, NULL, NULL, NULL, 0)) ;
-    OK (GB_entry_check (GrB_FP64, X, 5, NULL, NULL, NULL, 0)) ;
+    ERR (GB_entry_check (NULL, NULL, 5, NULL, NULL, NULL, GB_ARENA_MATLAB)) ;
+    ERR (GB_entry_check (NULL, X, 5, NULL, NULL, NULL, GB_ARENA_MATLAB)) ;
+    OK (GB_entry_check (GrB_FP64, X, 5, NULL, NULL, NULL, GB_ARENA_MATLAB)) ;
     printf ("\n") ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GB_entry_check (Tcrud, X, 5, NULL, NULL, NULL, 0)) ;
+    ERR (GB_entry_check (Tcrud, X, 5, NULL, NULL, NULL, GB_ARENA_MATLAB)) ;
     printf ("\nAll GB_entry_check tests passed (errors expected)\n") ;
 
     //--------------------------------------------------------------------------

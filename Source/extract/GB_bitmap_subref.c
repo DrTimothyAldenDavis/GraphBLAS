@@ -93,7 +93,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     int64_t imin, imax, jmin, jmax ;
 
     info = GB_ijproperties (I, I_is_32, ni, nI, avlen, &Ikind, Icolon,
-        &I_unsorted, &I_has_dupl, &I_contig, &imin, &imax, Werk) ;
+        &I_unsorted, &I_has_dupl, &I_contig, &imin, &imax, data_arena, Werk) ;
     if (info != GrB_SUCCESS)
     { 
         // I invalid
@@ -101,7 +101,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     }
 
     info = GB_ijproperties (J, J_is_32, nj, nJ, avdim, &Jkind, Jcolon,
-        &J_unsorted, &J_has_dupl, &J_contig, &jmin, &jmax, Werk) ;
+        &J_unsorted, &J_has_dupl, &J_contig, &jmin, &jmax, data_arena, Werk) ;
     if (info != GrB_SUCCESS)
     { 
         // J invalid

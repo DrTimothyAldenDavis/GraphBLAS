@@ -201,6 +201,7 @@ GrB_Info GX_ewise_slice                                                     \
     const GrB_Matrix M,             /* mask matrix to slice (optional) */   \
     const GrB_Matrix A,             /* matrix to slice */                   \
     const GrB_Matrix B,             /* matrix to slice */                   \
+    const int data_arena,           /* arena for workspace */               \
     GB_Werk Werk                                                            \
 )
 

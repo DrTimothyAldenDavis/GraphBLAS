@@ -41,6 +41,8 @@ GrB_Info GB_ijproperties        // check I and determine its properties
     bool *I_is_contig,          // true if I is a contiguous list, imin:imax
     int64_t *imin_result,       // min (I)
     int64_t *imax_result,       // max (I)
+    // input:
+    const int data_arena,       // arena for workspace
     GB_Werk Werk
 ) ;
 

@@ -1346,7 +1346,7 @@
     GB_OK (GB_ewise_slice (                                                 \
         &TaskList, &TaskList_mem, &ntasks, &nthreads,                       \
         Znvec, Zh, Zj_is_32, NULL, Z_to_X, Z_to_S, false,                   \
-        NULL, X, S, Werk)) ;                                                \
+        NULL, X, S, data_arena, Werk)) ;                                    \
     GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------

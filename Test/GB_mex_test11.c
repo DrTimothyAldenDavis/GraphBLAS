@@ -652,7 +652,7 @@ if (jit_enabled)
         &Ikind, Icolon,
         // output:
         &I_is_unsorted, &I_has_dupl, &I_is_contig,
-        &imin_result, &imax_result, Werk)) ;
+        &imin_result, &imax_result, GB_ARENA_MATLAB, Werk)) ;
     printf ("ijproperties: imin %ld imax %ld\n", imin_result, imax_result) ;
     CHECK (imin_result == 5) ;
     CHECK (imax_result == -1) ;

@@ -81,7 +81,7 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
     if (pr != GxB_SILENT)
     { 
         char *string = NULL ;
-        int header_arena = GB_Context_header_arena ( ) ;
+        int header_arena = GB_Context_header_arena ( ) ;  // for GB_entry_check
         uint64_t string_mem = 0 ;       // set by GB_entry_check
 
         // print the identity value, if present

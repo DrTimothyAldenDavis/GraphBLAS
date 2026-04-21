@@ -41,6 +41,7 @@ GrB_Info GB_AxB_dot3_one_slice
     int *p_nthreads,                // # of threads to use
     // input:
     const GrB_Matrix M,             // matrix to slice
+    const int data_arena,           // arena for workspace
     GB_Werk Werk
 )
 {
@@ -49,7 +50,6 @@ GrB_Info GB_AxB_dot3_one_slice
     // check inputs
     //--------------------------------------------------------------------------
 
-    int data_arena = 0 ;       // FIXME arena param
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (p_TaskList != NULL) ;

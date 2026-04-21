@@ -179,7 +179,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
             // computed by phase0:
             Cnvec, Ch, Cj_is_32, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
             // original input:
-            (apply_mask) ? M : NULL, A, B, Werk)) ;
+            (apply_mask) ? M : NULL, A, B, data_arena, Werk)) ;
 
         // count the number of entries in each vector of C
         GB_OK (GB_add_phase1 (

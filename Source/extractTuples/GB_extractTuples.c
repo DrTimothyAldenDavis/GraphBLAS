@@ -201,7 +201,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
         if (J != NULL)
         { 
-            GB_OK (GB_extract_vector_list (J, J_is_32, A, Werk)) ;
+            GB_OK (GB_extract_vector_list (J, J_is_32, A, data_arena, Werk)) ;
         }
 
         //----------------------------------------------------------------------

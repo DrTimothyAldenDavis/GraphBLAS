@@ -53,7 +53,7 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     bool j_is_32,               // if true, A->h and A->Y are 32 bit; else 64
     bool i_is_32,               // if true, A->i is 32 bit; 64 bit otherwise
     const int header_arena,     // arena for header, if allocated
-    const int data_arena,       // arena for matrix data
+    const int data_arena        // arena for matrix data
 )
 #endif
 

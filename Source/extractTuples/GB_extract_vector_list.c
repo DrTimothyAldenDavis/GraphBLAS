@@ -30,6 +30,7 @@ GrB_Info GB_extract_vector_list // extract vector list from a matrix
     // input:
     bool is_32,                 // if true, J is 32-bit; else 64-bit
     const GrB_Matrix A,
+    const int data_arena,       // arena for workspace
     GB_Werk Werk
 )
 {
@@ -38,8 +39,6 @@ GrB_Info GB_extract_vector_list // extract vector list from a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (A != NULL) ;
-    int data_arena = A->data_arena ;            // FIXME arena param instead
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (J != NULL) ;
