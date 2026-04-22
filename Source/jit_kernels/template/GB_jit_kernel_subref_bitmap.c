@@ -23,7 +23,8 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_BITMAP_SUBREF_PROTO (GB_jit_kernel)
     GB_GET_CALLBACK (GB_free_memory) ;
     GB_GET_CALLBACK (GB_subassign_IxJ_slice) ;
 
-    int data_arena = 0 ;   // FIXME arena param
+    ASSERT (C != NULL) ;
+    int data_arena = C->data_arena ;
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     // declare the TaskList_IxJ workspace

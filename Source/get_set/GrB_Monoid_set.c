@@ -54,8 +54,10 @@ GrB_Info GrB_Monoid_set_String
     // set the field
     //--------------------------------------------------------------------------
 
+    int header_arena = GB_arena (monoid->header_mem) ;
+
     return (GB_user_name_set (&(monoid->user_name),
-        &(monoid->user_name_mem), value, true)) ;
+        &(monoid->user_name_mem), value, true, header_arena)) ;
 }
 
 //------------------------------------------------------------------------------

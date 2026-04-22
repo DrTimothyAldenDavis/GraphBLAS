@@ -20,7 +20,7 @@
 // condition is not checked if count is uint64_t (always returns true).
 
 // The parallel cumsum requires a small amount of memory, typically allocated
-// on the werk stack, or in the data_arean if the stack is full.  The single-
+// on the werk stack, or in the data_arena if the stack is full.  The single-
 // threaded cumsum requires no space at all.  This method always succeeds; if
 // no space is available for a parallel cumsum, the single-threaded cumsum is
 // used instead.

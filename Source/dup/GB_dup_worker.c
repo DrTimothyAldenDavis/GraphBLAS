@@ -82,7 +82,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     if (A->user_name != NULL)
     { 
         info = GB_user_name_set (&C_user_name, &C_user_name_mem,
-            A->user_name, false) ;
+            A->user_name, false, header_arena) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory

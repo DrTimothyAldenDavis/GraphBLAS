@@ -252,8 +252,10 @@ GrB_Info GrB_Descriptor_set_String
     // set the field
     //--------------------------------------------------------------------------
 
+    int header_arena = GB_arena (desc->header_mem) ;
+
     return (GB_user_name_set (&(desc->user_name), &(desc->user_name_mem),
-        value, false)) ;
+        value, false, header_arena)) ;
 }
 
 //------------------------------------------------------------------------------

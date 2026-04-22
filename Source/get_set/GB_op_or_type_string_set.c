@@ -45,13 +45,15 @@ GrB_Info GB_op_or_type_string_set
 
     size_t len = strlen (value) ;
     bool compute_hash = false ;
+    int header_arena = 0 ; // FIXME arena param
 
     switch (field)
     {
 
         case GrB_NAME : 
 
-            return (GB_user_name_set (user_name, user_name_mem, value, true)) ;
+            return (GB_user_name_set (user_name, user_name_mem, value, true,
+                header_arena)) ;
 
         case GxB_JIT_C_NAME : 
 

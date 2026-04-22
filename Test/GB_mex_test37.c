@@ -148,7 +148,7 @@ GrB_Info ewise
     // get the current free function
     //--------------------------------------------------------------------------
 
-    int arena = 0 ; // FIXME arena
+    int arena = 0 ; // FIXME arena: defined by what GxB_unpack* returns
     free_function = GB_Global_free_function_get (arena) ;
 
     //--------------------------------------------------------------------------

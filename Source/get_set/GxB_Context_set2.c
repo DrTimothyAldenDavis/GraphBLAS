@@ -114,8 +114,10 @@ GrB_Info GxB_Context_set_String
     // set the field
     //--------------------------------------------------------------------------
 
+    int header_arena = GB_arena (Context->header_mem) ;
+
     return (GB_user_name_set (&(Context->user_name),
-        &(Context->user_name_mem), value, false)) ;
+        &(Context->user_name_mem), value, false, header_arena)) ;
 }
 
 //------------------------------------------------------------------------------

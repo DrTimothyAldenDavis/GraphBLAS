@@ -54,8 +54,10 @@ GrB_Info GrB_Semiring_set_String
     // set the field
     //--------------------------------------------------------------------------
 
+    int header_arena = GB_arena (semiring->header_mem) ;
+
     return (GB_user_name_set (&(semiring->user_name),
-        &(semiring->user_name_mem), value, true)) ;
+        &(semiring->user_name_mem), value, true, header_arena)) ;
 }
 
 //------------------------------------------------------------------------------

@@ -16,12 +16,12 @@ GrB_Info GB_user_name_set
     size_t *object_user_name_mem,   // user_name_mem of the object
     // input
     const char *new_name,           // new name for the object
-    const bool only_once            // if true, the name of the object can
+    const bool only_once,           // if true, the name of the object can
                                     // only be set once
+    const int header_arena          // arena for user name string
 )
 { 
 
-    int header_arena = 0 ;       // FIXME arena: param
     uint64_t mem = GB_mem (header_arena, 0) ;
 
     if (only_once && (*object_user_name) != NULL)
