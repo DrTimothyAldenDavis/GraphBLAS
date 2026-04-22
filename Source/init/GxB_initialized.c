@@ -23,7 +23,7 @@ GrB_Info GxB_initialized    // determine if GraphBLAS is initialized
                             // called (and the corresponding GrB_finalize
                             // has not), false otherwise
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

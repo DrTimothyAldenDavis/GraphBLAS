@@ -42,6 +42,7 @@
 
 // FIXME arena: use arena = A->data_arena by default; and add new
 // methods where the arena of the blob can be provided on input.
+// Or use GB_Context_data_arena.
 
 GrB_Info GB_serialize               // serialize a matrix into a blob
 (

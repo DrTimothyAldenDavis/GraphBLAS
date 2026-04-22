@@ -384,7 +384,7 @@ GrB_Info GxB_Global_Option_get_FUNCTION // gets the current global option
     // get the option
     //--------------------------------------------------------------------------
 
-    int arena = 0 ; // FIXME arena
+    int arena = 0 ; // FIXME arena: GrB_get ( MALLOC etc of arena)
 
     switch (field)
     {
@@ -802,7 +802,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 void ** malloc_function = va_arg (ap, void **) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (malloc_function) ;
-                int arena = 0 ; // FIXME arena
+                int arena = 0 ; // FIXME arena  GrB_get MALLOC etc of arena
                 (*malloc_function) = GB_Global_malloc_function_get (arena) ;
             }
             break ;
@@ -814,7 +814,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 void ** calloc_function = va_arg (ap, void **) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (calloc_function) ;
-                int arena = 0 ; // FIXME arena
+                int arena = 0 ; // FIXME arena  GrB_get MALLOC etc of arena
                 (*calloc_function) = GB_Global_calloc_function_get (arena) ;
             }
             break ;
@@ -826,7 +826,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 void ** realloc_function = va_arg (ap, void **) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (realloc_function) ;
-                int arena = 0 ; // FIXME arena
+                int arena = 0 ; // FIXME arena  GrB_get MALLOC etc of arena
                 (*realloc_function) = GB_Global_realloc_function_get (arena) ;
             }
             break ;
@@ -838,7 +838,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 void ** free_function = va_arg (ap, void **) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (free_function) ;
-                int arena = 0 ; // FIXME arena
+                int arena = 0 ; // FIXME arena  GrB_get MALLOC etc of arena
                 (*free_function) = GB_Global_free_function_get (arena) ;
             }
             break ;

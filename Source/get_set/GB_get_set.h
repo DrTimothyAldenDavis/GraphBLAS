@@ -67,7 +67,8 @@ GrB_Info GB_op_or_type_string_set
     int32_t *name_len,
     char **defn,
     uint64_t *defn_mem,
-    uint64_t *hash
+    uint64_t *hash,
+    const int header_arena
 ) ;
 
 GrB_Info GB_monoid_get

@@ -58,5 +58,20 @@ void GB_memcpy                  // parallel memcpy
     int nthreads                // # of threads to use
 ) ;
 
+//------------------------------------------------------------------------------
+// set the arena of a block of memory
+//------------------------------------------------------------------------------
+
+GrB_Info GB_set_arena           // set arena of a block of memory
+(
+    // input/output:
+    void **p_handle,            // block of memory to change
+    uint64_t **p_mem_handle,    // memsize and arena of block of memory
+    // input
+    const int new_arena,        // arena to move to
+    uint64_t n,                 // # of bytes that must be copied
+    int nthreads                // max # of threads to use
+) ;
+
 #endif
 

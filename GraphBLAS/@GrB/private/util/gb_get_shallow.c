@@ -358,6 +358,7 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
         if (Yp != NULL)
         { 
             // import the Y matrix using the Container
+            // FIXME: ensure Y is constructed in the A->data_arena
             OK (GrB_Matrix_new (&Y, GrB_UINT64, 0, 0)) ;
             Container->nrows = vdim ;
             Container->ncols = yvdim ;

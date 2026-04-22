@@ -48,7 +48,6 @@ void GB_phy_free                // free A->p, A->h, and A->Y of a matrix
     A->plen = 0 ;
     A->nvec = 0 ;
     A->nvals = 0 ;
-//  A->nvec_nonempty = 0 ;
     GB_nvec_nonempty_set (A, 0) ;
 
     //--------------------------------------------------------------------------

@@ -104,7 +104,7 @@ GrB_Info GB_subassign_25
 
     bool C_is_csc = C->is_csc ;
     GB_phybix_free (C) ;
-    GB_OK (GB_dup_worker (&C, C_iso, M, false, C->type,
+    GB_OK (GB_dup_worker (&C, C_iso, M, /* numeric: */ false, C->type,
         header_arena, data_arena)) ;
     C->is_csc = C_is_csc ;
 

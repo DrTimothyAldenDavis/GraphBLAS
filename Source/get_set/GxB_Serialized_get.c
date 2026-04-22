@@ -12,7 +12,7 @@
 #define GB_FREE_ALL ;
 
 // FIXME arena: define arena for the blob with GB_Context_data_arena ( ),
-// but how to keep track of it?  Place it in the blob itself.
+// but how to keep track of it?  Place it in the blob itself?
 
 //------------------------------------------------------------------------------
 // GB_blob_header_get: get all properties of the blob

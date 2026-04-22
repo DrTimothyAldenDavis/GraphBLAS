@@ -12,7 +12,8 @@
 
 // The input arrays are assumed to be in arena 0
 
-// FIXME arena: or use GB_Context_header_arena and GB_Context_data_arena
+// FIXME arena: only support arena 0, or use GB_Context_header_arena
+// and GB_Context_data_arena
 
 #include "import_export/GB_export.h"
 

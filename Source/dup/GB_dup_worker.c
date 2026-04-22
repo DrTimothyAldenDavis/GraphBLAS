@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dup_worker: make a deep copy of a sparse matrix
+// GB_dup_worker: make a deep copy of a matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -17,11 +17,11 @@
 // or jumbled).  The pending work is copied into the output matrix C.  It is
 // not finished.  This case is only supported if numeric is true.
 
+#define GB_DEBUG  /* FIXME */
+
 #include "GB.h"
 #include "get_set/GB_get_set.h"
 #include "pending/GB_Pending.h"
-#define GB_FREE_ALL \
-    GB_FREE_MEMORY (&C_user_name, C_user_name_mem) ;
 
 GrB_Info GB_dup_worker      // make an exact copy of a matrix
 (
@@ -99,33 +99,59 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
 
     // allocate a new user header for C if (*Chandle) is NULL, or reuse the
     // existing static or dynamic header if (*Chandle) is not NULL.
-    GB_OK (GB_new_bix (Chandle, // can be new or existing header
+    info = GB_new_bix (Chandle, // can be new or existing header
         numeric ? atype : ctype, A->vlen, A->vdim, GB_ph_malloc, A->is_csc,
         GB_sparsity (A), false, A->hyper_switch, A->plen, anz, true, C_iso,
-        A->p_is_32, A->j_is_32, A->i_is_32, header_arena, data_arena)) ;
+        A->p_is_32, A->j_is_32, A->i_is_32, header_arena, data_arena) ;
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory
+        GB_FREE_MEMORY (&C_user_name, C_user_name_mem) ;
+        return (info) ;
+    }
     C = (*Chandle) ;
 
     //--------------------------------------------------------------------------
     // allocate the pending tuples, if present
     //--------------------------------------------------------------------------
 
+    bool ok = true ;
+
     if (A_Pending != NULL && numeric)
     { 
         // A has pending tuples; allocate space for them in C.  This case is
         // only supported if numeric is true.
         ASSERT (C_iso == A->iso) ;
-        if (!GB_Pending_alloc (C, A->iso, A_Pending->type, A_Pending->op,
-            A_Pending->nmax))
+        ok = GB_Pending_alloc (C, A->iso, A_Pending->type, A_Pending->op,
+            A_Pending->nmax) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // copy the hyper hash, if present
+    //--------------------------------------------------------------------------
+
+    ASSERT (C->Y == NULL) ;
+    if (ok && A->Y != NULL)
+    { 
+        info = GB_dup_worker (&(C->Y), /* Y is not iso: */ false, A->Y,
+            /* numeric: */ true, NULL, data_arena, data_arena) ;
+        ok = (info == GrB_SUCCESS) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // check if out of memory
+    //--------------------------------------------------------------------------
+
+    if (!ok)
+    { 
+        // out of memory
+        GB_FREE_MEMORY (&C_user_name, C_user_name_mem) ;
+        GB_phybix_free (C) ;
+        if (!preexisting_header)
         { 
-            // out of memory
-            GB_FREE_ALL ;
-            GB_phybix_free (C) ;
-            if (!preexisting_header)
-            { 
-                GB_Matrix_free (Chandle) ;
-            }
-            return (GrB_OUT_OF_MEMORY) ;
+            GB_Matrix_free (Chandle) ;
         }
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------

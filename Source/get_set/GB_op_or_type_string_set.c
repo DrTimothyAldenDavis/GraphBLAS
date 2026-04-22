@@ -25,7 +25,8 @@ GrB_Info GB_op_or_type_string_set
     int32_t *name_len,
     char **defn,
     uint64_t *defn_mem,
-    uint64_t *hash
+    uint64_t *hash,
+    const int header_arena
 ) 
 {
 
@@ -45,7 +46,6 @@ GrB_Info GB_op_or_type_string_set
 
     size_t len = strlen (value) ;
     bool compute_hash = false ;
-    int header_arena = 0 ; // FIXME arena param
 
     switch (field)
     {

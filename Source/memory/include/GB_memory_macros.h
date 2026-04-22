@@ -22,6 +22,11 @@
 #define GB_ARENA_DEFAULT 0
 #define GB_ARENA_RMM 0          /* FIXME arena: Rapids will be on arena 1 */
 #define GB_ARENA_MATLAB 0       /* FIXME arena: mxMalloc will be on arena 2 */
+#define GB_ARENA_STACK (-1)     /* FIXME arena: for static space, not malloc'd*/
+
+// FIXME arena: put these in GraphBLAS.h:
+#define GxB_ARENA_DEFAULT 0     /* defined by GrB_init or GxB_init */
+#define GxB_ARENA_RMM 1         /* for Rapids rmm_malloc/rmm_free only */
 
 GB_STATIC_INLINE_BOTH int GB_arena (uint64_t mem)
 {

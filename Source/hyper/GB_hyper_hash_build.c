@@ -177,6 +177,8 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
     // return result
     //--------------------------------------------------------------------------
 
+    // FIXME arena: assert that all content of Y is in the A->data_arena
+
     ASSERT_MATRIX_OK (A, "A from hyper_hash", GB0) ;
     ASSERT (!GB_ZOMBIES (Y)) ;
     ASSERT (!GB_JUMBLED (Y)) ;

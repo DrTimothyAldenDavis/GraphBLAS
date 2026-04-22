@@ -578,7 +578,7 @@ GrB_Info GrB_Global_get_VOID
 
             case GxB_MALLOC_FUNCTION : 
                 {
-                    int arena = 0 ; // FIXME arena
+                    int arena = 0 ; // FIXME arena: GrB_get ( MALLOC of arena)
                     void **func = (void **) value ;
                     (*func) = GB_Global_malloc_function_get (arena) ;
                 }
@@ -587,7 +587,7 @@ GrB_Info GrB_Global_get_VOID
 
             case GxB_CALLOC_FUNCTION : 
                 {
-                    int arena = 0 ; // FIXME arena
+                    int arena = 0 ; // FIXME arena: GrB_get ( MALLOC of arena)
                     void **func = (void **) value ;
                     (*func) = GB_Global_calloc_function_get (arena) ;
                 }
@@ -596,7 +596,7 @@ GrB_Info GrB_Global_get_VOID
 
             case GxB_REALLOC_FUNCTION : 
                 {
-                    int arena = 0 ; // FIXME arena
+                    int arena = 0 ; // FIXME arena: GrB_get ( MALLOC of arena)
                     void **func = (void **) value ;
                     (*func) = GB_Global_realloc_function_get (arena) ;
                 }
@@ -605,7 +605,7 @@ GrB_Info GrB_Global_get_VOID
 
             case GxB_FREE_FUNCTION : 
                 {
-                    int arena = 0 ; // FIXME arena
+                    int arena = 0 ; // FIXME arena: GrB_get ( MALLOC of arena)
                     void **func = (void **) value ;
                     (*func) = GB_Global_free_function_get (arena) ;
                 }

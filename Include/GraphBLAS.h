@@ -1478,7 +1478,7 @@ GB_GLOBAL GrB_IndexUnaryOp
 
 /* FIXME arena: add GrB get/set to move a matrix between arenas:
 
-    changes the data arena only:
+    changes the data arena only: (not lazy; always moves data if needed)
     GrB_Matrix_set_INT32 (A, arena, GxB_DATA_ARENA) ;
     GrB_Vector_set_INT32 (V, arena, GxB_DATA_ARENA) ;
     GrB_Scalar_set_INT32 (S, arena, GxB_DATA_ARENA) ;
@@ -1492,10 +1492,10 @@ GB_GLOBAL GrB_IndexUnaryOp
     GrB_Vector_get_INT32 (V, &arena, GxB_HEADER_ARENA) ;
     GrB_Scalar_get_INT32 (S, &arena, GxB_HEADER_ARENA) ;
 
-    to change both header and data arena:
-    GxB_Matrix_arena_set (&A, header_arena, data_arena) ;
-    GxB_Vector_arena_set (&V, header_arena, data_arena) ;
-    GxB_Scalar_arena_set (&S, header_arena, data_arena) ;
+    to change both header & data arena: (not lazy; always moves data if needed)
+    GxB_Matrix_set_arena (&A, header_arena, data_arena) ;
+    GxB_Vector_set_arena (&V, header_arena, data_arena) ;
+    GxB_Scalar_set_arena (&S, header_arena, data_arena) ;
 */
 
 typedef enum    // GxB_Option_Field ;
@@ -6636,15 +6636,15 @@ GrB_Info GxB_Vector_unload
 
 // The GrB_Matrix_import method copies from user-provided arrays into an
 // opaque GrB_Matrix and GrB_Matrix_export copies data out, from an opaque
-// GrB_Matrix into user-provided arrays.  Unlike the GxB pack/unpack methods,
+// GrB_Matrix into user-provided arrays.  Unlike the GxB Container methods,
 // memory is not handed off between the user application and GraphBLAS.
 
-// These methods are much slower than the GxB pack/unpack methods, since they
+// These methods are much slower than the GxB Container methods, since they
 // require a copy of the data to be made.  GrB_Matrix_import also must assume
 // its input data cannot be trusted, and so it does extensive checks.  The GxB
 // pack takes O(1) time in all cases (unless it is told the input data is
-// untrusted, via the descriptor).  GxB unpack takes O(1) time unless the
-// matrix is exported in a different format than it currently has.
+// untrusted, via the descriptor).  GxB Container methods take O(1) time unless
+// the matrix has pending work that must be finished first.
 
 // No typecasting of the values is done on import or export.  The GrB_Type type
 // parameter must be the equivalent of the ctype of the *Ax parameter.
