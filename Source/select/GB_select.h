@@ -93,6 +93,7 @@ GrB_Info GB_selectop_to_idxunop
     GxB_SelectOp selectop,
     GrB_Scalar Thunk,
     GrB_Type atype,
+    const int data_arena,           // arena for workspace
     GB_Werk Werk
 ) ;
 

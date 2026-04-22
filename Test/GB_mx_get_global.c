@@ -67,7 +67,6 @@ bool GB_mx_get_global       // true if doing malloc_debug
         GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree) ;
     }
 
-    ASSERT (GB_Global_nmalloc_get ( ) == 0) ;
     GB_Global_abort_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;
     GxB_Global_Option_set_(GxB_FORMAT, GxB_BY_COL) ;

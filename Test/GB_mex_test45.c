@@ -80,7 +80,14 @@ void mexFunction
     // C = A*A and Y = C*X
     //--------------------------------------------------------------------------
 
+    printf ("=============================== GrB_mxm:\n") ;
+    GxB_print (A, 2) ;
+    GxB_print (C, 2) ;
     OK (GrB_mxm (C, NULL, NULL, GrB_PLUS_TIMES_SEMIRING_FP64, A, A, NULL)) ;
+    printf ("=============================== GrB_mxv:\n") ;
+    GxB_print (C, 2) ;
+    GxB_print (X, 2) ;
+    GxB_print (Y, 2) ;
     OK (GrB_mxv (Y, NULL, NULL, GrB_PLUS_TIMES_SEMIRING_FP64, C, X, NULL)) ;
     Y->jumbled = true ; // hack Y to force it to be jumbled
 

@@ -20,7 +20,7 @@
 
 GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 (
-    const GrB_Matrix A,     // GraphBLAS matrix to print and check
+    const GrB_Matrix A,     // GraphBLAS matrix to print and check (can be NULL)
     const char *name,       // name of the matrix, optional
     int pr,                 // print level (see GB_check.h)
     FILE *f,                // file for output (or stdout if f is NULL)
@@ -33,7 +33,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (A != NULL) ;
     bool is_hyper = GB_IS_HYPERSPARSE (A) ;
     bool is_full = GB_IS_FULL (A) ;
     bool is_bitmap = GB_IS_BITMAP (A) ;
@@ -48,7 +47,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         skip_zombie_checks = true ;
     }
     pr = GB_IMIN (pr, GxB_COMPLETE_VERBOSE) ;
-    bool phantom = (is_full && (A->x == NULL || A->iso)) ;
+    bool phantom = (is_full && (A != NULL && (A->x == NULL || A->iso))) ;
     if (phantom)
     { 
         // the matrix is a phantom: iso full, or full with no A->x;

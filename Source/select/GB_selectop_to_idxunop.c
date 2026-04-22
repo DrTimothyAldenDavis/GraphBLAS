@@ -30,6 +30,7 @@ GrB_Info GB_selectop_to_idxunop
     GxB_SelectOp selectop,
     GrB_Scalar Thunk,
     GrB_Type atype,
+    const int data_arena,           // arena for workspace
     GB_Werk Werk
 )
 {
@@ -205,8 +206,6 @@ GrB_Info GB_selectop_to_idxunop
 
     // finish any pending work on the Thunk
     GB_MATRIX_WAIT (Thunk) ;
-
-    int data_arena = Thunk->data_arena ;
 
     // allocate the NewThunk as a full scalar
     GB_OK (GB_new_bix ((GrB_Matrix *) &NewThunk, idxunop->ytype, 1, 1,
