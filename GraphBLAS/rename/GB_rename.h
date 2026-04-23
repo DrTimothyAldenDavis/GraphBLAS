@@ -1247,6 +1247,7 @@
 #define GB_serialize GM_serialize
 #define GB_serialize_method GM_serialize_method
 #define GB_serialize_to_blob GM_serialize_to_blob
+#define GB_set_arena GM_set_arena
 #define GB_setElement GM_setElement
 #define GB_shallow_copy GM_shallow_copy
 #define GB_shallow_op GM_shallow_op

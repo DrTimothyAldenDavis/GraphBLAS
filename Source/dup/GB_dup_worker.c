@@ -17,8 +17,6 @@
 // or jumbled).  The pending work is copied into the output matrix C.  It is
 // not finished.  This case is only supported if numeric is true.
 
-#define GB_DEBUG  /* FIXME */
-
 #include "GB.h"
 #include "get_set/GB_get_set.h"
 #include "pending/GB_Pending.h"
