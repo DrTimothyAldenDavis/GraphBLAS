@@ -6749,6 +6749,11 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 // the data is untrusted, use this to check the matrix:
 //      GxB_Matrix_fprint (A, "A deserialized", GxB_SILENT, NULL)
 
+// GxB*_serialize methods always construct the blob in the data arena defined
+// by the current Context.  There is no method for query a blob for its arena,
+// since the user application can move it unchanged into a file, and load it
+// back, or move it to another arena, without using GraphBLAS.
+
 // Example usage:
 
 /*
@@ -6912,7 +6917,8 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
 GrB_Info GrB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
 (
     // output:
-    GrB_Matrix *C,      // output matrix created from the blob
+    GrB_Matrix *C,      // output matrix created from the blob, created in the
+                        // header and data arena of the current Context
     // input:
     GrB_Type type,      // type of the matrix C.  Required if the blob holds a
                         // matrix of user-defined type.  May be NULL if blob

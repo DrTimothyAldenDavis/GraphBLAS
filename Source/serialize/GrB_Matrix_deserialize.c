@@ -18,7 +18,8 @@
 GrB_Info GrB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
 (
     // output:
-    GrB_Matrix *C,      // output matrix created from the blob
+    GrB_Matrix *C,      // output matrix created from the blob, created in the
+                        // header and data arena of the current Context
     // input:
     GrB_Type type,      // type of the matrix C.  Required if the blob holds a
                         // matrix of user-defined type.  May be NULL if blob

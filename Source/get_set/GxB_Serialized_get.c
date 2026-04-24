@@ -11,8 +11,11 @@
 #include "serialize/GB_serialize.h"
 #define GB_FREE_ALL ;
 
-// FIXME arena: define arena for the blob with GB_Context_data_arena ( ),
-// but how to keep track of it?  Place it in the blob itself?
+// Query the contents of the blob.  There is no method for querying the arena
+// of the blob, since the user application can move it unchanged into a file,
+// and load it back, or move it to another arena, without using GraphBLAS.  The
+// GxB*_serialize methods always construct the blob in the data_arena defined
+// by the current Context.
 
 //------------------------------------------------------------------------------
 // GB_blob_header_get: get all properties of the blob
