@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG /* FIXME */
+
 #define GB_FREE_WORKSPACE                   \
 {                                           \
     GB_FREE_MEMORY (&I_work, I_work_mem) ;  \
@@ -177,9 +179,11 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
     // return result
     //--------------------------------------------------------------------------
 
-    // FIXME arena: assert that all content of Y is in the A->data_arena
-
     ASSERT_MATRIX_OK (A, "A from hyper_hash", GB0) ;
+    ASSERT (A->data_arena == A->Y->data_arena) ;
+    ASSERT (A->data_arena == GB_arena (A->Y->p_mem)) ;
+    ASSERT (A->data_arena == GB_arena (A->Y->i_mem)) ;
+    ASSERT (A->data_arena == GB_arena (A->Y->x_mem)) ;
     ASSERT (!GB_ZOMBIES (Y)) ;
     ASSERT (!GB_JUMBLED (Y)) ;
     ASSERT (!GB_PENDING (Y)) ;

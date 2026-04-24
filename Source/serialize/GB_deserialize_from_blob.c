@@ -35,6 +35,7 @@ GrB_Info GB_deserialize_from_blob
     uint64_t *Sblocks,          // array of size nblocks
     int32_t nblocks,            // # of compressed blocks for this array
     int32_t method,             // compression method used for each block
+    const int data_arena,       // areno for workspace and output X
     // input/output:
     uint64_t *s_handle          // where to read from the blob
 )
@@ -44,7 +45,6 @@ GrB_Info GB_deserialize_from_blob
     // check inputs
     //--------------------------------------------------------------------------
 
-    int data_arena = 0 ;           // FIXME arena param
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (blob != NULL) ;

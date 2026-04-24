@@ -6841,11 +6841,11 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 // level 1).
 
 #ifndef GRAPHBLAS_VANILLA
-// FIXME arena: GxB_Matrix_serialize: **blob_handle: use Context data arena
 GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 (
     // output:
-    void **blob_handle,             // the blob, allocated on output
+    void **blob_handle,             // the blob, allocated on output, in the
+                                    // data arena defined by the current Context
     GrB_Index *blob_size,           // size of the blob on output
     // input:
     GrB_Matrix A,                   // matrix to serialize
@@ -6866,11 +6866,11 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 ) ;
 
 #ifndef GRAPHBLAS_VANILLA
-// FIXME arena: GxB_Vector_serialize: **blob_handle: use Context data arena
 GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
 (
     // output:
-    void **blob_handle,             // the blob, allocated on output
+    void **blob_handle,             // the blob, allocated on output, in the
+                                    // data arena defined by the current Context
     GrB_Index *blob_size,           // size of the blob on output
     // input:
     GrB_Vector u,                   // vector to serialize
@@ -6892,12 +6892,12 @@ GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
 // deserialize methods simply add the descriptor, which allows for optional
 // control of the # of threads used to deserialize the blob.
 
-// FIXME arena: deserialize to Context header and data arenas
 #ifndef GRAPHBLAS_VANILLA
 GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
 (
     // output:
-    GrB_Matrix *C,      // output matrix created from the blob
+    GrB_Matrix *C,      // output matrix created from the blob, created in the
+                        // header and data arena of the current Context
     // input:
     GrB_Type type,      // type of the matrix C.  Required if the blob holds a
                         // matrix of user-defined type.  May be NULL if blob
@@ -6926,7 +6926,8 @@ GrB_Info GrB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
 GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
 (
     // output:
-    GrB_Vector *w,      // output vector created from the blob
+    GrB_Matrix *w,      // output vector created from the blob, created in the
+                        // header and data arena of the current Context
     // input:
     GrB_Type type,      // type of the vector w.  Required if the blob holds a
                         // vector of user-defined type.  May be NULL if blob

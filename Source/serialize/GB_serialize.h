@@ -18,6 +18,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // input:
     const GrB_Matrix A,             // matrix to serialize
     int32_t method,                 // method to use
+    const int data_arena,           // arena for workspace and output blob
     GB_Werk Werk
 ) ;
 
@@ -33,7 +34,8 @@ void GB_serialize_method
 GrB_Info GB_deserialize             // deserialize a matrix from a blob
 (
     // output:
-    GrB_Matrix *Chandle,            // output matrix created from the blob
+    GrB_Matrix *Chandle, // output matrix created from the blob, created in the
+                         // header and data arena of the current Context
     // input:
     GrB_Type type_expected,         // type expected (NULL for any built-in)
     const GB_void *blob,            // serialized matrix 
@@ -65,6 +67,7 @@ GrB_Info GB_serialize_array
     int32_t method,                     // compression method requested
     int32_t algo,                       // compression algorithm
     int32_t level,                      // compression level
+    const int data_arena,               // arena for output and workspace
     GB_Werk Werk
 ) ;
 
@@ -99,6 +102,7 @@ GrB_Info GB_deserialize_from_blob
     uint64_t *Sblocks,          // array of size nblocks
     int32_t nblocks,            // # of compressed blocks for this array
     int32_t method_used,        // compression method used for each block
+    const int data_arena,       // areno for workspace and output X
     // input/output:
     uint64_t *s_handle            // where to read from the blob
 ) ;

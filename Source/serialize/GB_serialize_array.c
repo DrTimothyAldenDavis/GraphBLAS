@@ -40,6 +40,7 @@ GrB_Info GB_serialize_array
     int32_t method,                     // compression method requested
     int32_t algo,                       // compression algorithm
     int32_t level,                      // compression level
+    const int data_arena,               // arena for output and workspace
     GB_Werk Werk
 )
 {
@@ -48,7 +49,6 @@ GrB_Info GB_serialize_array
     // check inputs
     //--------------------------------------------------------------------------
 
-    int data_arena = 0 ;   // FIXME arena param
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (Blocks_handle != NULL) ;

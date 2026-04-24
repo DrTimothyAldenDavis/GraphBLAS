@@ -27,6 +27,8 @@
     free (blob) ;                                   // user frees the blob
 */
 
+// The blob is created in the current data arena, as defined by the Context.
+
 #include "GB.h"
 #include "serialize/GB_serialize.h"
 
@@ -35,7 +37,7 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     // output:
     void *blob,                     // the blob, already allocated in input
     // input/output:
-    uint64_t *blob_memsize_handle,     // size of the blob on input.  On output,
+    uint64_t *blob_memsize_handle,  // size of the blob on input.  On output,
                                     // the # of bytes used in the blob.
     // input:
     GrB_Matrix A                    // matrix to serialize
@@ -55,6 +57,8 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     // no descriptor, so assume the default method
     int method = GxB_DEFAULT ;
 
+    int data_arena = GB_Context_data_arena ( ) ;
+
     // Werk will hold the default # of threads, which can be controlled
     // by GxB_Global_Option_set.
 
@@ -63,7 +67,8 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     //--------------------------------------------------------------------------
 
     uint64_t blob_memsize = (*blob_memsize_handle) ;
-    info = GB_serialize ((GB_void **) &blob, &blob_memsize, A, method, Werk) ;
+    info = GB_serialize ((GB_void **) &blob, &blob_memsize, A, method,
+        data_arena, Werk) ;
     if (info == GrB_SUCCESS)
     { 
         (*blob_memsize_handle) = (uint64_t) blob_memsize ;

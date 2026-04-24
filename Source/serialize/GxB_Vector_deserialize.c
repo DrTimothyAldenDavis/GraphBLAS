@@ -18,7 +18,8 @@
 GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
 (
     // output:
-    GrB_Vector *w,      // output vector created from the blob
+    GrB_Matrix *w,      // output vector created from the blob, created in the
+                        // header and data arena of the current Context
     // input:
     GrB_Type type,      // type of the vector w.  Required if the blob holds a
                         // vector of user-defined type.  May be NULL if blob

@@ -40,10 +40,6 @@
     }                                           \
 }
 
-// FIXME arena: use arena = A->data_arena by default; and add new
-// methods where the arena of the blob can be provided on input.
-// Or use GB_Context_data_arena.
-
 GrB_Info GB_serialize               // serialize a matrix into a blob
 (
     // output:
@@ -55,6 +51,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // input:
     const GrB_Matrix A,             // matrix to serialize
     int32_t method,                 // method to use
+    const int data_arena,           // arena for workspace and output blob
     GB_Werk Werk
 )
 {
@@ -67,7 +64,6 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     ASSERT (blob_memsize_handle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for serialize", GB0) ;
 
-    int data_arena = A->data_arena ;
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     uint64_t blob_mem = mem ;
@@ -221,27 +217,27 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     GB_OK (GB_serialize_array (&Ap_Blocks, &Ap_Blocks_mem,
         &Ap_Sblocks, &Ap_Sblocks_mem, &Ap_nblocks, &Ap_method,
         &Ap_compressed_memsize, dryrun,
-        (GB_void *) A->p, Ap_len, method, algo, level, Werk)) ;
+        (GB_void *) A->p, Ap_len, method, algo, level, data_arena, Werk)) ;
 
     GB_OK (GB_serialize_array (&Ah_Blocks, &Ah_Blocks_mem,
         &Ah_Sblocks, &Ah_Sblocks_mem, &Ah_nblocks, &Ah_method,
         &Ah_compressed_memsize, dryrun,
-        (GB_void *) A->h, Ah_len, method, algo, level, Werk)) ;
+        (GB_void *) A->h, Ah_len, method, algo, level, data_arena, Werk)) ;
 
     GB_OK (GB_serialize_array (&Ab_Blocks, &Ab_Blocks_mem,
         &Ab_Sblocks, &Ab_Sblocks_mem, &Ab_nblocks, &Ab_method,
         &Ab_compressed_memsize, dryrun,
-        (GB_void *) A->b, Ab_len, method, algo, level, Werk)) ;
+        (GB_void *) A->b, Ab_len, method, algo, level, data_arena, Werk)) ;
 
     GB_OK (GB_serialize_array (&Ai_Blocks, &Ai_Blocks_mem,
         &Ai_Sblocks, &Ai_Sblocks_mem, &Ai_nblocks, &Ai_method,
         &Ai_compressed_memsize, dryrun,
-        (GB_void *) A->i, Ai_len, method, algo, level, Werk)) ;
+        (GB_void *) A->i, Ai_len, method, algo, level, data_arena, Werk)) ;
 
     GB_OK (GB_serialize_array (&Ax_Blocks, &Ax_Blocks_mem,
         &Ax_Sblocks, &Ax_Sblocks_mem, &Ax_nblocks, &Ax_method,
         &Ax_compressed_memsize, dryrun,
-        (GB_void *) A->x, Ax_len, method, algo, level, Werk)) ;
+        (GB_void *) A->x, Ax_len, method, algo, level, data_arena, Werk)) ;
 
     //--------------------------------------------------------------------------
     // determine the size of the blob

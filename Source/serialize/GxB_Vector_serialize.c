@@ -30,6 +30,8 @@
     free (blob) ;                                   // user frees the blob
 */
 
+// The blob is created in the current data arena, as defined by the Context.
+
 #include "GB.h"
 #include "serialize/GB_serialize.h"
 
@@ -55,8 +57,7 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
     GB_WHERE_1 (u, "GxB_Vector_serialize (&blob, &blob_memsize, u, desc)") ;
     GB_BURBLE_START ("GxB_Vector_serialize") ;
 
-    int data_arena = u->data_arena ;
-    uint64_t mem = GB_mem (data_arena, 0) ;
+    int data_arena = GB_Context_data_arena ( ) ;
 
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
@@ -68,9 +69,9 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
     //--------------------------------------------------------------------------
 
     (*blob_handle) = NULL ;
-    uint64_t blob_memsize = mem ;
+    uint64_t blob_memsize = 0 ;
     info = GB_serialize ((GB_void **) blob_handle, &blob_memsize,
-        (GrB_Matrix) u, method, Werk) ;
+        (GrB_Matrix) u, method, data_arena, Werk) ;
     (*blob_memsize_handle) = (uint64_t) blob_memsize ;
     GB_BURBLE_END ;
     #pragma omp flush
