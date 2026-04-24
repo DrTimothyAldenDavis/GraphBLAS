@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// A wrapper for calloc.  Space is set to zero.
+// A wrapper for calloc.  Space is set to zero on the CPU.
+// CUDA will rely on its own method and will not call this method.
 
 #include "GB.h"
 
@@ -38,9 +39,8 @@ static inline void *GB_calloc_helper
 
     if (p != NULL)
     { 
-        // clear the block of memory with a parallel memset
+        // clear the block of memory with a parallel memset on the CPU
         int nthreads_max = GB_Context_nthreads_max ( ) ;
-        // FIXME for CUDA: need to know if this is on the GPU or CPU
         GB_memset (p, 0, (*memsize), nthreads_max) ;
     }
 

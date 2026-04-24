@@ -27,8 +27,8 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     const int ntasks,                   // # of tasks
     const int nthreads,                 // # of threads to use
     const GrB_Matrix R,                 // R = inverse (I), if needed
-    uint64_t **p_Cwork,                 // workspace of size max(2,C->nvec+1)
-    uint64_t Cwork_mem,
+    uint64_t **p_Cwork,                 // &Cwork, size max(2,C->nvec+1)
+    uint64_t Cwork_mem,                 // memsize and arena of Cwork
     // analysis from phase0:
     const void *Ap_start,
     const void *Ap_end,
