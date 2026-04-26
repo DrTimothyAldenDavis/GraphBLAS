@@ -171,6 +171,7 @@ include_directories ( ${PROJECT_SOURCE_DIR}/../ ../Source ../Include Config
     # include all Source/* folders that have include/ or template/ subfolders:
     ../Source/add
     ../Source/apply
+    ../Source/arena
     ../Source/assign
     ../Source/builder
     ../Source/builtin

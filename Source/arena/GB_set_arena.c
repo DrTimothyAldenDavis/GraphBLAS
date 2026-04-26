@@ -7,17 +7,23 @@
 
 //------------------------------------------------------------------------------
 
+// CPU method for ensuring a pointer p is in a specified arena.
+// CUDA will have its own method.
+
+#define GB_DEBUG    /* FIXME arena */
+
 #include "GB.h"
 
 GrB_Info GB_set_arena           // set arena of a block of memory
 (
     // input/output:
     void **p_handle,            // block of memory to change
-    uint64_t **p_mem_handle,    // memsize and arena of block of memory
+    uint64_t *p_mem_handle,     // memsize and arena of block of memory
     // input
     const int new_arena,        // arena to move to
-    uint64_t n,                 // # of bytes that must be copied
-    int nthreads                // max # of threads to use
+    const uint64_t new_memsize, // new size of the block of memory
+    const uint64_t n,           // # of bytes that must be copied
+    const int nthreads          // max # of threads to use
 )
 {
 
@@ -38,8 +44,11 @@ GrB_Info GB_set_arena           // set arena of a block of memory
     void *p_old = (*p_handle) ;
     uint64_t p_old_mem = (*p_mem_handle) ;
     int old_arena = GB_arena (p_old_mem) ;
-    // uint64_t old_memsize = GB_memsize (p_old_mem) ;
-    // ASSERT (GB_mem (old_memsize) >= n) ;
+    #ifdef GB_DEBUG
+    uint64_t old_memsize = GB_memsize (p_old_mem) ;
+    ASSERT (old_memsize >= new_memsize) ;
+    ASSERT (new_memsize >= n) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // quick return
@@ -47,6 +56,7 @@ GrB_Info GB_set_arena           // set arena of a block of memory
 
     if (old_arena == new_arena)
     { 
+        // nothing to do
         return (GrB_SUCCESS) ;
     }
 
@@ -55,7 +65,7 @@ GrB_Info GB_set_arena           // set arena of a block of memory
     //--------------------------------------------------------------------------
 
     uint64_t p_new_mem = GB_mem (new_arena, 0) ;
-    void *p_new = GB_MALLOC_MEMORY (n, sizeof (GB_void), &p_new_mem) ;
+    void *p_new = GB_MALLOC_MEMORY (new_memsize, sizeof (GB_void), &p_new_mem) ;
     if (p_new == NULL)
     { 
         return (GrB_OUT_OF_MEMORY) ;

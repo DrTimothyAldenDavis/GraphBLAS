@@ -32,7 +32,6 @@
 #include "pending/GB_Pending_n.h"
 #include "nvals/GB_nvals.h"
 #include "aliased/GB_aliased.h"
-// #include "matrix/GB_matrix.h"
 #include "clear/GB_clear.h"
 #include "dup/GB_dup.h"
 #include "compatible/GB_code_compatible.h"
@@ -57,6 +56,7 @@
 #include "callback/GB_callbacks.h"
 #include "helper/GB_factory.h"
 #include "matrix/GB_matrix.h"
+#include "arena/GB_arena.h"
 
 #endif
 

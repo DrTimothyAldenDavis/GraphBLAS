@@ -70,18 +70,27 @@ GrB_Info GxB_Vector_load
     int data_arena ;
     bool readonly ;
 
-    switch (handling)
-    {
-        case GrB_DEFAULT       : data_arena = 0 ; readonly = false ; break ;
-        case GrB_DEFAULT+1     : data_arena = 1 ; readonly = false ; break ;
-        case GrB_DEFAULT+2     : data_arena = 2 ; readonly = false ; break ;
-        case GrB_DEFAULT+3     : data_arena = 3 ; readonly = false ; break ;
-        case GxB_IS_READONLY   : data_arena = 0 ; readonly = true  ; break ;
-        case GxB_IS_READONLY+1 : data_arena = 1 ; readonly = true  ; break ;
-        case GxB_IS_READONLY+2 : data_arena = 2 ; readonly = true  ; break ;
-        case GxB_IS_READONLY+3 : data_arena = 3 ; readonly = true  ; break ;
-        default : return (GrB_INVALID_VALUE) ;  // invalid handling
+    // FIXME arena: need a max # of arenas in GraphBLAS.h
+    if (handling >= ((int) GrB_DEFAULT) &&
+        handling <  ((int) GrB_DEFAULT) + GB_NARENAS)
+    { 
+        data_arena = handling - ((int) GrB_DEFAULT) ;
+        readonly = false ;
     }
+    else if (handling >= ((int) GxB_IS_READONLY) &&
+             handling <  ((int) GxB_IS_READONLY) + GB_NARENAS)
+    { 
+        data_arena = handling - ((int) GxB_IS_READONLY) ;
+        readonly = true ;
+    }
+    else
+    { 
+        // invalid handling
+        return (GrB_INVALID_VALUE) ;
+    }
+
+    // FIXME arena: need to return an error if the data arena has not
+    // been established yet.
 
     uint64_t X_mem = GB_mem (data_arena, X_memsize) ;
 

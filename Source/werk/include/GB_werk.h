@@ -32,8 +32,8 @@ typedef struct
 {
     GB_void Stack [GB_WERK_SIZE] ;  // werkspace stack
     const char *where ;             // GraphBLAS function where error occurred
-    char **logger_handle ;          // error report
-    uint64_t *logger_mem_handle ;
+    char **logger_handle ;          // logger string for error report
+    uint64_t *logger_mem_handle ;   // memsize and arena of logger string
     int pwerk ;                     // top of Werk stack, initially zero
 
     // integer control, combines C->[pji]_control and Global [pji]_control:

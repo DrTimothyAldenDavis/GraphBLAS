@@ -4637,6 +4637,33 @@ GrB_Info GxB_Context_set_INT    (GxB_Context, int32_t   , int) ;
 GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , int, size_t) ;
 #endif
 
+GrB_Info GxB_Matrix_set_arenas
+(
+    // input/output
+    GrB_Matrix *Ahandle,        // handle of matrix to modify
+    // input
+    const int new_header_arena, // new arena for the header of A
+    const int new_data_arena    // new arena for the data content of A
+) ;
+
+GrB_Info GxB_Vector_set_arenas
+(
+    // input/output
+    GrB_Vector *Vhandle,        // handle of vector to modify
+    // input
+    const int new_header_arena, // new arena for the header of V
+    const int new_data_arena    // new arena for the data content of V
+) ;
+
+GrB_Info GxB_Scalar_set_arenas
+(
+    // input/output:
+    GrB_Scalar *Shandle,        // handle of vector to modify
+    // input:
+    const int new_header_arena, // new arena for the header of S
+    const int new_data_arena    // new arena for the data content of S
+) ;
+
 //==============================================================================
 // GrB_wait: finish computations
 //==============================================================================

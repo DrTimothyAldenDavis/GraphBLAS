@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG /* FIXME */
-
 #define GB_FREE_WORKSPACE                   \
 {                                           \
     GB_FREE_MEMORY (&I_work, I_work_mem) ;  \
