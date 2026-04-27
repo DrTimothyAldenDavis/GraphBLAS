@@ -19,7 +19,7 @@
 // realloc is NULL, it is not used, and malloc/memcpy/free are used instead.
 
 // The malloc/calloc/realloc/free functions passed to GxB_init are for
-// arena 0 (GB_ARENA_DEFAULT), and cannot be modified once set by GxB_init.
+// arena 0 (GxB_ARENA_DEFAULT), and cannot be modified once set by GxB_init.
 // GraphBLAS uses this arena during initializations (for the JIT hash table).
 
 // Examples:
@@ -82,10 +82,11 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     // initialize GraphBLAS
     //--------------------------------------------------------------------------
 
+    // FIXME arena: CUDA will have GB_rmm_malloc etc in arena 1 (GxB_ARENA_RMM)
+
 #if defined ( GRAPHBLAS_HAS_CUDA )
     if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
     {
-        // FIXME arena: CUDA will have GB_rmm_malloc etc available in arena 1.
         return (GB_init (mode,              // blocking or non-blocking mode
             // thread-safe RMM C memory management functions:
             GB_rmm_malloc, NULL, NULL, GB_rmm_free, Werk)) ;

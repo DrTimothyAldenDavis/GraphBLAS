@@ -548,8 +548,42 @@ GrB_Info GrB_Global_get_VOID
 
     GrB_Info info = GrB_NO_VALUE ;
 
+    uint32_t arena_option = ((uint32_t) field) && (~0xFFFF) ;
+    uint32_t arena = ((uint32_t) field) && (0xFFFF) ;
+    if (arena_option > 0 && arena >= GB_NARENAS)
+    { 
+        // arena out of range
+        return (GrB_INVALID_VALUE) ;
+    }
+
     GB_OPENMP_LOCK_SET (0)      // global get (void)
-    {
+
+    if (arena_option == GxB_ARENA_MALLOC)
+    { 
+        void **f = (void **) value ;
+        (*f) = GB_Global_malloc_function_get (arena) ;
+        info = GrB_SUCCESS ;
+    }
+    else if (arena_option == GxB_ARENA_CALLOC)
+    { 
+        void **f = (void **) value ;
+        (*f) = GB_Global_calloc_function_get (arena) ;
+        info = GrB_SUCCESS ;
+    }
+    else if (arena_option == GxB_ARENA_REALLOC)
+    { 
+        void **f = (void **) value ;
+        (*f) = GB_Global_realloc_function_get (arena) ;
+        info = GrB_SUCCESS ;
+    }
+    else if (arena_option == GxB_ARENA_FREE)
+    { 
+        void **f = (void **) value ;
+        (*f) = GB_Global_free_function_get (arena) ;
+        info = GrB_SUCCESS ;
+    }
+    else
+    { 
         switch (field)
         {
 
@@ -576,38 +610,34 @@ GrB_Info GrB_Global_get_VOID
                 info = GrB_SUCCESS ;
                 break ;
 
-            case GxB_MALLOC_FUNCTION : 
+            case GxB_MALLOC_FUNCTION :  // default arena only (historical)
                 {
-                    int arena = 0 ; // FIXME arena: GrB_get ( MALLOC of arena)
-                    void **func = (void **) value ;
-                    (*func) = GB_Global_malloc_function_get (arena) ;
+                    void **f = (void **) value ;
+                    (*f) = GB_Global_malloc_function_get (GxB_ARENA_DEFAULT) ;
                 }
                 info = GrB_SUCCESS ;
                 break ;
 
-            case GxB_CALLOC_FUNCTION : 
+            case GxB_CALLOC_FUNCTION :  // default arena only (historical)
                 {
-                    int arena = 0 ; // FIXME arena: GrB_get ( MALLOC of arena)
-                    void **func = (void **) value ;
-                    (*func) = GB_Global_calloc_function_get (arena) ;
+                    void **f = (void **) value ;
+                    (*f) = GB_Global_calloc_function_get (GxB_ARENA_DEFAULT) ;
                 }
                 info = GrB_SUCCESS ;
                 break ;
 
-            case GxB_REALLOC_FUNCTION : 
+            case GxB_REALLOC_FUNCTION : // default arena only (historical)
                 {
-                    int arena = 0 ; // FIXME arena: GrB_get ( MALLOC of arena)
-                    void **func = (void **) value ;
-                    (*func) = GB_Global_realloc_function_get (arena) ;
+                    void **f = (void **) value ;
+                    (*f) = GB_Global_realloc_function_get (GxB_ARENA_DEFAULT) ;
                 }
                 info = GrB_SUCCESS ;
                 break ;
 
-            case GxB_FREE_FUNCTION : 
+            case GxB_FREE_FUNCTION :    // default arena only (historical)
                 {
-                    int arena = 0 ; // FIXME arena: GrB_get ( MALLOC of arena)
-                    void **func = (void **) value ;
-                    (*func) = GB_Global_free_function_get (arena) ;
+                    void **f = (void **) value ;
+                    (*f) = GB_Global_free_function_get (GxB_ARENA_DEFAULT) ;
                 }
                 info = GrB_SUCCESS ;
                 break ;
@@ -623,6 +653,7 @@ GrB_Info GrB_Global_get_VOID
                 info = GrB_INVALID_VALUE ;
         }
     }
+
     GB_OPENMP_LOCK_UNSET (0)      // global get (void)
 
     #pragma omp flush

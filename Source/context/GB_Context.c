@@ -447,7 +447,7 @@ void GB_Context_data_arena_set
     }
     // ensure data_arena is in range
     data_arena = GB_IMAX (data_arena, 0) ;
-    data_arena = GB_IMIN (data_arena, GB_NARENAS) ;
+    data_arena = GB_IMIN (data_arena, GB_NARENAS - 1) ;
     if (Context == NULL || Context == GxB_CONTEXT_WORLD)
     { 
         GB_ATOMIC_WRITE
@@ -512,7 +512,7 @@ void GB_Context_header_arena_set
     }
     // ensure header_arena is in range
     header_arena = GB_IMAX (header_arena, 0) ;
-    header_arena = GB_IMIN (header_arena, GB_NARENAS) ;
+    header_arena = GB_IMIN (header_arena, GB_NARENAS - 1) ;
     if (Context == NULL || Context == GxB_CONTEXT_WORLD)
     { 
         GB_ATOMIC_WRITE

@@ -69,7 +69,7 @@ typedef struct
     // tell MATLAB to make memory persistent
     //--------------------------------------------------------------------------
 
-    void (* persistent_function ) (void *) ;
+    void (* persistent_function ) (void *) ;    // FIXME arena: remove
 
     //--------------------------------------------------------------------------
     // memory usage tracking: for testing and debugging only
@@ -211,15 +211,26 @@ static GB_Global_struct GB_Global =
     .hyper_hash = GB_HYPER_HASH_DEFAULT,
 
     // abort function for debugging only
-    .abort_function   = abort,
+    .abort_function = abort,
 
-    // malloc/realloc/free functions: default to C11 functions
-    .malloc_function       = { malloc , malloc  , malloc , malloc },
-    .calloc_function       = { NULL   , NULL    , NULL   , NULL   },
-    .realloc_function      = { realloc, realloc , realloc, realloc},
-    .free_function         = { free   , free    , free   , free   },
+    // malloc/realloc/free functions: default to C11 functions in arena 0.
+    // The user application can change arena 0 only using GxB_init.
+    // Arena 1 cannot be changed (GxB_ARENA_RMM, reserved for Rapids).
+    #ifdef GRAPHBLAS_HAS_CUDA
+    // CUDA available: use GB_rmm_malloc/GB_rmm_free for arena 1
+    .malloc_function  = { malloc , GB_rmm_malloc, NULL, NULL },
+    .calloc_function  = { NULL   , NULL         , NULL, NULL },
+    .realloc_function = { realloc, NULL         , NULL, NULL },
+    .free_function    = { free   , GB_rmm_free  , NULL, NULL },
+    #else
+    // CUDA not available: use malloc/free for arena 1
+    .malloc_function  = { malloc , malloc, NULL, NULL },
+    .calloc_function  = { NULL   , NULL  , NULL, NULL },
+    .realloc_function = { realloc, NULL  , NULL, NULL },
+    .free_function    = { free   , free  , NULL, NULL },
+    #endif
 
-    // tell MATLAB to make memory persistent
+    // tell MATLAB to make memory persistent  FIXME arena: remove
     .persistent_function = NULL,
 
     // malloc tracking, for testing, statistics, and debugging only
@@ -857,6 +868,9 @@ void GB_Global_free_function (void *p, int arena)
 //------------------------------------------------------------------------------
 // malloc/free persistent memory: malloc and make the memory persistent
 //------------------------------------------------------------------------------
+
+// FIXME arena: persistent malloc/make will be removed; just use malloc/free
+// from arena 0
 
 // By default, MATLAB frees any memory allocated by mxMalloc when a mexFunction
 // returns, except for any memory passed back to the MATLAB caller.  This is

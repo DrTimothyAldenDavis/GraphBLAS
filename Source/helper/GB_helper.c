@@ -405,7 +405,8 @@ double GB_helper10       // norm (x-y,p), or -1 on error
 //------------------------------------------------------------------------------
 
 // FIXME arena:  when mxMalloc/mxFree is moved to GB_ARENA_MATLAB,
-// change these methods to use GB_ARENA_DEFAULT.
+// these methods can just call GxB_Container_new and GxB_Container_free,
+// and remove GB_Global_persistent_* methods.
 
 static GxB_Container Container = NULL ;
 
@@ -417,11 +418,11 @@ GxB_Container GB_helper_container (void)    // return the global Container
 static GrB_Vector GB_helper_component (void)
 {
     size_t s = sizeof (struct GB_Vector_opaque) ;
-    GrB_Vector p = GB_Global_persistent_malloc (s) ;  // with GB_ARENA_DEFAULT
+    GrB_Vector p = GB_Global_persistent_malloc (s) ;  // FIXME arena
     if (p != NULL)
     {
         memset (p, 0, s) ;
-        p->header_mem = GB_mem (GB_ARENA_DEFAULT, s) ;  // FIXME arena
+        p->header_mem = GB_mem (GxB_ARENA_DEFAULT, s) ;
         p->type = GrB_BOOL ;
         p->is_csc = true ;
         p->plen = -1 ;
@@ -441,7 +442,7 @@ void GB_helper_container_new (void)         // allocate the global Container
 
     // allocate a new Container
     size_t s = sizeof (struct GxB_Container_struct) ;
-    Container = GB_Global_persistent_malloc (s) ;   // with GB_ARENA_DEFAULT
+    Container = GB_Global_persistent_malloc (s) ;   // FIXME arena
     printf ("new persistent container: %p\n", Container) ;
     if (Container != NULL)
     {
@@ -457,18 +458,18 @@ void GB_helper_container_new (void)         // allocate the global Container
         Container->ncols_nonempty = -1 ;
         Container->format = GxB_FULL ;
         Container->orientation = GrB_ROWMAJOR ;
-        Container->header_arena = GB_ARENA_DEFAULT ;  // FIXME arena
+        Container->header_arena = GxB_ARENA_DEFAULT ;  // FIXME arena
     }
 }
 
 void GB_helper_container_free (void)        // free the global Container
 {
     if (Container == NULL) return ;
-    GB_Global_persistent_free ((void **) &(Container->p)) ;
-    GB_Global_persistent_free ((void **) &(Container->h)) ;
-    GB_Global_persistent_free ((void **) &(Container->b)) ;
-    GB_Global_persistent_free ((void **) &(Container->i)) ;
-    GB_Global_persistent_free ((void **) &(Container->x)) ;
-    GB_Global_persistent_free ((void **) &(Container)) ;
+    GB_Global_persistent_free ((void **) &(Container->p)) ;  // FIXME arena
+    GB_Global_persistent_free ((void **) &(Container->h)) ;  // FIXME arena
+    GB_Global_persistent_free ((void **) &(Container->b)) ;  // FIXME arena
+    GB_Global_persistent_free ((void **) &(Container->i)) ;  // FIXME arena
+    GB_Global_persistent_free ((void **) &(Container->x)) ;  // FIXME arena
+    GB_Global_persistent_free ((void **) &(Container)) ;     // FIXME arena
 }
 

@@ -92,7 +92,7 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    // FIXME arena: use GB_rmm_malloc etc for GB_ARENA_RMM (arena: 1),
+    // FIXME arena: use GB_rmm_malloc etc for GxB_ARENA_RMM (arena: 1),
     // which is reserved and cannot be modified by the user.
     GB_Global_gpu_count_set (true) ;
     int gpu_count = GB_Global_gpu_count_get ( ) ;
@@ -120,11 +120,11 @@ GrB_Info GB_init            // start up GraphBLAS
     }
 
     // GrB_init passes in the C11 malloc/calloc/realloc/free; these methods
-    // are used for arena 0
-    GB_Global_malloc_function_set  (malloc_function , 0) ; // cannot be NULL
-    GB_Global_calloc_function_set  (calloc_function , 0) ; // not used
-    GB_Global_realloc_function_set (realloc_function, 0) ; // ok if NULL
-    GB_Global_free_function_set    (free_function   , 0) ; // cannot be NULL
+    // are used for arena 0 (GxB_ARENA_DEFAULT)
+    GB_Global_malloc_function_set  (malloc_function , GxB_ARENA_DEFAULT) ;
+    GB_Global_calloc_function_set  (calloc_function , GxB_ARENA_DEFAULT) ;
+    GB_Global_realloc_function_set (realloc_function, GxB_ARENA_DEFAULT) ;
+    GB_Global_free_function_set    (free_function   , GxB_ARENA_DEFAULT) ;
 
     GB_Global_memtable_clear ( ) ;
 

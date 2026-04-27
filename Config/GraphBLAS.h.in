@@ -547,7 +547,7 @@ typedef struct GB_Scalar_opaque *GxB_Scalar ;       // use GrB_Scalar
 //      GxB*_pack* methods.
 
 #ifndef GRAPHBLAS_VANILLA
-// The following are enumerated values in both the GrB_Desc_Field and the
+// The following are enumerated values in both the GxB_Context_Field and the
 // GxB_Option_Field for global options.  They are defined with the same integer
 // value for both enums, so the user can use them for both.
 #define GxB_NTHREADS 7086
@@ -556,6 +556,16 @@ typedef struct GB_Scalar_opaque *GxB_Scalar ;       // use GrB_Scalar
 // GPU control
 #define GxB_GPU_IDS 7101
 #define GxB_NGPUS 7102
+
+// arena control
+#define GxB_ARENA_DATA   7105
+#define GxB_ARENA_HEADER 7106
+#endif
+
+#ifndef GRAPHBLAS_VANILLA
+// pre-defined arenas
+#define GxB_ARENA_DEFAULT 0     /* default arena for header and data: 0 */
+#define GxB_ARENA_RMM     1     /* arena 1 reserved for CUDA Rapids */
 #endif
 
 typedef enum    // GrB_Desc_Field ;
@@ -1479,23 +1489,32 @@ GB_GLOBAL GrB_IndexUnaryOp
 /* FIXME arena: add GrB get/set to move a matrix between arenas:
 
     changes the data arena only: (not lazy; always moves data if needed)
-    GrB_Matrix_set_INT32 (A, arena, GxB_DATA_ARENA) ;
-    GrB_Vector_set_INT32 (V, arena, GxB_DATA_ARENA) ;
-    GrB_Scalar_set_INT32 (S, arena, GxB_DATA_ARENA) ;
+    GrB_Matrix_set_INT32 (A, arena, GxB_ARENA_DATA) ;
+    GrB_Vector_set_INT32 (V, arena, GxB_ARENA_DATA) ;
+    GrB_Scalar_set_INT32 (S, arena, GxB_ARENA_DATA) ;
 
-    get the data or header arena:
-    GrB_Matrix_get_INT32 (A, &arena, GxB_DATA_ARENA) ;
-    GrB_Vector_get_INT32 (V, &arena, GxB_DATA_ARENA) ;
-    GrB_Scalar_get_INT32 (S, &arena, GxB_DATA_ARENA) ;
+    get the data or header arena of a matrix:
+    GrB_Matrix_get_INT32 (A, &arena, GxB_ARENA_DATA) ;
+    GrB_Vector_get_INT32 (V, &arena, GxB_ARENA_DATA) ;
+    GrB_Scalar_get_INT32 (S, &arena, GxB_ARENA_DATA) ;
 
-    GrB_Matrix_get_INT32 (A, &arena, GxB_HEADER_ARENA) ;
-    GrB_Vector_get_INT32 (V, &arena, GxB_HEADER_ARENA) ;
-    GrB_Scalar_get_INT32 (S, &arena, GxB_HEADER_ARENA) ;
+    GrB_Matrix_get_INT32 (A, &arena, GxB_ARENA_HEADER) ;
+    GrB_Vector_get_INT32 (V, &arena, GxB_ARENA_HEADER) ;
+    GrB_Scalar_get_INT32 (S, &arena, GxB_ARENA_HEADER) ;
 
     to change both header & data arena: (not lazy; always moves data if needed)
     GxB_Matrix_set_arena (&A, header_arena, data_arena) ;
     GxB_Vector_set_arena (&V, header_arena, data_arena) ;
     GxB_Scalar_set_arena (&S, header_arena, data_arena) ;
+
+    create a new arena; can only be done once, for arena 2 or more
+    GxB_Global_arena_new (arena, malloc, calloc, realloc, free) ;
+
+    get the malloc, calloc, realloc, and free functions of an arena:
+    GrB_Global_get_VOID (GrB_GLOBAL, &malloc_func,  GxB_ARENA_MALLOC  + arena) ;
+    GrB_Global_get_VOID (GrB_GLOBAL, &calloc_func,  GxB_ARENA_CALLOC  + arena) ;
+    GrB_Global_get_VOID (GrB_GLOBAL, &realloc_func, GxB_ARENA_REALLOC + arena) ;
+    GrB_Global_get_VOID (GrB_GLOBAL, &free_func,    GxB_ARENA_FREE    + arena) ;
 */
 
 typedef enum    // GxB_Option_Field ;
@@ -1622,10 +1641,19 @@ typedef enum    // GxB_Option_Field ;
     GxB_COMPILER_VERSION = 7016,     // compiler version (3 int's)
     GxB_COMPILER_NAME = 7017,        // compiler name (char *)
     GxB_LIBRARY_OPENMP = 7018,       // library compiled with OpenMP
-    GxB_MALLOC_FUNCTION = 7037,      // malloc function pointer
-    GxB_CALLOC_FUNCTION = 7038,      // calloc function pointer
-    GxB_REALLOC_FUNCTION = 7039,     // realloc function pointer
-    GxB_FREE_FUNCTION = 7040,        // free function pointer
+
+    // historical; use GxB_ARENA_* values instead to query any arena:
+    GxB_MALLOC_FUNCTION = 7037,      // malloc function pointer (arena 0 only)
+    GxB_CALLOC_FUNCTION = 7038,      // calloc function pointer (arena 0 only)
+    GxB_REALLOC_FUNCTION = 7039,     // realloc function pointer (arena 0 only)
+    GxB_FREE_FUNCTION = 7040,        // free function pointer (arena 0 only)
+
+    // for GrB_Global_get_VOID only: add k to get the function pointer
+    // for the kth arena
+    GxB_ARENA_MALLOC  = 0x10000,    // +k to get malloc function of kth arena
+    GxB_ARENA_CALLOC  = 0x20000,    // +k to get calloc function of kth arena
+    GxB_ARENA_REALLOC = 0x30000,    // +k to get realloc function of kth arena
+    GxB_ARENA_FREE    = 0x40000,    // +k to get free function of kth arena
 
     //------------------------------------------------------------
     // GrB_get / GrB_set for GrB_GLOBAL:
@@ -1775,6 +1803,7 @@ typedef enum    // GxB_Context_Field
     // GPU control
     GxB_CONTEXT_NGPUS = GxB_NGPUS,        // # of GPU(s) to use
     GxB_CONTEXT_GPU_IDS = GxB_GPU_IDS,    // list of GPU(s) to use
+
 }
 GxB_Context_Field ;
 #endif

@@ -67,7 +67,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    int data_arena = GB_ARENA_DEFAULT ;
+    int data_arena = GxB_ARENA_DEFAULT ;
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     int64_t *Ap_new = NULL ; uint64_t Ap_new_mem = mem ;

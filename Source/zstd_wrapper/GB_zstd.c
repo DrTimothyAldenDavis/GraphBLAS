@@ -18,7 +18,7 @@
 
 void *ZSTD_malloc (size_t s)
 {
-    return (GB_Global_malloc_function (s, GB_ARENA_DEFAULT)) ;
+    return (GB_Global_malloc_function (s, GxB_ARENA_DEFAULT)) ;
 }
 
 void *ZSTD_calloc (size_t n, size_t s)
@@ -35,7 +35,7 @@ void *ZSTD_calloc (size_t n, size_t s)
 
 void ZSTD_free (void *p)
 {
-    GB_Global_free_function (p, GB_ARENA_DEFAULT) ;
+    GB_Global_free_function (p, GxB_ARENA_DEFAULT) ;
 }
 
 // ZSTD uses switch statements with no default case.
