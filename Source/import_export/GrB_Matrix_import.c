@@ -8,7 +8,8 @@
 //------------------------------------------------------------------------------
 
 // No typecasting is done.  The type of entries in the Ax array must match
-// the GrB_Type type parameter.
+// the GrB_Type type parameter.  All input arrays must be in the default
+// data arena, GxB_ARENA_DEFAULT.
 
 #include "import_export/GB_export.h"
 #include "builder/GB_build.h"
@@ -52,8 +53,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     ASSERT_TYPE_OK (type, "type for GrB_Matrix_import", GB0) ;
     GrB_Info info ;
 
-    int arena = 0 ;       // FIXME arena: or get arena from the Context
-    uint64_t mem = GB_mem (arena, 0) ;
+    uint64_t mem = GB_mem (GxB_ARENA_DEFAULT, 0) ;
 
     // GrB_Matrix_import has no descritptor so it only supports a secure import
     bool fast_import = false ;
@@ -273,7 +273,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
                     type, vlen, vdim, GB_ph_null, is_csc, GxB_AUTO_SPARSITY,
                     GB_Global_hyper_switch_get ( ), 0,
                     /* OK; 64-bit only: */ false, false, false,
-                    arena, arena)) ;
+                    GxB_ARENA_DEFAULT, GxB_ARENA_DEFAULT)) ;
 
                 // build A from the input triplets
                 GB_OK (GB_builder (

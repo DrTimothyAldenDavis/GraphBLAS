@@ -61,11 +61,11 @@ assert (c1 == c2) ;
 try
     x = vpa (1) ; %#ok<*NASGU>
     have_symbolic = true ;
-    fprintf ('\nwith symoblic toolbox\n') ;
+    fprintf ('\nwith symbolic toolbox\n') ;
 catch
     % symbolic toolbox not available
     have_symbolic = false ;
-    fprintf ('\nno symoblic toolbox\n') ;
+    fprintf ('\nno symbolic toolbox\n') ;
 end
 
 

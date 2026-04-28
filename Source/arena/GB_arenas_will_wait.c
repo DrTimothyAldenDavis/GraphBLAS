@@ -27,11 +27,6 @@
     if (GB_arenas_will_wait (A))
     {
         // wait on all data arenas to ensure they are in GxB_ARENA_RMM
-        // GB_wait_arenas (A) will do:
-        //      GB_set_arenas (&A,              /* will not change &A */
-        //          GB_arena(A->header_mem),    /* no change to header */
-        //          A->data_arena) ;            /* ensure all data is in 
-        //                                         A->data_arena */
         GB_wait_arenas (A)
     }
     GrB_Matrix A_alias = NULL ;
@@ -84,7 +79,7 @@ bool GB_arenas_will_wait
     { 
         if (GB_arena (A->p_mem) != A_data_arena)
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (true) ;
         }
     }
@@ -93,7 +88,7 @@ bool GB_arenas_will_wait
     { 
         if (GB_arena (A->h_mem) != A_data_arena)
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (true) ;
         }
     }
@@ -102,7 +97,7 @@ bool GB_arenas_will_wait
     { 
         if (GB_arena (A->b_mem) != A_data_arena)
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (true) ;
         }
     }
@@ -111,7 +106,7 @@ bool GB_arenas_will_wait
     { 
         if (GB_arena (A->i_mem) != A_data_arena)
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (true) ;
         }
     }
@@ -120,7 +115,7 @@ bool GB_arenas_will_wait
     { 
         if (GB_arena (A->x_mem) != A_data_arena)
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (true) ;
         }
     }
@@ -133,12 +128,12 @@ bool GB_arenas_will_wait
     { 
         if (A->Y->data_arena != A_data_arena)
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (true) ;
         }
         if (GB_arenas_will_wait (A->Y))
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (true) ;
         }
     }
@@ -152,7 +147,7 @@ bool GB_arenas_will_wait
     { 
         if (GB_arena (Pending->header_mem) != A_data_arena)
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (true) ;
         }
 
@@ -160,7 +155,7 @@ bool GB_arenas_will_wait
         { 
             if (GB_arena (Pending->i_mem) != A_data_arena)
             { 
-                DIE ;   // FIXME arena
+                DIE ;
                 return (true) ;
             }
         }
@@ -169,7 +164,7 @@ bool GB_arenas_will_wait
         { 
             if (GB_arena (Pending->j_mem) != A_data_arena)
             { 
-                DIE ;   // FIXME arena
+                DIE ;
                 return (true) ;
             }
         }
@@ -178,7 +173,7 @@ bool GB_arenas_will_wait
         { 
             if (GB_arena (Pending->x_mem) != A_data_arena)
             { 
-                DIE ;   // FIXME arena
+                DIE ;
                 return (true) ;
             }
         }
@@ -193,7 +188,7 @@ bool GB_arenas_will_wait
     { 
         if (GB_arena (A->user_name_mem) != A_header_arena)
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (true) ;
         }
     }
@@ -201,7 +196,7 @@ bool GB_arenas_will_wait
     { 
         if (GB_arena (A->logger_mem) != A_header_arena)
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (true) ;
         }
     }

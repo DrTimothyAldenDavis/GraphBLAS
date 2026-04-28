@@ -2,14 +2,15 @@
 // GB_export: export a matrix or vector
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// No conversion is done, except to convert to non-iso if requested, and all
-// integers are converted to 64-bits.  The matrix is exported in its current
-// sparsity structure and by-row/by-col format.
+// No conversion is done, except: the matrix A is moved to the default data if
+// not already there, A is convert to non-iso if requested, and all integers
+// are converted to 64-bits.  The matrix is exported in its current sparsity
+// structure and by-row/by-col format.
 
 #include "import_export/GB_export.h"
 
@@ -75,11 +76,22 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     ASSERT (A != NULL) ;
     GB_RETURN_IF_NULL (*A) ;
 
-    // FIXME arena: ensure all components of the matrix are in arena 0,
-    // or use GB_Context_data_arena ( ).
+    //--------------------------------------------------------------------------
+    // ensure A->data_arena is GxB_ARENA_DEFAULT
+    //--------------------------------------------------------------------------
 
+    (*A)->data_arena = GxB_ARENA_DEFAULT ;
+    GB_OK (GB_wait_arenas (*A)) ;
+
+    //--------------------------------------------------------------------------
     // ensure the matrix is all-64-bit
+    //--------------------------------------------------------------------------
+
     GB_OK (GB_convert_int (*A, false, false, false, false)) ;
+
+    //--------------------------------------------------------------------------
+    // check more inputs
+    //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL_OR_INVALID (*A) ;
     ASSERT_MATRIX_OK (*A, "A to export", GB0) ;

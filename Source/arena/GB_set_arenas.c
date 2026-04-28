@@ -125,7 +125,7 @@ GrB_Info GB_set_arenas          // modify all arenas of a matrix
 
         // the i,j,x arrays contain n tuples but can hold nmax tuples,
         // where nmax >= n
-        ASSERT (nmax => n) ;
+        ASSERT (nmax >= n) ;
 
         GB_OK (GB_set_arena (&(Pending->i), &(Pending->i_mem), new_data_arena,
             nmax * isize, n * isize, nthreads)) ;

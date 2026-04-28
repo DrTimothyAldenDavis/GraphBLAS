@@ -47,7 +47,7 @@ bool GB_shallow_arenas_ok
     { 
         if (GB_arena (A->p_mem) != A_data_arena)
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (false) ;
         }
     }
@@ -56,7 +56,7 @@ bool GB_shallow_arenas_ok
     { 
         if (GB_arena (A->h_mem) != A_data_arena)
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (false) ;
         }
     }
@@ -65,7 +65,7 @@ bool GB_shallow_arenas_ok
     { 
         if (GB_arena (A->b_mem) != A_data_arena)
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (false) ;
         }
     }
@@ -74,7 +74,7 @@ bool GB_shallow_arenas_ok
     { 
         if (GB_arena (A->i_mem) != A_data_arena)
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (false) ;
         }
     }
@@ -83,7 +83,7 @@ bool GB_shallow_arenas_ok
     { 
         if (GB_arena (A->x_mem) != A_data_arena)
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (false) ;
         }
     }
@@ -96,12 +96,12 @@ bool GB_shallow_arenas_ok
     { 
         if (A->Y_shallow && A->Y->data_arena != A_data_arena)
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (false) ;
         }
         if (!GB_shallow_arenas_ok (A->Y))
         { 
-            DIE ;   // FIXME arena
+            DIE ;
             return (false) ;
         }
     }

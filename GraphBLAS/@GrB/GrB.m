@@ -670,6 +670,8 @@ methods
     %---------------------------------------------------------------------
 
     function G = saveobj (G)
+    fprintf ('GrB saveobj, G.opaque:\n') ;
+    G.opaque
     end
 
     %---------------------------------------------------------------------
@@ -687,7 +689,7 @@ methods
     %   qmr rjr tfqmr lsqr
 
     %---------------------------------------------------------------------
-    % FUTURE:: many these could also be overloaded:
+    % FUTURE:: many could also be overloaded:
     %---------------------------------------------------------------------
 
     % methods in the ops folder:
@@ -993,6 +995,8 @@ methods (Static)
     %---------------------------------------------------------------------
 
     function G = loadobj (G)
+    fprintf ('GrB loadobj, G.opaque:\n') ;
+    G.opaque
     end
 
     %---------------------------------------------------------------------

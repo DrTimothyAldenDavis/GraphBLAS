@@ -19,12 +19,9 @@
 
 // A has any sparsity structure (hypersparse, sparse, bitmap, or full).
 
-// Compare this function with GB_shallow_op.c.
-
-// FIXME arena: make a simpler method that just copies the entire header into
-// a new header_arena, and tags all pointers as shallow.  use this for CUDA
-// so it can access a matrix with a header_arena outside of RMM, and where
-// the data_arena is RMM.
+// Compare this function with GB_shallow_op.c.  See also GB_get_arena_alias
+// and GB_set_arena_alias, which makes an alias of the header (content is not
+// shallow).
 
 #include "GB.h"
 

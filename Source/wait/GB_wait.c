@@ -61,14 +61,25 @@ GrB_Info GB_wait                // finish all pending computations
     //--------------------------------------------------------------------------
 
     GrB_Info info = GrB_SUCCESS ;
-
     ASSERT (A != NULL) ;
 
     int data_arena = A->data_arena ;
 
     GrB_Matrix T = NULL, W = NULL, S = NULL, Y = NULL ;
-
     ASSERT_MATRIX_OK (A, "A to wait", GB0_Z) ;
+
+    //--------------------------------------------------------------------------
+    // align the data arenas with A->data_arena
+    //--------------------------------------------------------------------------
+
+    if (GB_arenas_will_wait (A))
+    { 
+        GB_OK (GB_wait_arenas (A)) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // quick return for bitmap/full matrices
+    //--------------------------------------------------------------------------
 
     int64_t nvec_nonempty = GB_nvec_nonempty_get (A) ;
 

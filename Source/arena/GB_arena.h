@@ -59,5 +59,10 @@ bool GB_shallow_arenas_ok
     GrB_Matrix A
 ) ;
 
+GrB_Info GB_wait_arenas         // align data with A->data_arena
+(
+    GrB_Matrix A                // input/output matrix
+) ;
+
 #endif
 
