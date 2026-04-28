@@ -25,7 +25,7 @@ GrB_Info GB_set_arena           // set arena of a block of memory
     const uint64_t n,           // # of bytes that must be copied
     const int nthreads          // max # of threads to use
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

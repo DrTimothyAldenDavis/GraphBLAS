@@ -74,7 +74,7 @@ GrB_Info GB_vector_unload
     // component of a Container obtained by unloading a GrB_Matrix or
     // GrB_Vector into the Container.
 
-    if (GB_ANY_PENDING_WORK (V))
+    if (GB_will_wait ((GrB_Matrix) V))
     { 
         GB_OK (GB_wait ((GrB_Matrix) V, "V_to_unload", Werk)) ;
     }

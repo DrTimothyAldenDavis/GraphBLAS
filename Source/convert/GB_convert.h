@@ -221,10 +221,11 @@ static inline bool GB_as_if_full
         // A is full; the pattern is not present
         return (true) ;
     }
-    if (GB_ANY_PENDING_WORK (A))
+    if (GB_ANY_PENDING_WORK (A))    // if true, A is not as-is-full
     { 
         // A has pending work and so cannot be treated as if full.
         // The existence of the hyper_hash is not considered in this test.
+        // A->data_arena is ignored.
         return (false) ;
     }
     // A is sparse, hyper, or bitmap: check if all entries present

@@ -15,6 +15,7 @@
 #define GB_apply GM_apply
 #define GB_apply_op GM_apply_op
 #define GB_apply_unop_jit GM_apply_unop_jit
+#define GB_arenas_will_wait GM_arenas_will_wait
 #define GB_assign_burble GM_assign_burble
 #define GB_assign_describe GM_assign_describe
 #define GB_assign GM_assign
@@ -389,6 +390,7 @@
 #define GB_FSE_readNCount GM_FSE_readNCount
 #define GB_FSE_versionNumber GM_FSE_versionNumber
 #define GB_FSE_writeNCount GM_FSE_writeNCount
+#define GB_get_arena_alias GM_get_arena_alias
 #define GB_Global_abort GM_Global_abort
 #define GB_Global_abort_set GM_Global_abort_set
 #define GB_Global_bitmap_switch_default GM_Global_bitmap_switch_default
@@ -1180,6 +1182,7 @@
 #define GB_p_slice_64 GM_p_slice_64
 #define GB_p_slice_float GM_p_slice_float
 #define GB_p_slice GM_p_slice
+#define GB_put_arena_alias GM_put_arena_alias
 #define GB_qsort_1_32 GM_qsort_1_32
 #define GB_qsort_1_64 GM_qsort_1_64
 #define GB_qsort_1b_32_16 GM_qsort_1b_32_16
@@ -1248,7 +1251,9 @@
 #define GB_serialize_method GM_serialize_method
 #define GB_serialize_to_blob GM_serialize_to_blob
 #define GB_set_arena GM_set_arena
+#define GB_set_arenas GM_set_arenas
 #define GB_setElement GM_setElement
+#define GB_shallow_arenas_ok GM_shallow_arenas_ok
 #define GB_shallow_copy GM_shallow_copy
 #define GB_shallow_op GM_shallow_op
 #define GB_signumf GM_signumf
@@ -3886,6 +3891,7 @@
 #define GxB_Matrix_select_FC64 GxM_Matrix_select_FC64
 #define GxB_Matrix_select GxM_Matrix_select
 #define GxB_Matrix_serialize GxM_Matrix_serialize
+#define GxB_Matrix_set_arenas GxM_Matrix_set_arenas
 #define GxB_Matrix_setElement_FC32 GxM_Matrix_setElement_FC32
 #define GxB_Matrix_setElement_FC64 GxM_Matrix_setElement_FC64
 #define GxB_Matrix_sort GxM_Matrix_sort
@@ -4756,6 +4762,7 @@
 #define GxB_Scalar_memoryUsage GxM_Scalar_memoryUsage
 #define GxB_Scalar_new GxM_Scalar_new
 #define GxB_Scalar_nvals GxM_Scalar_nvals
+#define GxB_Scalar_set_arenas GxM_Scalar_set_arenas
 #define GxB_Scalar_setElement_BOOL GxM_Scalar_setElement_BOOL
 #define GxB_Scalar_setElement_FC32 GxM_Scalar_setElement_FC32
 #define GxB_Scalar_setElement_FC64 GxM_Scalar_setElement_FC64
@@ -5146,6 +5153,7 @@
 #define GxB_Vector_select_FC64 GxM_Vector_select_FC64
 #define GxB_Vector_select GxM_Vector_select
 #define GxB_Vector_serialize GxM_Vector_serialize
+#define GxB_Vector_set_arenas GxM_Vector_set_arenas
 #define GxB_Vector_setElement_FC32 GxM_Vector_setElement_FC32
 #define GxB_Vector_setElement_FC64 GxM_Vector_setElement_FC64
 #define GxB_Vector_sort GxM_Vector_sort

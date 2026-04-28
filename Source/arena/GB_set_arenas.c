@@ -102,8 +102,10 @@ GrB_Info GB_set_arenas          // modify all arenas of a matrix
     // set the arenas of the hyperhash to the new data arena
     //--------------------------------------------------------------------------
 
-    GB_OK (GxB_Matrix_set_arenas (&(A->Y),
-        new_header_arena, new_data_arena)) ;
+    if (!A->Y_shallow)
+    { 
+        GB_OK (GB_set_arenas (&(A->Y), new_data_arena, new_data_arena)) ;
+    }
 
     //--------------------------------------------------------------------------
     // set the arenas of the Pending tuples to the new data arena
@@ -112,12 +114,12 @@ GrB_Info GB_set_arenas          // modify all arenas of a matrix
     GB_Pending Pending = A->Pending ;
     if (Pending != NULL)
     { 
-        header_mem = Pending->header_mem ;
+        uint64_t P_header_mem = Pending->header_mem ;
         n = sizeof (struct GB_Pending_struct) ;
-        GB_OK (GB_set_arena (&(A->Pending), &header_mem, new_data_arena,
+        GB_OK (GB_set_arena (&(A->Pending), &P_header_mem, new_data_arena,
             n, n, nthreads)) ;
         Pending = A->Pending ;
-        Pending->header_mem = header_mem ;
+        Pending->header_mem = P_header_mem ;
         int64_t nmax = Pending->nmax ;
         n = Pending->n ;
 
@@ -136,15 +138,12 @@ GrB_Info GB_set_arenas          // modify all arenas of a matrix
     }
 
     //--------------------------------------------------------------------------
-    // set the arenas of the user name and error logger
+    // set the arenas of the user name and error logger (in header arena of A)
     //--------------------------------------------------------------------------
 
     n = GB_memsize (A->user_name_mem) ;
     GB_OK (GB_set_arena (&(A->user_name), &(A->user_name_mem), new_header_arena,
         n, n, nthreads)) ;
-
-    // FIXME arena: ensure error logger is allocated in object->header_arena,
-    // elsewhere (see GB_werk_init.h)
 
     n = GB_LOGGER_LEN + 1 ;
     GB_OK (GB_set_arena (&(A->logger), &(A->logger_mem), new_header_arena,

@@ -85,7 +85,7 @@ GrB_Info GB_matvec_enum_get (GrB_Matrix A, int32_t *value, int field)
 
         case GxB_WILL_WAIT : 
 
-            (*value) = GB_ANY_PENDING_WORK (A) || GB_hyper_hash_need (A) ;
+            (*value) = GB_will_wait (A) ;
             break ;
 
         default : 

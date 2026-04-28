@@ -49,6 +49,7 @@
 #include "hyper/GB_hyper.h"
 #include "werk/GB_werk_init.h"
 #include "cast/GB_cast.h"
+#include "arena/GB_arena.h"
 #include "wait/GB_wait.h"
 #include "convert/GB_convert.h"
 #include "context/GB_Context.h"
@@ -56,7 +57,6 @@
 #include "callback/GB_callbacks.h"
 #include "helper/GB_factory.h"
 #include "matrix/GB_matrix.h"
-#include "arena/GB_arena.h"
 
 #endif
 

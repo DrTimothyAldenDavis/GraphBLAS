@@ -31,5 +31,33 @@ GrB_Info GB_set_arenas          // modify all arenas of a matrix
     const int new_data_arena    // new arena for the data content of A
 ) ;
 
+GrB_Info GB_get_arena_alias
+(
+    // output
+    GrB_Matrix *Chandle,    // output matrix, (*Chandle) is NULL on input
+    // inputs
+    const int new_header_arena, // arena for C header
+    const GrB_Matrix A      // input matrix
+) ;
+
+void GB_put_arena_alias
+(
+    // input/outputs
+    GrB_Matrix *Chandle,    // alias of A to be freed; NULL on output
+    const GrB_Matrix A      // updated with any revisions in the alias header C
+) ;
+
+bool GB_arenas_will_wait    // true if GrB_wait will change arenas of A
+(
+    // input/output:
+    GrB_Matrix A
+) ;
+
+bool GB_shallow_arenas_ok
+(
+    // input/output:
+    GrB_Matrix A
+) ;
+
 #endif
 

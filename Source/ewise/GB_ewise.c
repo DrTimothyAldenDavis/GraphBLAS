@@ -301,9 +301,9 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         GB_IS_BITMAP (B1) ;
 
     bool any_pending_work =
-        GB_ANY_PENDING_WORK (M1) ||
-        GB_ANY_PENDING_WORK (A1) ||
-        GB_ANY_PENDING_WORK (B1) ;
+        GB_ANY_PENDING_WORK (M1) || // ignore hyper_hash and data_arena
+        GB_ANY_PENDING_WORK (A1) || // ignore hyper_hash and data_arena
+        GB_ANY_PENDING_WORK (B1) ;  // ignore hyper_hash and data_arena
 
     bool any_iso = (A1->iso || B1->iso) ;
 
