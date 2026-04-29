@@ -399,22 +399,23 @@ GrB_Info GxB_Global_Option_get_FUNCTION // gets the current global option
 
         case GxB_MALLOC_FUNCTION : 
 
-            (*value) = (void *) GB_Global_malloc_function_get (GxB_ARENA_DEFAULT) ;
+            // historical: get malloc function only for default arena only
+            (*value) = (void *) GB_Global_malloc_function_get (GrB_DEFAULT) ;
             break ;
 
         case GxB_CALLOC_FUNCTION : 
 
-            (*value) = (void *) GB_Global_calloc_function_get (GxB_ARENA_DEFAULT) ;
+            (*value) = (void *) GB_Global_calloc_function_get (GrB_DEFAULT) ;
             break ;
 
         case GxB_REALLOC_FUNCTION : 
 
-            (*value) = (void *) GB_Global_realloc_function_get (GxB_ARENA_DEFAULT) ;
+            (*value) = (void *) GB_Global_realloc_function_get (GrB_DEFAULT) ;
             break ;
 
         case GxB_FREE_FUNCTION : 
 
-            (*value) = (void *) GB_Global_free_function_get (GxB_ARENA_DEFAULT) ;
+            (*value) = (void *) GB_Global_free_function_get (GrB_DEFAULT) ;
             break ;
 
         default : 
@@ -795,12 +796,13 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
         case GxB_MALLOC_FUNCTION : 
 
+            // historical: get malloc function only for default arena only
             {
                 va_start (ap, field) ;
                 void ** malloc_function = va_arg (ap, void **) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (malloc_function) ;
-                (*malloc_function) = GB_Global_malloc_function_get (GxB_ARENA_DEFAULT) ;
+                (*malloc_function) = GB_Global_malloc_function_get (GrB_DEFAULT) ;
             }
             break ;
 
@@ -811,7 +813,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 void ** calloc_function = va_arg (ap, void **) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (calloc_function) ;
-                (*calloc_function) = GB_Global_calloc_function_get (GxB_ARENA_DEFAULT) ;
+                (*calloc_function) = GB_Global_calloc_function_get (GrB_DEFAULT) ;
             }
             break ;
 
@@ -822,7 +824,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 void ** realloc_function = va_arg (ap, void **) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (realloc_function) ;
-                (*realloc_function) = GB_Global_realloc_function_get (GxB_ARENA_DEFAULT) ;
+                (*realloc_function) = GB_Global_realloc_function_get (GrB_DEFAULT) ;
             }
             break ;
 
@@ -833,7 +835,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 void ** free_function = va_arg (ap, void **) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (free_function) ;
-                (*free_function) = GB_Global_free_function_get (GxB_ARENA_DEFAULT) ;
+                (*free_function) = GB_Global_free_function_get (GrB_DEFAULT) ;
             }
             break ;
 

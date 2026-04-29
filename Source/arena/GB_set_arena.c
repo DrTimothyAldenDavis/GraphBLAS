@@ -10,8 +10,6 @@
 // CPU method for ensuring a pointer p is in a specified arena.
 // CUDA will have its own method.
 
-#define GB_DEBUG    /* FIXME arena */
-
 #include "GB.h"
 
 GrB_Info GB_set_arena           // set arena of a block of memory
@@ -61,6 +59,10 @@ GrB_Info GB_set_arena           // set arena of a block of memory
         // nothing to do
         return (GrB_SUCCESS) ;
     }
+
+    //--------------------------------------------------------------------------
+
+    // FIXME arena: ensure new_arena is initialized
 
     //--------------------------------------------------------------------------
     // allocate the new block in the new arena

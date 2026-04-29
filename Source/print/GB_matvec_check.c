@@ -11,8 +11,8 @@
 #define GB_DEVELOPER 0
 
 // For development only:
-#undef  GB_DEVELOPER
-#define GB_DEVELOPER 1
+// #undef  GB_DEVELOPER
+// #define GB_DEVELOPER 1
 
 #include "GB.h"
 #include "pending/GB_Pending.h"
@@ -349,6 +349,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     uint64_t mem_deep, mem_shallow, memsize ;
     GB_memoryUsage (&nallocs, &mem_deep, &mem_shallow, A, true) ;
     memsize = mem_deep + (pr_mem_shallow ? mem_shallow : 0) ;
+    int A_header_arena = GB_arena (A->header_mem) ;
+    int A_data_arena = A->data_arena ;
 
     #if GB_DEVELOPER
     if (pr_short || pr_complete)
@@ -360,7 +362,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         else
         {
             GBPR ("  header (%p) arena: (%d,%d) size: " GBu, (void *) A,
-                GB_arena (A->header_mem), A->data_arena,
+                A_header_arena, A_data_arena,
                 GB_memsize (A->header_mem)) ;
         }
         GBPR (" struct size: %d\n", (int) sizeof (struct GB_Matrix_opaque)) ;
@@ -505,29 +507,34 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
 
     //--------------------------------------------------------------------------
-    // print the memory size
+    // print the memory size and arenas if not defaults
     //--------------------------------------------------------------------------
 
     #define K (1024L)
     if (memsize < K)
     { 
-        GBPR0 (", memory: " GBd " bytes\n", (int64_t) memsize) ;
+        GBPR0 (", memory: " GBd " bytes", (int64_t) memsize) ;
     }
     else if (memsize < K*K)
     { 
         double s = ((double) memsize) / ((double) K) ;
-        GBPR0 (", memory: %.1f KB\n", s) ;
+        GBPR0 (", memory: %.1f KB", s) ;
     }
     else if (memsize < K*K*K)
     { 
         double s = ((double) memsize) / ((double) K*K) ;
-        GBPR0 (", memory: %.1f MB\n", s) ;
+        GBPR0 (", memory: %.1f MB", s) ;
     }
     else
     {
         double s = ((double) memsize) / ((double) K*K*K) ;
-        GBPR0 (", memory: %.1f GB\n", s) ;
+        GBPR0 (", memory: %.1f GB", s) ;
     }
+    if (A_header_arena != GrB_DEFAULT || A_data_arena != GrB_DEFAULT)
+    { 
+        GBPR (", arena: (%d,%d)", A_header_arena, A_data_arena) ;
+    }
+    GBPR0 ("\n") ;
 
     //--------------------------------------------------------------------------
     // print the iso value

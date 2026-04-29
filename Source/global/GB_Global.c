@@ -219,13 +219,13 @@ static GB_Global_struct GB_Global =
     #ifdef GRAPHBLAS_HAS_CUDA
     // CUDA available: use GB_rmm_malloc/GB_rmm_free for arena 1
     .malloc_function  = { malloc , GB_rmm_malloc, NULL, NULL },
-    .calloc_function  = { NULL   , NULL         , NULL, NULL },
+    .calloc_function  = { calloc , NULL         , NULL, NULL },
     .realloc_function = { realloc, NULL         , NULL, NULL },
     .free_function    = { free   , GB_rmm_free  , NULL, NULL },
     #else
     // CUDA not available: use malloc/free for arena 1
     .malloc_function  = { malloc , malloc, NULL, NULL },
-    .calloc_function  = { NULL   , NULL  , NULL, NULL },
+    .calloc_function  = { calloc , NULL  , NULL, NULL },
     .realloc_function = { realloc, NULL  , NULL, NULL },
     .free_function    = { free   , free  , NULL, NULL },
     #endif

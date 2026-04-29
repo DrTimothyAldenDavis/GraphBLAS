@@ -1046,8 +1046,8 @@ struct GB_Context_opaque GB_OPAQUE (CONTEXT_WORLD) =
     0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,
     0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,
     0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,
-    // header_arena and data_arena:
-    0, 0
+    // arenas:
+    0, 0                            // header_arena, data_arena
 } ;
 
 GxB_Context GxB_CONTEXT_WORLD = & GB_OPAQUE (CONTEXT_WORLD) ;

@@ -88,6 +88,16 @@ GrB_Info GB_matvec_enum_get (GrB_Matrix A, int32_t *value, int field)
             (*value) = GB_will_wait (A) ;
             break ;
 
+        case GxB_ARENA_DATA : 
+
+            (*value) = A->data_arena ;
+            break ;
+
+        case GxB_ARENA_HEADER : 
+
+            (*value) = GB_arena (A->header_mem) ;
+            break ;
+
         default : 
             return (GrB_INVALID_VALUE) ;
     }

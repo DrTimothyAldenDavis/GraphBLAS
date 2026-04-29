@@ -122,6 +122,16 @@ static GrB_Info GB_global_enum_get (int32_t *value, int field)
             (*value) = GB_Global_gpu_count_get ( ) ;
             break ;
 
+        case GxB_ARENA_DATA : 
+
+            (*value) = GB_Context_data_arena_get (NULL) ;
+            break ;
+
+        case GxB_ARENA_HEADER : 
+
+            (*value) = GB_Context_header_arena_get (NULL) ;
+            break ;
+
         case GxB_BURBLE : 
 
             (*value) = (int) GB_Global_burble_get ( ) ;
@@ -562,6 +572,7 @@ GrB_Info GrB_Global_get_VOID
     { 
         void **f = (void **) value ;
         (*f) = GB_Global_malloc_function_get (arena) ;
+        printf ("Global get malloc [%d]: %p\n", arena, (*f)) ;
         info = GrB_SUCCESS ;
     }
     else if (arena_option == GxB_ARENA_CALLOC)
@@ -569,18 +580,21 @@ GrB_Info GrB_Global_get_VOID
         void **f = (void **) value ;
         (*f) = GB_Global_calloc_function_get (arena) ;
         info = GrB_SUCCESS ;
+        printf ("Global get calloc [%d]: %p\n", arena, (*f)) ;
     }
     else if (arena_option == GxB_ARENA_REALLOC)
     { 
         void **f = (void **) value ;
         (*f) = GB_Global_realloc_function_get (arena) ;
         info = GrB_SUCCESS ;
+        printf ("Global get realloc [%d]: %p\n", arena, (*f)) ;
     }
     else if (arena_option == GxB_ARENA_FREE)
     { 
         void **f = (void **) value ;
         (*f) = GB_Global_free_function_get (arena) ;
         info = GrB_SUCCESS ;
+        printf ("Global free realloc [%d]: %p\n", arena, (*f)) ;
     }
     else
     { 
@@ -613,7 +627,7 @@ GrB_Info GrB_Global_get_VOID
             case GxB_MALLOC_FUNCTION :  // default arena only (historical)
                 {
                     void **f = (void **) value ;
-                    (*f) = GB_Global_malloc_function_get (GxB_ARENA_DEFAULT) ;
+                    (*f) = GB_Global_malloc_function_get (GrB_DEFAULT) ;
                 }
                 info = GrB_SUCCESS ;
                 break ;
@@ -621,7 +635,7 @@ GrB_Info GrB_Global_get_VOID
             case GxB_CALLOC_FUNCTION :  // default arena only (historical)
                 {
                     void **f = (void **) value ;
-                    (*f) = GB_Global_calloc_function_get (GxB_ARENA_DEFAULT) ;
+                    (*f) = GB_Global_calloc_function_get (GrB_DEFAULT) ;
                 }
                 info = GrB_SUCCESS ;
                 break ;
@@ -629,7 +643,7 @@ GrB_Info GrB_Global_get_VOID
             case GxB_REALLOC_FUNCTION : // default arena only (historical)
                 {
                     void **f = (void **) value ;
-                    (*f) = GB_Global_realloc_function_get (GxB_ARENA_DEFAULT) ;
+                    (*f) = GB_Global_realloc_function_get (GrB_DEFAULT) ;
                 }
                 info = GrB_SUCCESS ;
                 break ;
@@ -637,7 +651,7 @@ GrB_Info GrB_Global_get_VOID
             case GxB_FREE_FUNCTION :    // default arena only (historical)
                 {
                     void **f = (void **) value ;
-                    (*f) = GB_Global_free_function_get (GxB_ARENA_DEFAULT) ;
+                    (*f) = GB_Global_free_function_get (GrB_DEFAULT) ;
                 }
                 info = GrB_SUCCESS ;
                 break ;

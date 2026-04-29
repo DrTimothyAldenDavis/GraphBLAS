@@ -26,6 +26,10 @@
     GrB_Matrix_free (&W) ;                  \
     GrB_Vector_free (&w) ;                  \
 
+//------------------------------------------------------------------------------
+// check_result
+//------------------------------------------------------------------------------
+
 GrB_Info check_result (GrB_Matrix A1, GrB_Matrix C1, GrB_BinaryOp eq) ;
 GrB_Info check_result (GrB_Matrix A1, GrB_Matrix C1, GrB_BinaryOp eq)
 {
@@ -52,6 +56,29 @@ GrB_Info check_result (GrB_Matrix A1, GrB_Matrix C1, GrB_BinaryOp eq)
     printf ("A and C match, time %g\n", t) ;
     return (GrB_SUCCESS) ;
 }
+
+//------------------------------------------------------------------------------
+// allocators 
+//------------------------------------------------------------------------------
+
+void *my_malloc (size_t size) ;
+void *my_malloc (size_t size)
+{
+    void *p = malloc (size) ;
+    printf ("my_malloc (%lu): %p\n", (uint64_t) size, p) ;
+    return (p) ;
+}
+
+void my_free (void *p) ;
+void my_free (void *p)
+{
+    printf ("my_free: %p\n", p) ;
+    free (p) ;
+}
+
+//------------------------------------------------------------------------------
+// main demo program
+//------------------------------------------------------------------------------
 
 int main (int argc, char **argv)
 {
@@ -224,8 +251,38 @@ int main (int argc, char **argv)
         OK (GrB_Matrix_dup (&T, A)) ;
         t = (WALLCLOCK - t) ;
         printf ("dup:        %g (%d threads)\n", t, threads) ;
+        GrB_Matrix_free (&T) ;
         GrB_Global_set_INT32 (GrB_GLOBAL, (int) 1, GxB_GLOBAL_NTHREADS) ;
     }
+
+    //--------------------------------------------------------------------------
+    // C = A, using dup, in a different arena
+    //--------------------------------------------------------------------------
+
+    OK (GxB_arena_init (2, my_malloc, NULL, NULL, my_free)) ;
+    OK (GrB_Matrix_set_INT32 (A, 2, GxB_ARENA_DATA)) ;
+
+    printf ("\nsingle call to dup:\n") ;
+    OK (GrB_Matrix_dup (&T, A)) ;
+
+    OK (GxB_Matrix_fprint (A, "A with data arena 2", 2, stdout)) ;
+    OK (GxB_Matrix_fprint (T, "T with data arena 0", 2, stdout)) ;
+
+    printf ("\nfree T:\n") ;
+    GrB_Matrix_free (&T) ;
+
+    printf ("\nchange default data arena:\n") ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, (int) 2, GxB_ARENA_DATA)) ;
+
+    printf ("\nT = A with data arena 2\n") ;
+    OK (GrB_Matrix_dup (&T, A)) ;
+    OK (GxB_Matrix_fprint (T, "T with data arena 2", 2, stdout)) ;
+
+    printf ("\nfree T:\n") ;
+    GrB_Matrix_free (&T) ;
+
+    printf ("\nfree A:\n") ;
+    GrB_Matrix_free (&A) ;
 
     //--------------------------------------------------------------------------
     // try different integer sizes

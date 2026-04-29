@@ -422,7 +422,7 @@ static GrB_Vector GB_helper_component (void)
     if (p != NULL)
     {
         memset (p, 0, s) ;
-        p->header_mem = GB_mem (GxB_ARENA_DEFAULT, s) ;
+        p->header_mem = GB_mem (GrB_DEFAULT, s) ;
         p->type = GrB_BOOL ;
         p->is_csc = true ;
         p->plen = -1 ;
@@ -458,7 +458,7 @@ void GB_helper_container_new (void)         // allocate the global Container
         Container->ncols_nonempty = -1 ;
         Container->format = GxB_FULL ;
         Container->orientation = GrB_ROWMAJOR ;
-        Container->header_arena = GxB_ARENA_DEFAULT ;
+        Container->header_arena = GrB_DEFAULT ;
     }
 }
 

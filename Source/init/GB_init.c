@@ -120,11 +120,11 @@ GrB_Info GB_init            // start up GraphBLAS
     }
 
     // GrB_init passes in the C11 malloc/calloc/realloc/free; these methods
-    // are used for arena 0 (GxB_ARENA_DEFAULT)
-    GB_Global_malloc_function_set  (malloc_function , GxB_ARENA_DEFAULT) ;
-    GB_Global_calloc_function_set  (calloc_function , GxB_ARENA_DEFAULT) ;
-    GB_Global_realloc_function_set (realloc_function, GxB_ARENA_DEFAULT) ;
-    GB_Global_free_function_set    (free_function   , GxB_ARENA_DEFAULT) ;
+    // are used for arena 0 (GrB_DEFAULT)
+    GB_Global_malloc_function_set  (malloc_function , GrB_DEFAULT) ;
+    GB_Global_calloc_function_set  (calloc_function , GrB_DEFAULT) ;
+    GB_Global_realloc_function_set (realloc_function, GrB_DEFAULT) ;
+    GB_Global_free_function_set    (free_function   , GrB_DEFAULT) ;
 
     GB_Global_memtable_clear ( ) ;
 

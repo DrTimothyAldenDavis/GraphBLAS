@@ -18,7 +18,7 @@
 
 void *LZ4_malloc (size_t s)
 {
-    return (GB_Global_malloc_function (s, GxB_ARENA_DEFAULT)) ;
+    return (GB_Global_malloc_function (s, GrB_DEFAULT)) ;
 }
 
 void *LZ4_calloc (size_t n, size_t s)
@@ -35,7 +35,7 @@ void *LZ4_calloc (size_t n, size_t s)
 
 void LZ4_free (void *p)
 {
-    GB_Global_free_function (p, GxB_ARENA_DEFAULT) ;
+    GB_Global_free_function (p, GrB_DEFAULT) ;
 }
 
 // LZ4 uses switch statements with no default case.

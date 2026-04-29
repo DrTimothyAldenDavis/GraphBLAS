@@ -1353,6 +1353,7 @@
 #define GB_vector_reset GM_vector_reset
 #define GB_Vector_subassign_scalar GM_Vector_subassign_scalar
 #define GB_vector_unload GM_vector_unload
+#define GB_wait_arenas GM_wait_arenas
 #define GB_wait GM_wait
 #define GB_werk_pop GM_werk_pop
 #define GB_werk_push GM_werk_push
@@ -3068,6 +3069,7 @@
 #define GxB_ANY_UINT64_MONOID GxM_ANY_UINT64_MONOID
 #define GxB_ANY_UINT8 GxM_ANY_UINT8
 #define GxB_ANY_UINT8_MONOID GxM_ANY_UINT8_MONOID
+#define GxB_arena_init GxM_arena_init
 #define GxB_ASIN_FC32 GxM_ASIN_FC32
 #define GxB_ASIN_FC64 GxM_ASIN_FC64
 #define GxB_ASIN_FP32 GxM_ASIN_FP32

@@ -158,6 +158,16 @@ GrB_Info GxB_Context_set_INT
             return (GB_Context_gpu_ids_set (Context, NULL, value)) ;
             break ;
 
+        case GxB_ARENA_DATA : 
+
+            GB_Context_data_arena_set (Context, value) ;
+            break ;
+
+        case GxB_ARENA_HEADER : 
+
+            GB_Context_header_arena_set (Context, value) ;
+            break ;
+
         default : 
             return (GrB_INVALID_VALUE) ;
     }

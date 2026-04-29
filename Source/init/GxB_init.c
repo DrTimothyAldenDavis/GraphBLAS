@@ -19,7 +19,7 @@
 // realloc is NULL, it is not used, and malloc/memcpy/free are used instead.
 
 // The malloc/calloc/realloc/free functions passed to GxB_init are for
-// arena 0 (GxB_ARENA_DEFAULT), and cannot be modified once set by GxB_init.
+// arena 0 (GrB_DEFAULT), and cannot be modified once set by GxB_init.
 // GraphBLAS uses this arena during initializations (for the JIT hash table).
 
 // Examples:

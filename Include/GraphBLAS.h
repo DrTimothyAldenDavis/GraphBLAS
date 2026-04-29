@@ -564,7 +564,7 @@ typedef struct GB_Scalar_opaque *GxB_Scalar ;       // use GrB_Scalar
 
 #ifndef GRAPHBLAS_VANILLA
 // pre-defined arenas
-#define GxB_ARENA_DEFAULT 0     /* default arena for header and data: 0 */
+// #define GrB_DEFAULT (0): default arena for header and data: 0
 #define GxB_ARENA_RMM     1     /* arena 1 reserved for CUDA Rapids */
 #endif
 
@@ -1489,6 +1489,7 @@ GB_GLOBAL GrB_IndexUnaryOp
 /* FIXME arena: add GrB get/set to move a matrix between arenas:
 
     changes the data arena only: (not lazy; always moves data if needed)
+    but could be done as a lazy, leaving it as pending work:
     GrB_Matrix_set_INT32 (A, arena, GxB_ARENA_DATA) ;
     GrB_Vector_set_INT32 (V, arena, GxB_ARENA_DATA) ;
     GrB_Scalar_set_INT32 (S, arena, GxB_ARENA_DATA) ;
@@ -1503,18 +1504,34 @@ GB_GLOBAL GrB_IndexUnaryOp
     GrB_Scalar_get_INT32 (S, &arena, GxB_ARENA_HEADER) ;
 
     to change both header & data arena: (not lazy; always moves data if needed)
-    GxB_Matrix_set_arena (&A, header_arena, data_arena) ;
-    GxB_Vector_set_arena (&V, header_arena, data_arena) ;
-    GxB_Scalar_set_arena (&S, header_arena, data_arena) ;
+    GxB_Matrix_set_arenas (&A, header_arena, data_arena) ;
+    GxB_Vector_set_arenas (&V, header_arena, data_arena) ;
+    GxB_Scalar_set_arenas (&S, header_arena, data_arena) ;
 
-    create a new arena; can only be done once, for arena 2 or more
-    GxB_Global_arena_new (arena, malloc, calloc, realloc, free) ;
+    create a new arena; can only be done once, for arena 2 or more:
+    GxB_arena_init (arena, malloc, calloc, realloc, free) ;
 
     get the malloc, calloc, realloc, and free functions of an arena:
     GrB_Global_get_VOID (GrB_GLOBAL, &malloc_func,  GxB_ARENA_MALLOC  + arena) ;
     GrB_Global_get_VOID (GrB_GLOBAL, &calloc_func,  GxB_ARENA_CALLOC  + arena) ;
     GrB_Global_get_VOID (GrB_GLOBAL, &realloc_func, GxB_ARENA_REALLOC + arena) ;
     GrB_Global_get_VOID (GrB_GLOBAL, &free_func,    GxB_ARENA_FREE    + arena) ;
+
+    to change the global data and header arenas:
+    GrB_Global_set_INT (GrB_GLOBAL, data_arena, GxB_ARENA_DATA) ;
+    GrB_Global_set_INT (GrB_GLOBAL, header_arena, GxB_ARENA_HEADER) ;
+
+    to get the global data and header arenas:
+    GrB_Global_get_INT (GrB_GLOBAL, &data_arena, GxB_ARENA_DATA) ;
+    GrB_Global_get_INT (GrB_GLOBAL, &header_arena, GxB_ARENA_HEADER) ;
+
+    to change the data and header arenas in the current Context:
+    GxB_Context_set_INT (Context, data_arena, GxB_ARENA_DATA) ;
+    GxB_Context_set_INT (Context, header_arena, GxB_ARENA_HEADER) ;
+
+    to get the data and header arenas in the current Context
+    GxB_Context_get_INT (Context, &data_arena, GxB_ARENA_DATA) ;
+    GxB_Context_get_INT (Context, &header_arena, GxB_ARENA_HEADER) ;
 */
 
 typedef enum    // GxB_Option_Field ;
@@ -2903,6 +2920,17 @@ GrB_Info GxB_finalized      // determine if GraphBLAS is finalized
     int *flag               // returns true if GrB_init or GxB_init has not
                             // yet been called or if GrB_finalize has been
                             // called, false otherwise
+) ;
+
+GrB_Info GxB_arena_init
+(
+    // input
+    int arena,              // 0 to GB_NARENAS-1    FIXME arena: GxB_NARENAS
+    // pointers to memory management functions
+    void * (* user_malloc_function  ) (size_t),         // required
+    void * (* user_calloc_function  ) (size_t, size_t), // not used
+    void * (* user_realloc_function ) (void *, size_t), // optional, can be NULL
+    void   (* user_free_function    ) (void *)          // required
 ) ;
 
 #endif

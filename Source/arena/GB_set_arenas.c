@@ -32,6 +32,9 @@ GrB_Info GB_set_arenas          // modify all arenas of a matrix
         return (GrB_SUCCESS) ;
     }
 
+    // FIXME: return an error if either new_header_arena or new_data_arena
+    // are not initialized, or out of range.
+
     //--------------------------------------------------------------------------
     // get the input matrix
     //--------------------------------------------------------------------------
