@@ -148,8 +148,8 @@ GrB_Info ewise
     // get the current free function
     //--------------------------------------------------------------------------
 
-    int arena = 0 ; // FIXME arena: defined by what GxB_unpack* returns
-    free_function = GB_Global_free_function_get (arena) ;
+    // GxB_unpack returns its arrays in the default arena
+    free_function = GB_Global_free_function_get (GrB_DEFAULT) ;
 
     //--------------------------------------------------------------------------
     // create bitmap format of A, A', and T

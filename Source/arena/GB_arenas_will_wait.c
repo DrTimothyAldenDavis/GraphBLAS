@@ -47,11 +47,6 @@
 
 #endif
 
-#define DIE \
-    fprintf (stderr, "die !!!\n") ; fflush (stderr) ; \
-    printf ("die !!!\n") ; fflush (stdout) ; \
-    abort ( ) ; /* FIXME arena */
-
 bool GB_arenas_will_wait
 (
     // input/output:
@@ -77,47 +72,27 @@ bool GB_arenas_will_wait
 
     if (!A->p_shallow && A->p != NULL)
     { 
-        if (GB_arena (A->p_mem) != A_data_arena)
-        { 
-            DIE ;
-            return (true) ;
-        }
+        if (GB_arena (A->p_mem) != A_data_arena) return (true) ;
     }
 
     if (!A->h_shallow && A->h != NULL)
     { 
-        if (GB_arena (A->h_mem) != A_data_arena)
-        { 
-            DIE ;
-            return (true) ;
-        }
+        if (GB_arena (A->h_mem) != A_data_arena) return (true) ;
     }
 
     if (!A->b_shallow && A->b != NULL)
     { 
-        if (GB_arena (A->b_mem) != A_data_arena)
-        { 
-            DIE ;
-            return (true) ;
-        }
+        if (GB_arena (A->b_mem) != A_data_arena) return (true) ;
     }
 
     if (!A->i_shallow && A->i != NULL)
     { 
-        if (GB_arena (A->i_mem) != A_data_arena)
-        { 
-            DIE ;
-            return (true) ;
-        }
+        if (GB_arena (A->i_mem) != A_data_arena) return (true) ;
     }
 
     if (!A->x_shallow && A->x != NULL)
     { 
-        if (GB_arena (A->x_mem) != A_data_arena)
-        { 
-            DIE ;
-            return (true) ;
-        }
+        if (GB_arena (A->x_mem) != A_data_arena) return (true) ;
     }
 
     //--------------------------------------------------------------------------
@@ -126,16 +101,8 @@ bool GB_arenas_will_wait
 
     if (!A->Y_shallow && A->Y != NULL)
     { 
-        if (A->Y->data_arena != A_data_arena)
-        { 
-            DIE ;
-            return (true) ;
-        }
-        if (GB_arenas_will_wait (A->Y))
-        { 
-            DIE ;
-            return (true) ;
-        }
+        if (A->Y->data_arena != A_data_arena) return (true) ;
+        if (GB_arenas_will_wait (A->Y)) return (true) ;
     }
 
     //--------------------------------------------------------------------------
@@ -145,37 +112,21 @@ bool GB_arenas_will_wait
     GB_Pending Pending = A->Pending ;
     if (Pending != NULL)
     { 
-        if (GB_arena (Pending->header_mem) != A_data_arena)
-        { 
-            DIE ;
-            return (true) ;
-        }
+        if (GB_arena (Pending->header_mem) != A_data_arena) return (true) ;
 
         if (Pending->i != NULL)
         { 
-            if (GB_arena (Pending->i_mem) != A_data_arena)
-            { 
-                DIE ;
-                return (true) ;
-            }
+            if (GB_arena (Pending->i_mem) != A_data_arena) return (true) ;
         }
 
         if (Pending->j != NULL)
         { 
-            if (GB_arena (Pending->j_mem) != A_data_arena)
-            { 
-                DIE ;
-                return (true) ;
-            }
+            if (GB_arena (Pending->j_mem) != A_data_arena) return (true) ;
         }
 
         if (Pending->x != NULL)
         { 
-            if (GB_arena (Pending->x_mem) != A_data_arena)
-            { 
-                DIE ;
-                return (true) ;
-            }
+            if (GB_arena (Pending->x_mem) != A_data_arena) return (true) ;
         }
     }
 
@@ -186,19 +137,11 @@ bool GB_arenas_will_wait
     int A_header_arena = GB_arena (A->header_mem) ;
     if (A->user_name != NULL)
     { 
-        if (GB_arena (A->user_name_mem) != A_header_arena)
-        { 
-            DIE ;
-            return (true) ;
-        }
+        if (GB_arena (A->user_name_mem) != A_header_arena) return (true) ;
     }
     if (A->logger != NULL)
     { 
-        if (GB_arena (A->logger_mem) != A_header_arena)
-        { 
-            DIE ;
-            return (true) ;
-        }
+        if (GB_arena (A->logger_mem) != A_header_arena) return (true) ;
     }
 
     //--------------------------------------------------------------------------

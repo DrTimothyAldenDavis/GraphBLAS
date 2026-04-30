@@ -44,8 +44,6 @@ GrB_Info GB_set_arena           // set arena of a block of memory
     int old_arena = GB_arena (p_old_mem) ;
     #ifdef GB_DEBUG
     uint64_t old_memsize = GB_memsize (p_old_mem) ;
-//  printf ("p_old: %p, new_memsize: %lu, old_memsize: %lu, n: %lu\n",
-//      p_old, new_memsize, old_memsize, n) ;
     ASSERT (new_memsize >= n) ;
     ASSERT (old_memsize >= n) ;
     #endif

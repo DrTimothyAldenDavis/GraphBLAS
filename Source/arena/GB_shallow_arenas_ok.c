@@ -15,11 +15,6 @@
 
 #include "GB.h"
 
-#define DIE \
-    fprintf (stderr, "die !!!\n") ; fflush (stderr) ; \
-    printf ("die !!!\n") ; fflush (stdout) ; \
-    abort ( ) ; /* FIXME arena */
-
 bool GB_shallow_arenas_ok
 (
     // input/output:
@@ -45,47 +40,27 @@ bool GB_shallow_arenas_ok
 
     if (A->p_shallow && A->p != NULL)
     { 
-        if (GB_arena (A->p_mem) != A_data_arena)
-        { 
-            DIE ;
-            return (false) ;
-        }
+        if (GB_arena (A->p_mem) != A_data_arena) return (false) ;
     }
 
     if (A->h_shallow && A->h != NULL)
     { 
-        if (GB_arena (A->h_mem) != A_data_arena)
-        { 
-            DIE ;
-            return (false) ;
-        }
+        if (GB_arena (A->h_mem) != A_data_arena) return (false) ;
     }
 
     if (A->b_shallow && A->b != NULL)
     { 
-        if (GB_arena (A->b_mem) != A_data_arena)
-        { 
-            DIE ;
-            return (false) ;
-        }
+        if (GB_arena (A->b_mem) != A_data_arena) return (false) ;
     }
 
     if (A->i_shallow && A->i != NULL)
     { 
-        if (GB_arena (A->i_mem) != A_data_arena)
-        { 
-            DIE ;
-            return (false) ;
-        }
+        if (GB_arena (A->i_mem) != A_data_arena) return (false) ;
     }
 
     if (A->x_shallow && A->x != NULL)
     { 
-        if (GB_arena (A->x_mem) != A_data_arena)
-        { 
-            DIE ;
-            return (false) ;
-        }
+        if (GB_arena (A->x_mem) != A_data_arena) return (false) ;
     }
 
     //--------------------------------------------------------------------------
@@ -94,16 +69,8 @@ bool GB_shallow_arenas_ok
 
     if (A->Y != NULL)
     { 
-        if (A->Y_shallow && A->Y->data_arena != A_data_arena)
-        { 
-            DIE ;
-            return (false) ;
-        }
-        if (!GB_shallow_arenas_ok (A->Y))
-        { 
-            DIE ;
-            return (false) ;
-        }
+        if (A->Y_shallow && A->Y->data_arena != A_data_arena) return (false) ;
+        if (!GB_shallow_arenas_ok (A->Y)) return (false) ;
     }
 
     //--------------------------------------------------------------------------

@@ -1486,54 +1486,6 @@ GB_GLOBAL GrB_IndexUnaryOp
 // for floating-point types). They only affect the time and memory usage of the
 // computations.
 
-/* FIXME arena: add GrB get/set to move a matrix between arenas:
-
-    changes the data arena only: (not lazy; always moves data if needed)
-    but could be done as a lazy, leaving it as pending work:
-    GrB_Matrix_set_INT32 (A, arena, GxB_ARENA_DATA) ;
-    GrB_Vector_set_INT32 (V, arena, GxB_ARENA_DATA) ;
-    GrB_Scalar_set_INT32 (S, arena, GxB_ARENA_DATA) ;
-
-    get the data or header arena of a matrix:
-    GrB_Matrix_get_INT32 (A, &arena, GxB_ARENA_DATA) ;
-    GrB_Vector_get_INT32 (V, &arena, GxB_ARENA_DATA) ;
-    GrB_Scalar_get_INT32 (S, &arena, GxB_ARENA_DATA) ;
-
-    GrB_Matrix_get_INT32 (A, &arena, GxB_ARENA_HEADER) ;
-    GrB_Vector_get_INT32 (V, &arena, GxB_ARENA_HEADER) ;
-    GrB_Scalar_get_INT32 (S, &arena, GxB_ARENA_HEADER) ;
-
-    to change both header & data arena: (not lazy; always moves data if needed)
-    GxB_Matrix_set_arenas (&A, header_arena, data_arena) ;
-    GxB_Vector_set_arenas (&V, header_arena, data_arena) ;
-    GxB_Scalar_set_arenas (&S, header_arena, data_arena) ;
-
-    create a new arena; can only be done once, for arena 2 or more:
-    GxB_arena_init (arena, malloc, calloc, realloc, free) ;
-
-    get the malloc, calloc, realloc, and free functions of an arena:
-    GrB_Global_get_VOID (GrB_GLOBAL, &malloc_func,  GxB_ARENA_MALLOC  + arena) ;
-    GrB_Global_get_VOID (GrB_GLOBAL, &calloc_func,  GxB_ARENA_CALLOC  + arena) ;
-    GrB_Global_get_VOID (GrB_GLOBAL, &realloc_func, GxB_ARENA_REALLOC + arena) ;
-    GrB_Global_get_VOID (GrB_GLOBAL, &free_func,    GxB_ARENA_FREE    + arena) ;
-
-    to change the global data and header arenas:
-    GrB_Global_set_INT (GrB_GLOBAL, data_arena, GxB_ARENA_DATA) ;
-    GrB_Global_set_INT (GrB_GLOBAL, header_arena, GxB_ARENA_HEADER) ;
-
-    to get the global data and header arenas:
-    GrB_Global_get_INT (GrB_GLOBAL, &data_arena, GxB_ARENA_DATA) ;
-    GrB_Global_get_INT (GrB_GLOBAL, &header_arena, GxB_ARENA_HEADER) ;
-
-    to change the data and header arenas in the current Context:
-    GxB_Context_set_INT (Context, data_arena, GxB_ARENA_DATA) ;
-    GxB_Context_set_INT (Context, header_arena, GxB_ARENA_HEADER) ;
-
-    to get the data and header arenas in the current Context
-    GxB_Context_get_INT (Context, &data_arena, GxB_ARENA_DATA) ;
-    GxB_Context_get_INT (Context, &header_arena, GxB_ARENA_HEADER) ;
-*/
-
 typedef enum    // GxB_Option_Field ;
 {
 
@@ -2922,7 +2874,61 @@ GrB_Info GxB_finalized      // determine if GraphBLAS is finalized
                             // called, false otherwise
 ) ;
 
-GrB_Info GxB_arena_init
+#endif
+
+//==============================================================================
+// arena methods
+//==============================================================================
+
+/*  FIXME arena: add this to user guide:
+
+    changes the data arena only: (not lazy; always moves data if needed)
+    but could be done as a lazy, leaving it as pending work:
+    GrB_Matrix_set_INT32 (A, arena, GxB_ARENA_DATA) ;
+    GrB_Vector_set_INT32 (V, arena, GxB_ARENA_DATA) ;
+    GrB_Scalar_set_INT32 (S, arena, GxB_ARENA_DATA) ;
+
+    get the data or header arena of a matrix:
+    GrB_Matrix_get_INT32 (A, &arena, GxB_ARENA_DATA) ;
+    GrB_Vector_get_INT32 (V, &arena, GxB_ARENA_DATA) ;
+    GrB_Scalar_get_INT32 (S, &arena, GxB_ARENA_DATA) ;
+
+    GrB_Matrix_get_INT32 (A, &arena, GxB_ARENA_HEADER) ;
+    GrB_Vector_get_INT32 (V, &arena, GxB_ARENA_HEADER) ;
+    GrB_Scalar_get_INT32 (S, &arena, GxB_ARENA_HEADER) ;
+
+    to change both header & data arena: (not lazy; always moves data if needed)
+    GxB_Matrix_set_arenas (&A, header_arena, data_arena) ;
+    GxB_Vector_set_arenas (&V, header_arena, data_arena) ;
+    GxB_Scalar_set_arenas (&S, header_arena, data_arena) ;
+
+    create a new arena; can only be done once, for arena 2 or more:
+    GxB_arena_init (arena, malloc, calloc, realloc, free) ;
+
+    get the malloc, calloc, realloc, and free functions of an arena:
+    GrB_Global_get_VOID (GrB_GLOBAL, &malloc_func,  GxB_ARENA_MALLOC  + arena) ;
+    GrB_Global_get_VOID (GrB_GLOBAL, &calloc_func,  GxB_ARENA_CALLOC  + arena) ;
+    GrB_Global_get_VOID (GrB_GLOBAL, &realloc_func, GxB_ARENA_REALLOC + arena) ;
+    GrB_Global_get_VOID (GrB_GLOBAL, &free_func,    GxB_ARENA_FREE    + arena) ;
+
+    to change the global data and header arenas:
+    GrB_Global_set_INT (GrB_GLOBAL, data_arena, GxB_ARENA_DATA) ;
+    GrB_Global_set_INT (GrB_GLOBAL, header_arena, GxB_ARENA_HEADER) ;
+
+    to get the global data and header arenas:
+    GrB_Global_get_INT (GrB_GLOBAL, &data_arena, GxB_ARENA_DATA) ;
+    GrB_Global_get_INT (GrB_GLOBAL, &header_arena, GxB_ARENA_HEADER) ;
+
+    to change the data and header arenas in the current Context:
+    GxB_Context_set_INT (Context, data_arena, GxB_ARENA_DATA) ;
+    GxB_Context_set_INT (Context, header_arena, GxB_ARENA_HEADER) ;
+
+    to get the data and header arenas in the current Context
+    GxB_Context_get_INT (Context, &data_arena, GxB_ARENA_DATA) ;
+    GxB_Context_get_INT (Context, &header_arena, GxB_ARENA_HEADER) ;
+*/
+
+GrB_Info GxB_arena_init     // create a new arena
 (
     // input
     int arena,              // 0 to GB_NARENAS-1    FIXME arena: GxB_NARENAS
@@ -2933,7 +2939,33 @@ GrB_Info GxB_arena_init
     void   (* user_free_function    ) (void *)          // required
 ) ;
 
-#endif
+// GxB_[Matrix,Vector,Scalar]_set_arenas: change the header and data arena:
+GrB_Info GxB_Matrix_set_arenas
+(
+    // input/output
+    GrB_Matrix *Ahandle,        // handle of matrix to modify
+    // input
+    const int new_header_arena, // new arena for the header of A
+    const int new_data_arena    // new arena for the data content of A
+) ;
+
+GrB_Info GxB_Vector_set_arenas
+(
+    // input/output
+    GrB_Vector *Vhandle,        // handle of vector to modify
+    // input
+    const int new_header_arena, // new arena for the header of V
+    const int new_data_arena    // new arena for the data content of V
+) ;
+
+GrB_Info GxB_Scalar_set_arenas
+(
+    // input/output:
+    GrB_Scalar *Shandle,        // handle of vector to modify
+    // input:
+    const int new_header_arena, // new arena for the header of S
+    const int new_data_arena    // new arena for the data content of S
+) ;
 
 //==============================================================================
 // GrB_Descriptor: the GraphBLAS descriptor
@@ -4693,33 +4725,6 @@ GrB_Info GxB_Context_set_String (GxB_Context, char *    , int) ;
 GrB_Info GxB_Context_set_INT    (GxB_Context, int32_t   , int) ;
 GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , int, size_t) ;
 #endif
-
-GrB_Info GxB_Matrix_set_arenas
-(
-    // input/output
-    GrB_Matrix *Ahandle,        // handle of matrix to modify
-    // input
-    const int new_header_arena, // new arena for the header of A
-    const int new_data_arena    // new arena for the data content of A
-) ;
-
-GrB_Info GxB_Vector_set_arenas
-(
-    // input/output
-    GrB_Vector *Vhandle,        // handle of vector to modify
-    // input
-    const int new_header_arena, // new arena for the header of V
-    const int new_data_arena    // new arena for the data content of V
-) ;
-
-GrB_Info GxB_Scalar_set_arenas
-(
-    // input/output:
-    GrB_Scalar *Shandle,        // handle of vector to modify
-    // input:
-    const int new_header_arena, // new arena for the header of S
-    const int new_data_arena    // new arena for the data content of S
-) ;
 
 //==============================================================================
 // GrB_wait: finish computations

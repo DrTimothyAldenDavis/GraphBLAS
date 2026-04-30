@@ -33,9 +33,11 @@
 
 // This function accesses GB_methods inside GraphBLAS.
 
-// FIXME arena: for GraphBLAS 10.4.0: just export as a single uint8_t
+// FIXME arena: for GraphBLAS 11: just export as a single uint8_t
 // arrays containing the A header.  Remainder (even A->Y header) are
-// in the default arena 0 (malloc/free).  Do not use a struct.
+// in the default arena 0 (malloc/free).  The struct will have just:
+//      GraphBLASv11    data type
+//      header          uint8 array, size 240 (sizeof (struct GB_Matrix_opaque))
 
 #include "gb_interface.h"
 
