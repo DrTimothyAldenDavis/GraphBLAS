@@ -10,12 +10,15 @@
 // threadblock) is #define'd here.  This file is used both in host and CUDA
 // JIT kernels.
 
+// FUTURE: tune this per GPU type.
+
 #ifndef GB_CUDA_GEOMETRY_H
 #define GB_CUDA_GEOMETRY_H
 
 // tile geometry for reductions (used in many kernels)
 #define GB_CUDA_TILE_SIZE 32
 #define GB_CUDA_LOG2_TILE_SIZE 5
+
 
 // select sparse CUDA kernel
 #define GB_CUDA_SELECT_SPARSE_BLOCKDIM1 512
@@ -43,6 +46,10 @@
 #define GB_CUDA_TRANSPOSE_PREP_BLOCKDIM_LOG2 9
 #define GB_CUDA_TRANSPOSE_PREP_CHUNKSIZE 4096
 #define GB_CUDA_TRANSPOSE_PREP_CHUNKSIZE_LOG2 12
+
+// dot3 CUDA kernel
+#define GB_CUDA_DOT3_CHUNKSIZE 128
+#define GB_CUDA_DOT3_CHUNKSIZE_LOG2 7
 
 #endif
 

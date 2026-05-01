@@ -840,8 +840,6 @@ __global__ void GB_cuda_builder_phase5_transplant
             // copy the entries
             //------------------------------------------------------------------
 
-            // FIXME: break this into 2 loops?  For Ti, and (Tp,Th)
-
             // Ti [p] = Key_out [p].i ;
             GB_KEY_UNLOAD_I (Key_out, p, i1) ;
             Ti [p] = (GB_Ti_TYPE) i1 ;
@@ -955,8 +953,6 @@ __global__ void GB_cuda_builder_phase5_no_dupl
             //------------------------------------------------------------------
             // copy the entries
             //------------------------------------------------------------------
-
-            // FIXME: break this into 3 loops?  For Ti, Tx, and (Tp,Th)
 
             // Ti [p] = Key_out [p].i ;
             GB_KEY_UNLOAD_I (Key_out, p, i1) ;
@@ -1468,12 +1464,15 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     GB_Tp_TYPE *JDeltaSum = ((GB_Tp_TYPE *) W_7) + 1 ;
     #endif
 
+    // phase 3 requires shared memory (1 or 2 Int arrays, each of size CHUNKSIZE)
+    size_t shared_bytes = CHUNKSIZE * sizeof (Int) ;
+
     #if GB_KNOWN_NO_DUPLICATES
     {
         // phase3 does not need to look for duplicates; this is known
         // at compile time of the JIT kernel
         #if GB_MTX_BUILD
-        GB_cuda_builder_phase3_no_dupl <<<grid, block1, 0, stream>>>
+        GB_cuda_builder_phase3_no_dupl <<<grid, block1, shared_bytes, stream>>>
             ( /* outputs: */
                 JDelta, JDeltaSum,
               /* inputs: */ Key_out, nvals, nchunks) ;
@@ -1486,7 +1485,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             // phase3 does not need to look for duplicates; this is known
             // only after checking for duplicates
             #if GB_MTX_BUILD
-            GB_cuda_builder_phase3_no_dupl <<<grid, block1, 0, stream>>>
+            GB_cuda_builder_phase3_no_dupl <<<grid, block1, shared_bytes, stream>>>
                 ( /* outputs: */
                     JDelta, JDeltaSum,
                   /* inputs: */ Key_out, nvals, nchunks) ;
@@ -1494,7 +1493,11 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         }
         else
         {
-            GB_cuda_builder_phase3_with_dupl <<<grid, block1, 0, stream>>>
+            #if GB_MTX_BUILD
+            // for matrix build: needs two Int arrays of size CHUNKSIZE
+            shared_bytes = 2 * shared_bytes ;
+            #endif
+            GB_cuda_builder_phase3_with_dupl <<<grid, block1, shared_bytes, stream>>>
                 ( /* outputs: */ Map, ChunkSum,
                     #if GB_MTX_BUILD
                     JDelta, JDeltaSum,

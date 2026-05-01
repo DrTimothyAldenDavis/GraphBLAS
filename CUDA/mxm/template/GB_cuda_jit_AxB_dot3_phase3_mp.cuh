@@ -21,13 +21,12 @@
 // Both the grid and block are 1D, so blockDim.x is the # threads in a
 // threadblock, and the # of threadblocks is grid.x
 
-// Let b = blockIdx.x, and let s be blockDim.x. s= 32 with a variable number of
-// active threads = min( min(g_xnz, g_ynz), 32) 
+// This method requires blockDim.x to be equal to GB_CUDA_TILE_SIZE.
 
 // Thus, threadblock b owns a part of the index set spanned by g_xi and g_yi.
 // Its job is to find the intersection of the index sets g_xi and g_yi, perform
 // the semi-ring dot product on those items in the intersection, and finally
-// reduce this data to a scalar, on exit write it to g_odata [b].
+// reduce this data to a scalar, on exit write it to Cx [...].
 
 //  int64_t start          <- start of vector pairs for this kernel
 //  int64_t end            <- end of vector pairs for this kernel

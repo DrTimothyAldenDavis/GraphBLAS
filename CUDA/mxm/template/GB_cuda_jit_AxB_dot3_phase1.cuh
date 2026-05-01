@@ -125,9 +125,9 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     // threadblocks can differ on different GPUs.
 
     // grid-stride loop for each threadblock:
-    for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
+    for (int64_t pfirst = blockIdx.x << LOG2_CHUNKSIZE ;
                  pfirst < mnz ;
-                 pfirst += gridDim.x << log2_chunk_size)
+                 pfirst += gridDim.x << LOG2_CHUNKSIZE)
     {
 
         //----------------------------------------------------------------------
@@ -138,7 +138,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
         // pfirst + my_chunk_size - 1.
         int64_t my_chunk_size, mnvec1, kfirst, klast ;
         float slope ;
-        GB_cuda_ek_slice_setup<GB_Mp_TYPE> (Mp, mnvec, mnz, pfirst, chunk_size,
+        GB_cuda_ek_slice_setup<GB_Mp_TYPE> (Mp, mnvec, mnz, pfirst, CHUNKSIZE,
             &kfirst, &klast, &my_chunk_size, &mnvec1, &slope) ;
 
         //----------------------------------------------------------------------
@@ -316,7 +316,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     // cumulative sum of each bucket
     //--------------------------------------------------------------------------
 
-    typedef cub::BlockScan<int64_t, 32, cub::BLOCK_SCAN_WARP_SCANS> BlockCumSum;
+    typedef cub::BlockScan<int64_t, GB_CUDA_TILE_SIZE, cub::BLOCK_SCAN_WARP_SCANS> BlockCumSum;
     __shared__ typename BlockCumSum::TempStorage temp_storage ;
 
     // The taskbucket for this thread block is an array of size

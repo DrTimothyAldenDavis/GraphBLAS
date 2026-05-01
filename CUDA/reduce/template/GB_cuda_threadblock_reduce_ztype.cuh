@@ -41,7 +41,7 @@ __inline__ __device__ GB_Z_TYPE GB_cuda_threadblock_reduce_ztype
     val = GB_cuda_tile_reduce_ztype (tile, val) ;
 
     // shared result for partial sums of all threads in a tile:
-    static __shared__ GB_Z_TYPE shared [GB_CUDA_TILE_SIZE] ;
+    __shared__ GB_Z_TYPE shared [GB_CUDA_TILE_SIZE] ;
 
     if (threadId_in_tile == 0)
     {

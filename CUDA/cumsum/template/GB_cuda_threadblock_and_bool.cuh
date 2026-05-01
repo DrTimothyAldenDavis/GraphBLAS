@@ -48,7 +48,7 @@ __inline__ __device__ bool GB_cuda_threadblock_and_bool
     val = GB_cuda_tile_and_bool (tile, val) ;    
 
     // shared result for partial sums of all threads in a tile:
-    static __shared__ bool shared [GB_CUDA_TILE_SIZE] ;
+    __shared__ bool shared [GB_CUDA_TILE_SIZE] ;
 
     if (threadId_in_tile == 0)
     {

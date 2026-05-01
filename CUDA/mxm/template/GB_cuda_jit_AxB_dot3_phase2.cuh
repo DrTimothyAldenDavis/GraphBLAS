@@ -50,10 +50,8 @@ __inline__ __device__ void blockBucketExclusiveSum
 )
 {
 
-    // FIXME: make "32" below a #define
-
-    // Specialize BlockScan for a 1D block of 32 threads
-    typedef cub::BlockScan<int64_t, 32, cub::BLOCK_SCAN_WARP_SCANS> BlockScan ;
+    // Specialize BlockScan for a 1D block of GB_CUDA_TILE_SIZE threads
+    typedef cub::BlockScan<int64_t, GB_CUDA_TILE_SIZE, cub::BLOCK_SCAN_WARP_SCANS> BlockScan ;
 
     // Allocate shared memory for BlockScan
     __shared__ typename BlockScan::TempStorage temp_storage ;
@@ -71,9 +69,9 @@ __inline__ __device__ void blockBucketExclusiveSum
 
         // Load a segment of consecutive items that are blocked across threads
 
-        // FIXME: use BlockLoad and BlockScan, and make Blockbucket size
-        // a multiple of 32 with zero-padding, so the if(..) below is not
-        // needed.
+        // FIXME: use BlockLoad and BlockScan, and make Blockbucket size a
+        // multiple of GB_CUDA_TILE_SIZE with zero-padding, so the if(..) below
+        // is not needed.
 
         int loc = block_id + threadIdx.x;
         if (loc <= nblocks)

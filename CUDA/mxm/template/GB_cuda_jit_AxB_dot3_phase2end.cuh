@@ -81,16 +81,14 @@ __global__ void GB_cuda_AxB_dot3_phase2end_kernel
     // C, which is the part of C operated on by this threadblock.
 
     // FIXME: why is bucket_idx needed?
-    __shared__ int64_t bucket_idx [chunk_size] ;
+    __shared__ int64_t bucket_idx [CHUNKSIZE] ;
 
-    for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
+    for (int64_t pfirst = blockIdx.x << LOG2_CHUNKSIZE ;
                  pfirst < cnz ;
-                 pfirst += gridDim.x << log2_chunk_size)
+                 pfirst += gridDim.x << LOG2_CHUNKSIZE)
     {
 
-        // pfirst = chunk_size * chunk ;
-        // plast  = GB_IMIN( chunk_size * (chunk+1), cnz ) ;
-        int64_t plast = pfirst + chunk_size ;
+        int64_t plast = pfirst + CHUNKSIZE ;
         plast = GB_IMIN (plast, cnz) ;
 
         for (int64_t p = pfirst + threadIdx.x ; p < plast ; p += blockDim.x)

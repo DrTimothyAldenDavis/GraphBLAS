@@ -56,9 +56,9 @@ __global__ void GB_cuda_AxB_dot3_dense_phase1_kernel
     //--------------------------------------------------------------------------
 
     // grid-stride loop for each threadblock:
-    for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
+    for (int64_t pfirst = blockIdx.x << LOG2_CHUNKSIZE ;
                  pfirst < mnz ;
-                 pfirst += gridDim.x << log2_chunk_size)
+                 pfirst += gridDim.x << LOG2_CHUNKSIZE)
     {
 
         //----------------------------------------------------------------------
@@ -69,7 +69,7 @@ __global__ void GB_cuda_AxB_dot3_dense_phase1_kernel
         // pfirst + my_chunk_size - 1.
         int64_t my_chunk_size, mnvec1, kfirst, klast ;
         float slope ;
-        GB_cuda_ek_slice_setup<GB_Mp_TYPE> (Mp, mnvec, mnz, pfirst, chunk_size,
+        GB_cuda_ek_slice_setup<GB_Mp_TYPE> (Mp, mnvec, mnz, pfirst, CHUNKSIZE,
             &kfirst, &klast, &my_chunk_size, &mnvec1, &slope) ;
 
         //----------------------------------------------------------------------
