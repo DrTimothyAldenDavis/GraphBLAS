@@ -61,9 +61,7 @@ __inline__ __device__ void blockBucketExclusiveSum
 
     // Have the block iterate over segments of items
 
-    // FIXME: threads_per_block is a #define; make uppercase and
-    // use GB_cuda_geometry.hpp
-    for (int block_id = 0 ; block_id <= nblocks ; block_id += threads_per_block)
+    for (int block_id = 0 ; block_id <= nblocks ; block_id += GB_CUDA_TILE_SIZE)
     {
         int64_t data = 0 ;
 
