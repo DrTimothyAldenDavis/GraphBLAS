@@ -334,8 +334,11 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         // phase1 and phase2: place each C(i,j) in a bucket
         //----------------------------------------------------------------------
 
+// FIXME: API for CUDA 13.2
+#if 0
         CUDA_OK (cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
-        CUDA_OK (cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, device));
+        CUDA_OK (cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, (cudaMemLocation) device));
+#endif
 
         CUDA_OK (cudaGetLastError ( )) ;
         CUDA_OK (cudaStreamSynchronize (stream)) ;

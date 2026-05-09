@@ -154,26 +154,28 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     size_t jsize = C->j_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t isize = C->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
+// FIXME: API changes for CUDA 13.2
+#if 0
     // FIXME: make this a helper function, something like:
     // GB_cuda_matrix_memadvise (C, GB_MEMADVISE_PHIX, device, stream) ;
     CUDA_OK (cudaMemAdvise (C->p, (cnvec+1) * psize,
-        cudaMemAdviseSetPreferredLocation, device)) ;
+        cudaMemAdviseSetPreferredLocation, (cudaMemLocation) device)) ;
     if (M_is_hyper)
     { 
         CUDA_OK (cudaMemAdvise (C->h, cnvec * jsize,
-            cudaMemAdviseSetPreferredLocation, device)) ;
+            cudaMemAdviseSetPreferredLocation, (cudaMemLocation) device)) ;
     }
     CUDA_OK (cudaMemAdvise (C->i, (cnz+1) * isize,
-        cudaMemAdviseSetPreferredLocation, device)) ;
+        cudaMemAdviseSetPreferredLocation, (cudaMemLocation) device)) ;
     if (!C_iso)
     {
         CUDA_OK (cudaMemAdvise (C->x, (cnz+1) * C->type->size ,
-            cudaMemAdviseSetPreferredLocation, device)) ;
+            cudaMemAdviseSetPreferredLocation, (cudaMemLocation) device)) ;
     }
-
     // prefetch M (if M hypersparse: using M->h not M->Y)
     GB_OK (GB_cuda_matrix_prefetch (M,
         Mask_struct ? GB_PREFETCH_PHBI : GB_PREFETCH_PHBIX, device, stream)) ;
+#endif
 
     //--------------------------------------------------------------------------
     // copy Mp and Mh into C
