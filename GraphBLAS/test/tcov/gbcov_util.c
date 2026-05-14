@@ -11,6 +11,7 @@
 // allow them to copy the statement coverage counts to and from the built-in
 // global workspace.
 
+#define GB_MXUTIL
 #include "gb_interface.h"
 
 //------------------------------------------------------------------------------

@@ -7,16 +7,32 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_UTIL
+
+#define FREE_WORK               \
+    GrB_Matrix_free (&id2) ;    \
+    GrB_Matrix_free (&B) ;      \
+    GrB_Matrix_free (&T) ;
+
+#define FREE_ALL                \
+    FREE_WORK ;                 \
+    GrB_Matrix_free (&C) ; 
+
 #include "gb_interface.h"
 
-GrB_Matrix gb_expand_to_full    // C = full (A), and typecast
+GrB_Info gb_expand_to_full      // C = full (A), and typecast
 (
+    // output
+    GrB_Matrix *C_handle,
+    // inputs
     const GrB_Matrix A,         // input matrix to expand to full
     GrB_Type type,              // type of C, if NULL use the type of A
     int fmt,                    // format of C
     GrB_Matrix id               // identity value, use zero if NULL
 )
 {
+
+    GrB_Matrix C = NULL, id2 = NULL, B = NULL, T = NULL, S = NULL ;
 
     //--------------------------------------------------------------------------
     // get the size and type of A
@@ -30,7 +46,7 @@ GrB_Matrix gb_expand_to_full    // C = full (A), and typecast
 
     // C defaults to the same type of A
     if (type == NULL)
-    {
+    { 
         type = atype ;
     }
 
@@ -38,9 +54,8 @@ GrB_Matrix gb_expand_to_full    // C = full (A), and typecast
     // get the identity, use full(0) if NULL
     //--------------------------------------------------------------------------
 
-    GrB_Matrix id2 = NULL ;
     if (id == NULL)
-    {
+    { 
         OK (GrB_Matrix_new (&id2, type, 1, 1)) ;
         OK (GrB_Matrix_setElement_INT32 (id2, 0, 0, 0)) ;
         id = id2 ;
@@ -50,7 +65,7 @@ GrB_Matrix gb_expand_to_full    // C = full (A), and typecast
     // expand the identity into a full matrix B the same size as C
     //--------------------------------------------------------------------------
 
-    GrB_Matrix B = gb_new (type, nrows, ncols, fmt, 0) ;
+    OK (gb_new (&B, type, nrows, ncols, fmt, 0)) ;
     OK1 (B, GrB_Matrix_assign_Scalar (B, NULL, NULL, (GrB_Scalar) id,
         GrB_ALL, 0, GrB_ALL, 0, NULL)) ;
 
@@ -58,11 +73,10 @@ GrB_Matrix gb_expand_to_full    // C = full (A), and typecast
     // typecast A from float to integer using the built-in rules
     //--------------------------------------------------------------------------
 
-    GrB_Matrix S, T = NULL ;
     if (gb_is_integer (type) && gb_is_float (atype))
     { 
         // T = (type) round (A)
-        T = gb_new (type, nrows, ncols, fmt, 0) ;
+        OK (gb_new (&T, type, nrows, ncols, fmt, 0)) ;
         OK1 (T, GrB_Matrix_apply (T, NULL, NULL, gb_round_op (atype), A, NULL));
         S = T ;
     }
@@ -76,17 +90,17 @@ GrB_Matrix gb_expand_to_full    // C = full (A), and typecast
     // C = first (S, B)
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C = gb_new (type, nrows, ncols, fmt, 0) ;
-    OK1 (C, GrB_Matrix_eWiseAdd_BinaryOp (C, NULL, NULL,
-        gb_first_binop (type), S, B, NULL)) ;
+    GrB_BinaryOp op ;
+    OK (gb_new (&C, type, nrows, ncols, fmt, 0)) ;
+    OK (gb_first_binop (&op, type)) ;
+    OK1 (C, GrB_Matrix_eWiseAdd_BinaryOp (C, NULL, NULL, op, S, B, NULL)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_free (&id2)) ;
-    OK (GrB_Matrix_free (&B)) ;
-    OK (GrB_Matrix_free (&T)) ;
-    return (C) ;
+    FREE_WORK ;
+    (*C_handle) = C ;
+    return (GrB_SUCCESS) ;
 }
 

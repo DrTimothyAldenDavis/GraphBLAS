@@ -11,6 +11,13 @@
 
 // [lo,hi] = gbbandwidth (A, compute_lo, compute_hi)
 
+#define FREE_WORK                   \
+    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Matrix_free (&x) ;          \
+    GrB_Matrix_free (&idiag) ;      \
+    GrB_Matrix_free (&imin) ;       \
+    GrB_Matrix_free (&imax) ;
+
 #include "gb_interface.h"
 
 #define USAGE "usage: [lo,hi] = gbbandwidth (A, compute_lo, compute_hi)"
@@ -22,16 +29,40 @@ void mexFunction
     int nargin,
     const mxArray *pargin [ ]
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 3 && nargout == 2, USAGE) ;
-    GrB_Matrix A = gb_get_shallow (pargin [0]) ;
+    GrB_Matrix A = NULL, A_shallow = NULL, x = NULL, imin = NULL, imax = NULL,
+        idiag = NULL ;
+
+    gbmx_usage (nargin == 3 && nargout == 2, USAGE) ;
+
+    pargout [0] = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
+    pargout [1] = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
+    int64_t *lo_output = (int64_t *) mxGetData (pargout [0]) ;
+    int64_t *hi_output = (int64_t *) mxGetData (pargout [1]) ;
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
+    struct gb_matrix_struct Matrix [1] ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+
     bool compute_lo = (bool) mxGetScalar (pargin [1]) ;
     bool compute_hi = (bool) mxGetScalar (pargin [2]) ;
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get input matrix
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
@@ -41,7 +72,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     int64_t hi = 0, lo = 0 ;
-    GrB_Matrix x = NULL, imin = NULL, imax = NULL, idiag = NULL ;
 
     int fmt ;
     OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
@@ -153,35 +183,12 @@ void mexFunction
         }
     }
 
-    OK (GrB_Matrix_free (&A)) ;
-    OK (GrB_Matrix_free (&x)) ;
-    OK (GrB_Matrix_free (&idiag)) ;
-    OK (GrB_Matrix_free (&imin)) ;
-    OK (GrB_Matrix_free (&imax)) ;
-
     //--------------------------------------------------------------------------
-    // return result as int64 scalars
+    // return result
     //--------------------------------------------------------------------------
 
-    if (lo > FLINTMAX || hi > FLINTMAX)
-    { 
-        // output is int64 to avoid flint overflow
-        int64_t *p ;
-        pargout [0] = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
-        // use mxGetData (best for Octave, fine for MATLAB)
-        p = (int64_t *) mxGetData (pargout [0]) ;
-        p [0] = (int64_t) lo ;
-        pargout [1] = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
-        p = (int64_t *) mxGetData (pargout [1]) ;
-        p [0] = (int64_t) hi ;
-    }
-    else
-    { 
-        // output is double
-        pargout [0] = mxCreateDoubleScalar ((double) lo) ;
-        pargout [1] = mxCreateDoubleScalar ((double) hi) ;
-    }
-
+    (*lo_output) = (int64_t) lo ;
+    (*hi_output) = (int64_t) hi ;
     gb_wrapup ( ) ;
 }
 

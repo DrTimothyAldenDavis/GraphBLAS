@@ -26,21 +26,21 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 1 && nargout <= 1, USAGE) ;
+    gbmx_usage (nargin <= 1 && nargout <= 1, USAGE) ;
+    pargout [0] = mxCreateDoubleScalar (0) ;
+    double *burble_output = (double *) mxGetData (pargout [0]) ;
 
     //--------------------------------------------------------------------------
-    // set the burble, if requested
+    // get input burble
     //--------------------------------------------------------------------------
 
     int32_t burble = false ;
-
     if (nargin > 0)
     { 
-        // set the burble
-        if (gb_mxarray_is_scalar (pargin [0]))
+        if (gbmx_mxarray_is_scalar (pargin [0]))
         { 
             // argument is a numeric scalar
             burble = (int32_t) mxGetScalar (pargin [0]) ;
@@ -52,8 +52,18 @@ void mexFunction
         }
         else
         { 
-            ERROR ("input must be a scalar") ;
+            ERROR ("input must be a scalar", GrB_INVALID_VALUE) ;
         }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // set the burble, if requested
+    //--------------------------------------------------------------------------
+
+    if (nargin > 0)
+    { 
         OK (GrB_Global_set_INT32 (GrB_GLOBAL, burble, GxB_BURBLE)) ;
     }
 
@@ -62,7 +72,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     OK (GrB_Global_get_INT32 (GrB_GLOBAL, &burble, GxB_BURBLE)) ;
-    pargout [0] = mxCreateDoubleScalar (burble) ;
+    (*burble_output) = (double) burble ;
     gb_wrapup ( ) ;
 }
 

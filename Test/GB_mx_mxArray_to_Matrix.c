@@ -68,8 +68,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     GrB_Matrix A = NULL ;
     GrB_Matrix T = NULL ;
 
-    int header_arena = GB_ARENA_MATLAB ;
-    int data_arena = GB_ARENA_MATLAB ;
+    int header_arena = GB_ARENA_TEST ;
+    int data_arena = GB_ARENA_TEST ;
 
     if (A_matlab == NULL)
     {

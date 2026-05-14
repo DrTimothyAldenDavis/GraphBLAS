@@ -1,0 +1,84 @@
+//------------------------------------------------------------------------------
+// gb_get_matrix: get a matrix argument
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
+// A = gb_get_matrix (matrix) constructs a GrB_Matrix from a MATLAB mxArray,
+// which can either be a MATLAB sparse matrix (double, complex, or logical) or
+// a MATLAB @GrB object.  The input is a gb_matrix constructed by
+// gbmx_get_matrix.
+
+// The input matrix must not be NULL, but it can be an empty matrix, as matrix
+// = [ ].  In this case, A is returned as NULL.  This is not an error here,
+// since the caller might be getting an optional input matrix, such as Cin or
+// the Mask.
+
+// If A_shallow is returned as non-NULL, it contains a pointer to a newly
+// allocated GrB_Matrix that contains readonly content from a MATLAB matrix.
+// The A_shallow matrix must be freed by the caller (which does not free the
+// readonly MATLAB content).
+
+// FIXME: rename A_shallow to A_to_free, throughout
+
+#define GB_UTIL
+#define FREE_ALL GrB_Matrix_free (&A) ;
+
+#include "gb_interface.h"
+
+GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
+                            // or the content of a MATLAB @GrB handle object
+(
+    // output
+    GrB_Matrix *A_handle,   // output matrix
+    GrB_Matrix *A_shallow,  // must be freed by the caller if not NULL
+    // input
+    gb_matrix matrix        // input MATLAB or @GrB matrix
+)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GrB_Matrix A = NULL ;
+    CHECK_ERROR (A_handle == NULL, "matrix missing") ;
+    CHECK_ERROR (A_shallow == NULL, "matrix missing") ;
+    CHECK_ERROR (matrix == NULL, "matrix missing") ;
+
+    //--------------------------------------------------------------------------
+    // construct the GrB_Matrix
+    //--------------------------------------------------------------------------
+
+    if (matrix->G != NULL)
+    { 
+        // matrix is a @GrB object
+        (*A_handle) = matrix->G ;
+        (*A_shallow) = NULL ;           // no shallow copy to free when done
+    }
+    else if (matrix->is_empty)
+    { 
+        // matrix is a 0-by-0 MATLAB matrix.  Create a new 0-by-0 matrix of the
+        // same type as matrix, with the default format.
+        OK (GrB_Matrix_new (&A, matrix->type, 0, 0)) ;
+        (*A_handle) = A ;
+        (*A_shallow) = A ;
+    }
+    else
+    { 
+        // construct a shallow GrB_Matrix copy of a built-in MATLAB matrix
+        OK (gb_get_matlab_matrix (&A, matrix)) ;
+        (*A_handle) = A ;
+        (*A_shallow) = A ;
+    }
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
+    return (GrB_SUCCESS) ;
+}
+

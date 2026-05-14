@@ -26,17 +26,22 @@
 
 // (6) Otherwise, the global default sparsity is used for C.
 
+// This method does not allocate any memory, so it is safe to use in either
+// the GrB* or mx* region of a mexFunction.
+
+#define GB_UTIL
 #include "gb_interface.h"
 
-int gb_get_sparsity         // 0 to 15
+GrB_Info gb_get_sparsity    // determine the sparsity of C for C = method(A,B)
 (
+    // input:
     GrB_Matrix A,           // may be NULL
     GrB_Matrix B,           // may be NULL
-    int sparsity_default    // may be 0
+    // input/output:
+    int *sparsity           // may be 0 on input
 )
 {
 
-    int sparsity ;
     int A_sparsity = 0 ;
     int B_sparsity = 0 ;
     uint64_t nrows, ncols ;
@@ -46,22 +51,22 @@ int gb_get_sparsity         // 0 to 15
     //--------------------------------------------------------------------------
 
     if (A != NULL)
-    {
+    { 
         OK (GrB_Matrix_nrows (&nrows, A)) ;
         OK (GrB_Matrix_ncols (&ncols, A)) ;
         if (nrows > 1 || ncols > 1)
-        {
+        { 
             // A is a vector or matrix, not a scalar
             OK (GrB_Matrix_get_INT32 (A, &A_sparsity, GxB_SPARSITY_CONTROL)) ;
         }
     }
 
     if (B != NULL)
-    {
+    { 
         OK (GrB_Matrix_nrows (&nrows, B)) ;
         OK (GrB_Matrix_ncols (&ncols, B)) ;
         if (nrows > 1 || ncols > 1)
-        {
+        { 
             // B is a vector or matrix, not a scalar
             OK (GrB_Matrix_get_INT32 (B, &B_sparsity, GxB_SPARSITY_CONTROL)) ;
         }
@@ -71,32 +76,31 @@ int gb_get_sparsity         // 0 to 15
     // determine the sparsity of C
     //--------------------------------------------------------------------------
 
-    if (sparsity_default != 0)
+    if ((*sparsity) != 0)
     { 
         // (2) the sparsity is defined by the descriptor to the method
-        sparsity = sparsity_default ;
     }
     else if (A_sparsity > 0 && B_sparsity > 0)
-    {
+    { 
         // (3) C is determined by the sparsity of A and B
-        sparsity = A_sparsity | B_sparsity ;
+        (*sparsity) = A_sparsity | B_sparsity ;
     }
     else if (A_sparsity > 0)
-    {
+    { 
         // (4) get the sparsity of A
-        sparsity = A_sparsity ;
+        (*sparsity) = A_sparsity ;
     }
     else if (B_sparsity > 0)
-    {
+    { 
         // (5) get the sparsity of B
-        sparsity = B_sparsity ;
+        (*sparsity) = B_sparsity ;
     }
     else
-    {
+    { 
         // (6) use the default sparsity
-        sparsity = GxB_AUTO_SPARSITY ;
+        (*sparsity) = GxB_AUTO_SPARSITY ;
     }
 
-    return (sparsity) ;
+    return (GrB_SUCCESS) ;
 }
 

@@ -13,6 +13,14 @@
 //  gbdegree (A, 'row')     row degree
 //  gbdegree (A, 'col')     column degree
 
+#define FREE_WORK                   \
+    GrB_Matrix_free (&x) ;          \
+    GrB_Matrix_free (&A_shallow) ;
+
+#define FREE_ALL                    \
+    FREE_WORK ;                     \
+    GrB_Matrix_free (&d) ;
+
 #include "gb_interface.h"
 
 #define USAGE "usage: degree = gbdegree (A, dim)"
@@ -27,31 +35,43 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 2 && nargout <= 1, USAGE) ;
+    GrB_Matrix *d_opaque = NULL, d = NULL, x = NULL, A = NULL,
+        A_shallow = NULL ;
+
+    gbmx_usage (nargin == 2 && nargout <= 1, USAGE) ;
+    pargout [0] = gbmx_export_struct (&d_opaque) ;
 
     //--------------------------------------------------------------------------
-    // get the inputs 
+    // get inputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix d = NULL, x = NULL ;
-    GrB_Matrix A = gb_get_shallow (pargin [0]) ;
+    struct gb_matrix_struct Matrix [1] ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+
+    char dim_string [LEN+2] ;
+    gbmx_mxstring_to_string (dim_string, LEN, pargin [1], "dim") ;
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get input matrix
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
-
-    #define LEN 256
-    char dim_string [LEN+2] ;
-    gb_mxstring_to_string (dim_string, LEN, pargin [1], "dim") ;
 
     //--------------------------------------------------------------------------
     // compute the row/column degree
     //--------------------------------------------------------------------------
 
     if (MATCH (dim_string, "row"))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // row degree
@@ -67,7 +87,7 @@ void mexFunction
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // column degree
@@ -82,9 +102,12 @@ void mexFunction
         OK (GrB_mxm (d, NULL, NULL, GxB_PLUS_PAIR_INT64, A, x, GrB_DESC_T0)) ;
     }
 
-    OK (GrB_Matrix_free (&x)) ;
-    OK (GrB_Matrix_free (&A)) ;
-    pargout [0] = gb_export ((GrB_Matrix *) &d, KIND_GRB) ;
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
+
+    FREE_WORK ;
+    OK (gb_export (d_opaque, (GrB_Matrix *) &d, KIND_GRB)) ;
     gb_wrapup ( ) ;
 }
 

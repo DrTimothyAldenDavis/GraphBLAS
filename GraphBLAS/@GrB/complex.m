@@ -33,7 +33,7 @@ if (nargin == 1)
     % this overloaded method for GrB objects would not be called).
     % Convert A to a built-in double complex matrix C.
     A = A.opaque ;
-    C = gbbuiltin (A, 'double complex') ;
+    C = gbcast (A, 'double complex') ;
 
 else
 
@@ -83,7 +83,7 @@ else
             % A is a matrix, B is a scalar.  C is full, unless B == 0.
             if (gb_scalar (B) == 0)
                 % C = complex (A); C is sparse or full
-                C = gbbuiltin (A, 'double.complex') ;
+                C = gbcast (A, 'double.complex') ;
             else
                 % expand A and B to full double matrices; C is full
                 A = gbfull (A, 'double') ;
@@ -99,4 +99,6 @@ else
     end
 
 end
+
+C = gb2builtin (C) ;
 

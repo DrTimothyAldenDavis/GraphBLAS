@@ -70,8 +70,8 @@ switch (type)
 
     case { 'single' }
 
-        % The graph(...) function can accept x as single, but not
-        % from a built-in sparse matrix.  So extract the tuples of G first.
+        % The graph(...) function can accept x as single, but not from a
+        % built-in sparse matrix.  So extract the tuples of G first.
         [i, j, x] = gbextracttuples (G) ;
         Graph = graph (i, j, x, n) ;
 
@@ -79,11 +79,11 @@ switch (type)
 
         % The digraph(...) function allows for logical
         % adjacency matrices (no edge weights are created).
-        Graph = graph (gbbuiltin (G, 'logical'), side) ;
+        Graph = graph (gb2builtin (gbcast (G, 'logical')), side) ;
 
     otherwise
 
         % typecast to double
-        Graph = graph (gbbuiltin (G, 'double'), side) ;
+        Graph = graph (gb2builtin (gbcast (G, 'double')), side) ;
 end
 

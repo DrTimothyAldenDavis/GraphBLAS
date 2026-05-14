@@ -9,6 +9,7 @@
 
 // This function accesses opaque content and GB_methods inside GraphBLAS.
 
+#define GB_UTIL
 #include "gb_interface.h"
 #include "GB_binop.h"
 
@@ -80,73 +81,17 @@
 // the older, equivalent, GxB* named semirings.
 
 //------------------------------------------------------------------------------
+// gb_semiring_factory
+//------------------------------------------------------------------------------
 
-GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
+static GrB_Semiring gb_semiring_factory
 (
-    const GrB_BinaryOp add,         // add operator
-    const GrB_BinaryOp mult         // multiply operator
+    int zcode,
+    int xcode,
+    GB_Opcode add_binop_code,
+    GB_Opcode mult_binop_code
 )
 {
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    CHECK_ERROR (add == NULL || mult == NULL,
-        "invalid semiring (add or mult missing)") ;
-
-    GB_Opcode add_binop_code  = add->opcode ;       // add opcode
-    GB_Opcode mult_binop_code = mult->opcode ;      // multiply opcode
-
-    // add must be a monoid
-    CHECK_ERROR (add->xtype != add->ztype,
-        "invalid semiring (add operator not a monoid)") ;
-    CHECK_ERROR (add->ytype != add->ztype,
-        "invalid semiring (add operator not a monoid)") ;
-
-    // the type of add must match the mult->ztype
-    CHECK_ERROR (add->ztype != mult->ztype,
-        "invalid semiring (add opeartor not a monoid)") ;
-
-    // The conditions above are true for any semiring and any A and B, whether
-    // or not this function handles the semiring as hard-coded.  Now return for
-    // cases this function does not handle.  This function handles only
-    // built-in operators.
-
-    CHECK_ERROR (add_binop_code == GB_USER_binop_code,
-        "invalid semiring (add operator not built-in)") ;
-    CHECK_ERROR (mult_binop_code == GB_USER_binop_code,
-        "invalid semiring (multiply operator not built-in)") ;
-
-    //--------------------------------------------------------------------------
-    // rename redundant Boolean multiply operators
-    //--------------------------------------------------------------------------
-
-    int xcode, zcode ;
-    OK (GrB_BinaryOp_get_INT32 (mult, &xcode, GrB_INP0_TYPE_CODE)) ;
-    OK (GrB_BinaryOp_get_INT32 (mult, &zcode, GrB_OUTP_TYPE_CODE)) ;
-
-    CHECK_ERROR (xcode == GrB_UDT_CODE,
-        "invalid semiring (x and y type not built-in)") ;
-    CHECK_ERROR (zcode == GrB_UDT_CODE,
-        "invalid semiring (z type not built-in)") ;
-
-    if (xcode == GrB_BOOL_CODE)
-    { 
-        // z = mult(x,y) where both x and y are Boolean.
-        mult_binop_code = GB_boolean_rename (mult_binop_code) ;
-    }
-
-    if (zcode == GrB_BOOL_CODE)
-    { 
-        // Only the LAND, LOR, LXOR, and EQ monoids remain if z is
-        // Boolean.  MIN, MAX, PLUS, and TIMES are renamed.
-        add_binop_code = GB_boolean_rename (add_binop_code) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // launch the switch factory
-    //--------------------------------------------------------------------------
 
     if (zcode == GxB_FC32_CODE)
     {
@@ -2586,10 +2531,10 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
 
                         switch (zcode)
                         {
-                            case GrB_UINT8_CODE  : return (GxB_BXNOR_BXNOR_UINT8     ) ;
-                            case GrB_UINT16_CODE : return (GxB_BXNOR_BXNOR_UINT16    ) ;
-                            case GrB_UINT32_CODE : return (GxB_BXNOR_BXNOR_UINT32    ) ;
-                            case GrB_UINT64_CODE : return (GxB_BXNOR_BXNOR_UINT64    ) ;
+                            case GrB_UINT8_CODE  : return (GxB_BXNOR_BXNOR_UINT8    ) ;
+                            case GrB_UINT16_CODE : return (GxB_BXNOR_BXNOR_UINT16   ) ;
+                            case GrB_UINT32_CODE : return (GxB_BXNOR_BXNOR_UINT32   ) ;
+                            case GrB_UINT64_CODE : return (GxB_BXNOR_BXNOR_UINT64   ) ;
                             default  : ;
                         }
                         break ;
@@ -3606,10 +3551,94 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
     }
 
     //--------------------------------------------------------------------------
-    // not a built-in semiring
+    // semiring not found
     //--------------------------------------------------------------------------
 
-    ERROR ("invalid semiring (not found)")
     return (NULL) ;
+}
+
+//------------------------------------------------------------------------------
+// gb_semiring
+//------------------------------------------------------------------------------
+
+GrB_Info gb_semiring                // find semiring from (add,mult) ops
+(
+    // output:
+    GrB_Semiring *semiring,
+    // inputs:
+    const GrB_BinaryOp add,         // add operator
+    const GrB_BinaryOp mult         // multiply operator
+)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    CHECK_ERROR (add == NULL || mult == NULL,
+        "invalid semiring (add or mult missing)") ;
+
+    GB_Opcode add_binop_code  = add->opcode ;       // add opcode
+    GB_Opcode mult_binop_code = mult->opcode ;      // multiply opcode
+
+    // add must be a monoid
+    CHECK_ERROR (add->xtype != add->ztype,
+        "invalid semiring (add operator not a monoid)") ;
+    CHECK_ERROR (add->ytype != add->ztype,
+        "invalid semiring (add operator not a monoid)") ;
+
+    // the type of add must match the mult->ztype
+    CHECK_ERROR (add->ztype != mult->ztype,
+        "invalid semiring (add opeartor not a monoid)") ;
+
+    // The conditions above are true for any semiring and any A and B, whether
+    // or not this function handles the semiring as hard-coded.  Now return for
+    // cases this function does not handle.  This function handles only
+    // built-in operators.
+
+    CHECK_ERROR (add_binop_code == GB_USER_binop_code,
+        "invalid semiring (add operator not built-in)") ;
+    CHECK_ERROR (mult_binop_code == GB_USER_binop_code,
+        "invalid semiring (multiply operator not built-in)") ;
+
+    //--------------------------------------------------------------------------
+    // rename redundant Boolean multiply operators
+    //--------------------------------------------------------------------------
+
+    int xcode, zcode ;
+    OK (GrB_BinaryOp_get_INT32 (mult, &xcode, GrB_INP0_TYPE_CODE)) ;
+    OK (GrB_BinaryOp_get_INT32 (mult, &zcode, GrB_OUTP_TYPE_CODE)) ;
+
+    CHECK_ERROR (xcode == GrB_UDT_CODE,
+        "invalid semiring (x and y type not built-in)") ;
+    CHECK_ERROR (zcode == GrB_UDT_CODE,
+        "invalid semiring (z type not built-in)") ;
+
+    if (xcode == GrB_BOOL_CODE)
+    { 
+        // z = mult(x,y) where both x and y are Boolean.
+        mult_binop_code = GB_boolean_rename (mult_binop_code) ;
+    }
+
+    if (zcode == GrB_BOOL_CODE)
+    { 
+        // Only the LAND, LOR, LXOR, and EQ monoids remain if z is
+        // Boolean.  MIN, MAX, PLUS, and TIMES are renamed.
+        add_binop_code = GB_boolean_rename (add_binop_code) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // launch the switch factory to find the semiring
+    //--------------------------------------------------------------------------
+
+    (*semiring) = gb_semiring_factory (zcode, xcode,
+        add_binop_code, mult_binop_code) ;
+
+    //--------------------------------------------------------------------------
+    // return results
+    //--------------------------------------------------------------------------
+
+    CHECK_ERROR ((*semiring) == NULL, "invalid semiring (not found)") ;
+    return (GrB_SUCCESS) ;
 }
 

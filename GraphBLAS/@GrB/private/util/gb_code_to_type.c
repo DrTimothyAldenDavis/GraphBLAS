@@ -2,13 +2,15 @@
 // gb_code_to_type: get the GrB_Type from the GrB_Type_Code
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// Returns NULL if the type is user-defined.
+// Returns NULL if the type is user-defined.  This method cannot fail, so it
+// does not need to return a GrB_Info value.
 
+#define GB_UTIL
 #include "gb_interface.h"
 
 GrB_Type gb_code_to_type

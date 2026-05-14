@@ -558,11 +558,21 @@ GrB_Info GrB_Global_get_VOID
 
     GrB_Info info = GrB_NO_VALUE ;
 
-    uint32_t arena_option = ((uint32_t) field) && (~0xFFFF) ;
-    uint32_t arena = ((uint32_t) field) && (0xFFFF) ;
-    if (arena_option > 0 && arena >= GB_NARENAS)
+    printf ("field: %x\n", field) ;
+    printf ("uint32 field: %x\n", (uint32_t) field) ;
+
+    uint32_t arena_option = ((uint32_t) field) & (~0xFFFF) ;
+    printf ("arena_option: %x\n", arena_option) ;
+    uint32_t arena = ((uint32_t) field) & (0xFFFF) ;
+    printf ("arena: %u\n", arena) ;
+
+    if (((arena_option == GxB_ARENA_MALLOC) ||
+        (arena_option == GxB_ARENA_CALLOC) ||
+        (arena_option == GxB_ARENA_REALLOC) ||
+        (arena_option == GxB_ARENA_FREE)) && arena >= GB_NARENAS)
     { 
         // arena out of range
+        printf ("arena out of range: %u\n", arena) ;
         return (GrB_INVALID_VALUE) ;
     }
 
@@ -572,7 +582,7 @@ GrB_Info GrB_Global_get_VOID
     { 
         void **f = (void **) value ;
         (*f) = GB_Global_malloc_function_get (arena) ;
-        printf ("Global get malloc [%d]: %p\n", arena, (*f)) ;
+        printf ("Global get malloc [%d]: %p %p\n", arena, (*f), malloc) ;
         info = GrB_SUCCESS ;
     }
     else if (arena_option == GxB_ARENA_CALLOC)
@@ -580,21 +590,21 @@ GrB_Info GrB_Global_get_VOID
         void **f = (void **) value ;
         (*f) = GB_Global_calloc_function_get (arena) ;
         info = GrB_SUCCESS ;
-        printf ("Global get calloc [%d]: %p\n", arena, (*f)) ;
+        printf ("Global get calloc [%d]: %p %p\n", arena, (*f), calloc) ;
     }
     else if (arena_option == GxB_ARENA_REALLOC)
     { 
         void **f = (void **) value ;
         (*f) = GB_Global_realloc_function_get (arena) ;
         info = GrB_SUCCESS ;
-        printf ("Global get realloc [%d]: %p\n", arena, (*f)) ;
+        printf ("Global get realloc [%d]: %p %p\n", arena, (*f), realloc) ;
     }
     else if (arena_option == GxB_ARENA_FREE)
     { 
         void **f = (void **) value ;
         (*f) = GB_Global_free_function_get (arena) ;
         info = GrB_SUCCESS ;
-        printf ("Global free realloc [%d]: %p\n", arena, (*f)) ;
+        printf ("Global free realloc [%d]: %p %p\n", arena, (*f), free) ;
     }
     else
     { 

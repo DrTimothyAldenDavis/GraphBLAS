@@ -14,7 +14,6 @@ function C = uint64 (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-G = G.opaque ;
 desc.kind = 'full' ;
-C = gbfull (G, 'uint64', uint64 (0), desc) ;    % export as a full matrix
+C = gb2builtin (gbfull (G, 'uint64', uint64 (0), desc)) ;
 

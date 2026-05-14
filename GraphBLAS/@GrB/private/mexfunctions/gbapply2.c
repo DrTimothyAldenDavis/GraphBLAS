@@ -18,12 +18,29 @@
 // C = gbapply2 (Cin, M, op, A, B, desc)
 // C = gbapply2 (Cin, M, accum, op, A, B, desc)
 
+// TODO
+// gbapply2 (C, accum, op, A, B, desc)
+// gbapply2 (C, M, op, A, B, desc)
+// gbapply2 (C, M, accum, op, A, B, desc)
+
 // Either A or B (or both) must be a non-empty scalar (1-by-1, with 1 entry).
 // If both A and B are non-empty scalars, then A is treated as the input
 // 'matrix' and B is treated as the scalar.
 
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A, B, and the descriptor).
+
+#define FREE_WORK                   \
+    GrB_Matrix_free (&C_shallow) ;  \
+    GrB_Matrix_free (&M_shallow) ;  \
+    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Matrix_free (&B_shallow) ;  \
+    GrB_Scalar_free (&Thunk) ;      \
+    GrB_Descriptor_free (&desc) ;
+
+#define FREE_ALL                    \
+    FREE_WORK ;                     \
+    GrB_Matrix_free (&C) ;
 
 #include "gb_interface.h"
 
@@ -39,51 +56,64 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 3 && nargin <= 7 && nargout <= 2, USAGE) ;
+    GrB_Type atype, btype, ctype = NULL ;
+    GrB_Matrix *C_opaque = NULL, C = NULL, M = NULL, A = NULL, B = NULL,
+        C_shallow = NULL, M_shallow = NULL, A_shallow = NULL, B_shallow = NULL ;
+    GrB_Scalar Thunk = NULL ;
+    GrB_Descriptor desc = NULL ;
+
+    gbmx_usage (nargin >= 3 && nargin <= 7 && nargout <= 2, USAGE) ;
+    pargout [0] = gbmx_export_struct (&C_opaque) ;
+    pargout [1] = mxCreateDoubleScalar (0) ;
+    double *kind_output = (double *) mxGetData (pargout [1]) ;
 
     //--------------------------------------------------------------------------
     // find the arguments
     //--------------------------------------------------------------------------
 
-    mxArray *Matrix [6], *String [2], *Cell [2] ;
-    base_enum_t base ;
-    kind_enum_t kind ;
-    int fmt ;
-    int nmatrices, nstrings, ncells, sparsity ;
-    GrB_Descriptor desc ;
-    gb_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String, &nstrings,
-        Cell, &ncells, &desc, &base, &kind, &fmt, &sparsity) ;
+    struct gb_matrix_struct Matrix [6] ;
+    mxArray *Cell [2] ;
+    char String [2][LEN+2] ;
+    int nmatrices, nstrings, ncells ;
+    struct gb_descriptor_struct gbdesc ;
+    gbmx_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String,
+        &nstrings, Cell, &ncells, &gbdesc) ;
 
     CHECK_ERROR (nmatrices < 2 || nmatrices > 4 || nstrings < 1 || ncells > 0,
         USAGE) ;
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get the GrB_Descriptor
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_descriptor (&desc, &gbdesc)) ;
 
     //--------------------------------------------------------------------------
     // get the matrices
     //--------------------------------------------------------------------------
 
-    GrB_Type atype, btype, ctype = NULL ;
-    GrB_Matrix C = NULL, M = NULL, A, B ;
-
     if (nmatrices == 2)
     { 
-        A = gb_get_shallow (Matrix [0]) ;
-        B = gb_get_shallow (Matrix [1]) ;
+        OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+        OK (gb_get_matrix (&B, &B_shallow, &(Matrix [1]))) ;
     }
     else if (nmatrices == 3)
     { 
-        C = gb_get_deep    (Matrix [0]) ;
-        A = gb_get_shallow (Matrix [1]) ;
-        B = gb_get_shallow (Matrix [2]) ;
+        OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
+        OK (gb_get_matrix (&A, &A_shallow, &(Matrix [1]))) ;
+        OK (gb_get_matrix (&B, &B_shallow, &(Matrix [2]))) ;
     }
     else // if (nmatrices == 4)
     { 
-        C = gb_get_deep    (Matrix [0]) ;
-        M = gb_get_shallow (Matrix [1]) ;
-        A = gb_get_shallow (Matrix [2]) ;
-        B = gb_get_shallow (Matrix [3]) ;
+        OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
+        OK (gb_get_matrix (&M, &M_shallow, &(Matrix [1]))) ;
+        OK (gb_get_matrix (&A, &A_shallow, &(Matrix [2]))) ;
+        OK (gb_get_matrix (&B, &B_shallow, &(Matrix [3]))) ;
     }
 
     OK (GxB_Matrix_type (&atype, A)) ;
@@ -113,20 +143,20 @@ void mexFunction
     bool B_is_scalar = (bnrows == 1 && bncols == 1 && bnvals == 1) ;
 
     if (B_is_scalar)
-    {
+    { 
         // A is the matrix and B is the scalar
         binop_bind1st = false ;
         scalar = (GrB_Scalar) B ;   // NOTE: this is not allowed by the spec
     }
     else if (A_is_scalar)
-    {
+    { 
         // A is the scalar and B is the matrix
         binop_bind1st = true ;
         scalar = (GrB_Scalar) A ;   // NOTE: this is not allowed by the spec
     }
     else
-    {
-        ERROR ("either A or B must be a non-empty scalar") ;
+    { 
+        ERROR ("either A or B must be a non-empty scalar", GrB_INVALID_VALUE) ;
     }
 
     //--------------------------------------------------------------------------
@@ -146,20 +176,19 @@ void mexFunction
 
     if (nstrings == 1)
     { 
-        gb_mxstring_to_binop_or_idxunop (String [0], atype, btype,
-            &op2, &idxunop, &ithunk) ;
+        OK (gb_string_to_binop_or_idxunop (&op2, &(String [0][0]),
+            atype, btype, &idxunop, &ithunk)) ;
     }
     else 
     { 
         // if accum appears, then Cin must also appear
         CHECK_ERROR (C == NULL, USAGE) ;
-        accum = gb_mxstring_to_binop (String [0], ctype, ctype) ;
-        gb_mxstring_to_binop_or_idxunop (String [1], atype, btype,
-            &op2, &idxunop, &ithunk) ;
+        OK (gb_string_to_binop (&accum, String [0], ctype, ctype)) ;
+        OK (gb_string_to_binop_or_idxunop (&op2, &(String [1][0]),
+            atype, btype, &idxunop, &ithunk)) ;
     }
 
     // create an int64 scalar from ithunk
-    GrB_Scalar Thunk ;
     OK (GrB_Scalar_new (&Thunk, GrB_INT64)) ;
     OK (GrB_Scalar_setElement_INT64 (Thunk, ithunk)) ;
 
@@ -175,7 +204,7 @@ void mexFunction
         // get the descriptor to determine if the input matrix is transposed
         uint64_t cnrows, cncols ;
         if (binop_bind1st)
-        {
+        { 
             // A is the scalar and B is the matrix
             int in1 ;
             OK (GrB_Descriptor_get_INT32 (desc, &in1, GrB_INP1)) ;
@@ -185,7 +214,7 @@ void mexFunction
             cncols = (B_transpose) ? bnrows : bncols ;
         }
         else
-        {
+        { 
             // A is the matrix and B is the scalar
             int in0 ;
             OK (GrB_Descriptor_get_INT32 (desc, &in0, GrB_INP0)) ;
@@ -197,11 +226,11 @@ void mexFunction
 
         // use the ztype of the op as the type of C
         if (op2 != NULL)
-        {
-            ctype = gb_binaryop_ztype (op2) ;
+        { 
+            OK (gb_binaryop_ztype (&ctype, op2)) ;
         }
         else
-        {
+        { 
             int code = 0 ;
             OK (GrB_IndexUnaryOp_get_INT32 (idxunop, &code,
                 GrB_OUTP_TYPE_CODE)) ;
@@ -209,9 +238,9 @@ void mexFunction
         }
 
         // create the matrix C and set its format and sparsity
-        fmt = gb_get_format (cnrows, cncols, A, B, fmt) ;
-        sparsity = gb_get_sparsity (A, B, sparsity) ;
-        C = gb_new (ctype, cnrows, cncols, fmt, sparsity) ;
+        OK (gb_get_format (cnrows, cncols, A, B, &(gbdesc.fmt))) ;
+        OK (gb_get_sparsity (A, B, &(gbdesc.sparsity))) ;
+        OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -219,37 +248,28 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     if (idxunop != NULL)
-    {
+    { 
         OK1 (C, GrB_Matrix_apply_IndexOp_Scalar (C, M, accum, idxunop,
             A, Thunk, desc)) ;
     }
     else if (binop_bind1st)
-    {
+    { 
         OK1 (C, GrB_Matrix_apply_BinaryOp1st_Scalar (C, M, accum, op2,
             scalar, B, desc)) ;
     }
     else
-    {
+    { 
         OK1 (C, GrB_Matrix_apply_BinaryOp2nd_Scalar (C, M, accum, op2,
             A, scalar, desc)) ;
     }
 
     //--------------------------------------------------------------------------
-    // free shallow copies
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_free (&M)) ;
-    OK (GrB_Matrix_free (&A)) ;
-    OK (GrB_Matrix_free (&B)) ;
-    OK (GrB_Scalar_free (&Thunk)) ;
-    OK (GrB_Descriptor_free (&desc)) ;
-
-    //--------------------------------------------------------------------------
-    // export the output matrix C
-    //--------------------------------------------------------------------------
-
-    pargout [0] = gb_export (&C, kind) ;
-    pargout [1] = mxCreateDoubleScalar (kind) ;
+    FREE_WORK ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind)) ;
+    (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }
 

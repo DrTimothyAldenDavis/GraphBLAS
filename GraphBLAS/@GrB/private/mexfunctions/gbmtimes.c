@@ -25,6 +25,16 @@
 // C = gbmtimes (A, B)
 // C = gbmtimes (A, B, desc)
 
+#define FREE_WORK                   \
+    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Matrix_free (&B_shallow) ;  \
+    GrB_Scalar_free (&zero) ;       \
+    GrB_Descriptor_free (&desc) ;
+
+#define FREE_ALL                    \
+    FREE_WORK ;                     \
+    GrB_Matrix_free (&C) ;
+
 #include "gb_interface.h"
 
 #define USAGE "usage: C = gbmtimes (A, B, desc)"
@@ -39,41 +49,49 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 2 && nargin <= 3 && nargout <= 2, USAGE) ;
+    GrB_Type atype, btype, ctype ;
+    GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, B = NULL,
+        A_shallow = NULL, B_shallow = NULL ;
+    GrB_Scalar scalar = NULL, zero = NULL ;
+    GrB_Descriptor desc = NULL ;
+
+    gbmx_usage (nargin >= 2 && nargin <= 3 && nargout <= 2, USAGE) ;
+    pargout [0] = gbmx_export_struct (&C_opaque) ;
+    pargout [1] = mxCreateDoubleScalar (0) ;
+    double *kind_output = (double *) mxGetData (pargout [1]) ;
 
     //--------------------------------------------------------------------------
     // find the arguments
     //--------------------------------------------------------------------------
 
-    mxArray *Matrix [6], *String [2], *Cell [2] ;
-    base_enum_t base ;
-    kind_enum_t kind ;
-    int fmt ;
-    int nmatrices, nstrings, ncells, sparsity ;
-    GrB_Descriptor desc ;
-    gb_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String, &nstrings,
-        Cell, &ncells, &desc, &base, &kind, &fmt, &sparsity) ;
+    struct gb_matrix_struct Matrix [6] ;
+    mxArray *Cell [2] ;
+    char String [2][LEN+2] ;
+    int nmatrices, nstrings, ncells ;
+    struct gb_descriptor_struct gbdesc ;
+    gbmx_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String,
+        &nstrings, Cell, &ncells, &gbdesc) ;
 
     CHECK_ERROR (nmatrices != 2 || nstrings > 0 || ncells > 0, USAGE) ;
 
-    // ensure the descriptor is present, and set GxB_SORT to true
-    if (desc == NULL)
-    { 
-        OK (GrB_Descriptor_new (&desc)) ;
-    }
-    OK (GrB_Descriptor_set_INT32 (desc, true, GxB_SORT)) ;
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get the GrB_Descriptor
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_descriptor_mxm (&desc, &gbdesc)) ;
 
     //--------------------------------------------------------------------------
     // get the matrices
     //--------------------------------------------------------------------------
 
-    GrB_Type atype, btype, ctype ;
-    GrB_Matrix C = NULL, A, B ;
-    A = gb_get_shallow (Matrix [0]) ;
-    B = gb_get_shallow (Matrix [1]) ;
+    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&B, &B_shallow, &(Matrix [1]))) ;
+
     OK (GxB_Matrix_type (&atype, A)) ;
     OK (GxB_Matrix_type (&btype, B)) ;
 
@@ -84,15 +102,15 @@ void mexFunction
     GrB_BinaryOp plus = NULL, times = NULL ;
     GrB_Monoid plus_monoid = NULL ;
     GrB_Semiring plus_times = NULL ;
-    char semiring_string [8] ;
-    strcpy (semiring_string, "+.*") ;
-    plus_times = gb_string_to_semiring (semiring_string, atype, btype) ;
+    char semiring_string [LEN+2] ;
+    strncpy (semiring_string, "+.*", LEN) ;
+    OK (gb_string_to_semiring (&plus_times, semiring_string, atype, btype)) ;
     OK (GrB_Semiring_get_VOID (plus_times, (void *) &plus_monoid,
         GxB_SEMIRING_MONOID)) ;
     OK (GrB_Semiring_get_VOID (plus_times, (void *) &times,
         GxB_SEMIRING_MULTIPLY)) ;
     OK (GrB_Monoid_get_VOID (plus_monoid, (void *) &plus, GxB_MONOID_OPERATOR));
-    ctype = gb_binaryop_ztype (plus) ;
+    OK (gb_binaryop_ztype (&ctype, plus)) ;
 
     //--------------------------------------------------------------------------
     // construct C
@@ -113,10 +131,9 @@ void mexFunction
     bool B_transpose = (in1 == GrB_TRAN) ;
 
     // determine the size of C
-    GrB_Scalar scalar = NULL, zero = NULL ;
     bool binop_bind1st = false ;
     if (anrows == 1 && ancols == 1)
-    {
+    { 
         // C = alpha * B
         binop_bind1st = true ;
         cnrows = (B_transpose) ? bncols : bnrows ;
@@ -124,7 +141,7 @@ void mexFunction
         scalar = (GrB_Scalar) A ;
     }
     else if (bnrows == 1 && bncols == 1)
-    {
+    { 
         // C = A * beta
         binop_bind1st = false ;
         cnrows = (A_transpose) ? ancols : anrows ;
@@ -132,16 +149,16 @@ void mexFunction
         scalar = (GrB_Scalar) B ;
     }
     else
-    {
+    { 
         // C = A * B where A and B are both matrices or vectors
         cnrows = (A_transpose) ? ancols : anrows ;
         cncols = (B_transpose) ? bnrows : bncols ;
     }
 
     // create the matrix C and set its format and sparsity
-    fmt = gb_get_format (cnrows, cncols, A, B, fmt) ;
-    sparsity = gb_get_sparsity (A, B, sparsity) ;
-    C = gb_new (ctype, cnrows, cncols, fmt, sparsity) ;
+    OK (gb_get_format (cnrows, cncols, A, B, &(gbdesc.fmt))) ;
+    OK (gb_get_sparsity (A, B, &(gbdesc.sparsity))) ;
+    OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity)) ;
 
     //--------------------------------------------------------------------------
     // compute C = A*B
@@ -157,20 +174,20 @@ void mexFunction
         uint64_t nvals ;
         OK (GrB_Scalar_nvals (&nvals, scalar)) ;
         if (nvals == 0)
-        {
+        { 
             // zero = (ctype) 0
             OK (GrB_Scalar_new (&zero, ctype)) ;
             OK (GrB_Scalar_setElement_FP64 (zero, 0)) ;
             scalar = zero ;
         }
         if (binop_bind1st)
-        {
+        { 
             // C = alpha * B
             OK1 (C, GrB_Matrix_apply_BinaryOp1st_Scalar (C, NULL, NULL, times,
                 scalar, B, desc)) ;
         }
         else
-        {
+        { 
             // C = A * beta
             OK1 (C, GrB_Matrix_apply_BinaryOp2nd_Scalar (C, NULL, NULL, times,
                 A, scalar, desc)) ;
@@ -194,15 +211,16 @@ void mexFunction
         bool B_sparse = (B_sparsity == GxB_BITMAP || B_sparsity == GxB_SPARSE) ;
 
         if ((A_full && B_sparse) || (A_sparse && B_full))
-        {
+        { 
 
             //------------------------------------------------------------------
             // sparse-times-full or full-times-sparse
             //------------------------------------------------------------------
 
             // ensure C can be held as a full matrix
-            sparsity = sparsity | GxB_FULL ;
-            OK (GrB_Matrix_set_INT32 (C, sparsity, GxB_SPARSITY_CONTROL)) ;
+            gbdesc.sparsity = gbdesc.sparsity | GxB_FULL ;
+            OK (GrB_Matrix_set_INT32 (C, gbdesc.sparsity,
+                GxB_SPARSITY_CONTROL)) ;
             // C = 0
             // zero = (ctype) 0
             OK (GrB_Scalar_new (&zero, ctype)) ;
@@ -214,7 +232,7 @@ void mexFunction
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // C = A*B for everything else
@@ -229,20 +247,12 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // free shallow copies
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_free (&A)) ;
-    OK (GrB_Matrix_free (&B)) ;
-    OK (GrB_Scalar_free (&zero)) ;
-    OK (GrB_Descriptor_free (&desc)) ;
-
-    //--------------------------------------------------------------------------
-    // export the output matrix C
-    //--------------------------------------------------------------------------
-
-    pargout [0] = gb_export (&C, kind) ;
-    pargout [1] = mxCreateDoubleScalar (kind) ;
+    FREE_WORK ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind)) ;
+    (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }
 

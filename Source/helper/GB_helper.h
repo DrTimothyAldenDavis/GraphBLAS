@@ -16,7 +16,7 @@
 #include "GB.h"
 #include "math/GB_math.h"
 
-void GB_helper5             // construct pattern of S
+GrB_Info GB_helper5                 // construct pattern of S
 (
     // output:
     uint64_t *restrict Si,          // array of size anz
@@ -32,14 +32,17 @@ void GB_helper5             // construct pattern of S
     const uint64_t anz
 ) ;
 
-void GB_helper7              // Kx = uint64 (0:mnz-1)
+GrB_Info GB_helper7                 // Kx = uint64 (0:mnz-1)
 (
-    uint64_t *restrict Kx,      // array of size mnz
+    uint64_t *restrict Kx,           // array of size mnz
     const uint64_t mnz
 ) ;
 
-double GB_helper10       // norm (x-y,p), or -1 on error
+GrB_Info GB_helper10       // norm (x-y,p), or -1 on error
 (
+    // output:
+    double *s_result,
+    // inputs:
     GB_void *x_arg,             // float or double, depending on type parameter
     bool x_iso,                 // true if x is iso
     GB_void *y_arg,             // same type as x, treat as zero if NULL
@@ -48,10 +51,6 @@ double GB_helper10       // norm (x-y,p), or -1 on error
     int64_t p,                  // 0, 1, 2, INT64_MIN, or INT64_MAX
     uint64_t n
 ) ;
-
-GxB_Container GB_helper_container (void) ;  // return the global Container
-void GB_helper_container_new (void) ;       // allocate the global Container
-void GB_helper_container_free (void) ;      // free the global Container
 
 #endif
 

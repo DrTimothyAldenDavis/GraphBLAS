@@ -9,11 +9,16 @@
 
 // Only built-in GraphBLAS types and operators are supported.
 
+#define GB_UTIL
 #include "gb_interface.h"
 
-GrB_Semiring gb_string_to_semiring      // return a semiring from a string
+GrB_Info gb_string_to_semiring          // return a GrB semiring from a string
 (
+    // output:
+    GrB_Semiring *semiring,
+    // input/output:
     char *semiring_string,              // string defining the semiring
+    // inputs:
     const GrB_Type atype,               // type of A
     const GrB_Type btype                // type of B
 )
@@ -58,23 +63,27 @@ GrB_Semiring gb_string_to_semiring      // return a semiring from a string
         mult_type = gb_string_to_type (mult_typename) ;
     }
 
-    GrB_BinaryOp mult = gb_string_and_type_to_binop_or_idxunop (mult_name,
-        mult_type, type_not_given, NULL, NULL) ;
+    GrB_BinaryOp mult = NULL ;
+    OK (gb_string_and_type_to_binop_or_idxunop (&mult, mult_name, mult_type,
+        type_not_given, NULL, NULL)) ;
     CHECK_ERROR (mult == NULL, "invalid semiring (unknown multipy operator)") ;
 
     //--------------------------------------------------------------------------
     // get the add operator
     //--------------------------------------------------------------------------
 
-    GrB_Type add_type = gb_binaryop_ztype (mult) ;
-    GrB_BinaryOp add = gb_string_and_type_to_binop_or_idxunop (add_name,
-        add_type, false, NULL, NULL) ;
+    GrB_Type add_type = NULL ;
+    OK (gb_binaryop_ztype (&add_type, mult)) ;
+    GrB_BinaryOp add = NULL ;
+    OK (gb_string_and_type_to_binop_or_idxunop (&add, add_name, add_type,
+        false, NULL, NULL)) ;
     CHECK_ERROR (add == NULL, "invalid semiring (unknown add operator)") ;
 
     //--------------------------------------------------------------------------
-    // convert the add and mult operators to a semiring
+    // convert the add and mult operators to a semiring and return result
     //--------------------------------------------------------------------------
 
-    return (gb_semiring (add, mult)) ;
+    OK (gb_semiring (semiring, add, mult)) ;
+    return (GrB_SUCCESS) ;
 }
 

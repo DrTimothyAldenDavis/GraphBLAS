@@ -16,10 +16,14 @@
 // user-defined operator f(x,y) that returns true if x and y are equal, or if
 // both are NaN, and false otherwise.
 
+#define GB_UTIL
 #include "gb_interface.h"
 
-bool gb_is_equal            // true if A == B, false if A ~= B
+GrB_Info gb_is_equal
 (
+    // output:
+    bool *is_equal,             // true if A == B, false if A ~= B
+    // input:
     GrB_Matrix A,
     GrB_Matrix B
 )
@@ -32,7 +36,8 @@ bool gb_is_equal            // true if A == B, false if A ~= B
     if (atype != btype)
     { 
         // types differ
-        return (false) ;
+        (*is_equal) = false ;
+        return (GrB_SUCCESS) ;
     }
 
     // select the comparator operator
@@ -52,10 +57,11 @@ bool gb_is_equal            // true if A == B, false if A ~= B
     else if (atype == GxB_FC64  ) op = GxB_EQ_FC64   ;
     else
     {
-        ERROR ("unsupported type") ;
+        ERROR ("unsupported type", GrB_DOMAIN_MISMATCH) ;
     }
 
     // check the size, pattern, and values of A and B
-    return (gb_is_all (A, B, op)) ;
+    OK (gb_is_all (is_equal, A, B, op)) ;
+    return (GrB_SUCCESS) ;
 }
 

@@ -36,6 +36,21 @@
 // The 'tril', 'triu', 'diag', 'offdiag', and 2-input operators all require
 // the b scalar.  The b scalar must not appear for the '*0' operators.
 
+#define FREE_WORK                       \
+    GrB_Scalar_free (&Zero) ;           \
+    GrB_Matrix_free (&C_shallow) ;      \
+    GrB_Matrix_free (&M_shallow) ;      \
+    GrB_Matrix_free (&A_shallow) ;      \
+    GrB_Matrix_free (&b_shallow) ;      \
+    GrB_Matrix_free (&b3) ;             \
+    GrB_Matrix_free (&b4) ;             \
+    GrB_IndexUnaryOp_free (&nan_test) ; \
+    GrB_Descriptor_free (&desc) ;
+
+#define FREE_ALL                        \
+    FREE_WORK ;                         \
+    GrB_Matrix_free (&C) ;
+
 #include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.select (Cin, M, accum, op, A, b, desc)"
@@ -43,6 +58,23 @@
 //------------------------------------------------------------------------------
 // nan functions for GrB_IndexUnaryOp operators
 //------------------------------------------------------------------------------
+
+void gb_isnan32 (bool *z, const float *aij,
+                 int64_t i, int64_t j, const void *thunk) ;
+void gb_isnan64 (bool *z, const double *aij,
+                 int64_t i, int64_t j, const void *thunk) ;
+void gb_isnotnan32 (bool *z, const float *aij,
+                    int64_t i, int64_t j, const void *thunk) ;
+void gb_isnotnan64 (bool *z, const double *aij,
+                    int64_t i, int64_t j, const void *thunk) ;
+void gb_isnanfc32 (bool *z, const GxB_FC32_t *x,
+                   int64_t i, int64_t j, const void *thunk) ;
+void gb_isnanfc64 (bool *z, const GxB_FC64_t *aij,
+                   int64_t i, int64_t j, const void *thunk) ;
+void gb_isnotnanfc32 (bool *z, const GxB_FC32_t *aij,
+                      int64_t i, int64_t j, const void *thunk) ;
+void gb_isnotnanfc64 (bool *z, const GxB_FC64_t *aij,
+                      int64_t i, int64_t j, const void *thunk) ;
 
 void gb_isnan32 (bool *z, const float *aij,
                  int64_t i, int64_t j, const void *thunk)
@@ -163,91 +195,106 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 2 && nargin <= 7 && nargout <= 2, USAGE) ;
+    GrB_IndexUnaryOp idxunop = NULL ;
+    GrB_Type atype, ctype = NULL ;
+    GrB_Matrix *C_opaque = NULL, C = NULL, M = NULL, A = NULL, b = NULL,
+        C_shallow = NULL, M_shallow = NULL, A_shallow = NULL, b_shallow = NULL,
+        b3 = NULL, b4 = NULL ;
+    GrB_Descriptor desc = NULL ;
+    GrB_Scalar Zero = NULL ;
+    GrB_IndexUnaryOp nan_test = NULL ;
+
+    gbmx_usage (nargin >= 2 && nargin <= 7 && nargout <= 2, USAGE) ;
+    pargout [0] = gbmx_export_struct (&C_opaque) ;
+    pargout [1] = mxCreateDoubleScalar (0) ;
+    double *kind_output = (double *) mxGetData (pargout [1]) ;
 
     //--------------------------------------------------------------------------
     // find the arguments
     //--------------------------------------------------------------------------
 
-    mxArray *Matrix [6], *String [2], *Cell [2] ;
-    base_enum_t base ;
-    kind_enum_t kind ;
-    int fmt ;
-    int nmatrices, nstrings, ncells, sparsity ;
-    GrB_Descriptor desc ;
-    gb_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String, &nstrings,
-        Cell, &ncells, &desc, &base, &kind, &fmt, &sparsity) ;
+    struct gb_matrix_struct Matrix [6] ;
+    mxArray *Cell [2] ;
+    char String [2][LEN+2] ;
+    int nmatrices, nstrings, ncells ;
+    struct gb_descriptor_struct gbdesc ;
+    gbmx_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String,
+        &nstrings, Cell, &ncells, &gbdesc) ;
 
     CHECK_ERROR (nmatrices < 1 || nmatrices > 4 || nstrings < 1 || ncells > 0,
         USAGE) ;
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get the GrB_Descriptor
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_descriptor (&desc, &gbdesc)) ;
 
     //--------------------------------------------------------------------------
     // get the select operator; determine the type and ithunk later
     //--------------------------------------------------------------------------
 
     int64_t ithunk = 0 ;
-    GrB_IndexUnaryOp idxunop = NULL ;
     bool thunk_zero = false ; 
     bool op_is_positional = false ;
 
-    gb_mxstring_to_idxunop (&idxunop, &thunk_zero,
-        &op_is_positional, &ithunk, String [nstrings-1], GrB_FP64) ;
+    OK (gb_string_to_idxunop (&idxunop, &thunk_zero, &op_is_positional, &ithunk,
+        String [nstrings-1], GrB_FP64)) ;
 
     //--------------------------------------------------------------------------
     // get the matrices
     //--------------------------------------------------------------------------
 
-    GrB_Type atype, ctype = NULL ;
-    GrB_Matrix C = NULL, M = NULL, A, b = NULL ;
-
     if (thunk_zero)
-    {
+    { 
         if (nmatrices == 1)
         { 
-            A = gb_get_shallow (Matrix [0]) ;
+            OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
         }
         else if (nmatrices == 2)
         { 
-            C = gb_get_deep    (Matrix [0]) ;
-            A = gb_get_shallow (Matrix [1]) ;
+            OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
+            OK (gb_get_matrix (&A, &A_shallow, &(Matrix [1]))) ;
         }
         else if (nmatrices == 3)
         { 
-            C = gb_get_deep    (Matrix [0]) ;
-            M = gb_get_shallow (Matrix [1]) ;
-            A = gb_get_shallow (Matrix [2]) ;
+            OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
+            OK (gb_get_matrix (&M, &M_shallow, &(Matrix [1]))) ;
+            OK (gb_get_matrix (&A, &A_shallow, &(Matrix [2]))) ;
         }
         else // if (nmatrices == 4)
         { 
-            ERROR (USAGE) ;
+            ERROR (USAGE, GrB_INVALID_VALUE) ;
         }
     }
     else
-    {
+    { 
         if (nmatrices == 1)
         { 
-            ERROR ("operator input is missing") ;
+            ERROR ("operator input is missing", GrB_INVALID_VALUE) ;
         }
         else if (nmatrices == 2)
         { 
-            A = gb_get_shallow (Matrix [0]) ;
-            b = gb_get_shallow (Matrix [1]) ;
+            OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+            OK (gb_get_matrix (&b, &b_shallow, &(Matrix [1]))) ;
         }
         else if (nmatrices == 3)
         { 
-            C = gb_get_deep    (Matrix [0]) ;
-            A = gb_get_shallow (Matrix [1]) ;
-            b = gb_get_shallow (Matrix [2]) ;
+            OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
+            OK (gb_get_matrix (&A, &A_shallow, &(Matrix [1]))) ;
+            OK (gb_get_matrix (&b, &b_shallow, &(Matrix [2]))) ;
         }
         else // if (nmatrices == 4)
         { 
-            C = gb_get_deep    (Matrix [0]) ;
-            M = gb_get_shallow (Matrix [1]) ;
-            A = gb_get_shallow (Matrix [2]) ;
-            b = gb_get_shallow (Matrix [3]) ;
+            OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
+            OK (gb_get_matrix (&M, &M_shallow, &(Matrix [1]))) ;
+            OK (gb_get_matrix (&A, &A_shallow, &(Matrix [2]))) ;
+            OK (gb_get_matrix (&b, &b_shallow, &(Matrix [3]))) ;
         }
     }
 
@@ -264,7 +311,7 @@ void mexFunction
     ithunk = 0 ;
     GrB_Type btype = NULL ;
     if (b != NULL)
-    {
+    { 
         OK (GxB_Matrix_type (&btype, b)) ;
         if (op_is_positional)
         { 
@@ -273,8 +320,8 @@ void mexFunction
         }
     }
 
-    gb_mxstring_to_idxunop (&idxunop, &thunk_zero,
-        &op_is_positional, &ithunk, String [nstrings-1], atype) ;
+    OK (gb_string_to_idxunop (&idxunop, &thunk_zero, &op_is_positional, &ithunk,
+        String [nstrings-1], atype)) ;
 
     //--------------------------------------------------------------------------
     // get the accum operator
@@ -285,16 +332,15 @@ void mexFunction
     { 
         // if accum appears, then Cin must also appear
         CHECK_ERROR (C == NULL, USAGE) ;
-        accum = gb_mxstring_to_binop (String [0], ctype, ctype) ;
+        OK (gb_string_to_binop (&accum, String [0], ctype, ctype)) ;
     }
 
     //--------------------------------------------------------------------------
     // construct the zero thunk scalar, if needed
     //--------------------------------------------------------------------------
 
-    GrB_Scalar Zero = NULL ;
     if (thunk_zero)
-    {
+    { 
         OK (GrB_Scalar_new (&Zero, atype)) ;
         OK (GrB_Scalar_setElement_INT32 (Zero, 0)) ;
         b = (GrB_Matrix) Zero ;
@@ -328,18 +374,16 @@ void mexFunction
         OK (GxB_Matrix_type (&ctype, A)) ;
 
         // create the matrix C and set its format and sparsity
-        fmt = gb_get_format (cnrows, cncols, A, NULL, fmt) ;
-        sparsity = gb_get_sparsity (A, NULL, sparsity) ;
-        C = gb_new (ctype, cnrows, cncols, fmt, sparsity) ;
+        OK (gb_get_format (cnrows, cncols, A, NULL, &(gbdesc.fmt))) ;
+        OK (gb_get_sparsity (A, NULL, &(gbdesc.sparsity))) ;
+        OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity)) ;
     }
 
     //--------------------------------------------------------------------------
     // handle the NaN case
     //--------------------------------------------------------------------------
 
-    GrB_IndexUnaryOp nan_test = NULL ;
     GrB_Matrix b2 = b ;
-    GrB_Matrix b3 = NULL, b4 = NULL ;
 
     if (op_is_positional)
     { 
@@ -349,7 +393,7 @@ void mexFunction
         b2 = b3 ;
     }
     else if (b != NULL)
-    {
+    { 
         // check if b is NaN
         bool b_is_nan = false ;
         if (btype == GrB_FP32)
@@ -378,10 +422,9 @@ void mexFunction
         }
 
         if (b_is_nan)
-        {
+        { 
             // b is NaN; create a new nan_test operator if it should be used
-            // instead of the built-in GxB_EQ_THUNK, GxB_NE_THUNK, GrB_VALUEEQ*
-            // or GrB_VALUENE* operators.
+            // instead of the built-in operators.
 
             if (idxunop == GrB_VALUEEQ_FP32)
             { 
@@ -462,24 +505,12 @@ void mexFunction
         (GrB_Scalar) b4, desc)) ;
 
     //--------------------------------------------------------------------------
-    // free shallow copies
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
-    OK (GrB_Scalar_free (&Zero)) ;
-    OK (GrB_Matrix_free (&M)) ;
-    OK (GrB_Matrix_free (&A)) ;
-    OK (GrB_Matrix_free (&b)) ;
-    OK (GrB_Matrix_free (&b3)) ;
-    OK (GrB_Matrix_free (&b4)) ;
-    OK (GrB_Descriptor_free (&desc)) ;
-    OK (GrB_IndexUnaryOp_free (&nan_test)) ;
-
-    //--------------------------------------------------------------------------
-    // export the output matrix C
-    //--------------------------------------------------------------------------
-
-    pargout [0] = gb_export (&C, kind) ;
-    pargout [1] = mxCreateDoubleScalar (kind) ;
+    FREE_WORK ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind)) ;
+    (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }
 

@@ -99,7 +99,7 @@ void mexFunction
     memcpy (Kout, K, n * (K_is_32 ? sizeof (uint32_t) : sizeof (uint64_t))) ;
 
     GB_msort_3 (Iout, I_is_32, Jout, J_is_32, Kout, K_is_32, n, nthreads,
-        GB_ARENA_MATLAB) ;
+        GB_ARENA_TEST) ;
 
     GB_mx_put_global (true) ;   
 }

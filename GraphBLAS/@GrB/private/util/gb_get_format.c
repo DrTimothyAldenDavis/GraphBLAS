@@ -29,50 +29,59 @@
 
 // (6) Otherwise, the global default format is used for C.
 
+// This method does not allocate any memory, so it is safe to use in either
+// the GrB* or mx* region of a mexFunction.
+
+#define GB_UTIL
 #include "gb_interface.h"
 
-int gb_get_format           // GxB_BY_ROW or GxB_BY_COL
+GrB_Info gb_get_format      // get the format (by row or by col)
 (
+    // input:
     GrB_Index cnrows,       // C is cnrows-by-cncols
     GrB_Index cncols,
     GrB_Matrix A,           // may be NULL
     GrB_Matrix B,           // may be NULL
-    int fmt_descriptor      // may be GxB_NO_FORMAT
+    // input/output:
+    int *fmt                // may be GxB_NO_FORMAT on input
 )
 {
 
-    int fmt ;
-
-    if (fmt_descriptor != GxB_NO_FORMAT)
+    if ((*fmt) != GxB_NO_FORMAT)
     { 
         // (1) the format is defined by the descriptor to the method
-        fmt = fmt_descriptor ;
     }
     else if (cncols == 1)
     { 
         // (2) column vectors are stored by column, by default
-        fmt = GxB_BY_COL ;
+        (*fmt) = GxB_BY_COL ;
     }
     else if (cnrows == 1)
     { 
         // (3) row vectors are stored by row, by default
-        fmt = GxB_BY_ROW ;
-    }
-    else if (A != NULL && !gb_is_vector (A))
-    { 
-        // (4) get the format of A
-        OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
-    }
-    else if (B != NULL && !gb_is_vector (B))
-    { 
-        // (5) get the format of B
-        OK (GrB_Matrix_get_INT32 (B, &fmt, GxB_FORMAT)) ;
+        (*fmt) = GxB_BY_ROW ;
     }
     else
-    { 
-        // (6) get the global default format
-        OK (GrB_Global_get_INT32 (GrB_GLOBAL, &fmt, GxB_FORMAT)) ;
+    {
+        bool A_is_vector, B_is_vector ;
+        OK (gb_is_vector (&A_is_vector, A)) ;
+        OK (gb_is_vector (&B_is_vector, B)) ;
+        if (A != NULL && A_is_vector)
+        { 
+            // (4) get the format of A
+            OK (GrB_Matrix_get_INT32 (A, fmt, GxB_FORMAT)) ;
+        }
+        else if (B != NULL && B_is_vector)
+        { 
+            // (5) get the format of B
+            OK (GrB_Matrix_get_INT32 (B, fmt, GxB_FORMAT)) ;
+        }
+        else
+        { 
+            // (6) get the global default format
+            OK (GrB_Global_get_INT32 (GrB_GLOBAL, fmt, GxB_FORMAT)) ;
+        }
     }
-    return (fmt) ;
+    return (GrB_SUCCESS) ;
 }
 

@@ -2133,7 +2133,7 @@ void mexFunction
     GxB_Matrix_fprint (HugeRow, "HugeRow", G3, ff) ;
 
     GrB_Matrix HugeMat = NULL ;
-    OK (GB_matrix_header_new (&HugeMat, GB_ARENA_MATLAB, GB_ARENA_MATLAB)) ;
+    OK (GB_matrix_header_new (&HugeMat, GB_ARENA_TEST, GB_ARENA_TEST)) ;
 
     OK (GB_AxB_dot2 (HugeMat, false, NULL, NULL, false, false,
         false, HugeRow, HugeRow, GxB_PLUS_TIMES_FP64, false, Werk)) ;
@@ -3713,14 +3713,14 @@ void mexFunction
 
     expected = GrB_NULL_POINTER ;
 
-    ERR (GB_entry_check (NULL, NULL, 5, NULL, NULL, NULL, GB_ARENA_MATLAB)) ;
-    ERR (GB_entry_check (NULL, X, 5, NULL, NULL, NULL, GB_ARENA_MATLAB)) ;
-    OK (GB_entry_check (GrB_FP64, X, 5, NULL, NULL, NULL, GB_ARENA_MATLAB)) ;
+    ERR (GB_entry_check (NULL, NULL, 5, NULL, NULL, NULL, GB_ARENA_TEST)) ;
+    ERR (GB_entry_check (NULL, X, 5, NULL, NULL, NULL, GB_ARENA_TEST)) ;
+    OK (GB_entry_check (GrB_FP64, X, 5, NULL, NULL, NULL, GB_ARENA_TEST)) ;
     printf ("\n") ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GB_entry_check (Tcrud, X, 5, NULL, NULL, NULL, GB_ARENA_MATLAB)) ;
+    ERR (GB_entry_check (Tcrud, X, 5, NULL, NULL, NULL, GB_ARENA_TEST)) ;
     printf ("\nAll GB_entry_check tests passed (errors expected)\n") ;
 
     //--------------------------------------------------------------------------
@@ -4925,7 +4925,7 @@ void mexFunction
     Werk->where = "GB_shallow_op" ;
 
     GrB_Matrix Q = NULL ;
-    OK (GB_matrix_header_new (&Q, GB_ARENA_MATLAB, GB_ARENA_MATLAB)) ;
+    OK (GB_matrix_header_new (&Q, GB_ARENA_TEST, GB_ARENA_TEST)) ;
     OK (GB_shallow_op (Q, true, (GB_Operator) GrB_AINV_FP32, NULL, NULL,
         false, C, Werk)) ;
     OK (GB_Matrix_check (Q, "Q empty, float", G3, NULL)) ;

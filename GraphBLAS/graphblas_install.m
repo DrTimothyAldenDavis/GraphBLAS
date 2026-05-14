@@ -169,6 +169,7 @@ try
     cd '@GrB/private'
     gbmake
 catch me
+    me
     fprintf ('Building GraphBLAS @GrB interface failed\n') ;
 end
 

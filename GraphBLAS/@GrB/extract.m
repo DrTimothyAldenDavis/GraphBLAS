@@ -69,48 +69,23 @@ function C = extract (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (isobject (arg1))
-    arg1 = arg1.opaque ;
-end
-
-if (nargin > 1 && isobject (arg2))
-    arg2 = arg2.opaque ;
-end
-
-if (nargin > 2 && isobject (arg3))
-    arg3 = arg3.opaque ;
-end
-
-if (nargin > 3 && isobject (arg4))
-    arg4 = arg4.opaque ;
-end
-
-if (nargin > 4 && isobject (arg5))
-    arg5 = arg5.opaque ;
-end
-
-if (nargin > 5 && isobject (arg6))
-    arg6 = arg6.opaque ;
-end
-
 switch (nargin)
     case 1
-        [C, k] = gbextract (arg1) ;
+        [C_opaque, kind] = gbextract (arg1) ;
     case 2
-        [C, k] = gbextract (arg1, arg2) ;
+        [C_opaque, kind] = gbextract (arg1, arg2) ;
     case 3
-        [C, k] = gbextract (arg1, arg2, arg3) ;
+        [C_opaque, kind] = gbextract (arg1, arg2, arg3) ;
     case 4
-        [C, k] = gbextract (arg1, arg2, arg3, arg4) ;
+        [C_opaque, kind] = gbextract (arg1, arg2, arg3, arg4) ;
     case 5
-        [C, k] = gbextract (arg1, arg2, arg3, arg4, arg5) ;
+        [C_opaque, kind] = gbextract (arg1, arg2, arg3, arg4, arg5) ;
     case 6
-        [C, k] = gbextract (arg1, arg2, arg3, arg4, arg5, arg6) ;
+        [C_opaque, kind] = gbextract (arg1, arg2, arg3, arg4, arg5, arg6) ;
     case 7
-        [C, k] = gbextract (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
+        [C_opaque, kind] = gbextract (arg1, arg2, arg3, arg4, arg5, arg6, ...
+            arg7) ;
 end
 
-if (k == 0)
-    C = GrB (C) ;
-end
+C = gb_mexfunction_result (C_opaque, kind) ;
 

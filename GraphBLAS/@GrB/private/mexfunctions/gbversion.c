@@ -7,7 +7,12 @@
 
 //------------------------------------------------------------------------------
 
+// Usage
+
 // v = gbversion
+
+// Calls to GrB_* and mx* methods are intermingled since none of the GrB
+// methods allocate any memory.
 
 #include "gb_interface.h"
 
@@ -26,7 +31,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 0 && nargout <= 1, USAGE) ;
+    gbmx_usage (nargin == 0 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the version and date information and return it as a built-in string
@@ -43,10 +48,9 @@ void mexFunction
     char *date = mxMalloc (len+1) ;
     OK (GrB_Global_get_String (GrB_GLOBAL, date, GxB_LIBRARY_DATE)) ;
 
-    #define LEN 256
-    char s [LEN+1] ;
+    char s [LEN+2] ;
     snprintf (s, LEN, "%d.%d.%d (%s)", major, minor, patch, date) ;
-    mxFree (date) ;
+    gbmx_free ((void **) &date) ;
 
     pargout [0] = mxCreateString (s) ;
     gb_wrapup ( ) ;

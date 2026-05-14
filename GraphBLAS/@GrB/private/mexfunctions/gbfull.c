@@ -23,6 +23,14 @@
 //  C = gbfull (A, type, id)
 //  C = gbfull (A, type, id, desc)
 
+#define FREE_WORK                   \
+    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Matrix_free (&id_shallow) ;
+
+#define FREE_ALL                    \
+    FREE_WORK ;                     \
+    GrB_Matrix_free (&C) ;
+
 #include "gb_interface.h"
 
 #define USAGE "usage: C = gbfull (A, type, id, desc)"
@@ -37,16 +45,49 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 1 && nargin <= 4 && nargout <= 2, USAGE) ;
+    GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_shallow = NULL,
+        id = NULL, id_shallow = NULL ;
+
+    gbmx_usage (nargin >= 1 && nargin <= 4 && nargout <= 2, USAGE) ;
+    pargout [0] = gbmx_export_struct (&C_opaque) ;
+    pargout [1] = mxCreateDoubleScalar (0) ;
+    double *kind_output = (double *) mxGetData (pargout [1]) ;
 
     //--------------------------------------------------------------------------
-    // get a shallow copy of the input matrix
+    // get inputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A = gb_get_shallow (pargin [0]) ;
+    struct gb_matrix_struct Matrix [2] ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+
+    struct gb_descriptor_struct gbdesc ;
+    if (gbmx_mxarray_to_descriptor (&gbdesc, pargin [nargin-1]))
+    { 
+        // descriptor is present, remove it from further consideration
+        nargin-- ;
+    }
+
+    char type_string [LEN+2] ;
+    if (nargin > 1)
+    { 
+        gbmx_mxstring_to_string (type_string, LEN, pargin [1], "type") ;
+    }
+
+    if (nargin > 2)
+    { 
+        gbmx_get_matrix (&(Matrix [1]), pargin [2]) ;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get the input matrix
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
@@ -58,7 +99,7 @@ void mexFunction
     GrB_Type type ;
     if (nargin > 1)
     { 
-        type = gb_mxstring_to_type (pargin [1]) ;
+        type = gb_string_to_type (type_string) ;
     }
     else
     { 
@@ -70,60 +111,45 @@ void mexFunction
     // get the identity scalar
     //--------------------------------------------------------------------------
 
-    GrB_Matrix id = NULL ;
     if (nargin > 2)
     { 
-        id = gb_get_shallow (pargin [2]) ;
+        OK (gb_get_matrix (&id, &id_shallow, &(Matrix [1]))) ;
     }
-
-    //--------------------------------------------------------------------------
-    // get the descriptor
-    //--------------------------------------------------------------------------
-
-    base_enum_t base = BASE_DEFAULT ;
-    kind_enum_t kind = KIND_GRB ;
-    int fmt = GxB_NO_FORMAT ;
-    int sparsity = 0 ;
-    GrB_Descriptor desc = NULL ;
-    if (nargin > 3)
-    { 
-        desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt,
-            &sparsity, &base) ;
-    }
-    OK (GrB_Descriptor_free (&desc)) ;
 
     //--------------------------------------------------------------------------
     // finalize the kind and format
     //--------------------------------------------------------------------------
 
-    // ignore desc.kind = 'sparse' or 'builtin' and just use 'full' instead
-    kind = (kind == KIND_SPARSE || kind == KIND_BUILTIN) ? KIND_FULL : kind ;
+    // ignore gbdesc.kind = 'sparse' or 'builtin' and just use 'full' instead
+    if (gbdesc.kind == KIND_SPARSE || gbdesc.kind == KIND_BUILTIN)
+    { 
+        gbdesc.kind = KIND_FULL ;
+    }
 
-    if (kind == KIND_FULL)
-    {
+    if (gbdesc.kind == KIND_FULL)
+    { 
         // built-in matrices are always held by column
-        fmt = GxB_BY_COL ;
+        gbdesc.fmt = GxB_BY_COL ;
     }
     else
-    {
+    { 
         // A determines the format of C, unless defined by the descriptor
-        fmt = gb_get_format (nrows, ncols, A, NULL, fmt) ;
+        OK (gb_get_format (nrows, ncols, A, NULL, &(gbdesc.fmt))) ;
     }
 
     //--------------------------------------------------------------------------
     // expand A to a full matrix
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C = gb_expand_to_full (A, type, fmt, id) ;
-    OK (GrB_Matrix_free (&A)) ;
-    OK (GrB_Matrix_free (&id)) ;
+    OK (gb_expand_to_full (&C, A, type, gbdesc.fmt, id)) ;
 
     //--------------------------------------------------------------------------
-    // export C
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_export (&C, kind) ;
-    pargout [1] = mxCreateDoubleScalar (kind) ;
+    FREE_WORK ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind)) ;
+    (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }
 

@@ -12,6 +12,10 @@
 
 #include "helper/GB_helper.h"
 
+//------------------------------------------------------------------------------
+// GB_factory_kernels_enabled : enable/disable factory kernels for testing only
+//------------------------------------------------------------------------------
+
 bool GB_factory_kernels_enabled = true ;
 
 //------------------------------------------------------------------------------
@@ -27,7 +31,7 @@ bool GB_factory_kernels_enabled = true ;
 // GB_helper5: construct pattern of S for gblogassign
 //------------------------------------------------------------------------------
 
-void GB_helper5             // construct pattern of S
+GrB_Info GB_helper5                 // construct pattern of S
 (
     // output:
     uint64_t *restrict Si,          // array of size anz
@@ -60,6 +64,8 @@ void GB_helper5             // construct pattern of S
         Si [k] = GBi_M (Mi, i, mvlen) ;
         Sj [k] = Mj [i] ;
     }
+
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------
@@ -68,7 +74,7 @@ void GB_helper5             // construct pattern of S
 
 // TODO: use GrB_apply with a positional operator instead
 
-void GB_helper7              // Kx = uint64 (0:mnz-1)
+GrB_Info GB_helper7                 // Kx = uint64 (0:mnz-1)
 (
     uint64_t *restrict Kx,           // array of size mnz
     const uint64_t mnz
@@ -83,6 +89,7 @@ void GB_helper7              // Kx = uint64 (0:mnz-1)
     {
         Kx [k] = k ;
     }
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------
@@ -97,8 +104,11 @@ void GB_helper7              // Kx = uint64 (0:mnz-1)
 //      INT64_MIN   (-inf)-norm, min (abs (x-y))
 //      other:      p-norm not yet computed
 
-double GB_helper10       // norm (x-y,p), or -1 on error
+GrB_Info GB_helper10       // norm (x-y,p), or -1 on error
 (
+    // output:
+    double *s_result,
+    // inputs:
     GB_void *x_arg,             // float or double, depending on type parameter
     bool x_iso,                 // true if x is iso
     GB_void *y_arg,             // same type as x, treat as zero if NULL
@@ -116,12 +126,14 @@ double GB_helper10       // norm (x-y,p), or -1 on error
     if (!(type == GrB_FP32 || type == GrB_FP64))
     {
         // type of x and y must be GrB_FP32 or GrB_FP64
-        return ((double) -1) ;
+        (*s_result) = (double) -1 ;
+        return (GrB_DOMAIN_MISMATCH) ;
     }
 
     if (n == 0)
     {
-        return ((double) 0) ;
+        (*s_result) = (double) 0 ;
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -397,79 +409,7 @@ double GB_helper10       // norm (x-y,p), or -1 on error
     // return result
     //--------------------------------------------------------------------------
 
-    return (s) ;
-}
-
-//------------------------------------------------------------------------------
-// persistent Container
-//------------------------------------------------------------------------------
-
-// FIXME arena:  when mxMalloc/mxFree is moved to GB_ARENA_MATLAB,
-// these methods can just call GxB_Container_new and GxB_Container_free,
-// and remove GB_Global_persistent_* methods.
-
-static GxB_Container Container = NULL ;
-
-GxB_Container GB_helper_container (void)    // return the global Container
-{
-    return (Container) ;
-}
-
-static GrB_Vector GB_helper_component (void)
-{
-    size_t s = sizeof (struct GB_Vector_opaque) ;
-    GrB_Vector p = GB_Global_persistent_malloc (s) ;
-    if (p != NULL)
-    {
-        memset (p, 0, s) ;
-        p->header_mem = GB_mem (GrB_DEFAULT, s) ;
-        p->type = GrB_BOOL ;
-        p->is_csc = true ;
-        p->plen = -1 ;
-        p->vdim = 1 ;
-        p->nvec = 1 ;
-        p->sparsity_control = GxB_FULL ;
-        p->magic = GB_MAGIC ;
-    }
-    ASSERT_VECTOR_OK (p, "container component", GB0) ;
-    return (p) ;
-}
-
-void GB_helper_container_new (void)         // allocate the global Container
-{
-    // free any existing Container
-    GB_helper_container_free ( ) ;
-
-    // allocate a new Container
-    size_t s = sizeof (struct GxB_Container_struct) ;
-    Container = GB_Global_persistent_malloc (s) ;
-    printf ("new persistent container: %p\n", Container) ;
-    if (Container != NULL)
-    {
-        memset (Container, 0, s) ;
-        Container->p = GB_helper_component ( ) ;
-        Container->h = GB_helper_component ( ) ;
-        Container->b = GB_helper_component ( ) ;
-        Container->i = GB_helper_component ( ) ;
-        Container->x = GB_helper_component ( ) ;
-
-        // clear the Container scalars
-        Container->nrows_nonempty = -1 ;
-        Container->ncols_nonempty = -1 ;
-        Container->format = GxB_FULL ;
-        Container->orientation = GrB_ROWMAJOR ;
-        Container->header_arena = GrB_DEFAULT ;
-    }
-}
-
-void GB_helper_container_free (void)        // free the global Container
-{
-    if (Container == NULL) return ;
-    GB_Global_persistent_free ((void **) &(Container->p)) ;
-    GB_Global_persistent_free ((void **) &(Container->h)) ;
-    GB_Global_persistent_free ((void **) &(Container->b)) ;
-    GB_Global_persistent_free ((void **) &(Container->i)) ;
-    GB_Global_persistent_free ((void **) &(Container->x)) ;
-    GB_Global_persistent_free ((void **) &(Container)) ;
+    (*s_result) = s ;
+    return (GrB_SUCCESS) ;
 }
 

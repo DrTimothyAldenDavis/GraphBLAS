@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmdiag: construct a diaogonal matrix from a vector
+// gbmdiag: construct a diagonal matrix from a vector
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -10,6 +10,14 @@
 // Usage:
 
 // C = gbmdiag (v, k, desc)
+
+#define FREE_WORK                   \
+    GrB_Matrix_free (&V_shallow) ;  \
+    GrB_Descriptor_free (&desc) ;
+
+#define FREE_ALL                    \
+    FREE_WORK ;                     \
+    GrB_Matrix_free (&C) ;
 
 #include "gb_interface.h"
 
@@ -25,32 +33,51 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 1 && nargin <= 3 && nargout <= 2, USAGE) ;
-
-    //--------------------------------------------------------------------------
-    // get the descriptor
-    //--------------------------------------------------------------------------
-
-    base_enum_t base ;
-    kind_enum_t kind ;
-    int fmt ;
-    int sparsity ;
+    GrB_Matrix *C_opaque = NULL, C = NULL, V = NULL, V_shallow = NULL ;
     GrB_Descriptor desc = NULL ;
-    desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt,
-        &sparsity, &base) ;
-    // if present, remove the descriptor from consideration
-    if (desc != NULL) nargin-- ;
+    GrB_Type ctype = NULL ;
+
+    gbmx_usage (nargin >= 1 && nargin <= 3 && nargout <= 2, USAGE) ;
+    pargout [0] = gbmx_export_struct (&C_opaque) ;
+    pargout [1] = mxCreateDoubleScalar (0) ;
+    double *kind_output = (double *) mxGetData (pargout [1]) ;
+
+    //--------------------------------------------------------------------------
+    // find the arguments
+    //--------------------------------------------------------------------------
+
+    struct gb_matrix_struct Matrix [6] ;
+    mxArray *Cell [2] ;
+    char String [2][LEN+2] ;
+    int nmatrices, nstrings, ncells ;
+    struct gb_descriptor_struct gbdesc ;
+    gbmx_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String,
+        &nstrings, Cell, &ncells, &gbdesc) ;
+
+    if (gbdesc.is_present) nargin-- ;
+
+    int64_t k = 0 ;
+    if (nargin > 1)
+    { 
+        k = gbmx_get_int64_scalar (pargin [1], "k") ;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get the GrB_Descriptor
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_descriptor (&desc, &gbdesc)) ;
 
     //--------------------------------------------------------------------------
     // get the inputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C = NULL ;
-    GrB_Matrix V = gb_get_shallow (pargin [0]) ;
-    int64_t k = 0 ;
+    OK (gb_get_matrix (&V, &V_shallow, &(Matrix [0]))) ;
 
     uint64_t ncols ;
     OK (GrB_Matrix_ncols (&ncols, V)) ;
@@ -60,25 +87,16 @@ void mexFunction
     OK (GrB_Matrix_get_INT32 (V, &s, GxB_SPARSITY_STATUS)) ;
     CHECK_ERROR (s == GxB_HYPERSPARSE, "v cannot be hypersparse") ;
 
-    if (nargin > 1)
-    { 
-        CHECK_ERROR (!gb_mxarray_is_scalar (pargin [1]), "k must be a scalar") ;
-        double x = mxGetScalar (pargin [1]) ;
-        k = (int64_t) x ;
-        CHECK_ERROR ((double) k != x, "k must be an integer scalar") ;
-    }
-
     //--------------------------------------------------------------------------
     // construct C
     //--------------------------------------------------------------------------
 
-    GrB_Type ctype = NULL ;
     uint64_t n ;
     OK (GxB_Matrix_type (&ctype, V)) ;
     OK (GrB_Matrix_nrows (&n, V)) ;
     n += ABS (k) ;
-    fmt = gb_get_format (n, n, NULL, NULL, fmt) ;
-    C = gb_new (ctype, n, n, fmt, 0) ;
+    OK (gb_get_format (n, n, NULL, NULL, &(gbdesc.fmt))) ;
+    OK (gb_new (&C, ctype, n, n, gbdesc.fmt, 0)) ;
 
     //--------------------------------------------------------------------------
     // compute C = diag (v, k)
@@ -87,18 +105,12 @@ void mexFunction
     OK1 (C, GxB_Matrix_diag (C, (GrB_Vector) V, k, desc)) ;
 
     //--------------------------------------------------------------------------
-    // free shallow copies
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_free (&V)) ;
-    OK (GrB_Descriptor_free (&desc)) ;
-
-    //--------------------------------------------------------------------------
-    // export the output matrix C
-    //--------------------------------------------------------------------------
-
-    pargout [0] = gb_export (&C, kind) ;
-    pargout [1] = mxCreateDoubleScalar (kind) ;
+    FREE_WORK ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind)) ;
+    (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }
 

@@ -7,13 +7,16 @@
 
 //------------------------------------------------------------------------------
 
-// The input may be either a GraphBLAS matrix struct or a standard built-in
-// matrix.  Note that the output may be int64, to accomodate huge hypersparse
+// The input may be either a GraphBLAS @GrB matrix or a standard built-in
+// matrix.  Note that the output is int64, to accomodate huge hypersparse
 // matrices.  Also returns the type of the matrix.
 
 // Usage:
 
 // [m, n, type] = gbsize (X)
+
+// Calls to GrB_* and mx* methods are intermingled since none of the GrB
+// methods allocate any memory.
 
 #include "gb_interface.h"
 
@@ -29,65 +32,27 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 1 && nargout <= 4, USAGE) ;
+    gbmx_usage (nargin == 1 && nargout <= 4, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the # of rows and columns of a GraphBLAS or built-in matrix
     //--------------------------------------------------------------------------
 
     uint64_t nrows, ncols ;
-    int typecode = -1 ;
 
-    if (mxIsStruct (pargin [0]))
+    if (mxIsStruct (pargin [0]) || mxIsClass (pargin [0], "GrB"))
     { 
 
         //----------------------------------------------------------------------
         // get the size of a GraphBLAS matrix
         //----------------------------------------------------------------------
 
-        // get the type
-        mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv10") ;
-        if (mx_type == NULL)
-        {
-            // check if it is a GraphBLASv7_3 struct
-            mx_type = mxGetField (pargin [0], 0, "GraphBLASv7_3") ;
-        }
-        if (mx_type == NULL)
-        {
-            // check if it is a GraphBLASv5_1 struct
-            mx_type = mxGetField (pargin [0], 0, "GraphBLASv5_1") ;
-        }
-        if (mx_type == NULL)
-        {
-            // check if it is a GraphBLASv5 struct
-            mx_type = mxGetField (pargin [0], 0, "GraphBLASv5") ;
-        }
-        if (mx_type == NULL)
-        {
-            // check if it is a GraphBLASv4 struct
-            mx_type = mxGetField (pargin [0], 0, "GraphBLASv4") ;
-        }
-        if (mx_type == NULL)
-        {
-            // check if it is a GraphBLASv3 struct
-            mx_type = mxGetField (pargin [0], 0, "GraphBLAS") ;
-        }
-        CHECK_ERROR (mx_type == NULL, "invalid GraphBLAS struct") ;
-
-        // get the scalar info
-        mxArray *opaque = mxGetField (pargin [0], 0, "s") ;
-        CHECK_ERROR (opaque == NULL, "invalid GraphBLAS struct") ;
-        // use mxGetData (best for Octave, fine for MATLAB)
-        int64_t *s = (int64_t *) mxGetData (opaque) ;
-        int64_t vlen = s [1] ;
-        int64_t vdim = s [2] ;
-        bool is_csc = (bool) (s [6]) ;
-
-        nrows = (is_csc) ? vlen : vdim ;
-        ncols = (is_csc) ? vdim : vlen ;
+        GrB_Matrix A = gbmx_get_grb_matrix (pargin [0]) ;
+        OK (GrB_Matrix_nrows (&nrows, A)) ;
+        OK (GrB_Matrix_ncols (&ncols, A)) ;
 
         //----------------------------------------------------------------------
         // return type of a GraphBLAS matrix, if requested
@@ -96,12 +61,14 @@ void mexFunction
         if (nargout > 2)
         { 
             // return the type
-            pargout [2] = mxDuplicateArray (mx_type) ;
+            GrB_Type type ;
+            OK (GxB_Matrix_type (&type, A)) ;
+            pargout [2] = gbmx_type_to_mxstring (type) ;
         }
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // get the size of a built-in matrix
@@ -118,7 +85,7 @@ void mexFunction
         { 
             mxClassID class = mxGetClassID (pargin [0]) ;
             bool is_complex = mxIsComplex (pargin [0]) ;
-            pargout [2] = gb_mxclass_to_mxstring (class, is_complex) ;
+            pargout [2] = gbmx_mxclass_to_mxstring (class, is_complex) ;
         }
     }
 
@@ -144,7 +111,4 @@ void mexFunction
         pargout [0] = mxCreateDoubleScalar ((double) nrows) ;
         pargout [1] = mxCreateDoubleScalar ((double) ncols) ;
     }
-
-    gb_wrapup ( ) ;
 }
-

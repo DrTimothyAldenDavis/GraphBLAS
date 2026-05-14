@@ -7,21 +7,24 @@
 
 //------------------------------------------------------------------------------
 
-// This function accesses GB_methods inside GraphBLAS.
+// GraphBLAS methods are called, but none of them allocate any memory, so this
+// will not fail.  Each call to GraphBLAS is checked just in case, however.
+
+#define GB_UTIL
 
 #include "gb_interface.h"
 
 typedef void (*function_pointer) (void) ;
 
-void gb_defaults (void)     // set global GraphBLAS defaults for MATLAB
-{
-    // for debug only
-    GB_Global_abort_set (gb_abort) ;
+GrB_Info gb_defaults (void)     // set global GraphBLAS defaults for MATLAB
+{ 
+    // for debug assertions only, for the ASSERT (...) macro
+    GB_Global_abort_set (gbmx_abort) ;
 
     // must use mexPrintf to print to Command Window
     OK (GrB_Global_set_VOID (GrB_GLOBAL, (void *) mexPrintf, GxB_PRINTF,
         sizeof (function_pointer))) ;
-    OK (GrB_Global_set_VOID (GrB_GLOBAL, (void *) gb_flush, GxB_FLUSH,
+    OK (GrB_Global_set_VOID (GrB_GLOBAL, (void *) gbmx_flush, GxB_FLUSH,
         sizeof (function_pointer))) ;
 
     // enable the JIT
@@ -41,15 +44,13 @@ void gb_defaults (void)     // set global GraphBLAS defaults for MATLAB
     int nthreads = GB_omp_get_max_threads ( ) ;
     OK (GrB_Global_set_INT32 (GrB_GLOBAL, nthreads, GxB_NTHREADS)) ;
 
-    // default chunk
-    GrB_Scalar chunk_default = NULL ;
-    OK (GrB_Scalar_new (&chunk_default, GrB_FP64)) ;
-    OK (GrB_Scalar_setElement_FP64 (chunk_default, (double) (64 * 1024))) ;
-    OK (GrB_Global_set_Scalar (GrB_GLOBAL, chunk_default, GxB_CHUNK)) ;
-    OK (GrB_Scalar_free (&chunk_default)) ;
+    // default chunk: use the historical method to avoid any memory allocation
+    OK (GxB_Global_Option_set_FP64 (GxB_CHUNK, (double) (64 * 1024))) ;
 
     // for printing memory sizes of matrices
     OK (GrB_Global_set_INT32 (GrB_GLOBAL, true,
         GxB_INCLUDE_READONLY_STATISTICS)) ;
+
+    return (GrB_SUCCESS) ;
 }
 

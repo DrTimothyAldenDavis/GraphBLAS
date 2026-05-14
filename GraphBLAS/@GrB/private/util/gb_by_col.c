@@ -10,20 +10,23 @@
 // The return value A is set to either the input matrix A_input, or the A_copy
 // matrix.
 
+#define GB_UTIL
 #include "gb_interface.h"
 
-GrB_Matrix gb_by_col            // return the matrix by column
+GrB_Info gb_by_col
 (
+    // output
+    GrB_Matrix *A_handle,       // return the matrix by column
     GrB_Matrix *A_copy_handle,  // copy made of A, stored by column, or NULL
+    // input
     GrB_Matrix A_input          // input matrix, by row or column
 )
 {
+    GrB_Matrix A_copy = NULL, A = NULL ;
 
     // get the format of A_input
     int fmt ;
     OK (GrB_Matrix_get_INT32 (A_input, &fmt, GxB_FORMAT)) ;
-
-    GrB_Matrix A_copy = NULL, A ;
 
     if (fmt == GxB_BY_ROW)
     { 
@@ -40,7 +43,8 @@ GrB_Matrix gb_by_col            // return the matrix by column
     }
 
     // return results
+    (*A_handle) = A ;
     (*A_copy_handle) = A_copy ;
-    return (A) ;
+    return (GrB_SUCCESS) ;
 }
 

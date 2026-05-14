@@ -13,4 +13,6 @@ function S = struct (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% FIXME either delete this method, or punt to serialize ... ?
+
 S = G.opaque ;

@@ -6,9 +6,9 @@ classdef GrB < handle
 % for more details and resources.  See also the SuiteSparse:GraphBLAS User
 % Guide in this package.
 %
-% The GrB class represents a GraphBLAS sparse matrix.  The GrB
-% method creates a GraphBLAS sparse matrix from a built-in matrix.  Other
-% methods also generate GrB matrices.  For example:
+% The GrB class represents a GraphBLAS sparse matrix.  The GrB method
+% creates a GraphBLAS sparse matrix from a built-in matrix.  Other methods
+% also generate GrB matrices.  For example:
 %
 %   G = GrB.subassign (C, M, A) ;
 %
@@ -30,12 +30,12 @@ classdef GrB < handle
 %   C = GrB (..., type) ;    create or typecast to a different type
 %   C = GrB (..., format) ;  create in a specified format
 %
-%   The m and n parameters above are built-in scalars.  The type and format
-%   parameters are strings.  The default format is 'by col', to match the
-%   format used in built-in (see also GrB.format), but many graph
-%   algorithms are faster if the format is 'by row'.  The format can also
-%   specify the data structure to use (hypersparse, sparse, bitmap, and/or
-%   full).
+%   The m and n parameters above are built-in scalars.  The type and
+%   format parameters are strings.  The default format is 'by col', to
+%   match the format used in built-in (see also GrB.format), but many
+%   graph algorithms are faster if the format is 'by row'.  The format can
+%   also specify the data structure to use (hypersparse, sparse, bitmap,
+%   and/or full).
 %
 %   The usage C = GrB (m, n, type) is analgous to A = sparse (m, n), which
 %   creates an empty built-in sparse matrix A.  The type parameter is a
@@ -44,8 +44,8 @@ classdef GrB < handle
 %   For the usage C = GrB (A, type), A is either a built-in sparse or full
 %   matrix, or a GraphBLAS sparse matrix object.  C is created as a
 %   GraphBLAS sparse matrix object that contains a copy of A, typecasted
-%   to the given type if the type string does not match the type of A.
-%   If the type string is not present it defaults to 'double'.
+%   to the given type if the type string does not match the type of A.  If
+%   the type string is not present it defaults to 'double'.
 %
 % --------------------
 % Matrix types:
@@ -366,8 +366,8 @@ classdef GrB < handle
 %   [C,I,J] = GrB.compact (A,id,s) remove empty rows and columns
 %   c = GrB.entries (A,...)      count or query entries in a matrix
 %   C = GrB.expand (scalar, A)   expand a scalar (C = scalar*spones(A))
-%   [I,J,X] = GrB.extracttuples (A,desc) extract all entries (like 'find')
-%   C = GrB.eye (m,n,type)       identity matrix of any type (like 'speye')
+%   [I,J,X] = GrB.extracttuples (A,desc) extract all entries, like 'find'
+%   C = GrB.eye (m,n,type)       identity matrix of any type, like 'speye'
 %   f = GrB.format (f)           set/get matrix format by row or col
 %   s = GrB.isbyrow (A)          true if format f A is 'by row'
 %   s = GrB.isbycol (A)          true if format f A is 'by col'
@@ -377,9 +377,9 @@ classdef GrB < handle
 %   s = GrB.normdiff (A,B,kind)  norm (A-B,kind)
 %   C = GrB.offdiag (A)          prune diagonal entries
 %   C = GrB.prune (A, id)        prune entries equal to id
-%   C = GrB.random (...)         random GraphBLAS matrix (like 'sprand')
-%   C = GrB.speye (m,n,type)     identity matrix of any type (like 'speye')
-%   t = GrB.type (A)             get the type of a built-in or GrB matrix A
+%   C = GrB.random (...)         random GraphBLAS matrix, like 'sprand'
+%   C = GrB.speye (m,n,type)     identity matrix of any type, like 'speye'
+%   t = GrB.type (A)             get the type of  built-in or GrB matrix A
 %   v = GrB.version              string with SuiteSparse:GraphBLAS version
 %   v = GrB.ver                  struct with SuiteSparse:GraphBLAS version
 %
@@ -432,16 +432,16 @@ classdef GrB < handle
 %
 %       C<#M,replace> = accum (C, operation (A or A', B or B'))
 %
-%   C is both an input and output matrix.  In this interface to
-%   GraphBLAS, it is split into Cin (the value of C on input) and C
-%   (the value of C on output).  M is the optional mask matrix, and #M is
-%   either M or ~M depending on whether or not the mask is complemented
-%   via the desc.mask option.  The replace option is determined by
-%   desc.out; if present, C is cleared after it is used in the accum
-%   operation but before the final assignment.  A and/or B may optionally
-%   be transposed via the descriptor fields desc.in0 and desc.in1,
-%   respectively.  To select the format of C, use desc.format.  See
-%   GrB.descriptorinfo for more details.
+%   C is both an input and output matrix.  In this interface to GraphBLAS,
+%   it is split into Cin (the value of C on input) and C (the value of C
+%   on output).  M is the optional mask matrix, and #M is either M or ~M
+%   depending on whether or not the mask is complemented via the desc.mask
+%   option.  The replace option is determined by desc.out; if present, C
+%   is cleared after it is used in the accum operation but before the
+%   final assignment.  A and/or B may optionally be transposed via the
+%   descriptor fields desc.in0 and desc.in1, respectively.  To select the
+%   format of C, use desc.format.  See GrB.descriptorinfo for more
+%   details.
 %
 %   accum is optional; if not is not present, then the operation becomes
 %   C<...> = operation(A,B).  Otherwise, C = C + operation(A,B) is
@@ -469,7 +469,7 @@ classdef GrB < handle
 %       C = GrB.subassign (Cin, M, accum,     A,    I, J, desc)
 %       C = GrB.trans     (Cin, M, accum,     A,          desc)
 %       C = GrB.vreduce   (Cin, M, accum, op, A,          desc)
-
+%
 % FIXME: add these methods, which work on C in place:
 %       GrB._apply     (C, M, accum, op, A,          desc)
 %       GrB._apply2    (C, M, accum, op, A, B,       desc)
@@ -485,15 +485,14 @@ classdef GrB < handle
 %       GrB._subassign (C, M, accum,     A,    I, J, desc)
 %       GrB._trans     (C, M, accum,     A,          desc)
 %       GrB._vreduce   (C, M, accum, op, A,          desc)
-
 %
 %   The parameters divide into 4 classes: matrices, strings, cells, and a
-%   single optional struct (the descriptor).  The order of parameters
-%   between the matrices, strings, and cell classes is arbitrary.  The
-%   order of parameters within a class is important; for example, if a
-%   method takes 4 matrix inputs, then they must appear in the order Cin,
-%   M, A, and then B.  However, if a single string appears as a
-%   parameter, it can appear anywhere within the list of 4 matrices.
+%   single optional struct, which is the descriptor.  The order of
+%   parameters between the matrices, strings, and cell classes is
+%   arbitrary.  The order of parameters within a class is important; for
+%   example, if a method takes 4 matrix inputs, then they must appear in
+%   the order Cin, M, A, and then B.  However, if a single string appears
+%   as a parameter, it can appear anywhere within the list of 4 matrices.
 %
 %   (1) Cin, M, A, B are matrices, and a and b are scalars (eunion only).
 %       If the method takes up to 4 matrices
@@ -548,9 +547,9 @@ classdef GrB < handle
 %
 %   Some valid uses are shown below, along with their equivalent in
 %   GraphBLAS notation.  For the first three mxm examples, the four
-%   matrices C, M, A, and B must appear in that order, and the two
-%   strings '+' and '+.*' must appear in that order, but the matrices and
-%   strings may be interleaved arbitrarily.
+%   matrices C, M, A, and B must appear in that order, and the two strings
+%   '+' and '+.*' must appear in that order, but the matrices and strings
+%   may be interleaved arbitrarily.
 %
 %       C = GrB.apply (C, M, '|', '~', A)           C<M> |= ~A
 %       C = GrB.apply ('~', A)                      C = ~A
@@ -595,8 +594,8 @@ classdef GrB < handle
 % SPDX-License-Identifier: Apache-2.0
 
 properties (SetAccess = private, GetAccess = private)
-    % The struct contains the entire opaque content of a GraphBLAS
-    % GrB_Matrix.
+    % The G.opaque content of a @GrB object G is a single pointer to a
+    % GrB_Matrix, which is held in MATLAB as a uint8 array of 8 bytes.
     opaque = [ ] ;
 end
 
@@ -607,62 +606,58 @@ methods
     %---------------------------------------------------------------------
 
     function C = GrB (arg1, arg2, arg3, arg4)
-    %GRB GraphBLAS constructor: create a GraphBLAS sparse matrix.
+    %GRB GraphBLAS constructor: create a GraphBLAS matrix.
     %
     % C = GrB (A) ;          GrB copy of a matrix A, same type and format
     %
-    % C = GrB (A, type) ;    GrB typecasted copy of a matrix A, same format
+    % C = GrB (A, type) ;    GrB typecasted copy of A, same format
     % C = GrB (A, format) ;  GrB copy of a matrix A, with given format
-    % C = GrB (m, n) ;       empty m-by-n GrB double matrix, default format
+    % C = GrB (m, n) ;       empty m-by-n GrB double matrix
     %
-    % C = GrB (A, type, format) ;   GrB copy of A, new type and format
-    % C = GrB (A, format, type) ;   ditto
+    % C = GrB (A, type, format) ; GrB copy of A, new type and format
+    % C = GrB (A, format, type) ; ditto
     %
     % C = GrB (m,n, type) ;   empty m-by-n GrB type matrix, default format
     % C = GrB (m,n, format) ; empty m-by-n GrB double matrix, given format
     %
-    % C = GrB (m,n,type,format) ;  empty m-by-n matrix, given type & format
-    % C = GrB (m,n,format,type) ;  ditto
+    % C = GrB (m,n,type,format) ; empty m-by-n matrix, given type & format
+    % C = GrB (m,n,format,type) ; ditto
+    %
+    % C = GrB (C_struct) ; convert a C_struct constructed by a GraphBLAS
+    %                      mexFunction into a @GrB matrix C.  This usage
+    %                      is not meant for the end-user application.
     %
     % See also sparse.
-        if (nargin == 1)
-            if (isstruct (arg1))
-                % C = GrB (A), where the input A is a GraphBLAS struct as
-                % returned by another GrB* function, but this usage is not
-                % meant for the end-user.  It is only used internally in
-                % @GrB, to convert a GraphBLAS struct computed by a
-                % GraphBLAS mexFunction into a GrB matrix object.
-                C.opaque = arg1 ;
-            elseif (isobject (arg1))
-                % arg1 is already a GrB matrix; make a deep copy
-                C.opaque = gbnew (arg1.opaque) ;
-            else
-                % arg1 is a built-in matrix; convert to a GrB matrix
-                C.opaque = gbnew (arg1) ;
-            end
+        if (isstruct (arg1))
+            % C = GrB (C_struct) ; arg1 is a simple struct containing the
+            % opaque handle constructed by a GraphBLAS mexFunction.  The
+            % C_opaque struct contains the C.opaque property of a new
+            % @GrB object.
+            C_struct = arg1 ;
         else
-            if (isobject (arg1))
-                % extract the contents of the GrB object as its opaque
-                % struct so the gbnew mexFunction can access it.
-                arg1 = arg1.opaque ;
-            end
-            % varargin is more elegant, but it is slower than the switch
+            % All other cases are handled by gbnew, which creates a new
+            % @GrB matrix C with the opaque handle constructed by the
+            % gbnew mexFunction
             switch (nargin)
+                case 1
+                    C_struct = gbnew (arg1) ;
                 case 2
-                    C.opaque = gbnew (arg1, arg2) ;
+                    C_struct = gbnew (arg1, arg2) ;
                 case 3
-                    C.opaque = gbnew (arg1, arg2, arg3) ;
+                    C_struct = gbnew (arg1, arg2, arg3) ;
                 case 4
-                    C.opaque = gbnew (arg1, arg2, arg3, arg4) ;
+                    C_struct = gbnew (arg1, arg2, arg3, arg4) ;
             end
         end
+        C.opaque = C_struct.opaque ;
     end
 
     %---------------------------------------------------------------------
     % GrB: GraphBLAS matrix destructor
     %---------------------------------------------------------------------
 
-    function delete(C)
+    function delete (C)
+    gbdelete (C) ;
     end
 
     %---------------------------------------------------------------------
@@ -672,6 +667,7 @@ methods
     function G = saveobj (G)
     fprintf ('GrB saveobj, G.opaque:\n') ;
     G.opaque
+    error ('saveobj not yet implemented') ; % FIXME
     end
 
     %---------------------------------------------------------------------
@@ -776,7 +772,7 @@ methods
     %       condensation inedges isdag predecessors successors toposort
     %       transclosure transreduction
 
-    % methods in LAGraph: (see the LAGraph/src folder)
+    % methods in LAGraph
 
     %---------------------------------------------------------------------
     % operator overloading
@@ -997,6 +993,7 @@ methods (Static)
     function G = loadobj (G)
     fprintf ('GrB loadobj, G.opaque:\n') ;
     G.opaque
+    error ('loadobj not yet implemented') ; % FIXME
     end
 
     %---------------------------------------------------------------------
@@ -1008,12 +1005,12 @@ methods (Static)
     % built-in sparse, or built-in full).  The output matrix C is a
     % GraphBLAS matrix.
 
-    % Some of the methods listed below are high-level graph algorithms that
-    % rely on GrB objects internally (bfs, dnn, ktruss, mis, pagerank, and
-    % tricount), for simplicity and readability.  All of the other methods
-    % extract the opaque content of the GrB objects just once, operate on
-    % them, and then cast their results back into a GrB object just
-    % once.  This makes for less-readable code, but it avoids the
+    % Some of the methods listed below are high-level graph algorithms
+    % that rely on GrB objects internally (bfs, dnn, ktruss, mis,
+    % pagerank, and tricount), for simplicity and readability.  All of the
+    % other methods extract the opaque content of the GrB objects just
+    % once, operate on them, and then return their results as a GrB object
+    % just once.  This makes for less-readable code, but it avoids the
     % performance cost of accessing/modifying a object.
 
     MATLAB_vs_GrB ;
@@ -1061,6 +1058,7 @@ methods (Static)
     list = monoids ;
     C = mxm (Cin, M, accum, semiring, A, B, desc) ;
     result = nonz (A, varargin) ;
+    e = nvals (A) ;
     s = normdiff (A, B, kind) ;
     C = offdiag (A) ;
     ctype = optype (a, b) ;

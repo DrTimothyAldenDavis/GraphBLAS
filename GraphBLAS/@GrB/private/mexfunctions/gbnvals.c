@@ -12,11 +12,13 @@
 
 // Usage
 
-// nvals = gbnvals (X)
+// nvals = gbnvals (A)
+
+#define FREE_WORK GrB_Matrix_free (&A_shallow) ;
 
 #include "gb_interface.h"
 
-#define USAGE "usage: nvals = gbnvals (X)"
+#define USAGE "usage: nvals = gbnvals (A)"
 
 void mexFunction
 (
@@ -28,42 +30,57 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 1 && nargout <= 1, USAGE) ;
+    GrB_Matrix A = NULL, A_shallow = NULL ;
+
+    gbmx_usage (nargin == 1 && nargout <= 1, USAGE) ;
+
+    pargout [0] = mxCreateDoubleScalar (0) ;
+    double *anvals_output = (double *) mxGetData (pargout [0]) ;
 
     //--------------------------------------------------------------------------
-    // get a shallow copy of the matrix
+    // get inputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
+    struct gb_matrix_struct Matrix [1] ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get the input matrix
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
 
     //--------------------------------------------------------------------------
     // get the # of entries in the matrix
     //--------------------------------------------------------------------------
 
     uint64_t nvals ;
-    OK (GrB_Matrix_nvals (&nvals, X)) ;
-
-    //--------------------------------------------------------------------------
-    // free the shallow copy and return the result
-    //--------------------------------------------------------------------------
+    OK (GrB_Matrix_nvals (&nvals, A)) ;
 
     double anvals ;
     if (nvals == INT64_MAX)
-    {
+    { 
         uint64_t nrows, ncols ;
-        OK (GrB_Matrix_nrows (&nrows, X)) ;
-        OK (GrB_Matrix_ncols (&ncols, X)) ;
+        OK (GrB_Matrix_nrows (&nrows, A)) ;
+        OK (GrB_Matrix_ncols (&ncols, A)) ;
         anvals = ((double) nrows) * ((double) ncols) ;
     }
     else
-    {
+    { 
         anvals = (double) nvals ;
     }
-    pargout [0] = mxCreateDoubleScalar (anvals) ;
-    OK (GrB_Matrix_free (&X)) ;
+
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
+
+    FREE_WORK ;
+    (*anvals_output) = anvals ;
     gb_wrapup ( ) ;
 }
 

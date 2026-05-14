@@ -12,6 +12,8 @@
 // gbdescriptorinfo
 // gbdescriptorinfo (desc)
 
+#define FREE_WORK GrB_Descriptor_free (&desc) ;
+
 #include "gb_interface.h"
 
 #define USAGE "usage: GrB.descriptorinfo or GrB.descriptorinfo (desc)"
@@ -26,31 +28,34 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs (no outputs to construct)
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 1 && nargout == 0, USAGE) ;
-
-    //--------------------------------------------------------------------------
-    // construct the GraphBLAS descriptor
-    //--------------------------------------------------------------------------
-
-    base_enum_t base = BASE_DEFAULT ;
-    kind_enum_t kind = KIND_GRB ;
-    int fmt = GxB_NO_FORMAT ;
-    int sparsity = 0 ;
     GrB_Descriptor desc = NULL ;
-    if (nargin > 0)
-    {
-        desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt,
-            &sparsity, &base) ;
-    }
 
-    if (desc == NULL)
-    { 
-        printf ("\nDefault GraphBLAS descriptor:\n") ;
-        OK (GrB_Descriptor_new (&desc)) ;
-    }
+    gbmx_usage (nargin <= 1 && nargout == 0, USAGE) ;
+
+    //--------------------------------------------------------------------------
+    // find the arguments
+    //--------------------------------------------------------------------------
+
+    struct gb_matrix_struct Matrix [6] ;
+    mxArray *Cell [2] ;
+    char String [2][LEN+2] ;
+    int nmatrices, nstrings, ncells ;
+    struct gb_descriptor_struct gbdesc ;
+    gbmx_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String,
+        &nstrings, Cell, &ncells, &gbdesc) ;
+
+    CHECK_ERROR (nmatrices > 0 || nstrings > 0 || ncells > 0, USAGE) ;
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get the GrB_Descriptor
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_descriptor (&desc, &gbdesc)) ;
 
     //--------------------------------------------------------------------------
     // print the GraphBLAS descriptor
@@ -63,7 +68,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     printf ("    d.kind     = ") ;
-    switch (kind)
+    switch (gbdesc.kind)
     {
         case KIND_SPARSE  : printf ("sparse\n")  ; break ;
         case KIND_FULL    : printf ("full\n")    ; break ;
@@ -73,7 +78,7 @@ void mexFunction
     }
 
     printf ("    d.base     = ") ;
-    switch (base)
+    switch (gbdesc.base)
     {
         case BASE_0_INT    : printf ("zero-based\n")    ; break ;
         case BASE_1_INT    : printf ("one-based int\n") ; break ;
@@ -84,7 +89,7 @@ void mexFunction
 
     printf ("    d.format   = ") ;
 
-    switch (sparsity)
+    switch (gbdesc.sparsity)
     {
         case GxB_HYPERSPARSE :                              // 1
             printf ("hypersparse ") ;
@@ -116,9 +121,8 @@ void mexFunction
         case GxB_SPARSE + GxB_FULL :                        // 10
             printf ("sparse/full ") ;
             break ;
-        default :
         case GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL :      // 11
-            // printf ("hypersparse/sparse/full ") ;
+            printf ("hypersparse/sparse/full ") ;
             break ;
         case GxB_BITMAP + GxB_FULL :                        // 12
             printf ("bitmap/full ") ;
@@ -129,12 +133,13 @@ void mexFunction
         case GxB_SPARSE + GxB_BITMAP + GxB_FULL :           // 14
             printf ("sparse/bitmap/full ") ;
             break ;
+        default :
         case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP + GxB_FULL : // 15
             printf ("hypersparse/sparse/bitmap/full ") ;
             break ;
     }
 
-    switch (fmt)
+    switch (gbdesc.fmt)
     {
         case GxB_BY_ROW    : printf ("by row\n")     ; break ;
         case GxB_BY_COL    : printf ("by col\n")     ; break ;
@@ -143,10 +148,10 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // free the descriptor
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
-    OK (GrB_Descriptor_free (&desc)) ;
+    FREE_WORK ;
     gb_wrapup ( ) ;
 }
 

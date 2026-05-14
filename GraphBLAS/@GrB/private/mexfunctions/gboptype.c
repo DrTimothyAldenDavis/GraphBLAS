@@ -28,14 +28,21 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 2 && nargout <= 1, USAGE) ;
+    gbmx_usage (nargin == 2 && nargout <= 1, USAGE) ;
+
+    char atype_string [LEN+2] ;
+    char btype_string [LEN+2] ;
+    gbmx_mxstring_to_string (atype_string, LEN, pargin [0], "atype") ;
+    gbmx_mxstring_to_string (btype_string, LEN, pargin [1], "btype") ;
+
+    ////////////////////////////////////////////////////////////////////////////
 
     //--------------------------------------------------------------------------
     // get atype and btype
     //--------------------------------------------------------------------------
 
-    GrB_Type atype = gb_mxstring_to_type (pargin [0]) ;
-    GrB_Type btype = gb_mxstring_to_type (pargin [1]) ;
+    GrB_Type atype = gb_string_to_type (atype_string) ;
+    GrB_Type btype = gb_string_to_type (btype_string) ;
 
     //--------------------------------------------------------------------------
     // determine the optype
@@ -44,11 +51,13 @@ void mexFunction
     GrB_Type optype = gb_default_type (atype, btype) ;
     CHECK_ERROR (optype == NULL, "unknown type") ;
 
+    ////////////////////////////////////////////////////////////////////////////
+
     //--------------------------------------------------------------------------
-    // return result as a string
+    // return result as a MATLAB string
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_type_to_mxstring (optype) ;
+    pargout [0] = gbmx_type_to_mxstring (optype) ;
     gb_wrapup ( ) ;
 }
 

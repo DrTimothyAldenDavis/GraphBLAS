@@ -11,15 +11,24 @@
 // if the pattern of A and B are identical, and if the result of C = op(A,B) is
 // true for all entries in C.
 
+#define FREE_WORK GrB_Matrix_free (&C) ;
+
+#define GB_UTIL
 #include "gb_interface.h"
 
-bool gb_is_all              // true if op (A,B) is all true, false otherwise
+GrB_Info gb_is_all          // check two matrices for equality, given an op
 (
+    // output:
+    bool *result,           // true if op (A,B) is all true, false otherwise
+    // input:
     GrB_Matrix A,
     GrB_Matrix B,
     GrB_BinaryOp op
 )
 {
+
+    GrB_Matrix C = NULL ;
+    (*result) = true ;
 
     uint64_t nrows1, ncols1, nrows2, ncols2, nvals, nvals1, nvals2 ;
 
@@ -32,7 +41,8 @@ bool gb_is_all              // true if op (A,B) is all true, false otherwise
     if (nrows1 != nrows2)
     { 
         // # of rows differ
-        return (false) ;
+        (*result) = false ;
+        return (GrB_SUCCESS) ;
     }
 
     OK (GrB_Matrix_ncols (&ncols1, A)) ;
@@ -40,7 +50,8 @@ bool gb_is_all              // true if op (A,B) is all true, false otherwise
     if (ncols1 != ncols2)
     { 
         // # of cols differ
-        return (false) ;
+        (*result) = false ;
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -52,14 +63,16 @@ bool gb_is_all              // true if op (A,B) is all true, false otherwise
     if (nvals1 != nvals2)
     { 
         // # of entries differ
-        return (false) ;
+        (*result) = false ;
+        return (GrB_SUCCESS) ;
     }
 
     // check if A and B both have no entries
     if (nvals1 == 0)
     { 
         // A and B are empty matrices of the same size and type
-        return (true) ;
+        (*result) = true ;
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -68,8 +81,9 @@ bool gb_is_all              // true if op (A,B) is all true, false otherwise
 
     int fmt ;
     OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
-    int sparsity = gb_get_sparsity (A, B, 0) ;
-    GrB_Matrix C = gb_new (GrB_BOOL, nrows1, ncols1, fmt, sparsity) ;
+    int sparsity = 0 ;
+    OK (gb_get_sparsity (A, B, &sparsity)) ;
+    OK (gb_new (&C, GrB_BOOL, nrows1, ncols1, fmt, sparsity)) ;
     OK1 (C, GrB_Matrix_eWiseMult_BinaryOp (C, NULL, NULL, op, A, B, NULL)) ;
 
     //--------------------------------------------------------------------------
@@ -80,22 +94,22 @@ bool gb_is_all              // true if op (A,B) is all true, false otherwise
     if (nvals != nvals1)
     { 
         // pattern of A and B are different
-        GrB_Matrix_free (&C) ;
-        return (false) ;
+        FREE_WORK ;
+        (*result) = false ;
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
     // result = and (C)
     //--------------------------------------------------------------------------
 
-    bool result = true ;
-    OK (GrB_Matrix_reduce_BOOL (&result, NULL, GrB_LAND_MONOID_BOOL, C, NULL)) ;
+    OK (GrB_Matrix_reduce_BOOL (result, NULL, GrB_LAND_MONOID_BOOL, C, NULL)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GrB_Matrix_free (&C) ;
-    return (result) ;
+    FREE_WORK ;
+    return (GrB_SUCCESS) ;
 }
 

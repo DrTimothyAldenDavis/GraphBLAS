@@ -7,6 +7,11 @@
 
 //------------------------------------------------------------------------------
 
+// This returns NULL if the type is not recognized, so it does not return
+// GrB_Info.  The typename might be a format instead, so this is not yet a
+// final error.  That is determined by the caller.
+
+#define GB_UTIL
 #include "gb_interface.h"
 
 GrB_Type gb_string_to_type      // return the GrB_Type from a string
@@ -26,22 +31,18 @@ GrB_Type gb_string_to_type      // return the GrB_Type from a string
     if (MATCH (typename, "uint64"  )) return (GrB_UINT64) ;
     if (MATCH (typename, "single"  )) return (GrB_FP32) ;
     if (MATCH (typename, "double"  )) return (GrB_FP64) ;
-
-    if (MATCH (typename, "single complex") ||
-        MATCH (typename, "float complex"))
+    if (MATCH (typename, "single complex") || MATCH (typename, "float complex"))
     { 
         return (GxB_FC32) ;
     }
-
-    if (MATCH (typename, "double complex") ||
-        MATCH (typename, "complex"))
+    if (MATCH (typename, "double complex") || MATCH (typename, "complex"))
     { 
         return (GxB_FC64) ;
     }
 
     // The string is not a type, but this is not an error here.  For example,
     // G = GrB (m,n,'double','by row') queries both its string input arguments
-    // with gb_mxstring_to_type and gb_mxstring_to_format, to parse its inputs.
+    // with gb_string_to_type and gb_string_to_format, to parse its inputs.
     return (NULL) ;
 }
 

@@ -9,6 +9,11 @@
 
 // This function accesses opaque content and GB_methods inside GraphBLAS.
 
+#define FREE_WORK                   \
+    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Matrix_free (&B_shallow) ;  \
+    GrB_Matrix_free (&X) ;
+
 #include "gb_interface.h"
 
 #define USAGE "usage: s = gbnormdiff (A, B, kind)"
@@ -23,18 +28,35 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 3 && nargout <= 1, USAGE) ;
+    GrB_Matrix A = NULL, B = NULL, X = NULL,
+        A_shallow = NULL, B_shallow = NULL ;
+
+    gbmx_usage (nargin == 3 && nargout <= 1, USAGE) ;
+
+    pargout [0] = mxCreateDoubleScalar (0) ;
+    double *s_output = (double *) mxGetData (pargout [0]) ;
 
     //--------------------------------------------------------------------------
     // get the inputs 
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A = gb_get_shallow (pargin [0]) ;
-    GrB_Matrix B = gb_get_shallow (pargin [1]) ;
-    int64_t norm_kind = gb_norm_kind (pargin [2]) ;
+    struct gb_matrix_struct Matrix [2] ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+    gbmx_get_matrix (&(Matrix [1]), pargin [1]) ;
+
+    int64_t norm_kind = gbmx_norm_kind (pargin [2]) ;
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get the inputs 
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&B, &B_shallow, &(Matrix [1]))) ;
 
     GrB_Type atype, btype ;
     OK (GxB_Matrix_type (&atype, A)) ;
@@ -46,8 +68,8 @@ void mexFunction
     OK (GrB_Matrix_nrows (&bnrows, B)) ;
     OK (GrB_Matrix_ncols (&bncols, B)) ;
     if (anrows != bnrows || ancols != bncols)
-    {
-        ERROR ("A and B must have the same size") ;
+    { 
+        ERROR ("A and B must have the same size", GrB_DIMENSION_MISMATCH) ;
     }
 
     //--------------------------------------------------------------------------
@@ -56,20 +78,24 @@ void mexFunction
 
     double s ;
 
-    if (gb_is_dense (A) && gb_is_dense (B) &&
+    bool A_is_dense, B_is_dense ;
+    OK (gb_is_dense (&A_is_dense, A)) ;
+    OK (gb_is_dense (&B_is_dense, A)) ;
+
+    if (A_is_dense && B_is_dense &&
         (atype == GrB_FP32 || atype == GrB_FP64) && (atype == btype)
         && (anrows == 1 || ancols == 1 || norm_kind == 0))
-    {
+    { 
         // s = norm (A-B,p) where A and B are full FP32 or FP64 vectors,
         // or when p = 0 (for Frobenius norm)
         uint64_t anz ;
         OK (GrB_Matrix_nvals (&anz, A)) ;
-        s = GB_helper10 (A->x, A->iso, B->x, B->iso,
-            atype, norm_kind, anz) ;
-        if (s < 0) ERROR ("unknown norm") ;
+        OK (GB_helper10 (&s, A->x, A->iso, B->x, B->iso, atype,
+            norm_kind, anz)) ;
+        CHECK_ERROR (s < 0, "unknown norm") ;
     }
     else
-    {
+    { 
         GrB_Type xtype ;
         GrB_BinaryOp op ;
         if (atype == GrB_FP32 && atype == btype)
@@ -99,22 +125,19 @@ void mexFunction
         }
 
         // X = A-B
-        GrB_Matrix X ;
         OK (GrB_Matrix_new (&X, xtype, anrows, ancols)) ;
         OK1 (X, GrB_Matrix_eWiseAdd_BinaryOp (X, NULL, NULL, op, A, B, NULL)) ;
 
         // s = norm (X, norm_kind)
-        s = gb_norm (X, norm_kind) ;
-        OK (GrB_Matrix_free (&X)) ;
+        OK (gb_norm (&s, X, norm_kind)) ;
     }
 
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_free (&A)) ;
-    OK (GrB_Matrix_free (&B)) ;
-    pargout [0] = mxCreateDoubleScalar (s) ;
+    (*s_output) = s ;
+    FREE_WORK ;
     gb_wrapup ( ) ;
 }
 

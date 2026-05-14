@@ -7,21 +7,37 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_UTIL
 #include "gb_interface.h"
 
 // The string has the form op_name.op_type.  For example '+.double' is
 // GrB_PLUS_MONOID_FP64.  The type is optional.  If not present, it defaults
 // to the default_type parameter.
 
-GrB_Monoid gb_string_to_monoid          // return monoid from a string
+GrB_Info gb_string_to_monoid            // return monoid from a string
 (
+    // output
+    GrB_Monoid *monoid,
+    // input
     char *opstring,                     // string defining the operator
     const GrB_Type type                 // default type if not in the string
 )
 { 
 
-    // get the binary operator and convert to a monoid
-    return (gb_binop_to_monoid (gb_string_to_binop_or_idxunop (opstring,
-        type, type, NULL, NULL))) ;
+    //--------------------------------------------------------------------------
+    // get the binary operator defined by the opstring and type
+    //--------------------------------------------------------------------------
+
+    ASSERT (monoid != NULL) ;
+    GrB_BinaryOp binop = NULL ;
+    OK (gb_string_to_binop_or_idxunop (&binop, opstring, type, type,
+        /* idxunop: not allowed here: */ NULL, NULL)) ;
+
+    //--------------------------------------------------------------------------
+    // convert the binary op to a monoid and return result
+    //--------------------------------------------------------------------------
+
+    OK (gb_binop_to_monoid (monoid, binop)) ;
+    return (GrB_SUCCESS) ;
 }
 

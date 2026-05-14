@@ -7,14 +7,18 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_UTIL
 #include "gb_interface.h"
 
 // The string has the form op_name.op_type.  For example 'abs.double' is the
 // GrB_ABS_FP64 operator.  The type is optional.  If not present, it defaults
 // to the default_type parameter.
 
-GrB_UnaryOp gb_string_to_unop           // return unary operator from a string
+GrB_Info gb_string_to_unop              // return unary operator from a string
 (
+    // output
+    GrB_UnaryOp *unop,                  // unary op determined by the string
+    // input
     char *opstring,                     // string defining the operator
     const GrB_Type default_type         // default type if not in the string
 )
@@ -54,6 +58,7 @@ GrB_UnaryOp gb_string_to_unop           // return unary operator from a string
     // convert the string to a GraphBLAS unary operator, built-in or Complex
     //--------------------------------------------------------------------------
 
-    return (gb_string_and_type_to_unop (op_name, type, type_not_given)) ;
+    OK (gb_string_and_type_to_unop (unop, op_name, type, type_not_given)) ;
+    return (GrB_SUCCESS) ;
 }
 

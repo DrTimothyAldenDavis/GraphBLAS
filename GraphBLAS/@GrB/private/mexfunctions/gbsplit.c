@@ -15,47 +15,19 @@
 
 // where C is a 2D cell array of matrices.
 
+#define FREE_WORK                   \
+    mxFree (Tiles) ;                \
+    mxFree (Tiles_opaque) ;         \
+    mxFree (Tile_nrows) ;           \
+    mxFree (Tile_ncols) ;           \
+    GrB_Matrix_free (&A_shallow) ;
+
+#define FREE_ALL                    \
+    FREE_WORK ;
+
 #include "gb_interface.h"
 
-#define USAGE "usage: C = GrB.split (A, m, n, desc)"
-
-//------------------------------------------------------------------------------
-// gb_get_tilesizes:  get a list of integers
-//------------------------------------------------------------------------------
-
-static inline uint64_t *gb_get_tilesizes (mxArray *mxList, uint64_t *len)
-{
-    int64_t n = mxGetNumberOfElements (mxList) ;
-    (*len) = (uint64_t) n ;
-    mxClassID class = mxGetClassID (mxList) ;
-    uint64_t *List = mxMalloc (n * sizeof (uint64_t)) ;
-    // use mxGetData (best for Octave, fine for MATLAB)
-    if (class == mxINT64_CLASS)
-    {
-        int64_t *p = (int64_t *) mxGetData (mxList) ;
-        memcpy (List, p, n * sizeof (int64_t)) ;
-    }
-    else if (class == mxUINT64_CLASS)
-    {
-        uint64_t *p = (uint64_t *) mxGetData (mxList) ;
-        memcpy (List, p, n * sizeof (uint64_t)) ;
-    }
-    else if (class == mxDOUBLE_CLASS)
-    {
-        double *p = (double *) mxGetData (mxList) ;
-        for (int64_t k = 0 ; k < n ; k++)
-        {
-            List [k] = (uint64_t) p [k] ;
-            CHECK_ERROR ((double) List [k] != p [k],
-                "dimensions must be integer") ;
-        }
-    }
-    else
-    {
-        ERROR ("unsupported type") ;
-    }
-    return (List) ;
-}
+#define USAGE "usage: C = GrB.split (A, m, n)"
 
 //------------------------------------------------------------------------------
 // gbsplit mexFunction
@@ -71,72 +43,73 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage ((nargin == 3 || nargin == 4) && nargout <= 2, USAGE) ;
+    GrB_Matrix A = NULL, A_shallow = NULL ;
+
+    gbmx_usage (nargin == 3 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
-    // find the arguments
+    // get the tile sizes, kind, and create the output arguments
     //--------------------------------------------------------------------------
 
-    mxArray *Matrix [6], *String [2], *Cell [2] ;
-    base_enum_t base ;
-    kind_enum_t kind ;
-    int fmt ;
-    int nmatrices, nstrings, ncells, sparsity ;
-    GrB_Descriptor desc ;
-    gb_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String, &nstrings,
-        Cell, &ncells, &desc, &base, &kind, &fmt, &sparsity) ;
-
-    CHECK_ERROR (nmatrices != 3 || nstrings > 0 || ncells > 0, USAGE) ;
-
-    //--------------------------------------------------------------------------
-    // get the input matrix A, Tile_nrows, and Tile_ncols
-    //--------------------------------------------------------------------------
-
-    GrB_Matrix A = gb_get_shallow (Matrix [0]) ;
     uint64_t m, n ;
-    uint64_t *Tile_nrows = gb_get_tilesizes (Matrix [1], &m) ;
-    uint64_t *Tile_ncols = gb_get_tilesizes (Matrix [2], &n) ;
-    GrB_Matrix *Tiles = mxMalloc (m * n * sizeof (GrB_Matrix)) ;
+    uint64_t *Tile_nrows = gbmx_get_integer_list (pargin [1], &m) ;
+    uint64_t *Tile_ncols = gbmx_get_integer_list (pargin [2], &n) ;
+
+    GrB_Matrix *Tiles = mxCalloc (m * n, sizeof (GrB_Matrix)) ;
+    GrB_Matrix **Tiles_opaque = mxCalloc (m * n, sizeof (GrB_Matrix *)) ;
+
+    pargout [0] = mxCreateCellMatrix (m, n) ;
+    for (int64_t i = 0 ; i < m ; i++)
+    { 
+        for (int64_t j = 0 ; j < n ; j++)
+        { 
+            // pargout [0] and Tiles_opaque are in column-major form
+            mxArray *mxCell_entry = 
+                gbmx_export_struct (&(Tiles_opaque [i+j*m])) ;
+            mxSetCell (pargout [0], i+j*m, mxCell_entry) ;
+        }
+    }
+
+    struct gb_matrix_struct Matrix [1] ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get the input matrix A
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
 
     //--------------------------------------------------------------------------
     // Tiles = split (A)
     //--------------------------------------------------------------------------
 
-    OK (GxB_Matrix_split (Tiles, m, n, Tile_nrows, Tile_ncols, A, desc)) ;
+    OK (GxB_Matrix_split (Tiles, m, n, Tile_nrows, Tile_ncols, A, NULL)) ;
 
     //--------------------------------------------------------------------------
-    // convert the Tiles array to a built-in cell array
+    // export the Tiles array into the output cell array
     //--------------------------------------------------------------------------
 
-    mxArray *C = mxCreateCellMatrix (m, n) ;
     for (int64_t i = 0 ; i < m ; i++)
-    {
+    { 
         for (int64_t j = 0 ; j < n ; j++)
-        {
-            // Tiles is in row-major form and C is in column-major form
-            mxSetCell (C, i+j*m, gb_export (&Tiles [i*n+j], kind)) ;
+        { 
+            // Tiles is in row-major form;
+            // Tiles_opaque is in column-major form
+            GrB_Matrix *Cell_opaque = Tiles_opaque [i+j*m] ;
+            OK (gb_export (Cell_opaque, &Tiles [i*n+j], KIND_GRB)) ;
         }
     }
 
     //--------------------------------------------------------------------------
-    // free workspace and shallow copies
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_free (&A)) ;
-    OK (GrB_Descriptor_free (&desc)) ;
-    mxFree (Tiles) ;
-    mxFree (Tile_nrows) ;
-    mxFree (Tile_ncols) ;
-
-    //--------------------------------------------------------------------------
-    // export the output cell array C
-    //--------------------------------------------------------------------------
-
-    pargout [0] = C ;
-    pargout [1] = mxCreateDoubleScalar (kind) ;
+    FREE_WORK ;
     gb_wrapup ( ) ;
 }
 

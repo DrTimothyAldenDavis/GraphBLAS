@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_export: export a GrB_Matrix as a MATLAB matrix or GraphBLAS struct
+// gb_export: export a GrB_Matrix as a GraphBLAS C.opaque @GrB handle
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -7,137 +7,111 @@
 
 //------------------------------------------------------------------------------
 
-// mxArray pargout [0] = gb_export (&C, kind) ; exports C as a MATLAB matrix
-// and frees the remaining content of C.
+// gb_export (&C_opaque, &C, kind): exports C as a MATLAB 8-byte C.opaque uint8
+// mxArray, containing a single pointer to a GrB_Matrix.  The input GrB_Matrix
+// C may be shallow or deep.
 
-// This function accesses GB_methods inside GraphBLAS.
+// No mx* methods are called, so that any memory allocation failures can
+// be properly handled.
+
+#define GB_UTIL
+
+#define FREE_WORK                   \
+    GrB_Matrix_free (&T) ;
+
+#define FREE_ALL                    \
+    GrB_Matrix_free (C_handle) ;
 
 #include "gb_interface.h"
 
-mxArray *gb_export              // return the exported MATLAB matrix or struct
+GrB_Info gb_export              // export a GrB_Matrix to MATLAB
 (
-    GrB_Matrix *C_handle,       // GrB_Matrix to export and free
+    // output:
+    GrB_Matrix *C_opaque,
+    // input/output:
+    GrB_Matrix *C_handle,       // GrB_Matrix to export, set to NULL on output
+    // input:
     kind_enum_t kind            // GrB, sparse, full, or built-in
 )
 {
 
     //--------------------------------------------------------------------------
-    // determine if all entries in C are present
+    // check inputs
     //--------------------------------------------------------------------------
 
-    uint64_t nrows, ncols ;
-    bool is_full = false ;
-    if (kind == KIND_BUILTIN || kind == KIND_FULL)
+    GrB_Matrix C = NULL, T = NULL ;
+    CHECK_ERROR (C_handle == NULL || (*C_handle == NULL), "internal error 3") ;
+    C = (*C_handle) ;
+
+    //--------------------------------------------------------------------------
+    // ensure C has no readonly components
+    //--------------------------------------------------------------------------
+
+    int readonly ;
+    OK (GrB_Matrix_get_INT32 (C, &readonly, GxB_IS_READONLY)) ;
+
+    if (readonly)
     { 
-        uint64_t nvals ;
-        OK (GrB_Matrix_nvals (&nvals, *C_handle)) ;
-        OK (GrB_Matrix_nrows (&nrows, *C_handle)) ;
-        OK (GrB_Matrix_ncols (&ncols, *C_handle)) ;
-        is_full = ((double) nrows * (double) ncols == (double) nvals) ;
+        // C has readonly components so make a deep copy
+        OK (GrB_Matrix_dup (&T, C)) ;
+        GrB_Matrix_free (C_handle) ;
+        (*C_handle) = T ;
+        T = NULL ;
+        C = (*C_handle) ;
     }
+
+    //--------------------------------------------------------------------------
+    // determine if all entries in C are present
+    //--------------------------------------------------------------------------
 
     if (kind == KIND_BUILTIN)
     { 
         // export as full if all entries present, or sparse otherwise
+        uint64_t nrows, ncols, nvals ;
+        OK (GrB_Matrix_nvals (&nvals, C)) ;
+        OK (GrB_Matrix_nrows (&nrows, C)) ;
+        OK (GrB_Matrix_ncols (&ncols, C)) ;
+        bool is_full = ((double) nrows * (double) ncols == (double) nvals) ;
         kind = (is_full) ? KIND_FULL : KIND_SPARSE ;
     }
 
     //--------------------------------------------------------------------------
-    // export the matrix
+    // conform the matrix to a MATLAB sparse or full format, if requested
     //--------------------------------------------------------------------------
 
     if (kind == KIND_SPARSE)
     { 
 
         //----------------------------------------------------------------------
-        // export C as a MATLAB sparse matrix
+        // export C as a @GrB matrix, to become a MATLAB sparse matrix
         //----------------------------------------------------------------------
 
         // Typecast to double, if C is integer (int8, ..., uint64)
-        return (gb_export_to_mxsparse (C_handle)) ;
+        OK (gb_export_to_sparse (C_handle)) ;
+        C = (*C_handle) ;
 
     }
     else if (kind == KIND_FULL)
     { 
 
         //----------------------------------------------------------------------
-        // export C as a MATLAB full matrix, adding explicit zeros if needed
+        // export C as a @GrB matrix, to become a MATLAB full matrix
         //----------------------------------------------------------------------
 
-        // No typecasting is needed since MATLAB full matrices support all
-        // the same types.
-
-        // ensure C is full
-        GrB_Matrix C = NULL ;
-        if (!is_full)
-        {
-            // expand C with explicit zeros so all entries are present
-            C = gb_expand_to_full (*C_handle, NULL, GxB_BY_COL, NULL) ;
-            OK (GrB_Matrix_free (C_handle)) ;
-            (*C_handle) = C ;
-            CHECK_ERROR (gb_is_readonly (*C_handle), "internal error 707")
-        }
-
-        // ensure the matrix is not readonly
-        if (gb_is_readonly (*C_handle))
-        {
-            // C is shallow so make a deep copy
-            OK (GrB_Matrix_dup (&C, *C_handle)) ;
-            OK (GrB_Matrix_free (C_handle)) ;
-            (*C_handle) = C ;
-        }
-        CHECK_ERROR (gb_is_readonly (*C_handle), "internal error 717")
-
-        // ensure C is in full format, held by column
+        OK (gb_export_to_full (C_handle)) ;
         C = (*C_handle) ;
-        OK (GrB_Matrix_set_INT32 (C, GxB_FULL,   GxB_SPARSITY_CONTROL)) ;
-        OK (GrB_Matrix_set_INT32 (C, GxB_BY_COL, GxB_FORMAT)) ;
-
-        // ensure the matrix is not iso-valued
-        OK (GrB_Matrix_set_INT32 (C, 0, GxB_ISO)) ;
-
-        // FIXME arena: change data arena of C to MATLAB
-
-        // unload C into the Container and free C
-        GxB_Container Container = GB_helper_container ( ) ;
-        CHECK_ERROR (Container == NULL, "internal error 911a") ;
-        OK (GxB_unload_Matrix_into_Container (C, Container, NULL)) ;
-        OK (GrB_Matrix_free (C_handle)) ;
-
-        // ensure the container holds the right content: not iso, full, and in
-        // column major format.  This is just a sanity check; it should always
-        // succeed.
-        CHECK_ERROR (Container->iso, "internal error 718") ;
-        CHECK_ERROR (Container->format != GxB_FULL, "internal error 719") ;
-        CHECK_ERROR (Container->orientation != GrB_COLMAJOR,
-            "internal error 720") ;
-
-        // unload the Container->x vector into the raw C array Cx
-        void *Cx = NULL ;
-        GrB_Type ctype = NULL ;
-        uint64_t Cx_memsize, xlen ;
-        int handling = 0 ;
-        OK (GxB_Vector_unload (Container->x, &Cx, &ctype, &xlen, &Cx_memsize,
-            &handling, NULL)) ;
-        if (handling != GrB_DEFAULT + GB_ARENA_MATLAB)
-        {
-            printf ("handling %d\n", handling) ;
-            mexErrMsgIdAndTxt ("GrB:arena", "arena invalid (2)") ;
-        }
-        // export Cx as a dense nrows-by-ncols MATLAB matrix
-        return (gb_export_to_mxfull (&Cx, nrows, ncols, ctype)) ;
-
     }
-    else // kind == KIND_GRB
-    { 
 
-        //----------------------------------------------------------------------
-        // export C as a MATLAB struct containing a verbatim GrB_Matrix
-        //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // copy the handle into C_opaque and return result
+    //--------------------------------------------------------------------------
 
-        // No typecasting is needed since the MATLAB struct can hold all of
-        // the opaque content of the GrB_Matrix.
-        return (gb_export_to_mxstruct (C_handle)) ;
-    }
+    // C should now be deep, but double-check here
+    OK (GrB_Matrix_get_INT32 (C, &readonly, GxB_IS_READONLY)) ;
+    CHECK_ERROR (readonly, "internal error 7") ;
+
+    (*C_opaque) = C ;       // copy the GraphBLAS C header into C_opaque
+    (*C_handle) = NULL ;    // flag C as no longer available to the caller
+    return (GrB_SUCCESS) ;
 }
 

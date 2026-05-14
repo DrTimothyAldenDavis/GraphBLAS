@@ -7,10 +7,12 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_UTIL
 #include "gb_interface.h"
 
-bool gb_is_vector               // true if A is a row or column vector
+GrB_Info gb_is_vector
 (
+    bool *is_vector,            // true if A is a row or column vector
     GrB_Matrix A                // GrB_Matrix to query
 )
 {
@@ -22,6 +24,7 @@ bool gb_is_vector               // true if A is a row or column vector
         OK (GrB_Matrix_nrows (&nrows, A)) ;
         OK (GrB_Matrix_ncols (&ncols, A)) ;
     }
-    return (nrows == 1 || ncols == 1) ;
+    (*is_vector) = (nrows == 1 || ncols == 1) ;
+    return (GrB_SUCCESS) ;
 }
 

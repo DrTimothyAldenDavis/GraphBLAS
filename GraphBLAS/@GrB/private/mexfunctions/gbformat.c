@@ -14,6 +14,9 @@
 // [f,sparsity,iso] = gbformat (G) ;  get the format, sparsity, and iso status
 //                                    of a matrix (either @GrB or built-in)
 
+// Calls to GrB_* and mx* methods are intermingled since none of the GrB
+// methods allocate any memory.
+
 #include "gb_interface.h"
 
 #define USAGE "usage: [f,s,iso] = GrB.format(G), f = GrB.format (f), or f = GrB.format"
@@ -31,7 +34,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 1 && nargout <= 3, USAGE) ;
+    gbmx_usage (nargin <= 1 && nargout <= 3, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get/set the format
@@ -40,7 +43,6 @@ void mexFunction
     int fmt = GxB_BY_COL ;
     int sparsity = GxB_AUTO_SPARSITY ;
     bool iso = false ;
-    bool v5_1_or_later = false ;
 
     if (nargin == 0)
     { 
@@ -66,72 +68,25 @@ void mexFunction
 
             // parse the format string
             int ignore ;
-            bool ok = gb_mxstring_to_format (pargin [0], &fmt, &ignore) ;
+            char format_string [LEN+2] ;
+            gbmx_mxstring_to_string (format_string, LEN, pargin [0], "format") ;
+            bool ok = gb_string_to_format (format_string, &fmt, &ignore) ;
             CHECK_ERROR (!ok, "invalid format") ;
             // set the global format
             OK (GrB_Global_set_INT32 (GrB_GLOBAL, fmt, GxB_FORMAT)) ;
 
         }
-        else if (mxIsStruct (pargin [0]))
+        else if (mxIsClass (pargin [0], "GrB"))
         { 
 
             //------------------------------------------------------------------
             // GrB.format (G) for a GraphBLAS matrix G
             //------------------------------------------------------------------
 
-            // get the type
-            mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv10") ;
-            if (mx_type == NULL)
-            {
-                // check if it is a GraphBLASv7_3 struct
-                mx_type = mxGetField (pargin [0], 0, "GraphBLASv7_3") ;
-            }
-            if (mx_type == NULL)
-            {
-                // check if it is a GraphBLASv5_1 struct
-                mx_type = mxGetField (pargin [0], 0, "GraphBLASv5_1") ;
-            }
-            if (mx_type != NULL)
-            {
-                // v5_1 or v7_3
-                v5_1_or_later = true ;
-            }
-            if (mx_type == NULL)
-            {
-                // check if it is a GraphBLASv5 struct
-                mx_type = mxGetField (pargin [0], 0, "GraphBLASv5") ;
-            }
-            if (mx_type == NULL)
-            {
-                // check if it is a GraphBLASv4 struct
-                mx_type = mxGetField (pargin [0], 0, "GraphBLASv4") ;
-            }
-            if (mx_type == NULL)
-            {
-                // check if it is a GraphBLASv3 struct
-                mx_type = mxGetField (pargin [0], 0, "GraphBLAS") ;
-            }
-            CHECK_ERROR (mx_type == NULL, "invalid GraphBLAS struct") ;
-
-            // get the row/column format of the input matrix G
-            mxArray *opaque = mxGetField (pargin [0], 0, "s") ;
-            CHECK_ERROR (opaque == NULL, "invalid GraphBLAS struct") ;
-            // use mxGetData (best for Octave, fine for MATLAB)
-            int64_t *s = (int64_t *) mxGetData (opaque) ;
-            bool is_csc = (bool) (s [6]) ;
-            fmt = (is_csc) ? GxB_BY_COL : GxB_BY_ROW ;
-            iso = (v5_1_or_later) ? ((bool) s [9]) : false ;
-
-            // get the current sparsity status of the input matrix G
-            switch (mxGetNumberOfFields (pargin [0]))
-            {
-                case 3 : sparsity = GxB_FULL ;        break ;
-                case 4 : sparsity = GxB_BITMAP ;      break ;
-                case 5 : sparsity = GxB_SPARSE ;      break ;
-                case 9 : // fall through to hypersparse
-                case 6 : sparsity = GxB_HYPERSPARSE ; break ;
-                default: ERROR ("invalid GraphBLAS struct") ;
-            }
+            GrB_Matrix A = gbmx_get_grb_matrix (pargin [0]) ;
+            OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
+            OK (GrB_Matrix_get_INT32 (A, &sparsity, GxB_SPARSITY_STATUS)) ;
+            OK (GrB_Matrix_get_INT32 (A, &iso, GxB_ISO)) ;
 
         }
         else
@@ -145,7 +100,6 @@ void mexFunction
             fmt = GxB_BY_COL ;
             // built-in matrices are sparse or full, never hypersparse or bitmap
             sparsity = mxIsSparse (pargin [0]) ? GxB_SPARSE : GxB_FULL ;
-
         }
     }
 

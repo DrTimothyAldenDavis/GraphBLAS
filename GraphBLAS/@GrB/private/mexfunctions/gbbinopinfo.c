@@ -27,46 +27,56 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
-
-    gb_usage (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
-
-    //--------------------------------------------------------------------------
-    // construct the GraphBLAS binary operator and print it
-    //--------------------------------------------------------------------------
-
-    #define LEN 256
-    char opstring [LEN+2] ;
-    gb_mxstring_to_string (opstring, LEN, pargin [0], "binary operator") ;
 
     GrB_Type type = NULL ;
-    if (nargin > 1)
+    GrB_BinaryOp binop = NULL ;
+    GrB_IndexUnaryOp idxunop = NULL ;
+
+    gbmx_usage (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
+    if (nargout == 1)
     { 
-        type = gb_mxstring_to_type (pargin [1]) ;
-        CHECK_ERROR (type == NULL, "unknown type") ;
+        pargout [0] = mxCreateLogicalScalar (true) ;
     }
 
-    GrB_BinaryOp op2 = NULL ;
-    GrB_IndexUnaryOp idxunop = NULL ;
-    int64_t ithunk = 0 ;
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
 
-    gb_mxstring_to_binop_or_idxunop (pargin [0], type, type,
-        &op2, &idxunop, &ithunk) ;
+    char op_string [LEN+2] ;
+    char type_string [LEN+2] ;
+    gbmx_mxstring_to_string (op_string, LEN, pargin [0], "binary operator") ;
+    if (nargin > 1)
+    { 
+        gbmx_mxstring_to_string (type_string, LEN, pargin [1], "type") ;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // construct the GraphBLAS binary operator or index unary op and print it
+    //--------------------------------------------------------------------------
+
+    int64_t ithunk = 0 ;
+    if (nargin > 1)
+    { 
+        type = gb_string_to_type (type_string) ;
+    }
+
+    OK (gb_string_to_binop_or_idxunop (&binop, op_string, type, type,
+        &idxunop, &ithunk)) ;
 
     int pr = (nargout < 1) ? GxB_COMPLETE : GxB_SILENT ;
     if (idxunop != NULL)
-    {
-        OK (GxB_IndexUnaryOp_fprint (idxunop, opstring, pr, NULL)) ;
+    { 
+        OK (GxB_IndexUnaryOp_fprint (idxunop, op_string, pr, NULL)) ;
     }
     else
-    {
-        OK (GxB_BinaryOp_fprint (op2, opstring, pr, NULL)) ;
+    { 
+        OK (GxB_BinaryOp_fprint (binop, op_string, pr, NULL)) ;
     }
-    if (nargout == 1)
-    {
-        pargout [0] = mxCreateLogicalScalar (true) ;
-    }
+
     gb_wrapup ( ) ;
 }
 

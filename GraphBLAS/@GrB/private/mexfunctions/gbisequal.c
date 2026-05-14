@@ -13,6 +13,10 @@
 
 //  result = gbisequal (A,B)
 
+#define FREE_WORK                   \
+    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Matrix_free (&B_shallow) ;
+
 #include "gb_interface.h"
 
 #define USAGE "usage: s = GrB.isequal (A, B)"
@@ -27,30 +31,46 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 2 && nargout <= 1, USAGE) ;
+    GrB_Matrix A = NULL, B = NULL, A_shallow = NULL, B_shallow = NULL ;
+
+    gbmx_usage (nargin == 2 && nargout <= 1, USAGE) ;
+
+    pargout [0] = mxCreateLogicalScalar (false) ;
+    bool *s_output = (bool *) mxGetData (pargout [0]) ;
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
+    struct gb_matrix_struct Matrix [2] ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+    gbmx_get_matrix (&(Matrix [1]), pargin [1]) ;
+
+    ////////////////////////////////////////////////////////////////////////////
 
     //--------------------------------------------------------------------------
     // get the arguments
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A = gb_get_shallow (pargin [0]) ;
-    GrB_Matrix B = gb_get_shallow (pargin [1]) ;
+    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&B, &B_shallow, &(Matrix [1]))) ;
 
     //--------------------------------------------------------------------------
     // check if they are equal
     //--------------------------------------------------------------------------
 
-    pargout [0] = mxCreateLogicalScalar (gb_is_equal (A, B)) ;
+    bool is_equal ;
+    OK (gb_is_equal (&is_equal, A, B)) ;
 
     //--------------------------------------------------------------------------
-    // free shallow copies
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_free (&A)) ;
-    OK (GrB_Matrix_free (&B)) ;
+    FREE_WORK ;
+    (*s_output) = is_equal ;
     gb_wrapup ( ) ;
 }
 

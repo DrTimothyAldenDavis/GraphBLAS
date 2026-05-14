@@ -13,6 +13,9 @@
 // If A or B are boolean, the type is taken from the other operand.
 // If either A or B are signed, then the type is signed.
 
+// This method cannot fail, so it returns the type, not GrB_Info.
+
+#define GB_UTIL
 #include "gb_interface.h"
 
 GrB_Type gb_default_type        // return the default type to use
@@ -23,7 +26,7 @@ GrB_Type gb_default_type        // return the default type to use
 {
 
     if (atype == NULL || btype == NULL)
-    {
+    { 
 
         // undefined type
         return (NULL) ;
@@ -179,7 +182,7 @@ GrB_Type gb_default_type        // return the default type to use
 
     }
     else
-    {
+    { 
 
         // unknown type
         return (NULL) ;

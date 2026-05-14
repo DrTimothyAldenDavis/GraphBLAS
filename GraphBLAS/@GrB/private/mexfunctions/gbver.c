@@ -7,7 +7,12 @@
 
 //------------------------------------------------------------------------------
 
+// Usage:
+
 // v = gbver
+
+// Calls to GrB_* and mx* methods are intermingled since none of the GrB
+// methods allocate any memory.
 
 #include "gb_interface.h"
 
@@ -28,7 +33,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 0 && nargout <= 1, USAGE) ;
+    gbmx_usage (nargin == 0 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the version and date information and return it as a struct
@@ -47,7 +52,7 @@ void mexFunction
     OK (GrB_Global_get_String (GrB_GLOBAL, date, GxB_LIBRARY_DATE)) ;
 
     if (nargout == 0)
-    {
+    { 
         printf ("----------------------------------------"
                 "-----------------------------------\n") ;
 
@@ -56,7 +61,7 @@ void mexFunction
         char *about = mxMalloc (len+1) ;
         OK (GrB_Global_get_String (GrB_GLOBAL, about, GxB_LIBRARY_ABOUT)) ;
         printf ("%s\n", about) ;
-        mxFree (about) ;
+        gbmx_free ((void **) &about) ;
 
         // version and date:
         printf ("Version: %d.%d.%d (%s)\n", major, minor, patch, date) ;
@@ -74,7 +79,7 @@ void mexFunction
         printf ("GraphBLAS compiled with %s (v%d.%d.%d), %s OpenMP\n", compiler,
             cver [0], cver [1], cver [2],
             have_openmp ? "with" : "without") ;
-        mxFree (compiler) ;
+        gbmx_free ((void **) &compiler) ;
 
         // license:
         printf ("@GrB License: Apache-2.0\n\n") ;
@@ -84,22 +89,21 @@ void mexFunction
         char *spec = mxMalloc (len+1) ;
         OK (GrB_Global_get_String (GrB_GLOBAL, spec, GxB_API_ABOUT)) ;
         printf ("Spec:\n%s\n", spec) ;
-        mxFree (spec) ;
+        gbmx_free ((void **) &spec) ;
 
         // url:
         OK (GrB_Global_get_SIZE (GrB_GLOBAL, &len, GxB_API_URL)) ;
         char *url = mxMalloc (len+1) ;
         OK (GrB_Global_get_String (GrB_GLOBAL, url, GxB_API_URL)) ;
         printf ("URL: %s\n", url) ;
-        mxFree (url) ;
+        gbmx_free ((void **) &url) ;
 
         printf ("----------------------------------------"
                 "-----------------------------------\n") ;
     }
     else
-    {
-        #define LEN 256
-        char s [LEN+1] ;
+    { 
+        char s [LEN+2] ;
         snprintf (s, LEN, "%d.%d.%d", major, minor, patch) ;
         pargout [0] = mxCreateStructMatrix (1, 1, 3, vfields) ;
         mxSetFieldByNumber (pargout [0], 0, 0,
@@ -108,8 +112,7 @@ void mexFunction
         mxSetFieldByNumber (pargout [0], 0, 2, mxCreateString (date)) ;
     }
 
-    mxFree (date) ;
-
+    gbmx_free ((void **) &date) ;
     gb_wrapup ( ) ;
 }
 

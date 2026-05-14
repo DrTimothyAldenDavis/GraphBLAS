@@ -79,6 +79,21 @@
 
 // C is always returned as a GrB matrix.
 
+#define FREE_WORK                   \
+    gb_free ((void **) &Kx) ;       \
+    GrB_Matrix_free (&G) ;          \
+    GrB_Matrix_free (&K) ;          \
+    GrB_Matrix_free (&T) ;          \
+    GrB_Matrix_free (&M) ;          \
+    GrB_Matrix_free (&M_shallow) ;  \
+    GrB_Matrix_free (&A_copy) ;     \
+    GrB_Matrix_free (&A_shallow) ;
+
+#define FREE_ALL                    \
+    FREE_WORK ;                     \
+    GrB_Vector_free (&V) ;          \
+    GrB_Matrix_free (&C) ;
+
 #include "gb_interface.h"
 #include "GB_transpose.h"
 
@@ -94,10 +109,28 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 2 && nargout <= 1, USAGE) ;
+    GrB_Matrix *C_opaque = NULL, K = NULL, M = NULL, A = NULL, A_copy = NULL,
+        G = NULL, T = NULL, C = NULL, A_input = NULL, A_shallow = NULL,
+        M_input = NULL, M_shallow = NULL ;
+    GrB_Vector V = NULL ;
+    uint64_t *Kx = NULL ;
+
+    gbmx_usage (nargin == 2 && nargout <= 1, USAGE) ;
+    pargout [0] = gbmx_export_struct (&C_opaque) ;
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
+    struct gb_matrix_struct Matrix [2] ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+    gbmx_get_matrix (&(Matrix [1]), pargin [2]) ;
+
+    ////////////////////////////////////////////////////////////////////////////
+
     GB_WERK ("gblogextract") ;
 
     //--------------------------------------------------------------------------
@@ -105,9 +138,9 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // make sure A is stored by column
-    GrB_Matrix A_input = gb_get_shallow (pargin [0]) ;
-    GrB_Matrix A, A_copy ;
-    A = gb_by_col (&A_copy, A_input) ;
+    OK (gb_get_matrix (&A_input, &A_shallow, &(Matrix [0]))) ;
+
+    OK (gb_by_col (&A, &A_copy, A_input)) ;
 
     GrB_Index nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
@@ -121,11 +154,11 @@ void mexFunction
     int not_bitmap = GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL ;
 
     // make M boolean, stored by column, and drop explicit zeros
-    GrB_Matrix M_input = gb_get_shallow (pargin [1]) ;
-    GrB_Matrix M = gb_new (GrB_BOOL, nrows, ncols, GxB_BY_COL, not_bitmap) ;
+    OK (gb_get_matrix (&M_input, &M_shallow, &(Matrix [1]))) ;
+    OK (gb_new (&M, GrB_BOOL, nrows, ncols, GxB_BY_COL, not_bitmap)) ;
     OK1 (M, GrB_Matrix_select_BOOL (M, NULL, NULL, GrB_VALUENE_BOOL, M_input,
         0, NULL)) ;
-    OK (GrB_Matrix_free (&M_input)) ;
+    GrB_Matrix_free (&M_shallow) ;
 
     GrB_Index mnz ;
     OK (GrB_Matrix_nvals (&mnz, M)) ;
@@ -142,11 +175,11 @@ void mexFunction
     // Also ensure the G is not bitmap.
     GrB_Type type ;
     OK (GxB_Matrix_type (&type, A)) ;
-    GrB_Matrix G = gb_new (type, nrows, ncols, GxB_BY_COL, not_bitmap) ;
+    OK (gb_new (&G, type, nrows, ncols, GxB_BY_COL, not_bitmap)) ;
     OK1 (G, GxB_Matrix_subassign (G, M, NULL,
         A, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
-    OK (GrB_Matrix_free (&A_copy)) ;
-    OK (GrB_Matrix_free (&A_input)) ;
+    GrB_Matrix_free (&A_copy) ;
+    GrB_Matrix_free (&A_shallow) ;
 
     //--------------------------------------------------------------------------
     // extract Gx, the values of G
@@ -182,7 +215,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // K is a shallow copy of M, except for its numerical values
-    GrB_Matrix K = NULL ;
     OK (GB_matrix_header_new (&K, GB_ARENA_MATLAB, GB_ARENA_MATLAB)) ;
 
     OK (GB_shallow_copy (K, GxB_BY_COL, M, NULL)) ;
@@ -191,9 +223,9 @@ void mexFunction
 
     // Kx = uint64 (0:mnz-1)
     size_t Kx_memsize = (MAX (mnz, 1) * sizeof (uint64_t)) ;
-    uint64_t Kx_mem = GB_mem (GB_ARENA_MATLAB, Kx_memsize) ;
-    uint64_t *Kx = mxMalloc (Kx_memsize) ;  // same as GB_ARENA_MATLAB
-    GB_helper7 (Kx, mnz) ;
+    uint64_t Kx_mem = GB_mem (GrB_DEFAULT, Kx_memsize) ;
+    Kx = gb_malloc (Kx_memsize) ;
+    OK (GB_helper7 (Kx, mnz)) ;
 
     // add a new K->x to K
     K->x = Kx ;
@@ -208,7 +240,7 @@ void mexFunction
     // T<G> = K
     //--------------------------------------------------------------------------
 
-    GrB_Matrix T = gb_new (GrB_UINT64, nrows, ncols, GxB_BY_COL, not_bitmap) ;
+    OK (gb_new (&T, GrB_UINT64, nrows, ncols, GxB_BY_COL, not_bitmap)) ;
     OK1 (T, GxB_Matrix_subassign (T, G, NULL,
         K, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
 
@@ -236,16 +268,15 @@ void mexFunction
     // step takes constant time, using a transplant of the row indices Tx from
     // T and the values Gx from G.  V is sparse (not full, not hypersparse).
 
-    GrB_Vector V ;
     OK (GrB_Vector_new (&V, type, mnz)) ;
     OK (GrB_Vector_set_INT32 (V, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
 
     GBMDUMP ("remove V->i from memtable: %p\n", V->i) ;
     GBMDUMP ("remove V->x from memtable: %p\n", V->x) ;
     GB_Global_memtable_remove (V->i) ;
-    gb_mxfree ((void **) (&V->i)) ;
+    gb_free ((void **) (&V->i)) ;
     GB_Global_memtable_remove (V->x) ;
-    gb_mxfree ((void **) (&V->x)) ;
+    gb_free ((void **) (&V->x)) ;
 
     // transplant values of T as the row indices of V
     V->i = (void *) Tx ;
@@ -269,27 +300,18 @@ void mexFunction
 
     V->nvals = tnvals ;
     V->magic = GB_MAGIC ;
-//  V->nvec_nonempty = (tnvals > 0) ? 1 : 0 ;
     GB_nvec_nonempty_set ((GrB_Matrix) V, (tnvals > 0) ? 1 : 0) ;
 
     // typecast V to a matrix C, for export
-    GrB_Matrix C = (GrB_Matrix) V ;
+    C = (GrB_Matrix) V ;
     V = NULL ;
 
     //--------------------------------------------------------------------------
-    // free shallow copies and temporary matrices
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_free (&G)) ;
-    OK (GrB_Matrix_free (&K)) ;
-    OK (GrB_Matrix_free (&T)) ;
-    OK (GrB_Matrix_free (&M)) ;
-
-    //--------------------------------------------------------------------------
-    // export the output matrix C as a GraphBLAS matrix
-    //--------------------------------------------------------------------------
-
-    pargout [0] = gb_export (&C, KIND_GRB) ;
+    FREE_WORK ;
+    OK (gb_export (C_opaque, &C, KIND_GRB)) ;
     gb_wrapup ( ) ;
 }
 

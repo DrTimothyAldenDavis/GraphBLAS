@@ -14,6 +14,7 @@
 // is -1.  If two dots are found, s [position [0]] == '.' is the first dot, and
 // s [position [1]] == '.' is the second.
 
+#define GB_UTIL
 #include "gb_interface.h"
 
 void gb_find_dot            // find 1st and 2nd dot ('.') in a string

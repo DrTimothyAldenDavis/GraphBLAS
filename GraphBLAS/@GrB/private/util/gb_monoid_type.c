@@ -7,15 +7,20 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_UTIL
 #include "gb_interface.h"
 
-GrB_Type gb_monoid_type
+GrB_Info gb_monoid_type
 (
+    // output:
+    GrB_Type *type,
+    // input:
     GrB_Monoid op
 )
 { 
     int code = 0 ;
     OK (GrB_Monoid_get_INT32 (op, &code, GrB_OUTP_TYPE_CODE)) ;
-    return (gb_code_to_type (code)) ;
+    (*type) = (gb_code_to_type (code)) ;
+    return (GrB_SUCCESS) ;
 }
 

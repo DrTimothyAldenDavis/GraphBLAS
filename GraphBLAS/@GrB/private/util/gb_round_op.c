@@ -7,6 +7,7 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_UTIL
 #include "gb_interface.h"
 
 GrB_UnaryOp gb_round_op (GrB_Type type)

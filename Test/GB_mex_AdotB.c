@@ -214,7 +214,7 @@ void mexFunction
     // get flipxy
     GET_SCALAR (3, bool, flipxy, false) ;
 
-    GB_matrix_header_new (&C, GB_ARENA_MATLAB, GB_ARENA_MATLAB) ;
+    GB_matrix_header_new (&C, GB_ARENA_TEST, GB_ARENA_TEST) ;
 
     if (A->type == Complex)
     {

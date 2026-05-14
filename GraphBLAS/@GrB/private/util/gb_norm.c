@@ -7,10 +7,18 @@
 
 //------------------------------------------------------------------------------
 
+#define FREE_WORK           \
+    GrB_Matrix_free (&X) ;  \
+    GrB_Vector_free (&t) ;
+
+#define GB_UTIL
 #include "gb_interface.h"
 
-double gb_norm              // compute norm (A,kind)
+GrB_Info gb_norm            // compute norm (A,kind)
 (
+    // output:
+    double *s,              // norm of A
+    // inputs:
     GrB_Matrix A,
     int64_t norm_kind       // 0, 1, 2, INT64_MAX, or INT64_MIN
 )
@@ -20,9 +28,16 @@ double gb_norm              // compute norm (A,kind)
     // get input matrix, select types and operators, and allocate X
     //--------------------------------------------------------------------------
 
+    GrB_Matrix X = NULL ;
+    GrB_Vector t = NULL ;
+    (*s) = 0 ;
+
     uint64_t nrows, ncols, nvals ;
     OK (GrB_Matrix_nvals (&nvals, A)) ;
-    if (nvals == 0) return ((double) 0) ;
+    if (nvals == 0)
+    { 
+        return (GrB_SUCCESS) ;
+    }
 
     GrB_Type atype, xtype ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
@@ -31,9 +46,8 @@ double gb_norm              // compute norm (A,kind)
 
     GrB_UnaryOp absop ;
     GrB_Monoid sumop, maxop, minop ;
-    GrB_Vector t = NULL ;
-    GrB_Matrix X = NULL ;
     bool is_complex = false ;
+    bool is_dense = false ;
 
     if (atype == GrB_FP32)
     { 
@@ -81,8 +95,6 @@ double gb_norm              // compute norm (A,kind)
     // compute the norm
     //--------------------------------------------------------------------------
 
-    double s = 0 ;
-
     if (nrows == 1 || ncols == 1 || norm_kind == 0)
     {
 
@@ -119,8 +131,8 @@ double gb_norm              // compute norm (A,kind)
                         GxB_POW_FP64, A, (double) 2.0, NULL)) ;
                 }
                 // s = sum (X)
-                OK (GrB_Matrix_reduce_FP64 (&s, NULL, sumop, X, NULL)) ;
-                s = sqrt (s) ;
+                OK (GrB_Matrix_reduce_FP64 (s, NULL, sumop, X, NULL)) ;
+                (*s) = sqrt ((*s)) ;
                 break ;
 
             case 1 :    // 1-norm
@@ -128,7 +140,7 @@ double gb_norm              // compute norm (A,kind)
                 // X = abs (A)
                 OK1 (X, GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;
                 // s = sum (X)
-                OK (GrB_Matrix_reduce_FP64 (&s, NULL, sumop, X, NULL)) ;
+                OK (GrB_Matrix_reduce_FP64 (s, NULL, sumop, X, NULL)) ;
                 break ;
 
             case INT64_MAX :    // inf-norm
@@ -136,23 +148,24 @@ double gb_norm              // compute norm (A,kind)
                 // X = abs (A)
                 OK1 (X, GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;
                 // s = max (X)
-                OK (GrB_Matrix_reduce_FP64 (&s, NULL, maxop, X, NULL)) ;
+                OK (GrB_Matrix_reduce_FP64 (s, NULL, maxop, X, NULL)) ;
                 break ;
 
             case INT64_MIN :    // (-inf)-norm
 
-                if (gb_is_dense (A))
+                OK (gb_is_dense (&is_dense, A)) ;
+                if (is_dense)
                 { 
                     // X = abs (A)
                     OK1 (X, GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;
                     // s = min (X)
-                    OK (GrB_Matrix_reduce_FP64 (&s, NULL, minop, X, NULL)) ;
+                    OK (GrB_Matrix_reduce_FP64 (s, NULL, minop, X, NULL)) ;
                 }
                 break ;
 
             default:
 
-                ERROR ("unknown norm") ;
+                ERROR ("unknown norm", GrB_INVALID_VALUE) ;
                 break ;
         }
 
@@ -169,7 +182,8 @@ double gb_norm              // compute norm (A,kind)
 
             case 2 :    // 2-norm
 
-                ERROR ("2-norm not available for GrB matrices") ;
+                ERROR ("2-norm not available for GrB matrices",
+                    GrB_NOT_IMPLEMENTED) ;
                 break ;
 
             case 1 :    // 1-norm:  max sum of columns of abs (A)
@@ -182,7 +196,7 @@ double gb_norm              // compute norm (A,kind)
                 OK (GrB_Matrix_reduce_Monoid (t, NULL, NULL, sumop, X,
                     GrB_DESC_T0)) ;
                 // s = max (t)
-                OK (GrB_Vector_reduce_FP64 (&s, NULL, maxop, t, NULL)) ;
+                OK (GrB_Vector_reduce_FP64 (s, NULL, maxop, t, NULL)) ;
                 break ;
 
             case INT64_MAX :    // inf-norm:  max sum of rows of abs (A)
@@ -194,17 +208,18 @@ double gb_norm              // compute norm (A,kind)
                 // t(i) = sum of the ith row, X(i,:)
                 OK (GrB_Matrix_reduce_Monoid (t, NULL, NULL, sumop, X, NULL)) ;
                 // s = max (t)
-                OK (GrB_Vector_reduce_FP64 (&s, NULL, maxop, t, NULL)) ;
+                OK (GrB_Vector_reduce_FP64 (s, NULL, maxop, t, NULL)) ;
                 break ;
 
             case INT64_MIN :
 
-                ERROR ("(-inf)-norm not available for GrB matrices") ;
+                ERROR ("(-inf)-norm not available for GrB matrices",
+                    GrB_NOT_IMPLEMENTED) ;
                 break ;
 
             default :
 
-                ERROR ("unknown norm") ;
+                ERROR ("unknown norm", GrB_INVALID_VALUE) ;
                 break ;
         }
     }
@@ -213,8 +228,7 @@ double gb_norm              // compute norm (A,kind)
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_free (&X)) ;
-    OK (GrB_Vector_free (&t)) ;
-    return (s) ;
+    FREE_WORK ;
+    return (GrB_SUCCESS) ;
 }
 

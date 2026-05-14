@@ -7,18 +7,27 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_UTIL
 #include "gb_interface.h"
 
 // The string has the form op_name.op_type.  For example '+.double' is the
 // GrB_PLUS_FP64 operator.  The type is optional.  If not present in the
 // string, it is found by gb_default_type (atype, btype).
 
-GrB_BinaryOp gb_string_to_binop_or_idxunop
+// FIXME: reorder the parameters
+
+GrB_Info gb_string_to_binop_or_idxunop
 (
+    // output:
+    GrB_BinaryOp *binop,        // binary op, or NULL if idxunop
+    // input/output:
     char *opstring,                     // string defining the operator
+    // input:
     const GrB_Type atype,               // type of A
     const GrB_Type btype,               // type of B
+    // output
     GrB_IndexUnaryOp *idxunop,          // idxunop from the string
+    // input/output
     int64_t *ithunk                     // thunk for idxunop
 )
 {
@@ -57,7 +66,8 @@ GrB_BinaryOp gb_string_to_binop_or_idxunop
     // convert the string to a GraphBLAS binary operator, built-in or Complex
     //--------------------------------------------------------------------------
 
-    return (gb_string_and_type_to_binop_or_idxunop (op_name, type,
+    OK (gb_string_and_type_to_binop_or_idxunop (binop, op_name, type,
         type_not_given, idxunop, ithunk)) ;
+    return (GrB_SUCCESS) ;
 }
 

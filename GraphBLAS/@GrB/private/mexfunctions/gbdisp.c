@@ -11,6 +11,8 @@
 
 // gbdisp (C, cnz, level)
 
+#define FREE_WORK GrB_Matrix_free (&C_shallow) ;
+
 #include "gb_interface.h"
 
 #define USAGE "usage: gbdisp (C, cnz, level)"
@@ -25,20 +27,37 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs (no outputs to construct)
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 3 && nargout == 0, USAGE) ;
+    GrB_Matrix C = NULL, C_shallow = NULL ;
+
+    gbmx_usage (nargin == 3 && nargout == 0, USAGE) ;
 
     //--------------------------------------------------------------------------
-    // get cnz and level
+    // get inputs
     //--------------------------------------------------------------------------
+
+    struct gb_matrix_struct Matrix [1] ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
 
     double cnz = mxGetScalar (pargin [1]) ;
     int level = (int) mxGetScalar (pargin [2]) ;
 
-    #define LEN 256
-    char s [LEN+1] ;
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get the input matrix
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_matrix (&C, &C_shallow, &(Matrix [0]))) ;
+
+    //--------------------------------------------------------------------------
+    // print the GraphBLAS matrix
+    //--------------------------------------------------------------------------
+
+    // construct the matrix name
+    char s [LEN+2] ;
     if (cnz == 0)
     { 
         snprintf (s, LEN, "no nonzeros") ;
@@ -48,19 +67,14 @@ void mexFunction
         snprintf (s, LEN, "1 nonzero") ;
     }
     else if (cnz < INT64_MAX)
-    {
+    { 
         snprintf (s, LEN, GBd " nonzeros", (int64_t) cnz) ;
     }
     else
     { 
         snprintf (s, LEN, "%g nonzeros", cnz) ;
     }
-
     s [LEN] = '\0' ;
-
-    //--------------------------------------------------------------------------
-    // print the GraphBLAS matrix
-    //--------------------------------------------------------------------------
 
     // print 1-based indices
     OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, GxB_PRINT_1BASED)) ;
@@ -69,9 +83,13 @@ void mexFunction
     OK (GrB_Global_set_INT32 (GrB_GLOBAL, true,
         GxB_INCLUDE_READONLY_STATISTICS)) ;
 
-    GrB_Matrix C = gb_get_shallow (pargin [0]) ;
     OK (GxB_Matrix_fprint (C, s, level, NULL)) ;
-    OK (GrB_Matrix_free (&C)) ;
+
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
+
+    FREE_WORK ;
     gb_wrapup ( ) ;
 }
 

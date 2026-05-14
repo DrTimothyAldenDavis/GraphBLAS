@@ -7,15 +7,20 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_UTIL
 #include "gb_interface.h"
 
-GrB_Type gb_binaryop_ztype
+GrB_Info gb_binaryop_ztype
 (
+    // output
+    GrB_Type *ztype,    // the GrB_Type of the output of a binary op
+    // input
     GrB_BinaryOp op
 )
 { 
     int code = 0 ;
     OK (GrB_BinaryOp_get_INT32 (op, &code, GrB_OUTP_TYPE_CODE)) ;
-    return (gb_code_to_type (code)) ;
+    (*ztype) = gb_code_to_type (code) ;
+    return (GrB_SUCCESS) ;
 }
 

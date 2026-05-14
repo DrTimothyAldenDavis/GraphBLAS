@@ -7,11 +7,12 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_UTIL
 #include "gb_interface.h"
 
 // GrB_IndexUnaryOp operators, with their equivalent aliases
 
-void gb_string_to_idxunop
+GrB_Info gb_string_to_idxunop
 (
     // outputs: one of the outputs is non-NULL and the other NULL
     GrB_IndexUnaryOp *op,       // GrB_IndexUnaryOp, if found
@@ -63,7 +64,7 @@ void gb_string_to_idxunop
     }
 
     if (type == NULL)
-    {
+    { 
         // type may still be NULL, which is OK for positional ops since the
         // ignore the type.  But a placeholder type is needed for VALUE ops.
         type = GrB_FP64 ;
@@ -259,7 +260,9 @@ void gb_string_to_idxunop
 
     if ((*op) == NULL)
     { 
-        ERROR2 ("op unknown: %s\n", opstring) ;
+        ERROR2 ("op unknown: %s", opstring, GrB_INVALID_VALUE) ;
     }
+
+    return (GrB_SUCCESS) ;
 }
 

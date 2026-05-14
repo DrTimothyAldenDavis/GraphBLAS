@@ -2,7 +2,7 @@
 // GB_mex.h: definitions for the Test interface to GraphBLAS
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -23,6 +23,10 @@
 #include "mex.h"
 #include "matrix.h"
 #include "../Source/include/GB_dev.h"
+
+// The MATLAB test code in GraphBLAS/Test test uses mxMalloc/mxFree only, in
+// the default arena, established with GxB_init.
+#define GB_ARENA_TEST GrB_DEFAULT
 
 #define SIMPLE_RAND_MAX 32767
 uint64_t simple_rand (void) ;

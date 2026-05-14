@@ -7,20 +7,34 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_UTIL
 #include "gb_interface.h"
 
-bool gb_is_column_vector        // true if A is a column vector
+GrB_Info gb_is_column_vector    // determine if A is a column vector
 (
+    // output:
+    bool *is_column_vector,
+    // input:
     GrB_Matrix A                // GrB_matrix to query
 )
-{
-    if (A == NULL) return (false) ;
+{ 
+
+    if (A == NULL)
+    { 
+        (*is_column_vector) = false ;
+        return (GrB_SUCCESS) ;
+    }
+
     uint64_t ncols ;
     int sparsity, orientation ;
+
     OK (GrB_Matrix_get_INT32 (A, &sparsity, GxB_SPARSITY_STATUS)) ;
     OK (GrB_Matrix_get_INT32 (A, &orientation, GrB_STORAGE_ORIENTATION_HINT)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
-    return (sparsity != GxB_HYPERSPARSE && orientation == GrB_COLMAJOR &&
-        ncols == 1) ;
+
+    (*is_column_vector) = (sparsity != GxB_HYPERSPARSE &&
+        orientation == GrB_COLMAJOR && ncols == 1) ;
+
+    return (GrB_SUCCESS) ;
 }
 

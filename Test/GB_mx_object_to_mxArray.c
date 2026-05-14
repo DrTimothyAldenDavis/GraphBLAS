@@ -62,7 +62,7 @@ mxArray *GB_mx_object_to_mxArray    // returns the MATLAB mxArray
     GrB_Type ctype = C->type ;
     ASSERT_MATRIX_OK (C, "C for conversion to MATLAB matrix or struct", GB0) ;
 
-    uint64_t mem = GB_mem (GB_ARENA_MATLAB, 0) ;
+    uint64_t mem = GB_mem (GB_ARENA_TEST, 0) ;
 
     //--------------------------------------------------------------------------
     // save the integer status of the matrix

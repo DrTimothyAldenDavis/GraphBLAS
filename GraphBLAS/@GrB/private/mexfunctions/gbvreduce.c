@@ -20,6 +20,16 @@
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A and the descriptor).
 
+#define FREE_WORK                   \
+    GrB_Matrix_free (&C_shallow) ;  \
+    GrB_Matrix_free (&M_shallow) ;  \
+    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Descriptor_free (&desc) ;
+
+#define FREE_ALL                    \
+    FREE_WORK ;                     \
+    GrB_Matrix_free (&C) ;
+
 #include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.vreduce (Cin, M, accum, op, A, desc)"
@@ -34,61 +44,68 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 2 && nargin <= 6 && nargout <= 2, USAGE) ;
+    GrB_Type atype, ctype = NULL ;
+    GrB_Matrix *C_opaque = NULL, C = NULL, M = NULL, A = NULL,
+        C_shallow = NULL, M_shallow = NULL, A_shallow = NULL ;
+    GrB_Descriptor desc = NULL ;
+
+    gbmx_usage (nargin >= 2 && nargin <= 6 && nargout <= 2, USAGE) ;
+    pargout [0] = gbmx_export_struct (&C_opaque) ;
+    pargout [1] = mxCreateDoubleScalar (0) ;
+    double *kind_output = (double *) mxGetData (pargout [1]) ;
 
     //--------------------------------------------------------------------------
     // find the arguments
     //--------------------------------------------------------------------------
 
-    mxArray *Matrix [6], *String [2], *Cell [2] ;
-    base_enum_t base ;
-    kind_enum_t kind ;
-    int fmt ;
-    int nmatrices, nstrings, ncells, sparsity ;
-    GrB_Descriptor desc ;
-    gb_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String, &nstrings,
-        Cell, &ncells, &desc, &base, &kind, &fmt, &sparsity) ;
+    struct gb_matrix_struct Matrix [6] ;
+    mxArray *Cell [2] ;
+    char String [2][LEN+2] ;
+    int nmatrices, nstrings, ncells ;
+    struct gb_descriptor_struct gbdesc ;
+    gbmx_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String,
+        &nstrings, Cell, &ncells, &gbdesc) ;
 
     CHECK_ERROR (nmatrices < 1 || nmatrices > 3 || nstrings < 1 || ncells > 0,
         USAGE) ;
 
-    // ensure the descriptor is present, and set GxB_SORT to true
-    if (desc == NULL)
-    { 
-        OK (GrB_Descriptor_new (&desc)) ;
-    }
-    OK (GrB_Descriptor_set_INT32 (desc, true, GxB_SORT)) ;
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get the GrB_Descriptor
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_descriptor_mxm (&desc, &gbdesc)) ;
 
     //--------------------------------------------------------------------------
     // get the matrices
     //--------------------------------------------------------------------------
 
-    GrB_Type atype, ctype = NULL ;
-    GrB_Matrix C = NULL, M = NULL, A ;
-
     if (nmatrices == 1)
     { 
-        A = gb_get_shallow (Matrix [0]) ;
+        OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
     }
     else if (nmatrices == 2)
     { 
-        C = gb_get_deep    (Matrix [0]) ;
-        A = gb_get_shallow (Matrix [1]) ;
+        OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
+        OK (gb_get_matrix (&A, &A_shallow, &(Matrix [1]))) ;
     }
     else // if (nmatrices == 3)
     { 
-        C = gb_get_deep    (Matrix [0]) ;
-        M = gb_get_shallow (Matrix [1]) ;
-        A = gb_get_shallow (Matrix [2]) ;
+        OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
+        OK (gb_get_matrix (&M, &M_shallow, &(Matrix [1]))) ;
+        OK (gb_get_matrix (&A, &A_shallow, &(Matrix [2]))) ;
     }
 
     OK (GxB_Matrix_type (&atype, A)) ;
     if (C != NULL)
     { 
-        CHECK_ERROR (!gb_is_column_vector (C), "Cin must be a column vector") ;
+        bool is_column_vector ;
+        OK (gb_is_column_vector (&is_column_vector, C)) ;
+        CHECK_ERROR (!is_column_vector, "Cin must be a column vector") ;
         OK (GxB_Matrix_type (&ctype, C)) ;
     }
 
@@ -101,14 +118,14 @@ void mexFunction
 
     if (nstrings == 1)
     { 
-        monoid = gb_mxstring_to_monoid (String [0], atype) ;
+        OK (gb_string_to_monoid (&monoid, String [0], atype)) ;
     }
     else 
     { 
         // if accum appears, then Cin must also appear
         CHECK_ERROR (C == NULL, USAGE) ;
-        accum  = gb_mxstring_to_binop  (String [0], ctype, ctype) ;
-        monoid = gb_mxstring_to_monoid (String [1], atype) ;
+        OK (gb_string_to_binop (&accum, String [0], ctype, ctype)) ;
+        OK (gb_string_to_monoid (&monoid, String [1], atype)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -134,12 +151,12 @@ void mexFunction
         uint64_t cnrows = (A_transpose) ? ancols : anrows ;
 
         // use the ztype of the monoid as the type of C
-        ctype = gb_monoid_type (monoid) ;
+        OK (gb_monoid_type (&ctype, monoid)) ;
 
         // create the matrix C and set its format and sparsity
-        fmt = gb_get_format (cnrows, 1, A, NULL, fmt) ;
-        sparsity = gb_get_sparsity (A, NULL, sparsity) ;
-        C = gb_new (ctype, cnrows, 1, fmt, sparsity) ;
+        OK (gb_get_format (cnrows, 1, A, NULL, &(gbdesc.fmt))) ;
+        OK (gb_get_sparsity (A, NULL, &(gbdesc.sparsity))) ;
+        OK (gb_new (&C, ctype, cnrows, 1, gbdesc.fmt, gbdesc.sparsity)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -150,19 +167,12 @@ void mexFunction
         accum, monoid, A, desc)) ;
 
     //--------------------------------------------------------------------------
-    // free shallow copies
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_free (&M)) ;
-    OK (GrB_Matrix_free (&A)) ;
-    OK (GrB_Descriptor_free (&desc)) ;
-
-    //--------------------------------------------------------------------------
-    // export the output matrix C
-    //--------------------------------------------------------------------------
-
-    pargout [0] = gb_export (&C, kind) ;
-    pargout [1] = mxCreateDoubleScalar (kind) ;
+    FREE_WORK ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind)) ;
+    (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }
 

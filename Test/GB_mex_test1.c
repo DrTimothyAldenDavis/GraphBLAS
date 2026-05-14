@@ -535,27 +535,27 @@ void mexFunction
     float    f32 = 3.14 ;
     double   f64 = 99.4 ;
 
-    GB_entry_check (GrB_BOOL,   &b,     5, stdout, NULL,NULL, GB_ARENA_MATLAB) ;
+    GB_entry_check (GrB_BOOL,   &b,     5, stdout, NULL,NULL, GB_ARENA_TEST) ;
     printf ("\n");
-    GB_entry_check (GrB_INT8,   &int8,  5, stdout, NULL,NULL, GB_ARENA_MATLAB) ;
+    GB_entry_check (GrB_INT8,   &int8,  5, stdout, NULL,NULL, GB_ARENA_TEST) ;
     printf ("\n");
-    GB_entry_check (GrB_UINT8,  &u8,    5, stdout, NULL,NULL, GB_ARENA_MATLAB) ;
+    GB_entry_check (GrB_UINT8,  &u8,    5, stdout, NULL,NULL, GB_ARENA_TEST) ;
     printf ("\n");
-    GB_entry_check (GrB_INT16,  &int16, 5, stdout, NULL,NULL, GB_ARENA_MATLAB) ;
+    GB_entry_check (GrB_INT16,  &int16, 5, stdout, NULL,NULL, GB_ARENA_TEST) ;
     printf ("\n");
-    GB_entry_check (GrB_UINT16, &u16,   5, stdout, NULL,NULL, GB_ARENA_MATLAB) ;
+    GB_entry_check (GrB_UINT16, &u16,   5, stdout, NULL,NULL, GB_ARENA_TEST) ;
     printf ("\n");
-    GB_entry_check (GrB_INT32,  &int32, 5, stdout, NULL,NULL, GB_ARENA_MATLAB) ;
+    GB_entry_check (GrB_INT32,  &int32, 5, stdout, NULL,NULL, GB_ARENA_TEST) ;
     printf ("\n");
-    GB_entry_check (GrB_UINT32, &u32,   5, stdout, NULL,NULL, GB_ARENA_MATLAB) ;
+    GB_entry_check (GrB_UINT32, &u32,   5, stdout, NULL,NULL, GB_ARENA_TEST) ;
     printf ("\n");
-    GB_entry_check (GrB_INT64,  &int64, 5, stdout, NULL,NULL, GB_ARENA_MATLAB) ;
+    GB_entry_check (GrB_INT64,  &int64, 5, stdout, NULL,NULL, GB_ARENA_TEST) ;
     printf ("\n");
-    GB_entry_check (GrB_UINT64, &u64,   5, stdout, NULL,NULL, GB_ARENA_MATLAB) ;
+    GB_entry_check (GrB_UINT64, &u64,   5, stdout, NULL,NULL, GB_ARENA_TEST) ;
     printf ("\n");
-    GB_entry_check (GrB_FP32,   &f32,   5, stdout, NULL,NULL, GB_ARENA_MATLAB) ;
+    GB_entry_check (GrB_FP32,   &f32,   5, stdout, NULL,NULL, GB_ARENA_TEST) ;
     printf ("\n");
-    GB_entry_check (GrB_FP64,   &f64,   5, stdout, NULL,NULL, GB_ARENA_MATLAB) ;
+    GB_entry_check (GrB_FP64,   &f64,   5, stdout, NULL,NULL, GB_ARENA_TEST) ;
     printf ("\n");
 
     printf ("Check status codes\n") ;
@@ -655,7 +655,7 @@ void mexFunction
 
     OK (GrB_Matrix_new (&A, GrB_BOOL, 10000, 10000)) ;
     GrB_Matrix Q = NULL ;
-    GB_matrix_header_new (&Q, GB_ARENA_MATLAB, GB_ARENA_MATLAB) ;
+    GB_matrix_header_new (&Q, GB_ARENA_TEST, GB_ARENA_TEST) ;
     OK (GB_shallow_copy (Q, A->is_csc, A, NULL)) ;      // A is empty, not iso
     OK (GxB_Matrix_fprint_(Q, GxB_COMPLETE, NULL)) ;
     GrB_Matrix_free_(&A) ;

@@ -64,11 +64,11 @@ switch (type)
 
         % The digraph(...) function allows for logical
         % adjacency matrices (no edge weights are created).
-        DiGraph = digraph (gbbuiltin (G, 'logical')) ;
+        DiGraph = digraph (gb2builtin (gbcast (G, 'logical'))) ;
 
     otherwise
 
         % typecast to double
-        DiGraph = digraph (gbbuiltin (G, 'double')) ;
+        DiGraph = digraph (gb2builtin (gbcast (G, 'double'))) ;
 end
 

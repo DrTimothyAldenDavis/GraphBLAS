@@ -14,6 +14,9 @@
 
 // type = gbtype (X)
 
+// Calls to GrB_* and mx* methods are intermingled since none of the GrB
+// methods allocate any memory.
+
 #include "gb_interface.h"
 
 #define USAGE "usage: type = gbtype (X)"
@@ -31,65 +34,32 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 1 && nargout <= 1, USAGE) ;
+    gbmx_usage (nargin == 1 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the type of the matrix
     //--------------------------------------------------------------------------
 
-    mxArray *c = NULL ;
-    mxClassID class = mxGetClassID (pargin [0]) ;
-    bool is_complex = mxIsComplex (pargin [0]) ;
-
-    if (class == mxSTRUCT_CLASS)
-    {
-        // get the content of a GraphBLASv7_3 struct
-        mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv10") ;
-        if (mx_type == NULL)
-        { 
-            // check if it is a GraphBLASv5_1 struct
-            mx_type = mxGetField (pargin [0], 0, "GraphBLASv7_3") ;
-        }
-        if (mx_type == NULL)
-        { 
-            // check if it is a GraphBLASv5_1 struct
-            mx_type = mxGetField (pargin [0], 0, "GraphBLASv5_1") ;
-        }
-        if (mx_type == NULL)
-        { 
-            // check if it is a GraphBLASv5 struct
-            mx_type = mxGetField (pargin [0], 0, "GraphBLASv5") ;
-        }
-        if (mx_type == NULL)
-        { 
-            // check if it is a GraphBLASv4 struct
-            mx_type = mxGetField (pargin [0], 0, "GraphBLASv4") ;
-        }
-        if (mx_type == NULL)
-        { 
-            // check if it is a GraphBLASv3 struct
-            mx_type = mxGetField (pargin [0], 0, "GraphBLAS") ;
-        }
-        if (mx_type != NULL)
-        {
-            // the mxArray is a struct containing a GraphBLAS GrB_matrix;
-            // get its type
-            c = mxDuplicateArray (mx_type) ;
-        }
-    }
-
-    if (c == NULL)
+    if (mxIsStruct (pargin [0]) || mxIsClass (pargin [0], "GrB"))
     { 
-        // if c is still NULL, then it is not a GraphBLAS opaque struct.
-        // get the type of a built-in matrix
-        c = gb_mxclass_to_mxstring (class, is_complex) ;
+        // get the type of a @GrB matrix
+        GrB_Type type ;
+        GrB_Matrix A = gbmx_get_grb_matrix (pargin [0]) ;
+        OK (GxB_Matrix_type (&type, A)) ;
+        pargout [0] = gbmx_type_to_mxstring (type) ;
+    }
+    else
+    { 
+        // get the type of a MATLAB matrix
+        mxClassID class = mxGetClassID (pargin [0]) ;
+        bool is_complex = mxIsComplex (pargin [0]) ;
+        pargout [0] = gbmx_mxclass_to_mxstring (class, is_complex) ;
     }
 
     //--------------------------------------------------------------------------
     // return the result
     //--------------------------------------------------------------------------
 
-    pargout [0] = c ;
     gb_wrapup ( ) ;
 }
 

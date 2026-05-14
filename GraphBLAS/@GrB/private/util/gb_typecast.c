@@ -7,10 +7,16 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_UTIL
+#define FREE_ALL GrB_Matrix_free (&C) ;
+
 #include "gb_interface.h"
 
-GrB_Matrix gb_typecast  // C = (type) A, where C is deep
+GrB_Info gb_typecast  // C = (type) A, where C is deep
 (
+    // output:
+    GrB_Matrix *C_handle,
+    // inputs:
     GrB_Matrix A,       // may be shallow
     GrB_Type type,      // if NULL, use the type of A
     int fmt,            // format of C
@@ -22,7 +28,8 @@ GrB_Matrix gb_typecast  // C = (type) A, where C is deep
     // determine the sparsity control for C
     //--------------------------------------------------------------------------
 
-    sparsity = gb_get_sparsity (A, NULL, sparsity) ;
+    GrB_Matrix C = NULL ;
+    OK (gb_get_sparsity (A, NULL, &sparsity)) ;
 
     //--------------------------------------------------------------------------
     // get the type of C and A
@@ -43,7 +50,7 @@ GrB_Matrix gb_typecast  // C = (type) A, where C is deep
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
-    GrB_Matrix C = gb_new (type, nrows, ncols, fmt, sparsity) ;
+    OK (gb_new (&C, type, nrows, ncols, fmt, sparsity)) ;
 
     //--------------------------------------------------------------------------
     // C = A
@@ -65,6 +72,7 @@ GrB_Matrix gb_typecast  // C = (type) A, where C is deep
     // return result
     //--------------------------------------------------------------------------
 
-    return (C) ;
+    (*C_handle) = C ;
+    return (GrB_SUCCESS) ;
 }
-
+ 

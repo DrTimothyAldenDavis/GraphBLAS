@@ -158,8 +158,9 @@ else
     libgraphblas = '-lgraphblas' ;
 end
 
-  silent = '-silent' ;      % completely silent
+% silent = '-silent' ;      % completely silent
 % silent = '-v' ;           % extremely verbose
+  silent = '' ;
 
 % determine if the compiler supports C99 or MSVC complex types
 try

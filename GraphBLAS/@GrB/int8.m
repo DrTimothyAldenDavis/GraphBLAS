@@ -13,7 +13,6 @@ function C = int8 (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-G = G.opaque ;
 desc.kind = 'full' ;
-C = gbfull (G, 'int8', int8 (0), desc) ;        % export as a full matrix
+C = gb2builtin (gbfull (G, 'int8', int8 (0), desc)) ;
 

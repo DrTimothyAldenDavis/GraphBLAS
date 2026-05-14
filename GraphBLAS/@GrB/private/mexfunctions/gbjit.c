@@ -29,7 +29,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 2 && nargout <= 2, USAGE) ;
+    gbmx_usage (nargin <= 2 && nargout <= 2, USAGE) ;
 
     //--------------------------------------------------------------------------
     // set the JIT control, if requested
@@ -40,9 +40,8 @@ void mexFunction
         // set the JIT control
         #define JIT(c) \
             OK (GrB_Global_set_INT32 (GrB_GLOBAL, c, GxB_JIT_C_CONTROL)) ;
-        #define LEN 256
         char status [LEN+2]  ;
-        gb_mxstring_to_string (status, LEN, pargin [0], "status") ;
+        gbmx_mxstring_to_string (status, LEN, pargin [0], "status") ;
         if      (MATCH (status, ""     ))
         { 
             /* do nothing */ ;
@@ -74,7 +73,7 @@ void mexFunction
         }
         else
         { 
-            ERROR2 ("unknown option: %s", status) ;
+            ERROR2 ("unknown option: %s", status, GrB_INVALID_VALUE) ;
         }
     }
 
@@ -103,17 +102,17 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     if (nargin > 1)
-    {
+    { 
         if (!mxIsChar (pargin[1]))
         {
-            ERROR ("path must be a string") ;
+            ERROR ("path must be a string", GrB_INVALID_VALUE) ;
         }
         size_t pathlen = mxGetNumberOfElements (pargin [1]) + 2 ;
         char *path = mxMalloc (pathlen + 2) ;
         path [0] = '\0' ;
         mxGetString (pargin [1], path, pathlen) ;
         OK (GrB_Global_set_String (GrB_GLOBAL, path, GxB_JIT_CACHE_PATH)) ;
-        mxFree (path) ;
+        gbmx_free ((void **) &path) ;
     }
 
     //--------------------------------------------------------------------------
@@ -121,14 +120,14 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     if (nargout > 1)
-    {
+    { 
         size_t pathlen = 0 ;
         OK (GrB_Global_get_SIZE (GrB_GLOBAL, &pathlen, GxB_JIT_CACHE_PATH)) ;
         char *path = mxMalloc (pathlen + 2) ;
         path [0] = '\0' ;
         OK (GrB_Global_get_String (GrB_GLOBAL, path, GxB_JIT_CACHE_PATH)) ;
         pargout [1] = mxCreateString (path) ;
-        mxFree (path) ;
+        gbmx_free ((void **) &path) ;
     }
 
     //--------------------------------------------------------------------------

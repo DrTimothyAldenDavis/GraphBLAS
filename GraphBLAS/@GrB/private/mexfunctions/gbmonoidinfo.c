@@ -30,30 +30,43 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
+    GrB_Monoid monoid = NULL ;
+    GrB_Type type = NULL ;
+
+    gbmx_usage (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
+    if (nargout == 1)
+    { 
+        pargout [0] = mxCreateLogicalScalar (true) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
+    char op_string [LEN+2] ;
+    char type_string [LEN+2] ;
+    gbmx_mxstring_to_string (op_string, LEN, pargin [0], "binary operator") ;
+    if (nargin > 1)
+    { 
+        gbmx_mxstring_to_string (type_string, LEN, pargin [1], "type") ;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
 
     //--------------------------------------------------------------------------
     // construct the GraphBLAS monoid and print it
     //--------------------------------------------------------------------------
 
-    #define LEN 256
-    char opstring [LEN+2] ;
-    gb_mxstring_to_string (opstring, LEN, pargin [0], "binary operator") ;
-
-    GrB_Type type = NULL ;
     if (nargin > 1)
     { 
-        type = gb_mxstring_to_type (pargin [1]) ;
+        type = gb_string_to_type (type_string) ;
         CHECK_ERROR (type == NULL, "unknown type") ;
     }
 
-    GrB_Monoid op = gb_mxstring_to_monoid (pargin [0], type) ;
+    OK (gb_string_to_monoid (&monoid, op_string, type)) ;
+
     int pr = (nargout < 1) ? GxB_COMPLETE : GxB_SILENT ;
-    OK (GxB_Monoid_fprint (op, opstring, pr, NULL)) ;
-    if (nargout == 1)
-    {
-        pargout [0] = mxCreateLogicalScalar (true) ;
-    }
+    OK (GxB_Monoid_fprint (monoid, op_string, pr, NULL)) ;
     gb_wrapup ( ) ;
 }
 

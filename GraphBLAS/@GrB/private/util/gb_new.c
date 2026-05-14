@@ -7,10 +7,14 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_UTIL
 #include "gb_interface.h"
 
-GrB_Matrix gb_new       // create and empty matrix C
+GrB_Info gb_new       // create and empty matrix C
 (
+    // output
+    GrB_Matrix *C_handle,
+    // input
     GrB_Type type,      // type of C
     uint64_t nrows,     // # of rows
     uint64_t ncols,     // # of rows
@@ -26,7 +30,7 @@ GrB_Matrix gb_new       // create and empty matrix C
     // get the default format, if needed
     if (fmt < 0)
     { 
-        fmt = gb_default_format (nrows, ncols) ;
+        OK (gb_default_format (&fmt, nrows, ncols)) ;
     }
 
     // set the desired format
@@ -43,11 +47,12 @@ GrB_Matrix gb_new       // create and empty matrix C
         int current ;
         OK (GrB_Matrix_get_INT32 (C, &current, GxB_SPARSITY_CONTROL)) ;
         if (current != sparsity)
-        {
+        { 
             OK (GrB_Matrix_set_INT32 (C, sparsity, GxB_SPARSITY_CONTROL)) ;
         }
     }
 
-    return (C) ;
+    (*C_handle) = C ;
+    return (GrB_SUCCESS) ;
 }
 

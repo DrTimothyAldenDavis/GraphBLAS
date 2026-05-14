@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// This function accesses opaque content and GB_methods inside GraphBLAS.
+#define FREE_WORK GrB_Matrix_free (&A_shallow) ;
 
 #include "gb_interface.h"
 
@@ -23,17 +23,31 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 2 && nargout <= 1, USAGE) ;
+    GrB_Matrix A = NULL, A_shallow = NULL ;
+
+    gbmx_usage (nargin == 2 && nargout <= 1, USAGE) ;
+    pargout [0] = mxCreateDoubleScalar (0) ;
+    double *s_output = (double *) mxGetData (pargout [0]) ;
 
     //--------------------------------------------------------------------------
-    // get the inputs 
+    // get inputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A = gb_get_shallow (pargin [0]) ;
-    int64_t norm_kind = gb_norm_kind (pargin [1]) ;
+    struct gb_matrix_struct Matrix [1] ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+
+    int64_t norm_kind = gbmx_norm_kind (pargin [1]) ;
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get the input matrix
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
 
     GrB_Type atype ;
     OK (GxB_Matrix_type (&atype, A)) ;
@@ -51,7 +65,10 @@ void mexFunction
 
     double s ;
 
-    if (norm_kind == INT64_MIN && !gb_is_dense (A))
+    bool is_dense ;
+    OK (gb_is_dense (&is_dense, A)) ;
+
+    if (norm_kind == INT64_MIN && !is_dense)
     { 
         // norm (A,-inf) is zero if A is not full
         s = 0 ;
@@ -64,21 +81,22 @@ void mexFunction
         // or when p = 0 (for Frobenius norm).  A cannot be bitmap.
         uint64_t anz ;
         OK (GrB_Matrix_nvals (&anz, A)) ;
-        s = GB_helper10 (A->x, A->iso, NULL, false, atype, norm_kind, anz) ;
-        if (s < 0) ERROR ("unknown norm") ;
+        OK (GB_helper10 (&s, A->x, A->iso, NULL, false, atype,
+            norm_kind, anz)) ;
+        CHECK_ERROR (s < 0, "unknown norm") ;
     }
     else
     { 
         // s = norm (A, norm_kind)
-        s = gb_norm (A, norm_kind) ;
+        OK (gb_norm (&s, A, norm_kind)) ;
     }
 
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_free (&A)) ;
-    pargout [0] = mxCreateDoubleScalar (s) ;
+    FREE_WORK ;
+    (*s_output) = s ;
     gb_wrapup ( ) ;
 }
 

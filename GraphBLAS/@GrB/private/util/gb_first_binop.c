@@ -7,32 +7,37 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_UTIL
 #include "gb_interface.h"
 
-GrB_BinaryOp gb_first_binop         // return GrB_FIRST_[type] operator
+GrB_Info gb_first_binop     // construct GrB_FIRST_[type] operator
 (
+    // output
+    GrB_BinaryOp *op,       // return GrB_FIRST_[type] operator
+    // input
     const GrB_Type type
 )
 { 
 
-    if      (type == GrB_BOOL)   return (GrB_FIRST_BOOL) ;
-    else if (type == GrB_INT8)   return (GrB_FIRST_INT8) ;
-    else if (type == GrB_INT16)  return (GrB_FIRST_INT16) ;
-    else if (type == GrB_INT32)  return (GrB_FIRST_INT32) ;
-    else if (type == GrB_INT64)  return (GrB_FIRST_INT64) ;
-    else if (type == GrB_UINT8)  return (GrB_FIRST_UINT8) ;
-    else if (type == GrB_UINT16) return (GrB_FIRST_UINT16) ;
-    else if (type == GrB_UINT32) return (GrB_FIRST_UINT32) ;
-    else if (type == GrB_UINT64) return (GrB_FIRST_UINT64) ;
-    else if (type == GrB_FP32)   return (GrB_FIRST_FP32) ;
-    else if (type == GrB_FP64)   return (GrB_FIRST_FP64) ;
-    else if (type == GxB_FC32)   return (GxB_FIRST_FC32) ;
-    else if (type == GxB_FC64)   return (GxB_FIRST_FC64) ;
+    if      (type == GrB_BOOL)   (*op) = GrB_FIRST_BOOL ;
+    else if (type == GrB_INT8)   (*op) = GrB_FIRST_INT8 ;
+    else if (type == GrB_INT16)  (*op) = GrB_FIRST_INT16 ;
+    else if (type == GrB_INT32)  (*op) = GrB_FIRST_INT32 ;
+    else if (type == GrB_INT64)  (*op) = GrB_FIRST_INT64 ;
+    else if (type == GrB_UINT8)  (*op) = GrB_FIRST_UINT8 ;
+    else if (type == GrB_UINT16) (*op) = GrB_FIRST_UINT16 ;
+    else if (type == GrB_UINT32) (*op) = GrB_FIRST_UINT32 ;
+    else if (type == GrB_UINT64) (*op) = GrB_FIRST_UINT64 ;
+    else if (type == GrB_FP32)   (*op) = GrB_FIRST_FP32 ;
+    else if (type == GrB_FP64)   (*op) = GrB_FIRST_FP64 ;
+    else if (type == GxB_FC32)   (*op) = GxB_FIRST_FC32 ;
+    else if (type == GxB_FC64)   (*op) = GxB_FIRST_FC64 ;
     else
     {
-        ERROR ("unsupported type") ;
+        (*op) = NULL ;
+        ERROR ("unsupported type", GrB_DOMAIN_MISMATCH) ;
     }
 
-    return (NULL) ;
+    return (GrB_SUCCESS) ;
 }
 

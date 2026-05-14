@@ -13,6 +13,17 @@
 
 // blob = gbserialize (A, method)
 
+// The blob is returned as the opaque content of an n-by-1 uint8 @GrB matrix.
+
+#define FREE_WORK                   \
+    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Descriptor_free (&desc) ;
+
+#define FREE_ALL                    \
+    FREE_WORK ;                     \
+    gb_free ((void **) &blob) ;     \
+    GrB_Vector_free (&Blob) ;
+
 #include "gb_interface.h"
 
 #define USAGE "usage: blob = GrB.serialize (A, method, level)"
@@ -27,26 +38,61 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gb_usage ((nargin >= 1 && nargin <= 3) && nargout <= 1, USAGE) ;
-    GrB_Matrix A = gb_get_shallow (pargin [0]) ;
+    GrB_Matrix *Blob_opaque = NULL, A = NULL, A_shallow = NULL ;
+    GrB_Vector Blob = NULL ;
+    GrB_Descriptor desc = NULL ;
+    void *blob = NULL ;
+
+    gbmx_usage ((nargin >= 1 && nargin <= 3) && nargout <= 1, USAGE) ;
+    pargout [0] = gbmx_export_struct (&Blob_opaque) ;
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
+    char method_name [LEN+2] ;
+
+    struct gb_matrix_struct Matrix [1] ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+
+    int method = GxB_COMPRESSION_DEFAULT ;
+    int level = 0 ;     // use whatever is the default for the method
+
+    if (nargin > 1)
+    { 
+        gbmx_mxstring_to_string (method_name, LEN, pargin [1], "method") ;
+    }
+
+    // get the method level
+    if (nargin > 2)
+    { 
+        level = (int) mxGetScalar (pargin [2]) ;
+    }
+    if (level < 0 || level > 999) level = 0 ;
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get input matrix
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+
+    //--------------------------------------------------------------------------
+    // create descriptor
+    //--------------------------------------------------------------------------
 
     bool debug = false ;
-    GrB_Descriptor desc = NULL ;
     if (nargin > 1)
-    {
+    { 
         // create the descriptor
         OK (GrB_Descriptor_new (&desc)) ;
         // get the method
-        int method = GxB_COMPRESSION_DEFAULT ;
-        int level = 0 ;     // use whatever is the default for the method
-        #define LEN 64
-        char method_name [LEN+2] ;
-        gb_mxstring_to_string (method_name, LEN, pargin [1], "method") ;
         if (MATCH (method_name, "none"))
-        {
+        { 
             method = GxB_COMPRESSION_NONE ;
         }
         else if (MATCH (method_name, "lz4"))
@@ -58,7 +104,7 @@ void mexFunction
             method = GxB_COMPRESSION_LZ4HC ;
         }
         else if (MATCH (method_name, "default") || MATCH (method_name, "zstd"))
-        {
+        { 
             // the default is ZSTD, with level 1
             method = GxB_COMPRESSION_ZSTD ;
         }
@@ -70,33 +116,26 @@ void mexFunction
         }
         else
         { 
-            ERROR ("unknown method") ;
+            ERROR ("unknown method", GrB_INVALID_VALUE) ;
         }
-        // get the method level
-        if (nargin > 2)
-        { 
-            level = (int) mxGetScalar (pargin [2]) ;
-        }
-        if (level < 0 || level > 999) level = 0 ;
         // set the descriptor
         OK (GrB_Descriptor_set_INT32 (desc, method + level, GxB_COMPRESSION)) ;
     }
 
     //--------------------------------------------------------------------------
-    // serialize the matrix into the blob
+    // serialize the matrix into the blob (in arena 0)
     //--------------------------------------------------------------------------
 
-    void *blob = NULL ;
-    uint64_t blob_memsize ;
+    uint64_t blob_memsize = 0 ;
 
     if (debug)
     { 
         // debug GrB_Matrix_serializeSize and GrB_Matrix_serialize
         OK (GrB_Matrix_serializeSize (&blob_memsize, A)) ;
-        blob = mxMalloc (blob_memsize) ;
+        blob = gb_malloc (blob_memsize) ;
         OK (GrB_Matrix_serialize (blob, &blob_memsize, A)) ;
         // shrink the blob to its actual size
-        blob = mxRealloc (blob, blob_memsize) ;
+        // blob = realloc (blob, blob_memsize) ;    // this is skipped
     }
     else
     { 
@@ -104,22 +143,21 @@ void mexFunction
         OK (GxB_Matrix_serialize (&blob, &blob_memsize, A, desc)) ;
     }
 
-    OK (GrB_Descriptor_free (&desc)) ;
-
     //--------------------------------------------------------------------------
-    // free the shallow matrix A
+    // transfer the blob into the output Blob vector
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_free (&A)) ;
+    OK (GrB_Vector_new (&Blob, GrB_UINT8, blob_memsize)) ;
+    OK (GxB_Vector_load (Blob, &blob, GrB_UINT8, blob_memsize, blob_memsize,
+        GrB_DEFAULT, NULL)) ;
+    ASSERT (blob == NULL) ;
 
     //--------------------------------------------------------------------------
-    // return the blob to MATLAB as a uint8 dense blobsize-by-1 array
+    // free workspace and return results
     //--------------------------------------------------------------------------
 
-    pargout [0] = mxCreateNumericMatrix (0, 1, mxUINT8_CLASS, mxREAL) ;
-    mxFree (mxGetData (pargout [0])) ;
-    mxSetData (pargout [0], blob) ;
-    mxSetM (pargout [0], blob_memsize) ;
+    FREE_WORK ;
+    OK (gb_export (Blob_opaque, (GrB_Matrix *) &Blob, KIND_GRB)) ;
     gb_wrapup ( ) ;
 }
 

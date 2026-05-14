@@ -12,6 +12,9 @@
 // chunk = gbchunk ;
 // chunk = gbchunk (chunk) ;
 
+// GrB* and mx* methods are intermingled, since the GrB methods do not allocate
+// any memory.
+
 #include "gb_interface.h"
 
 #define USAGE "usage: c = GrB.chunk ; or GrB.chunk (c)"
@@ -29,36 +32,27 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 1 && nargout <= 1, USAGE) ;
+    gbmx_usage (nargin <= 1 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // set the chunk, if requested
     //--------------------------------------------------------------------------
 
-    GrB_Scalar chunk = NULL ;
-
+    double chunk ;
     if (nargin > 0)
     { 
-        // set the chunk
-        CHECK_ERROR (!gb_mxarray_is_scalar (pargin [0]),
+        CHECK_ERROR (!gbmx_mxarray_is_scalar (pargin [0]),
             "input must be a scalar") ;
-        chunk = (GrB_Scalar) gb_get_shallow (pargin [0]) ;
-        OK (GrB_Global_set_Scalar (GrB_GLOBAL, chunk, GxB_CHUNK)) ;
-        OK (GrB_Scalar_free (&chunk)) ;
+        chunk = mxGetScalar (pargin [0]) ;
+        OK (GxB_Global_Option_set_FP64 (GxB_CHUNK, chunk)) ;
     }
-
-    //--------------------------------------------------------------------------
-    // get the chunk and return it
-    //--------------------------------------------------------------------------
-
-    OK (GrB_Scalar_new (&chunk, GrB_FP64)) ;
-    OK (GrB_Global_get_Scalar (GrB_GLOBAL, chunk, GxB_CHUNK)) ;
 
     //--------------------------------------------------------------------------
     // return the chunk
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_export ((GrB_Matrix *) &chunk, KIND_FULL) ;
+    OK (GxB_Global_Option_get_FP64 (GxB_CHUNK, &chunk)) ;
+    pargout [0] = mxCreateDoubleScalar (chunk) ;
     gb_wrapup ( ) ;
 }
 

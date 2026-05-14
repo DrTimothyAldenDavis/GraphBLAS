@@ -71,20 +71,7 @@ function C = build (I,J,X,varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (isobject (I))
-    I = I.opaque ;
-end
+[C_opaque, kind] = gbbuild (I, J, X, varargin {:}) ;
 
-if (isobject (J))
-    J = J.opaque ;
-end
-
-if (isobject (X))
-    X = X.opaque ;
-end
-
-[C, k] = gbbuild (I, J, X, varargin {:}) ;
-if (k == 0)
-    C = GrB (C) ;
-end
+C = gb_mexfunction_result (C_opaque, kind) ;
 

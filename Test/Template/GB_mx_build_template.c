@@ -130,8 +130,8 @@ static GrB_Info builder
     GrB_Info info ;
     GrB_Scalar scalar = NULL ;
     (*Chandle) = NULL ;
-    int header_arena = GB_ARENA_MATLAB ;
-    int data_arena = GB_ARENA_MATLAB ;
+    int header_arena = GB_ARENA_TEST ;
+    int data_arena = GB_ARENA_TEST ;
 
     // create the GraphBLAS output object C
     int sparsity = GxB_SPARSE + GxB_HYPERSPARSE ;
