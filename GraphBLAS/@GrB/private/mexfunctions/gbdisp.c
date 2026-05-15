@@ -30,6 +30,8 @@ void mexFunction
     // check inputs (no outputs to construct)
     //--------------------------------------------------------------------------
 
+    // printf ("================================================== gbdisp\n") ;
+
     GrB_Matrix C = NULL, C_shallow = NULL ;
 
     gbmx_usage (nargin == 3 && nargout == 0, USAGE) ;
@@ -51,6 +53,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     OK (gb_get_matrix (&C, &C_shallow, &(Matrix [0]))) ;
+    // printf ("got C in gbdisp, header %p C_shallow %p\n", C, C_shallow) ;
 
     //--------------------------------------------------------------------------
     // print the GraphBLAS matrix
@@ -84,6 +87,7 @@ void mexFunction
         GxB_INCLUDE_READONLY_STATISTICS)) ;
 
     OK (GxB_Matrix_fprint (C, s, level, NULL)) ;
+    printf ("\n") ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

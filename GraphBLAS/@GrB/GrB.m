@@ -633,23 +633,24 @@ methods
             % opaque handle constructed by a GraphBLAS mexFunction.  The
             % C_opaque struct contains the C.opaque property of a new
             % @GrB object.
-            C_struct = arg1 ;
+            % fprintf ('GrB construct: is struct\n') ;
+            C.opaque = arg1 ;
         else
             % All other cases are handled by gbnew, which creates a new
             % @GrB matrix C with the opaque handle constructed by the
             % gbnew mexFunction
+            % fprintf ('GrB construct: not struct, nargin %d\n', nargin) ;
             switch (nargin)
                 case 1
-                    C_struct = gbnew (arg1) ;
+                    C.opaque = gbnew (arg1) ;
                 case 2
-                    C_struct = gbnew (arg1, arg2) ;
+                    C.opaque = gbnew (arg1, arg2) ;
                 case 3
-                    C_struct = gbnew (arg1, arg2, arg3) ;
+                    C.opaque = gbnew (arg1, arg2, arg3) ;
                 case 4
-                    C_struct = gbnew (arg1, arg2, arg3, arg4) ;
+                    C.opaque = gbnew (arg1, arg2, arg3, arg4) ;
             end
         end
-        C.opaque = C_struct.opaque ;
     end
 
     %---------------------------------------------------------------------

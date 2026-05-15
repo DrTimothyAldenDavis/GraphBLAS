@@ -43,6 +43,8 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
     CHECK_ERROR (C_handle == NULL || (*C_handle == NULL), "internal error 3") ;
     C = (*C_handle) ;
 
+    // OK (GxB_Matrix_fprint (C, "at start of gb_export", 5, NULL)) ;
+
     //--------------------------------------------------------------------------
     // ensure C has no readonly components
     //--------------------------------------------------------------------------
@@ -109,6 +111,10 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
     // C should now be deep, but double-check here
     OK (GrB_Matrix_get_INT32 (C, &readonly, GxB_IS_READONLY)) ;
     CHECK_ERROR (readonly, "internal error 7") ;
+
+    // OK (GxB_Matrix_fprint (C, "gb_export", 5, NULL)) ;
+    // printf ("C from gb_export: %p\n", C) ;
+    // printf ("C_opaque from gb_export: %p\n", C_opaque) ;
 
     (*C_opaque) = C ;       // copy the GraphBLAS C header into C_opaque
     (*C_handle) = NULL ;    // flag C as no longer available to the caller

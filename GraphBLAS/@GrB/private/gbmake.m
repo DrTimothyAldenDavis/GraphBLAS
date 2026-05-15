@@ -51,7 +51,8 @@ end
 make_all = (isequal (what, 'all')) ;
 
 % use -R2018a for the new interleaved complex API
-flags = '-O -R2018a -DGBNCPUFEAT' ;
+% flags = '-O -R2018a -DGBNCPUFEAT' ;
+  flags = '-g -R2018a -DGBNCPUFEAT' ;   % TODO FIXME :
 
 if ispc
     % First do the following in GraphBLAS/build, in the Windows console:

@@ -80,7 +80,7 @@ void mexFunction
 
 #include "gb_interface.h"
 
-static const char *fields = { "opaque" } ;
+static const char *fields [1] = { "opaque" } ;
 
 mxArray *gbmx_export_struct ( GrB_Matrix **C_opaque_handle )
 { 
@@ -89,6 +89,8 @@ mxArray *gbmx_export_struct ( GrB_Matrix **C_opaque_handle )
         mxUINT8_CLASS, mxREAL) ;
     mxSetFieldByNumber (C_struct, 0, 0, C_opaque) ;
     (*C_opaque_handle) = (GrB_Matrix *) mxGetData (C_opaque) ;
+    // printf ("C_opaque_handle:  %p\n", C_opaque_handle) ;
+    // printf ("*C_opaque_handle: %p\n", *C_opaque_handle) ;
     return (C_struct) ;
 }
 

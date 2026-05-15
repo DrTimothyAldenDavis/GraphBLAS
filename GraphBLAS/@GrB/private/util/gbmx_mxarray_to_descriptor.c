@@ -114,7 +114,8 @@ bool gbmx_mxarray_to_descriptor // true if descriptor present in pargin [...]
     memset (gbdesc, 0, sizeof (struct gb_descriptor_struct)) ;
     gbdesc->fmt = GxB_NO_FORMAT ;
 
-    if (mxdesc == NULL || !mxIsStruct (mxdesc))
+    if (mxdesc == NULL || !mxIsStruct (mxdesc) || 
+        mxGetField (mxdesc, 0, "opaque"))
     { 
         // no MATLAB descriptor struct is present in pargin [nargin-1]
         return (false) ;

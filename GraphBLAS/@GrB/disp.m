@@ -27,6 +27,8 @@ function disp (A, level)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+fprintf ('========================= disp:\n') ;
+
 if (nargin < 2)
     level = 2 ;
 else
@@ -41,6 +43,7 @@ if (level > 0)
 end
 
 if (isobject (A))
+    fprintf ('disp: is object\n') ;
     A = A.opaque ;
     gbdisp (A, gb_nnz (A), level) ;
 else

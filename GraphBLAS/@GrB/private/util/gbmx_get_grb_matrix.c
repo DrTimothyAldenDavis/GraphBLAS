@@ -27,16 +27,26 @@ GrB_Matrix gbmx_get_grb_matrix  // the content of a MATLAB @GrB handle object
     //--------------------------------------------------------------------------
 
     mxArray *G_opaque = NULL ;
+
     if (mxIsStruct (G))
     { 
+        // printf ("get G struct\n") ;
         G_opaque = mxGetFieldByNumber (G, 0, 0) ;
     }
     else if (mxIsClass (G, "GrB"))
     { 
-        G_opaque = mxGetProperty (G, 0, "opaque") ;
+//      printf ("get G object opaque\n") ;
+        mxArray *G_prop = mxGetProperty (G, 0, "opaque") ;
+//      printf ("G_prop is struct: %d\n", mxIsStruct (G_prop)) ;
+//      printf ("got G_prop %p\n", G_prop) ;
+        CHECK_ERROR (!mxIsStruct (G_prop), "@GrB object corrupted 1") ;
+        G_opaque = mxGetFieldByNumber (G_prop, 0, 0) ;
+//      printf ("got G_opaque %p\n", G_opaque) ;
     }
 
-    CHECK_ERROR (G_opaque == NULL, "@GrB object corrupted") ;
-    return (*((GrB_Matrix *) mxGetData (G_opaque))) ;
+    CHECK_ERROR (G_opaque == NULL, "@GrB object corrupted 2") ;
+    GrB_Matrix C = (*((GrB_Matrix *) mxGetData (G_opaque))) ;
+    // printf ("got C header is %p\n", C) ;
+    return (C) ;
 }
 

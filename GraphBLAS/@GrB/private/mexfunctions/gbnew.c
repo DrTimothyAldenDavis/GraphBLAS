@@ -200,6 +200,8 @@ void mexFunction
         // GraphBLAS copy of A, same type and format as A
         OK (gb_get_deep (&C, &C_shallow, &(Matrix [0]))) ;
 
+        // GxB_Matrix_fprint (C, "got deep", 5, NULL) ;
+
     }
     else if (nargin == 2)
     { 
@@ -399,6 +401,8 @@ void mexFunction
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
+
+    // OK (GxB_Matrix_fprint (C, "gbnew", 5, NULL)) ;
 
     FREE_WORK ;
     OK (gb_export (C_opaque, &C, KIND_GRB)) ;

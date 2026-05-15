@@ -9,11 +9,20 @@ function display (G) %#ok<DISPLAY>
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% fprintf ('################# display\n') ;
+
 name = inputname (1) ;
 if (~isempty (name))
     fprintf ('\n%s =\n', name) ;
 end
+
+% fprintf ('is object: %d\n', isobject (G)) ;
 G = G.opaque ;
-gbdisp (G, gb_nnz (G), 2) ;
-fprintf ('\n') ;
+% fprintf ('is object: %d\n', isobject (G)) ;
+% fprintf ('is struct: %d\n', isstruct (G)) ;
+
+nz = gb_nnz (G) ;
+
+gbdisp (G, nz, 2) ;
+% fprintf ('\n') ;
 

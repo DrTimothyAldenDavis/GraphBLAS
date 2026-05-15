@@ -75,6 +75,9 @@ void mexFunction
     gbmx_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String,
         &nstrings, Cell, &ncells, &gbdesc) ;
 
+    // printf ("nmatrices %d\n", nmatrices) ;
+    // printf ("ncells %d\n", ncells) ;
+    // printf ("nstrings %d\n", nstrings) ;
     CHECK_ERROR (nmatrices != 2 || nstrings > 0 || ncells > 0, USAGE) ;
 
     ////////////////////////////////////////////////////////////////////////////

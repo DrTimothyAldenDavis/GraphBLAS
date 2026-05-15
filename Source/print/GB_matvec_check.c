@@ -10,9 +10,9 @@
 // in production: turn off developer flag
 #define GB_DEVELOPER 0
 
-// For development only:
-// #undef  GB_DEVELOPER
-// #define GB_DEVELOPER 1
+// For development only: FIXME
+#undef  GB_DEVELOPER
+#define GB_DEVELOPER 1
 
 #include "GB.h"
 #include "pending/GB_Pending.h"
