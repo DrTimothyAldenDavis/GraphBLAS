@@ -33,14 +33,12 @@ void mexFunction
     gbmx_usage (nargin == 1, USAGE) ;
 
     //--------------------------------------------------------------------------
-    // wait on the matrix
+    // get the @GrB matrix handle to the GrB_Matrix, and free the matrix
     //--------------------------------------------------------------------------
 
-    if (mxIsClass (pargin [0], "GrB"))
-    { 
-        GrB_Matrix A = gbmx_get_grb_matrix (pargin [0]) ;
-        GrB_Matrix_free (&A) ;
-    }
+    mxArray *G_opaque = gbmx_get_grb_handle (pargin [0]) ;
+    GrB_Matrix *C_handle = (GrB_Matrix *) mxGetData (G_opaque) ;
+    GrB_Matrix_free (C_handle) ;
 
     //--------------------------------------------------------------------------
     // return the result

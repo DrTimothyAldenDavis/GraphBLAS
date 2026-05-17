@@ -1,11 +1,11 @@
 function C = gb_eunion (A, op, B)
 %GB_EUNION C = A+B, sparse matrix 'addition' using the given op.
 % The pattern of C is the set union of A and B.  Entries in A but not B,
-% or in B but not A, are assumed to have the value zero.  The op is applied
-% to all entries in the set union of the pattern of A and B.
+% or in B but not A, are assumed to have the value zero.  The op is
+% applied to all entries in the set union of the pattern of A and B.
 %
-% The inputs A and B are built-in matrices or GraphBLAS structs (not GrB
-% objects).  The result is a typically a GraphBLAS struct.
+% The inputs A and B are built-in matrices or @GrB objects or structs.
+% The result a GraphBLAS struct.
 %
 % See also GrB/plus, GrB/minus, GrB/bitxor, GrB/bitor, GrB/hypot.
 

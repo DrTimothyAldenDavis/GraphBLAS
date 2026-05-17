@@ -757,6 +757,12 @@ GrB_Matrix gbmx_get_grb_matrix  // the content of a MATLAB @GrB handle object
     const mxArray *G            // must be a @GrB object
 ) ;
 
+mxArray *gbmx_get_grb_handle    // the MATLAB @GrB opaque handle
+(
+    // input
+    const mxArray *G            // must be a @GrB object
+) ;
+
 int64_t gbmx_get_int64_scalar   // return int64 value of a MATLAB scalar
 (
     const mxArray *mxscalar,    // MATLAB scalar to extract

@@ -10,13 +10,5 @@ function C = minus (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (isobject (A))
-    A = A.opaque ;
-end
-
-if (isobject (B))
-    B = B.opaque ;
-end
-
 C = GrB (gb_eunion (A, '-', B)) ;
 

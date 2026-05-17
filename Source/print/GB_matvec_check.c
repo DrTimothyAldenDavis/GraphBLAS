@@ -32,6 +32,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // decide what to print
     //--------------------------------------------------------------------------
 
+//  printf ("A header: %p\n", A) ;
+//  printf ("A->magic is %lx\n", A->magic) ;
+//  GB_CHECK_MAGIC (A) ;
+
     GrB_Info info ;
     bool is_hyper = GB_IS_HYPERSPARSE (A) ;
     bool is_full = GB_IS_FULL (A) ;
@@ -331,9 +335,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     else
     {
         // A is hypersparse
-//          printf ("A->nvec %ld\n", A->nvec) ;
-//          printf ("A->plen %ld\n", A->plen) ;
-//          printf ("A->vdim %ld\n", A->vdim) ;
         if (! (A->nvec >= 0 && A->nvec <= A->plen && A->plen <= A->vdim))
         { 
             GBPR0 ("  invalid hypersparse %s structure\n", kind) ;

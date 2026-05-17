@@ -48,8 +48,6 @@ void gbmx_get_matrix
         // X is a @GrB object
         //----------------------------------------------------------------------
 
-//      printf ("get GrB matrix: %d %d\n", mxIsStruct (X), mxIsClass (X, "GrB")) ;
-
         matrix->G = gbmx_get_grb_matrix (X) ;
         matrix->will_wait = GB_will_wait (matrix->G) ;
         matrix->nvals = GB_nnz (matrix->G) ;
@@ -65,8 +63,6 @@ void gbmx_get_matrix
         //----------------------------------------------------------------------
         // X is a MATLAB matrix
         //----------------------------------------------------------------------
-
-//      printf ("get MATLAB matrix: \n") ;
 
         // get the type and dimensions
         matrix->type = gbmx_mxarray_type (X) ;
@@ -112,20 +108,5 @@ void gbmx_get_matrix
             matrix->x = (void *) mxGetData (X) ;
         }
     }
-
-
-//  printf ("got gb_matrix:\n") ;
-//  printf ("nvals %ld\n", matrix->nvals) ;
-//  GxB_Type_fprint (matrix->type, "matrix->type", 5, NULL) ;
-//  printf ("nrows %ld\n", matrix->nrows) ;
-//  printf ("ncols %ld\n", matrix->ncols) ;
-//  printf ("typesize %d\n", (int) matrix->typesize) ;
-//  printf ("G: %p\n", matrix->G) ;
-//  printf ("p: %p\n", matrix->p) ;
-//  printf ("i: %p\n", matrix->i) ;
-//  printf ("x: %p\n", matrix->x) ;
-//  printf ("is_sparse: %p\n", matrix->is_sparse) ;
-//  printf ("is_empty:  %p\n", matrix->is_empty) ;
-//  printf ("will_wait  %d\n", matrix->will_wait) ;
-
 }
+

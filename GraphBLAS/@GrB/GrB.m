@@ -594,8 +594,11 @@ classdef GrB < handle
 % SPDX-License-Identifier: Apache-2.0
 
 properties (SetAccess = private, GetAccess = private)
-    % The G.opaque content of a @GrB object G is a single pointer to a
-    % GrB_Matrix, which is held in MATLAB as a uint8 array of 8 bytes.
+    % The G.opaque content of a @GrB object G is a MATLAB struct that
+    % contains a single pointer to a GrB_Matrix, which is held in MATLAB
+    % as a uint8 array of 8 bytes.  The opaque content is not accessible
+    % to the user application.
+    % FIXME: also place the blob inside this struct
     opaque = [ ] ;
 end
 
@@ -629,17 +632,14 @@ methods
     %
     % See also sparse.
         if (isstruct (arg1))
-            % C = GrB (C_struct) ; arg1 is a simple struct containing the
-            % opaque handle constructed by a GraphBLAS mexFunction.  The
-            % C_opaque struct contains the C.opaque property of a new
-            % @GrB object.
-            % fprintf ('GrB construct: is struct\n') ;
+            % C = GrB (C_struct) ; arg1 is a struct containing the opaque
+            % struct constructed by a GraphBLAS mexFunction.  This usage
+            % is only meant for internal use inside GraphBLAS *.m files.
             C.opaque = arg1 ;
         else
             % All other cases are handled by gbnew, which creates a new
-            % @GrB matrix C with the opaque handle constructed by the
-            % gbnew mexFunction
-            % fprintf ('GrB construct: not struct, nargin %d\n', nargin) ;
+            % opaque struct to be placed inside a new @GrB object.
+            % This usage is available for the user application.
             switch (nargin)
                 case 1
                     C.opaque = gbnew (arg1) ;
@@ -666,8 +666,6 @@ methods
     %---------------------------------------------------------------------
 
     function G = saveobj (G)
-    fprintf ('GrB saveobj, G.opaque:\n') ;
-    G.opaque
     error ('saveobj not yet implemented') ; % FIXME
     end
 
@@ -992,8 +990,6 @@ methods (Static)
     %---------------------------------------------------------------------
 
     function G = loadobj (G)
-    fprintf ('GrB loadobj, G.opaque:\n') ;
-    G.opaque
     error ('loadobj not yet implemented') ; % FIXME
     end
 
@@ -1006,6 +1002,7 @@ methods (Static)
     % built-in sparse, or built-in full).  The output matrix C is a
     % GraphBLAS matrix.
 
+    % FIXME: benchmark this
     % Some of the methods listed below are high-level graph algorithms
     % that rely on GrB objects internally (bfs, dnn, ktruss, mis,
     % pagerank, and tricount), for simplicity and readability.  All of the
