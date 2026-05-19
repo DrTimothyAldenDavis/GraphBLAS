@@ -24,10 +24,8 @@ function DiGraph = digraph (G, option)
 %
 % See also graph, digraph, GrB/graph.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-G = G.opaque ;
 
 [m, n, type] = gbsize (G) ;
 if (m ~= n)
@@ -47,7 +45,7 @@ end
 % apply the options
 if (omitself)
     % ignore diagonal entries of G
-    G = gbselect ('offdiag', G, 0) ;
+    G = gbselect ('offdiag', G, 0) ;    % FIXME
 end
 
 % construct the digraph

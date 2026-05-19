@@ -6,24 +6,23 @@ function C = bitset (A, B, arg3, arg4)
 % type of A, then C(i,j) is equal to the value of A(i,j) after setting the
 % bit to 1.  If B(i,j) is outside this range, C(i,j) is set to A(i,j),
 % unmodified; note that this behavior is an extension of the built-in
-% bitset, which results in an error for this case.  This modified
-% rule allows the inputs A and B to be sparse.
+% bitset, which results in an error for this case.  This modified rule
+% allows the inputs A and B to be sparse.
 %
-% If A and B are matrices, the pattern of C is the set union of A
-% and B.  If one of A or B is a nonzero scalar, the scalar is expanded
-% into a sparse matrix with the same pattern as the other matrix, and the
-% result is a sparse matrix.
+% If A and B are matrices, the pattern of C is the set union of A and B.
+% If one of A or B is a nonzero scalar, the scalar is expanded into a
+% sparse matrix with the same pattern as the other matrix, and the result
+% is a sparse matrix.
 %
 % If the last input argument is a string, C = bigset (A,B,assumedtype)
-% provides a data type to convert A to if it has a floating-point type.
-% If A already has an integer type, then it is not modified.  Otherwise, A
-% is converted to assumedtype, which can be 'int8', 'int16', 'int32',
-% 'int64', 'uint8', 'uint16', 'uint32' or 'uint64'.  The default is
-% 'uint64'.
+% provides a data type to convert A to if it has a floating-point type.  If
+% A already has an integer type, then it is not modified.  Otherwise, A is
+% converted to assumedtype, which can be 'int8', 'int16', 'int32', 'int64',
+% 'uint8', 'uint16', 'uint32' or 'uint64'.  The default is 'uint64'.
 %
 % C = bitset (A,B,V) sets the bit in A(i,j) at position B(i,j) to 0 if
-% V(i,j) is zero, or to 1 if V(i,j) is nonzero.  If V is a scalar, it
-% is implicitly expanded to V * spones (B).
+% V(i,j) is zero, or to 1 if V(i,j) is nonzero.  If V is a scalar, it is
+% implicitly expanded to V * spones (B).
 %
 % All four arguments may be used, as C = bitset (A,B,V,assumedtype).
 %
@@ -41,16 +40,8 @@ function C = bitset (A, B, arg3, arg4)
 % See also GrB/bitor, GrB/bitand, GrB/bitxor, GrB/bitcmp, GrB/bitshift,
 % GrB/bitset, GrB/bitclr.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-if (isobject (A))
-    A = A.opaque ;
-end
-
-if (isobject (B))
-    B = B.opaque ;
-end
 
 [am, an, atype] = gbsize (A) ;
 [bm, bn, btype] = gbsize (B) ;
@@ -102,9 +93,6 @@ if (~isequal (btype, atype))
 end
 
 % get the matrix or scalar V
-if (isobject (V))
-    V = V.opaque ;
-end
 [m, n] = gbsize (V) ;
 V_is_scalar = (m == 1) && (n == 1) ;
 
@@ -181,5 +169,4 @@ if (isequal (gbtype (C), ctype))
 else
     C = GrB (gbnew (C, ctype)) ;
 end
-
 

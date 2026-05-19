@@ -2,7 +2,7 @@
 // gbdisp: display a GraphBLAS matrix struct
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -30,8 +30,6 @@ void mexFunction
     // check inputs (no outputs to construct)
     //--------------------------------------------------------------------------
 
-    // printf ("================================================== gbdisp\n") ;
-
     GrB_Matrix C = NULL, C_shallow = NULL ;
 
     gbmx_usage (nargin == 3 && nargout == 0, USAGE) ;
@@ -42,7 +40,6 @@ void mexFunction
 
     struct gb_matrix_struct Matrix [1] ;
     gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
-
     double cnz = mxGetScalar (pargin [1]) ;
     int level = (int) mxGetScalar (pargin [2]) ;
 
@@ -53,7 +50,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     OK (gb_get_matrix (&C, &C_shallow, &(Matrix [0]))) ;
-    // printf ("got C in gbdisp, header %p C_shallow %p\n", C, C_shallow) ;
 
     //--------------------------------------------------------------------------
     // print the GraphBLAS matrix

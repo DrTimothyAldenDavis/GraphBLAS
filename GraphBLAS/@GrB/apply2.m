@@ -24,7 +24,7 @@ function C = apply2 (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %
 % See also GrB/apply, GrB/spfun, GrB.binopinfo.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 switch (nargin)

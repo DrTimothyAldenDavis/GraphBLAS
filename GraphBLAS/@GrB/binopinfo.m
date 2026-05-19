@@ -5,11 +5,11 @@ function binopinfo (op, optype)
 %   GrB.binopinfo (op)
 %   GrB.binopinfo (op, optype)
 %
-% Binary operators are defined by a string of the form 'op.optype', or
-% just 'op', where the optype is inferred from the operands.  Valid
-% optypes are 'logical', 'int8', 'int16', 'int32', 'int64', 'uint8',
-% 'uint16', 'uint32', 'uint64', 'single', 'double', 'single complex',
-% 'double complex' (the latter can be written as simply 'complex').
+% Binary operators are defined by a string of the form 'op.optype', or just
+% 'op', where the optype is inferred from the operands.  Valid optypes are
+% 'logical', 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16',
+% 'uint32', 'uint64', 'single', 'double', 'single complex', 'double
+% complex' (the latter can be written as simply 'complex').
 %
 % For GrB.binopinfo (op), the op must be a string of the form 'op.optype',
 % where 'op' is listed below.  The second usage allows the optype to be
@@ -23,15 +23,15 @@ function binopinfo (op, optype)
 % The 6 comparator operators come in two flavors.  For the is* operators,
 % the result has the same type as the inputs, x and y, with 1 for true and
 % 0 for false.  For example isgt.double (pi, 3.0) is the double value 1.0.
-% For the second set of 6 operators (eq, ne, gt, lt, ge, le), the result
-% is always logical (true or false).  In a semiring, the optype of the add
+% For the second set of 6 operators (eq, ne, gt, lt, ge, le), the result is
+% always logical (true or false).  In a semiring, the optype of the add
 % monoid must exactly match the type of the output of the multiply
 % operator, and thus 'plus.iseq.double' is valid (counting how many terms
 % are equal).  The 'plus.eq.double' semiring is valid, but not the same
 % semiring since the 'plus' of 'plus.eq.double' has a logical type and is
-% thus equivalent to 'or.eq.double'.   The 'or.eq' is true if any terms
-% are equal and false otherwise (it does not count the number of terms
-% that are equal).
+% thus equivalent to 'or.eq.double'.   The 'or.eq' is true if any terms are
+% equal and false otherwise (it does not count the number of terms that are
+% equal).
 %
 % The following binary operators are available for most types.  Many have
 % equivalent synonyms, so that '1st' and 'first' both define the
@@ -110,8 +110,8 @@ function binopinfo (op, optype)
 % These functions match the MATLAB functions of the same name.
 %
 % The following index operators can be applied to a matrix A with
-% GrB.apply2 only, where the 2nd input is a scalar y.  When applied
-% to an entry A(i,j) via GrB.apply2 (op, A, y):
+% GrB.apply2 only, where the 2nd input is a scalar y.  When applied to an
+% entry A(i,j) via GrB.apply2 (op, A, y):
 %
 %   tril            j <= (i + y)
 %   triu            j >= (i + y)
@@ -144,7 +144,7 @@ function binopinfo (op, optype)
 % See also GrB.binops, GrB.descriptorinfo, GrB.monoidinfo,
 % GrB.selectopinfo, GrB.semiringinfo, GrB.unopinfo, GrB.optype.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 0)

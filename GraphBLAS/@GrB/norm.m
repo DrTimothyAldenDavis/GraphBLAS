@@ -25,10 +25,6 @@ function s = norm (G, kind)
 
 % FUTURE: add the p-norm for vectors.
 
-if (isobject (G))
-    G = G.opaque ;
-end
-
 if (nargin == 2)
     if (~ischar (kind))
         kind = gb_get_scalar (kind) ;

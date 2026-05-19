@@ -4,16 +4,8 @@ function C = atan2 (A, B)
 %
 % See also GrB/tan, GrB/tanh, GrB/atan, GrB/atanh.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-if (isobject (A))
-    A = A.opaque ;
-end
-
-if (isobject (B))
-    B = B.opaque ;
-end
 
 atype = gbtype (A) ;
 btype = gbtype (B) ;
@@ -23,10 +15,12 @@ if (gb_contains (atype, 'complex') || gb_contains (btype, 'complex'))
 end
 
 if (~gb_isfloat (atype))
+    % cast A to @GrB double
     A = gbnew (A, 'double') ;
 end
 
 if (~gb_isfloat (btype))
+    % cast B to @GrB double
     B = gbnew (B, 'double') ;
 end
 

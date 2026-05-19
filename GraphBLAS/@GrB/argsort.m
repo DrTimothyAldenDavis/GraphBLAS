@@ -8,9 +8,9 @@ function [C,P] = argsort (A, arg1, arg2)
 % [C,P] = argsort (A, dim, 'ascend')
 % [C,P] = argsort (A, dim, 'descend')
 %
-% GrB.argsort sorts the rows or columns of A.  By default, the
-% columns of A are sorted (dim == 1); with dim = 2, the rows of A are
-% sorted.  The default is to sort in ascending order.
+% GrB.argsort sorts the rows or columns of A.  By default, the columns of A
+% are sorted (dim == 1); with dim = 2, the rows of A are sorted.  The
+% default is to sort in ascending order.
 %
 % Example:
 %
@@ -24,20 +24,17 @@ function [C,P] = argsort (A, arg1, arg2)
 %   B (:,1)
 %   I (:,1)
 %
-% This methods differs from the MATLAB sort function.  Implicit zeros
-% are ignored and always placed last in the output.  P is returned sparse,
-% and only reflects the entries in A, not the implicit zeros.  The MATLAB
+% This methods differs from the MATLAB sort function.  Implicit zeros are
+% ignored and always placed last in the output.  P is returned sparse, and
+% only reflects the entries in A, not the implicit zeros.  The MATLAB
 % [C,P] = sort (A) always returns P as full since it permutes the implicit
-% zeros of A as well.  Complex matrices are not supported.
+% zeros of A as well.  Complex matrices are not supported.  C and P are
+% always returned as @GrB objects.
 %
 % See also sort, GrB.argmin, GrB.argmax.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-if (isobject (A))
-    A = A.opaque ;
-end
 
 dim = 1 ;
 direction = 'ascend' ;
@@ -54,11 +51,11 @@ elseif (nargin == 2)
 end
 
 if (nargout == 1)
-    C = gbargsort (A, dim, direction) ;
+    C_opaque = gbargsort (A, dim, direction) ;
 else
-    [C,P] = gbargsort (A, dim, direction) ;
-    P = GrB (P) ;
+    [C_opaque, P_opaque] = gbargsort (A, dim, direction) ;
+    P = GrB (P_opaque) ;
 end
 
-C = GrB (C) ;
+C = GrB (C_opaque) ;
 

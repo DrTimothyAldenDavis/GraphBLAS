@@ -1,13 +1,12 @@
 function C = abs (G)
 %ABS absolute value.
-% C = abs (G) is the absolute value of each entry of G.
-% C is always real, even if C is complex.
+% C = abs (G) is the absolute value of each entry of G.  C is always real,
+% even if C is complex.
 %
 % See also GrB/sign.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-G = G.opaque ;
 C = GrB (gb_abs (G)) ;
 

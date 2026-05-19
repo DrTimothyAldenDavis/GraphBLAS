@@ -11,10 +11,7 @@ function e = nvals (G)
 % SPDX-License-Identifier: Apache-2.0
 
 if (isobject (G))
-    % this is faster:
-    e = gbnvals (G.opaque) ;
-    % the mexFunction can read a @GrB object, but this is 2x slower:
-    % e = gbnvals (G) ;
+    e = gbnvals (G) ;
 else
     % for a MATLAB/Octave matrix: nvals is the same as nnz
     e = nnz (G) ;

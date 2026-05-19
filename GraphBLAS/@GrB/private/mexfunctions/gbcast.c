@@ -9,8 +9,8 @@
 
 // The input may be either a GraphBLAS matrix struct or a standard built-in
 // MATLAB sparse or full matrix.  The output is a @GrB matrix but with a data
-// structure that matches a standard built-in sparse or full matrix: full if
-// all entries are present, and sparse otherwise.
+// structure that matches a standard built-in MATLAB/Octave sparse or full
+// matrix: full if all entries are present, and sparse otherwise.
 
 // Usage:
 
@@ -75,7 +75,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, KIND_BUILTIN)) ;   // fixme:
+    OK (gb_export (C_opaque, &C, KIND_BUILTIN)) ;
     gb_wrapup ( ) ;
 }
 

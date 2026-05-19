@@ -4,8 +4,8 @@ function descriptorinfo (d)
 %   GrB.descriptorinfo
 %   GrB.descriptorinfo (d)
 %
-% The GraphBLAS descriptor is a struct that modifies the behavior
-% of GraphBLAS operations.  It contains the following components, each of
+% The GraphBLAS descriptor is a struct that modifies the behavior of
+% GraphBLAS operations.  It contains the following components, each of
 % which are a string or a number.  Any component of struct that is not
 % present is set to the default value.  If the descriptor d is empty, or
 % not present, in a GraphBLAS function, all default settings are used.
@@ -32,7 +32,7 @@ function descriptorinfo (d)
 %            where the GraphBLAS operation returns an object, which is
 %            preferred since GraphBLAS sparse matrices are faster and can
 %            represent many more data types.  However, if you want a
-%            standard sparse matrix on ouput, use d.kind='sparse'.  Use
+%            standard sparse matrix on output, use d.kind='sparse'.  Use
 %            d.kind='full' to return a full matrix.  Use d.kind='builtin'
 %            for a built-in sparse or full matrix (full if all entries are
 %            present, sparse otherwise).
@@ -42,9 +42,10 @@ function descriptorinfo (d)
 %            'zero-based', then indices are zero-based, in the range 0 to
 %            n-1, for a matrix of dimension n.
 %
-%   d.format a string that describes the sparsity format of the output
-%            matrix C.  The following rules are used to determine the
-%            format of the result, in order:
+%   d.format a string that describes the format of the output matrix C.
+%           The following rules are used to determine the format of the result, in
+%   order:
+
 %
 %            (1) If d.format appears in the descriptor for a method, then
 %               that determines the format of C.
@@ -73,7 +74,7 @@ function descriptorinfo (d)
 % See also GrB.binopinfo, GrB.monoidinfo, GrB.selectopinfo,
 % GrB.semiringinfo, GrB.unopinfo.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % FUTURE: add desc.in* = 'conjugate transpose'

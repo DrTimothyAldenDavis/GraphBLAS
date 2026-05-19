@@ -44,23 +44,12 @@ if (~isequal (S.type, '()'))
     error ('GrB:error', 'index type %s not supported', S.type) ;
 end
 
-if (isobject (C))
-    C = C.opaque ;
-end
-
-if (isobject (A))
-    A = A.opaque ;
-end
-
 ndims = length (S.subs) ;
 
 if (ndims == 1)
 
     % C (M) = A if M is logical, or C (I) = A otherwise
     S = S.subs {1} ;
-    if (isobject (S))
-        S = S.opaque ;
-    end
     if (isequal (gbtype (S), 'logical'))
         % C (M) = A for logical assignment
         [am, an] = gbsize (A) ;
@@ -101,6 +90,13 @@ if (ndims == 1)
 elseif (ndims == 2)
 
     % C (I,J) = A where A is length(I)-by-length(J), or a scalar
+    S.subs
+    'gb_index for 1=-----------------------'
+    S.subs{1}
+    gb_index (S.subs {1})
+    'gb_index for 2=-----------------------'
+    S.subs{2}
+    gb_index (S.subs {2})
     C = GrB (gbsubassign (C, gb_index (S.subs {1}), gb_index (S.subs {2}), A)) ;
 
 else

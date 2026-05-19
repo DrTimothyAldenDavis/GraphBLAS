@@ -1,7 +1,8 @@
 function G = deserialize (blob, mode, arg3)
 %GRB.DESERIALIZE convert a serialized blob into a matrix.
 % G = GrB.deserialize (blob) returns a @GrB matrix constructed from the
-% uint8 array blob constructed by GrB.serialize.
+% uint8 array blob constructed by GrB.serialize.  The input blob may be
+% dense uint8 MATLAB/Octave or @GrB matrix.
 %
 % G = GrB.deserialize (blob) or GrB.deserialize (blob, 'fast') assume the
 % blob comes from a trusted source.  G = GrB.deserialize (blob, 'secure')
@@ -9,6 +10,7 @@ function G = deserialize (blob, mode, arg3)
 % is valid, when the blob might not be trusted.
 %
 % Example:
+%
 %   G = GrB (magic (5))
 %   blob = GrB.serialize (G) ;
 %   f = fopen ('G.bin', 'wb') ;
@@ -21,7 +23,7 @@ function G = deserialize (blob, mode, arg3)
 %
 % See also GrB.serialize, GrB.load, GrB.save, GrB/struct.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % The type may also be specified, as an optional arg3 string:

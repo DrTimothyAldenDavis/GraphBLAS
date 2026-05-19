@@ -77,11 +77,11 @@ void mexFunction
     CHECK_ERROR (nmatrices < 1 || nmatrices > 3 || nstrings > 1, USAGE) ;
 
     int Cell0_len = 0, Cell1_len = 0 ;
-    if (ncells > 1)
+    if (ncells > 0)
     { 
         gbmx_mxcell_to_matrices (Cell0_Matrix, &Cell0_len, Cell [0]) ;
     }
-    if (ncells > 2)
+    if (ncells > 1)
     { 
         gbmx_mxcell_to_matrices (Cell1_Matrix, &Cell1_len, Cell [1]) ;
     }
@@ -174,14 +174,14 @@ void mexFunction
     else if (ncells == 1)
     { 
         // only I is present
-        OK (gb_cell_to_list (&I, &I_to_free, &cncols, NULL,
+        OK (gb_cell_to_list (&I, &I_to_free, &cnrows, NULL,
             Cell0_Matrix, Cell0_len, base_offset, anrows)) ;
         icells = Cell0_len ;
     }
     else if (ncells == 2)
     { 
         // both I and J are present
-        OK (gb_cell_to_list (&I, &I_to_free, &cncols, NULL,
+        OK (gb_cell_to_list (&I, &I_to_free, &cnrows, NULL,
             Cell0_Matrix, Cell0_len, base_offset, anrows)) ;
         OK (gb_cell_to_list (&J, &J_to_free, &cncols, NULL,
             Cell1_Matrix, Cell1_len, base_offset, ancols)) ;
@@ -217,11 +217,19 @@ void mexFunction
         OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity)) ;
     }
 
+// printf ("C input:\n") ; GxB_Matrix_fprint (C, "C input", 5, NULL) ;
+// printf ("M input:\n") ; GxB_Matrix_fprint (M, "M input", 5, NULL) ;
+// printf ("A input:\n") ; GxB_Matrix_fprint (A, "A input", 5, NULL) ;
+// printf ("I input:\n") ; GxB_Vector_fprint (I, "I input", 5, NULL) ;
+// printf ("J input:\n") ; GxB_Vector_fprint (J, "J input", 5, NULL) ;
+
     //--------------------------------------------------------------------------
     // C<M> += A(I,J) or AT(I,J)
     //--------------------------------------------------------------------------
 
     OK1 (C, GxB_Matrix_extract_Vector (C, M, accum, A, I, J, desc)) ;
+
+// GxB_Matrix_fprint (C, "C output", 5, NULL) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

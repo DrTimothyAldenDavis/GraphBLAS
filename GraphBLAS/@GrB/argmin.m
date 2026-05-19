@@ -14,13 +14,13 @@ function [x,p] = argmin (A, dim)
 %       and p is a 2-by-1 vector, with x = min(A,[],'all') = A(p(1),p(2)).
 %       If dim is not present, it defaults to 0.
 %
-% Unlike the built-in min, entries not present in A are not assumed to
-% have the value zero.  Instead, they are ignored.  If column A(:,j) has
-% no entries, x(j) and p(j) are not present in the sparsity pattern of x
-% and p, respectively.  GrB.argmin always returns x and p as column
+% Unlike the built-in min, entries not present in A are not assumed to have
+% the value zero.  Instead, they are ignored.  If column A(:,j) has no
+% entries, x(j) and p(j) are not present in the sparsity pattern of x and
+% p, respectively.  GrB.argmin always returns x and p as @GrB column
 % vectors, while the built-in min returns x and p as either row or column
-% or vectors, depending on dim.  NaNs are ignored.  If x(j) is NaN, p(j)
-% is empty.
+% or vectors, depending on dim.  NaNs are ignored.  If x(j) is NaN, p(j) is
+% empty.
 %
 % Example:
 %
@@ -50,12 +50,8 @@ function [x,p] = argmin (A, dim)
 %
 % See also min, max, GrB/min, GrB/max, GrB.argmax, GrB.argsort.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-if (isobject (A))
-    A = A.opaque ;
-end
 
 if (nargin < 2)
     dim = 0 ;

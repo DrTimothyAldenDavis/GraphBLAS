@@ -37,19 +37,19 @@ function C = assign (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %
 %       The J argument is identical, except that it is a list of column
 %       indices of C.  If only one cell array is provided, J = {  } is
-%       implied, refering to all n columns of C, like C(I,:).
-%       GrB.assign does not support linear indexing of a 2D matrix,
-%       as in C(I)=A when C is a 2D matrix.
+%       implied, refering to all n columns of C, like C(I,:).  GrB.assign
+%       does not support linear indexing of a 2D matrix, as in C(I)=A when
+%       C is a 2D matrix.
 %
 %       If neither I nor J are provided on input, then this implies both
 %       I = { } and J = { }, or C(:,:), refering to all rows and columns
 %       of C.
 %
-%       desc.base modifies how I, start, and fini are interpretted.
-%       If desc.base is 'zero-based' then they are interpretted as
-%       zero-based indices, where 0 is the first row or column.
-%       If desc.base is 'one-based' (which is the default), then
-%       indices are intrepetted as 1-based.
+%       desc.base modifies how I, start, and fini are interpretted.  If
+%       desc.base is 'zero-based' then they are interpretted as zero-based
+%       indices, where 0 is the first row or column.  If desc.base is
+%       'one-based' (which is the default), then indices are intrepetted as
+%       1-based.
 %
 % A: this argument either has size length(I)-by-length(J) (or A' if d.in0
 %       is 'transpose'), or it is 1-by-1 for scalar assignment (like
@@ -59,8 +59,8 @@ function C = assign (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %
 % accum: an optional binary operator, defined by a string ('+.double') for
 %       example.  This allows for C(I,J) = C(I,J) + A to be computed.  If
-%       not present, no accumulator is used and C(I,J)=A is computed.
-%       See 'help GrB.binopinfo' for available binary operators.
+%       not present, no accumulator is used and C(I,J)=A is computed.  See
+%       'help GrB.binopinfo' for available binary operators.
 %
 % M: an optional mask matrix, the same size as C.
 %
@@ -95,7 +95,7 @@ function C = assign (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %
 % See also GrB.subassign, GrB/subsasgn, GrB.binopinfo.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 switch (nargin)

@@ -78,6 +78,9 @@ void mexFunction
     uint64_t *Ai = (uint64_t *) A->i ;
     void *Ax = A->x ;
 
+    int sparsity_status ;
+    OK (GrB_Matrix_get_INT32 (A, &sparsity_status, GxB_SPARSITY_STATUS)) ;
+
     //--------------------------------------------------------------------------
     // sanity checks
     //--------------------------------------------------------------------------
@@ -88,16 +91,15 @@ void mexFunction
     // This allows the contents of the GrB_Matrix to be copied directly into a
     // MATLAB/Octave matrix via memcpy.
 
-    int sparsity_status, fmt, bits, will_wait, iso ;
+    int fmt, bits, will_wait, iso ;
+
+    CHECK_ERROR (!(sparsity_status == GxB_SPARSE
+                || sparsity_status == GxB_FULL), "internal error 722") ;
 
     OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
     CHECK_ERROR (fmt != GxB_BY_COL, "internal error 717") ;
 
-    OK (GrB_Matrix_get_INT32 (A, &sparsity_status, GxB_SPARSITY_STATUS)) ;
-    CHECK_ERROR (!(sparsity_status == GxB_SPARSE
-                || sparsity_status == GxB_FULL), "internal error 722") ;
-
-    if (Matrix.is_sparse)
+    if (sparsity_status == GxB_SPARSE)
     {
         OK (GrB_Matrix_get_INT32 (A, &bits, GxB_OFFSET_INTEGER_BITS)) ;
         CHECK_ERROR (bits != 64, "internal error 718") ;
@@ -122,7 +124,7 @@ void mexFunction
     int nthreads ;
     OK (GrB_Global_get_INT32 (GrB_GLOBAL, &nthreads, GxB_NTHREADS)) ;
 
-    if (Matrix.is_sparse)
+    if (sparsity_status == GxB_SPARSE)
     {
         if (Matrix.type == GrB_BOOL)
         { 

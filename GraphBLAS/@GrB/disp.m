@@ -5,8 +5,8 @@ function disp (A, level)
 % entries with high precision, 5: all with high precision.  The default is
 % 2 if level is not present.  To use this function on a built-in sparse
 % matrix, use disp (A, GrB (level)).  This is useful since disp(A) will
-% always display all entries of A, which can be too verbose if nnz (A)
-% is huge.
+% always display all entries of A, which can be too verbose if nnz (A) is
+% huge.
 %
 % Example:
 %
@@ -24,10 +24,8 @@ function disp (A, level)
 %
 % See also GrB/display.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-fprintf ('========================= disp:\n') ;
 
 if (nargin < 2)
     level = 2 ;
@@ -42,13 +40,7 @@ if (level > 0)
     end
 end
 
-if (isobject (A))
-    fprintf ('disp: is object\n') ;
-    A = A.opaque ;
-    gbdisp (A, gb_nnz (A), level) ;
-else
-    gbdisp (A, nnz (A), level) ;
-end
+gbdisp (A, gb_nnz (A), level) ;
 
 if (level > 0)
     fprintf ('\n') ;

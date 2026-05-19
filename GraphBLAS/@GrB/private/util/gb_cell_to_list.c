@@ -83,6 +83,8 @@ GrB_Info gb_cell_to_list
         // I = { list }
         //----------------------------------------------------------------------
 
+        printf ("len 1, I = {list}\n") ;
+
         OK (gb_matrix_to_list ((GrB_Matrix *) &I, (GrB_Matrix *) &I_to_free,
             &(Cell_Matrix [0]), base_offset)) ;
 
@@ -101,6 +103,8 @@ GrB_Info gb_cell_to_list
         //----------------------------------------------------------------------
         // I = { start, fini } or I = { start, inc, fini }
         //----------------------------------------------------------------------
+
+        printf ("len %d, I = {start ... fini}\n") ;
 
         // Start = Cell {0}, Fini = Cell {1}, and Inc = Cell {2} if present
         int64_t ibegin = 0, iinc = 1, iend = 0 ;

@@ -200,8 +200,6 @@ void mexFunction
         // GraphBLAS copy of A, same type and format as A
         OK (gb_get_deep (&C, &C_shallow, &(Matrix [0]))) ;
 
-        // GxB_Matrix_fprint (C, "got deep", 5, NULL) ;
-
     }
     else if (nargin == 2)
     { 
@@ -230,7 +228,7 @@ void mexFunction
                 // C = GrB (A, type)
                 //--------------------------------------------------------------
 
-                if (&(Matrix [0]).is_empty)
+                if (Matrix [0].is_empty)
                 { 
                     // A is a 0-by-0 built-in matrix.  create a new 0-by-0
                     // GraphBLAS matrix C of the given type, with the default
@@ -352,7 +350,7 @@ void mexFunction
                 ERROR ("unknown type and/or format", GrB_INVALID_VALUE) ;
             }
 
-            if (&(Matrix [0]).is_empty)
+            if (Matrix [0].is_empty)
             { 
                 OK (gb_new (&C, type, 0, 0, fmt, sparsity)) ;
             }
@@ -401,8 +399,6 @@ void mexFunction
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
-
-    // OK (GxB_Matrix_fprint (C, "gbnew", 5, NULL)) ;
 
     FREE_WORK ;
     OK (gb_export (C_opaque, &C, KIND_GRB)) ;

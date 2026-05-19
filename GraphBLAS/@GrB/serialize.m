@@ -42,20 +42,17 @@ function blob = serialize (G, method, level)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (isobject (G))
-    % extract the contents of a GraphBLAS matrix
-    G = G.opaque ;
-end
-
 % serialize the matrix into a uint8 blob
 if (nargin == 1)
     % use the default compression method and default level
-    blob = gbserialize (G) ;
+    b = gbserialize (G) ;
 elseif (nargin == 2)
     % use the given compression method and default level
-    blob = gbserialize (G, method) ;
+    b = gbserialize (G, method) ;
 else
     % use the given compression method and given level
-    blob = gbserialize (G, method, level) ;
+    b = gbserialize (G, method, level) ;
 end
+
+blob = gb2builtin (b) ;
 

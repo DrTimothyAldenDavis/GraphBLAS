@@ -14,7 +14,6 @@ function C = single (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-G = G.opaque ;
 desc.kind = 'full' ;
 if (gb_contains (gbtype (G), 'complex'))
     z = complex (single (0)) ;
@@ -24,5 +23,5 @@ else
     ctype = 'single' ;
 end
 
-C = gbfull (G, ctype, z, desc) ;                % export as a full matrix
+C = gb2builtin (gbfull (G, ctype, z, desc)) ; % export as a full matrix
 

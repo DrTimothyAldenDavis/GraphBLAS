@@ -32,18 +32,7 @@ function [I, whole] = gb_index (I)
 
 whole = false ;
 
-if (isobject (I))
-
-    % C (I) where I is a GraphBLAS matrix/vector of integer indices
-    I = I.opaque ;
-    I = { I } ;
-
-elseif (isstruct (I))
-
-    % C (I) where I is the opaque struct of a GrB matrix/vector
-    I = { I } ;
-
-elseif (iscell (I))
+if (iscell (I))
 
     % The index I already appears as a cell, for the usage
     % C ({ }), C ({ I }), C ({start,fini}), or C ({start,inc,fini}).
@@ -53,19 +42,6 @@ elseif (iscell (I))
     elseif (len == 0)
         % C ({ })
         whole = true ;
-    else
-        % C ({ I }), C ({start,fini}), or C ({start,inc,fini})
-        for k = 1:length(I)
-            K = I {k} ;
-            if (isobject (K))
-                % C ({ ..., K, ... }) where K is a GraphBLAS object
-                K = K.opaque ;
-            end
-            if (isstruct (K))
-                % C ({ ..., K, ... }) where I is a GraphBLAS struct
-                I {k} = K ;
-            end
-        end
     end
 
 elseif (ischar (I) && isequal (I, ':'))
@@ -76,7 +52,8 @@ elseif (ischar (I) && isequal (I, ':'))
 
 else
 
-    % C (I) where I is a built-in matrix/vector of integer indices
+    % C (I) where I is a built-in or GraphBLAS matrix/vector of integer indices,
+    % or a GraphBLAS opaque struct
     I = { I } ;
 
 end

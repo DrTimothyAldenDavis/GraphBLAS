@@ -180,7 +180,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     {
         GBPR0 ("  nvec_nonempty: " GBd , nvec_nonempty) ;
     }
-    GBPR0 (" nvec: " GBd " plen: " GBd "\n  hyper_switch %g "
+    GBPR0 ("  nvec: " GBd " plen: " GBd "\n  hyper_switch %g "
         "bitmap_switch %g\n",
         A->nvec, A->plen, A->hyper_switch, A->bitmap_switch) ;
     #endif

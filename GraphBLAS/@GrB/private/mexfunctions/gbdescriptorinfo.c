@@ -55,7 +55,9 @@ void mexFunction
     // get the GrB_Descriptor
     //--------------------------------------------------------------------------
 
+    gbdesc.nondefault = true ;      // ensure the GrB_Descriptor is allocated
     OK (gb_get_descriptor (&desc, &gbdesc)) ;
+    ASSERT (desc != NULL) ;
 
     //--------------------------------------------------------------------------
     // print the GraphBLAS descriptor
