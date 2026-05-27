@@ -94,7 +94,7 @@ GrB_Info GB_deserialize_from_blob
     // decompress the blocks from the blob
     //--------------------------------------------------------------------------
 
-    size_t s = (*s_handle) ;
+    uint64_t s = (*s_handle) ;
     bool ok = true ;
 
     if (nblocks == 0)

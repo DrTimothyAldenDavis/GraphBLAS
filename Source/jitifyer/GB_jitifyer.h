@@ -453,7 +453,7 @@ GrB_Info GB_jitifyer_set_error_log_worker (const char *new_error_log) ;
 bool GB_jitifyer_get_use_cmake (void) ;
 void GB_jitifyer_set_use_cmake (bool use_cmake) ;
 
-void GB_jitifyer_sanitize (char *string, size_t len) ;
+void GB_jitifyer_sanitize (char *string, uint64_t len) ;
 
 GB_jit_query_func GB_jitifyer_get_query (void *p) ;
 GB_user_op_f GB_jitifyer_get_user_op (void *p) ;

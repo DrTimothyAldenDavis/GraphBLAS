@@ -238,7 +238,7 @@ struct gb_descriptor_struct
     kind_enum_t kind ;  // how to return the output
     int fmt ;           // by row or by col
     int sparsity ;      // hypersparse/sparse/bitmap/full
-    kind_enum_t base ;  // 0-based-int, 1-based int, or 1-based double
+    base_enum_t base ;  // 0-based-int, 1-based int, or 1-based double
 
 // these appear in the GraphBLAS descriptor but are not needed here:
 //  int compression ;   // compression method for GxB_Matrix_serialize

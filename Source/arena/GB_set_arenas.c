@@ -57,7 +57,7 @@ GrB_Info GB_set_arenas          // modify all arenas of a matrix
     //--------------------------------------------------------------------------
 
     uint64_t n = sizeof (struct GB_Matrix_opaque) ;
-    GB_OK (GB_set_arena (Ahandle, &header_mem, new_header_arena, n, n,
+    GB_OK (GB_set_arena ((void **) Ahandle, &header_mem, new_header_arena, n, n,
         nthreads)) ;
     A = (*Ahandle) ;
     A->header_mem = header_mem ;
@@ -83,8 +83,8 @@ GrB_Info GB_set_arenas          // modify all arenas of a matrix
     if (!A->b_shallow)
     { 
         n = anz * sizeof (int8_t) ;
-        GB_OK (GB_set_arena (&(A->b), &(A->b_mem), new_data_arena, n, n,
-            nthreads)) ;
+        GB_OK (GB_set_arena ((void **) &(A->b), &(A->b_mem), new_data_arena,
+            n, n, nthreads)) ;
     }
 
     if (!A->i_shallow)
@@ -119,8 +119,8 @@ GrB_Info GB_set_arenas          // modify all arenas of a matrix
     { 
         uint64_t P_header_mem = Pending->header_mem ;
         n = sizeof (struct GB_Pending_struct) ;
-        GB_OK (GB_set_arena (&(A->Pending), &P_header_mem, new_data_arena,
-            n, n, nthreads)) ;
+        GB_OK (GB_set_arena ((void **) &(A->Pending), &P_header_mem,
+            new_data_arena, n, n, nthreads)) ;
         Pending = A->Pending ;
         Pending->header_mem = P_header_mem ;
         int64_t nmax = Pending->nmax ;
@@ -136,8 +136,9 @@ GrB_Info GB_set_arenas          // modify all arenas of a matrix
         GB_OK (GB_set_arena (&(Pending->j), &(Pending->j_mem), new_data_arena,
             nmax * jsize, n * jsize, nthreads)) ;
 
-        GB_OK (GB_set_arena (&(Pending->x), &(Pending->x_mem), new_data_arena,
-            nmax * Pending->size, n * Pending->size, nthreads)) ;
+        GB_OK (GB_set_arena ((void **) &(Pending->x), &(Pending->x_mem),
+            new_data_arena, nmax * Pending->size, n * Pending->size,
+            nthreads)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -145,12 +146,12 @@ GrB_Info GB_set_arenas          // modify all arenas of a matrix
     //--------------------------------------------------------------------------
 
     n = GB_memsize (A->user_name_mem) ;
-    GB_OK (GB_set_arena (&(A->user_name), &(A->user_name_mem), new_header_arena,
-        n, n, nthreads)) ;
+    GB_OK (GB_set_arena ((void **) &(A->user_name), &(A->user_name_mem),
+        new_header_arena, n, n, nthreads)) ;
 
     n = GB_LOGGER_LEN + 1 ;
-    GB_OK (GB_set_arena (&(A->logger), &(A->logger_mem), new_header_arena,
-        n, n, nthreads)) ;
+    GB_OK (GB_set_arena ((void **) &(A->logger), &(A->logger_mem),
+        new_header_arena, n, n, nthreads)) ;
 
     //--------------------------------------------------------------------------
     // revise the final data arena and return result

@@ -63,7 +63,7 @@ GrB_Info GB_Type_check      // check a GraphBLAS Type
             return (GrB_INVALID_OBJECT) ;
     }
 
-    GBPR0 (" size: %zu\n", type->size) ;
+    GBPR0 (" size: " GBu " \n", type->size) ;
 
     if (type->size == 0 ||
         type->size != GB_code_typesize (type->code, type->size))

@@ -60,17 +60,21 @@ end
 % C will have the same type as A on input
 ctype = atype ;
 
-% determine the type of A
+% ensure A and B have the right type then compute C = bitget (A,B)
 if (isequal (atype, 'double') || isequal (atype, 'single'))
-    A = gbnew (A, assumedtype) ;
     atype = assumedtype ;
+    op = ['bitget.' atype] ;
+    if (~isequal (btype, atype))
+        C = GrB (gb_emult (gbnew (A, atype), op, gbnew (B, atype)), ctype) ;
+    else
+        C = GrB (gb_emult (gbnew (A, atype), op, B), ctype) ;
+    end
+else
+    op = ['bitget.' atype] ;
+    if (~isequal (btype, atype))
+        C = GrB (gb_emult (A, op, gbnew (B, atype)), ctype) ;
+    else
+        C = GrB (gb_emult (A, op, B), ctype) ;
+    end
 end
-
-% ensure B has the right type
-if (~isequal (btype, atype))
-    B = gbnew (B, atype) ;
-end
-
-% extract the bits from each entry of A
-C = GrB (gb_emult (A, ['bitget.' atype], B), ctype) ;
 

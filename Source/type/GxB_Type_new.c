@@ -83,7 +83,7 @@ GrB_Info GxB_Type_new
     // initialize the type
     t->header_mem = header_mem ;
     t->user_name = NULL ; t->user_name_mem = 0 ;
-    t->size = sizeof_type ;
+    t->size = (uint64_t) sizeof_type ;
     t->code = GB_UDT_code ;                 // user-defined type
     memset (t->name, 0, GxB_MAX_NAME_LEN) ; // no name yet
     t->defn = NULL ; t->defn_mem = 0 ;      // no arena yet
@@ -138,9 +138,10 @@ GrB_Info GxB_Type_new
     // determine the type size via the JIT, if necessary
     //--------------------------------------------------------------------------
 
-    if (sizeof_type == 0)
+    uint64_t user_type_size = sizeof_type ;
+    if (user_type_size == 0)
     { 
-        info = GB_user_type_jit (&sizeof_type, t) ;
+        info = GB_user_type_jit (&user_type_size, t) ;
         if (info != GrB_SUCCESS)
         { 
             // unable to determine the type size
@@ -150,7 +151,7 @@ GrB_Info GxB_Type_new
             // is 0 and cannot be determined by the JIT).
             return (info == GrB_NO_VALUE ? GrB_INVALID_VALUE : info) ;
         }
-        t->size = sizeof_type ;
+        t->size = user_type_size ;
     }
 
     //--------------------------------------------------------------------------
@@ -163,7 +164,7 @@ GrB_Info GxB_Type_new
         // automatically on the stack.  These arrays are used for scalar values
         // for a given type.  If VLA is not supported, user-defined types can
         // be no larger than GB_VLA_MAXSIZE.
-        if (sizeof_type > GB_VLA_MAXSIZE)
+        if (user_type_size > GB_VLA_MAXSIZE)
         {
             GrB_Type_free (&t) ;
             return (GrB_INVALID_VALUE) ;

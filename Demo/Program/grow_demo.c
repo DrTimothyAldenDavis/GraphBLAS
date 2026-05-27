@@ -65,7 +65,7 @@ void *my_malloc (size_t size) ;
 void *my_malloc (size_t size)
 {
     void *p = malloc (size) ;
-    printf ("my_malloc (%lu): %p\n", (uint64_t) size, p) ;
+    printf ("my_malloc (%d): %p\n", (int) size, p) ;
     return (p) ;
 }
 

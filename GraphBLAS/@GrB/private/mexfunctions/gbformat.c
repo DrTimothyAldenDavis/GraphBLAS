@@ -42,7 +42,7 @@ void mexFunction
 
     int fmt = GxB_BY_COL ;
     int sparsity = GxB_AUTO_SPARSITY ;
-    bool iso = false ;
+    int iso = false ;
 
     if (nargin == 0)
     { 

@@ -1769,7 +1769,7 @@ GrB_Info GB_jitifyer_load2_worker
             GB_user_type_f GB_user_type =
                 GB_jitifyer_get_user_type (*dl_function) ;
     
-            size_t ignore ;
+            uint64_t ignore ;
             char *defn ;
             GB_user_type (&ignore, &defn) ;
             if (strcmp (defn, type1->defn) == 0)

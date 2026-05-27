@@ -23,9 +23,9 @@
 // GrB_assign, GxB_subassign, or GrB_extract.
 
 #define FREE_WORK                       \
-    GrB_Matrix_free (&Start_to_free) ;  \
-    GrB_Matrix_free (&Fini_to_free) ;   \
-    GrB_Matrix_free (&Inc_to_free) ;
+    GrB_Vector_free (&Start_to_free) ;  \
+    GrB_Vector_free (&Fini_to_free) ;   \
+    GrB_Vector_free (&Inc_to_free) ;
 
 #define FREE_ALL                        \
     FREE_WORK ;                         \
@@ -53,9 +53,9 @@ GrB_Info gb_cell_to_list
     // parse the lists in the cell array
     //--------------------------------------------------------------------------
 
-    GrB_Vector I = NULL, I_to_free = NULL ;
-    GrB_Matrix Start = NULL, Inc = NULL, Fini = NULL,
-        Start_to_free = NULL, Fini_to_free = NULL, Inc_to_free = NULL ;
+    GrB_Vector I = NULL, I_to_free = NULL, Start = NULL, Inc = NULL,
+        Fini = NULL, Start_to_free = NULL, Fini_to_free = NULL,
+        Inc_to_free = NULL ;
     bool Start_is_scalar, Fini_is_scalar, Inc_is_scalar ;
 
     (*I_handle) = NULL ;
@@ -85,8 +85,8 @@ GrB_Info gb_cell_to_list
 
         printf ("len 1, I = {list}\n") ;
 
-        OK (gb_matrix_to_list ((GrB_Matrix *) &I, (GrB_Matrix *) &I_to_free,
-            &(Cell_Matrix [0]), base_offset)) ;
+        OK (gb_matrix_to_list (&I, &I_to_free, &(Cell_Matrix [0]),
+            base_offset)) ;
 
         if (I_max != NULL)
         { 
@@ -114,8 +114,8 @@ GrB_Info gb_cell_to_list
                 0)) ;
             OK (gb_matrix_to_list (&Fini , &Fini_to_free , &(Cell_Matrix [1]),
                 0)) ;
-            OK (gb_is_scalar (&Start_is_scalar, Start)) ;
-            OK (gb_is_scalar (&Fini_is_scalar, Fini)) ;
+            OK (gb_is_scalar (&Start_is_scalar, (GrB_Matrix) Start)) ;
+            OK (gb_is_scalar (&Fini_is_scalar, (GrB_Matrix) Fini)) ;
             CHECK_ERROR (!Start_is_scalar || !Fini_is_scalar,
                 "cell entries must be scalars for start:fini") ;
         }
@@ -127,19 +127,19 @@ GrB_Info gb_cell_to_list
                 0)) ;
             OK (gb_matrix_to_list (&Fini , &Fini_to_free , &(Cell_Matrix [2]),
                 0)) ;
-            OK (gb_is_scalar (&Start_is_scalar, Start)) ;
-            OK (gb_is_scalar (&Inc_is_scalar, Inc)) ;
-            OK (gb_is_scalar (&Fini_is_scalar, Fini)) ;
+            OK (gb_is_scalar (&Start_is_scalar, (GrB_Matrix) Start)) ;
+            OK (gb_is_scalar (&Inc_is_scalar, (GrB_Matrix) Inc)) ;
+            OK (gb_is_scalar (&Fini_is_scalar, (GrB_Matrix) Fini)) ;
             CHECK_ERROR (!Start_is_scalar || !Fini_is_scalar || !Inc_is_scalar,
                 "cell entries must be scalars for start:inc:fini") ;
         }
 
         // get ibegin, iend, and iinc
-        OK (GrB_Matrix_extractElement_INT64 (&ibegin, Start, 0, 0)) ;
-        OK (GrB_Matrix_extractElement_INT64 (&iend, Fini, 0, 0)) ;
+        OK (GrB_Vector_extractElement_INT64 (&ibegin, Start, 0)) ;
+        OK (GrB_Vector_extractElement_INT64 (&iend, Fini, 0)) ;
         if (len == 3)
         { 
-            OK (GrB_Matrix_extractElement_INT64 (&iinc, Inc, 0, 0)) ;
+            OK (GrB_Vector_extractElement_INT64 (&iinc, Inc, 0)) ;
         }
 
         // handle the base_offset

@@ -12,5 +12,6 @@ type = gbtype (G) ;
 if (~gb_isfloat (type))
     type = 'double' ;
 end
+
 C = GrB (gb_trig ('acos', gbapply ('minv', gbfull (G, type)))) ;
 

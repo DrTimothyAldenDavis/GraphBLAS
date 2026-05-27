@@ -141,8 +141,8 @@ void mexFunction
             pargout [0] = mxCreateSparse (Matrix.nrows, Matrix.ncols,
                 Matrix.nvals+1, mxCOMPLEX) ;
         }
-        uint64_t *Cp = mxGetJc (pargout [0]) ;
-        uint64_t *Ci = mxGetIr (pargout [0]) ;
+        uint64_t *Cp = (uint64_t *) mxGetJc (pargout [0]) ;
+        uint64_t *Ci = (uint64_t *) mxGetIr (pargout [0]) ;
         GB_memcpy (Cp, Ap, (Matrix.ncols+1) * sizeof (uint64_t), nthreads) ;
         GB_memcpy (Ci, Ai, Matrix.nvals * sizeof (uint64_t), nthreads) ;
     }

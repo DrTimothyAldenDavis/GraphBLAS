@@ -89,7 +89,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         { 
             if (A->type->name [0] == '\0')
             { 
-                GBPR0 ("user-defined (type size %zu bytes)", A->type->size) ;
+                GBPR0 ("user-defined (type size " GBu " bytes)",
+                    A->type->size) ;
             }
             else
             { 
@@ -546,7 +547,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         if (A->x == NULL || GB_memsize (A->x_mem) < A->type->size)
         { 
             #if GB_DEVELOPER
-            GBPR0 ("A->x %p size %ld arena %d typesize %d\n", A->x,
+            GBPR0 ("A->x %p size " GBd " arena %d typesize %d\n", A->x,
                 GB_memsize (A->x_mem), GB_arena (A->x_mem),
                 (int) A->type->size) ;
             #endif

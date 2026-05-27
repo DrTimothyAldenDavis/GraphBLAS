@@ -12,5 +12,6 @@ if (~gb_isfloat (gbtype (G)))
 else
     op = 'asinh' ;
 end
+
 C = GrB (gbapply (op, G)) ;
 

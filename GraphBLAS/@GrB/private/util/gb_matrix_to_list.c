@@ -172,7 +172,7 @@ GrB_Info gb_matrix_to_list
                 GrB_DIMENSION_MISMATCH) ;
         }
         OK (GxB_Matrix_reshapeDup (&C, S, true, nrows * ncols, 1, NULL)) ;
-        GrB_Vector_free (&S_to_free) ;
+        GrB_Matrix_free (&S_to_free) ;
 
         // ensure C is not hypersparse, and is stored by column
         OK (GrB_Matrix_set_INT32 (C, GxB_SPARSE + GxB_BITMAP + GxB_FULL,

@@ -27,7 +27,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     // input:
     GrB_Type type_expected,         // type expected (NULL for any built-in)
     const GB_void *blob,            // serialized matrix 
-    size_t blob_memsize             // size of the blob
+    uint64_t blob_memsize           // size of the blob
 )
 {
 
@@ -47,7 +47,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     // read the content of the header (160 bytes)
     //--------------------------------------------------------------------------
 
-    size_t s = 0 ;
+    uint64_t s = 0 ;
 
     if (blob_memsize < GB_BLOB_HEADER_SIZE)
     { 
@@ -71,11 +71,9 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     // more bits to create a serialized blob, then GrB 10.0.0 will gracefully
     // fail if it attempts to deserialize the blob.
 
-    uint64_t blob_memsize1 = (uint64_t) blob_memsize ;
-
     // GrB v9.4.2 has the same test below, so it will safely declare the blob
     // invalid if it sees any encoding with a 1 in bit position 4 or 5.
-    if (blob_memsize1 != blob_memsize2
+    if (blob_memsize != blob_memsize2
         || typecode < GB_BOOL_code || typecode > GB_UDT_code
         || (typecode == GB_UDT_code &&
             blob_memsize < GB_BLOB_HEADER_SIZE + GxB_MAX_NAME_LEN)
@@ -277,12 +275,12 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
         //----------------------------------------------------------------------
 
         int nfound = 0 ;
-//      size_t ss [2] ;
-        for (size_t p = s ; p < blob_memsize && nfound < 2 ; p++)
+        // size_t ss [2] ;
+        for (int64_t p = s ; p < blob_memsize && nfound < 2 ; p++)
         {
             if (blob [p] == 0)
             {
-//              ss [nfound] = p ;
+                // ss [nfound] = p ;
                 nfound++ ;
             }
         }
@@ -292,7 +290,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
             // extract the GrB_NAME from the blob;
             // GrB_EL_TYPE_STRING not needed
             char *user_name = (char *) (blob + s) ;
-//          char *eltype_string = (char *) (blob + ss [0] + 1) ;
+            // char *eltype_string = (char *) (blob + ss [0] + 1) ;
             GB_OK (GB_matvec_name_set (C, user_name, GrB_NAME)) ;
         }
     }

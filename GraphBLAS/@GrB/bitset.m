@@ -83,13 +83,13 @@ ctype = atype ;
 
 % determine the type of A
 if (isequal (atype, 'double') || isequal (atype, 'single'))
-    A = gbnew (A, assumedtype) ;
+    A = gbnew (A, assumedtype) ;    % FIXME
     atype = assumedtype ;
 end
 
 % ensure B has the same type as A
 if (~isequal (btype, atype))
-    B = gbnew (B, atype) ;
+    B = gbnew (B, atype) ;  % FIXME
 end
 
 % get the matrix or scalar V
@@ -140,11 +140,11 @@ else
 
     if (a_is_scalar)
         % expand A to a full matrix the same size as V.
-        A = gb_scalar_to_full (m, n, atype, gb_fmt (V), A) ;
+        A = gb_scalar_to_full (m, n, atype, gb_fmt (V), A) ;    % FIXME
     end
     if (b_is_scalar)
         % expand B to a full matrix the same size as V.
-        B = gb_scalar_to_full (m, n, atype, gb_fmt (V), B) ;
+        B = gb_scalar_to_full (m, n, atype, gb_fmt (V), B) ;    % FIXME
     end
 
     % Set all bits referenced by B(i,j) to 1, even those that need to be

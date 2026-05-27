@@ -1563,7 +1563,7 @@ uint64_t GB_encodify_user_type      // encode a user defined type
 GrB_Info GB_user_type_jit       // construct a user type in a JIT kernel
 (
     // output:
-    size_t *typesize,           // sizeof the type
+    uint64_t *user_type_memsize,     // sizeof the user type
     // input:
     const GrB_Type type         // user-defined type
 ) ;

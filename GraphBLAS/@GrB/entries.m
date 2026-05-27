@@ -52,13 +52,8 @@ function result = entries (A, varargin)
 %
 % See also GrB.nonz, nnz, GrB/nnz, nonzeros, GrB/nonzeros.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-if (isobject (A))
-    % A is a GraphBLAS matrix; get its opaque content
-    A = A.opaque ;
-end
 
 % get the count/list of the entries of A
 result = gb_entries (A, varargin {:}) ;

@@ -358,6 +358,7 @@ include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     CUDA/select
     CUDA/slice
     CUDA/type
+    ${OpenMP}
     )
 
 #-------------------------------------------------------------------------------
@@ -613,6 +614,7 @@ if ( GRAPHBLAS_HAS_OPENMP )
     message ( STATUS "CMAKE OpenMP libraries:    ${OpenMP_C_LIBRARIES}" )
     message ( STATUS "CMAKE OpenMP include:      ${OpenMP_C_INCLUDE_DIRS}" )
     list ( APPEND GB_CMAKE_LIBRARIES ${OpenMP_C_LIBRARIES} )
+    include_directories ( ${OpenMP_C_INCLUDE_DIRS} )
     if ( BUILD_SHARED_LIBS )
         target_link_libraries ( GraphBLAS PRIVATE OpenMP::OpenMP_C )
         if ( GRAPHBLAS_HAS_CUDA )

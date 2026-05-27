@@ -155,12 +155,22 @@ try
 
 catch me
     me
-    fprintf ('Building GraphBLAS with cmake failed.  Try this outside of MATLAB:\n') ;
-    fprintf ('\n    cd %s\n    %s\n    %s\n', build_folder, cmd1, cmd2) ;
-    cd (here) ;
-
-    fprintf ('\nThen do this inside MATLAB/Octave:\n\n') ;
-    fprintf ('    cd %s/@GrB/private\n    gbmake\n', here) ;
+    fprintf ('Building GraphBLAS with cmake failed.\n') ;
+    if (ismac)
+        fprintf ('If you have errors like this:\n\n') ;
+        fprintf ('    Undefined symbols for architecture arm64:\n') ;
+        fprintf ('    "___kmpc_dispatch_deinit", referenced from: ...\n\n') ;
+        fprintf ('Then MATLAB mexFunctions on the Mac cannot use OpenMP.\n') ;
+        fprintf ('See the GraphBLAS/GraphBLAS/README.md file for details.\n') ;
+        fprintf ('\nTry compiling without OpenMP, with this command:\n\n') ;
+        fprintf ('    graphblas_install (''-DGRAPHBLAS_USE_OPENMP=0'')\n') ;
+    else
+        fprintf ('Try this outside of MATLAB:\n') ;
+        fprintf ('\n    cd %s\n    %s\n    %s\n', build_folder, cmd1, cmd2) ;
+        cd (here) ;
+        fprintf ('\nThen do this inside MATLAB/Octave:\n\n') ;
+        fprintf ('    cd %s/@GrB/private\n    gbmake\n', here) ;
+    end
     return ;
 end
 

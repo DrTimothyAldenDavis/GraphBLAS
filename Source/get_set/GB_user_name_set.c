@@ -13,14 +13,14 @@ GrB_Info GB_user_name_set
 (
     // input/output
     char **object_user_name,        // user_name of the object
-    size_t *object_user_name_mem,   // user_name_mem of the object
+    uint64_t *object_user_name_mem, // user_name_mem of the object
     // input
     const char *new_name,           // new name for the object
     const bool only_once,           // if true, the name of the object can
                                     // only be set once
     const int header_arena          // arena for user name string
 )
-{ 
+{
 
     uint64_t mem = GB_mem (header_arena, 0) ;
 

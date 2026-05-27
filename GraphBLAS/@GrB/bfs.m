@@ -106,7 +106,7 @@ if (isequal (kind, 'undirected'))
 else
     if (GrB.isbycol (A))
         % this can be costly
-        A = GrB (A, 'by row') ;
+        A = GrB (A, 'by row') ; % FIXME
     end
 end
 
