@@ -2,7 +2,7 @@ function C = gb_prod (op, type, G, option)
 %GB_PROD C = prod (G), using the given operator and type
 % Implements C = prod (G) and C = all (G).
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 [m, n] = gbsize (G) ;
@@ -53,5 +53,4 @@ switch (option)
 
         error ('GrB:error', 'unknown option') ;
 end
-
 

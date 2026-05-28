@@ -1,4 +1,4 @@
-function [I, whole] = gb_index (I)
+function [I, whole] = gb_index (I_input)
 %GB_INDEX helper function for subsref and subsasgn
 % [I, whole] = gb_index (I) converts I into a cell array of built-in
 % matrices or vectors containing integer indices, to access A(I).
@@ -27,24 +27,25 @@ function [I, whole] = gb_index (I)
 % If I is a built-in matrix or vector (not a cell array), then it is
 % wrapped in a cell array, { I }, to denote A(I).
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 whole = false ;
 
-if (iscell (I))
+if (iscell (I_input))
 
-    % The index I already appears as a cell, for the usage
+    % The index I_input already appears as a cell, for the usage
     % C ({ }), C ({ I }), C ({start,fini}), or C ({start,inc,fini}).
-    len = length (I) ;
+    len = length (I_input) ;
     if (len > 3)
         error ('GrB:error', 'invalid indexing: usage is A ({start,inc,fini})') ;
     elseif (len == 0)
         % C ({ })
         whole = true ;
     end
+    I = I_input ;
 
-elseif (ischar (I) && isequal (I, ':'))
+elseif (ischar (I_input) && isequal (I_input, ':'))
 
     % C (:)
     I = { } ;
@@ -52,9 +53,9 @@ elseif (ischar (I) && isequal (I, ':'))
 
 else
 
-    % C (I) where I is a built-in or GraphBLAS matrix/vector of integer indices,
-    % or a GraphBLAS opaque struct
-    I = { I } ;
+    % C (I_input) where I_input is a built-in or GraphBLAS matrix/vector of
+    % integer indices, or a GraphBLAS opaque struct
+    I = { I_input } ;
 
 end
 

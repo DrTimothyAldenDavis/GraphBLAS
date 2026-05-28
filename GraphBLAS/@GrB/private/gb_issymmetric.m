@@ -1,13 +1,13 @@
-function s = gb_issymmetric (G, option, herm)
+function s = gb_issymmetric (G_arg, option, herm)
 %GB_ISSYMMETRIC check if symmetric or Hermitian
 % Implements issymmetric (G,option) and ishermitian (G,option).
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % FUTURE: this can be much faster; see spsym in CHOLMOD.
 
-[m, n, type] = gbsize (G) ;
+[m, n, type] = gbsize (G_arg) ;
 
 if (m ~= n)
 
@@ -16,7 +16,9 @@ if (m ~= n)
 else
 
     if (isequal (type, 'logical'))
-        G = gbnew (G, 'double') ;
+        G = gbnew (G_arg, 'double') ;
+    else
+        G = G_arg ;
     end
 
     if (herm && gb_contains (type, 'complex'))

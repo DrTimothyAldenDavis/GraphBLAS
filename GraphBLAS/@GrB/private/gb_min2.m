@@ -2,7 +2,7 @@ function C = gb_min2 (op, A, B)
 %GB_MIN2 2-input min
 % Implements C = min (A,B)
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 [am, an, atype] = gbsize (A) ;
@@ -19,8 +19,8 @@ if (a_is_scalar)
         % A is a scalar, B is a matrix
         if (gb_scalar (A) < 0)
             % since A < 0, the result is full
-            A = gb_scalar_to_full (bm, bn, ctype, gb_fmt (B), A) ;
-            C = gbeadd (A, op, B) ;
+            a = gb_scalar_to_full (bm, bn, ctype, gb_fmt (B), A) ;
+            C = gbeadd (a, op, B) ;
         else
             % since A >= 0, the result is sparse.
             C = gbapply2 (gbfull (A), op, B) ;
@@ -31,8 +31,8 @@ else
         % A is a matrix, B is a scalar
         if (gb_scalar (B) < 0)
             % since B < 0, the result is full
-            B = gb_scalar_to_full (am, an, ctype, gb_fmt (A), B) ;
-            C = gbeadd (A, op, B) ;
+            b = gb_scalar_to_full (am, an, ctype, gb_fmt (A), B) ;
+            C = gbeadd (A, op, b) ;
         else
             % since B >= 0, the result is sparse.
             C = gbapply2 (A, op, gbfull (B)) ;

@@ -1,7 +1,7 @@
 function gbtest67
 %GBTEST67 test digraph
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ;
@@ -43,7 +43,8 @@ for k = 1:length (types)
         isequal (type, 'logical'))
         D1 = digraph (A) ;
     else
-        D1 = digraph (double (A)) ;
+        A2 = real (double (A)) ;
+        D1 = digraph (A2) ;
     end
 
     D2 = digraph (G) ;

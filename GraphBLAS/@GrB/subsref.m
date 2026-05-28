@@ -46,15 +46,12 @@ if (~isequal (S.type, '()'))
     error ('GrB:error', 'index type %s not supported', S.type) ;
 end
 
-'subref here ---------------------------------------'
-S
-A
-ndims = length (S.subs)
+ndims = length (S.subs) ;
 
 if (ndims == 1)
 
     % C = A(M) if M is logical, or C=A(I) otherwise
-    S1 = S.subs {1} 
+    S1 = S.subs {1} ;
     if (isequal (gbtype (S1), 'logical'))
         % C = A (M) for logical indexing
         C = GrB (gblogextract (A, S1)) ;

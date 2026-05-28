@@ -2,7 +2,7 @@ function C = gb_power (A, B)
 %GB_POWER .^ Array power.
 % C = A.^B computes element-wise powers.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 [am, an, atype] = gbsize (A) ;
@@ -46,7 +46,7 @@ else
 end
 
 % B is always full
-B = gbfull (B, ctype) ;
+B2 = gbfull (B, ctype) ;
 
 % determine the operator
 op = ['pow.' ctype] ;
@@ -57,7 +57,7 @@ if (a_is_scalar)
     % A is a scalar: C is a full matrix
     %----------------------------------------------------------------------
 
-    C = gbapply2 (op, gbfull (A, ctype), B) ;
+    C = gbapply2 (op, gbfull (A, ctype), B2) ;
 
 else
 
@@ -66,8 +66,8 @@ else
     %----------------------------------------------------------------------
 
     if (b_is_scalar)
-        % A is a matrix, B is a scalar
-        b = gb_scalar (B) ;
+        % A is a matrix, B2 is a scalar
+        b = gb_scalar (B2) ;
         if (b == 0)
             % special case:  C = A.^0 = ones (am, an, ctype)
             C = gb_scalar_to_full (am, an, ctype, gb_fmt (A), 1) ;
@@ -78,14 +78,14 @@ else
             return
         elseif (b <= 0)
             % 0.^b where b < 0 is Inf, so C is full
-            C = gbapply2 (op, gbfull (A, ctype), B) ;
+            C = gbapply2 (op, gbfull (A, ctype), B2) ;
         else
             % The scalar b is > 0, and thus 0.^b is zero, so C is sparse.
-            C = gbapply2 (op, A, B) ;
+            C = gbapply2 (op, A, B2) ;
         end
     else
-        % both A and B are matrices.  0.^0 is 1, so C is full.
-        C = gbemult (op, gbfull (A, ctype), B) ;
+        % both A and B2 are matrices.  0.^0 is 1, so C is full.
+        C = gbemult (op, gbfull (A, ctype), B2) ;
     end
 
 end

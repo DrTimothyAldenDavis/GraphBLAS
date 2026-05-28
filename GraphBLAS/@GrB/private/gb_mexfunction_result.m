@@ -4,7 +4,7 @@ function C = gb_mexfunction_result (C_opaque, kind)
 % The matrix is returned as a @GrB matrix if kind is 0, or MATLAB/Octave
 % otherwise.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (kind == 0)

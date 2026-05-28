@@ -2,7 +2,7 @@ function C = gb_random (varargin)
 %GB_RANDOM uniformly distributed random GraphBLAS matrix.
 % Implements C = GrB.random (...), C = sprand (...), C = sprand (...),
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 %--------------------------------------------------------------------------
@@ -31,7 +31,13 @@ for k = 1:nargin
                 if (rm*rn > 2)
                     error ('GrB:error', 'range can contain at most 2 entries') ;
                 end
-                range = gbfull (r, type, 0, struct ('kind', 'full')) ;
+                if (gb_contains (type, 'complex'))
+                    r = real (double (r)) ;
+                    rtype = 'double' ;
+                else
+                    rtype = type ;
+                end
+                range = GrB (gbfull (r, rtype, 0, struct ('kind', 'full'))) ;
             case { 'unsymmetric', 'symmetric', 'hermitian' }
                 sym_option = arg ;
             otherwise

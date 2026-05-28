@@ -2,7 +2,7 @@
 // gb_by_col: ensure a matrix is stored by column
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -11,6 +11,7 @@
 // matrix.
 
 #define GB_UTIL
+#define FREE_ALL GrB_Matrix_free (&A_copy) ;
 #include "gb_interface.h"
 
 GrB_Info gb_by_col
@@ -23,6 +24,8 @@ GrB_Info gb_by_col
 )
 {
     GrB_Matrix A_copy = NULL, A = NULL ;
+    (*A_handle) = NULL ;
+    (*A_copy_handle) = NULL ;
 
     // get the format of A_input
     int fmt ;

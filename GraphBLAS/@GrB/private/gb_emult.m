@@ -9,7 +9,7 @@ function C = gb_emult (A, op, B)
 % The input matrices may be either GraphBLAS structs and/or built-in
 % matrices, in any combination.  C is returned as a GraphBLAS struct.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (gb_isscalar (A))
@@ -26,7 +26,14 @@ else
         C = gbapply2 (A, op, gbfull (B)) ;
     else
         % both A and B are matrices
+        % FIXME HERE
+        'HERE am i'
+        A
+        B
         C = gbemult (A, op, B) ;
     end
 end
 
+Result = GrB (C)
+C
+dec2hex (C.opaque)

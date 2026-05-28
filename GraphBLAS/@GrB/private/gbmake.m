@@ -17,7 +17,7 @@ function gbmake (what)
 %
 % See also mex, version, GrB.clear.
 %
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;

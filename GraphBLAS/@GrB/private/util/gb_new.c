@@ -2,12 +2,13 @@
 // gb_new: create a GraphBLAS matrix with desired format and sparsity control
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 #define GB_UTIL
+#define FREE_ALL GrB_Matrix_free (&C) ;
 #include "gb_interface.h"
 
 GrB_Info gb_new       // create and empty matrix C

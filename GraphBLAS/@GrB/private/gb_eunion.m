@@ -9,7 +9,7 @@ function C = gb_eunion (A, op, B)
 %
 % See also GrB/plus, GrB/minus, GrB/bitxor, GrB/bitor, GrB/hypot.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 [am, an, atype] = gbsize (A) ;
@@ -25,15 +25,15 @@ if (a_is_scalar)
     else
         % A is a scalar, B is a matrix.  Result is full.
         % expand A to a full matrix
-        A = gb_scalar_to_full (bm, bn, type, gb_fmt (B), A) ;
-        C = gbeadd (A, op, B) ;
+        a = gb_scalar_to_full (bm, bn, type, gb_fmt (B), A) ;
+        C = gbeadd (a, op, B) ;
     end
 else
     if (b_is_scalar)
         % A is a matrix, B is a scalar.  Result is full.
         % expand B to a full matrix
-        B = gb_scalar_to_full (am, an, type, gb_fmt (A), B) ;
-        C = gbeadd (A, op, B) ;
+        b = gb_scalar_to_full (am, an, type, gb_fmt (A), B) ;
+        C = gbeadd (A, op, b) ;
     else
         % both A and B are matrices.  Result is sparse.
         C = gbeunion (A, 0, op, B, 0) ;

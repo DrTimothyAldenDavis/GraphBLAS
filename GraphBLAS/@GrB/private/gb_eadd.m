@@ -10,7 +10,7 @@ function C = gb_eadd (A, op, B)
 %
 % See also GrB/plus, GrB/minus, GrB/bitxor, GrB/bitor, GrB/hypot.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 [am, an, atype] = gbsize (A) ;
@@ -38,8 +38,7 @@ else
     if (b_is_scalar)
         % A is a matrix, B is a scalar.  Result is full, unless B == 0.
         if (gb_scalar (B) == 0)
-            % C = A+0 is a built-in matrix if A is a built-in matrix
-            C = A ;
+            C = GrB (A) ;
         else
             % expand B to a full matrix
             C = gbeadd (A, op, ...

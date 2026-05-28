@@ -1,11 +1,11 @@
-function C = gb_bitwise (op, A, B, assumedtype)
+function C = gb_bitwise (op, A_arg, B_arg, assumedtype)
 %GB_BITWISE bitwise AND, OR, XOR, ...
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-atype = gbtype (A) ;
-btype = gbtype (B) ;
+atype = gbtype (A_arg) ;
+btype = gbtype (B_arg) ;
 
 if (gb_contains (atype, 'complex') || gb_contains (btype, 'complex'))
     error ('GrB:error', 'inputs must be real') ;
@@ -23,8 +23,10 @@ end
 ctype = atype ;
 
 if (isequal (atype, 'double') || isequal (atype, 'single'))
-    A = gbnew (A, assumedtype) ;
+    A = gbnew (A_arg, assumedtype) ;
     atype = assumedtype ;
+else
+    A = A_arg ;
 end
 
 if (isequal (op, 'bitshift'))
@@ -32,12 +34,14 @@ if (isequal (op, 'bitshift'))
     if (~isequal (btype, 'int8'))
         % convert B to int8, and ensure all values are in range -64:64
         % ensure all entries in B are <= 64
-        B = gbapply2 (['min.' btype], B, 64) ;
+        B = gbapply2 (['min.' btype], B_arg, 64) ;
         if (gb_issigned (btype))
             % ensure all entries in B are >= -64
             B = gbapply2 (['max.' btype], B, -64) ;
         end
         B = gbnew (B, 'int8') ;
+    else
+        B = B_arg ;
     end
 
     a_is_scalar = gb_isscalar (A) ;
@@ -59,8 +63,10 @@ if (isequal (op, 'bitshift'))
 else
 
     if (isequal (btype, 'double') || isequal (btype, 'single'))
-        B = gbnew (B, assumedtype) ;
+        B = gbnew (B_arg, assumedtype) ;
         btype = assumedtype ;
+    else
+        B = B_arg ;
     end
     if (~isequal (atype, btype))
         error ('GrB:error', 'integer inputs must have the same type') ;

@@ -1,12 +1,12 @@
 function gbtest40
 %GBTEST40 test sum, prod, max, min, any, all, norm
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 rng ('default')
 
-x = GrB.random (10, 1, inf, 'range', complex ([0 1])) ;
+x = GrB.random (10, 1, inf, 'range', double ([0 1])) ;
 s1 = norm (x, 2) ;
 s2 = norm (double (x), 2) ;
 assert (abs (s1-s2) < 1e-12) ;

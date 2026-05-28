@@ -1,7 +1,7 @@
 function gbtest70
 %GBTEST70 test GrB.random
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ; A = sprand (4, 5, 0.5) ;
@@ -20,6 +20,7 @@ for k = 1:length(types)
     G = GrB.random (30, 40, 0.6) ; %#ok<*NASGU>
 
     r = gbtest_cast ([3 40], type) ;
+
     G = GrB.random (300, 400, 0.6, 'range', r) ;
     assert (isequal (GrB.type (G), type)) ;
 

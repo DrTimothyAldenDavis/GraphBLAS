@@ -2,7 +2,7 @@
 // gb_expand_scalar_to_vector: V (1:nvals) = V (1)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -30,11 +30,8 @@ GrB_Info gb_expand_scalar_to_vector
     // get the single entry from the input vector V, and then free it
     //--------------------------------------------------------------------------
 
-//  GxB_Vector_fprint (*V, "V input to gb_expand_scalar_to_vector", 5, NULL) ;
-
     GrB_Scalar x = NULL ;
     OK (gb_get_first_scalar (&x, *V, type)) ;
-//  GxB_Scalar_fprint (x, "x", 5, NULL) ;
     GrB_Vector_free (V) ;
 
     //--------------------------------------------------------------------------
