@@ -1,4 +1,4 @@
-function iset = mis (A, check)
+function iset = mis (A_arg, check)
 %GRB.MIS variant of Luby's maximal independent set algorithm.
 %
 %   iset = GrB.mis (A) ;
@@ -22,10 +22,8 @@ function iset = mis (A, check)
 %
 % See also GrB.offdiag.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-% NOTE: this is a high-level algorithm that uses GrB objects.
 
 [m, n] = size (A) ;
 if (m ~= n)
@@ -33,7 +31,7 @@ if (m ~= n)
 end
 
 % convert A to logical
-A = GrB.apply ('1.logical', A) ;
+A = GrB.apply ('1.logical', A_arg) ;
 
 if (nargin < 2)
     check = false ;

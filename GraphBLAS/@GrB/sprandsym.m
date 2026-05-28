@@ -23,13 +23,12 @@ function C = sprandsym (arg1, arg2)
 %
 % See also GrB/sprand, GrB/sprandn, GrB.random.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 1)
     % C = sprandsym (G)
-    G = arg1.opaque ;
-    C = GrB (gb_random (G, 'symmetric', 'normal')) ;
+    C = GrB (gb_random (arg1, 'symmetric', 'normal')) ;
 else
     % C = sprandsym (n, d)
     n = gb_get_scalar (arg1) ;

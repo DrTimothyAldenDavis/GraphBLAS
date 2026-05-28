@@ -116,7 +116,7 @@ function [f,s,iso] = format (arg)
 %
 % See also GrB.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 0)
@@ -126,10 +126,6 @@ if (nargin == 0)
     end
     f = gbformat ;
 else
-    if (isobject (arg))
-        % f = GrB.format (G) ; get the format of the GraphBLAS matrix
-        arg = arg.opaque ;
-    end
     % f = GrB.format (A) ; get the format of A (built-in or GraphBLAS)
     % f = GrB.format (f) ; set the global format for all matrices.
     if (nargout <= 1)

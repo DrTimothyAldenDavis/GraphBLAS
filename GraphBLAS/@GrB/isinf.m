@@ -5,10 +5,9 @@ function C = isinf (G)
 %
 % See also GrB/isnan, GrB/isfinite.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-G = G.opaque ;
 [m, n, type] = gbsize (G) ;
 
 if (gb_isfloat (type) && gbnvals (G) > 0)

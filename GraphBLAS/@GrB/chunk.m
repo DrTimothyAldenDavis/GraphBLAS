@@ -1,4 +1,4 @@
-function c = chunk (c)
+function c = chunk (c_arg)
 %GRB.CHUNK get/set the chunk size to use in GraphBLAS.
 %
 %   c = GrB.chunk ;      % get the current chunk c
@@ -25,6 +25,6 @@ function c = chunk (c)
 if (nargin == 0)
     c = gbchunk ;
 else
-    c = gbchunk (c) ;
+    c = gbchunk (c_arg) ;
 end
 

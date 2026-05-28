@@ -58,4 +58,3 @@ else
     P = GrB (P_opaque) ;
 end
 
-

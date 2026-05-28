@@ -15,4 +15,6 @@ function S = struct (G)
 
 % FIXME either delete this method, or punt to serialize ... ?
 
+error ('not implemented') ; % FIXME
+
 S = G.opaque ;

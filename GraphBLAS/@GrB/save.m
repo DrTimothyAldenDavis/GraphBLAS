@@ -24,6 +24,8 @@ function filename_used = save (C, filename)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+error ('not implemented') ; % FIXME
+
 % make sure C is a @GrB object
 if (~isobject (C))
     C = GrB (C) ;

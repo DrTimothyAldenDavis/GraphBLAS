@@ -21,6 +21,15 @@
 %     GrB.type for more details.
 %
 % ------------------------------------------------
+%% @GrB is a handle object
+% ------------------------------------------------
+%
+%     The @GrB matrix is a handle object, since it can include pending
+%     work.  That means that all methods that take a @GrB matrix as an
+%     input parameter can change the contents of the that matrix (by
+%     finishing any pending work).
+%
+% ------------------------------------------------
 %% Explicit zeros:
 % ------------------------------------------------
 %
@@ -264,7 +273,7 @@
 %% For more details, see the GraphBLAS user guide in GraphBLAS/Doc.
 % See also GrB, sparse.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 help GrB.MATLAB_vs_GrB ;

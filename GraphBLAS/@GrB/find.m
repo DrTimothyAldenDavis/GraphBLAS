@@ -1,4 +1,4 @@
-function [I, J, X] = find (G, k, search)
+function [I, J, X] = find (G_arg, k, search)
 %FIND extract entries from a matrix.
 % [I, J, X] = find (G) extracts the nonzeros from a matrix G.
 % X has the same type as G ('double', 'single', 'int8', ...).
@@ -27,12 +27,11 @@ function [I, J, X] = find (G, k, search)
 %
 % See also sparse, GrB.build, GrB.extracttuples.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (isobject (G))
-    G = G.opaque ;
-end
+% prune explicit zeros
+G = gbselect (G_arg, 'nonzero') ;
 
 if (nargin > 1)
     k = ceil (double (gb_get_scalar (k))) ;
@@ -45,9 +44,6 @@ if (nargin > 1)
         G = gbnew (G, 'by col') ;
     end
 end
-
-% prune explicit zeros
-G = gbselect (G, 'nonzero') ;
 
 [m, n] = gbsize (G) ;
 

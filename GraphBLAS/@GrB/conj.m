@@ -10,6 +10,6 @@ function C = conj (G)
 if (gb_contains (gbtype (G), 'complex'))
     C = GrB (gbapply ('conj', G)) ;
 else
-    C = G ;
+    C = GrB (G) ;
 end
 

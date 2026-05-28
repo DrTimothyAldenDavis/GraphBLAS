@@ -13,5 +13,6 @@ if (~gb_isfloat (gbtype (G)))
 else
     op = 'sin' ;
 end
+
 C = GrB (gbapply ('minv', gbfull (gbapply (op, G)))) ;
 

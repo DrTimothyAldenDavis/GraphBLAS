@@ -1,4 +1,4 @@
-function b = burble (b)
+function b = burble (b_arg)
 %GRB.BURBLE get/set the GraphBLAS burble option.
 %
 %   b = GrB.burble ;      % get the current burble
@@ -15,6 +15,6 @@ function b = burble (b)
 if (nargin == 0)
     b = gbburble ;
 else
-    b = gbburble (b) ;
+    b = gbburble (b_arg) ;
 end
 

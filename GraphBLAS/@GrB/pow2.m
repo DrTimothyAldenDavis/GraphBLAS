@@ -8,12 +8,9 @@ function C = pow2 (A, B)
 %
 % See also GrB/log2, GrB/power, GrB/exp.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (isobject (A))
-    A = A.opaque ;
-end
 atype = gbtype (A) ;
 
 if (nargin == 1)
@@ -24,9 +21,6 @@ if (nargin == 1)
     C = GrB (gbapply ('pow2', gbfull (A, atype))) ;
 else
     % C = A.*(2.^B)
-    if (isobject (B))
-        B = B.opaque ;
-    end
     type = gboptype (atype, gbtype (B)) ;
     if (gb_contains (type, 'single'))
         type = 'single' ;

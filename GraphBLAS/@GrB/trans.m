@@ -19,7 +19,7 @@ function C = trans (arg1, arg2, arg3, arg4, arg5)
 %
 % See also GrB/transpose, GrB/ctranspose, GrB/conj, GrB.binopinfo.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 switch (nargin)

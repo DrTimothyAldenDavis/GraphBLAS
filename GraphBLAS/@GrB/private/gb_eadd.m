@@ -30,8 +30,8 @@ if (a_is_scalar)
             C = B ;
         else
             % expand A to a full matrix
-            A = gb_scalar_to_full (bm, bn, type, gb_fmt (B), A) ;   %FIXME
-            C = gbeadd (A, op, B) ;
+            C = gbeadd (gb_scalar_to_full (bm, bn, type, gb_fmt (B), A), ...
+                op, B) ;
         end
     end
 else
@@ -42,8 +42,8 @@ else
             C = A ;
         else
             % expand B to a full matrix
-            B = gb_scalar_to_full (am, an, type, gb_fmt (A), B) ;   %FIXME
-            C = gbeadd (A, op, B) ;
+            C = gbeadd (A, op, ...
+                gb_scalar_to_full (am, an, type, gb_fmt (A), B)) ;
         end
     else
         % both A and B are matrices.  Result is sparse.

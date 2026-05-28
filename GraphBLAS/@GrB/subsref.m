@@ -31,14 +31,11 @@ function C = subsref (A, S)
 % See also GrB/subsasgn, GrB/subsindex, GrB.subassign, GrB.assign,
 % GrB.extract.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % FUTURE: add all forms of linear indexing.
 
-if (isobject (A))
-    A = A.opaque ;
-end
 [m, n] = gbsize (A) ;
 
 if (length (S) > 1)
@@ -49,21 +46,21 @@ if (~isequal (S.type, '()'))
     error ('GrB:error', 'index type %s not supported', S.type) ;
 end
 
-ndims = length (S.subs) ;
+'subref here ---------------------------------------'
+S
+A
+ndims = length (S.subs)
 
 if (ndims == 1)
 
     % C = A(M) if M is logical, or C=A(I) otherwise
-    S = S.subs {1} ;
-    if (isobject (S))
-        S = S.opaque ;
-    end
-    if (isequal (gbtype (S), 'logical'))
+    S1 = S.subs {1} 
+    if (isequal (gbtype (S1), 'logical'))
         % C = A (M) for logical indexing
-        C = GrB (gblogextract (A, S)) ;
+        C = GrB (gblogextract (A, S1)) ;
     else
         % C = A (I)
-        [I, whole] = gb_index (S) ;
+        [I, whole] = gb_index (S1) ;
         if (m == 1 || n == 1)
             % C = A (I) for a vector A
             if (m > 1)

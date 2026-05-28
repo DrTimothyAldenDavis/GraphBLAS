@@ -45,7 +45,7 @@ if (isequal (f, 'by row'))
 end
 tol = single (32) ;
 
-Y = Y0 ;
+Y = GrB (Y0) ;
 for k = 1:length(W)
     % Propagate through layer, apply bias, and threshold negative values.
     Y = GrB.mxm (Y, '+.*', W {k}, desc) ;

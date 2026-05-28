@@ -18,12 +18,8 @@ function C = max (A, B, option)
 %
 % See also GrB/min, GrB.argmax.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-if (isobject (A))
-    A = A.opaque ;
-end
 
 type = gbtype (A) ;
 if (gb_contains (type, 'complex'))
@@ -39,9 +35,6 @@ if (nargin == 1)
     C = GrB (gb_max1 (op, A)) ;
 elseif (nargin == 2)
     % C = max (A,B)
-    if (isobject (B))
-        B = B.opaque ;
-    end
     C = GrB (gb_max2 (op, A, B)) ;
 else
     % C = max (A, [ ], option)

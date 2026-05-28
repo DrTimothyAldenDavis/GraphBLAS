@@ -6,10 +6,9 @@ function C = repmat (G, m, n)
 %
 % See also GrB/kron, GrB.kronecker.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-G = G.opaque ;
 type = gbtype (G) ;
 
 if (nargin == 3)

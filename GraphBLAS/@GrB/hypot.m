@@ -1,4 +1,4 @@
-function C = hypot (A, B)
+function C = hypot (A_arg, B_arg)
 %HYPOT robust computation of the square root of sum of squares.
 % C = hypot (A,B) computes sqrt (abs (A).^2 + abs (B).^2) accurately.
 % If A and B are matrices, the pattern of C is the set union of A and B.
@@ -8,30 +8,28 @@ function C = hypot (A, B)
 %
 % See also GrB/abs, GrB/norm, GrB/sqrt, GrB/plus, GrB.eadd.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (isobject (A))
-    A = A.opaque ;
-end
-
-if (isobject (B))
-    B = B.opaque ;
-end
-
-atype = gbtype (A) ;
-btype = gbtype (B) ;
+atype = gbtype (A_arg) ;
+btype = gbtype (B_arg) ;
 
 if (gb_contains (atype, 'complex'))
-    A = gbapply ('abs', A) ;
+    A = gbapply ('abs', A_arg) ;
 elseif (~gb_isfloat (atype))
-    A = gbnew (A, 'double') ;
+    A = gbnew (A_arg, 'double') ;
+else
+    % use A_arg as-is
+    A = A_arg ;
 end
 
 if (gb_contains (btype, 'complex'))
-    B = gbapply ('abs', B) ;
+    B = gbapply ('abs', B_arg) ;
 elseif (~gb_isfloat (btype))
-    B = gbnew (B, 'double') ;
+    B = gbnew (B_arg, 'double') ;
+else
+    % use B_arg as-is
+    B = B_arg ;
 end
 
 C = GrB (gbapply ('abs', gb_eadd (A, 'hypot', B))) ;

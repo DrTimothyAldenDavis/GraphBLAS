@@ -30,9 +30,11 @@ xx = [x ; 2*x] ;
 ok = false ;
 try
     % no duplicates are tolerated
+    fprintf ('an error is expected here:\n') ;
     G = GrB.build (ii, jj, xx, m, n, '') ;
 catch
     ok = true ;
+    fprintf ('OK: error was expected\n') ;
 end
 assert (ok) ;
 

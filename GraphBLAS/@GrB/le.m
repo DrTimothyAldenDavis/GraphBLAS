@@ -11,16 +11,8 @@ function C = le (A, B)
 % B scalar, A matrix:  C is full if B>=0, otherwise C is a subset of A.
 % A matrix, B matrix:  C is full.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-if (isobject (A))
-    A = A.opaque ;
-end
-
-if (isobject (B))
-    B = B.opaque ;
-end
 
 [am, an, atype] = gbsize (A) ;
 [bm, bn, btype] = gbsize (B) ;
@@ -37,9 +29,9 @@ if (a_is_scalar)
         if (gb_scalar (A) <= 0)
             % since a <= 0, entries not present in B result in a true
             % value, so the result is full.  Expand A to a full matrix.
-            A = gb_scalar_to_full (bm, bn, ctype, gb_fmt (B), A) ;
-            B = gbfull (B, ctype) ;
-            C = GrB (gbemult (A, '<=', B)) ;
+            a = gb_scalar_to_full (bm, bn, ctype, gb_fmt (B), A) ;
+            b = gbfull (B, ctype) ;
+            C = GrB (gbemult (a, '<=', b)) ;
         else
             % since a > 0, entries not present in B result in a false
             % value, so the result is a sparse subset of B.  select all
@@ -53,9 +45,9 @@ else
         if (gb_scalar (B) >= 0)
             % since b >= 0, entries not present in A result in a true
             % value, so the result is full.  Expand B to a full matrix.
-            B = gb_scalar_to_full (am, an, ctype, gb_fmt (A), B) ;
-            A = gbfull (A, ctype) ;
-            C = GrB (gbemult (A, '<=', B)) ;
+            b = gb_scalar_to_full (am, an, ctype, gb_fmt (A), B) ;
+            a = gbfull (A, ctype) ;
+            C = GrB (gbemult (a, '<=', b)) ;
         else
             % since b < 0, entries not present in A result in a false
             % value, so the result is a sparse subset of A.  select all

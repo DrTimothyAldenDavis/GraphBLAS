@@ -1,4 +1,4 @@
-function C = incidence (A, varargin)
+function C = incidence (A_arg, varargin)
 %GRB.INCIDENCE graph incidence matrix.
 % C = GrB.incidence (A) is the graph incidence matrix of the square
 % matrix A.  C is GraphBLAS matrix of size n-by-e, if A is n-by-n with e
@@ -36,14 +36,10 @@ function C = incidence (A, varargin)
 %
 % See also graph/incidence, digraph/incidence.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (isobject (A))
-    A = A.opaque ;
-end
-
-[m, n] = gbsize (A) ;
+[m, n] = gbsize (A_arg) ;
 if (m ~= n)
     error ('GrB:error', 'A must be square') ;
 end
@@ -72,19 +68,19 @@ switch (kind)
 
         % create the incidence matrix of a directed graph, using all of A;
         % except that diagonal entries are ignored.
-        A = gbselect ('offdiag', A, 0) ;
+        A = gbselect ('offdiag', A_arg, 0) ;
 
     case { 'upper' }
 
         % create the incidence matrix of an undirected graph, using only
         % entries in the strictly upper triangular part of A.
-        A = gbselect ('triu', A, 1) ;
+        A = gbselect ('triu', A_arg, 1) ;
 
     otherwise   % 'undirected', 'symmetric', or 'lower'
 
         % create the incidence matrix of an undirected graph, using only
         % entries in the strictly lower triangular part of A.
-        A = gbselect ('tril', A, -1) ;
+        A = gbselect ('tril', A_arg, -1) ;
 
 end
 

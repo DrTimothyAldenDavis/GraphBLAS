@@ -6,17 +6,16 @@ function C = sign (G)
 %
 % See also GrB/abs.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-Q = G.opaque ;
-type = gbtype (Q) ;
+type = gbtype (G) ;
 
 if (isequal (type, 'logical'))
-    C = G ;
+    C = GrB (G) ;
 elseif (~gb_isfloat (type))
-    C = GrB (gbnew (gbapply ('signum.single', Q), type)) ;
+    C = GrB (gbnew (gbapply ('signum.single', G), type)) ;
 else
-    C = GrB (gbapply ('signum', Q)) ;
+    C = GrB (gbapply ('signum', G)) ;
 end
 

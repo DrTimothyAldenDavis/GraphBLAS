@@ -13,5 +13,6 @@ if (~gb_isfloat (gbtype (G)))
 else
     op = 'tanh' ;
 end
+
 C = GrB (gbapply ('minv', gbfull (gbapply (op, G)))) ;
 

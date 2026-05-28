@@ -9,17 +9,10 @@ function C = flip (A, dim)
 %
 % See also GrB/transpose.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-a_is_object = isobject (A) ;
-if (a_is_object)
-    G = A.opaque ;
-else
-    G = A ;
-end
-
-[m, n] = gbsize (G) ;
+[m, n] = gbsize (A) ;
 
 if (nargin == 1)
     if (m == 1)
@@ -38,15 +31,12 @@ end
 
 if (dim == 1 && m ~= 1)
     % C = A (m:-1:1, :)
-    C = GrB (gbextract (G, {m,-1,1}, { })) ;
+    C = GrB (gbextract (A, {m,-1,1}, { })) ;
 elseif (dim == 2 && n ~= 1)
     % C = A (:, n:-1:1)
-    C = GrB (gbextract (G, { }, {n,-1,1})) ;
-elseif (a_is_object)
-    % nothing to do
-    C = A ;
+    C = GrB (gbextract (A, { }, {n,-1,1})) ;
 else
-    % nothing to do except convert A to GrB
+    % nothing to do
     C = GrB (A) ;
 end
 

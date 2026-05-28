@@ -9,6 +9,6 @@ function C = ceil (G)
 if (gb_isfloat (gbtype (G)) && gbnvals (G) > 0)
     C = GrB (gbapply ('ceil', G)) ;
 else
-    C = G ;
+    C = GrB (G) ;
 end
 

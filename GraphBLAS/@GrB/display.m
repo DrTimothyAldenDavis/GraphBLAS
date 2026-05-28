@@ -13,5 +13,6 @@ name = inputname (1) ;
 if (~isempty (name))
     fprintf ('\n%s =\n', name) ;
 end
+
 gbdisp (G, gb_nnz (G), 2) ;
 

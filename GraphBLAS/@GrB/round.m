@@ -7,16 +7,14 @@ function C = round (G)
 %
 % See also GrB/ceil, GrB/floor, GrB/fix.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % FUTURE: round (x,n) and round (x,n,type)
 
-Q = G.opaque ;
-
-if (gb_isfloat (gbtype (Q)) && gbnvals (Q) > 0)
-    C = GrB (gbapply ('round', Q)) ;
+if (gb_isfloat (gbtype (G)) && gbnvals (G) > 0)
+    C = GrB (gbapply ('round', G)) ;
 else
-    C = G ;
+    C = GrB (G) ;
 end
 

@@ -1,4 +1,4 @@
-function C = rdivide (A, B)
+function C = rdivide (A_arg, B)
 %RDIVIDE C = A./B, sparse matrix element-wise division.
 % C = A./B when B is a matrix results in a full matrix C, with all
 % entries present.  If A is a matrix and B is a scalar, then C has the
@@ -7,16 +7,8 @@ function C = rdivide (A, B)
 %
 % See also GrB/ldivide, GrB.emult, GrB.eadd.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-if (isobject (A))
-    A = A.opaque ;
-end
-
-if (isobject (B))
-    B = B.opaque ;
-end
 
 [am, an, atype] = gbsize (A) ;
 [bm, bn, btype] = gbsize (B) ;
@@ -26,6 +18,8 @@ ctype = gboptype (atype, btype) ;
 
 if (a_is_scalar && gb_scalar (A) == 0 && gb_isfloat (ctype))
     A = 0 ;
+else
+    A = A_arg ;
 end
 
 if (a_is_scalar)
@@ -44,8 +38,8 @@ else
             % 0/0 is Nan, and thus must be computed computed if A is
             % floating-point.  The result is a full matrix.
             % expand B into a full matrix and cast to the type of A
-            B = gb_scalar_to_full (am, an, atype, gb_fmt (A), B) ;
-            C = GrB (gbemult (A, '/', B)) ;
+            b = gb_scalar_to_full (am, an, atype, gb_fmt (A), B) ;
+            C = GrB (gbemult (A, '/', b)) ;
         else
             % The scalar B is nonzero so just compute A/B in the pattern
             % of A.  The result is sparse (the pattern of A).

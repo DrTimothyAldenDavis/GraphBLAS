@@ -4,15 +4,13 @@ function C = real (G)
 %
 % See also GrB/conj, GrB/imag.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-Q = G.opaque ;
-
-if (gb_contains (gbtype (Q), 'complex'))
-    C = GrB (gbapply ('creal', Q)) ;
+if (gb_contains (gbtype (G), 'complex'))
+    C = GrB (gbapply ('creal', G)) ;
 else
     % G is already real
-    C = G ;
+    C = GrB (G) ;
 end
 

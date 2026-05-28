@@ -48,6 +48,7 @@ for type = { 'single', 'double' }
     assert (norm (C1 - C2, 1) == 0) ;
 end
 
+maxerr
 fprintf ('max error: %g\n', maxerr) ;
 fprintf ('gbtest19: all tests passed\n') ;
 

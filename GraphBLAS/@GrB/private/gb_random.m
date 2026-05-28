@@ -26,15 +26,12 @@ for k = 1:nargin
             case { 'uniform', 'normal' }
                 dist = arg ;
             case { 'range' }
-                range = varargin {k+1} ;
-                if (isobject (range))
-                    range = range.opaque ;
-                end
-                [rm, rn, type] = gbsize (range) ;
+                r = varargin {k+1} ;
+                [rm, rn, type] = gbsize (r) ;
                 if (rm*rn > 2)
                     error ('GrB:error', 'range can contain at most 2 entries') ;
                 end
-                range = gbfull (range, type, 0, struct ('kind', 'full')) ;
+                range = gbfull (r, type, 0, struct ('kind', 'full')) ;
             case { 'unsymmetric', 'symmetric', 'hermitian' }
                 sym_option = arg ;
             otherwise
@@ -55,9 +52,6 @@ if (firstchar == 2)
 
     % C = GrB.random (A, ...) ;
     A = varargin {1} ;
-    if (isobject (A))
-        A = A.opaque ;
-    end
     [m, n] = gbsize (A) ;
     if ((symmetric || hermitian) && (m ~= n))
         error ('GrB:error', 'input matrix must be square') ;
@@ -167,4 +161,6 @@ elseif (hermitian)
     end
     C = gbeadd (L, '+', gbeadd (LT, '+', D)) ;
 end
+
+C = GrB (C) ;
 

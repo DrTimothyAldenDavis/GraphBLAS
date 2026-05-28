@@ -35,10 +35,8 @@ function C = ktruss (A, k, check)
 %
 % See also GrB.tricount.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-% NOTE: this is a high-level algorithm that uses GrB objects.
 
 % check inputs
 if (nargin < 2)

@@ -52,17 +52,10 @@ function result = nonz (A, varargin)
 %
 % See also GrB.entries, GrB/nnz, GrB/nonzeros, GrB.prune.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-builtin_sparse = false ;
-if (isobject (A))
-    % A is a GraphBLAS matrix; get its opaque content
-    A = A.opaque ;
-elseif (builtin ('issparse', A))
-    % A is a built-in sparse matrix
-    builtin_sparse = true ;
-end
+builtin_sparse = builtin ('issparse', A) ;
 
 % get the identity value
 id = 0 ;
@@ -78,16 +71,16 @@ end
 
 if (id ~= 0)
     % id is nonzero, so prune A first (for any matrix A)
-    A = gbselect (A, '~=', id) ;
+    result = gb_entries (gbselect (A, '~=', id), varargin {1:nargs-1}) ;
 elseif (~builtin_sparse)
     % id is zero, so prune A only if it is a GraphBLAS matrix,
     % or a built-in full matrix.  A built-in sparse matrix can remain
     % unchanged.
-    A = gbselect (A, 'nonzero') ;
+    result = gb_entries (gbselect (A, 'nonzero'), varargin {1:nargs-1}) ;
+else
+    % get the count/list of the entries of A
+    result = gb_entries (A, varargin {1:nargs-1}) ;
 end
-
-% get the count/list of the entries of A
-result = gb_entries (A, varargin {1:nargs-1}) ;
 
 % if gb_entries returned a GraphBLAS struct, return it as a GrB matrix
 if (isstruct (result))

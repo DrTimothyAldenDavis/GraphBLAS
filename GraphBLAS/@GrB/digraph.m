@@ -1,4 +1,4 @@
-function DiGraph = digraph (G, option)
+function DiGraph = digraph (G_arg, option)
 %DIGRAPH convert a GraphBLAS matrix into a directed DiGraph.
 % DiGraph = digraph (G) converts a GraphBLAS matrix G into a directed
 % DiGraph.  G must be square.  If G is logical, then no weights are added
@@ -27,7 +27,7 @@ function DiGraph = digraph (G, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[m, n, type] = gbsize (G) ;
+[m, n, type] = gbsize (G_arg) ;
 if (m ~= n)
     error ('GrB:error', 'G must be square') ;
 end
@@ -45,7 +45,10 @@ end
 % apply the options
 if (omitself)
     % ignore diagonal entries of G
-    G = gbselect ('offdiag', G, 0) ;    % FIXME
+    G = gbselect ('offdiag', G_arg, 0) ;
+else
+    % use G_arg as-is
+    G = G_arg ;
 end
 
 % construct the digraph

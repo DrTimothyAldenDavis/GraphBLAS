@@ -13,10 +13,8 @@ function s = tricount (A, arg2, arg3)
 %
 % See also GrB.ktruss, GrB.entries.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-% NOTE: this is a high-level algorithm that uses GrB objects.
 
 [m, n] = size (A) ;
 if (m ~= n)
@@ -72,15 +70,21 @@ if (n > 1000 && GrB.entries (A) >= 10*n)
         % sort if the average degree is very high compared to the median
         [~, p] = sort (d, 'descend') ;
         % A = A (p,p) ;
-        A = GrB.extract (A, { p }, { p }) ;
+        S = GrB.extract (A, { p }, { p }) ;
         clear p
+    else
+        % use A as-is
+        S = A ;
     end
+else
+    % use A as-is
+    S = A ;
 end
 
-% C, L, and U will have the same format as A
-C = GrB (n, n, 'int64', GrB.format (A)) ;
-L = tril (A, -1) ;
-U = triu (A, 1) ;
+% C, L, and U will have the same format as S
+C = GrB (n, n, 'int64', GrB.format (S)) ;
+L = tril (S, -1) ;
+U = triu (S, 1) ;
 
 % Inside GraphBLAS, the methods below are identical.  For example, L stored by
 % row is the same data structure as U stored by column.  Both use the
@@ -89,7 +93,7 @@ U = triu (A, 1) ;
 
 desc.mask = 'structural' ;
 
-if (GrB.isbyrow (A))
+if (GrB.isbyrow (S))
     % C<U> = U*L': SandiaDot2 method
     desc.in1 = 'transpose' ;
     C = GrB.mxm (C, U, '+.oneb.int64', U, L, desc) ;

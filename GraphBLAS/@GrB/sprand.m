@@ -16,13 +16,12 @@ function C = sprand (arg1, arg2, arg3)
 %
 % See also GrB/sprandn, GrB/sprandsym, GrB.random.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 1)
     % C = sprand (G)
-    G = arg1.opaque ;
-    C = GrB (gb_random (G)) ;
+    C = GrB (gb_random (arg1)) ;
 elseif (nargin == 3)
     % C = sprand (m, n, d)
     m = gb_get_scalar (arg1) ;

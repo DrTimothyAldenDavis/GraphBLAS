@@ -4,10 +4,9 @@ function C = sinh (G)
 %
 % See also GrB/sin, GrB/asin, GrB/asinh.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-G = G.opaque ;
 if (~gb_isfloat (gbtype (G)))
     op = 'sinh.double' ;
 else

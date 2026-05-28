@@ -14,20 +14,11 @@ function C = expand (scalar, S, type)
 %
 % See also GrB.assign.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-if (isobject (scalar))
-    % do not use gb_get_scalar, to keep it sparse
-    scalar = scalar.opaque ;
-end
 
 if (~gb_isscalar (scalar))
     error ('GrB:error', 'first input must be a scalar') ;
-end
-
-if (isobject (S))
-    S = S.opaque ;
 end
 
 if (nargin < 3)

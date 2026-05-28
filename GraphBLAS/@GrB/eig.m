@@ -7,8 +7,6 @@ function [V, varargout] = eig (G, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% NOTE: this is a high-level algorithm that uses GrB objects.
-
 % convert G to a built-in matrix
 if (isreal (G) && issymmetric (G))
     % G can be sparse if G is real and symmetric

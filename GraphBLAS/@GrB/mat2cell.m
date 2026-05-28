@@ -23,11 +23,10 @@ function C = mat2cell (A, m, n)
 %
 % See also GrB/horzcat, GrB/vertcat, GrB/cat, GrB.cell2mat, GrB/num2cell.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (isobject (A))
-    A = A.opaque ;
     if (nargin < 3)
         [~, n] = gbsize (A) ;
     end
@@ -38,9 +37,10 @@ else
     end
 end
 
-C = gbsplit (A, m, n) ;
+S = gbsplit (A, m, n) ;
 
+C = cell (m, n) ;
 for k = 1:numel(C)
-    C {k} = GrB (C {k}) ;
+    C {k} = GrB (S {k}) ;
 end
 

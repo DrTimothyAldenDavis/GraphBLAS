@@ -1,4 +1,4 @@
-function [status,path] = jit (status,path)
+function [status,path] = jit (status_arg,path_arg)
 %GRB.JIT controls the GraphBLAS JIT
 %
 %   status = GrB.jit ;      % get the current status of the JIT
@@ -45,7 +45,7 @@ function [status,path] = jit (status,path)
 %
 % See also GrB.threads, GrB.clear.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 0)
@@ -59,17 +59,17 @@ if (nargin == 0)
 elseif (nargin == 1)
 
     if (nargout <= 1)
-        [status] = gbjit (status) ;
+        [status] = gbjit (status_arg) ;
     else
-        [status, path] = gbjit (status) ;
+        [status, path] = gbjit (status_arg) ;
     end
 
 else
 
     if (nargout <= 1)
-        [status] = gbjit (status, path) ;
+        [status] = gbjit (status_arg, path_arg) ;
     else
-        [status, path] = gbjit (status, path) ;
+        [status, path] = gbjit (status_arg, path_arg) ;
     end
 
 end

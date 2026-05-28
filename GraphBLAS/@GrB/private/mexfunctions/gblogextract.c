@@ -127,7 +127,7 @@ void mexFunction
 
     struct gb_matrix_struct Matrix [2] ;
     gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
-    gbmx_get_matrix (&(Matrix [1]), pargin [2]) ;
+    gbmx_get_matrix (&(Matrix [1]), pargin [1]) ;
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -225,10 +225,15 @@ void mexFunction
     size_t Kx_memsize = (MAX (mnz, 1) * sizeof (uint64_t)) ;
     uint64_t Kx_mem = GB_mem (GrB_DEFAULT, Kx_memsize) ;
     Kx = gb_malloc (Kx_memsize) ;
+    if (Kx == NULL)
+    {
+        FREE_ALL ;
+        ERROR ("out of memory", GrB_OUT_OF_MEMORY) ;
+    }
     OK (GB_helper7 (Kx, mnz)) ;
 
     // add a new K->x to K
-    K->x = Kx ;
+    K->x = Kx ; Kx = NULL ;
     K->x_shallow = false ;
     K->type = GrB_UINT64 ;
     K->x_mem = Kx_mem ;

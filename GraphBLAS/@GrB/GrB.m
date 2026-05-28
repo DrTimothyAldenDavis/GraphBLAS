@@ -1002,15 +1002,6 @@ methods (Static)
     % built-in sparse, or built-in full).  The output matrix C is a
     % GraphBLAS matrix.
 
-    % FIXME: benchmark this
-    % Some of the methods listed below are high-level graph algorithms
-    % that rely on GrB objects internally (bfs, dnn, ktruss, mis,
-    % pagerank, and tricount), for simplicity and readability.  All of the
-    % other methods extract the opaque content of the GrB objects just
-    % once, operate on them, and then return their results as a GrB object
-    % just once.  This makes for less-readable code, but it avoids the
-    % performance cost of accessing/modifying a object.
-
     MATLAB_vs_GrB ;
     C = apply (Cin, M, accum, op, A, desc) ;
     C = apply2 (Cin, M, accum, op, A, B, desc) ;

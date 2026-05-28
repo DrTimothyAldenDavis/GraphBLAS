@@ -13,7 +13,7 @@ function C = num2cell (A, dim)
 %
 % See also GrB/horzcat, GrB/vertcat, GrB/cat, GrB.cell2mat, GrB/mat2cell.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 2 && isequal (dim, [1 2]))
@@ -30,7 +30,6 @@ else
 
     % split into scalars, rows, or columns
     if (isobject (A))
-        A = A.opaque ;
         [m, n] = gbsize (A) ;
     else
         [m, n] = size (A) ;
@@ -38,20 +37,21 @@ else
 
     if (nargin == 1)
         % split A into scalars
-        C = gbsplit (A, ones (m, 1), ones (n, 1)) ;
+        S = gbsplit (A, ones (m, 1), ones (n, 1)) ;
     elseif (isequal (dim, 1))
         % split A into columns
-        C = gbsplit (A, m, ones (n, 1)) ;
+        S = gbsplit (A, m, ones (n, 1)) ;
     elseif (isequal (dim, 2))
         % split A into rows
-        C = gbsplit (A, ones (m, 1), n) ;
+        S = gbsplit (A, ones (m, 1), n) ;
     else
         error ('GrB:error', 'unknown option') ;
     end
 
     % convert each cell back into GrB matrices
-    for k = 1:numel(C)
-        C {k} = GrB (C {k}) ;
+    C = cell (m, n) ;
+    for k = 1:numel(S)
+        C {k} = GrB (S {k}) ;
     end
 end
 

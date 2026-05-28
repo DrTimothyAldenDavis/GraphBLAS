@@ -70,6 +70,7 @@ void mexFunction
     struct gb_descriptor_struct gbdesc ;
     gbmx_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String,
         &nstrings, Cell, &ncells, &gbdesc) ;
+    // printf ("base: %d\n", gbdesc.base) ;
 
     CHECK_ERROR (nmatrices != 1 || nstrings > 0 || ncells > 0, USAGE) ;
 
@@ -89,8 +90,9 @@ void mexFunction
     bool extract_J = (nargout > 1) ;
     bool extract_X = (nargout > 2) ;
 
-    if (gbdesc.base == BASE_1_DOUBLE && MAX (nrows, ncols) <= FLINTMAX)
+    if (gbdesc.base == BASE_1_DOUBLE && MAX (nrows, ncols) > FLINTMAX)
     { 
+        // printf ("switching to base 1 int\n") ;
         gbdesc.base = BASE_1_INT ;
     }
 

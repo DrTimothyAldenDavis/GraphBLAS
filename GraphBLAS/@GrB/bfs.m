@@ -61,8 +61,6 @@ function [v, parent] = bfs (A, s, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% NOTE: this is a high-level algorithm that uses GrB objects.
-
 %-------------------------------------------------------------------------
 % initializations
 %-------------------------------------------------------------------------
@@ -103,10 +101,15 @@ if (isequal (kind, 'undirected'))
         % A is stored by column but undirected, so use q*A' instead of q*A
         desc_rc.in1 = 'transpose' ;
     end
+    % use the input matrix A as-is
+    S = A ;
 else
     if (GrB.isbycol (A))
-        % this can be costly
-        A = GrB (A, 'by row') ; % FIXME
+        % convert S to be held by-row; this can be costly
+        S = GrB (A, 'by row') ;
+    else
+        % use the input matrix A as-is
+        S = A ;
     end
 end
 
@@ -136,8 +139,8 @@ if (nargout == 1)
         v = GrB.subassign (v, q, level, desc_s) ;
         % quit if q is empty
         if (~any (q)), break, end
-        % move to the next level:  q<~v,replace> = q*A
-        q = GrB.mxm (q, v, 'any.pair.logical', q, A, desc_rc) ;
+        % move to the next level:  q<~v,replace> = q*S
+        q = GrB.mxm (q, v, 'any.pair.logical', q, S, desc_rc) ;
     end
 
 else
@@ -157,9 +160,9 @@ else
         v = GrB.subassign (v, q, level, desc_s) ;
         % quit if q is empty
         if (~any (q)), break, end
-        % move to the next level:  q<~v,replace> = q*A,
+        % move to the next level:  q<~v,replace> = q*S,
         % using the any-first-integer semiring (int32 or int64)
-        q = GrB.mxm (q, v, semiring, q, A, desc_rc) ;
+        q = GrB.mxm (q, v, semiring, q, S, desc_rc) ;
         % assign parents: parent<q> = q
         parent = GrB.assign (parent, q, q, desc_s) ;
         % q(i) = i for all entries in q, using q<q>=1:n

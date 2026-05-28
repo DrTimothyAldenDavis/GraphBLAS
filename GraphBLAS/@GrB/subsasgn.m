@@ -35,7 +35,7 @@ function C = subsasgn (C, S, A)
 %
 % See also GrB/subsref, GrB/subsindex, GrB.assign, GrB.subassign.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % FUTURE: add all forms of linear indexing.
@@ -49,21 +49,21 @@ ndims = length (S.subs) ;
 if (ndims == 1)
 
     % C (M) = A if M is logical, or C (I) = A otherwise
-    S = S.subs {1} ;
-    if (isequal (gbtype (S), 'logical'))
+    S1 = S.subs {1} ;
+    if (isequal (gbtype (S1), 'logical'))
         % C (M) = A for logical assignment
         [am, an] = gbsize (A) ;
         if (am == 1 && an == 1)
             % C (M) = scalar
-            C = GrB (gbsubassign (C, S, A)) ;
+            C = GrB (gbsubassign (C, S1, A)) ;
         else
             % C (M) = A where A is a vector
-            C = GrB (gblogassign (C, S, A)) ;
+            C = GrB (gblogassign (C, S1, A)) ;
         end
     else
         % C (I) = A
         [cm, cn] = gbsize (C) ;
-        [I, whole] = gb_index (S) ;
+        [I, whole] = gb_index (S1) ;
         if (cm == 1 || cn == 1)
             % C (I) = A for a vector or scalar C
             C = GrB (gbsubassign (C, I, A)) ;
@@ -90,13 +90,13 @@ if (ndims == 1)
 elseif (ndims == 2)
 
     % C (I,J) = A where A is length(I)-by-length(J), or a scalar
-    S.subs
-    'gb_index for 1=-----------------------'
-    S.subs{1}
-    gb_index (S.subs {1})
-    'gb_index for 2=-----------------------'
-    S.subs{2}
-    gb_index (S.subs {2})
+%   S.subs
+%   'gb_index for 1=-----------------------'
+%   S.subs{1}
+%   gb_index (S.subs {1})
+%   'gb_index for 2=-----------------------'
+%   S.subs{2}
+%   gb_index (S.subs {2})
     C = GrB (gbsubassign (C, gb_index (S.subs {1}), gb_index (S.subs {2}), A)) ;
 
 else

@@ -1,4 +1,4 @@
-function C = bitset (A, B, arg3, arg4)
+function C = bitset (A_arg, B_arg, arg3, arg4)
 %BITSET set bit.
 % C = bitset (A,B) sets a bit in A to 1, where the bit position is
 % determined by B.  A is an integer array.  If B(i,j) is an integer in the
@@ -43,8 +43,8 @@ function C = bitset (A, B, arg3, arg4)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[am, an, atype] = gbsize (A) ;
-[bm, bn, btype] = gbsize (B) ;
+[am, an, atype] = gbsize (A_arg) ;
+[bm, bn, btype] = gbsize (B_arg) ;
 
 if (gb_contains (atype, 'complex') || gb_contains (btype, 'complex'))
     error ('GrB:error', 'inputs must be real') ;
@@ -83,13 +83,19 @@ ctype = atype ;
 
 % determine the type of A
 if (isequal (atype, 'double') || isequal (atype, 'single'))
-    A = gbnew (A, assumedtype) ;    % FIXME
+    A = gbnew (A_arg, assumedtype) ;
     atype = assumedtype ;
+else
+    % use the input A_arg as-is
+    A = A_arg ;
 end
 
 % ensure B has the same type as A
 if (~isequal (btype, atype))
-    B = gbnew (B, atype) ;  % FIXME
+    B = gbnew (B_arg, atype) ;
+else
+    % use the input B_arg as-is
+    B = B_arg ;
 end
 
 % get the matrix or scalar V
@@ -140,23 +146,27 @@ else
 
     if (a_is_scalar)
         % expand A to a full matrix the same size as V.
-        A = gb_scalar_to_full (m, n, atype, gb_fmt (V), A) ;    % FIXME
+        A2 = gb_scalar_to_full (m, n, atype, gb_fmt (V), A) ;
+    else
+        A2 = A ;
     end
     if (b_is_scalar)
         % expand B to a full matrix the same size as V.
-        B = gb_scalar_to_full (m, n, atype, gb_fmt (V), B) ;    % FIXME
+        B2 = gb_scalar_to_full (m, n, atype, gb_fmt (V), B) ;
+    else
+        B2 = B ;
     end
 
     % Set all bits referenced by B(i,j) to 1, even those that need to be
     % set to 0, without considering V(i,j).
-    C = gbeunion (['bitset.', atype], A, 0, B, 0) ;
+    C = gbeunion (['bitset.', atype], A2, 0, B2, 0) ;
 
     % The pattern of C is now the set intersection of A and B, but
     % bits referenced by B(i,j) have been set to 1, not 0.  Construct B0
     % as the bits in B(i,j) that must be set to 0; B0<~V>=B defines the
     % pattern of bit positions B0 to set to 0 in A.
     d.mask = 'complement' ;
-    B0 = gbassign (gbnew (m, n, atype), V, B, d) ;
+    B0 = gbassign (gbnew (m, n, atype), V, B2, d) ;
 
     % Clear the bits in C, referenced by B0(i,j), where V(i,j) is zero.
     C = gbeadd (['bitclr.', atype], C, B0) ;

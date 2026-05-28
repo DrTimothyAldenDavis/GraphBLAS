@@ -58,7 +58,7 @@ void mexFunction
     uint64_t nvals = Matrix [0].nvals ;
     GrB_Type X_type = Matrix [0].type ;
     size_t X_typesize = Matrix [0].typesize ;
-    
+
     pargout [0] = gbmx_new_matlab_matrix (nvals, 1, X_type) ;
     void *X_out = mxGetData (pargout [0]) ;
 

@@ -1,4 +1,4 @@
-function Graph = graph (G, varargin)
+function Graph = graph (G_arg, varargin)
 %GRAPH convert a GraphBLAS matrix into a undirected Graph.
 % Graph = graph (G) converts a GraphBLAS matrix G into an undirected
 % Graph.  G is assumed to be symmetric; only tril (G) is used by default.
@@ -23,12 +23,10 @@ function Graph = graph (G, varargin)
 %
 % See also graph, digraph, GrB/digraph.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-G = G.opaque ;
-
-[m, n, type] = gbsize (G) ;
+[m, n, type] = gbsize (G_arg) ;
 if (m ~= n)
     error ('GrB:error', 'G must be square') ;
 end
@@ -52,16 +50,22 @@ end
 if (omitself)
     % ignore diagonal entries of G
     if (isequal (side, 'upper'))
-        G = gbselect ('triu', G, 1) ;
+        G = gbselect ('triu', G_arg, 1) ;
     elseif (isequal (side, 'lower'))
-        G = gbselect ('tril', G, -1) ;
+        G = gbselect ('tril', G_arg, -1) ;
+    else
+        % use G_arg as-is
+        G = G_arg ;
     end
 else
     % include diagonal entries of G
     if (isequal (side, 'upper'))
-        G = gbselect ('triu', G, 0) ;
+        G = gbselect ('triu', G_arg, 0) ;
     elseif (isequal (side, 'lower'))
-        G = gbselect ('tril', G, 0) ;
+        G = gbselect ('tril', G_arg, 0) ;
+    else
+        % use G_arg as-is
+        G = G_arg ;
     end
 end
 
