@@ -39,7 +39,7 @@ end
 
 S = gbsplit (A, m, n) ;
 
-C = cell (m, n) ;
+C = cell (size (S)) ;
 for k = 1:numel(C)
     C {k} = GrB (S {k}) ;
 end

@@ -50,9 +50,9 @@ end
 
 make_all = (isequal (what, 'all')) ;
 
-% use -R2018a for the new interleaved complex API
-% flags = '-O -R2018a -DGBNCPUFEAT' ;   % FIXME
-  flags = '-g -R2018a -DGBNCPUFEAT' ;   % debug build
+% use -R2018a for the interleaved complex API
+  flags = '-O -R2018a -DGBNCPUFEAT' ;
+% flags = '-g -R2018a -DGBNCPUFEAT' ;   % debug build
 
 if ispc
     % First do the following in GraphBLAS/build, in the Windows console:
@@ -159,9 +159,9 @@ else
     libgraphblas = '-lgraphblas' ;
 end
 
-% silent = '-silent' ;      % completely silent
+  silent = '-silent' ;      % completely silent
 % silent = '-v' ;           % extremely verbose
-  silent = '' ;
+% silent = '' ;
 
 % determine if the compiler supports C99 or MSVC complex types
 try

@@ -1,7 +1,7 @@
 function gbtest123
 %GBTEST123 test build
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 rng ('default')
@@ -19,13 +19,15 @@ H (1,1) = 1 ;
 try
     S = GrB.build (H,H,H) ;
     ok = false ;
-catch me
-    me
+catch expected_error
+    expected_error
     have_octave = gb_octave ;
     if (have_octave)
-        assert (isequal (me.message, 'gbbuild: input matrix dimensions are too large')) ;
+        assert (isequal (expected_error.message, ...
+            'gbbuild: GraphBLAS: matrix dimensions are invalid')) ;
     else
-        assert (isequal (me.message, 'input matrix dimensions are too large')) ;
+        assert (isequal (expected_error.message, ...
+            'GraphBLAS: matrix dimensions are invalid')) ;
     end
     ok = true ;
 end

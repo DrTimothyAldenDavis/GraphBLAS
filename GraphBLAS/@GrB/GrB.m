@@ -626,30 +626,20 @@ methods
     % C = GrB (m,n,type,format) ; empty m-by-n matrix, given type & format
     % C = GrB (m,n,format,type) ; ditto
     %
-    % C = GrB (C_struct) ; convert a C_struct constructed by a GraphBLAS
-    %                      mexFunction into a @GrB matrix C.  This usage
-    %                      is not meant for the end-user application.
-    %
     % See also sparse.
-        if (isstruct (arg1))
-            % C = GrB (C_struct) ; arg1 is a struct containing the opaque
-            % struct constructed by a GraphBLAS mexFunction.  This usage
-            % is only meant for internal use inside GraphBLAS *.m files.
-            C.opaque = arg1 ;
-        else
-            % All other cases are handled by gbnew, which creates a new
-            % opaque struct to be placed inside a new @GrB object.
-            % This usage is available for the user application.
-            switch (nargin)
-                case 1
+        switch (nargin)
+            case 1
+                if (isstruct (arg1))
+                    C.opaque = arg1 ;
+                else
                     C.opaque = gbnew (arg1) ;
-                case 2
-                    C.opaque = gbnew (arg1, arg2) ;
-                case 3
-                    C.opaque = gbnew (arg1, arg2, arg3) ;
-                case 4
-                    C.opaque = gbnew (arg1, arg2, arg3, arg4) ;
-            end
+                end
+            case 2
+                C.opaque = gbnew (arg1, arg2) ;
+            case 3
+                C.opaque = gbnew (arg1, arg2, arg3) ;
+            case 4
+                C.opaque = gbnew (arg1, arg2, arg3, arg4) ;
         end
     end
 

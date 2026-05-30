@@ -217,19 +217,11 @@ void mexFunction
         OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity)) ;
     }
 
-// printf ("C input:\n") ; GxB_Matrix_fprint (C, "C input", 5, NULL) ;
-// printf ("M input:\n") ; GxB_Matrix_fprint (M, "M input", 5, NULL) ;
-// printf ("A input:\n") ; GxB_Matrix_fprint (A, "A input", 5, NULL) ;
-// printf ("I input:\n") ; GxB_Vector_fprint (I, "I input", 5, NULL) ;
-// printf ("J input:\n") ; GxB_Vector_fprint (J, "J input", 5, NULL) ;
-
     //--------------------------------------------------------------------------
     // C<M> += A(I,J) or AT(I,J)
     //--------------------------------------------------------------------------
 
     OK1 (C, GxB_Matrix_extract_Vector (C, M, accum, A, I, J, desc)) ;
-
-// GxB_Matrix_fprint (C, "C output", 5, NULL) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

@@ -70,16 +70,16 @@
     #define ERROR2(errmsg,arg,info)                             \
     {                                                           \
         FREE_ALL ;                                              \
-        mexPrintf ("File: %s, Line: %d\n", __FILE__, __LINE__) ; \
-        mexPrintf ("GrB:error (%d): " errmsg "\n", info, arg) ; \
+/*      mexPrintf ("File: %s, Line: %d\n", __FILE__, __LINE__) ; */ \
+/*      mexPrintf ("GrB:error (%d): " errmsg "\n", info, arg) ; */  \
         return (info) ;                                         \
     }
 
     #define ERROR(errmsg,info)                                  \
     {                                                           \
         FREE_ALL ;                                              \
-        mexPrintf ("File: %s, Line: %d\n", __FILE__, __LINE__) ; \
-        mexPrintf ("GrB:error (%d): %s\n", info, errmsg) ;      \
+/*      mexPrintf ("File: %s, Line: %d\n", __FILE__, __LINE__) ; */ \
+/*      mexPrintf ("GrB:error (%d): %s\n", info, errmsg) ;       */ \
         return (info) ;                                         \
     }
 
@@ -90,14 +90,14 @@
     {                                                           \
         gbcov_put ( ) ;                                         \
         FREE_ALL ;                                              \
-        mexPrintf ("File: %s, Line: %d\n", __FILE__, __LINE__) ; \
+/*      mexPrintf ("File: %s, Line: %d\n", __FILE__, __LINE__) ; */ \
         mexErrMsgIdAndTxt ("GrB:error", errmsg, arg) ;          \
     }
     #define ERROR(errmsg,info)                                  \
     {                                                           \
         gbcov_put ( ) ;                                         \
         FREE_ALL ;                                              \
-        mexPrintf ("File: %s, Line: %d\n", __FILE__, __LINE__) ; \
+/*      mexPrintf ("File: %s, Line: %d\n", __FILE__, __LINE__) ; */ \
         mexErrMsgIdAndTxt ("GrB:error", errmsg) ;               \
     }
 
@@ -134,7 +134,7 @@
     if (this_info != GrB_SUCCESS)                                   \
     {                                                               \
         const char *err1 = gb_error_string (this_info) ;            \
-        mexPrintf ("%s\n", err1) ;                                  \
+/*      mexPrintf ("%s\n", err1) ; */                               \
         const char *err2 ;                                          \
         GrB_Matrix_error (&err2, C) ;                               \
         ERROR ((err2 == NULL || err2 [0] == '\0') ? err1 : err2,    \

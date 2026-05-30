@@ -99,10 +99,6 @@ void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
         gbmx_mxcell_to_matrices (Cell1_Matrix, &Cell1_len, Cell [1]) ;
     }
 
-    // printf ("nmatrices %d\n", nmatrices) ;
-    // printf ("nstrings %d\n", nstrings) ;
-    // printf ("ncells %d\n", ncells) ;
-
     ////////////////////////////////////////////////////////////////////////////
 
     //--------------------------------------------------------------------------
@@ -167,7 +163,6 @@ void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
     if (cnrows == 1 && ncells == 1)
     { 
         // only J is present
-        // printf ("only J present\n") ;
         OK (gb_cell_to_list (&J, &J_to_free, &nJ, &J_max,
             Cell0_Matrix, Cell0_len, base_offset, cncols)) ;
         jcells = Cell0_len ;
@@ -175,7 +170,6 @@ void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
     else if (ncells == 1)
     { 
         // only I is present
-        // printf ("only I present\n") ;
         OK (gb_cell_to_list (&I, &I_to_free, &nI, &I_max,
             Cell0_Matrix, Cell0_len, base_offset, cnrows)) ;
         icells = Cell0_len ;
@@ -183,7 +177,6 @@ void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
     else if (ncells == 2)
     { 
         // both I and J are present
-        // printf ("both I and J present\n") ;
         OK (gb_cell_to_list (&I, &I_to_free, &nI, &I_max,
             Cell0_Matrix, Cell0_len, base_offset, cnrows)) ;
         OK (gb_cell_to_list (&J, &J_to_free, &nJ, &J_max,
@@ -208,11 +201,6 @@ void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
     // expand C if needed
     //--------------------------------------------------------------------------
 
-// printf ("C input:\n") ; GxB_Matrix_fprint (C, "C input", 5, NULL) ;
-// printf ("A input:\n") ; GxB_Matrix_fprint (A, "A input", 5, NULL) ;
-// printf ("I input:\n") ; GxB_Vector_fprint (I, "I input", 5, NULL) ;
-// printf ("J input:\n") ; GxB_Vector_fprint (J, "J input", 5, NULL) ;
-
     uint64_t cnrows_required = I_max + 1 ;
     uint64_t cncols_required = J_max + 1 ;
     if (cnrows_required > cnrows || cncols_required > cncols)
@@ -221,8 +209,6 @@ void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
         uint64_t cncols_new = MAX (cncols, cncols_required) ;
         OK (GrB_Matrix_resize (C, cnrows_new, cncols_new)) ;
     }
-
-// GxB_Matrix_fprint (C, "C resized", 5, NULL) ;
 
     //--------------------------------------------------------------------------
     // determine if A is a scalar (ignore the transpose descriptor)

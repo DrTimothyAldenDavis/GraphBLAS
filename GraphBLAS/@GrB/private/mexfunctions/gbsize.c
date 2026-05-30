@@ -42,8 +42,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     uint64_t nrows, ncols ;
-    // printf ("gbsize: %d %d\n", mxIsStruct (pargin [0]),
-    //    mxIsClass (pargin [0], "GrB")) ;
 
     if (mxIsStruct (pargin [0]) || mxIsClass (pargin [0], "GrB"))
     { 
@@ -53,7 +51,6 @@ void mexFunction
         //----------------------------------------------------------------------
 
         GrB_Matrix A = gbmx_get_grb_matrix (pargin [0]) ;
-        // GxB_Matrix_fprint (A, "GrB_Matrix A in gbsize", 5, NULL) ;
         OK (GrB_Matrix_nrows (&nrows, A)) ;
         OK (GrB_Matrix_ncols (&ncols, A)) ;
 

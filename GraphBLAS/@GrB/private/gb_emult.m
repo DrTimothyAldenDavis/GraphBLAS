@@ -26,14 +26,7 @@ else
         C = gbapply2 (A, op, gbfull (B)) ;
     else
         % both A and B are matrices
-        % FIXME HERE
-        'HERE am i'
-        A
-        B
         C = gbemult (A, op, B) ;
     end
 end
 
-Result = GrB (C)
-C
-dec2hex (C.opaque)

@@ -49,7 +49,7 @@ else
     end
 
     % convert each cell back into GrB matrices
-    C = cell (m, n) ;
+    C = cell (size (S)) ;
     for k = 1:numel(S)
         C {k} = GrB (S {k}) ;
     end

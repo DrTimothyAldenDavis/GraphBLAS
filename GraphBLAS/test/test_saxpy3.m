@@ -6,7 +6,7 @@
 % artificially.  However, this test is costly and can only be done on a
 % large system, so it is not part of the testall.m script.  See test296.m.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ;

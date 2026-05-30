@@ -46,7 +46,7 @@ void mexFunction
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     if (nargout > 1)
     { 
-        pargout [0] = gbmx_export_struct (&P_opaque) ;
+        pargout [1] = gbmx_export_struct (&P_opaque) ;
     }
 
     //--------------------------------------------------------------------------

@@ -43,8 +43,6 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
     CHECK_ERROR (C_handle == NULL || (*C_handle == NULL), "internal error 3") ;
     C = (*C_handle) ;
 
-    // OK (GxB_Matrix_fprint (C, "at start of gb_export", 5, NULL)) ;
-
     //--------------------------------------------------------------------------
     // ensure C has no readonly components
     //--------------------------------------------------------------------------

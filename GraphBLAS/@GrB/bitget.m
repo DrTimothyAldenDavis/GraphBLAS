@@ -60,40 +60,31 @@ end
 % C will have the same type as A on input
 ctype = atype ;
 
-% FIXME HERE
-atype
-btype
-ctype
-assumedtype
-
 % ensure A and B have the right type then compute C = bitget (A,B)
 if (isequal (atype, 'double') || isequal (atype, 'single'))
     atype = assumedtype ;
     op = ['bitget.' atype] ;
     if (~isequal (btype, atype))
-        'here1'
-        a = GrB (gbnew (A, atype))
-        b = GrB (gbnew (B, atype))
+        a = GrB (gbnew (A, atype)) ;
+        b = GrB (gbnew (B, atype)) ;
         C1 = gb_emult (a, op, b) ;
     else
-        'here2'
-        a = GrB (gbnew (A, atype))
+        a = GrB (gbnew (A, atype)) ;
         C1 = gb_emult (a, op, B) ;
     end
 else
     op = ['bitget.' atype] ;
     if (~isequal (btype, atype))
-        'here3'
-        b = GrB (gbnew (B, atype))
+        b = GrB (gbnew (B, atype)) ;
         C1 = gb_emult (A, op, b) ;
     else
-        'here4'
         C1 = gb_emult (A, op, B) ;
     end
 end
 
-C1
-ctype
-GrB (C1)
-C = GrB (C1, ctype)
+if (isequal (gbtype (C1), ctype))
+    C = GrB (C1) ;
+else
+    C = GrB (C1, ctype) ;
+end
 

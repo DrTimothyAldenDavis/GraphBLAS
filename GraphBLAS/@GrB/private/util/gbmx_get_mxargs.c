@@ -42,7 +42,6 @@ void gbmx_get_mxargs
     if (gbdesc->is_present)
     { 
         // descriptor is present, remove it from further consideration
-        // printf ("got descriptor\n") ;
         nargin-- ;
     }
 
@@ -55,7 +54,6 @@ void gbmx_get_mxargs
     (*ncells) = 0 ;
     String [0][0] = '\0' ;
     String [1][0] = '\0' ;
-    // printf ("nargin: %d\n", nargin) ;
 
     for (int k = 0 ; k < nargin ; k++)
     {
