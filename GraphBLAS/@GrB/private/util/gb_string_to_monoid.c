@@ -30,8 +30,9 @@ GrB_Info gb_string_to_monoid            // return monoid from a string
 
     ASSERT (monoid != NULL) ;
     GrB_BinaryOp binop = NULL ;
-    OK (gb_string_to_binop_or_idxunop (&binop, opstring, type, type,
-        /* idxunop: not allowed here: */ NULL, NULL)) ;
+    OK (gb_string_to_binop_or_idxunop (&binop,
+        /* idxunop: not allowed here: */ NULL, NULL,
+        opstring, type, type)) ;
 
     //--------------------------------------------------------------------------
     // convert the binary op to a monoid and return result

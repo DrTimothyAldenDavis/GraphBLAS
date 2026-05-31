@@ -648,15 +648,13 @@ GrB_Info gb_string_to_binop_or_idxunop
 (
     // output:
     GrB_BinaryOp *binop,        // binary op, or NULL if idxunop
+    GrB_IndexUnaryOp *idxunop,          // idxunop from the string
     // input/output:
+    int64_t *ithunk,                    // thunk for idxunop
     char *opstring,                     // string defining the operator
     // input:
     const GrB_Type atype,               // type of A
-    const GrB_Type btype,               // type of B
-    // output
-    GrB_IndexUnaryOp *idxunop,          // idxunop from the string
-    // input/output
-    int64_t *ithunk                     // thunk for idxunop
+    const GrB_Type btype                // type of B
 ) ;
 
 bool gb_string_to_format        // true if a valid format is found

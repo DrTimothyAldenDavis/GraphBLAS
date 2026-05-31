@@ -14,21 +14,17 @@
 // GrB_PLUS_FP64 operator.  The type is optional.  If not present in the
 // string, it is found by gb_default_type (atype, btype).
 
-// FIXME: reorder the parameters
-
 GrB_Info gb_string_to_binop_or_idxunop
 (
     // output:
     GrB_BinaryOp *binop,        // binary op, or NULL if idxunop
+    GrB_IndexUnaryOp *idxunop,          // idxunop from the string
     // input/output:
+    int64_t *ithunk,                    // thunk for idxunop
     char *opstring,                     // string defining the operator
     // input:
     const GrB_Type atype,               // type of A
-    const GrB_Type btype,               // type of B
-    // output
-    GrB_IndexUnaryOp *idxunop,          // idxunop from the string
-    // input/output
-    int64_t *ithunk                     // thunk for idxunop
+    const GrB_Type btype                // type of B
 )
 {
 

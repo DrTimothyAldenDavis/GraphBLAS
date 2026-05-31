@@ -23,7 +23,8 @@ GrB_Info gb_string_to_binop // return binary operator from a string
 { 
 
     // convert the string to a binary operator
-    return (gb_string_to_binop_or_idxunop (binop, opstring, atype, btype,
-        /* idxunop not allowed here: */ NULL, NULL)) ;
+    return (gb_string_to_binop_or_idxunop (binop,
+        /* idxunop not allowed here: */ NULL, NULL,
+        opstring, atype, btype)) ;
 }
 

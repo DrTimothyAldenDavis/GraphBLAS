@@ -176,16 +176,16 @@ void mexFunction
 
     if (nstrings == 1)
     { 
-        OK (gb_string_to_binop_or_idxunop (&op2, &(String [0][0]),
-            atype, btype, &idxunop, &ithunk)) ;
+        OK (gb_string_to_binop_or_idxunop (&op2, &idxunop, &ithunk,
+            &(String [0][0]), atype, btype)) ;
     }
     else 
     { 
         // if accum appears, then Cin must also appear
         CHECK_ERROR (C == NULL, USAGE) ;
         OK (gb_string_to_binop (&accum, String [0], ctype, ctype)) ;
-        OK (gb_string_to_binop_or_idxunop (&op2, &(String [1][0]),
-            atype, btype, &idxunop, &ithunk)) ;
+        OK (gb_string_to_binop_or_idxunop (&op2, &idxunop, &ithunk,
+            &(String [1][0]), atype, btype)) ;
     }
 
     // create an int64 scalar from ithunk

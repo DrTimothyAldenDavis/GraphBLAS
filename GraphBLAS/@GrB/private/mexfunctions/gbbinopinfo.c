@@ -64,8 +64,8 @@ void mexFunction
         type = gb_string_to_type (type_string) ;
     }
 
-    OK (gb_string_to_binop_or_idxunop (&binop, op_string, type, type,
-        &idxunop, &ithunk)) ;
+    OK (gb_string_to_binop_or_idxunop (&binop, &idxunop, &ithunk,
+        op_string, type, type)) ;
 
     int pr = (nargout < 1) ? GxB_COMPLETE : GxB_SILENT ;
     if (idxunop != NULL)
