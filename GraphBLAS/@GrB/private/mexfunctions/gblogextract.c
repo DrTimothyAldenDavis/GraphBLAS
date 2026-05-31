@@ -85,9 +85,9 @@
     GrB_Matrix_free (&K) ;          \
     GrB_Matrix_free (&T) ;          \
     GrB_Matrix_free (&M) ;          \
-    GrB_Matrix_free (&M_shallow) ;  \
+    GrB_Matrix_free (&M_to_free) ;  \
     GrB_Matrix_free (&A_copy) ;     \
-    GrB_Matrix_free (&A_shallow) ;
+    GrB_Matrix_free (&A_to_free) ;
 
 #define FREE_ALL                    \
     FREE_WORK ;                     \
@@ -113,8 +113,8 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix *C_opaque = NULL, K = NULL, M = NULL, A = NULL, A_copy = NULL,
-        G = NULL, T = NULL, C = NULL, A_input = NULL, A_shallow = NULL,
-        M_input = NULL, M_shallow = NULL ;
+        G = NULL, T = NULL, C = NULL, A_input = NULL, A_to_free = NULL,
+        M_input = NULL, M_to_free = NULL ;
     GrB_Vector V = NULL ;
     uint64_t *Kx = NULL ;
 
@@ -138,7 +138,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // make sure A is stored by column
-    OK (gb_get_matrix (&A_input, &A_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A_input, &A_to_free, &(Matrix [0]))) ;
 
     OK (gb_by_col (&A, &A_copy, A_input)) ;
 
@@ -154,11 +154,11 @@ void mexFunction
     int not_bitmap = GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL ;
 
     // make M boolean, stored by column, and drop explicit zeros
-    OK (gb_get_matrix (&M_input, &M_shallow, &(Matrix [1]))) ;
+    OK (gb_get_matrix (&M_input, &M_to_free, &(Matrix [1]))) ;
     OK (gb_new (&M, GrB_BOOL, nrows, ncols, GxB_BY_COL, not_bitmap)) ;
     OK1 (M, GrB_Matrix_select_BOOL (M, NULL, NULL, GrB_VALUENE_BOOL, M_input,
         0, NULL)) ;
-    GrB_Matrix_free (&M_shallow) ;
+    GrB_Matrix_free (&M_to_free) ;
 
     GrB_Index mnz ;
     OK (GrB_Matrix_nvals (&mnz, M)) ;
@@ -179,7 +179,7 @@ void mexFunction
     OK1 (G, GxB_Matrix_subassign (G, M, NULL,
         A, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
     GrB_Matrix_free (&A_copy) ;
-    GrB_Matrix_free (&A_shallow) ;
+    GrB_Matrix_free (&A_to_free) ;
 
     //--------------------------------------------------------------------------
     // extract Gx, the values of G

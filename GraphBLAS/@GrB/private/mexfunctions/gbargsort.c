@@ -15,7 +15,7 @@
 // direction is 'ascend' or 'descend'.
 
 #define FREE_WORK                       \
-    GrB_Matrix_free (&A_shallow) ;
+    GrB_Matrix_free (&A_to_free) ;
 
 #define FREE_ALL                        \
     FREE_WORK ;                         \
@@ -40,7 +40,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix *C_opaque = NULL, *P_opaque = NULL,
-        A = NULL, A_shallow = NULL, C = NULL, P = NULL ;
+        A = NULL, A_to_free = NULL, C = NULL, P = NULL ;
 
     gbmx_usage (nargin == 3 && (nargout == 2 || nargout == 1), USAGE) ;
     pargout [0] = gbmx_export_struct (&C_opaque) ;
@@ -68,7 +68,7 @@ void mexFunction
     // get inputs
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
 
     GrB_Type type ;
     OK (GxB_Matrix_type (&type, A)) ;

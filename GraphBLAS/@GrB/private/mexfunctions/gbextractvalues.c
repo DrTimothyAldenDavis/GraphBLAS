@@ -15,7 +15,7 @@
 
 #define FREE_WORK                   \
     gb_free (&x) ;                  \
-    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Matrix_free (&A_to_free) ;  \
     GrB_Vector_free (&X_vector) ;
 
 #include "gb_interface.h"
@@ -35,7 +35,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A = NULL, A_shallow = NULL ;
+    GrB_Matrix A = NULL, A_to_free = NULL ;
     GrB_Vector X_vector = NULL ;
     GrB_Type xtype = NULL ;
     void *x = NULL ;
@@ -75,7 +75,7 @@ void mexFunction
     // get the matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;

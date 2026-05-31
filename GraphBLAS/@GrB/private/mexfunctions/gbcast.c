@@ -17,7 +17,7 @@
 // C = gbcast (X, type)
 
 #define FREE_WORK                   \
-    GrB_Matrix_free (&X_shallow) ;
+    GrB_Matrix_free (&X_to_free) ;
 
 #define FREE_ALL                    \
     FREE_WORK ;                     \
@@ -40,7 +40,7 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix *C_opaque = NULL, X = NULL, X_shallow = NULL, C = NULL ;
+    GrB_Matrix *C_opaque = NULL, X = NULL, X_to_free = NULL, C = NULL ;
 
     gbmx_usage (nargin == 2 && nargout <= 1, USAGE) ;
     pargout [0] = gbmx_export_struct (&C_opaque) ;
@@ -61,7 +61,7 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&X, &X_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&X, &X_to_free, &(Matrix [0]))) ;
 
     //--------------------------------------------------------------------------
     // make a deep copy and typecast to the desired type

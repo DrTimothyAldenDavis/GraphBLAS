@@ -25,8 +25,7 @@
 // C = gbnew (m, n, format, type)
 
 #define FREE_WORK                   \
-    GrB_Matrix_free (&A_shallow) ;  \
-    GrB_Matrix_free (&C_shallow) ;
+    GrB_Matrix_free (&A_to_free) ;
 
 #define FREE_ALL                    \
     FREE_WORK ;                     \
@@ -49,8 +48,7 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL,
-        A_shallow = NULL, C_shallow = NULL ;
+    GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_to_free = NULL ;
 
     gbmx_usage (nargin >= 1 && nargin <= 4 && nargout <= 1, USAGE) ;
     pargout [0] = gbmx_export_struct (&C_opaque) ;
@@ -198,7 +196,7 @@ void mexFunction
         //----------------------------------------------------------------------
 
         // GraphBLAS copy of A, same type and format as A
-        OK (gb_get_deep (&C, &C_shallow, &(Matrix [0]))) ;
+        OK (gb_get_deep (&C, &(Matrix [0]))) ;
 
     }
     else if (nargin == 2)
@@ -239,7 +237,7 @@ void mexFunction
                 { 
                     // get a shallow copy and then typecast it to type.
                     // use the same format as A
-                    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+                    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
                     OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
                     OK (gb_typecast (&C, A, type, fmt, 0)) ;
                 }
@@ -253,7 +251,7 @@ void mexFunction
                 //--------------------------------------------------------------
 
                 // get a shallow copy of A
-                OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+                OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
                 // C = A with the requested format and sparsity, no typecast
                 OK (gb_typecast (&C, A, NULL, fmt, sparsity)) ;
 
@@ -357,7 +355,7 @@ void mexFunction
             else
             { 
                 // get a shallow copy, typecast it, and set the format
-                OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+                OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
                 OK (gb_typecast (&C, A, type, fmt, sparsity)) ;
             }
         }

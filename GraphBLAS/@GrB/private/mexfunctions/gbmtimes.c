@@ -26,8 +26,8 @@
 // C = gbmtimes (A, B, desc)
 
 #define FREE_WORK                   \
-    GrB_Matrix_free (&A_shallow) ;  \
-    GrB_Matrix_free (&B_shallow) ;  \
+    GrB_Matrix_free (&A_to_free) ;  \
+    GrB_Matrix_free (&B_to_free) ;  \
     GrB_Scalar_free (&zero) ;       \
     GrB_Descriptor_free (&desc) ;
 
@@ -54,7 +54,7 @@ void mexFunction
 
     GrB_Type atype, btype, ctype ;
     GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, B = NULL,
-        A_shallow = NULL, B_shallow = NULL ;
+        A_to_free = NULL, B_to_free = NULL ;
     GrB_Scalar scalar = NULL, zero = NULL ;
     GrB_Descriptor desc = NULL ;
 
@@ -89,8 +89,8 @@ void mexFunction
     // get the matrices
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
-    OK (gb_get_matrix (&B, &B_shallow, &(Matrix [1]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]))) ;
 
     OK (GxB_Matrix_type (&atype, A)) ;
     OK (GxB_Matrix_type (&btype, B)) ;

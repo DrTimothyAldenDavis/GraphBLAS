@@ -11,7 +11,7 @@
 
 // gbdisp (C, cnz, level)
 
-#define FREE_WORK GrB_Matrix_free (&C_shallow) ;
+#define FREE_WORK GrB_Matrix_free (&C_to_free) ;
 
 #include "gb_interface.h"
 
@@ -30,7 +30,7 @@ void mexFunction
     // check inputs (no outputs to construct)
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C = NULL, C_shallow = NULL ;
+    GrB_Matrix C = NULL, C_to_free = NULL ;
 
     gbmx_usage (nargin == 3 && nargout == 0, USAGE) ;
 
@@ -49,7 +49,7 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&C, &C_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&C, &C_to_free, &(Matrix [0]))) ;
 
     //--------------------------------------------------------------------------
     // print the GraphBLAS matrix

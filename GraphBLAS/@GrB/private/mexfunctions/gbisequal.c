@@ -14,8 +14,8 @@
 //  result = gbisequal (A,B)
 
 #define FREE_WORK                   \
-    GrB_Matrix_free (&A_shallow) ;  \
-    GrB_Matrix_free (&B_shallow) ;
+    GrB_Matrix_free (&A_to_free) ;  \
+    GrB_Matrix_free (&B_to_free) ;
 
 #include "gb_interface.h"
 
@@ -34,7 +34,7 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A = NULL, B = NULL, A_shallow = NULL, B_shallow = NULL ;
+    GrB_Matrix A = NULL, B = NULL, A_to_free = NULL, B_to_free = NULL ;
 
     gbmx_usage (nargin == 2 && nargout <= 1, USAGE) ;
 
@@ -55,8 +55,8 @@ void mexFunction
     // get the arguments
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
-    OK (gb_get_matrix (&B, &B_shallow, &(Matrix [1]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]))) ;
 
     //--------------------------------------------------------------------------
     // check if they are equal

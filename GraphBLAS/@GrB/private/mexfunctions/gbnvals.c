@@ -14,7 +14,7 @@
 
 // nvals = gbnvals (A)
 
-#define FREE_WORK GrB_Matrix_free (&A_shallow) ;
+#define FREE_WORK GrB_Matrix_free (&A_to_free) ;
 
 #include "gb_interface.h"
 
@@ -33,7 +33,7 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A = NULL, A_shallow = NULL ;
+    GrB_Matrix A = NULL, A_to_free = NULL ;
 
     gbmx_usage (nargin == 1 && nargout <= 1, USAGE) ;
 
@@ -53,7 +53,7 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
 
     //--------------------------------------------------------------------------
     // get the # of entries in the matrix

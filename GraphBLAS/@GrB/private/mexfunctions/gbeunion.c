@@ -21,12 +21,11 @@
 // right size (which depends on A, B, and the descriptor).
 
 #define FREE_WORK                       \
-    GrB_Matrix_free (&C_shallow) ;      \
-    GrB_Matrix_free (&M_shallow) ;      \
-    GrB_Matrix_free (&A_shallow) ;      \
-    GrB_Matrix_free (&alpha_shallow) ;  \
-    GrB_Matrix_free (&B_shallow) ;      \
-    GrB_Matrix_free (&beta_shallow) ;   \
+    GrB_Matrix_free (&M_to_free) ;      \
+    GrB_Matrix_free (&A_to_free) ;      \
+    GrB_Matrix_free (&alpha_to_free) ;  \
+    GrB_Matrix_free (&B_to_free) ;      \
+    GrB_Matrix_free (&beta_to_free) ;   \
     GrB_Descriptor_free (&desc) ;
 
 #define FREE_ALL                        \
@@ -53,9 +52,9 @@ void mexFunction
 
     GrB_Type atype, btype, ctype = NULL ;
     GrB_Matrix *C_opaque = NULL, C = NULL, M = NULL, A = NULL, B = NULL,
-        alpha = NULL, beta = NULL, C_shallow = NULL, M_shallow = NULL,
-        A_shallow = NULL, B_shallow = NULL, alpha_shallow = NULL,
-        beta_shallow = NULL ;
+        alpha = NULL, beta = NULL, M_to_free = NULL,
+        A_to_free = NULL, B_to_free = NULL, alpha_to_free = NULL,
+        beta_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
     gbmx_usage (nargin >= 3 && nargin <= 9 && nargout <= 2, USAGE) ;
@@ -91,27 +90,27 @@ void mexFunction
 
     if (nmatrices == 4)
     { 
-        OK (gb_get_matrix (&A    , &A_shallow    , &(Matrix [0]))) ;
-        OK (gb_get_matrix (&alpha, &alpha_shallow, &(Matrix [1]))) ;
-        OK (gb_get_matrix (&B    , &B_shallow    , &(Matrix [2]))) ;
-        OK (gb_get_matrix (&beta , &beta_shallow , &(Matrix [3]))) ;
+        OK (gb_get_matrix (&A    , &A_to_free    , &(Matrix [0]))) ;
+        OK (gb_get_matrix (&alpha, &alpha_to_free, &(Matrix [1]))) ;
+        OK (gb_get_matrix (&B    , &B_to_free    , &(Matrix [2]))) ;
+        OK (gb_get_matrix (&beta , &beta_to_free , &(Matrix [3]))) ;
     }
     else if (nmatrices == 5)
     { 
-        OK (gb_get_deep   (&C    , &C_shallow    , &(Matrix [0]))) ;
-        OK (gb_get_matrix (&A    , &A_shallow    , &(Matrix [1]))) ;
-        OK (gb_get_matrix (&alpha, &alpha_shallow, &(Matrix [2]))) ;
-        OK (gb_get_matrix (&B    , &B_shallow    , &(Matrix [3]))) ;
-        OK (gb_get_matrix (&beta , &beta_shallow , &(Matrix [4]))) ;
+        OK (gb_get_deep   (&C    ,                 &(Matrix [0]))) ;
+        OK (gb_get_matrix (&A    , &A_to_free    , &(Matrix [1]))) ;
+        OK (gb_get_matrix (&alpha, &alpha_to_free, &(Matrix [2]))) ;
+        OK (gb_get_matrix (&B    , &B_to_free    , &(Matrix [3]))) ;
+        OK (gb_get_matrix (&beta , &beta_to_free , &(Matrix [4]))) ;
     }
     else // if (nmatrices == 6)
     { 
-        OK (gb_get_deep   (&C    , &C_shallow    , &(Matrix [0]))) ;
-        OK (gb_get_matrix (&M    , &M_shallow    , &(Matrix [1]))) ;
-        OK (gb_get_matrix (&A    , &A_shallow    , &(Matrix [2]))) ;
-        OK (gb_get_matrix (&alpha, &alpha_shallow, &(Matrix [3]))) ;
-        OK (gb_get_matrix (&B    , &B_shallow    , &(Matrix [4]))) ;
-        OK (gb_get_matrix (&beta , &beta_shallow , &(Matrix [5]))) ;
+        OK (gb_get_deep   (&C    ,                 &(Matrix [0]))) ;
+        OK (gb_get_matrix (&M    , &M_to_free    , &(Matrix [1]))) ;
+        OK (gb_get_matrix (&A    , &A_to_free    , &(Matrix [2]))) ;
+        OK (gb_get_matrix (&alpha, &alpha_to_free, &(Matrix [3]))) ;
+        OK (gb_get_matrix (&B    , &B_to_free    , &(Matrix [4]))) ;
+        OK (gb_get_matrix (&beta , &beta_to_free , &(Matrix [5]))) ;
     }
 
     uint64_t n ;

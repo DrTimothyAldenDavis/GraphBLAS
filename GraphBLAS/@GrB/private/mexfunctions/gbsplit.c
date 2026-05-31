@@ -20,7 +20,7 @@
     mxFree (Tiles_opaque) ;         \
     mxFree (Tile_nrows) ;           \
     mxFree (Tile_ncols) ;           \
-    GrB_Matrix_free (&A_shallow) ;
+    GrB_Matrix_free (&A_to_free) ;
 
 #define FREE_ALL                    \
     FREE_WORK ;
@@ -46,7 +46,7 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A = NULL, A_shallow = NULL ;
+    GrB_Matrix A = NULL, A_to_free = NULL ;
 
     gbmx_usage (nargin == 3 && nargout <= 1, USAGE) ;
 
@@ -82,7 +82,7 @@ void mexFunction
     // get the input matrix A
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
 
     //--------------------------------------------------------------------------
     // Tiles = split (A)

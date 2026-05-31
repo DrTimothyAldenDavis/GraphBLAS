@@ -32,7 +32,7 @@
     GrB_UnaryOp_free (&Getk) ;          \
     GrB_Matrix_free (&y) ;              \
     GrB_Matrix_free (&c) ;              \
-    GrB_Matrix_free (&A_shallow) ;      \
+    GrB_Matrix_free (&A_to_free) ;      \
     GrB_Matrix_free (&z) ;              \
     GrB_Scalar_free (&Theta) ;          \
     GrB_Scalar_free (&s) ;
@@ -2535,7 +2535,7 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix *x_opaque = NULL, *p_opaque = NULL, A = NULL, A_shallow = NULL,
+    GrB_Matrix *x_opaque = NULL, *p_opaque = NULL, A = NULL, A_to_free = NULL,
         x = NULL, p = NULL, c = NULL, y = NULL, z = NULL ;
     GrB_Type Tuple = NULL, Tuple3 = NULL ;
     GxB_IndexBinaryOp Iop = NULL ;
@@ -2568,7 +2568,7 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
 
     //--------------------------------------------------------------------------
     // get the matrix properties

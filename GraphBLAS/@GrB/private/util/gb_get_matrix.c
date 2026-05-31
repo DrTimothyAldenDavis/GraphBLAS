@@ -17,12 +17,10 @@
 // since the caller might be getting an optional input matrix, such as Cin or
 // the Mask.
 
-// If A_shallow is returned as non-NULL, it contains a pointer to a newly
+// If A_to_free is returned as non-NULL, it contains a pointer to a newly
 // allocated GrB_Matrix that contains readonly content from a MATLAB matrix.
-// The A_shallow matrix must be freed by the caller (which does not free the
+// The A_to_free matrix must be freed by the caller (which does not free the
 // readonly MATLAB content).
-
-// FIXME: rename A_shallow to A_to_free, throughout
 
 #define GB_UTIL
 #define FREE_ALL GrB_Matrix_free (&A) ;
@@ -34,7 +32,7 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
 (
     // output
     GrB_Matrix *A_handle,   // output matrix
-    GrB_Matrix *A_shallow,  // must be freed by the caller if not NULL
+    GrB_Matrix *A_to_free,  // must be freed by the caller if not NULL
     // input
     gb_matrix matrix        // input MATLAB or @GrB matrix
 )
@@ -46,7 +44,7 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
 
     GrB_Matrix A = NULL ;
     CHECK_ERROR (A_handle == NULL, "matrix missing") ;
-    CHECK_ERROR (A_shallow == NULL, "matrix missing") ;
+    CHECK_ERROR (A_to_free == NULL, "matrix missing") ;
     CHECK_ERROR (matrix == NULL, "matrix missing") ;
 
     //--------------------------------------------------------------------------
@@ -57,22 +55,24 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
     { 
         // matrix is a @GrB object
         (*A_handle) = matrix->G ;
-        (*A_shallow) = NULL ;           // no shallow copy to free when done
+        (*A_to_free) = NULL ;           // no shallow copy to free when done
     }
     else if (matrix->is_empty)
     { 
         // matrix is a 0-by-0 MATLAB matrix.  Create a new 0-by-0 matrix of the
-        // same type as matrix, with the default format.
+        // same type as matrix, with the default format.  The new matrix must
+        // be freed by the caller when done.
         OK (GrB_Matrix_new (&A, matrix->type, 0, 0)) ;
         (*A_handle) = A ;
-        (*A_shallow) = A ;
+        (*A_to_free) = A ;
     }
     else
     { 
-        // construct a shallow GrB_Matrix copy of a built-in MATLAB matrix
+        // construct a shallow GrB_Matrix copy of a built-in MATLAB matrix,
+        // which must be freed by the caller when done.
         OK (gb_get_matlab_matrix (&A, matrix)) ;
         (*A_handle) = A ;
-        (*A_shallow) = A ;
+        (*A_to_free) = A ;
     }
 
     //--------------------------------------------------------------------------

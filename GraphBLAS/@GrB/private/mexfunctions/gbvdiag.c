@@ -12,7 +12,7 @@
 // v = gbvdiag (A, k, desc)
 
 #define FREE_WORK                   \
-    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Matrix_free (&A_to_free) ;  \
     GrB_Descriptor_free (&desc) ;
 
 #define FREE_ALL                    \
@@ -36,7 +36,7 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix *V_opaque = NULL, V = NULL, A = NULL, A_shallow = NULL ;
+    GrB_Matrix *V_opaque = NULL, V = NULL, A = NULL, A_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
     int64_t k = 0 ;
 
@@ -70,7 +70,7 @@ void mexFunction
     // get the inputs
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
 
     //--------------------------------------------------------------------------
     // construct V

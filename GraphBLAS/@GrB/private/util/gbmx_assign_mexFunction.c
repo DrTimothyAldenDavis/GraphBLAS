@@ -34,9 +34,8 @@
 // utility.
 
 #define FREE_WORK                   \
-    GrB_Matrix_free (&C_shallow) ;  \
-    GrB_Matrix_free (&M_shallow) ;  \
-    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Matrix_free (&M_to_free) ;  \
+    GrB_Matrix_free (&A_to_free) ;  \
     GrB_Vector_free (&I_to_free) ;  \
     GrB_Vector_free (&J_to_free) ;  \
     GrB_Descriptor_free (&desc) ;
@@ -64,7 +63,7 @@ void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
 
     GrB_Type ctype ;
     GrB_Matrix *C_opaque = NULL, C = NULL, M = NULL, A = NULL,
-        C_shallow = NULL, M_shallow = NULL, A_shallow = NULL ;
+        M_to_free = NULL, A_to_free = NULL ;
     GrB_Vector I = NULL, J = NULL, I_to_free = NULL, J_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
@@ -115,14 +114,14 @@ void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
 
     if (nmatrices == 2)
     { 
-        OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
-        OK (gb_get_matrix (&A, &A_shallow, &(Matrix [1]))) ;
+        OK (gb_get_deep   (&C,             &(Matrix [0]))) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]))) ;
     }
     else // if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
-        OK (gb_get_matrix (&M, &M_shallow, &(Matrix [1]))) ;
-        OK (gb_get_matrix (&A, &A_shallow, &(Matrix [2]))) ;
+        OK (gb_get_deep   (&C,             &(Matrix [0]))) ;
+        OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]))) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]))) ;
     }
 
     OK (GxB_Matrix_type (&ctype, C)) ;

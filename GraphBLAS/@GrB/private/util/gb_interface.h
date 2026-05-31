@@ -70,16 +70,12 @@
     #define ERROR2(errmsg,arg,info)                             \
     {                                                           \
         FREE_ALL ;                                              \
-/*      mexPrintf ("File: %s, Line: %d\n", __FILE__, __LINE__) ; */ \
-/*      mexPrintf ("GrB:error (%d): " errmsg "\n", info, arg) ; */  \
         return (info) ;                                         \
     }
 
     #define ERROR(errmsg,info)                                  \
     {                                                           \
         FREE_ALL ;                                              \
-/*      mexPrintf ("File: %s, Line: %d\n", __FILE__, __LINE__) ; */ \
-/*      mexPrintf ("GrB:error (%d): %s\n", info, errmsg) ;       */ \
         return (info) ;                                         \
     }
 
@@ -90,14 +86,12 @@
     {                                                           \
         gbcov_put ( ) ;                                         \
         FREE_ALL ;                                              \
-/*      mexPrintf ("File: %s, Line: %d\n", __FILE__, __LINE__) ; */ \
         mexErrMsgIdAndTxt ("GrB:error", errmsg, arg) ;          \
     }
     #define ERROR(errmsg,info)                                  \
     {                                                           \
         gbcov_put ( ) ;                                         \
         FREE_ALL ;                                              \
-/*      mexPrintf ("File: %s, Line: %d\n", __FILE__, __LINE__) ; */ \
         mexErrMsgIdAndTxt ("GrB:error", errmsg) ;               \
     }
 
@@ -133,12 +127,21 @@
     GrB_Info this_info = method ;                                   \
     if (this_info != GrB_SUCCESS)                                   \
     {                                                               \
-        const char *err1 = gb_error_string (this_info) ;            \
-/*      mexPrintf ("%s\n", err1) ; */                               \
         const char *err2 ;                                          \
         GrB_Matrix_error (&err2, C) ;                               \
-        ERROR ((err2 == NULL || err2 [0] == '\0') ? err1 : err2,    \
-            this_info) ;                                            \
+        if (err2 != NULL && err2 [0] != '\0')                       \
+        {                                                           \
+            /* copy the err2 string into err3 since err2 is freed */\
+            /* when C is freed */                                   \
+            char err3 [GB_LOGGER_LEN+2] ;                           \
+            strncpy (err3, err2, GB_LOGGER_LEN) ;                   \
+            err3 [GB_LOGGER_LEN] = '\0' ;                           \
+            ERROR (err3, this_info) ;                               \
+        }                                                           \
+        else                                                        \
+        {                                                           \
+            ERROR (gb_error_string (this_info), this_info) ;        \
+        }                                                           \
     }                                                               \
 }
 
@@ -440,7 +443,6 @@ GrB_Info gb_get_deep        // get a deep GrB_Matrix copy of a matrix
 (
     // output:
     GrB_Matrix *C_handle,   // deep copy of the input matrix
-    GrB_Matrix *C_shallow,  // shallow version; must be freed by caller
     // input:
     gb_matrix X             // input MATLAB or @GrB matrix
 ) ;
@@ -492,7 +494,7 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
 (
     // output
     GrB_Matrix *A_handle,   // output matrix
-    GrB_Matrix *A_shallow,  // must be freed by the caller if not NULL
+    GrB_Matrix *A_to_free,  // must be freed by the caller if not NULL
     // input
     gb_matrix X             // input MATLAB or @GrB matrix
 ) ;

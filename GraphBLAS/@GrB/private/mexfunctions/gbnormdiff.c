@@ -10,8 +10,8 @@
 // This function accesses opaque content and GB_methods inside GraphBLAS.
 
 #define FREE_WORK                   \
-    GrB_Matrix_free (&A_shallow) ;  \
-    GrB_Matrix_free (&B_shallow) ;  \
+    GrB_Matrix_free (&A_to_free) ;  \
+    GrB_Matrix_free (&B_to_free) ;  \
     GrB_Matrix_free (&X) ;
 
 #include "gb_interface.h"
@@ -32,7 +32,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix A = NULL, B = NULL, X = NULL,
-        A_shallow = NULL, B_shallow = NULL ;
+        A_to_free = NULL, B_to_free = NULL ;
 
     gbmx_usage (nargin == 3 && nargout <= 1, USAGE) ;
 
@@ -55,8 +55,8 @@ void mexFunction
     // get the inputs 
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
-    OK (gb_get_matrix (&B, &B_shallow, &(Matrix [1]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]))) ;
 
     GrB_Type atype, btype ;
     OK (GxB_Matrix_type (&atype, A)) ;

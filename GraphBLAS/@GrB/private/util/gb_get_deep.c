@@ -25,9 +25,13 @@
 // also be a @GrB object, not a MATLAB matrix).
 
 #define GB_UTIL
+
+#define FREE_WORK                   \
+    GrB_Matrix_free (&C_to_free) ;
+
 #define FREE_ALL                    \
-    GrB_Matrix_free (&C) ;          \
-    GrB_Matrix_free (C_shallow) ;
+    FREE_WORK ;                     \
+    GrB_Matrix_free (&C) ;
 
 #include "gb_interface.h"
 
@@ -35,18 +39,17 @@ GrB_Info gb_get_deep        // get a deep GrB_Matrix copy of a matrix
 (
     // output:
     GrB_Matrix *C_handle,   // deep copy of the input matrix
-    GrB_Matrix *C_shallow,  // shallow version; must be freed by caller
     // input:
     gb_matrix X             // input MATLAB or @GrB matrix
 )
 { 
 
     //--------------------------------------------------------------------------
-    // get the GrB_Matrix Cin and optional C_shallow of a MATLAB matrix
+    // get the GrB_Matrix Cin and optional C_to_free of a MATLAB matrix
     //--------------------------------------------------------------------------
 
-    GrB_Matrix Cin = NULL, C = NULL ;
-    OK (gb_get_matrix (&Cin, C_shallow, X)) ;
+    GrB_Matrix Cin = NULL, C = NULL, C_to_free = NULL ;
+    OK (gb_get_matrix (&Cin, &C_to_free, X)) ;
 
     //--------------------------------------------------------------------------
     // ensure Cin has no pending work
@@ -70,6 +73,7 @@ GrB_Info gb_get_deep        // get a deep GrB_Matrix copy of a matrix
     // return result
     //--------------------------------------------------------------------------
 
+    FREE_WORK ;
     (*C_handle) = C ;
     return (GrB_SUCCESS) ;
 }

@@ -18,8 +18,7 @@
 // If cin is not present then it is implicitly a 1-by-1 matrix with no entries.
 
 #define FREE_WORK                   \
-    GrB_Matrix_free (&C_shallow) ;  \
-    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Matrix_free (&A_to_free) ;  \
     GrB_Descriptor_free (&desc) ;
 
 #define FREE_ALL                    \
@@ -44,8 +43,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Type atype, ctype = NULL ;
-    GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL,
-        C_shallow = NULL, A_shallow = NULL ;
+    GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
     gbmx_usage (nargin >= 2 && nargin <= 5 && nargout <= 2, USAGE) ;
@@ -82,12 +80,12 @@ void mexFunction
 
     if (nmatrices == 1)
     { 
-        OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
     }
     else // if (nmatrices == 2)
     { 
-        OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
-        OK (gb_get_matrix (&A, &A_shallow, &(Matrix [1]))) ;
+        OK (gb_get_deep   (&C,             &(Matrix [0]))) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]))) ;
     }
 
     OK (GxB_Matrix_type (&atype, A)) ;

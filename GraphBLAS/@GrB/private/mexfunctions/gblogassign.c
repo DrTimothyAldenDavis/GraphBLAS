@@ -73,8 +73,8 @@
     gb_free ((void **) (&Mj)) ;     \
     GrB_Matrix_free (&S) ;          \
     GrB_Matrix_free (&M) ;          \
-    GrB_Matrix_free (&M_shallow) ;  \
-    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Matrix_free (&M_to_free) ;  \
+    GrB_Matrix_free (&A_to_free) ;  \
     GrB_Matrix_free (&A_copy) ;     \
     GrB_Matrix_free (&A_copy2) ;
 
@@ -100,9 +100,9 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix *C_opaque = NULL, C = NULL, C_shallow = NULL, M = NULL,
-        M_shallow = NULL, A = NULL, M_input = NULL, A_shallow = NULL,
-        A_copy = NULL, A_copy2 = NULL, S = NULL ;
+    GrB_Matrix *C_opaque = NULL, C = NULL, M = NULL, M_to_free = NULL,
+        A = NULL, M_input = NULL, A_to_free = NULL, A_copy = NULL,
+        A_copy2 = NULL, S = NULL ;
     uint64_t *Si = NULL, *Sj = NULL, *Mj = NULL ;
 
     gbmx_usage (nargin == 3 && nargout <= 1, USAGE) ;
@@ -123,7 +123,7 @@ void mexFunction
     // get a deep copy of C, of any sparsity structure
     //--------------------------------------------------------------------------
 
-    OK (gb_get_deep (&C, &C_shallow, &(Matrix [0]))) ;
+    OK (gb_get_deep (&C, &(Matrix [0]))) ;
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, C)) ;
     OK (GrB_Matrix_ncols (&ncols, C)) ;
@@ -133,14 +133,14 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // make M boolean, sparse/hyper, stored by column, and drop explicit zeros
-    OK (gb_get_matrix (&M_input, &M_shallow, &(Matrix [1]))) ;
+    OK (gb_get_matrix (&M_input, &M_to_free, &(Matrix [1]))) ;
 
     OK (gb_new (&M, GrB_BOOL, nrows, ncols, GxB_BY_COL,
         GxB_SPARSE + GxB_HYPERSPARSE)) ;
     OK1 (M, GrB_Matrix_select_BOOL (M, NULL, NULL, GrB_VALUENE_BOOL, M_input,
         0, NULL)) ;
 
-    GrB_Matrix_free (&M_shallow) ;
+    GrB_Matrix_free (&M_to_free) ;
     uint64_t mnz ;
     OK (GrB_Matrix_nvals (&mnz, M)) ;
 
@@ -148,7 +148,7 @@ void mexFunction
     // get A
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [2]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]))) ;
 
     GrB_Type atype ;
     uint64_t anrows, ancols, anz ;

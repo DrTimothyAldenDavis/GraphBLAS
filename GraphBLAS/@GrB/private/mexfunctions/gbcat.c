@@ -16,17 +16,17 @@
 // where Tiles is a 2D cell array of matrices.
 
 #define FREE_WORK                                       \
-    if (Tiles_shallow != NULL)                          \
+    if (Tiles_to_free != NULL)                          \
     {                                                   \
         for (int64_t k = 0 ; k < mn ; k++)              \
         {                                               \
-            GrB_Matrix_free (&(Tiles_shallow [k])) ;    \
+            GrB_Matrix_free (&(Tiles_to_free [k])) ;    \
         }                                               \
     }                                                   \
     GrB_Descriptor_free (&desc) ;                       \
     gbmx_free ((void **) &gb_Tiles) ;                   \
     gbmx_free ((void **) &Tiles) ;                      \
-    gbmx_free ((void **) &Tiles_shallow) ;
+    gbmx_free ((void **) &Tiles_to_free) ;
 
 #define FREE_ALL            \
     FREE_WORK ;             \
@@ -50,7 +50,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix *C_opaque = NULL, C = NULL, *Tiles = NULL,
-        *Tiles_shallow = NULL ;
+        *Tiles_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
     gb_matrix gb_Tiles = NULL ;
     int64_t m = 0, n = 0, mn = 0 ;
@@ -84,7 +84,7 @@ void mexFunction
     mn = m * n ;
     gb_Tiles = mxCalloc (mn, sizeof (struct gb_matrix_struct)) ;
     Tiles = mxCalloc (mn, sizeof (GrB_Matrix)) ;
-    Tiles_shallow = mxCalloc (mn, sizeof (GrB_Matrix)) ;
+    Tiles_to_free = mxCalloc (mn, sizeof (GrB_Matrix)) ;
 
     for (int64_t j = 0 ; j < n ; j++)
     {
@@ -112,7 +112,7 @@ void mexFunction
     for (int64_t k = 0 ; k < mn ; k++)
     { 
         // get the kth Tiles matrix; all arrays are row-major
-        OK (gb_get_matrix (&(Tiles [k]), &(Tiles_shallow [k]),
+        OK (gb_get_matrix (&(Tiles [k]), &(Tiles_to_free [k]),
             &(gb_Tiles [k]))) ;
     }
 

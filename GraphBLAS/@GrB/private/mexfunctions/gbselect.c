@@ -38,10 +38,9 @@
 
 #define FREE_WORK                       \
     GrB_Scalar_free (&Zero) ;           \
-    GrB_Matrix_free (&C_shallow) ;      \
-    GrB_Matrix_free (&M_shallow) ;      \
-    GrB_Matrix_free (&A_shallow) ;      \
-    GrB_Matrix_free (&b_shallow) ;      \
+    GrB_Matrix_free (&M_to_free) ;      \
+    GrB_Matrix_free (&A_to_free) ;      \
+    GrB_Matrix_free (&b_to_free) ;      \
     GrB_Matrix_free (&b3) ;             \
     GrB_Matrix_free (&b4) ;             \
     GrB_IndexUnaryOp_free (&nan_test) ; \
@@ -201,7 +200,7 @@ void mexFunction
     GrB_IndexUnaryOp idxunop = NULL ;
     GrB_Type atype, ctype = NULL ;
     GrB_Matrix *C_opaque = NULL, C = NULL, M = NULL, A = NULL, b = NULL,
-        C_shallow = NULL, M_shallow = NULL, A_shallow = NULL, b_shallow = NULL,
+        M_to_free = NULL, A_to_free = NULL, b_to_free = NULL,
         b3 = NULL, b4 = NULL ;
     GrB_Descriptor desc = NULL ;
     GrB_Scalar Zero = NULL ;
@@ -254,18 +253,18 @@ void mexFunction
     { 
         if (nmatrices == 1)
         { 
-            OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
         }
         else if (nmatrices == 2)
         { 
-            OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
-            OK (gb_get_matrix (&A, &A_shallow, &(Matrix [1]))) ;
+            OK (gb_get_deep   (&C,             &(Matrix [0]))) ;
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]))) ;
         }
         else if (nmatrices == 3)
         { 
-            OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
-            OK (gb_get_matrix (&M, &M_shallow, &(Matrix [1]))) ;
-            OK (gb_get_matrix (&A, &A_shallow, &(Matrix [2]))) ;
+            OK (gb_get_deep   (&C,             &(Matrix [0]))) ;
+            OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]))) ;
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]))) ;
         }
         else // if (nmatrices == 4)
         { 
@@ -280,21 +279,21 @@ void mexFunction
         }
         else if (nmatrices == 2)
         { 
-            OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
-            OK (gb_get_matrix (&b, &b_shallow, &(Matrix [1]))) ;
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+            OK (gb_get_matrix (&b, &b_to_free, &(Matrix [1]))) ;
         }
         else if (nmatrices == 3)
         { 
-            OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
-            OK (gb_get_matrix (&A, &A_shallow, &(Matrix [1]))) ;
-            OK (gb_get_matrix (&b, &b_shallow, &(Matrix [2]))) ;
+            OK (gb_get_deep   (&C,             &(Matrix [0]))) ;
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]))) ;
+            OK (gb_get_matrix (&b, &b_to_free, &(Matrix [2]))) ;
         }
         else // if (nmatrices == 4)
         { 
-            OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
-            OK (gb_get_matrix (&M, &M_shallow, &(Matrix [1]))) ;
-            OK (gb_get_matrix (&A, &A_shallow, &(Matrix [2]))) ;
-            OK (gb_get_matrix (&b, &b_shallow, &(Matrix [3]))) ;
+            OK (gb_get_deep   (&C,             &(Matrix [0]))) ;
+            OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]))) ;
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]))) ;
+            OK (gb_get_matrix (&b, &b_to_free, &(Matrix [3]))) ;
         }
     }
 

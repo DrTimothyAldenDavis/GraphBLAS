@@ -23,9 +23,8 @@
 // since the default behavior is to transpose the input matrix.
 
 #define FREE_WORK                   \
-    GrB_Matrix_free (&C_shallow) ;  \
-    GrB_Matrix_free (&M_shallow) ;  \
-    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Matrix_free (&M_to_free) ;  \
+    GrB_Matrix_free (&A_to_free) ;  \
     GrB_Descriptor_free (&desc) ;
 
 #define FREE_ALL                    \
@@ -51,7 +50,7 @@ void mexFunction
 
     GrB_Type atype, ctype = NULL ;
     GrB_Matrix *C_opaque = NULL, C = NULL, M = NULL, A,
-        C_shallow = NULL, M_shallow = NULL, A_shallow = NULL ;
+        M_to_free = NULL, A_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
     gbmx_usage (nargin >= 1 && nargin <= 5 && nargout <= 2, USAGE) ;
@@ -88,18 +87,18 @@ void mexFunction
 
     if (nmatrices == 1)
     { 
-        OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
     }
     else if (nmatrices == 2)
     { 
-        OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
-        OK (gb_get_matrix (&A, &A_shallow, &(Matrix [1]))) ;
+        OK (gb_get_deep   (&C,             &(Matrix [0]))) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]))) ;
     }
     else // if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C, &C_shallow, &(Matrix [0]))) ;
-        OK (gb_get_matrix (&M, &M_shallow, &(Matrix [1]))) ;
-        OK (gb_get_matrix (&A, &A_shallow, &(Matrix [2]))) ;
+        OK (gb_get_deep   (&C,             &(Matrix [0]))) ;
+        OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]))) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]))) ;
     }
 
     OK (GxB_Matrix_type (&atype, A)) ;

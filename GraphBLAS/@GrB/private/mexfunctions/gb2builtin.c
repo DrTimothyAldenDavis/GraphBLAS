@@ -29,7 +29,7 @@
 
 // C = gb2builtin (A)
 
-#define FREE_WORK GrB_Matrix_free (&A_shallow) ;
+#define FREE_WORK GrB_Matrix_free (&A_to_free) ;
 
 #include "gb_interface.h"
 
@@ -48,7 +48,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A = NULL, A_shallow = NULL ;
+    GrB_Matrix A = NULL, A_to_free = NULL ;
 
     gbmx_usage (nargin == 1 && nargout == 1, USAGE) ;
 
@@ -73,7 +73,7 @@ void mexFunction
     // get matrix input
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &Matrix)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &Matrix)) ;
     uint64_t *Ap = (uint64_t *) A->p ;
     uint64_t *Ai = (uint64_t *) A->i ;
     void *Ax = A->x ;

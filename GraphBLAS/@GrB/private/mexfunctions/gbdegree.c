@@ -15,7 +15,7 @@
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&x) ;          \
-    GrB_Matrix_free (&A_shallow) ;
+    GrB_Matrix_free (&A_to_free) ;
 
 #define FREE_ALL                    \
     FREE_WORK ;                     \
@@ -39,7 +39,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix *d_opaque = NULL, d = NULL, x = NULL, A = NULL,
-        A_shallow = NULL ;
+        A_to_free = NULL ;
 
     gbmx_usage (nargin == 2 && nargout <= 1, USAGE) ;
     pargout [0] = gbmx_export_struct (&d_opaque) ;
@@ -60,7 +60,7 @@ void mexFunction
     // get input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
 
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;

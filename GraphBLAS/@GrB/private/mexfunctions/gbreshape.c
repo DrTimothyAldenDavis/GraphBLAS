@@ -12,7 +12,7 @@
 // C = gbreshape (A, nrows_new, ncols_new, by_col)
 
 #define FREE_WORK                   \
-    GrB_Matrix_free (&A_shallow) ;
+    GrB_Matrix_free (&A_to_free) ;
 
 #define FREE_ALL                    \
     FREE_WORK ;                     \
@@ -35,7 +35,7 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_shallow = NULL ;
+    GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_to_free = NULL ;
 
     gbmx_usage ((nargin == 3 || nargin == 4) && nargout == 1, USAGE) ;
     pargout [0] = gbmx_export_struct (&C_opaque) ;
@@ -57,7 +57,7 @@ void mexFunction
     // get input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
 
     ////////////////////////////////////////////////////////////////////////////
 

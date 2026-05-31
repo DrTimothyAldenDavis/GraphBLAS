@@ -24,8 +24,8 @@
 //  C = gbfull (A, type, id, desc)
 
 #define FREE_WORK                   \
-    GrB_Matrix_free (&A_shallow) ;  \
-    GrB_Matrix_free (&id_shallow) ;
+    GrB_Matrix_free (&A_to_free) ;  \
+    GrB_Matrix_free (&id_to_free) ;
 
 #define FREE_ALL                    \
     FREE_WORK ;                     \
@@ -48,8 +48,8 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_shallow = NULL,
-        id = NULL, id_shallow = NULL ;
+    GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_to_free = NULL,
+        id = NULL, id_to_free = NULL ;
 
     gbmx_usage (nargin >= 1 && nargin <= 4 && nargout <= 2, USAGE) ;
     pargout [0] = gbmx_export_struct (&C_opaque) ;
@@ -87,7 +87,7 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
@@ -113,7 +113,7 @@ void mexFunction
 
     if (nargin > 2)
     { 
-        OK (gb_get_matrix (&id, &id_shallow, &(Matrix [1]))) ;
+        OK (gb_get_matrix (&id, &id_to_free, &(Matrix [1]))) ;
     }
 
     //--------------------------------------------------------------------------

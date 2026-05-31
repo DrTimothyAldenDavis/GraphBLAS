@@ -18,7 +18,7 @@
 // C is returned as a @GrB matrix.
 
 #define FREE_WORK                       \
-    GrB_Matrix_free (&Blob_shallow) ;
+    GrB_Matrix_free (&Blob_to_free) ;
 
 #define FREE_ALL                        \
     FREE_WORK ;                         \
@@ -41,7 +41,7 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix *C_opaque = NULL, C = NULL, Blob = NULL, Blob_shallow = NULL ;
+    GrB_Matrix *C_opaque = NULL, C = NULL, Blob = NULL, Blob_to_free = NULL ;
 
     gbmx_usage ((nargin >= 1 || nargin <= 3) && nargout <= 1, USAGE) ;
     pargout [0] = gbmx_export_struct (&C_opaque) ;
@@ -58,7 +58,7 @@ void mexFunction
     // get the blob, normally a row or column vector, but can be a dense matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&Blob, &Blob_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&Blob, &Blob_to_free, &(Matrix [0]))) ;
 
     bool Blob_is_dense = false ;
     OK (gb_is_dense (&Blob_is_dense, Blob)) ;

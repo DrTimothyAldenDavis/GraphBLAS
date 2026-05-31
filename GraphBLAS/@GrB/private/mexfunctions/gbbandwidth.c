@@ -12,7 +12,7 @@
 // [lo,hi] = gbbandwidth (A, compute_lo, compute_hi)
 
 #define FREE_WORK                   \
-    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Matrix_free (&A_to_free) ;  \
     GrB_Matrix_free (&x) ;          \
     GrB_Matrix_free (&idiag) ;      \
     GrB_Matrix_free (&imin) ;       \
@@ -35,7 +35,7 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A = NULL, A_shallow = NULL, x = NULL, imin = NULL, imax = NULL,
+    GrB_Matrix A = NULL, A_to_free = NULL, x = NULL, imin = NULL, imax = NULL,
         idiag = NULL ;
 
     gbmx_usage (nargin == 3 && nargout == 2, USAGE) ;
@@ -61,7 +61,7 @@ void mexFunction
     // get input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
 
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;

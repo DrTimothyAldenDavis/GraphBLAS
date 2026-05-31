@@ -16,7 +16,7 @@
 // The blob is returned as the opaque content of an n-by-1 uint8 @GrB matrix.
 
 #define FREE_WORK                   \
-    GrB_Matrix_free (&A_shallow) ;  \
+    GrB_Matrix_free (&A_to_free) ;  \
     GrB_Descriptor_free (&desc) ;
 
 #define FREE_ALL                    \
@@ -41,7 +41,7 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix *Blob_opaque = NULL, A = NULL, A_shallow = NULL ;
+    GrB_Matrix *Blob_opaque = NULL, A = NULL, A_to_free = NULL ;
     GrB_Vector Blob = NULL ;
     GrB_Descriptor desc = NULL ;
     void *blob = NULL ;
@@ -79,7 +79,7 @@ void mexFunction
     // get input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_shallow, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
 
     //--------------------------------------------------------------------------
     // create descriptor
