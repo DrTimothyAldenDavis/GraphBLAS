@@ -11,7 +11,8 @@
 // object, or the G.opaque struct content of a @GrB object.  The output is an
 // mxArray containing the G.opaque.opaque handle to the GrB_Matrix that the
 // @GrB object holds.  Returns NULL if the input is not a @GrB handle object
-// from GraphBLAS v10.4.0 or later.
+// from GraphBLAS v10.4.0 or later.  Since this method is used by gbdelete,
+// it cannot throw an error.
 
 #include "gb_interface.h"
 

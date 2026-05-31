@@ -879,8 +879,6 @@ void GB_Global_free_function (void *p, int arena)
 void * GB_Global_persistent_malloc (uint64_t memsize)
 {
     // malloc persistent memory
-//  void *p = GB_Global.malloc_function [GB_ARENA_MATLAB] (memsize) ;
-//  GB_Global_persistent_make (p) ;
     /* FIXME HACK: */ void *p = malloc (memsize) ;
     return (p) ;
 }
@@ -889,8 +887,7 @@ void GB_Global_persistent_make (void *p)
 {
     if (p != NULL && GB_Global.persistent_function != NULL)
     { 
-        // tell MATLAB to make this memory persistent
-// FIXME HACK:      GB_Global.persistent_function (p) ;
+        // tell MATLAB to make this memory persistent: REMOVED
     }
 }
 
@@ -905,7 +902,6 @@ void GB_Global_persistent_free (void **p)
     // free persistent memory
     if (p != NULL && *p != NULL)
     { 
-//      GB_Global.free_function [GB_ARENA_MATLAB] (*p) ;
     /* FIXME HACK: */ free (*p) ;
     }
     (*p) = NULL ;

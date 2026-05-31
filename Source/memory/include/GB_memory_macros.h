@@ -20,7 +20,6 @@
 
 #define GB_NARENAS 4            /* total # of arenas */
 #define GB_ARENA_RMM 0          /* FIXME arena: Rapids will be on arena 1 */
-#define GB_ARENA_MATLAB 0       /* FIXME arena: mxMalloc will be on arena 2 */
 #define GB_ARENA_STACK (255)    /* FIXME arena: for static space, not malloc'd*/
 
 GB_STATIC_INLINE_BOTH int GB_arena (uint64_t mem)

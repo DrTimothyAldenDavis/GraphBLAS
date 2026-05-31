@@ -215,7 +215,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // K is a shallow copy of M, except for its numerical values
-    OK (GB_matrix_header_new (&K, GB_ARENA_MATLAB, GB_ARENA_MATLAB)) ;
+    OK (GB_matrix_header_new (&K, GrB_DEFAULT, GrB_DEFAULT)) ;
 
     OK (GB_shallow_copy (K, GxB_BY_COL, M, NULL)) ;
     OK (GrB_Matrix_get_INT32 (K, &sparsity, GxB_SPARSITY_STATUS)) ;

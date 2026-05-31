@@ -9,14 +9,13 @@
 
 // Usage:
 
-// gbdelete (X)
+// gbdelete (G)
 
-// deletes the @GrB matrix G.  Does nothing if the input is not a @GrB handle
-// object from GraphBLAS v10.4.0 or later.
+// Deletes the @GrB matrix G.  Does nothing if the input is not a @GrB handle
+// object from GraphBLAS v10.4.0 or later.  This method must not throw an
+// error, since it is called by the @GrB delete method.
 
 #include "gb_interface.h"
-
-#define USAGE "usage: gbdelete (X)"
 
 void mexFunction
 (
@@ -28,26 +27,17 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    gbmx_usage (nargin == 1, USAGE) ;
-
-    //--------------------------------------------------------------------------
     // get the @GrB matrix handle to the GrB_Matrix, and free the matrix
     //--------------------------------------------------------------------------
 
-    mxArray *G_opaque = gbmx_get_grb_handle (pargin [0]) ;
-    if (G_opaque != NULL)
+    if (nargin == 1)
     {
-        GrB_Matrix *C_handle = (GrB_Matrix *) mxGetData (G_opaque) ;
-        GrB_Matrix_free (C_handle) ;
+        mxArray *G_opaque = gbmx_get_grb_handle (pargin [0]) ;
+        if (G_opaque != NULL)
+        {
+            GrB_Matrix *C_handle = (GrB_Matrix *) mxGetData (G_opaque) ;
+            GrB_Matrix_free (C_handle) ;
+        }
     }
-
-    //--------------------------------------------------------------------------
-    // return the result
-    //--------------------------------------------------------------------------
-
-    gb_wrapup ( ) ;
 }
 
