@@ -1,4 +1,4 @@
-function filename_used = save (C, filename)
+function filename_used = save (GrB_Matrix_from_GrB_save, filename)
 %GRB.SAVE Save a single GraphBLAS matrix to a file.
 % GrB.save (C) saves a single @GrB or built-in matrix C to a file, with a
 % filename of 'C.mat' that matches the matrix name.  If C is an
@@ -7,10 +7,8 @@ function filename_used = save (C, filename)
 % 'myfile.mat').  If A is not already a @GrB matrix, it is converted to
 % one with GrB(A).
 %
-% The object or matrix C is saved as a struct containing the opaque
-% contents of the GrB object, which is then reconstructed by GrB.load.  A
-% matrix saved to a file with GrB.save must be loaded back with GrB.load.
-% It cannot be loaded with the built-in load method.
+% NOTE: As of GraphBLAS v10.4.0, this method is no longer needed; just use
+% the MATLAB/Octave load/save methods instead.
 %
 % Example:
 %
@@ -19,21 +17,10 @@ function filename_used = save (C, filename)
 %   clear all
 %   A = GrB.load ('A.mat') ;    % A is now a @GrB matrix
 %
-% See also GrB.load, GrB/struct, GrB.serialize, GrB.deserialize.
+% See also load, save, GrB.load, GrB.serialize, GrB.deserialize.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-error ('not implemented') ; % FIXME
-
-% make sure C is a @GrB object
-if (~isobject (C))
-    C = GrB (C) ;
-end
-
-% Extract the opaque contents of C as a struct.  Give it a long and peculiar
-% name to help ensure it is only loaded by GrB.load.
-GraphBLAS_struct_from_GrB_save = C.opaque ;
 
 % determine the default filename
 if (nargin < 2)
@@ -46,8 +33,7 @@ if (nargin < 2)
     filename = [filename '.mat'] ;
 end
 
-% save the struct (not the @GrB matrix C) to the file. 
-save (filename, 'GraphBLAS_struct_from_GrB_save') ;
+save (filename, 'GrB_Matrix_from_GrB_save') ;
 
 % return the chosen filename
 if (nargout > 0)

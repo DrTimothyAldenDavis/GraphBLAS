@@ -4,13 +4,13 @@ function graphblas_install (cmake_options, cmake_config)
 % Usage:
 %   graphblas_install
 %
-% MATLAB 9.4 (R2018a) or Octave 7 later is required.  This function must
-% be run while your current working directory is the same as the directory
-% that contains graphblas_install.m.
+% MATLAB 9.4 (R2018a) or Octave 7 or later are required.  This function
+% must be run while your current working directory is the same as the
+% directory that contains graphblas_install.m.
 %
 % See also mex.
 %
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % make sure we are in the right place

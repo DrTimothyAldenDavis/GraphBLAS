@@ -598,7 +598,6 @@ properties (SetAccess = private, GetAccess = private)
     % contains a single pointer to a GrB_Matrix, which is held in MATLAB
     % as a uint8 array of 8 bytes.  The opaque content is not accessible
     % to the user application.
-    % FIXME: also place the blob inside this struct
     opaque = [ ] ;
 end
 
@@ -648,15 +647,8 @@ methods
     %---------------------------------------------------------------------
 
     function delete (C)
+    %DELETE delete a GraphBLAS matrix
     gbdelete (C) ;
-    end
-
-    %---------------------------------------------------------------------
-    % saveobj: save a GraphBLAS matrix to a file
-    %---------------------------------------------------------------------
-
-    function G = saveobj (G)
-    error ('saveobj not yet implemented') ; % FIXME
     end
 
     %---------------------------------------------------------------------
@@ -971,6 +963,19 @@ methods
 
     C = xor (A, B) ;
 
+    %---------------------------------------------------------------------
+    % saveobj: save a GraphBLAS matrix to a file
+    %---------------------------------------------------------------------
+
+    function S = saveobj (G)
+    %SAVEOBJ prepares a @GrB matrix for MATLAB/Octave to save to a file.
+    % It creates a struct S containing just S.blob from the serialization
+    % of the @GrB matrix G.  S is not an object.  S.blob is a dense
+    % builtin MATLAB/Octave array of type uint8.  It will be loaded back
+    % using loadobj, below.
+    S.blob = gb2builtin (gbserialize (G)) ;
+    end
+
 end
 
 methods (Static)
@@ -979,8 +984,21 @@ methods (Static)
     % loadobj: load a GraphBLAS matrix from a file
     %---------------------------------------------------------------------
 
-    function G = loadobj (G)
-    error ('loadobj not yet implemented') ; % FIXME
+    function G = loadobj (S)
+    %LOADOBJ loads a @GrB matrix from a file.
+    % MATLAB/Octave first reads in the struct S that saveobj created, and
+    % then passes it to this method.
+        if (isobject (S))
+            % S is a @GrB matrix from GraphBLAS 10.3.1 or earlier, which
+            % did not have saveobj and loadobj methods.  S is not a
+            % handle object.  It must be converted here into a @GrB
+            % handle object for the current version of GraphBLAS.
+            G = GrB (gbloadhistorical (S.opaque)) ;
+        else
+            % S is a struct created by saveobj, above, with a single
+            % S.blob field containing the serialized matrix.
+            G = GrB (gbdeserialize (S.blob)) ;
+        end
     end
 
     %---------------------------------------------------------------------
@@ -989,8 +1007,9 @@ methods (Static)
 
     % All of these are used as GrB.method (...), with the "GrB." prefix.
     % The input matrices (A, B, C, M, ...) are of any kind (GraphBLAS,
-    % built-in sparse, or built-in full).  The output matrix C is a
-    % GraphBLAS matrix.
+    % built-in sparse, or built-in full).  The output matrix C is a @GrB
+    % matrix by default.  It is a builtin MATLAB/Octave matrix if
+    % desc.kind = 'builtin'.
 
     MATLAB_vs_GrB ;
     C = apply (Cin, M, accum, op, A, desc) ;

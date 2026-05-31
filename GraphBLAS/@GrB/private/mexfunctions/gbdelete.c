@@ -11,7 +11,8 @@
 
 // gbdelete (X)
 
-// deletes the @GrB matrix G.  Does nothing if the input is not a @GrB matrix.
+// deletes the @GrB matrix G.  Does nothing if the input is not a @GrB handle
+// object from GraphBLAS v10.4.0 or later.
 
 #include "gb_interface.h"
 
@@ -37,8 +38,11 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     mxArray *G_opaque = gbmx_get_grb_handle (pargin [0]) ;
-    GrB_Matrix *C_handle = (GrB_Matrix *) mxGetData (G_opaque) ;
-    GrB_Matrix_free (C_handle) ;
+    if (G_opaque != NULL)
+    {
+        GrB_Matrix *C_handle = (GrB_Matrix *) mxGetData (G_opaque) ;
+        GrB_Matrix_free (C_handle) ;
+    }
 
     //--------------------------------------------------------------------------
     // return the result

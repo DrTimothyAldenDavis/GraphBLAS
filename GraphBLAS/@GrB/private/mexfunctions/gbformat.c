@@ -84,6 +84,7 @@ void mexFunction
             //------------------------------------------------------------------
 
             GrB_Matrix A = gbmx_get_grb_matrix (pargin [0]) ;
+            CHECK_ERROR (A == NULL, "invalid @GrB matrix") ;
             OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
             OK (GrB_Matrix_get_INT32 (A, &sparsity, GxB_SPARSITY_STATUS)) ;
             OK (GrB_Matrix_get_INT32 (A, &iso, GxB_ISO)) ;

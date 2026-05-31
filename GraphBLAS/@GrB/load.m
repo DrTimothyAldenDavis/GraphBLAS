@@ -1,8 +1,13 @@
 function C = load (filename)
 %GRB.LOAD Load a single GraphBLAS matrix from a file.
-% C = GrB.load (filename) loads a single @GrB matrix from a file.  The file
-% must have been previously created by GrB.save.  If the filename is not
-% present, it defaults to 'GrB_Matrix.mat'.
+% C = GrB.load (filename) loads a single @GrB matrix from a file.  If the
+% filename is not present, it defaults to 'GrB_Matrix.mat'.
+%
+% GrB.load can load in *.mat files created by GrB.save from this or earlier
+% versions of GraphBLAS.
+%
+% NOTE: As of GraphBLAS v10.4.0, this method is no longer needed; just use
+% the MATLAB/Octave load/save methods instead.
 %
 % Examples:
 %
@@ -15,20 +20,26 @@ function C = load (filename)
 %   GrB.save (2*A-1)            % save a matrix computation to GrB_Matrix.mat
 %   GrB.load                    % load it back in
 %
-% See also GrB.save, GrB/struct, GrB.serialize, GrB.deserialize.
+% See also load, save, GrB.save, GrB.serialize, GrB.deserialize.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-error ('not implemented') ;
 
 if (nargin < 1)
     filename = 'GrB_Matrix.mat' ;
 end
 
-% load in the opaque struct from the file
-S = load (filename, 'GraphBLAS_struct_from_GrB_save') ;
+S = load (filename) ;
 
-% convert it to a @GrB object
-C = GrB (S.GraphBLAS_struct_from_GrB_save) ;
+if (isfield (S, 'GraphBLAS_struct_from_GrB_save'))
+    % S was created by GrB.save from GraphBLAS v10.3.1 or earlier
+    C = GrB (gbloadhistorical (S.GraphBLAS_struct_from_GrB_save)) ;
+elseif (isfield (S, 'GrB_Matrix_from_GrB_save'))
+    % S was created by GrB.save from GraphBLAS v10.4.0 or later,
+    % and it already contains a properly loaded @GrB matrix.
+    C = S.GrB_Matrix_from_GrB_save ;
+else
+    % S has already been properly loaded by GrB/loadobj
+    C = S ;
+end
 

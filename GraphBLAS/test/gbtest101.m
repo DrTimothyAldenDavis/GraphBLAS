@@ -1,29 +1,18 @@
 function gbtest101
 %GBTEST101 test loading of v3 GraphBLAS objects
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% FIXME: load not yet implemented ...
-%{
 load gbtestv3 %#ok<LOAD>
 whos
 
+fprintf ('================== v3 sparse:\n') ;
 G
-fprintf ('================== v3 sparse struct:\n') ;
-G_struct = struct (G) %#ok<*NOPRT>
+fprintf ('================== latest sparse:\n') ;
 G2 = GrB (G, 'sparse') ;
-fprintf ('================== v10 sparse struct:\n') ;
-G2_struct = struct (G2)
 assert (isequal (G, A)) ;
 assert (isequal (G2, A)) ;
-
-assert (isfield (G_struct, 'GraphBLAS')) ;
-assert (isfield (G2_struct, 'GraphBLASv10')) ;
-G3 = GrB (G) ;
-G3_struct = struct (G3) ;
-assert (isfield (G3_struct, 'GraphBLASv10')) ;
-assert (isequal (G3, A)) ;
 
 [m1, n1] = size (G) ;
 [m2, n2] = size (A) ;
@@ -41,17 +30,10 @@ assert (isequal (f1, f2)) ;
 iso
 
 H2 = GrB (H, 'hyper') ;
-fprintf ('================== v3 hypersparse struct:\n') ;
-H_struct = struct (H)
-fprintf ('================== v10 hypersparse struct:\n') ;
-H2_struct = struct (H2)
-
-assert (isfield (H_struct, 'GraphBLAS')) ;
-assert (isfield (H2_struct, 'GraphBLASv10')) ;
-H3 = GrB (H) ;
-H3_struct = struct (H3) ;
-assert (isfield (H3_struct, 'GraphBLASv10')) ;
-assert (isequal (H3, H)) ;
+fprintf ('================== v3 hypersparse:\n') ;
+H
+fprintf ('================== latest hypersparse:\n') ;
+H2
 
 H3 = GrB (n,n) ;
 H3 (1:4, 1:4) = magic (4) ;
@@ -73,21 +55,22 @@ R2 = GrB (R) ;
 assert (isequal (R2, R)) ;
 assert (isequal (R2, A')) ;
 
-assert (isfield (struct (R), 'GraphBLAS')) ;
-assert (isfield (struct (R2), 'GraphBLASv10')) ;
-
 X2 = GrB (X) ;
 assert (isequal (magic (4), X)) ;
 assert (isequal (magic (4), X2)) ;
 
-assert (isfield (struct (X), 'GraphBLAS')) ;
-assert (isfield (struct (X2), 'GraphBLASv10')) ;
+fprintf ('================== v3 dense (held in sparse format):\n') ;
+X
+fprintf ('================== latest dense:\n') ;
+X2
 
-fprintf ('================== v3 dense struct (held in sparse format):\n') ;
-X_struct = struct (X) %#ok<*NASGU>
-fprintf ('================== v10 dense struct (no integers in struct):\n') ;
-X2_struct = struct (X2)
+ok = false ;
+try
+    struct (G)
+catch expected_error
+    expected_error
+    ok = true ;
+end
+assert (ok) ;
 
 fprintf ('gbtest101: all tests passed\n') ;
-
-%}

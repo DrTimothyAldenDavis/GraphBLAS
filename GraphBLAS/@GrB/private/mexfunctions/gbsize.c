@@ -51,6 +51,7 @@ void mexFunction
         //----------------------------------------------------------------------
 
         GrB_Matrix A = gbmx_get_grb_matrix (pargin [0]) ;
+        CHECK_ERROR (A == NULL, "invalid @GrB matrix") ;
         OK (GrB_Matrix_nrows (&nrows, A)) ;
         OK (GrB_Matrix_ncols (&ncols, A)) ;
 

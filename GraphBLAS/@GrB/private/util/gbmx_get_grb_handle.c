@@ -8,8 +8,10 @@
 //------------------------------------------------------------------------------
 
 // The input to this method is an mxArray G, which must either be a @GrB
-// object, or the G.opaque struct content of a @GrB object.  The output is
-// a pointer to the GrB_Matrix that the @GrB object holds.
+// object, or the G.opaque struct content of a @GrB object.  The output is an
+// mxArray containing the G.opaque.opaque handle to the GrB_Matrix that the
+// @GrB object holds.  Returns NULL if the input is not a @GrB handle object
+// from GraphBLAS v10.4.0 or later.
 
 #include "gb_interface.h"
 
@@ -21,36 +23,36 @@ mxArray *gbmx_get_grb_handle    // the MATLAB @GrB opaque handle
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    CHECK_ERROR (G == NULL, "matrix missing") ;
-    mxArray *G_opaque = NULL ;
-
-    //--------------------------------------------------------------------------
     // get the GrB_Matrix handle
     //--------------------------------------------------------------------------
 
-    if (mxIsStruct (G))
-    { 
-        // G is a struct, which must come from the opaque content of a @GrB
-        // object.  Results are undefined if G is another kind of struct.
-        G_opaque = mxGetFieldByNumber (G, 0, 0) ;
-    }
-    else if (mxIsClass (G, "GrB"))
+    mxArray *G_opaque = NULL ;
+
+    if (G != NULL && mxIsClass (G, "GrB"))
     { 
         // G is a @GrB object; get its opaque content (which must be a struct)
-        // and then get the first item in the struct.
-        mxArray *G_prop = mxGetProperty (G, 0, "opaque") ;
-        CHECK_ERROR (!mxIsStruct (G_prop), "@GrB object corrupted") ;
-        G_opaque = mxGetFieldByNumber (G_prop, 0, 0) ;
+        // and then get the first item in the struct, below.
+        G = mxGetProperty (G, 0, "opaque") ;
+    }
+
+    if (G != NULL && mxIsStruct (G) && mxGetNumberOfFields (G) == 1 &&
+        mxGetNumberOfElements (G) == 1)
+    { 
+        // G is a single struct with a single field, which must come from the
+        // opaque content of a @GrB object: a uint8 array of size 1-by-8.
+        G_opaque = mxGetFieldByNumber (G, 0, 0) ;
+        if (! (mxGetM (G_opaque) == 1 &&
+               mxGetN (G_opaque) == sizeof (GrB_Matrix) &&
+               mxGetClassID (G_opaque) == mxUINT8_CLASS))
+        {
+            return (NULL) ;
+        }
     }
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
-    CHECK_ERROR (G_opaque == NULL, "@GrB object corrupted") ;
     return (G_opaque) ;
 }
 

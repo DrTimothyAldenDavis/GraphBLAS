@@ -12,7 +12,7 @@
 // gbwait (G)
 
 // finishes all pending work in a @GrB matrix.  Does nothing if the input
-// is not a @GrB matrix.
+// is not a @GrB matrix from GraphBLAS v10.4.0 or later.
 
 #include "gb_interface.h"
 
@@ -37,9 +37,9 @@ void mexFunction
     // wait on the matrix
     //--------------------------------------------------------------------------
 
-    if (mxIsClass (pargin [0], "GrB"))
-    { 
-        GrB_Matrix A = gbmx_get_grb_matrix (pargin [0]) ;
+    GrB_Matrix A = gbmx_get_grb_matrix (pargin [0]) ;
+    if (A != NULL)
+    {
         OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
     }
 

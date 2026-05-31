@@ -45,6 +45,7 @@ void mexFunction
         // get the type of a @GrB matrix
         GrB_Type type ;
         GrB_Matrix A = gbmx_get_grb_matrix (pargin [0]) ;
+        CHECK_ERROR (A == NULL, "invalid @GrB matrix") ;
         OK (GxB_Matrix_type (&type, A)) ;
         pargout [0] = gbmx_type_to_mxstring (type) ;
     }

@@ -49,6 +49,7 @@ void gbmx_get_matrix
         //----------------------------------------------------------------------
 
         matrix->G = gbmx_get_grb_matrix (X) ;
+        CHECK_ERROR (matrix->G == NULL, "invalid @GrB matrix") ;
         matrix->will_wait = GB_will_wait (matrix->G) ;
         matrix->nvals = GB_nnz (matrix->G) ;
         OK (GrB_Matrix_nrows (&matrix->nrows, matrix->G)) ;
