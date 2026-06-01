@@ -15,7 +15,8 @@ GrB_Info gb_is_scalar
     // output:
     bool *is_scalar,    // true if A is a 1-by-1 GrB_Matrix with 1 entry
     // input
-    GrB_Matrix A
+    GrB_Matrix A,
+    char err [ERRLEN]
 )
 { 
     uint64_t nrows, ncols, nvals ;

@@ -15,7 +15,10 @@
 // INFINITY:    inf-norm
 // -INFINITY:   (-inf)-norm
 
-int64_t gbmx_norm_kind (const mxArray *arg)
+int64_t gbmx_norm_kind      // determine the kind of norm to compute
+(
+    const mxArray *arg
+)
 {
     if (mxIsChar (arg))
     {

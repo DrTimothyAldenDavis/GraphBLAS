@@ -33,7 +33,8 @@ void mexFunction
     GrB_Semiring semiring = NULL ;
     GrB_Type type = NULL ;
 
-    gbmx_usage (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
+
     if (nargout == 1)
     { 
         pargout [0] = mxCreateLogicalScalar (true) ;
@@ -63,7 +64,7 @@ void mexFunction
         CHECK_ERROR (type == NULL, "unknown type") ;
     }
 
-    OK (gb_string_to_semiring (&semiring, semiring_string, type, type)) ;
+    OK (gb_string_to_semiring (&semiring, semiring_string, type, type, err)) ;
     int pr = (nargout < 1) ? GxB_COMPLETE : GxB_SILENT ;
     OK (GxB_Semiring_fprint (semiring, semiring_string, pr, NULL)) ;
     gb_wrapup ( ) ;

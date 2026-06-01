@@ -16,7 +16,8 @@ GrB_Info gb_default_format
     int *fmt,               // GxB_BY_ROW or GxB_BY_COL
     // input
     uint64_t nrows,        // row vectors are stored by row
-    uint64_t ncols         // column vectors are stored by column
+    uint64_t ncols,        // column vectors are stored by column
+    char err [ERRLEN]
 )
 {
 

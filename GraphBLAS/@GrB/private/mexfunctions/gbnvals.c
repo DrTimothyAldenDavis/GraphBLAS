@@ -35,7 +35,7 @@ void mexFunction
 
     GrB_Matrix A = NULL, A_to_free = NULL ;
 
-    gbmx_usage (nargin == 1 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 1 && nargout <= 1, USAGE) ;
 
     pargout [0] = mxCreateDoubleScalar (0) ;
     double *anvals_output = (double *) mxGetData (pargout [0]) ;
@@ -53,7 +53,7 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
 
     //--------------------------------------------------------------------------
     // get the # of entries in the matrix

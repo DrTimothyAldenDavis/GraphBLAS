@@ -22,7 +22,8 @@ GrB_Info gb_expand_scalar_to_vector
 (
     GrB_Vector *V,
     GrB_Type type,
-    uint64_t nvals
+    uint64_t nvals,
+    char err [ERRLEN]
 )
 { 
 
@@ -31,7 +32,7 @@ GrB_Info gb_expand_scalar_to_vector
     //--------------------------------------------------------------------------
 
     GrB_Scalar x = NULL ;
-    OK (gb_get_first_scalar (&x, *V, type)) ;
+    OK (gb_get_first_scalar (&x, *V, type, err)) ;
     GrB_Vector_free (V) ;
 
     //--------------------------------------------------------------------------

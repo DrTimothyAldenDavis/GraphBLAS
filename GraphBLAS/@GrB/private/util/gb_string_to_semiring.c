@@ -20,7 +20,8 @@ GrB_Info gb_string_to_semiring          // return a GrB semiring from a string
     char *semiring_string,              // string defining the semiring
     // inputs:
     const GrB_Type atype,               // type of A
-    const GrB_Type btype                // type of B
+    const GrB_Type btype,               // type of B
+    char err [ERRLEN]
 )
 {
 
@@ -65,7 +66,7 @@ GrB_Info gb_string_to_semiring          // return a GrB semiring from a string
 
     GrB_BinaryOp mult = NULL ;
     OK (gb_string_and_type_to_binop_or_idxunop (&mult, mult_name, mult_type,
-        type_not_given, NULL, NULL)) ;
+        type_not_given, NULL, NULL, err)) ;
     CHECK_ERROR (mult == NULL, "invalid semiring (unknown multipy operator)") ;
 
     //--------------------------------------------------------------------------
@@ -73,17 +74,17 @@ GrB_Info gb_string_to_semiring          // return a GrB semiring from a string
     //--------------------------------------------------------------------------
 
     GrB_Type add_type = NULL ;
-    OK (gb_binaryop_ztype (&add_type, mult)) ;
+    OK (gb_binaryop_ztype (&add_type, mult, err)) ;
     GrB_BinaryOp add = NULL ;
     OK (gb_string_and_type_to_binop_or_idxunop (&add, add_name, add_type,
-        false, NULL, NULL)) ;
+        false, NULL, NULL, err)) ;
     CHECK_ERROR (add == NULL, "invalid semiring (unknown add operator)") ;
 
     //--------------------------------------------------------------------------
     // convert the add and mult operators to a semiring and return result
     //--------------------------------------------------------------------------
 
-    OK (gb_semiring (semiring, add, mult)) ;
+    OK (gb_semiring (semiring, add, mult, err)) ;
     return (GrB_SUCCESS) ;
 }
 

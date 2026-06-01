@@ -51,7 +51,8 @@ void mexFunction
     GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_to_free = NULL,
         id = NULL, id_to_free = NULL ;
 
-    gbmx_usage (nargin >= 1 && nargin <= 4 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 1 && nargin <= 4 && nargout <= 2, USAGE) ;
+
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
     double *kind_output = (double *) mxGetData (pargout [1]) ;
@@ -87,7 +88,7 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
@@ -113,7 +114,7 @@ void mexFunction
 
     if (nargin > 2)
     { 
-        OK (gb_get_matrix (&id, &id_to_free, &(Matrix [1]))) ;
+        OK (gb_get_matrix (&id, &id_to_free, &(Matrix [1]), err)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -134,21 +135,21 @@ void mexFunction
     else
     { 
         // A determines the format of C, unless defined by the descriptor
-        OK (gb_get_format (nrows, ncols, A, NULL, &(gbdesc.fmt))) ;
+        OK (gb_get_format (nrows, ncols, A, NULL, &(gbdesc.fmt), err)) ;
     }
 
     //--------------------------------------------------------------------------
     // expand A to a full matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_expand_to_full (&C, A, type, gbdesc.fmt, id)) ;
+    OK (gb_expand_to_full (&C, A, type, gbdesc.fmt, id, err)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, gbdesc.kind)) ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }

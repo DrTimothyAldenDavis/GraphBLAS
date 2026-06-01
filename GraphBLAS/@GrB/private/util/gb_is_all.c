@@ -23,7 +23,8 @@ GrB_Info gb_is_all          // check two matrices for equality, given an op
     // input:
     GrB_Matrix A,
     GrB_Matrix B,
-    GrB_BinaryOp op
+    GrB_BinaryOp op,
+    char err [ERRLEN]
 )
 {
 
@@ -82,8 +83,8 @@ GrB_Info gb_is_all          // check two matrices for equality, given an op
     int fmt ;
     OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
     int sparsity = 0 ;
-    OK (gb_get_sparsity (A, B, &sparsity)) ;
-    OK (gb_new (&C, GrB_BOOL, nrows1, ncols1, fmt, sparsity)) ;
+    OK (gb_get_sparsity (A, B, &sparsity, err)) ;
+    OK (gb_new (&C, GrB_BOOL, nrows1, ncols1, fmt, sparsity, err)) ;
     OK1 (C, GrB_Matrix_eWiseMult_BinaryOp (C, NULL, NULL, op, A, B, NULL)) ;
 
     //--------------------------------------------------------------------------

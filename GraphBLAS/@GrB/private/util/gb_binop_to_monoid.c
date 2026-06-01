@@ -15,7 +15,8 @@ GrB_Info gb_binop_to_monoid         // return monoid from a binary op
     // output
     GrB_Monoid *monoid,
     // input
-    GrB_BinaryOp op
+    GrB_BinaryOp op,
+    char err [ERRLEN]
 )
 { 
 

@@ -33,7 +33,7 @@ void mexFunction
     GrB_IndexUnaryOp idxunop = NULL ;
     GrB_Type type = GrB_FP64 ;
 
-    gbmx_usage (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
 
     if (nargout == 1)
     { 
@@ -68,7 +68,7 @@ void mexFunction
     int64_t ignore3 = 0 ;
 
     OK (gb_string_to_idxunop (&idxunop, &ignore1, &ignore2, &ignore3,
-        op_string, type)) ;
+        op_string, type, err)) ;
 
     int pr = (nargout < 1) ? GxB_COMPLETE : GxB_SILENT ;
     OK (GxB_IndexUnaryOp_fprint (idxunop, op_string, pr, NULL)) ;

@@ -58,7 +58,8 @@ void mexFunction
     GrB_Scalar scalar = NULL, zero = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    gbmx_usage (nargin >= 2 && nargin <= 3 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 2 && nargin <= 3 && nargout <= 2, USAGE) ;
+
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
     double *kind_output = (double *) mxGetData (pargout [1]) ;
@@ -83,14 +84,14 @@ void mexFunction
     // get the GrB_Descriptor
     //--------------------------------------------------------------------------
 
-    OK (gb_get_descriptor_mxm (&desc, &gbdesc)) ;
+    OK (gb_get_descriptor_mxm (&desc, &gbdesc, err)) ;
 
     //--------------------------------------------------------------------------
     // get the matrices
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
-    OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]), err)) ;
 
     OK (GxB_Matrix_type (&atype, A)) ;
     OK (GxB_Matrix_type (&btype, B)) ;
@@ -104,13 +105,14 @@ void mexFunction
     GrB_Semiring plus_times = NULL ;
     char semiring_string [LEN+2] ;
     strncpy (semiring_string, "+.*", LEN) ;
-    OK (gb_string_to_semiring (&plus_times, semiring_string, atype, btype)) ;
+    OK (gb_string_to_semiring (&plus_times, semiring_string, atype, btype,
+        err)) ;
     OK (GrB_Semiring_get_VOID (plus_times, (void *) &plus_monoid,
         GxB_SEMIRING_MONOID)) ;
     OK (GrB_Semiring_get_VOID (plus_times, (void *) &times,
         GxB_SEMIRING_MULTIPLY)) ;
     OK (GrB_Monoid_get_VOID (plus_monoid, (void *) &plus, GxB_MONOID_OPERATOR));
-    OK (gb_binaryop_ztype (&ctype, plus)) ;
+    OK (gb_binaryop_ztype (&ctype, plus, err)) ;
 
     //--------------------------------------------------------------------------
     // construct C
@@ -156,9 +158,9 @@ void mexFunction
     }
 
     // create the matrix C and set its format and sparsity
-    OK (gb_get_format (cnrows, cncols, A, B, &(gbdesc.fmt))) ;
-    OK (gb_get_sparsity (A, B, &(gbdesc.sparsity))) ;
-    OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity)) ;
+    OK (gb_get_format (cnrows, cncols, A, B, &(gbdesc.fmt), err)) ;
+    OK (gb_get_sparsity (A, B, &(gbdesc.sparsity), err)) ;
+    OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity, err)) ;
 
     //--------------------------------------------------------------------------
     // compute C = A*B
@@ -251,7 +253,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, gbdesc.kind)) ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }

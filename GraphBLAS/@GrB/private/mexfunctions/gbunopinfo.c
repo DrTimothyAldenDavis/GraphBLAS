@@ -33,7 +33,7 @@ void mexFunction
     GrB_Type type = NULL ;  // use default type if NULL
     GrB_UnaryOp op = NULL ;
 
-    gbmx_usage (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
 
     if (nargout == 1)
     { 
@@ -63,7 +63,7 @@ void mexFunction
         type = gb_string_to_type (type_string) ;
     }
 
-    OK (gb_string_to_unop (&op, op_string, type)) ;
+    OK (gb_string_to_unop (&op, op_string, type, err)) ;
     CHECK_ERROR (op == NULL, "unknown operator") ;
 
     int pr = (nargout < 1) ? GxB_COMPLETE : GxB_SILENT ;

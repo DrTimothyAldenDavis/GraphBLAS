@@ -18,9 +18,9 @@
     FREE_WORK ;                     \
     GrB_Matrix_free (&C) ;
 
-#include "gb_interface.h"
-
 #define USAGE "usage: C = gbreshape (A, nrows_new, ncols_new, by_col)"
+
+#include "gb_interface.h"
 
 void mexFunction
 (
@@ -37,7 +37,8 @@ void mexFunction
 
     GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_to_free = NULL ;
 
-    gbmx_usage ((nargin == 3 || nargin == 4) && nargout == 1, USAGE) ;
+    GBMX_USAGE ((nargin == 3 || nargin == 4) && nargout == 1, USAGE) ;
+
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
     //--------------------------------------------------------------------------
@@ -57,7 +58,7 @@ void mexFunction
     // get input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -72,7 +73,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, KIND_GRB)) ;
+    OK (gb_export (C_opaque, &C, KIND_GRB, err)) ;
     gb_wrapup ( ) ;
 }
 

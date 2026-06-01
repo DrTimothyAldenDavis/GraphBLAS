@@ -22,7 +22,8 @@ GrB_Info gb_string_to_idxunop
     int64_t *ithunk,
     // inputs:
     char *opstring,             // string defining the operator
-    const GrB_Type atype        // type of A, or NULL if not present
+    const GrB_Type atype,       // type of A, or NULL if not present
+    char err [ERRLEN]
 )
 {
 

@@ -40,7 +40,8 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
     int64_t k = 0 ;
 
-    gbmx_usage (nargin >= 1 && nargin <= 3 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 1 && nargin <= 3 && nargout <= 2, USAGE) ;
+
     pargout [0] = gbmx_export_struct (&V_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
     double *kind_output = (double *) mxGetData (pargout [1]) ;
@@ -70,7 +71,7 @@ void mexFunction
     // get the inputs
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
 
     //--------------------------------------------------------------------------
     // construct V
@@ -98,7 +99,7 @@ void mexFunction
         n = MIN (nrows + k, ncols) ;
     }
 
-    OK (gb_new (&V, vtype, n, 1, GxB_BY_COL, 0)) ;
+    OK (gb_new (&V, vtype, n, 1, GxB_BY_COL, 0, err)) ;
 
     //--------------------------------------------------------------------------
     // compute v = diag (A, k)
@@ -111,7 +112,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (V_opaque, &V, gbdesc.kind)) ;
+    OK (gb_export (V_opaque, &V, gbdesc.kind, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }

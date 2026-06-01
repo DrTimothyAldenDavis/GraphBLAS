@@ -34,7 +34,8 @@ void mexFunction
     GrB_BinaryOp binop = NULL ;
     GrB_IndexUnaryOp idxunop = NULL ;
 
-    gbmx_usage (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
+
     if (nargout == 1)
     { 
         pargout [0] = mxCreateLogicalScalar (true) ;
@@ -65,7 +66,7 @@ void mexFunction
     }
 
     OK (gb_string_to_binop_or_idxunop (&binop, &idxunop, &ithunk,
-        op_string, type, type)) ;
+        op_string, type, type, err)) ;
 
     int pr = (nargout < 1) ? GxB_COMPLETE : GxB_SILENT ;
     if (idxunop != NULL)

@@ -40,7 +40,7 @@ void mexFunction
     GrB_Type xtype = NULL ;
     void *x = NULL ;
 
-    gbmx_usage (nargin == 1 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 1 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -75,7 +75,7 @@ void mexFunction
     // get the matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;

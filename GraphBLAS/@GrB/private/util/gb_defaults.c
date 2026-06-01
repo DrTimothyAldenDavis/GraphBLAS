@@ -16,7 +16,10 @@
 
 typedef void (*function_pointer) (void) ;
 
-GrB_Info gb_defaults (void)     // set global GraphBLAS defaults for MATLAB
+GrB_Info gb_defaults            // set global GraphBLAS defaults for MATLAB
+(
+    char err [ERRLEN]
+)
 { 
     // for debug assertions only, for the ASSERT (...) macro
     GB_Global_abort_set (gbmx_abort) ;

@@ -105,7 +105,8 @@ void mexFunction
         A_copy2 = NULL, S = NULL ;
     uint64_t *Si = NULL, *Sj = NULL, *Mj = NULL ;
 
-    gbmx_usage (nargin == 3 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 3 && nargout <= 1, USAGE) ;
+
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
     //--------------------------------------------------------------------------
@@ -123,7 +124,7 @@ void mexFunction
     // get a deep copy of C, of any sparsity structure
     //--------------------------------------------------------------------------
 
-    OK (gb_get_deep (&C, &(Matrix [0]))) ;
+    OK (gb_get_deep (&C, &(Matrix [0]), err)) ;
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, C)) ;
     OK (GrB_Matrix_ncols (&ncols, C)) ;
@@ -133,10 +134,10 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // make M boolean, sparse/hyper, stored by column, and drop explicit zeros
-    OK (gb_get_matrix (&M_input, &M_to_free, &(Matrix [1]))) ;
+    OK (gb_get_matrix (&M_input, &M_to_free, &(Matrix [1]), err)) ;
 
     OK (gb_new (&M, GrB_BOOL, nrows, ncols, GxB_BY_COL,
-        GxB_SPARSE + GxB_HYPERSPARSE)) ;
+        GxB_SPARSE + GxB_HYPERSPARSE, err)) ;
     OK1 (M, GrB_Matrix_select_BOOL (M, NULL, NULL, GrB_VALUENE_BOOL, M_input,
         0, NULL)) ;
 
@@ -148,7 +149,7 @@ void mexFunction
     // get A
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), err)) ;
 
     GrB_Type atype ;
     uint64_t anrows, ancols, anz ;
@@ -186,7 +187,7 @@ void mexFunction
         { 
             // A is 1-by-ancols and held by column: transpose it
             OK (gb_new (&A_copy, atype, mnz, 1, GxB_BY_COL,
-                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL)) ;
+                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL, err)) ;
             OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A, NULL)) ;
             OK1 (A_copy, GrB_Matrix_wait (A_copy, GrB_MATERIALIZE)) ;
             A = A_copy ;
@@ -201,7 +202,7 @@ void mexFunction
         { 
             // A is anrows-by-1 and held by row: transpose it
             OK (gb_new (&A_copy, atype, 1, mnz, GxB_BY_ROW,
-                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL)) ;
+                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL, err)) ;
             OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A, NULL)) ;
             OK1 (A_copy, GrB_Matrix_wait (A_copy, GrB_MATERIALIZE)) ;
             A = A_copy ;
@@ -243,7 +244,7 @@ void mexFunction
 
     OK (GB_helper5 (Si, Sj, M->i, M->i_is_32, Mj, M->vlen, A->i, A->i_is_32,
         A->vlen, anz)) ;
-    OK (gb_new (&S, atype, nrows, ncols, GxB_BY_COL, 0)) ;
+    OK (gb_new (&S, atype, nrows, ncols, GxB_BY_COL, 0, err)) ;
 
     if (A->iso)
     { 
@@ -381,7 +382,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, KIND_GRB)) ;
+    OK (gb_export (C_opaque, &C, KIND_GRB, err)) ;
     gb_wrapup ( ) ;
 }
 

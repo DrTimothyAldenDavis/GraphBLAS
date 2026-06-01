@@ -18,7 +18,8 @@ GrB_Info gb_is_dense            // determine if A is dense
     // output:
     bool *is_dense,
     // input:
-    GrB_Matrix A                // GrB_Matrix to query
+    GrB_Matrix A,               // GrB_Matrix to query
+    char err [ERRLEN]
 )
 { 
 

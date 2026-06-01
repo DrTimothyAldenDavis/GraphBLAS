@@ -13,7 +13,8 @@
 GrB_Info gb_is_vector
 (
     bool *is_vector,            // true if A is a row or column vector
-    GrB_Matrix A                // GrB_Matrix to query
+    GrB_Matrix A,               // GrB_Matrix to query
+    char err [ERRLEN]
 )
 {
 

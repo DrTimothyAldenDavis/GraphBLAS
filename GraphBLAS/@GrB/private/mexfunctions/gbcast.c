@@ -42,7 +42,8 @@ void mexFunction
 
     GrB_Matrix *C_opaque = NULL, X = NULL, X_to_free = NULL, C = NULL ;
 
-    gbmx_usage (nargin == 2 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 2 && nargout <= 1, USAGE) ;
+
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
     //--------------------------------------------------------------------------
@@ -61,21 +62,21 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&X, &X_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&X, &X_to_free, &(Matrix [0]), err)) ;
 
     //--------------------------------------------------------------------------
     // make a deep copy and typecast to the desired type
     //--------------------------------------------------------------------------
 
     GrB_Type type = gb_string_to_type (type_string) ;
-    OK (gb_typecast (&C, X, type, GxB_BY_COL, GxB_SPARSE + GxB_FULL)) ;
+    OK (gb_typecast (&C, X, type, GxB_BY_COL, GxB_SPARSE + GxB_FULL, err)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, KIND_BUILTIN)) ;
+    OK (gb_export (C_opaque, &C, KIND_BUILTIN, err)) ;
     gb_wrapup ( ) ;
 }
 

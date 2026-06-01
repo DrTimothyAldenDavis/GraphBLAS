@@ -33,7 +33,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gbmx_usage (nargin == 0 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 0 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the version and date information and return it as a struct

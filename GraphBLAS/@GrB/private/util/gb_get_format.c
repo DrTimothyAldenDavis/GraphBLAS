@@ -43,7 +43,8 @@ GrB_Info gb_get_format      // get the format (by row or by col)
     GrB_Matrix A,           // may be NULL
     GrB_Matrix B,           // may be NULL
     // input/output:
-    int *fmt                // may be GxB_NO_FORMAT on input
+    int *fmt,               // may be GxB_NO_FORMAT on input
+    char err [ERRLEN]
 )
 {
 
@@ -64,8 +65,8 @@ GrB_Info gb_get_format      // get the format (by row or by col)
     else
     {
         bool A_is_vector, B_is_vector ;
-        OK (gb_is_vector (&A_is_vector, A)) ;
-        OK (gb_is_vector (&B_is_vector, B)) ;
+        OK (gb_is_vector (&A_is_vector, A, err)) ;
+        OK (gb_is_vector (&B_is_vector, B, err)) ;
         if (A != NULL && A_is_vector)
         { 
             // (4) get the format of A

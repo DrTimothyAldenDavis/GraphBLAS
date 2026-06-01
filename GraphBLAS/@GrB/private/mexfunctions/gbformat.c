@@ -34,7 +34,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gbmx_usage (nargin <= 1 && nargout <= 3, USAGE) ;
+    GBMX_USAGE (nargin <= 1 && nargout <= 3, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get/set the format

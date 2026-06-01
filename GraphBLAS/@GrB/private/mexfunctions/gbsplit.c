@@ -48,7 +48,7 @@ void mexFunction
 
     GrB_Matrix A = NULL, A_to_free = NULL ;
 
-    gbmx_usage (nargin == 3 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 3 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the tile sizes, kind, and create the output arguments
@@ -82,7 +82,7 @@ void mexFunction
     // get the input matrix A
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
 
     //--------------------------------------------------------------------------
     // Tiles = split (A)
@@ -101,7 +101,7 @@ void mexFunction
             // Tiles is in row-major form;
             // Tiles_opaque is in column-major form
             GrB_Matrix *Cell_opaque = Tiles_opaque [i+j*m] ;
-            OK (gb_export (Cell_opaque, &Tiles [i*n+j], KIND_GRB)) ;
+            OK (gb_export (Cell_opaque, &Tiles [i*n+j], KIND_GRB, err)) ;
         }
     }
 

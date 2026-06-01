@@ -29,7 +29,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gbmx_usage (nargin <= 2 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin <= 2 && nargout <= 2, USAGE) ;
 
     //--------------------------------------------------------------------------
     // set the JIT control, if requested

@@ -28,7 +28,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gbmx_usage (nargin == 2 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 2 && nargout <= 1, USAGE) ;
 
     char atype_string [LEN+2] ;
     char btype_string [LEN+2] ;

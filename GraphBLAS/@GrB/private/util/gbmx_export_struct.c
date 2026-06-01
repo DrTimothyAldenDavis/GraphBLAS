@@ -56,7 +56,7 @@ void mexFunction
 
     // at end of mexFunction:
 
-    OK (gb_export (C_opaque, &C, gbdesc.kind)) ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
 
     // gb_wrapup technically relies on mx* methods, but it is used in testing

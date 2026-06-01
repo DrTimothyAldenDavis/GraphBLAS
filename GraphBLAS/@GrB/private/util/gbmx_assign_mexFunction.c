@@ -67,7 +67,8 @@ void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
     GrB_Vector I = NULL, J = NULL, I_to_free = NULL, J_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    gbmx_usage (nargin >= 2 && nargin <= 7 && nargout <= 2, usage) ;
+    GBMX_USAGE (nargin >= 2 && nargin <= 7 && nargout <= 2, usage) ;
+
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
     double *kind_output = (double *) mxGetData (pargout [1]) ;
@@ -105,7 +106,7 @@ void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
     //--------------------------------------------------------------------------
 
     gbdesc.nondefault = true ;      // ensure the GrB_Descriptor is allocated
-    OK (gb_get_descriptor (&desc, &gbdesc)) ;
+    OK (gb_get_descriptor (&desc, &gbdesc, err)) ;
     ASSERT (desc != NULL) ;
 
     //--------------------------------------------------------------------------
@@ -114,14 +115,14 @@ void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
 
     if (nmatrices == 2)
     { 
-        OK (gb_get_deep   (&C,             &(Matrix [0]))) ;
-        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]))) ;
+        OK (gb_get_deep   (&C,             &(Matrix [0]), err)) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), err)) ;
     }
     else // if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C,             &(Matrix [0]))) ;
-        OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]))) ;
-        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]))) ;
+        OK (gb_get_deep   (&C,             &(Matrix [0]), err)) ;
+        OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), err)) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), err)) ;
     }
 
     OK (GxB_Matrix_type (&ctype, C)) ;
@@ -134,7 +135,7 @@ void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
 
     if (nstrings == 1)
     { 
-        OK (gb_string_to_binop (&accum, String [0], ctype, ctype)) ;
+        OK (gb_string_to_binop (&accum, String [0], ctype, ctype, err)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -163,23 +164,23 @@ void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
     { 
         // only J is present
         OK (gb_cell_to_list (&J, &J_to_free, &nJ, &J_max,
-            Cell0_Matrix, Cell0_len, base_offset, cncols)) ;
+            Cell0_Matrix, Cell0_len, base_offset, cncols, err)) ;
         jcells = Cell0_len ;
     }
     else if (ncells == 1)
     { 
         // only I is present
         OK (gb_cell_to_list (&I, &I_to_free, &nI, &I_max,
-            Cell0_Matrix, Cell0_len, base_offset, cnrows)) ;
+            Cell0_Matrix, Cell0_len, base_offset, cnrows, err)) ;
         icells = Cell0_len ;
     }
     else if (ncells == 2)
     { 
         // both I and J are present
         OK (gb_cell_to_list (&I, &I_to_free, &nI, &I_max,
-            Cell0_Matrix, Cell0_len, base_offset, cnrows)) ;
+            Cell0_Matrix, Cell0_len, base_offset, cnrows, err)) ;
         OK (gb_cell_to_list (&J, &J_to_free, &nJ, &J_max,
-            Cell1_Matrix, Cell1_len, base_offset, cncols)) ;
+            Cell1_Matrix, Cell1_len, base_offset, cncols, err)) ;
         icells = Cell0_len ;
         jcells = Cell1_len ;
     }
@@ -256,7 +257,7 @@ void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, gbdesc.kind)) ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }

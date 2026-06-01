@@ -40,7 +40,8 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
     GrB_Type ctype = NULL ;
 
-    gbmx_usage (nargin >= 1 && nargin <= 3 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 1 && nargin <= 3 && nargout <= 2, USAGE) ;
+
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
     double *kind_output = (double *) mxGetData (pargout [1]) ;
@@ -71,13 +72,13 @@ void mexFunction
     // get the GrB_Descriptor
     //--------------------------------------------------------------------------
 
-    OK (gb_get_descriptor (&desc, &gbdesc)) ;
+    OK (gb_get_descriptor (&desc, &gbdesc, err)) ;
 
     //--------------------------------------------------------------------------
     // get the inputs
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&V, &V_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&V, &V_to_free, &(Matrix [0]), err)) ;
 
     uint64_t ncols ;
     OK (GrB_Matrix_ncols (&ncols, V)) ;
@@ -95,8 +96,8 @@ void mexFunction
     OK (GxB_Matrix_type (&ctype, V)) ;
     OK (GrB_Matrix_nrows (&n, V)) ;
     n += ABS (k) ;
-    OK (gb_get_format (n, n, NULL, NULL, &(gbdesc.fmt))) ;
-    OK (gb_new (&C, ctype, n, n, gbdesc.fmt, 0)) ;
+    OK (gb_get_format (n, n, NULL, NULL, &(gbdesc.fmt), err)) ;
+    OK (gb_new (&C, ctype, n, n, gbdesc.fmt, 0, err)) ;
 
     //--------------------------------------------------------------------------
     // compute C = diag (v, k)
@@ -109,7 +110,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, gbdesc.kind)) ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }

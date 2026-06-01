@@ -29,7 +29,8 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gbmx_usage (nargin <= 1 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin <= 1 && nargout <= 1, USAGE) ;
+
     pargout [0] = mxCreateDoubleScalar (0) ;
     double *burble_output = (double *) mxGetData (pargout [0]) ;
 

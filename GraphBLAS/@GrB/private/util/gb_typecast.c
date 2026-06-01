@@ -20,7 +20,8 @@ GrB_Info gb_typecast  // C = (type) A, where C is deep
     GrB_Matrix A,       // may be shallow
     GrB_Type type,      // if NULL, use the type of A
     int fmt,            // format of C
-    int sparsity        // sparsity control for C, if 0 use A
+    int sparsity,       // sparsity control for C, if 0 use A
+    char err [ERRLEN]
 )
 {
 
@@ -29,7 +30,7 @@ GrB_Info gb_typecast  // C = (type) A, where C is deep
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = NULL ;
-    OK (gb_get_sparsity (A, NULL, &sparsity)) ;
+    OK (gb_get_sparsity (A, NULL, &sparsity, err)) ;
 
     //--------------------------------------------------------------------------
     // get the type of C and A
@@ -50,7 +51,7 @@ GrB_Info gb_typecast  // C = (type) A, where C is deep
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
-    OK (gb_new (&C, type, nrows, ncols, fmt, sparsity)) ;
+    OK (gb_new (&C, type, nrows, ncols, fmt, sparsity, err)) ;
 
     //--------------------------------------------------------------------------
     // C = A

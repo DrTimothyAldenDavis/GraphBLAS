@@ -20,7 +20,8 @@ GrB_Info gb_string_to_monoid            // return monoid from a string
     GrB_Monoid *monoid,
     // input
     char *opstring,                     // string defining the operator
-    const GrB_Type type                 // default type if not in the string
+    const GrB_Type type,                // default type if not in the string
+    char err [ERRLEN]
 )
 { 
 
@@ -32,13 +33,13 @@ GrB_Info gb_string_to_monoid            // return monoid from a string
     GrB_BinaryOp binop = NULL ;
     OK (gb_string_to_binop_or_idxunop (&binop,
         /* idxunop: not allowed here: */ NULL, NULL,
-        opstring, type, type)) ;
+        opstring, type, type, err)) ;
 
     //--------------------------------------------------------------------------
     // convert the binary op to a monoid and return result
     //--------------------------------------------------------------------------
 
-    OK (gb_binop_to_monoid (monoid, binop)) ;
+    OK (gb_binop_to_monoid (monoid, binop, err)) ;
     return (GrB_SUCCESS) ;
 }
 

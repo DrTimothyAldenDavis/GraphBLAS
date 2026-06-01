@@ -20,7 +20,8 @@ GrB_Info gb_string_to_unop              // return unary operator from a string
     GrB_UnaryOp *unop,                  // unary op determined by the string
     // input
     char *opstring,                     // string defining the operator
-    const GrB_Type default_type         // default type if not in the string
+    const GrB_Type default_type,        // default type if not in the string
+    char err [ERRLEN]
 )
 {
 
@@ -58,7 +59,7 @@ GrB_Info gb_string_to_unop              // return unary operator from a string
     // convert the string to a GraphBLAS unary operator, built-in or Complex
     //--------------------------------------------------------------------------
 
-    OK (gb_string_and_type_to_unop (unop, op_name, type, type_not_given)) ;
+    OK (gb_string_and_type_to_unop (unop, op_name, type, type_not_given, err)) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -60,7 +60,8 @@ GrB_Info gb_string_and_type_to_binop_or_idxunop
     // output:
     GrB_IndexUnaryOp *idxunop,          // idxunop from the string
     // input/output:
-    int64_t *ithunk                     // thunk for idxunop
+    int64_t *ithunk,                    // thunk for idxunop
+    char err [ERRLEN]
 )
 {
 

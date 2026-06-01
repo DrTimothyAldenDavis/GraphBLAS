@@ -20,7 +20,8 @@ GrB_Info gb_norm            // compute norm (A,kind)
     double *s,              // norm of A
     // inputs:
     GrB_Matrix A,
-    int64_t norm_kind       // 0, 1, 2, INT64_MAX, or INT64_MIN
+    int64_t norm_kind,      // 0, 1, 2, INT64_MAX, or INT64_MIN
+    char err [ERRLEN]
 )
 {
 
@@ -153,7 +154,7 @@ GrB_Info gb_norm            // compute norm (A,kind)
 
             case INT64_MIN :    // (-inf)-norm
 
-                OK (gb_is_dense (&is_dense, A)) ;
+                OK (gb_is_dense (&is_dense, A, err)) ;
                 if (is_dense)
                 { 
                     // X = abs (A)

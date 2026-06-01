@@ -64,17 +64,34 @@
 // basic error handling for mexFunctions and utilities
 //------------------------------------------------------------------------------
 
+#define ERRLEN (GB_LOGGER_LEN+128)
+
+#define GBMX_USAGE(ok,usage)                                    \
+    char err [ERRLEN] ;                                         \
+    err [0] = '\0' ;                                            \
+    gbmx_usage (ok, usage, err) ;
+
 #if defined ( GB_UTIL )
 
     // error handling for gb_* utilities
     #define ERROR2(errmsg,arg,info)                             \
     {                                                           \
+        if (err [0] == '\0')                                    \
+        {                                                       \
+            snprintf (err, ERRLEN, errmsg, arg) ;               \
+            err [ERRLEN-1] = '\0' ;                             \
+        }                                                       \
         FREE_ALL ;                                              \
         return (info) ;                                         \
     }
 
     #define ERROR(errmsg,info)                                  \
     {                                                           \
+        if (err [0] == '\0')                                    \
+        {                                                       \
+            strncpy (err, errmsg, ERRLEN) ;                     \
+            err [ERRLEN-1] = '\0' ;                             \
+        }                                                       \
         FREE_ALL ;                                              \
         return (info) ;                                         \
     }
@@ -131,12 +148,11 @@
         GrB_Matrix_error (&err2, C) ;                               \
         if (err2 != NULL && err2 [0] != '\0')                       \
         {                                                           \
-            /* copy the err2 string into err3 since err2 is freed */\
+            /* copy the err2 string into err since err2 is freed */ \
             /* when C is freed */                                   \
-            char err3 [GB_LOGGER_LEN+2] ;                           \
-            strncpy (err3, err2, GB_LOGGER_LEN) ;                   \
-            err3 [GB_LOGGER_LEN] = '\0' ;                           \
-            ERROR (err3, this_info) ;                               \
+            strncpy (err, err2, ERRLEN) ;                           \
+            err [ERRLEN-1] = '\0' ;                                 \
+            ERROR (err, this_info) ;                                \
         }                                                           \
         else                                                        \
         {                                                           \
@@ -325,7 +341,8 @@ GrB_Info gb_binaryop_ztype
     // output
     GrB_Type *ztype,    // the GrB_Type of the output of a binary op
     // input
-    GrB_BinaryOp op
+    GrB_BinaryOp op,
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_binop_to_monoid         // return monoid from a binary op
@@ -333,7 +350,8 @@ GrB_Info gb_binop_to_monoid         // return monoid from a binary op
     // output
     GrB_Monoid *monoid,
     // input
-    GrB_BinaryOp op
+    GrB_BinaryOp op,
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_by_col
@@ -342,7 +360,8 @@ GrB_Info gb_by_col
     GrB_Matrix *A_handle,       // return the matrix by column
     GrB_Matrix *A_copy_handle,  // copy made of A, stored by column, or NULL
     // input
-    GrB_Matrix A_input          // input matrix, by row or column
+    GrB_Matrix A_input,         // input matrix, by row or column
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_cell_to_list
@@ -356,7 +375,8 @@ GrB_Info gb_cell_to_list
     struct gb_matrix_struct Cell_Matrix [3],    // contents of the Cell
     const int len,              // # of items in Cell_Matrix
     const int base_offset,      // 1 or 0
-    const uint64_t n            // dimension of the matrix
+    const uint64_t n,           // dimension of the matrix
+    char err [ERRLEN]
 ) ;
 
 GrB_Type gb_code_to_type    // return the GrB_Type from a GrB_Type_Code
@@ -370,10 +390,14 @@ GrB_Info gb_default_format
     int *fmt,               // GxB_BY_ROW or GxB_BY_COL
     // input
     uint64_t nrows,        // row vectors are stored by row
-    uint64_t ncols         // column vectors are stored by column
+    uint64_t ncols,        // column vectors are stored by column
+    char err [ERRLEN]
 ) ;
 
-GrB_Info gb_defaults (void) ;   // set global GraphBLAS defaults for MATLAB
+GrB_Info gb_defaults            // set global GraphBLAS defaults for MATLAB
+(
+    char err [ERRLEN]
+) ;
 
 GrB_Type gb_default_type        // return the default type to use
 (
@@ -390,7 +414,8 @@ GrB_Info gb_expand_scalar_to_vector
 (
     GrB_Vector *V,
     GrB_Type type,
-    uint64_t nvals
+    uint64_t nvals,
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_expand_to_full      // C = full (A), and typecast
@@ -401,7 +426,8 @@ GrB_Info gb_expand_to_full      // C = full (A), and typecast
     const GrB_Matrix A,         // input matrix to expand to full
     GrB_Type type,              // type of C, if NULL use the type of A
     int fmt,                    // format of C
-    GrB_Matrix id               // identity value, use zero if NULL
+    GrB_Matrix id,              // identity value, use zero if NULL
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_export              // export a GrB_Matrix to MATLAB
@@ -411,18 +437,21 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
     // input/output:
     GrB_Matrix *C_handle,       // GrB_Matrix to export, set to NULL on output
     // input:
-    kind_enum_t kind            // GrB, sparse, full, or built-in
+    kind_enum_t kind,           // GrB, sparse, full, or built-in
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_export_to_full
 (
-    GrB_Matrix *C_handle    // GraphBLAS matrix to modify for export to MATLAB
+    GrB_Matrix *C_handle,   // GraphBLAS matrix to modify for export to MATLAB
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_export_to_sparse
 (
     // input/output
-    GrB_Matrix *C_handle    // GraphBLAS matrix to modify for export to MATLAB
+    GrB_Matrix *C_handle,   // GraphBLAS matrix to modify for export to MATLAB
+    char err [ERRLEN]
 ) ;
 
 void gb_find_dot            // find 1st and 2nd dot ('.') in a string
@@ -436,7 +465,8 @@ GrB_Info gb_first_binop     // construct GrB_FIRST_[type] operator
     // output
     GrB_BinaryOp *op,       // return GrB_FIRST_[type] operator
     // input
-    const GrB_Type type
+    const GrB_Type type,
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_get_deep        // get a deep GrB_Matrix copy of a matrix
@@ -444,7 +474,8 @@ GrB_Info gb_get_deep        // get a deep GrB_Matrix copy of a matrix
     // output:
     GrB_Matrix *C_handle,   // deep copy of the input matrix
     // input:
-    gb_matrix X             // input MATLAB or @GrB matrix
+    gb_matrix X,            // input MATLAB or @GrB matrix
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_get_descriptor
@@ -452,7 +483,8 @@ GrB_Info gb_get_descriptor
     // output:
     GrB_Descriptor *desc_handle,    // GraphBLAS descriptor
     // input:
-    gb_descriptor gbdesc            // gb_descriptor, pointer to static struct
+    gb_descriptor gbdesc,           // gb_descriptor, pointer to static struct
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_get_descriptor_mxm
@@ -460,14 +492,18 @@ GrB_Info gb_get_descriptor_mxm
     // output:
     GrB_Descriptor *desc_handle,    // GraphBLAS descriptor
     // input:
-    gb_descriptor gbdesc            // gb_descriptor, pointer to static struct
+    gb_descriptor gbdesc,           // gb_descriptor, pointer to static struct
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_get_first_scalar
 (
+    // output:
     GrB_Scalar *x,          // x = find (V, 'first')
+    // input:
     GrB_Vector V,
-    GrB_Type type
+    GrB_Type type,
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_get_format      // get the format (by row or by col)
@@ -478,7 +514,8 @@ GrB_Info gb_get_format      // get the format (by row or by col)
     GrB_Matrix A,           // may be NULL
     GrB_Matrix B,           // may be NULL
     // input/output:
-    int *fmt                // may be GxB_NO_FORMAT on input
+    int *fmt,               // may be GxB_NO_FORMAT on input
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_get_matlab_matrix    // shallow copy of MATLAB sparse matrix
@@ -486,7 +523,8 @@ GrB_Info gb_get_matlab_matrix    // shallow copy of MATLAB sparse matrix
     // output
     GrB_Matrix *A_handle,   // content of A is tagged GxB_IS_READONLY
     // input
-    gb_matrix matrix        // contents of a MATLAB matrix
+    gb_matrix matrix,       // contents of a MATLAB matrix
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
@@ -496,7 +534,8 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
     GrB_Matrix *A_handle,   // output matrix
     GrB_Matrix *A_to_free,  // must be freed by the caller if not NULL
     // input
-    gb_matrix X             // input MATLAB or @GrB matrix
+    gb_matrix X,            // input MATLAB or @GrB matrix
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_get_sparsity    // determine the sparsity of C for C = method(A,B)
@@ -505,7 +544,8 @@ GrB_Info gb_get_sparsity    // determine the sparsity of C for C = method(A,B)
     GrB_Matrix A,           // may be NULL
     GrB_Matrix B,           // may be NULL
     // input/output:
-    int *sparsity           // may be 0 on input
+    int *sparsity,          // may be 0 on input
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_is_all          // check two matrices for equality, given an op
@@ -515,7 +555,8 @@ GrB_Info gb_is_all          // check two matrices for equality, given an op
     // input:
     GrB_Matrix A,
     GrB_Matrix B,
-    GrB_BinaryOp op
+    GrB_BinaryOp op,
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_is_column_vector    // determine if A is a column vector
@@ -523,7 +564,8 @@ GrB_Info gb_is_column_vector    // determine if A is a column vector
     // output:
     bool *is_column_vector,
     // input:
-    GrB_Matrix A                // GrB_matrix to query
+    GrB_Matrix A,               // GrB_matrix to query
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_is_dense            // determine if A is dense
@@ -531,7 +573,8 @@ GrB_Info gb_is_dense            // determine if A is dense
     // output:
     bool *is_dense,
     // input:
-    GrB_Matrix A                // GrB_Matrix to query
+    GrB_Matrix A,               // GrB_Matrix to query
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_is_equal
@@ -540,7 +583,8 @@ GrB_Info gb_is_equal
     bool *is_equal,             // true if A == B, false if A ~= B
     // input:
     GrB_Matrix A,
-    GrB_Matrix B
+    GrB_Matrix B,
+    char err [ERRLEN]
 ) ;
 
 bool gb_is_float (const GrB_Type type) ;
@@ -552,13 +596,15 @@ GrB_Info gb_is_scalar
     // output:
     bool *is_scalar,    // true if A is a 1-by-1 GrB_Matrix with 1 entry
     // input
-    GrB_Matrix A
+    GrB_Matrix A,
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_is_vector
 (
     bool *is_vector,            // true if A is a row or column vector
-    GrB_Matrix A                // GrB_Matrix to query
+    GrB_Matrix A,               // GrB_Matrix to query
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_matrix_to_list
@@ -568,7 +614,8 @@ GrB_Info gb_matrix_to_list
     GrB_Vector *V_to_free_handle,  // must be freed by the caller
     // inputs:
     gb_matrix matrix,
-    const int base_offset   // 1 or 0
+    const int base_offset,  // 1 or 0
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_monoid_type
@@ -576,7 +623,8 @@ GrB_Info gb_monoid_type
     // output:
     GrB_Type *type,
     // input:
-    GrB_Monoid op
+    GrB_Monoid op,
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_new       // create and empty matrix C
@@ -588,7 +636,8 @@ GrB_Info gb_new       // create and empty matrix C
     uint64_t nrows,     // # of rows
     uint64_t ncols,     // # of rows
     int fmt,            // requested format, if < 0 use default
-    int sparsity        // sparsity control for C, 0 for default
+    int sparsity,       // sparsity control for C, 0 for default
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_norm            // compute norm (A,kind)
@@ -597,7 +646,8 @@ GrB_Info gb_norm            // compute norm (A,kind)
     double *s,              // norm of A
     // inputs:
     GrB_Matrix A,
-    int64_t norm_kind       // 0, 1, 2, INT64_MAX, or INT64_MIN
+    int64_t norm_kind,      // 0, 1, 2, INT64_MAX, or INT64_MIN
+    char err [ERRLEN]
 ) ;
 
 GrB_UnaryOp gb_round_op (const GrB_Type type) ;
@@ -608,9 +658,11 @@ GrB_Info gb_semiring                // find semiring from (add,mult) ops
     GrB_Semiring *semiring,
     // inputs:
     const GrB_BinaryOp add,         // add operator
-    const GrB_BinaryOp mult         // multiply operator
+    const GrB_BinaryOp mult,        // multiply operator
+    char err [ERRLEN]
 ) ;
 
+// FIXME: reorder parameters of gb_string_and_type_to_binop_or_idxunop:
 GrB_Info gb_string_and_type_to_binop_or_idxunop
 (
     // output:
@@ -622,7 +674,8 @@ GrB_Info gb_string_and_type_to_binop_or_idxunop
     // output:
     GrB_IndexUnaryOp *idxunop,          // idxunop from the string
     // input/output:
-    int64_t *ithunk                     // thunk for idxunop
+    int64_t *ithunk,                    // thunk for idxunop
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_string_and_type_to_unop  // return op from string and type
@@ -632,7 +685,8 @@ GrB_Info gb_string_and_type_to_unop  // return op from string and type
     // input
     const char *op_name,        // name of the operator, as a string
     const GrB_Type type,        // type of the input to the operator
-    const bool type_not_given   // true if no type present in the string
+    const bool type_not_given,  // true if no type present in the string
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_string_to_binop // return binary operator from a string
@@ -643,7 +697,8 @@ GrB_Info gb_string_to_binop // return binary operator from a string
     char *opstring,             // string that defines the binary operator
     // input:
     const GrB_Type atype,       // type of A
-    const GrB_Type btype        // type of B
+    const GrB_Type btype,       // type of B
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_string_to_binop_or_idxunop
@@ -656,7 +711,8 @@ GrB_Info gb_string_to_binop_or_idxunop
     char *opstring,                     // string defining the operator
     // input:
     const GrB_Type atype,               // type of A
-    const GrB_Type btype                // type of B
+    const GrB_Type btype,               // type of B
+    char err [ERRLEN]
 ) ;
 
 bool gb_string_to_format        // true if a valid format is found
@@ -678,7 +734,8 @@ GrB_Info gb_string_to_idxunop
     int64_t *ithunk,
     // inputs:
     char *opstring,             // string defining the operator
-    const GrB_Type atype        // type of A, or NULL if not present
+    const GrB_Type atype,       // type of A, or NULL if not present
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_string_to_monoid            // return monoid from a string
@@ -687,7 +744,8 @@ GrB_Info gb_string_to_monoid            // return monoid from a string
     GrB_Monoid *monoid,
     // input
     char *opstring,                     // string defining the operator
-    const GrB_Type type                 // default type if not in the string
+    const GrB_Type type,                // default type if not in the string
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_string_to_semiring          // return a GrB semiring from a string
@@ -698,7 +756,8 @@ GrB_Info gb_string_to_semiring          // return a GrB semiring from a string
     char *semiring_string,              // string defining the semiring
     // inputs:
     const GrB_Type atype,               // type of A
-    const GrB_Type btype                // type of B
+    const GrB_Type btype,               // type of B
+    char err [ERRLEN]
 ) ;
 
 GrB_Type gb_string_to_type      // return the GrB_Type from a string
@@ -712,7 +771,8 @@ GrB_Info gb_string_to_unop              // return unary operator from a string
     GrB_UnaryOp *unop,                  // unary op determined by the string
     // input
     char *opstring,                     // string defining the operator
-    const GrB_Type default_type         // default type if not in the string
+    const GrB_Type default_type,        // default type if not in the string
+    char err [ERRLEN]
 ) ;
 
 GrB_Info gb_typecast  // C = (type) A, where C is deep
@@ -723,7 +783,8 @@ GrB_Info gb_typecast  // C = (type) A, where C is deep
     GrB_Matrix A,       // may be shallow
     GrB_Type type,      // if NULL, use the type of A
     int fmt,            // format of C
-    int sparsity        // sparsity control for C, if 0 use A
+    int sparsity,       // sparsity control for C, if 0 use A
+    char err [ERRLEN]
 ) ;
 
 // allocate/free memory space in the default arena 0:
@@ -769,9 +830,16 @@ int64_t gbmx_get_int64_scalar   // return int64 value of a MATLAB scalar
     char *name                  // name of the scalar
 ) ;
 
-uint64_t *gbmx_get_integer_list (const mxArray *mxList, uint64_t *len) ;
+uint64_t *gbmx_get_integer_list
+(
+    const mxArray *mxList,
+    uint64_t *len
+) ;
 
-kind_enum_t gbmx_get_kind (const mxArray *mxdesc) ;
+kind_enum_t gbmx_get_kind
+(
+    const mxArray *mxdesc
+) ;
 
 void gbmx_get_matrix
 (
@@ -850,7 +918,10 @@ mxArray *gbmx_new_matlab_matrix // return new MATLAB full matrix
     GrB_Type type               // type of the array
 ) ;
 
-int64_t gbmx_norm_kind (const mxArray *arg) ;
+int64_t gbmx_norm_kind      // determine the kind of norm to compute
+(   
+    const mxArray *arg
+) ;
 
 void gbmx_set_double_scalar (mxArray *scalar, double value) ;
 
@@ -862,7 +933,8 @@ mxArray * gbmx_type_to_mxstring // return the built-in string from a GrB_Type
 void gbmx_usage       // check usage and make sure GxB_init has been called
 (
     bool ok,                // if false, then usage is not correct
-    const char *message     // error message if usage is not correct
+    const char *message,    // error message if usage is not correct
+    char err [ERRLEN]
 ) ;
 
 //------------------------------------------------------------------------------

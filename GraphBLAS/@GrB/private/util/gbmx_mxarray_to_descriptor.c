@@ -11,7 +11,7 @@
 
 #include "gb_interface.h"
 
-static void get_descriptor
+static void get_desc
 (
     // output:
     int *desc_field,        // field in gb_descriptor to modify
@@ -128,11 +128,11 @@ bool gbmx_mxarray_to_descriptor // true if descriptor present in pargin [...]
     //--------------------------------------------------------------------------
 
     // get each component for the GraphBLAS GrB_Descriptor
-    get_descriptor (&(gbdesc->out ), &(gbdesc->nondefault), mxdesc, "out" ) ;
-    get_descriptor (&(gbdesc->in0 ), &(gbdesc->nondefault), mxdesc, "in0" ) ;
-    get_descriptor (&(gbdesc->in1 ), &(gbdesc->nondefault), mxdesc, "in1" ) ;
-    get_descriptor (&(gbdesc->mask), &(gbdesc->nondefault), mxdesc, "mask") ;
-    get_descriptor (&(gbdesc->axb ), &(gbdesc->nondefault), mxdesc, "axb" ) ;
+    get_desc (&(gbdesc->out ), &(gbdesc->nondefault), mxdesc, "out" ) ;
+    get_desc (&(gbdesc->in0 ), &(gbdesc->nondefault), mxdesc, "in0" ) ;
+    get_desc (&(gbdesc->in1 ), &(gbdesc->nondefault), mxdesc, "in1" ) ;
+    get_desc (&(gbdesc->mask), &(gbdesc->nondefault), mxdesc, "mask") ;
+    get_desc (&(gbdesc->axb ), &(gbdesc->nondefault), mxdesc, "axb" ) ;
 
     //--------------------------------------------------------------------------
     // get the desired kind of output: GrB, sparse, or full

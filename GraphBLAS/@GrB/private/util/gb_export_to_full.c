@@ -28,7 +28,8 @@
 
 GrB_Info gb_export_to_full
 (
-    GrB_Matrix *C_handle    // GraphBLAS matrix to modify for export to MATLAB
+    GrB_Matrix *C_handle,   // GraphBLAS matrix to modify for export to MATLAB
+    char err [ERRLEN]
 )
 {
 
@@ -61,7 +62,7 @@ GrB_Info gb_export_to_full
     if (!is_full)
     { 
         // expand C with explicit zeros so all entries are present
-        OK (gb_expand_to_full (&T, C, NULL, GxB_BY_COL, NULL)) ;
+        OK (gb_expand_to_full (&T, C, NULL, GxB_BY_COL, NULL, err)) ;
         GrB_Matrix_free (C_handle) ;
         (*C_handle) = T ;
         T = NULL ;

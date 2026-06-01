@@ -3567,7 +3567,8 @@ GrB_Info gb_semiring                // find semiring from (add,mult) ops
     GrB_Semiring *semiring,
     // inputs:
     const GrB_BinaryOp add,         // add operator
-    const GrB_BinaryOp mult         // multiply operator
+    const GrB_BinaryOp mult,        // multiply operator
+    char err [ERRLEN]
 )
 {
 

@@ -40,7 +40,8 @@ GrB_Info gb_get_deep        // get a deep GrB_Matrix copy of a matrix
     // output:
     GrB_Matrix *C_handle,   // deep copy of the input matrix
     // input:
-    gb_matrix X             // input MATLAB or @GrB matrix
+    gb_matrix X,            // input MATLAB or @GrB matrix
+    char err [ERRLEN]
 )
 { 
 
@@ -49,7 +50,7 @@ GrB_Info gb_get_deep        // get a deep GrB_Matrix copy of a matrix
     //--------------------------------------------------------------------------
 
     GrB_Matrix Cin = NULL, C = NULL, C_to_free = NULL ;
-    OK (gb_get_matrix (&Cin, &C_to_free, X)) ;
+    OK (gb_get_matrix (&Cin, &C_to_free, X, err)) ;
 
     //--------------------------------------------------------------------------
     // ensure Cin has no pending work
@@ -67,7 +68,7 @@ GrB_Info gb_get_deep        // get a deep GrB_Matrix copy of a matrix
 
     int fmt ;   // by row or by column
     OK (GrB_Matrix_get_INT32 (Cin, &fmt, GxB_FORMAT)) ;
-    OK (gb_typecast (&C, Cin, NULL, fmt, 0)) ;
+    OK (gb_typecast (&C, Cin, NULL, fmt, 0, err)) ;
 
     //--------------------------------------------------------------------------
     // return result

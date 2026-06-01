@@ -118,7 +118,8 @@ void mexFunction
     GrB_Vector V = NULL ;
     uint64_t *Kx = NULL ;
 
-    gbmx_usage (nargin == 2 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 2 && nargout <= 1, USAGE) ;
+
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
     //--------------------------------------------------------------------------
@@ -138,9 +139,9 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // make sure A is stored by column
-    OK (gb_get_matrix (&A_input, &A_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A_input, &A_to_free, &(Matrix [0]), err)) ;
 
-    OK (gb_by_col (&A, &A_copy, A_input)) ;
+    OK (gb_by_col (&A, &A_copy, A_input, err)) ;
 
     GrB_Index nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
@@ -154,8 +155,8 @@ void mexFunction
     int not_bitmap = GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL ;
 
     // make M boolean, stored by column, and drop explicit zeros
-    OK (gb_get_matrix (&M_input, &M_to_free, &(Matrix [1]))) ;
-    OK (gb_new (&M, GrB_BOOL, nrows, ncols, GxB_BY_COL, not_bitmap)) ;
+    OK (gb_get_matrix (&M_input, &M_to_free, &(Matrix [1]), err)) ;
+    OK (gb_new (&M, GrB_BOOL, nrows, ncols, GxB_BY_COL, not_bitmap, err)) ;
     OK1 (M, GrB_Matrix_select_BOOL (M, NULL, NULL, GrB_VALUENE_BOOL, M_input,
         0, NULL)) ;
     GrB_Matrix_free (&M_to_free) ;
@@ -175,7 +176,7 @@ void mexFunction
     // Also ensure the G is not bitmap.
     GrB_Type type ;
     OK (GxB_Matrix_type (&type, A)) ;
-    OK (gb_new (&G, type, nrows, ncols, GxB_BY_COL, not_bitmap)) ;
+    OK (gb_new (&G, type, nrows, ncols, GxB_BY_COL, not_bitmap, err)) ;
     OK1 (G, GxB_Matrix_subassign (G, M, NULL,
         A, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
     GrB_Matrix_free (&A_copy) ;
@@ -245,7 +246,7 @@ void mexFunction
     // T<G> = K
     //--------------------------------------------------------------------------
 
-    OK (gb_new (&T, GrB_UINT64, nrows, ncols, GxB_BY_COL, not_bitmap)) ;
+    OK (gb_new (&T, GrB_UINT64, nrows, ncols, GxB_BY_COL, not_bitmap, err)) ;
     OK1 (T, GxB_Matrix_subassign (T, G, NULL,
         K, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
 
@@ -316,7 +317,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, KIND_GRB)) ;
+    OK (gb_export (C_opaque, &C, KIND_GRB, err)) ;
     gb_wrapup ( ) ;
 }
 

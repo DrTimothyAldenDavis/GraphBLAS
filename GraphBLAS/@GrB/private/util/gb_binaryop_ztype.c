@@ -15,7 +15,8 @@ GrB_Info gb_binaryop_ztype
     // output
     GrB_Type *ztype,    // the GrB_Type of the output of a binary op
     // input
-    GrB_BinaryOp op
+    GrB_BinaryOp op,
+    char err [ERRLEN]
 )
 { 
     int code = 0 ;

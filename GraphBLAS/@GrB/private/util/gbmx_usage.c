@@ -46,7 +46,8 @@ void gb_free (void **p)
 void gbmx_usage     // check usage and make sure GrB.init has been called
 (
     bool ok,                // if false, then usage is not correct
-    const char *usage       // error message if usage is not correct
+    const char *usage,      // error message if usage is not correct
+    char err [ERRLEN]
 )
 {
 
@@ -71,7 +72,7 @@ void gbmx_usage     // check usage and make sure GrB.init has been called
         //----------------------------------------------------------------------
 
         OK (GrB_init (GrB_NONBLOCKING)) ;
-        OK (gb_defaults ( )) ;          // no memory allocated; "cannot" fail
+        OK (gb_defaults (err)) ;        // no memory allocated; "cannot" fail
 
         OK (GrB_Global_get_VOID (GrB_GLOBAL, &gb_malloc0, GxB_ARENA_MALLOC)) ;
         OK (GrB_Global_get_VOID (GrB_GLOBAL, &gb_free0, GxB_ARENA_MALLOC)) ;

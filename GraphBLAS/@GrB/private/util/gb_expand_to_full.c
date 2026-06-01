@@ -28,7 +28,8 @@ GrB_Info gb_expand_to_full      // C = full (A), and typecast
     const GrB_Matrix A,         // input matrix to expand to full
     GrB_Type type,              // type of C, if NULL use the type of A
     int fmt,                    // format of C
-    GrB_Matrix id               // identity value, use zero if NULL
+    GrB_Matrix id,              // identity value, use zero if NULL
+    char err [ERRLEN]
 )
 {
 
@@ -65,7 +66,7 @@ GrB_Info gb_expand_to_full      // C = full (A), and typecast
     // expand the identity into a full matrix B the same size as C
     //--------------------------------------------------------------------------
 
-    OK (gb_new (&B, type, nrows, ncols, fmt, 0)) ;
+    OK (gb_new (&B, type, nrows, ncols, fmt, 0, err)) ;
     OK1 (B, GrB_Matrix_assign_Scalar (B, NULL, NULL, (GrB_Scalar) id,
         GrB_ALL, 0, GrB_ALL, 0, NULL)) ;
 
@@ -76,7 +77,7 @@ GrB_Info gb_expand_to_full      // C = full (A), and typecast
     if (gb_is_integer (type) && gb_is_float (atype))
     { 
         // T = (type) round (A)
-        OK (gb_new (&T, type, nrows, ncols, fmt, 0)) ;
+        OK (gb_new (&T, type, nrows, ncols, fmt, 0, err)) ;
         OK1 (T, GrB_Matrix_apply (T, NULL, NULL, gb_round_op (atype), A, NULL));
         S = T ;
     }
@@ -91,8 +92,8 @@ GrB_Info gb_expand_to_full      // C = full (A), and typecast
     //--------------------------------------------------------------------------
 
     GrB_BinaryOp op ;
-    OK (gb_new (&C, type, nrows, ncols, fmt, 0)) ;
-    OK (gb_first_binop (&op, type)) ;
+    OK (gb_new (&C, type, nrows, ncols, fmt, 0, err)) ;
+    OK (gb_first_binop (&op, type, err)) ;
     OK1 (C, GrB_Matrix_eWiseAdd_BinaryOp (C, NULL, NULL, op, S, B, NULL)) ;
 
     //--------------------------------------------------------------------------

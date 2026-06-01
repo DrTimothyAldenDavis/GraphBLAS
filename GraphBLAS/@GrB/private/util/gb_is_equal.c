@@ -25,7 +25,8 @@ GrB_Info gb_is_equal
     bool *is_equal,             // true if A == B, false if A ~= B
     // input:
     GrB_Matrix A,
-    GrB_Matrix B
+    GrB_Matrix B,
+    char err [ERRLEN]
 )
 {
 
@@ -61,7 +62,7 @@ GrB_Info gb_is_equal
     }
 
     // check the size, pattern, and values of A and B
-    OK (gb_is_all (is_equal, A, B, op)) ;
+    OK (gb_is_all (is_equal, A, B, op, err)) ;
     return (GrB_SUCCESS) ;
 }
 

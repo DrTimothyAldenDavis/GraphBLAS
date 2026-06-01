@@ -15,7 +15,8 @@ GrB_Info gb_is_column_vector    // determine if A is a column vector
     // output:
     bool *is_column_vector,
     // input:
-    GrB_Matrix A                // GrB_matrix to query
+    GrB_Matrix A,               // GrB_matrix to query
+    char err [ERRLEN]
 )
 { 
 

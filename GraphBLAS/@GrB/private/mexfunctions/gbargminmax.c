@@ -2547,7 +2547,8 @@ void mexFunction
     GrB_UnaryOp Getv = NULL, Getk = NULL ;
     GrB_Scalar s = NULL ;
 
-    gbmx_usage (nargin == 3 && nargout == 2, USAGE) ;
+    GBMX_USAGE (nargin == 3 && nargout == 2, USAGE) ;
+
     pargout [0] = gbmx_export_struct (&x_opaque) ;
     pargout [1] = gbmx_export_struct (&p_opaque) ;
 
@@ -2568,7 +2569,7 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
 
     //--------------------------------------------------------------------------
     // get the matrix properties
@@ -3636,8 +3637,8 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (x_opaque, &x, KIND_GRB)) ;
-    OK (gb_export (p_opaque, &p, KIND_GRB)) ;
+    OK (gb_export (x_opaque, &x, KIND_GRB, err)) ;
+    OK (gb_export (p_opaque, &p, KIND_GRB, err)) ;
     gb_wrapup ( ) ;
 }
 

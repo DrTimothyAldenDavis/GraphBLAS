@@ -24,7 +24,8 @@ GrB_Info gb_string_to_binop_or_idxunop
     char *opstring,                     // string defining the operator
     // input:
     const GrB_Type atype,               // type of A
-    const GrB_Type btype                // type of B
+    const GrB_Type btype,               // type of B
+    char err [ERRLEN]
 )
 {
 
@@ -63,7 +64,7 @@ GrB_Info gb_string_to_binop_or_idxunop
     //--------------------------------------------------------------------------
 
     OK (gb_string_and_type_to_binop_or_idxunop (binop, op_name, type,
-        type_not_given, idxunop, ithunk)) ;
+        type_not_given, idxunop, ithunk, err)) ;
     return (GrB_SUCCESS) ;
 }
 

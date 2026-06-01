@@ -50,7 +50,7 @@ void mexFunction
 
     GrB_Matrix A = NULL, A_to_free = NULL ;
 
-    gbmx_usage (nargin == 1 && nargout == 1, USAGE) ;
+    GBMX_USAGE (nargin == 1 && nargout == 1, USAGE) ;
 
     // The input must be a @GrB object or its opaque content as a struct.  The
     // input is never a MATLAB/Octave matrix, since this is not required.
@@ -73,7 +73,7 @@ void mexFunction
     // get matrix input
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &Matrix)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &Matrix, err)) ;
     uint64_t *Ap = (uint64_t *) A->p ;
     uint64_t *Ai = (uint64_t *) A->i ;
     void *Ax = A->x ;

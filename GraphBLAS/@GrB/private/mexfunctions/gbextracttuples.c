@@ -57,7 +57,7 @@ void mexFunction
     GrB_Vector I = NULL, J = NULL, X = NULL, T = NULL ;
     void *x = NULL ;
 
-    gbmx_usage (nargin >= 1 && nargin <= 2 && nargout <= 3, USAGE) ;
+    GBMX_USAGE (nargin >= 1 && nargin <= 2 && nargout <= 3, USAGE) ;
 
     //--------------------------------------------------------------------------
     // find the arguments
@@ -142,7 +142,7 @@ void mexFunction
     // get the matrix; disable burble for scalars
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
     int burble ;
     bool disable_burble = (nrows <= 1 && ncols <= 1) ;
     if (disable_burble)

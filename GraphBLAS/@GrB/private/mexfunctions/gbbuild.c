@@ -73,7 +73,8 @@ void mexFunction
     GrB_Type type = NULL ;
     GrB_Scalar x = NULL ;
 
-    gbmx_usage (nargin >= 3 && nargin <= 8 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 3 && nargin <= 8 && nargout <= 2, USAGE) ;
+
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
     double *kind_output = (double *) mxGetData (pargout [1]) ;
@@ -133,9 +134,9 @@ void mexFunction
     // get I, J, and X and their properties
     //--------------------------------------------------------------------------
 
-    OK (gb_matrix_to_list (&I, &I_to_free, &(Matrix [0]), base_offset)) ;
-    OK (gb_matrix_to_list (&J, &J_to_free, &(Matrix [1]), base_offset)) ;
-    OK (gb_matrix_to_list (&X, &X_to_free, &(Matrix [2]), 0)) ;
+    OK (gb_matrix_to_list (&I, &I_to_free, &(Matrix [0]), base_offset, err)) ;
+    OK (gb_matrix_to_list (&J, &J_to_free, &(Matrix [1]), base_offset, err)) ;
+    OK (gb_matrix_to_list (&X, &X_to_free, &(Matrix [2]), 0, err)) ;
 
     uint64_t ni, nj, nx ;
     OK (GrB_Vector_nvals (&ni, I)) ;
@@ -174,8 +175,8 @@ void mexFunction
         { 
             OK (GrB_Vector_reduce_UINT64 (&Imax, NULL, max, I, NULL)) ;
         }
-        gb_expand_scalar_to_vector (&I,
-            (Imax < UINT32_MAX) ? GrB_UINT32 : GrB_UINT64, nvals) ;
+        OK (gb_expand_scalar_to_vector (&I,
+            (Imax < UINT32_MAX) ? GrB_UINT32 : GrB_UINT64, nvals, err)) ;
     }
 
     if (nj == 1 && nj < nvals)
@@ -184,8 +185,8 @@ void mexFunction
         { 
             OK (GrB_Vector_reduce_UINT64 (&Jmax, NULL, max, J, NULL)) ;
         }
-        gb_expand_scalar_to_vector (&J,
-            (Jmax < UINT32_MAX) ? GrB_UINT32 : GrB_UINT64, nvals) ;
+        OK (gb_expand_scalar_to_vector (&J,
+            (Jmax < UINT32_MAX) ? GrB_UINT32 : GrB_UINT64, nvals, err)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -218,7 +219,7 @@ void mexFunction
 
     if (!default_dup)
     { 
-        OK (gb_string_to_binop (&dup, op_string, xtype, xtype)) ;
+        OK (gb_string_to_binop (&dup, op_string, xtype, xtype, err)) ;
     }
 
     bool nice_iso_dup = false ;
@@ -327,9 +328,9 @@ void mexFunction
     // build the matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_format (nrows, ncols, NULL, NULL, &(gbdesc.fmt))) ;
-    OK (gb_get_sparsity (NULL, NULL, &(gbdesc.sparsity))) ;
-    OK (gb_new (&C, type, nrows, ncols, gbdesc.fmt, gbdesc.sparsity)) ;
+    OK (gb_get_format (nrows, ncols, NULL, NULL, &(gbdesc.fmt), err)) ;
+    OK (gb_get_sparsity (NULL, NULL, &(gbdesc.sparsity), err)) ;
+    OK (gb_new (&C, type, nrows, ncols, gbdesc.fmt, gbdesc.sparsity, err)) ;
 
     if (nvals > 0)
     {
@@ -338,7 +339,7 @@ void mexFunction
         if (iso_build)
         { 
             // build an iso matrix, with no dup operator
-            OK (gb_get_first_scalar (&x, X, xtype)) ;
+            OK (gb_get_first_scalar (&x, X, xtype, err)) ;
             OK1 (C, GxB_Matrix_build_Scalar_Vector (C, I, J, x, NULL)) ;
         }
         else
@@ -347,7 +348,7 @@ void mexFunction
             if (X_is_scalar)
             { 
                 // expand X from a scalar to a vector of length nvals
-                gb_expand_scalar_to_vector (&X, xtype, nvals) ;
+                OK (gb_expand_scalar_to_vector (&X, xtype, nvals, err)) ;
             }
             OK1 (C, GxB_Matrix_build_Vector (C, I, J, X, dup, NULL)) ;
         }
@@ -358,7 +359,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, gbdesc.kind)) ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }

@@ -20,7 +20,8 @@ GrB_Info gb_by_col
     GrB_Matrix *A_handle,       // return the matrix by column
     GrB_Matrix *A_copy_handle,  // copy made of A, stored by column, or NULL
     // input
-    GrB_Matrix A_input          // input matrix, by row or column
+    GrB_Matrix A_input,         // input matrix, by row or column
+    char err [ERRLEN]
 )
 {
     GrB_Matrix A_copy = NULL, A = NULL ;

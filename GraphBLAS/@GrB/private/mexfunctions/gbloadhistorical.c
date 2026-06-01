@@ -53,7 +53,8 @@ void mexFunction
     GrB_Matrix *C_opaque = NULL, C = NULL, Y = NULL ;
     int burble = false ;
 
-    gbmx_usage (nargin == 1 && nargout == 1, USAGE) ;
+    GBMX_USAGE (nargin == 1 && nargout == 1, USAGE) ;
+
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
     //--------------------------------------------------------------------------
@@ -181,8 +182,7 @@ void mexFunction
             // or with 9 fields: Yp, Yi, and Yx added.
             sparsity_status = GxB_HYPERSPARSE ;
             // GraphBLAS v9 and earlier can export a matrix to the MATLAB
-            // struct with plen of 1 but nvec of 0.  Fix it here for v9 and
-            // earlier structs, and also in gb_export_to_mxstruct for v10:
+            // struct with plen of 1 but nvec of 0.  Fix it here.
             plen = nvec ;
             break ;
 
@@ -425,7 +425,7 @@ void mexFunction
 
     OK (GrB_Global_set_INT32 (GrB_GLOBAL, burble, GxB_BURBLE)) ;
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, KIND_GRB)) ;
+    OK (gb_export (C_opaque, &C, KIND_GRB, err)) ;
     gb_wrapup ( ) ;
 }
 

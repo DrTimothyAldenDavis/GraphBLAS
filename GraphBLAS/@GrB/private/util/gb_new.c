@@ -20,7 +20,8 @@ GrB_Info gb_new       // create and empty matrix C
     uint64_t nrows,     // # of rows
     uint64_t ncols,     // # of rows
     int fmt,            // requested format, if < 0 use default
-    int sparsity        // sparsity control for C, 0 for default
+    int sparsity,       // sparsity control for C, 0 for default
+    char err [ERRLEN]
 )
 {
 
@@ -31,7 +32,7 @@ GrB_Info gb_new       // create and empty matrix C
     // get the default format, if needed
     if (fmt < 0)
     { 
-        OK (gb_default_format (&fmt, nrows, ncols)) ;
+        OK (gb_default_format (&fmt, nrows, ncols, err)) ;
     }
 
     // set the desired format

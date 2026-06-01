@@ -31,10 +31,10 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A = NULL, B = NULL, X = NULL,
-        A_to_free = NULL, B_to_free = NULL ;
+    GrB_Matrix A = NULL, B = NULL, X = NULL, A_to_free = NULL,
+        B_to_free = NULL ;
 
-    gbmx_usage (nargin == 3 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 3 && nargout <= 1, USAGE) ;
 
     pargout [0] = mxCreateDoubleScalar (0) ;
     double *s_output = (double *) mxGetData (pargout [0]) ;
@@ -55,8 +55,8 @@ void mexFunction
     // get the inputs 
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
-    OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]), err)) ;
 
     GrB_Type atype, btype ;
     OK (GxB_Matrix_type (&atype, A)) ;
@@ -79,8 +79,8 @@ void mexFunction
     double s ;
 
     bool A_is_dense, B_is_dense ;
-    OK (gb_is_dense (&A_is_dense, A)) ;
-    OK (gb_is_dense (&B_is_dense, A)) ;
+    OK (gb_is_dense (&A_is_dense, A, err)) ;
+    OK (gb_is_dense (&B_is_dense, A, err)) ;
 
     if (A_is_dense && B_is_dense &&
         (atype == GrB_FP32 || atype == GrB_FP64) && (atype == btype)
@@ -129,7 +129,7 @@ void mexFunction
         OK1 (X, GrB_Matrix_eWiseAdd_BinaryOp (X, NULL, NULL, op, A, B, NULL)) ;
 
         // s = norm (X, norm_kind)
-        OK (gb_norm (&s, X, norm_kind)) ;
+        OK (gb_norm (&s, X, norm_kind, err)) ;
     }
 
     //--------------------------------------------------------------------------

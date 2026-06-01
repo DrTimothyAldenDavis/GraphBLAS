@@ -45,7 +45,8 @@ GrB_Info gb_cell_to_list
     struct gb_matrix_struct Cell_Matrix [3],    // contents of the Cell
     const int len,              // # of items in Cell_Matrix
     const int base_offset,      // 1 or 0
-    const uint64_t n            // dimension of the matrix
+    const uint64_t n,           // dimension of the matrix
+    char err [ERRLEN]
 )
 {
 
@@ -84,7 +85,7 @@ GrB_Info gb_cell_to_list
         //----------------------------------------------------------------------
 
         OK (gb_matrix_to_list (&I, &I_to_free, &(Cell_Matrix [0]),
-            base_offset)) ;
+            base_offset, err)) ;
 
         if (I_max != NULL)
         { 
@@ -107,25 +108,25 @@ GrB_Info gb_cell_to_list
         if (len == 2)
         { 
             OK (gb_matrix_to_list (&Start, &Start_to_free, &(Cell_Matrix [0]),
-                0)) ;
+                0, err)) ;
             OK (gb_matrix_to_list (&Fini , &Fini_to_free , &(Cell_Matrix [1]),
-                0)) ;
-            OK (gb_is_scalar (&Start_is_scalar, (GrB_Matrix) Start)) ;
-            OK (gb_is_scalar (&Fini_is_scalar, (GrB_Matrix) Fini)) ;
+                0, err)) ;
+            OK (gb_is_scalar (&Start_is_scalar, (GrB_Matrix) Start, err)) ;
+            OK (gb_is_scalar (&Fini_is_scalar, (GrB_Matrix) Fini, err)) ;
             CHECK_ERROR (!Start_is_scalar || !Fini_is_scalar,
                 "cell entries must be scalars for start:fini") ;
         }
         else // if (len == 3)
         { 
             OK (gb_matrix_to_list (&Start, &Start_to_free, &(Cell_Matrix [0]),
-                0)) ;
+                0, err)) ;
             OK (gb_matrix_to_list (&Inc  , &Inc_to_free  , &(Cell_Matrix [1]),
-                0)) ;
+                0, err)) ;
             OK (gb_matrix_to_list (&Fini , &Fini_to_free , &(Cell_Matrix [2]),
-                0)) ;
-            OK (gb_is_scalar (&Start_is_scalar, (GrB_Matrix) Start)) ;
-            OK (gb_is_scalar (&Inc_is_scalar, (GrB_Matrix) Inc)) ;
-            OK (gb_is_scalar (&Fini_is_scalar, (GrB_Matrix) Fini)) ;
+                0, err)) ;
+            OK (gb_is_scalar (&Start_is_scalar, (GrB_Matrix) Start, err)) ;
+            OK (gb_is_scalar (&Inc_is_scalar, (GrB_Matrix) Inc, err)) ;
+            OK (gb_is_scalar (&Fini_is_scalar, (GrB_Matrix) Fini, err)) ;
             CHECK_ERROR (!Start_is_scalar || !Fini_is_scalar || !Inc_is_scalar,
                 "cell entries must be scalars for start:inc:fini") ;
         }

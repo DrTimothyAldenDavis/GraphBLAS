@@ -33,7 +33,8 @@ void mexFunction
     GrB_Monoid monoid = NULL ;
     GrB_Type type = NULL ;
 
-    gbmx_usage (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
+
     if (nargout == 1)
     { 
         pargout [0] = mxCreateLogicalScalar (true) ;
@@ -63,7 +64,7 @@ void mexFunction
         CHECK_ERROR (type == NULL, "unknown type") ;
     }
 
-    OK (gb_string_to_monoid (&monoid, op_string, type)) ;
+    OK (gb_string_to_monoid (&monoid, op_string, type, err)) ;
 
     int pr = (nargout < 1) ? GxB_COMPLETE : GxB_SILENT ;
     OK (GxB_Monoid_fprint (monoid, op_string, pr, NULL)) ;

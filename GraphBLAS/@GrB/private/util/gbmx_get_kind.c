@@ -9,7 +9,10 @@
 
 #include "gb_interface.h"
 
-kind_enum_t gbmx_get_kind (const mxArray *mxdesc)
+kind_enum_t gbmx_get_kind
+(
+    const mxArray *mxdesc
+)
 {
 
     kind_enum_t kind = KIND_GRB ;

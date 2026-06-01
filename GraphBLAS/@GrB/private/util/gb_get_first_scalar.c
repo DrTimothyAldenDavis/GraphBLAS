@@ -20,9 +20,12 @@
 
 GrB_Info gb_get_first_scalar
 (
+    // output:
     GrB_Scalar *x,          // x = find (V, 'first')
+    // input:
     GrB_Vector V,
-    GrB_Type type
+    GrB_Type type,
+    char err [ERRLEN]
 )
 { 
 

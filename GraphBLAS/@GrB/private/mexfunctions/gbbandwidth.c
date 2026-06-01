@@ -38,7 +38,7 @@ void mexFunction
     GrB_Matrix A = NULL, A_to_free = NULL, x = NULL, imin = NULL, imax = NULL,
         idiag = NULL ;
 
-    gbmx_usage (nargin == 3 && nargout == 2, USAGE) ;
+    GBMX_USAGE (nargin == 3 && nargout == 2, USAGE) ;
 
     pargout [0] = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
     pargout [1] = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
@@ -61,7 +61,7 @@ void mexFunction
     // get input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
 
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;

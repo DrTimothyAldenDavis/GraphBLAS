@@ -14,7 +14,11 @@
 
 #include "gb_interface.h"
 
-uint64_t *gbmx_get_integer_list (const mxArray *mxList, uint64_t *len)
+uint64_t *gbmx_get_integer_list
+(
+    const mxArray *mxList,
+    uint64_t *len
+)
 {
     int64_t n = mxGetNumberOfElements (mxList) ;
     (*len) = (uint64_t) n ;

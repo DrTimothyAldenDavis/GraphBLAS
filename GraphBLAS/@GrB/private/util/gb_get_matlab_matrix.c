@@ -26,7 +26,8 @@ GrB_Info gb_get_matlab_matrix    // shallow copy of MATLAB sparse matrix
     // output
     GrB_Matrix *A_handle,   // content of A is tagged GxB_IS_READONLY
     // input
-    gb_matrix matrix        // contents of a MATLAB matrix
+    gb_matrix matrix,       // contents of a MATLAB matrix
+    char err [ERRLEN]
 )
 {
 

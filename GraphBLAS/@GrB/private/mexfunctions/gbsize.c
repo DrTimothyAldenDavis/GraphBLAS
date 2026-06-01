@@ -35,7 +35,7 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    gbmx_usage (nargin == 1 && nargout <= 4, USAGE) ;
+    GBMX_USAGE (nargin == 1 && nargout <= 4, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the # of rows and columns of a GraphBLAS or built-in matrix

@@ -15,7 +15,8 @@ GrB_Info gb_first_binop     // construct GrB_FIRST_[type] operator
     // output
     GrB_BinaryOp *op,       // return GrB_FIRST_[type] operator
     // input
-    const GrB_Type type
+    const GrB_Type type,
+    char err [ERRLEN]
 )
 { 
 

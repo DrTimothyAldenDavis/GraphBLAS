@@ -18,13 +18,14 @@ GrB_Info gb_string_to_binop // return binary operator from a string
     char *opstring,             // string that defines the binary operator
     // input:
     const GrB_Type atype,       // type of A
-    const GrB_Type btype        // type of B
+    const GrB_Type btype,       // type of B
+    char err [ERRLEN]
 )
 { 
 
     // convert the string to a binary operator
     return (gb_string_to_binop_or_idxunop (binop,
         /* idxunop not allowed here: */ NULL, NULL,
-        opstring, atype, btype)) ;
+        opstring, atype, btype, err)) ;
 }
 

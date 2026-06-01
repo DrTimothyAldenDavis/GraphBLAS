@@ -50,7 +50,8 @@ void mexFunction
 
     GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_to_free = NULL ;
 
-    gbmx_usage (nargin >= 1 && nargin <= 4 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin >= 1 && nargin <= 4 && nargout <= 1, USAGE) ;
+
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
     //--------------------------------------------------------------------------
@@ -196,7 +197,7 @@ void mexFunction
         //----------------------------------------------------------------------
 
         // GraphBLAS copy of A, same type and format as A
-        OK (gb_get_deep (&C, &(Matrix [0]))) ;
+        OK (gb_get_deep (&C, &(Matrix [0]), err)) ;
 
     }
     else if (nargin == 2)
@@ -231,15 +232,15 @@ void mexFunction
                     // A is a 0-by-0 built-in matrix.  create a new 0-by-0
                     // GraphBLAS matrix C of the given type, with the default
                     // format.
-                    OK (gb_new (&C, type, 0, 0, -1, 0)) ;
+                    OK (gb_new (&C, type, 0, 0, -1, 0, err)) ;
                 }
                 else
                 { 
                     // get a shallow copy and then typecast it to type.
                     // use the same format as A
-                    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+                    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
                     OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
-                    OK (gb_typecast (&C, A, type, fmt, 0)) ;
+                    OK (gb_typecast (&C, A, type, fmt, 0, err)) ;
                 }
 
             }
@@ -251,9 +252,9 @@ void mexFunction
                 //--------------------------------------------------------------
 
                 // get a shallow copy of A
-                OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+                OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
                 // C = A with the requested format and sparsity, no typecast
-                OK (gb_typecast (&C, A, NULL, fmt, sparsity)) ;
+                OK (gb_typecast (&C, A, NULL, fmt, sparsity, err)) ;
 
             }
             else
@@ -270,7 +271,7 @@ void mexFunction
             //------------------------------------------------------------------
 
             // m-by-n GraphBLAS double matrix, no entries, default format
-            OK (gb_new (&C, GrB_FP64, nrows, ncols, -1, 0)) ;
+            OK (gb_new (&C, GrB_FP64, nrows, ncols, -1, 0, err)) ;
 
         }
         else
@@ -307,13 +308,13 @@ void mexFunction
                 // C = GrB (m, n, type)
                 // create an m-by-n matrix of the desired type, no entries,
                 // use the default format.
-                OK (gb_new (&C, type, nrows, ncols, -1, sparsity)) ;
+                OK (gb_new (&C, type, nrows, ncols, -1, sparsity, err)) ;
             }
             else if (ok)
             { 
                 // C = GrB (m, n, format)
                 // create an m-by-n double matrix of the desired format
-                OK (gb_new (&C, GrB_FP64, nrows, ncols, fmt, sparsity)) ;
+                OK (gb_new (&C, GrB_FP64, nrows, ncols, fmt, sparsity, err)) ;
             }
             else
             { 
@@ -350,13 +351,13 @@ void mexFunction
 
             if (Matrix [0].is_empty)
             { 
-                OK (gb_new (&C, type, 0, 0, fmt, sparsity)) ;
+                OK (gb_new (&C, type, 0, 0, fmt, sparsity, err)) ;
             }
             else
             { 
                 // get a shallow copy, typecast it, and set the format
-                OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
-                OK (gb_typecast (&C, A, type, fmt, sparsity)) ;
+                OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+                OK (gb_typecast (&C, A, type, fmt, sparsity, err)) ;
             }
         }
 
@@ -391,7 +392,7 @@ void mexFunction
             ERROR ("unknown type and/or format", GrB_INVALID_VALUE) ;
         }
 
-        OK (gb_new (&C, type, nrows, ncols, fmt, sparsity)) ;
+        OK (gb_new (&C, type, nrows, ncols, fmt, sparsity, err)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -399,7 +400,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, KIND_GRB)) ;
+    OK (gb_export (C_opaque, &C, KIND_GRB, err)) ;
     gb_wrapup ( ) ;
 }
 

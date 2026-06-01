@@ -13,10 +13,10 @@ classdef GrB < handle
 %   G = GrB.subassign (C, M, A) ;
 %
 % constructs a GraphBLAS matrix G, which is the result of C<M>=A in
-% GraphBLAS notation (like C(M)=A(M)).  The matrices used in any
-% GrB.method may be built-in matrices (sparse or full) or GraphBLAS
-% matrices (hyper, sparse, bitmap, or full, by row or column), in any
-% combination.
+% GraphBLAS notation (like C(M)=A(M) in MATLAB notation).  The matrices
+% used in any GrB.method may be built-in matrices (sparse or full) or
+% GraphBLAS matrices (hyper, sparse, bitmap, or full, by row or column), in
+% any combination.
 %
 % --------------------
 % The GrB constructor:
@@ -30,22 +30,30 @@ classdef GrB < handle
 %   C = GrB (..., type) ;    create or typecast to a different type
 %   C = GrB (..., format) ;  create in a specified format
 %
-%   The m and n parameters above are built-in scalars.  The type and
-%   format parameters are strings.  The default format is 'by col', to
-%   match the format used in built-in (see also GrB.format), but many
-%   graph algorithms are faster if the format is 'by row'.  The format can
-%   also specify the data structure to use (hypersparse, sparse, bitmap,
-%   and/or full).
+%   The first 2 use cases cn be combined with the type and format options: 
+%
+%   C = GrB (A, type, format) ; GrB copy of A, new type and format
+%   C = GrB (m,n,type,format) ; empty m-by-n matrix, given type & format
+%
+%   The m and n parameters above are built-in scalars.  The type and format
+%   parameters are strings.  The default format is 'by col', to match the
+%   format used in built-in (see also GrB.format), but many graph
+%   algorithms are faster if the format is 'by row'.  The format can also
+%   specify the data structure to use ('hypersparse', 'sparse', 'bitmap',
+%   and/or 'full').  These can be combined, as in 'sparse by row', or
+%   'sparse/hypersparse by col'.  In the latter example, the matrix is held
+%   by column, and GraphBLAS can choose to hold it in either sparse or
+%   hypersparse format.
 %
 %   The usage C = GrB (m, n, type) is analgous to A = sparse (m, n), which
 %   creates an empty built-in sparse matrix A.  The type parameter is a
 %   string, which defaults to 'double' if not present.
 %
 %   For the usage C = GrB (A, type), A is either a built-in sparse or full
-%   matrix, or a GraphBLAS sparse matrix object.  C is created as a
-%   GraphBLAS sparse matrix object that contains a copy of A, typecasted
-%   to the given type if the type string does not match the type of A.  If
-%   the type string is not present it defaults to 'double'.
+%   matrix, or a GraphBLAS @GrB matrix object.  C is created as a GraphBLAS
+%   @GrB matrix object that contains a copy of A, typecasted to the given
+%   type if the type string does not match the type of A.  If the type
+%   string is not present it defaults to 'double'.
 %
 % --------------------
 % Matrix types:
@@ -404,56 +412,57 @@ classdef GrB < handle
 % Foundational GraphBLAS operations:
 %-----------------------------------
 %
-%   GraphBLAS has 12 foundational operations, listed below.  All have
+%   GraphBLAS has 14 foundational operations, listed below.  All have
 %   similar parameters.  The full set of input parameters is listed in the
 %   order in which they appear in the GraphBLAS C API, except that for the
-%   @GrB interface, Cin and C are different matrices.  They combine into a
-%   single input/output matrix in the GraphBLAS C API.  In the @GrB
+%   @GrB interface, Cin and C can be different matrices.  In the @GrB
 %   interface, many of the parameters become optional, and they can appear
 %   in different order.
 %
-%   GrB.apply       apply a unary operator
-%   GrB.apply2      apply a binary operator
-%   GrB.assign      sparse matrix assignment, such as C(I,J)=A
-%   GrB.eadd        element-wise addition
-%   GrB.eunion      element-wise union
-%   GrB.emult       element-wise multiplication
-%   GrB.extract     extract submatrix, like C=A(I,J)
-%   GrB.kronecker   Kronecker product
-%   GrB.mxm         sparse matrix-matrix multiplication over a semiring
-%   GrB.reduce      reduce a matrix to a scalar
-%   GrB.select      select a subset of entries from a matrix
-%   GrB.subassign   sparse matrix assignment, such as C(I,J)=A
-%   GrB.trans       transpose a matrix
-%   GrB.vreduce     reduce a matrix to a vector
+%       GrB.apply       apply a unary operator
+%       GrB.apply2      apply a binary operator
+%       GrB.assign      sparse matrix assignment, such as C(I,J)=A
+%       GrB.eadd        element-wise addition
+%       GrB.eunion      element-wise union
+%       GrB.emult       element-wise multiplication
+%       GrB.extract     extract submatrix, like C=A(I,J)
+%       GrB.kronecker   Kronecker product
+%       GrB.mxm         sparse matrix-matrix multiplication over a semiring
+%       GrB.reduce      reduce a matrix to a scalar
+%       GrB.select      select a subset of entries from a matrix
+%       GrB.subassign   sparse matrix assignment, such as C(I,J)=A
+%       GrB.trans       transpose a matrix
+%       GrB.vreduce     reduce a matrix to a vector
 %
-%   In GraphBLAS notation (with C, Cin arguments for the one matrix
-%   C), these take the following form:
+%   In GraphBLAS notation (with C, Cin arguments for the one matrix C),
+%   these take the following form:
 %
 %       C<#M,replace> = accum (C, operation (A or A', B or B'))
 %
 %   C is both an input and output matrix.  In this interface to GraphBLAS,
-%   it is split into Cin (the value of C on input) and C (the value of C
-%   on output).  M is the optional mask matrix, and #M is either M or ~M
-%   depending on whether or not the mask is complemented via the desc.mask
-%   option.  The replace option is determined by desc.out; if present, C
-%   is cleared after it is used in the accum operation but before the
-%   final assignment.  A and/or B may optionally be transposed via the
-%   descriptor fields desc.in0 and desc.in1, respectively.  To select the
-%   format of C, use desc.format.  See GrB.descriptorinfo for more
-%   details.
+%   it can be split into Cin (the value of C on input) and C (the value of
+%   on output) using the functional syntax, or it can be a single
+%   input/output matrix as the first parameter using the in-place syntax.
+%
+%   M is the optional mask matrix, and #M is either M or ~M depending on
+%   whether or not the mask is complemented via the desc.mask option.  The
+%   replace option is determined by desc.out; if present, C is cleared
+%   after it is used in the accum operation but before the final
+%   assignment.  A and/or B may optionally be transposed via the descriptor
+%   fields desc.in0 and desc.in1, respectively.  To select the format of C,
+%   use desc.format.  See GrB.descriptorinfo for more details.
 %
 %   accum is optional; if not is not present, then the operation becomes
-%   C<...> = operation(A,B).  Otherwise, C = C + operation(A,B) is
-%   computed where '+' is the accum operator.  It acts like a sparse
-%   matrix addition (see GrB.eadd), in terms of the structure of the
-%   result C, but any binary operator can be used.
+%   C<...> = operation(A,B).  Otherwise, C = C + operation(A,B) is computed
+%   where '+' is the accum operator.  It acts like a sparse matrix addition
+%   (see GrB.eadd), in terms of the structure of the result C, but any
+%   binary operator can be used.
 %
-%   The mask M acts like built-in logical indexing.  If M(i,j)=1 then
-%   C(i,j) can be modified; if zero, it cannot be modified by the
-%   operation.
+%   The mask M acts like MATLAB logical indexing.  If M(i,j)=1 then C(i,j)
+%   can be modified; if zero, it cannot be modified by the operation.
 %
-%   The full list of parameters is shown below:
+%   The full list of parameters is shown below, with different C and Cin
+%   matrices using the functional syntax:
 %
 %       C = GrB.apply     (Cin, M, accum, op, A,          desc)
 %       C = GrB.apply2    (Cin, M, accum, op, A, B,       desc)
@@ -470,50 +479,64 @@ classdef GrB < handle
 %       C = GrB.trans     (Cin, M, accum,     A,          desc)
 %       C = GrB.vreduce   (Cin, M, accum, op, A,          desc)
 %
-% FIXME: add these methods, which work on C in place:
-%       GrB._apply     (C, M, accum, op, A,          desc)
-%       GrB._apply2    (C, M, accum, op, A, B,       desc)
-%       GrB._assign    (C, M, accum,     A,    I, J, desc)
-%       GrB._eadd      (C, M, accum, op, A, B,       desc)
-%       GrB._eunion    (C, M, accum, op, A, a, B, b, desc)
-%       GrB._emult     (C, M, accum, op, A, B,       desc)
-%       GrB._extract   (C, M, accum,     A,    I, J, desc)
-%       GrB._kronecker (C, M, accum, op, A, B,       desc)
-%       GrB._mxm       (C, M, accum, op, A, B,       desc)
-%       GrB._reduce    (C,    accum, op, A,          desc)
-%       GrB._select    (C, M, accum, op, A, b,       desc)
-%       GrB._subassign (C, M, accum,     A,    I, J, desc)
-%       GrB._trans     (C, M, accum,     A,          desc)
-%       GrB._vreduce   (C, M, accum, op, A,          desc)
+%   The @GrB matrix is a handle object, so C can also be modified in place.
+%   Using this in-place syntax:
+%
+% FIXME: test for memory leaks
+% FIXME: do test coverage for gbtest
+% FIXME: modify C in place for these 12
+%
+%       GrB.apply     (C, M, accum, op, A,          desc)
+%       GrB.apply2    (C, M, accum, op, A, B,       desc)
+%       GrB.assign    (C, M, accum,     A,    I, J, desc)
+%       GrB.eadd      (C, M, accum, op, A, B,       desc)
+%       GrB.eunion    (C, M, accum, op, A, a, B, b, desc)
+%       GrB.emult     (C, M, accum, op, A, B,       desc)
+%       GrB.extract   (C, M, accum,     A,    I, J, desc)
+%       GrB.kronecker (C, M, accum, op, A, B,       desc)
+%       GrB.mxm       (C, M, accum, op, A, B,       desc)
+%       GrB.reduce    (C,    accum, op, A,          desc)
+%       GrB.select    (C, M, accum, op, A, b,       desc)
+%       GrB.subassign (C, M, accum,     A,    I, J, desc)
+%       GrB.trans     (C, M, accum,     A,          desc)
+%       GrB.vreduce   (C, M, accum, op, A,          desc)
+%
+%   For the in-place syntax, no output parameter ("C = GrB.method (..)")
+%   can appear, and the matrix C must appear as a parameter (see below).
 %
 %   The parameters divide into 4 classes: matrices, strings, cells, and a
 %   single optional struct, which is the descriptor.  The order of
 %   parameters between the matrices, strings, and cell classes is
 %   arbitrary.  The order of parameters within a class is important; for
 %   example, if a method takes 4 matrix inputs, then they must appear in
-%   the order Cin, M, A, and then B.  However, if a single string appears
-%   as a parameter, it can appear anywhere within the list of 4 matrices.
+%   the order Cin (or C), M, A, and then B.  However, if a single string
+%   appears as a parameter, it can appear anywhere within the list of 4
+%   matrices.
 %
-%   (1) Cin, M, A, B are matrices, and a and b are scalars (eunion only).
-%       If the method takes up to 4 matrices
-%       (mxm, kronecker, select (with operator requiring a b
-%       parameter), eadd, emult, apply2), then they appear in this order:
-%       with 2 matrix inputs: A, B
-%       with 3 matrix inputs: Cin, A, B
-%       with 4 matrix inputs: Cin, M, A, B
-%       For GrB.select, b is a scalar.  For GrB.apply2, either A or B
-%       is a scalar.
+%   (1) Cin (or C), M, A, B are matrices, and a and b are scalars:
+%
+%       If the method takes up to 4 matrices (mxm, kronecker, select (with
+%       an operator requiring a b parameter), eadd, emult, apply2), then
+%       they appear in this order:
+%
+%           with 2 matrix inputs: A, B (functional syntax only)
+%           with 3 matrix inputs: Cin (or C), A, B
+%           with 4 matrix inputs: Cin (or C), M, A, B
+%           For GrB.select, b is a scalar.  For GrB.apply2, either A or B
+%           is a scalar.
 %
 %       If the method takes up to 3 matrices (vreduce, apply, assign,
 %       subassign, extract, trans, or select without b):
-%       with 1 matrix input:  A
-%       with 2 matrix inputs: Cin, A
-%       with 3 matrix inputs: Cin, M, A
-%       Note that assign and subassign require Cin.
+%
+%           with 1 matrix input:  A (functional syntax only)
+%           with 2 matrix inputs: Cin (or C), A
+%           with 3 matrix inputs: Cin (or C), M, A
+%           Note that assign and subassign require Cin (or C).
 %
 %       If the method takes up to 2 input matrices (the reduce method):
-%       with 1 matrix input:  A
-%       with 2 matrix inputs: Cin, A
+%
+%           with 1 matrix input:  A (functional syntax only)
+%           with 2 matrix inputs: Cin (or C), A
 %
 %   (2) accum and op are strings.  The accum string is always optional.
 %       If the method has an op parameter, then it is a required input.
@@ -523,7 +546,7 @@ classdef GrB < handle
 %       apply, a select operator for the select method, and a binary
 %       operator for all other methods.  If 2 strings appear, the first
 %       one is the accum the second is the op.  If the accum appears then
-%       Cin must also appear as a matrix input.
+%       Cin (or C) must also appear as a matrix input.
 %
 %       If the method has no op (assign, subassign, extract, trans), but
 %       just an accum parameter, then 0 or 1 strings may appear in the
@@ -532,9 +555,10 @@ classdef GrB < handle
 %   (3) I and J are cell arrays.  For details, see the assign, subassign,
 %       and extract methods; a short summary appears below.  Both are
 %       optional:
-%       with no cell inputs: default for I and J
-%       with 1  cell inputs: I, default for J
-%       with 2  cell inputs: I, J
+%
+%           with no cell inputs: default for I and J
+%           with 1  cell inputs: I, default for J
+%           with 2  cell inputs: I, J
 %
 %       Each cell array may appear with 0, 1, 2, or 3 items:
 %           0: { }                  ":" in built-in notation
@@ -542,14 +566,16 @@ classdef GrB < handle
 %           2: { start,fini }       start:fini in built-in notation
 %           3: { start,inc,fini }   start:inc:fini in built-in notation
 %
-%   (4) The descriptor is an optional struct.  If present, it must
-%       appear last, after all other parameters.
+%   (4) The descriptor is an optional struct.  If present, it must appear
+%       last, after all other parameters.
 %
-%   Some valid uses are shown below, along with their equivalent in
+%   Example valid uses are shown below, along with their equivalent in
 %   GraphBLAS notation.  For the first three mxm examples, the four
 %   matrices C, M, A, and B must appear in that order, and the two strings
 %   '+' and '+.*' must appear in that order, but the matrices and strings
-%   may be interleaved arbitrarily.
+%   may be interleaved arbitrarily.  They all compute the same thing.
+%
+% FIXME: add in-place syntax
 %
 %       C = GrB.apply (C, M, '|', '~', A)           C<M> |= ~A
 %       C = GrB.apply ('~', A)                      C = ~A
@@ -1018,7 +1044,7 @@ methods (Static)
     [C,P] = argsort (A, dim, direction) ;
     [x,p] = argmax (A, dim) ;
     C = assign (Cin, M, accum, A, I, J, desc) ;
-    [v, parent] = bfs (A, s, varargin) ;        % uses GrB matrices
+    [v, parent] = bfs (A, s, varargin) ;
     binopinfo (op, type) ;
     list = binops ;
     C = build (I, J, X, m, n, dup, type, desc) ;
@@ -1029,7 +1055,7 @@ methods (Static)
     [C, I, J] = compact (A, id, symmetric) ;
     descriptorinfo (d) ;
     C = deserialize (blob, mode, arg3) ;        % arg3 for testing only
-    Y = dnn (W, bias, Y0) ;                     % uses GrB matrices
+    Y = dnn (W, bias, Y0) ;
     C = eadd (Cin, M, accum, op, A, B, desc) ;
     C = empty (arg1, arg2) ;
     C = emult (Cin, M, accum, op, A, B, desc) ;
@@ -1039,6 +1065,7 @@ methods (Static)
     [I, J, X] = extracttuples (A, desc) ;
     C = eunion (Cin, M, accum, op, A, a, B, b, desc) ;
     C = eye (m, n, type) ;
+    C = false (varargin) ;
     finalize ;
     [f, s, iso] = format (arg) ;
     C = incidence (A, varargin) ;
@@ -1047,11 +1074,12 @@ methods (Static)
     s = isbycol (A) ;
     s = isfull (A) ;
     s = issigned (arg) ;
+    [s,path] = jit (s,path) ;
     C = kronecker (Cin, M, accum, op, A, B, desc) ;
-    C = ktruss (A, k, check) ;                  % uses GrB matrices
+    C = ktruss (A, k, check) ;
     L = laplacian (A, type, check) ;
     C = load (filename) ;
-    iset = mis (A, check) ;                     % uses GrB matrices
+    iset = mis (A, check) ;
     monoidinfo (monoid, type) ;
     list = monoids ;
     C = mxm (Cin, M, accum, semiring, A, B, desc) ;
@@ -1059,8 +1087,9 @@ methods (Static)
     e = nvals (A) ;
     s = normdiff (A, B, kind) ;
     C = offdiag (A) ;
+    C = ones (varargin) ;
     ctype = optype (a, b) ;
-    [r, stats] = pagerank (A, opts) ;           % uses GrB matrices
+    [r, stats] = pagerank (A, opts) ;
     C = prune (A, identity) ;
     C = random (varargin) ;
     C = reduce (cin, accum, monoid, A, desc) ;
@@ -1074,20 +1103,15 @@ methods (Static)
     C = speye (m, n, type) ;
     C = subassign (Cin, M, accum, A, I, J, desc) ;
     nthreads = threads (nthreads) ;
-    [s,path] = jit (s,path) ;
+    C = true (varargin) ;
     C = trans (Cin, M, accum, A, desc) ;
-    s = tricount (A, check, d) ;                % uses GrB matrices
+    s = tricount (A, check, d) ;
     s = type (A) ;
     unopinfo (op, type) ;
     list = unops ;
     v = version ;
     v = ver ;
     C = vreduce (Cin, M, accum, monoid, A, desc) ;
-
-    % these were formerly overloaded methods, now Static methods
-    C = false (varargin) ;
-    C = true (varargin) ;
-    C = ones (varargin) ;
     C = zeros (varargin) ;
 
 end

@@ -33,7 +33,7 @@ void mexFunction
 
     GrB_Descriptor desc = NULL ;
 
-    gbmx_usage (nargin <= 1 && nargout == 0, USAGE) ;
+    GBMX_USAGE (nargin <= 1 && nargout == 0, USAGE) ;
 
     //--------------------------------------------------------------------------
     // find the arguments
@@ -56,7 +56,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gbdesc.nondefault = true ;      // ensure the GrB_Descriptor is allocated
-    OK (gb_get_descriptor (&desc, &gbdesc)) ;
+    OK (gb_get_descriptor (&desc, &gbdesc, err)) ;
     ASSERT (desc != NULL) ;
 
     //--------------------------------------------------------------------------

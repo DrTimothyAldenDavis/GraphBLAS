@@ -28,7 +28,8 @@ void mexFunction
 
     GrB_Matrix A = NULL, A_to_free = NULL ;
 
-    gbmx_usage (nargin == 2 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 2 && nargout <= 1, USAGE) ;
+
     pargout [0] = mxCreateDoubleScalar (0) ;
     double *s_output = (double *) mxGetData (pargout [0]) ;
 
@@ -47,7 +48,7 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
 
     GrB_Type atype ;
     OK (GxB_Matrix_type (&atype, A)) ;
@@ -66,7 +67,7 @@ void mexFunction
     double s ;
 
     bool is_dense ;
-    OK (gb_is_dense (&is_dense, A)) ;
+    OK (gb_is_dense (&is_dense, A, err)) ;
 
     if (norm_kind == INT64_MIN && !is_dense)
     { 
@@ -88,7 +89,7 @@ void mexFunction
     else
     { 
         // s = norm (A, norm_kind)
-        OK (gb_norm (&s, A, norm_kind)) ;
+        OK (gb_norm (&s, A, norm_kind, err)) ;
     }
 
     //--------------------------------------------------------------------------

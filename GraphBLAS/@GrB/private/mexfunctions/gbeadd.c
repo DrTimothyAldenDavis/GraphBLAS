@@ -58,7 +58,8 @@ void mexFunction
         M_to_free = NULL, A_to_free = NULL, B_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    gbmx_usage (nargin >= 3 && nargin <= 7 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 3 && nargin <= 7 && nargout <= 2, USAGE) ;
+
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
     double *kind_output = (double *) mxGetData (pargout [1]) ;
@@ -84,7 +85,7 @@ void mexFunction
     // get the GrB_Descriptor
     //--------------------------------------------------------------------------
 
-    OK (gb_get_descriptor (&desc, &gbdesc)) ;
+    OK (gb_get_descriptor (&desc, &gbdesc, err)) ;
 
     //--------------------------------------------------------------------------
     // get the matrices
@@ -92,21 +93,21 @@ void mexFunction
 
     if (nmatrices == 2)
     { 
-        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
-        OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]))) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+        OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]), err)) ;
     }
     else if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C,             &(Matrix [0]))) ;
-        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]))) ;
-        OK (gb_get_matrix (&B, &B_to_free, &(Matrix [2]))) ;
+        OK (gb_get_deep   (&C,             &(Matrix [0]), err)) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), err)) ;
+        OK (gb_get_matrix (&B, &B_to_free, &(Matrix [2]), err)) ;
     }
     else // if (nmatrices == 4)
     { 
-        OK (gb_get_deep   (&C,             &(Matrix [0]))) ;
-        OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]))) ;
-        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]))) ;
-        OK (gb_get_matrix (&B, &B_to_free, &(Matrix [3]))) ;
+        OK (gb_get_deep   (&C,             &(Matrix [0]), err)) ;
+        OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), err)) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), err)) ;
+        OK (gb_get_matrix (&B, &B_to_free, &(Matrix [3]), err)) ;
     }
 
     OK (GxB_Matrix_type (&atype, A)) ;
@@ -124,14 +125,14 @@ void mexFunction
 
     if (nstrings == 1)
     { 
-        OK (gb_string_to_binop (&op, String [0], atype, btype)) ;
+        OK (gb_string_to_binop (&op, String [0], atype, btype, err)) ;
     }
     else 
     { 
         // if accum appears, then Cin must also appear
         CHECK_ERROR (C == NULL, USAGE) ;
-        OK (gb_string_to_binop (&accum, String [0], ctype, ctype)) ;
-        OK (gb_string_to_binop (&op   , String [1], atype, btype)) ;
+        OK (gb_string_to_binop (&accum, String [0], ctype, ctype, err)) ;
+        OK (gb_string_to_binop (&op   , String [1], atype, btype, err)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -158,12 +159,13 @@ void mexFunction
         uint64_t cncols = (A_transpose) ? anrows : ancols ;
 
         // use the ztype of the op as the type of C
-        OK (gb_binaryop_ztype (&ctype, op)) ;
+        OK (gb_binaryop_ztype (&ctype, op, err)) ;
 
         // create the matrix C and set its format and sparsity
-        OK (gb_get_format (cnrows, cncols, A, B, &(gbdesc.fmt))) ;
-        OK (gb_get_sparsity (A, B, &(gbdesc.sparsity))) ;
-        OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity)) ;
+        OK (gb_get_format (cnrows, cncols, A, B, &(gbdesc.fmt), err)) ;
+        OK (gb_get_sparsity (A, B, &(gbdesc.sparsity), err)) ;
+        OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity,
+            err)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -177,7 +179,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, gbdesc.kind)) ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }

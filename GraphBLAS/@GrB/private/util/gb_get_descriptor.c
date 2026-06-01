@@ -18,7 +18,8 @@ GrB_Info gb_get_descriptor
     // output:
     GrB_Descriptor *desc_handle,    // GraphBLAS descriptor
     // input:
-    gb_descriptor gbdesc            // gb_descriptor, pointer to static struct
+    gb_descriptor gbdesc,           // gb_descriptor, pointer to static struct
+    char err [ERRLEN]
 )
 {
 

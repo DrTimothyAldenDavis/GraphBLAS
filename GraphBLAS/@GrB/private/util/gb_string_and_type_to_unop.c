@@ -66,7 +66,8 @@ GrB_Info gb_string_and_type_to_unop  // return op from string and type
     // input
     const char *op_name,        // name of the operator, as a string
     const GrB_Type type,        // type of the input to the operator
-    const bool type_not_given   // true if no type present in the string
+    const bool type_not_given,  // true if no type present in the string
+    char err [ERRLEN]
 )
 {
 

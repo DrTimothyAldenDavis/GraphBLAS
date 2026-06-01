@@ -38,7 +38,8 @@ GrB_Info gb_get_sparsity    // determine the sparsity of C for C = method(A,B)
     GrB_Matrix A,           // may be NULL
     GrB_Matrix B,           // may be NULL
     // input/output:
-    int *sparsity           // may be 0 on input
+    int *sparsity,          // may be 0 on input
+    char err [ERRLEN]
 )
 {
 

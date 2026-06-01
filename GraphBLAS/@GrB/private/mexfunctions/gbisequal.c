@@ -36,7 +36,7 @@ void mexFunction
 
     GrB_Matrix A = NULL, B = NULL, A_to_free = NULL, B_to_free = NULL ;
 
-    gbmx_usage (nargin == 2 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 2 && nargout <= 1, USAGE) ;
 
     pargout [0] = mxCreateLogicalScalar (false) ;
     bool *s_output = (bool *) mxGetData (pargout [0]) ;
@@ -55,15 +55,15 @@ void mexFunction
     // get the arguments
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
-    OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]), err)) ;
 
     //--------------------------------------------------------------------------
     // check if they are equal
     //--------------------------------------------------------------------------
 
     bool is_equal ;
-    OK (gb_is_equal (&is_equal, A, B)) ;
+    OK (gb_is_equal (&is_equal, A, B, err)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

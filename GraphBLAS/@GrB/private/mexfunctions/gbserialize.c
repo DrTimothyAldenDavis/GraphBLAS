@@ -46,7 +46,8 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
     void *blob = NULL ;
 
-    gbmx_usage ((nargin >= 1 && nargin <= 3) && nargout <= 1, USAGE) ;
+    GBMX_USAGE ((nargin >= 1 && nargin <= 3) && nargout <= 1, USAGE) ;
+
     pargout [0] = gbmx_export_struct (&Blob_opaque) ;
 
     //--------------------------------------------------------------------------
@@ -79,7 +80,7 @@ void mexFunction
     // get input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
 
     //--------------------------------------------------------------------------
     // create descriptor
@@ -157,7 +158,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (Blob_opaque, (GrB_Matrix *) &Blob, KIND_GRB)) ;
+    OK (gb_export (Blob_opaque, (GrB_Matrix *) &Blob, KIND_GRB, err)) ;
     gb_wrapup ( ) ;
 }
 

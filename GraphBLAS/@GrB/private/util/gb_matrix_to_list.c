@@ -28,7 +28,8 @@ static GrB_Info gb_subtract_base
     GrB_Vector *S,              // set to NULL on output
     GrB_Vector *S_to_free,      // set to NULL on output
     // input:
-    const int base_offset       // 1 or 0
+    const int base_offset,      // 1 or 0
+    char err [ERRLEN]
 )
 {
     (*V) = NULL ;
@@ -96,7 +97,8 @@ GrB_Info gb_matrix_to_list
     GrB_Vector *V_to_free_handle,  // must be freed by the caller
     // inputs:
     gb_matrix matrix,
-    const int base_offset   // 1 or 0
+    const int base_offset,  // 1 or 0
+    char err [ERRLEN]
 )
 { 
 
@@ -109,7 +111,7 @@ GrB_Info gb_matrix_to_list
     (*V_handle) = NULL ;
     (*V_to_free_handle) = NULL ;
 
-    OK (gb_get_matrix (&S, &S_to_free, matrix)) ;
+    OK (gb_get_matrix (&S, &S_to_free, matrix, err)) ;
 
     //--------------------------------------------------------------------------
     // get the properties of S
@@ -149,12 +151,12 @@ GrB_Info gb_matrix_to_list
         // return S as a shallow GrB_Vector, but subtract the base if needed
         //----------------------------------------------------------------------
 
-        OK (gb_is_column_vector (&is_column_vector, S)) ;
+        OK (gb_is_column_vector (&is_column_vector, S, err)) ;
         ASSERT (is_column_vector) ;
         ASSERT_VECTOR_OK ((GrB_Vector) S, "S as vector", GB0) ;
         // V = S - base_offset
         OK (gb_subtract_base (&V, &V_to_free,
-            (GrB_Vector *) &S, (GrB_Vector *) &S_to_free, base_offset)) ;
+            (GrB_Vector *) &S, (GrB_Vector *) &S_to_free, base_offset, err)) ;
         ASSERT_VECTOR_OK (V, "V result, quick", GB0) ;
 
     }
@@ -180,13 +182,13 @@ GrB_Info gb_matrix_to_list
         OK (GrB_Matrix_set_INT32 (C, GxB_BY_COL, GxB_FORMAT)) ;
 
         // C is now a valid column vector
-        OK (gb_is_column_vector (&is_column_vector, C)) ;
+        OK (gb_is_column_vector (&is_column_vector, C, err)) ;
         ASSERT (is_column_vector) ;
 
         // V = C - base_offset
         C_to_free = (GrB_Vector) C ;
         OK (gb_subtract_base (&V, &V_to_free,
-            (GrB_Vector *) &C, &C_to_free, base_offset)) ;
+            (GrB_Vector *) &C, &C_to_free, base_offset, err)) ;
 
         // V is now a valid GrB_Vector; must be freed by the caller
         ASSERT_VECTOR_OK (V, "V result, slow", GB0) ;

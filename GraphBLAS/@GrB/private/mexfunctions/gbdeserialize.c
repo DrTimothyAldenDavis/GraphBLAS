@@ -43,7 +43,8 @@ void mexFunction
 
     GrB_Matrix *C_opaque = NULL, C = NULL, Blob = NULL, Blob_to_free = NULL ;
 
-    gbmx_usage ((nargin >= 1 || nargin <= 3) && nargout <= 1, USAGE) ;
+    GBMX_USAGE ((nargin >= 1 || nargin <= 3) && nargout <= 1, USAGE) ;
+
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
     struct gb_matrix_struct Matrix [1] ;
@@ -58,10 +59,10 @@ void mexFunction
     // get the blob, normally a row or column vector, but can be a dense matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&Blob, &Blob_to_free, &(Matrix [0]))) ;
+    OK (gb_get_matrix (&Blob, &Blob_to_free, &(Matrix [0]), err)) ;
 
     bool Blob_is_dense = false ;
-    OK (gb_is_dense (&Blob_is_dense, Blob)) ;
+    OK (gb_is_dense (&Blob_is_dense, Blob, err)) ;
     CHECK_ERROR (!Blob_is_dense, "blob must be a uint8 dense matrix/vector") ;
 
     uint64_t nvals ;
@@ -80,7 +81,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, KIND_GRB)) ;
+    OK (gb_export (C_opaque, &C, KIND_GRB, err)) ;
     gb_wrapup ( ) ;
 }
 

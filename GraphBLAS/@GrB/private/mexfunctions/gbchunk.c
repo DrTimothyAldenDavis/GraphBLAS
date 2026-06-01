@@ -32,7 +32,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gbmx_usage (nargin <= 1 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin <= 1 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // set the chunk, if requested

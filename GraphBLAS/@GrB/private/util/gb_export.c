@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// gb_export (&C_opaque, &C, kind): exports C as a MATLAB 8-byte C.opaque uint8
-// mxArray, containing a single pointer to a GrB_Matrix.  The input GrB_Matrix
-// C may be shallow or deep.
+// gb_export exports C as a MATLAB 8-byte C.opaque uint8 mxArray, containing a
+// single pointer to a GrB_Matrix.  The input GrB_Matrix C may be shallow or
+// deep.
 
 // No mx* methods are called, so that any memory allocation failures can
 // be properly handled.
@@ -31,7 +31,8 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
     // input/output:
     GrB_Matrix *C_handle,       // GrB_Matrix to export, set to NULL on output
     // input:
-    kind_enum_t kind            // GrB, sparse, full, or built-in
+    kind_enum_t kind,           // GrB, sparse, full, or built-in
+    char err [ERRLEN]
 )
 {
 
@@ -87,7 +88,7 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
         //----------------------------------------------------------------------
 
         // Typecast to double, if C is integer (int8, ..., uint64)
-        OK (gb_export_to_sparse (C_handle)) ;
+        OK (gb_export_to_sparse (C_handle, err)) ;
         C = (*C_handle) ;
 
     }
@@ -98,7 +99,7 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
         // export C as a @GrB matrix, to become a MATLAB full matrix
         //----------------------------------------------------------------------
 
-        OK (gb_export_to_full (C_handle)) ;
+        OK (gb_export_to_full (C_handle, err)) ;
         C = (*C_handle) ;
     }
 
