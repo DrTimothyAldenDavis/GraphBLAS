@@ -24,10 +24,10 @@ catch expected_error
     have_octave = gb_octave ;
     if (have_octave)
         assert (isequal (expected_error.message, ...
-            'gbbuild: GraphBLAS: matrix dimensions are invalid')) ;
+            'gbbuild: input matrix dimensions are too large')) ;
     else
         assert (isequal (expected_error.message, ...
-            'GraphBLAS: matrix dimensions are invalid')) ;
+            'input matrix dimensions are too large')) ;
     end
     ok = true ;
 end

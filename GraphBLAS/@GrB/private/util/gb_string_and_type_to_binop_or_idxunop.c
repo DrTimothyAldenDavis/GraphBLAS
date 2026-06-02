@@ -53,14 +53,13 @@ GrB_Info gb_string_and_type_to_binop_or_idxunop
 (
     // output:
     GrB_BinaryOp *binop,        // binary op, or NULL if idxunop
+    GrB_IndexUnaryOp *idxunop,          // idxunop from the string
+    // input/output:
+    int64_t *ithunk,                    // thunk for idxunop
     // input:
     const char *op_name,        // name of the operator, as a string
     const GrB_Type type,        // type of the x,y inputs to the operator
     const bool type_not_given,  // true if no type present in the string
-    // output:
-    GrB_IndexUnaryOp *idxunop,          // idxunop from the string
-    // input/output:
-    int64_t *ithunk,                    // thunk for idxunop
     char err [ERRLEN]
 )
 {

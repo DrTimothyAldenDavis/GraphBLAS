@@ -32,10 +32,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // decide what to print
     //--------------------------------------------------------------------------
 
-//  printf ("A header: %p\n", A) ;
-//  printf ("A->magic is %lx\n", A->magic) ;
-//  GB_CHECK_MAGIC (A) ;
-
     GrB_Info info ;
     bool is_hyper = GB_IS_HYPERSPARSE (A) ;
     bool is_full = GB_IS_FULL (A) ;
@@ -364,8 +360,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         else
         {
             GBPR ("  header (%p) arena: (%d,%d) size: " GBu, (void *) A,
-                A_header_arena, A_data_arena,
-                GB_memsize (A->header_mem)) ;
+                A_header_arena, A_data_arena, GB_memsize (A->header_mem)) ;
         }
         GBPR (" struct size: %d\n", (int) sizeof (struct GB_Matrix_opaque)) ;
         GBPR ("  number of memory blocks: " GBd "\n", nallocs) ;
@@ -374,6 +369,16 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             (uint64_t) (mem_deep + mem_shallow)) ;
     }
     #endif
+
+    if (A_header_arena < 0 || A_header_arena >= GB_NARENAS ||
+        A_data_arena < 0 || A_data_arena >= GB_NARENAS)
+    {
+        printf ("\n%p:  invalid arenas: (%d,%d)\n", A,  // FIXME
+            A_header_arena, A_data_arena) ;
+//      GBPR0 ("  invalid arenas: (%d,%d)\n", A_header_arena, A_data_arena) ;
+        return (GrB_INVALID_OBJECT) ;
+    }
+
 
     //--------------------------------------------------------------------------
     // check the type
@@ -534,7 +539,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
     if (A_header_arena != GrB_DEFAULT || A_data_arena != GrB_DEFAULT)
     { 
-        GBPR (", arena: (%d,%d)", A_header_arena, A_data_arena) ;
+        GBPR0 (", arena: (%d,%d)", A_header_arena, A_data_arena) ;
     }
     GBPR0 ("\n") ;
 

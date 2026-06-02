@@ -63,8 +63,7 @@ GrB_Info gb_string_to_binop_or_idxunop
     // convert the string to a GraphBLAS binary operator, built-in or Complex
     //--------------------------------------------------------------------------
 
-    OK (gb_string_and_type_to_binop_or_idxunop (binop, op_name, type,
-        type_not_given, idxunop, ithunk, err)) ;
-    return (GrB_SUCCESS) ;
+    return (gb_string_and_type_to_binop_or_idxunop (binop, idxunop, ithunk,
+        op_name, type, type_not_given, err)) ;
 }
 

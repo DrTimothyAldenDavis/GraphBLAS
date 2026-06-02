@@ -33,6 +33,8 @@ void gbmx_get_matrix
     // check inputs
     //--------------------------------------------------------------------------
 
+    char err [ERRLEN] ;
+    err [0] = '\0' ;
     ASSERT (matrix != NULL) ;
     CHECK_ERROR (X == NULL, "matrix is missing") ;
     memset (matrix, 0, sizeof (struct gb_matrix_struct)) ;

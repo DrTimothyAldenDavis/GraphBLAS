@@ -65,9 +65,10 @@ GrB_Info gb_string_to_semiring          // return a GrB semiring from a string
     }
 
     GrB_BinaryOp mult = NULL ;
-    OK (gb_string_and_type_to_binop_or_idxunop (&mult, mult_name, mult_type,
-        type_not_given, NULL, NULL, err)) ;
-    CHECK_ERROR (mult == NULL, "invalid semiring (unknown multipy operator)") ;
+    OK (gb_string_and_type_to_binop_or_idxunop (&mult,
+        /* no index unary op: */ NULL, NULL,
+        mult_name, mult_type, type_not_given, err)) ;
+    CHECK_ERROR (mult == NULL, "invalid semiring (unknown multiply operator)") ;
 
     //--------------------------------------------------------------------------
     // get the add operator
@@ -76,8 +77,9 @@ GrB_Info gb_string_to_semiring          // return a GrB semiring from a string
     GrB_Type add_type = NULL ;
     OK (gb_binaryop_ztype (&add_type, mult, err)) ;
     GrB_BinaryOp add = NULL ;
-    OK (gb_string_and_type_to_binop_or_idxunop (&add, add_name, add_type,
-        false, NULL, NULL, err)) ;
+    OK (gb_string_and_type_to_binop_or_idxunop (&add,
+        /* no index unary op: */ NULL, NULL,
+        add_name, add_type, false, err)) ;
     CHECK_ERROR (add == NULL, "invalid semiring (unknown add operator)") ;
 
     //--------------------------------------------------------------------------
