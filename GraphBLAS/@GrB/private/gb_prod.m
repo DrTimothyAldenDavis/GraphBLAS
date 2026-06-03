@@ -37,17 +37,25 @@ switch (option)
         Cin = gbnew (n, 1, type) ;
         % C<M> = op (G')
         desc.in0 = 'transpose' ;
-        C = gbtrans (gbvreduce (Cin, M, op, G, desc)) ;
+        T = gbvreduce (Cin, M, op, G, desc) ;
+        C = gbtrans (T) ;
+        gbdelete (T) ;
+        gbdelete (Cin) ;
+        gbdelete (M) ;
 
     case { 2 }
 
         % C = prod (G,2) reduces each row to a scalar,
         % giving an m-by-1 column vector.
         % M = find (row degree of G == n)
-        M = gbselect (gbdegree (G, 'row'), '==', int64 (n)) ;
+        d = gbdegree (G, 'row') ;
+        M = gbselect (d, '==', int64 (n)) ;
+        gbdelete (d) ;
         % C<M> = op (G)
         Cin = gbnew (m, 1, type) ;
         C = gbvreduce (Cin, M, op, G) ;
+        gbdelete (Cin) ;
+        gbdelete (M) ;
 
     otherwise
 

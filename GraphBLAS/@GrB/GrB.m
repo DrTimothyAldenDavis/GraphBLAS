@@ -1113,6 +1113,7 @@ methods (Static)
     v = ver ;
     C = vreduce (Cin, M, accum, monoid, A, desc) ;
     C = zeros (varargin) ;
+    n = nmalloc ;  % for testing/development only
 
 end
 end

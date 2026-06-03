@@ -18,9 +18,12 @@ if (~gb_contains (type, 'complex'))
             % C is complex if any (abs (G) > 1)
             switch (type)
                 case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
-                    noutside = gbnvals (gbselect (gbapply ('abs', G), '>', 1)) ;
+                    T = GrB (gbapply ('abs', G)) ;
+                    T = GrB (gbselect (T, '>', 1)) ;
+                    noutside = gbnvals (T) ;
                 case { 'uint8', 'uint16', 'uint32', 'uint64' }
-                    noutside = gbnvals (gbselect (G, '>', 1)) ;
+                    T = GrB (gbselect (G, '>', 1)) ;
+                    noutside = gbnvals (T) ;
             end
 
         case { 'log', 'log10', 'sqrt', 'log2' }
@@ -28,7 +31,8 @@ if (~gb_contains (type, 'complex'))
             % C is complex if any (G < 0)
             switch (type)
                 case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
-                    noutside = gbnvals (gbselect (G, '<', 0)) ;
+                    T = GrB (gbselect (G, '<', 0)) ;
+                    noutside = gbnvals (T) ;
             end
 
         case { 'log1p' }
@@ -36,13 +40,15 @@ if (~gb_contains (type, 'complex'))
             % C is complex if any (G < -1)
             switch (type)
                 case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
-                    noutside = gbnvals (gbselect (G, '<', -1)) ;
+                    T = GrB (gbselect (G, '<', -1)) ;
+                    noutside = gbnvals (T) ;
             end
 
         case { 'acosh' }
 
             % C is complex if any (G < 1)
-            noutside = gbnvals (gbselect (G, '<', 1)) ;
+            T = GrB (gbselect (G, '<', 1)) ;
+            noutside = gbnvals (T) ;
     end
 
     if (noutside > 0)
@@ -58,7 +64,9 @@ if (~gb_contains (type, 'complex'))
     end
 end
 
+clear T
+
 % if G is already complex, gbapply will select a complex operator
 
-C = gbapply (op, G) ;
+C = GrB (gbapply (op, G)) ;
 

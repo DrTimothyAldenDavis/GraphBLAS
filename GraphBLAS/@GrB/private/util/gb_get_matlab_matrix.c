@@ -39,7 +39,9 @@ GrB_Info gb_get_matlab_matrix    // shallow copy of MATLAB sparse matrix
 
     GxB_Container Container = NULL ;
 
+    // printf ("get container\n") ;
     OK (GxB_Container_new (&Container)) ;
+    // printf ("got container %p\n", Container) ;
 
     Container->nrows = matrix->nrows ;
     Container->ncols = matrix->ncols ;
@@ -71,11 +73,16 @@ GrB_Info gb_get_matlab_matrix    // shallow copy of MATLAB sparse matrix
     OK (GxB_Vector_load (Container->x, (void **) &(matrix->x), matrix->type,
         matrix->nvals, Xx_memsize, GxB_IS_READONLY, NULL)) ;
 
+    // GxB_Matrix_fprint (Container->p, "Container->p", 5, NULL) ;
+    // GxB_Matrix_fprint (Container->i, "Container->i", 5, NULL) ;
+    // GxB_Matrix_fprint (Container->x, "Container->x", 5, NULL) ;
+
     //--------------------------------------------------------------------------
     // unload the Container into A
     //--------------------------------------------------------------------------
 
     OK (GrB_Matrix_new (&A, matrix->type, matrix->nrows, matrix->ncols)) ;
+    // printf ("new matrix A: %p\n", A) ;
     OK (GxB_load_Matrix_from_Container (A, Container, NULL)) ;
     (*A_handle) = A ;
 
@@ -83,6 +90,7 @@ GrB_Info gb_get_matlab_matrix    // shallow copy of MATLAB sparse matrix
     // free workspace and return result
     //--------------------------------------------------------------------------
 
+    // printf ("free container: %p\n", Container) ;
     FREE_WORK ;
     return (GrB_SUCCESS) ;
 }

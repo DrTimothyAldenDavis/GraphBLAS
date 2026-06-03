@@ -22,16 +22,15 @@ type = gboptype (atype, btype) ;
 if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars.  Result is also a scalar.
-        C = gbeadd (A, op, B) ;
+        C = GrB (gbeadd (A, op, B)) ;
     else
         % A is a scalar, B is a matrix.  Result is full, unless A == 0.
         if (gb_scalar (A) == 0)
-            % C = 0+B is a built-in matrix if B is a built-in matrix
-            C = B ;
+            C = GrB (B) ;
         else
             % expand A to a full matrix
-            C = gbeadd (gb_scalar_to_full (bm, bn, type, gb_fmt (B), A), ...
-                op, B) ;
+            a = gb_scalar_to_full (bm, bn, type, gb_fmt (B), A) ;
+            C = GrB (gbeadd (a, op, B)) ;
         end
     end
 else
@@ -41,12 +40,12 @@ else
             C = GrB (A) ;
         else
             % expand B to a full matrix
-            C = gbeadd (A, op, ...
-                gb_scalar_to_full (am, an, type, gb_fmt (A), B)) ;
+            b = gb_scalar_to_full (am, an, type, gb_fmt (A), B) ;
+            C = GrB (gbeadd (A, op, b)) ;
         end
     else
         % both A and B are matrices.  Result is sparse.
-        C = gbeadd (A, op, B) ;
+        C = GrB (gbeadd (A, op, B)) ;
     end
 end
 

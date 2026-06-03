@@ -49,8 +49,15 @@ ctype = atype ;
 
 if (isequal (atype, 'double') || isequal (atype, 'single'))
     % cast A to the assumedtype
-    C = GrB (gbapply ('bitcmp', gbfull (gbnew (A, assumedtype))), ctype) ;
+    T = gbnew (A, assumedtype) ;
+    a = gbfull (T) ;
+    gbdelete (T) ;
 else
-    C = GrB (gbapply ('bitcmp', gbfull (A)), ctype) ;
+    a = gbfull (A) ;
 end
+
+S = gbapply ('bitcmp', a) ;
+gbdelete (a) ;
+C = GrB (S, ctype) ;
+gbdelete (S) ;
 

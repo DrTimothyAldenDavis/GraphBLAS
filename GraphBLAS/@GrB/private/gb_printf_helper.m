@@ -11,7 +11,7 @@ for k = 1:len
     arg = varargin {k} ;
     if (isobject (arg))
         desc.kind = 'full' ;
-        args {k} = gb2builtin (gbfull (arg, gbtype (arg), 0, desc)) ;
+        args {k} = gb2builtin (GrB (gbfull (arg, gbtype (arg), 0, desc))) ;
     else
         args {k} = arg ;
     end

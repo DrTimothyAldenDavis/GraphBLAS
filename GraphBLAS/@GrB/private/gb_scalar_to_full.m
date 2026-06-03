@@ -10,5 +10,7 @@ else
     fmt = 'by col' ;
 end
 
-C = gbsubassign (gbnew (m, n, type, fmt), gbfull (scalar)) ;
+E = GrB (m, n, type, fmt) ;
+S = GrB (gbfull (scalar)) ;
+C = GrB (gbsubassign (E, S)) ;
 

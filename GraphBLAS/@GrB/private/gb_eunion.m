@@ -21,22 +21,22 @@ type = gboptype (atype, btype) ;
 if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars.  Result is also a scalar.
-        C = gbeadd (A, op, B) ;
+        C = GrB (gbeadd (A, op, B)) ;
     else
         % A is a scalar, B is a matrix.  Result is full.
         % expand A to a full matrix
         a = gb_scalar_to_full (bm, bn, type, gb_fmt (B), A) ;
-        C = gbeadd (a, op, B) ;
+        C = GrB (gbeadd (a, op, B)) ;
     end
 else
     if (b_is_scalar)
         % A is a matrix, B is a scalar.  Result is full.
         % expand B to a full matrix
         b = gb_scalar_to_full (am, an, type, gb_fmt (A), B) ;
-        C = gbeadd (A, op, b) ;
+        C = GrB (gbeadd (A, op, b)) ;
     else
         % both A and B are matrices.  Result is sparse.
-        C = gbeunion (A, 0, op, B, 0) ;
+        C = GrB (gbeunion (A, 0, op, B, 0)) ;
     end
 end
 

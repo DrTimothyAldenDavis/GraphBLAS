@@ -31,8 +31,7 @@ mxArray *gbmx_get_grb_handle    // the MATLAB @GrB opaque handle
 
     if (G != NULL && mxIsClass (G, "GrB"))
     { 
-        // G is a @GrB object; get its opaque content (which must be a struct)
-        // and then get the first item in the struct, below.
+        // G is a @GrB object; get its opaque content (which must be a struct).
         G = mxGetProperty (G, 0, "opaque") ;
     }
 

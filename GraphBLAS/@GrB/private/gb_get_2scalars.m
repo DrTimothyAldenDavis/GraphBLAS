@@ -6,7 +6,9 @@ function [x, y] = gb_get_2scalars (A)
 
 type = gbtype (A) ;
 desc.kind = 'full' ;
-C = gb2builtin (gbfull (A, type, 0, desc)) ;   % export as a full matrix
+a = GrB (gbfull (A, type, 0, desc)) ;
+C = gb2builtin (a) ;   % export as a full MATLAB/Octave matrix
 x = C (1) ;
 y = C (2) ;
+
 

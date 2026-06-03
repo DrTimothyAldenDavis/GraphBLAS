@@ -25,7 +25,9 @@ switch (option)
         % C = sum (G, 1) reduces each column to a scalar,
         % giving a 1-by-n row vector.
         desc.in0 = 'transpose' ;
-        C = gbtrans (gbvreduce (op, G, desc)) ;
+        V = gbvreduce (op, G, desc) ;
+        C = gbtrans (V) ;
+        gbdelete (V) ;
 
     case { 2 }
 

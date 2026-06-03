@@ -65,26 +65,20 @@ if (isequal (atype, 'double') || isequal (atype, 'single'))
     atype = assumedtype ;
     op = ['bitget.' atype] ;
     if (~isequal (btype, atype))
-        a = GrB (gbnew (A, atype)) ;
-        b = GrB (gbnew (B, atype)) ;
-        C1 = gb_emult (a, op, b) ;
+        C = GrB (gb_emult (GrB (A, atype), op, GrB (B, atype))) ;
     else
-        a = GrB (gbnew (A, atype)) ;
-        C1 = gb_emult (a, op, B) ;
+        C = GrB (gb_emult (GrB (A, atype), op, B)) ;
     end
 else
     op = ['bitget.' atype] ;
     if (~isequal (btype, atype))
-        b = GrB (gbnew (B, atype)) ;
-        C1 = gb_emult (A, op, b) ;
+        C = GrB (gb_emult (A, op, GrB (B, atype))) ;
     else
-        C1 = gb_emult (A, op, B) ;
+        C = GrB (gb_emult (A, op, B)) ;
     end
 end
 
-if (isequal (gbtype (C1), ctype))
-    C = GrB (C1) ;
-else
-    C = GrB (C1, ctype) ;
+if (~isequal (gbtype (C), ctype))
+    C = GrB (C, ctype) ;
 end
 

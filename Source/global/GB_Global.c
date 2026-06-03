@@ -745,7 +745,8 @@ void GB_Global_memtable_remove (void *p)
             {
                 // found p in the table; remove it
                 GB_Global.memtable_p [i] = GB_Global.memtable_p [n-1] ;
-                GB_Global.memtable_memsize [i] = GB_Global.memtable_memsize [n-1] ;
+                GB_Global.memtable_memsize [i] =
+                    GB_Global.memtable_memsize [n-1] ;
                 GB_Global.memtable_arena [i] = GB_Global.memtable_arena [n-1] ;
                 GB_Global.nmemtable -- ;
                 found = true ;

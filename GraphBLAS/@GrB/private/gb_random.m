@@ -148,25 +148,63 @@ end
 % build the matrix
 %---------------------------------------------------------------------------
 
-C = gbbuild (I, J, X, m, n, '2nd', desc) ;
+T = gbbuild (I, J, X, m, n, '2nd', desc) ;
 
 % make it symmetric or hermitian, if requested
-L = gbselect ('tril', C, -1) ;
+L = gbselect ('tril', T, -1) ;
+
 if (symmetric)
-    % C = tril (C) + tril (C,-1)'
-    C = gbeadd (gbselect ('tril', C, 0), '+', gbtrans (L)) ;
-elseif (hermitian)
-    % C = L + L' + real (diag (C))
+
+    % C = tril (T) + tril (T,-1)'
+    L2 = gbselect ('tril', T, 0) ;
+    gbdelete (T) ;
     LT = gbtrans (L) ;
+    C = gbeadd (L2, '+', LT) ;
+    gbdelete (LT) ;
+    gbdelete (L2) ;
+
+elseif (hermitian)
+
+    % C = L + L' + real (diag (T))
+
+    D = gbselect ('diag', T, 0) ;
+    gbdelete (T) ;
+    LT = gbtrans (L) ;
+
     if (gb_contains (gbtype (LT), 'complex'))
-        LT = gbapply ('conj', LT) ;
+        LC = gbapply ('conj', LT) ;
+        if (gb_contains (gbtype (D), 'complex'))
+            R = gbapply ('creal', D) ;
+            gbdelete (D) ;
+            LTD = gbeadd (LC, '+', R) ;
+            gbdelete (R) ;
+        else
+            LTD = gbeadd (LC, '+', D) ;
+            gbdelete (D) ;
+        end
+        gbdelete (LC) ;
+    else
+        if (gb_contains (gbtype (D), 'complex'))
+            R = gbapply ('creal', D) ;
+            gbdelete (D) ;
+            LTD = gbeadd (LT, '+', R) ;
+            gbdelete (R) ;
+        else
+            LTD = gbeadd (LT, '+', D) ;
+            gbdelete (D) ;
+        end
     end
-    D = gbselect ('diag', C, 0) ;
-    if (gb_contains (gbtype (D), 'complex'))
-        D = gbapply ('creal', D) ;
-    end
-    C = gbeadd (L, '+', gbeadd (LT, '+', D)) ;
+    gbdelete (LT) ;
+
+    C = gbeadd (L, '+', LTD) ;
+
+    gbdelete (LTD) ;
+
+else
+
+    C = T ;
+
 end
 
-C = GrB (C) ;
+gbdelete (L) ;
 

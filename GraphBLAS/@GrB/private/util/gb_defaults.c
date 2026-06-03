@@ -21,6 +21,9 @@ GrB_Info gb_defaults            // set global GraphBLAS defaults for MATLAB
     char err [ERRLEN]
 )
 { 
+    // debugging only; disabled in production
+    GB_Global_malloc_tracking_set (true) ;  // FIXME
+
     // for debug assertions only, for the ASSERT (...) macro
     GB_Global_abort_set (gbmx_abort) ;
 

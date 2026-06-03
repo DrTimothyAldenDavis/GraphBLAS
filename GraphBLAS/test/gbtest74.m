@@ -38,6 +38,8 @@ for k = 1:8
 
         C1 = bitset (A, B) ;
         C2 = bitset (A2, B2) ;
+        C1
+        C2
         assert (isequal (C1, C2)) ;
 
         C1 = bitget (A, B) ;

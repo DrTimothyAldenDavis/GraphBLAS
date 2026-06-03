@@ -14,16 +14,17 @@ ctype = gboptype (atype, btype) ;
 if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars.  Result is also a scalar.
-        C = gbeunion (op, A, 0, B, 0) ;
+        C = GrB (gbeunion (op, A, 0, B, 0)) ;
     else
         % A is a scalar, B is a matrix
         if (gb_scalar (A) < 0)
             % since A < 0, the result is full
-            a = gb_scalar_to_full (bm, bn, ctype, gb_fmt (B), A) ;
-            C = gbeadd (a, op, B) ;
+            a = GrB (gb_scalar_to_full (bm, bn, ctype, gb_fmt (B), A)) ;
+            C = GrB (gbeadd (a, op, B)) ;
         else
             % since A >= 0, the result is sparse.
-            C = gbapply2 (gbfull (A), op, B) ;
+            a = GrB (gbfull (A)) ;
+            C = GrB (gbapply2 (a, op, B)) ;
         end
     end
 else
@@ -31,15 +32,16 @@ else
         % A is a matrix, B is a scalar
         if (gb_scalar (B) < 0)
             % since B < 0, the result is full
-            b = gb_scalar_to_full (am, an, ctype, gb_fmt (A), B) ;
-            C = gbeadd (A, op, b) ;
+            b = GrB (gb_scalar_to_full (am, an, ctype, gb_fmt (A), B)) ;
+            C = GrB (gbeadd (A, op, b)) ;
         else
             % since B >= 0, the result is sparse.
-            C = gbapply2 (A, op, gbfull (B)) ;
+            b = GrB (gbfull (B)) ;
+            C = GrB (gbapply2 (A, op, b)) ;
         end
     else
         % both A and B are matrices.  Result is sparse.
-        C = gbeunion (op, A, 0, B, 0) ;
+        C = GrB (gbeunion (op, A, 0, B, 0)) ;
     end
 end
 

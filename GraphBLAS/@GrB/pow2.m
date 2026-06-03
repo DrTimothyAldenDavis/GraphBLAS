@@ -27,6 +27,6 @@ else
     else
         type = 'double' ;
     end
-    C = GrB (gb_eunion (A, ['pow2.' type], B)) ;
+    C = gb_eunion (A, ['pow2.' type], B) ;
 end
 

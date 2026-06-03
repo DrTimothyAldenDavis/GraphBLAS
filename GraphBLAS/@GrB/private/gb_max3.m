@@ -9,12 +9,12 @@ if (isequal (option, 'all'))
     % C = max (A, [ ] 'all'), reducing all entries to a scalar
     C = gb_maxall (op, A) ;
 else
-    option = gb_get_scalar (option) ;
-    if (option == 1)
+    opt = gb_get_scalar (option) ;
+    if (opt == 1)
         % C = max (A, [ ], 1) reduces each column to a scalar,
         % giving a 1-by-n row vector.
         C = gb_maxbycol (op, A) ;
-    elseif (option == 2)
+    elseif (opt == 2)
         % C = max (A, [ ], 2) reduces each row to a scalar,
         % giving an m-by-1 column vector.
         C = gb_maxbyrow (op, A) ;

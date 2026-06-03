@@ -32,16 +32,16 @@ end
 
 if (nargin == 1)
     % C = min (A)
-    C = GrB (gb_min1 (op, A)) ;
+    C = gb_min1 (op, A) ;
 elseif (nargin == 2)
     % C = min (A,B)
-    C = GrB (gb_min2 (op, A, B)) ;
+    C = gb_min2 (op, A, B) ;
 else
     % C = min (A, [ ], option)
     if (~isempty (B))
         error ('GrB:error', ...
             'dimension argument not allowed with 2 input matrices') ;
     end
-    C = GrB (gb_min3 (op, A, option)) ;
+    C = gb_min3 (op, A, option) ;
 end
 

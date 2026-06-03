@@ -13,5 +13,9 @@ if (~gb_isfloat (type))
     type = 'double' ;
 end
 
-C = GrB (gbapply ('atan', gbapply ('minv', gbfull (G, type)))) ;
+S = gbfull (G, type) ;
+T = gbapply ('minv', S) ;
+gbdelete (S) ;
+C = GrB (gbapply ('atan', T)) ;
+gbdelete (T) ;
 

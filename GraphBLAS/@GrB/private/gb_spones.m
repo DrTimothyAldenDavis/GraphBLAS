@@ -21,5 +21,5 @@ else
     op = ['1.' type] ;
 end
 
-C = gbapply (op, G) ;
+C = GrB (gbapply (op, G)) ;
 

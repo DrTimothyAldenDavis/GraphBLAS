@@ -13,5 +13,7 @@ if (~gb_isfloat (type))
     type = 'double' ;
 end
 
-C = GrB (gb_trig ('asin', gbapply ('minv', gbfull (G, type)))) ;
+S = GrB (gbfull (G, type)) ;
+T = GrB (gbapply ('minv', S)) ;
+C = gb_trig ('asin', T) ;
 

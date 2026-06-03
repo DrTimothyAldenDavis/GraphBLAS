@@ -336,18 +336,6 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // construct the zero thunk scalar, if needed
-    //--------------------------------------------------------------------------
-
-    if (thunk_zero)
-    { 
-        OK (GrB_Scalar_new (&Zero, atype)) ;
-        OK (GrB_Scalar_setElement_INT32 (Zero, 0)) ;
-        b = (GrB_Matrix) Zero ;
-        Zero = NULL ;
-    }
-
-    //--------------------------------------------------------------------------
     // construct C if not present on input
     //--------------------------------------------------------------------------
 
@@ -381,10 +369,21 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // handle the NaN case
+    // construct the zero thunk scalar, if needed
     //--------------------------------------------------------------------------
 
     GrB_Matrix b2 = b ;
+
+    if (thunk_zero)
+    { 
+        OK (GrB_Scalar_new (&Zero, atype)) ;
+        OK (GrB_Scalar_setElement_INT32 (Zero, 0)) ;
+        b2 = (GrB_Matrix) Zero ;
+    }
+
+    //--------------------------------------------------------------------------
+    // handle the NaN case
+    //--------------------------------------------------------------------------
 
     if (op_is_positional)
     { 
@@ -393,7 +392,7 @@ void mexFunction
         OK (GrB_Matrix_setElement_INT64 (b3, ithunk, 0, 0)) ;
         b2 = b3 ;
     }
-    else if (b != NULL)
+    else if (b != NULL && !thunk_zero)
     { 
         // check if b is NaN
         bool b_is_nan = false ;

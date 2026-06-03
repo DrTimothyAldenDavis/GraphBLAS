@@ -32,16 +32,16 @@ end
 
 if (nargin == 1)
     % C = max (A)
-    C = GrB (gb_max1 (op, A)) ;
+    C = gb_max1 (op, A) ;
 elseif (nargin == 2)
     % C = max (A,B)
-    C = GrB (gb_max2 (op, A, B)) ;
+    C = gb_max2 (op, A, B) ;
 else
     % C = max (A, [ ], option)
     if (~isempty (B))
         error ('GrB:error', ...
             'dimension argument not allowed with 2 input matrices') ;
     end
-    C = GrB (gb_max3 (op, A, option)) ;
+    C = gb_max3 (op, A, option) ;
 end
 

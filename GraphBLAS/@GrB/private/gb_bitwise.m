@@ -23,7 +23,7 @@ end
 ctype = atype ;
 
 if (isequal (atype, 'double') || isequal (atype, 'single'))
-    A = gbnew (A_arg, assumedtype) ;
+    A = GrB (A_arg, assumedtype) ;
     atype = assumedtype ;
 else
     A = A_arg ;
@@ -34,12 +34,12 @@ if (isequal (op, 'bitshift'))
     if (~isequal (btype, 'int8'))
         % convert B to int8, and ensure all values are in range -64:64
         % ensure all entries in B are <= 64
-        B = gbapply2 (['min.' btype], B_arg, 64) ;
+        B = GrB (gbapply2 (['min.' btype], B_arg, 64)) ;
         if (gb_issigned (btype))
             % ensure all entries in B are >= -64
-            B = gbapply2 (['max.' btype], B, -64) ;
+            B = GrB (gbapply2 (['max.' btype], B, -64)) ;
         end
-        B = gbnew (B, 'int8') ;
+        B = GrB (B, 'int8') ;
     else
         B = B_arg ;
     end
@@ -49,21 +49,21 @@ if (isequal (op, 'bitshift'))
 
     if (a_is_scalar && ~b_is_scalar)
         % A is a scalar, B is a matrix
-        C = gbapply2 (['bitshift.' atype], gbfull (A), B) ;
+        C = gbapply2 (['bitshift.' atype], GrB (gbfull (A)), B) ;
     elseif (~a_is_scalar && b_is_scalar)
         % A is a matrix, B is a scalar
-        C = gbapply2 (['bitshift.' atype], A, gbfull (B)) ;
+        C = gbapply2 (['bitshift.' atype], A, GrB (gbfull (B))) ;
     else
         % both A and B are matrices, or both are scalars
         % expand B by padding it with zeros from the pattern of A
-        B = gbeadd ('1st.int8', B, gb_expand (0, A, 'int8')) ;
-        C = gbemult (['bitshift.' atype], A, B) ;
+        b = GrB (gbeadd ('1st.int8', B, GrB (gb_expand (0, A, 'int8')))) ;
+        C = gbemult (['bitshift.' atype], A, b) ;
     end
 
 else
 
     if (isequal (btype, 'double') || isequal (btype, 'single'))
-        B = gbnew (B_arg, assumedtype) ;
+        B = GrB (B_arg, assumedtype) ;
         btype = assumedtype ;
     else
         B = B_arg ;
@@ -81,6 +81,8 @@ else
 end
 
 if (~isequal (gbtype (C), ctype))
-    C = gbnew (C, ctype) ;
+    C = GrB (C, ctype) ;
+else
+    C = GrB (C) ;
 end
 

@@ -7,27 +7,29 @@ function C = gb_maxbycol (op, A)
 
 % C = max (A, [ ], 1) reduces each col to a scalar; C is 1-by-n
 desc.in0 = 'transpose' ;
-C = gbvreduce (op, A, desc) ;
+c = GrB (gbvreduce (op, A, desc)) ;
 
-% if C(j) < 0, but if A(:,j) is sparse, then assign C(j) = 0.
-ctype = gbtype (C) ;
+% if c(j) < 0, but if A(:,j) is sparse, then assign c(j) = 0.
+ctype = gbtype (c) ;
 
 if (gb_issigned (ctype))
     % d (j) = number of entries in A(:,j); d (j) not present if A(:,j) empty
     [m, n] = gbsize (A) ;
-    d = gbdegree (A, 'col') ;
-    % d (j) is an explicit zero if A(:,j) has 1 to m-1 entries
-    d = gbselect (d, '<', int64 (m)) ;
-    zero = gbnew (0, ctype) ;
-    if (gbnvals (d) == n)
+    d = GrB (gbdegree (A, 'col')) ;
+    % s (j) is an explicit zero if A(:,j) has 1 to m-1 entries
+    s = GrB (gbselect (d, '<', int64 (m))) ;
+    zero = GrB (0, ctype) ;
+    if (gbnvals (s) == n)
         % all columns A(:,j) have between 1 and m-1 entries
-        C = gbapply2 (op, C, zero) ;
+        T = GrB (gbapply2 (op, c, zero)) ;
     else
-        d = gbapply2 (['2nd.' ctype], d, zero) ;
-        % if d (j) is between 1 and m-1 and C (j) < 0 then C (j) = 0
-        C = gbeadd (op, C, d) ;
+        z = GrB (gbapply2 (['2nd.' ctype], s, zero)) ;
+        % if z (j) is between 1 and m-1 and c (j) < 0 then T (j) = 0
+        T = GrB (gbeadd (op, c, z)) ;
     end
+else
+    T = c ;
 end
 
-C = gbtrans (C) ;
+C = GrB (gbtrans (T)) ;
 

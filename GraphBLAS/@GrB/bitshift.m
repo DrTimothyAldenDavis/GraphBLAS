@@ -29,5 +29,5 @@ if (nargin < 3)
     assumedtype = 'uint64' ;
 end
 
-C = GrB (gb_bitwise ('bitshift', A, B, assumedtype)) ;
+C = gb_bitwise ('bitshift', A, B, assumedtype) ;
 

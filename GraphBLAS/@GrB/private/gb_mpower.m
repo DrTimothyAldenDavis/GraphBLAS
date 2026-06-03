@@ -5,13 +5,14 @@ function C = gb_mpower (A, b)
 % SPDX-License-Identifier: Apache-2.0
 
 if (b == 1)
-    C = A ;
+    C = GrB (A) ;
 else
     T = gb_mpower (A, floor (b/2)) ;
-    C = gbmxm (T, '+.*', T) ;
-    clear T ;
+    S = GrB (gbmxm (T, '+.*', T)) ;
     if (mod (b, 2) == 1)
-        C = gbmxm (C, '+.*', A) ;
+        C = GrB (gbmxm (S, '+.*', A)) ;
+    else
+        C = S ;
     end
 end
 

@@ -1,7 +1,7 @@
-function gbsetup
+function n = nmalloc
+%NMALLOC number of malloc's in GraphBLAS, for testing/development only
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-error ('GrB:mex', 'mexFunction not found; use gbmake to compile GraphBLAS') ;
-
+n = gbnmalloc ;

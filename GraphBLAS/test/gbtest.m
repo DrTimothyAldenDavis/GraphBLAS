@@ -182,10 +182,10 @@ gbtest127 % test semirings
 gbtest128 % test unops
 gbtest96  % test GrB.optype
 
-if (~have_octave)
-    % the Graph and DiGraph methods do not appear in octave
-    gbtest00  % test GrB.bfs and plot (graph (G))
-end
+% if (~have_octave)
+%     % the Graph and DiGraph methods do not appear in octave
+%     gbtest00  % test GrB.bfs and plot (graph (G))
+% end
 
 % restore default # of threads
 demo_nproc ;

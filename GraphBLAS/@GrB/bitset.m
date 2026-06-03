@@ -82,8 +82,9 @@ end
 ctype = atype ;
 
 % determine the type of A
-if (isequal (atype, 'double') || isequal (atype, 'single'))
-    A = gbnew (A_arg, assumedtype) ;
+cast_A = isequal (atype, 'double') || isequal (atype, 'single') ;
+if (cast_A)
+    A = GrB (A_arg, assumedtype) ;
     atype = assumedtype ;
 else
     % use the input A_arg as-is
@@ -91,8 +92,9 @@ else
 end
 
 % ensure B has the same type as A
-if (~isequal (btype, atype))
-    B = gbnew (B_arg, atype) ;
+cast_B = ~isequal (btype, atype) ;
+if (cast_B)
+    B = GrB (B_arg, atype) ;
 else
     % use the input B_arg as-is
     B = B_arg ;
@@ -117,19 +119,21 @@ if (V_is_scalar)
         % A is a scalar
         if (b_is_scalar)
             % both A and B are scalars
-            C = gbeunion (op, A, 0, B, 0) ;
+            T = GrB (gbeunion (op, A, 0, B, 0)) ;
         else
             % A is a scalar, B is a matrix
-            C = gbapply2 (op, gbfull (A), B) ;
+            a = GrB (gbfull (A)) ;
+            T = GrB (gbapply2 (op, a, B)) ;
         end
     else
         % A is a matrix
         if (b_is_scalar)
             % A is a matrix, B is scalar
-            C = gbapply2 (op, A, gbfull (B)) ;
+            b = GrB (gbfull (B)) ;
+            T = GrB (gbapply2 (op, A, b)) ;
         else
             % both A and B are matrices
-            C = gbeunion (op, A, 0, B, 0) ;
+            T = GrB (gbeunion (op, A, 0, B, 0)) ;
         end
     end
 
@@ -146,37 +150,38 @@ else
 
     if (a_is_scalar)
         % expand A to a full matrix the same size as V.
-        A2 = gb_scalar_to_full (m, n, atype, gb_fmt (V), A) ;
+        A2 = GrB (gb_scalar_to_full (m, n, atype, gb_fmt (V), A)) ;
     else
         A2 = A ;
     end
     if (b_is_scalar)
         % expand B to a full matrix the same size as V.
-        B2 = gb_scalar_to_full (m, n, atype, gb_fmt (V), B) ;
+        B2 = GrB (gb_scalar_to_full (m, n, atype, gb_fmt (V), B)) ;
     else
         B2 = B ;
     end
 
     % Set all bits referenced by B(i,j) to 1, even those that need to be
     % set to 0, without considering V(i,j).
-    C = gbeunion (['bitset.', atype], A2, 0, B2, 0) ;
+    S = GrB (gbeunion (['bitset.', atype], A2, 0, B2, 0)) ;
 
-    % The pattern of C is now the set intersection of A and B, but
+    % The pattern of S is now the set intersection of A and B, but
     % bits referenced by B(i,j) have been set to 1, not 0.  Construct B0
     % as the bits in B(i,j) that must be set to 0; B0<~V>=B defines the
     % pattern of bit positions B0 to set to 0 in A.
     d.mask = 'complement' ;
-    B0 = gbassign (gbnew (m, n, atype), V, B2, d) ;
+    E = GrB (gbnew (m, n, atype)) ;
+    B0 = GrB (gbassign (E, V, B2, d)) ;
 
     % Clear the bits in C, referenced by B0(i,j), where V(i,j) is zero.
-    C = gbeadd (['bitclr.', atype], C, B0) ;
+    T = GrB (gbeadd (['bitclr.', atype], S, B0)) ;
 
 end
 
 % return result
-if (isequal (gbtype (C), ctype))
-    C = GrB (C) ;
+if (isequal (gbtype (T), ctype))
+    C = T ;
 else
-    C = GrB (gbnew (C, ctype)) ;
+    C = GrB (T, ctype) ;
 end
 

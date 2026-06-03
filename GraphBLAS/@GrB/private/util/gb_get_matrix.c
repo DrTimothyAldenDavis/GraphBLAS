@@ -38,6 +38,7 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
     char err [ERRLEN]
 )
 {
+    // printf ("start gb_get_matrix:\n") ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -71,7 +72,9 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
     { 
         // construct a shallow GrB_Matrix copy of a built-in MATLAB matrix,
         // which must be freed by the caller when done.
+        // printf ("start get_matlab_matrix\n") ;
         OK (gb_get_matlab_matrix (&A, matrix, err)) ;
+        // printf ("got get_matlab_matrix: %p\n", A) ;
         (*A_handle) = A ;
         (*A_to_free) = A ;
     }
@@ -80,6 +83,7 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
     // return result
     //--------------------------------------------------------------------------
 
+    // printf ("end gb_get_matrix, matrix->G is %p:\n", matrix->G) ;
     return (GrB_SUCCESS) ;
 }
 

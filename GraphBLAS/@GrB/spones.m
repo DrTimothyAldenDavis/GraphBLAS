@@ -21,8 +21,8 @@ function C = spones (G, type)
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 1)
-    C = GrB (gb_spones (G)) ;
+    C = gb_spones (G) ;
 else
-    C = GrB (gb_spones (G, type)) ;
+    C = gb_spones (G, type) ;
 end
 
