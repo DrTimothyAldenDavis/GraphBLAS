@@ -49,15 +49,15 @@ if (isequal (op, 'bitshift'))
 
     if (a_is_scalar && ~b_is_scalar)
         % A is a scalar, B is a matrix
-        C = gbapply2 (['bitshift.' atype], GrB (gbfull (A)), B) ;
+        C = GrB (gbapply2 (['bitshift.' atype], GrB (gbfull (A)), B)) ;
     elseif (~a_is_scalar && b_is_scalar)
         % A is a matrix, B is a scalar
-        C = gbapply2 (['bitshift.' atype], A, GrB (gbfull (B))) ;
+        C = GrB (gbapply2 (['bitshift.' atype], A, GrB (gbfull (B)))) ;
     else
         % both A and B are matrices, or both are scalars
         % expand B by padding it with zeros from the pattern of A
-        b = GrB (gbeadd ('1st.int8', B, GrB (gb_expand (0, A, 'int8')))) ;
-        C = gbemult (['bitshift.' atype], A, b) ;
+        b = GrB (gbeadd ('1st.int8', B, gb_expand (0, A, 'int8'))) ;
+        C = GrB (gbemult (['bitshift.' atype], A, b)) ;
     end
 
 else
@@ -82,7 +82,5 @@ end
 
 if (~isequal (gbtype (C), ctype))
     C = GrB (C, ctype) ;
-else
-    C = GrB (C) ;
 end
 

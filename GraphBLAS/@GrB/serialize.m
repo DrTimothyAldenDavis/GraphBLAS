@@ -39,19 +39,21 @@ function blob = serialize (G, method, level)
 %
 % See also GrB.deserialize, GrB.load, GrB.save, GrB/struct.
 
+% FIXME: add an option to return a @GrB blob
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % serialize the matrix into a uint8 blob
 if (nargin == 1)
     % use the default compression method and default level
-    b = gbserialize (G) ;
+    b = GrB (gbserialize (G)) ;
 elseif (nargin == 2)
     % use the given compression method and default level
-    b = gbserialize (G, method) ;
+    b = GrB (gbserialize (G, method)) ;
 else
     % use the given compression method and given level
-    b = gbserialize (G, method, level) ;
+    b = GrB (gbserialize (G, method, level)) ;
 end
 
 blob = gb2builtin (b) ;

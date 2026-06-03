@@ -45,7 +45,7 @@ end
 if (am == 1)
 
     % C = diag (v,k) where A is a row vector and C is a matrix
-    C = GrB (gbmdiag (gbtrans (A), k)) ;
+    C = GrB (gbmdiag (GrB (gbtrans (A)), k)) ;
 
 elseif (an == 1)
 

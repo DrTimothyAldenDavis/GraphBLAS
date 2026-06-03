@@ -25,11 +25,13 @@ end
 if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars
-        C = GrB (gbemult (A, '/', gbfull (B))) ;
+        b = GrB (gbfull (B)) ;
+        C = GrB (gbemult (A, '/', b)) ;
     else
         % A is a scalar, B is a matrix.
         % Expand B to full with type of C
-        C = GrB (gbapply2 (A, '/', gbfull (B, ctype))) ;
+        b = GrB (gbfull (B, ctype)) ;
+        C = GrB (gbapply2 (A, '/', b)) ;
     end
 else
     if (b_is_scalar)
@@ -47,7 +49,9 @@ else
         end
     else
         % both A and B are matrices.  The result is a full matrix.
-        C = GrB (gbemult (gbfull (A, ctype), '/', gbfull (B, ctype))) ;
+        a = GrB (gbfull (A, ctype)) ;
+        b = GrB (gbfull (B, ctype)) ;
+        C = GrB (gbemult (a, '/', b)) ;
     end
 end
 

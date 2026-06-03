@@ -31,12 +31,13 @@ if (a_is_scalar)
             % since a ~= 0, entries not present in B result in a true
             % value, so the result is full.  Expand A to a full matrix.
             a = gb_scalar_to_full (bm, bn, ctype, gb_fmt (B), A) ;
-            C = GrB (gbemult (a, '~=', gbfull (B, ctype))) ;
+            b = GrB (gbfull (B, ctype)) ;
+            C = GrB (gbemult (a, '~=', b)) ;
         else
             % since a == 0, entries not present in B result in a false
             % value, so the result is a sparse subset of B.  select all
             % entries in B ~= 0, then convert to true.
-            C = GrB (gbnew (B, 'logical')) ;
+            C = GrB (B, 'logical') ;
         end
     end
 else
@@ -45,15 +46,16 @@ else
         if (gb_scalar (B) ~= 0)
             % since b ~= 0, entries not present in A result in a true
             % value, so the result is full.  Expand B to a full matrix.
+            a = GrB (gbfull (A, ctype)) ;
             b = gb_scalar_to_full (am, an, ctype, gb_fmt (A), B) ;
-            C = GrB (gbemult (gbfull (A, ctype), '~=', b)) ;
+            C = GrB (gbemult (a, '~=', b)) ;
         else
             % since b == 0, entries not present in A result in a false
             % value, so the result is a sparse subset of A.  Simply
             % typecast A to logical.  Explicit zeroes in A become explicit
             % false entries.  Any other explicit entries not equal to zero
             % become true.
-            C = GrB (gbnew (A, 'logical')) ;
+            C = GrB (A, 'logical') ;
         end
     else
         % both A and B are matrices.  C is sparse.

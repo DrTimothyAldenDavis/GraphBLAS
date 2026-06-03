@@ -21,13 +21,13 @@ function C = sprand (arg1, arg2, arg3)
 
 if (nargin == 1)
     % C = sprand (G)
-    C = GrB (gb_random (arg1)) ;
+    C = gb_random (arg1) ;
 elseif (nargin == 3)
     % C = sprand (m, n, d)
     m = gb_get_scalar (arg1) ;
     n = gb_get_scalar (arg2) ;
     d = gb_get_scalar (arg3) ;
-    C = GrB (gb_random (m, n, d)) ;
+    C = gb_random (m, n, d) ;
 else
     % the 'rc' input option is not supported
     error ('GrB:error', 'usage: sprand(A) or sprand(m,n,d)') ;

@@ -50,9 +50,9 @@ end
 if (omitself)
     % ignore diagonal entries of G
     if (isequal (side, 'upper'))
-        G = gbselect ('triu', G_arg, 1) ;
+        G = GrB (gbselect ('triu', G_arg, 1)) ;
     elseif (isequal (side, 'lower'))
-        G = gbselect ('tril', G_arg, -1) ;
+        G = GrB (gbselect ('tril', G_arg, -1)) ;
     else
         % use G_arg as-is
         G = G_arg ;
@@ -60,9 +60,9 @@ if (omitself)
 else
     % include diagonal entries of G
     if (isequal (side, 'upper'))
-        G = gbselect ('triu', G_arg, 0) ;
+        G = GrB (gbselect ('triu', G_arg, 0)) ;
     elseif (isequal (side, 'lower'))
-        G = gbselect ('tril', G_arg, 0) ;
+        G = GrB (gbselect ('tril', G_arg, 0)) ;
     else
         % use G_arg as-is
         G = G_arg ;
@@ -83,11 +83,11 @@ switch (type)
 
         % The digraph(...) function allows for logical
         % adjacency matrices (no edge weights are created).
-        Graph = graph (gb2builtin (gbcast (G, 'logical')), side) ;
+        Graph = graph (gb2builtin (GrB (gbcast (G, 'logical'))), side) ;
 
     otherwise
 
         % typecast to double
-        Graph = graph (gb2builtin (gbcast (G, 'double')), side) ;
+        Graph = graph (gb2builtin (GrB (gbcast (G, 'double'))), side) ;
 end
 

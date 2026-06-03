@@ -9,5 +9,9 @@ function C = log10 (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-C = GrB (gb_make_real (gb_trig ('log10', gbfull (G)))) ;
+C = gb_trig ('log10', GrB (gbfull (G))) ;
+
+if (gb_make_real (C))
+    C = GrB (gbapply ('creal', C)) ;
+end
 

@@ -25,5 +25,5 @@ else
     end
 end
 
-C = GrB (gbnew (m, n)) ;
+C = GrB (m, n) ;
 

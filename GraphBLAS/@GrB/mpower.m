@@ -14,7 +14,7 @@ a_is_scalar = (am == 1) && (an == 1) ;
 b_is_scalar = (bm == 1) && (bn == 1) ;
 
 if (a_is_scalar && b_is_scalar)
-    C = GrB (gb_power (A, B)) ;
+    C = gb_power (A, B) ;
 else
     if (am ~= an)
         error ('GrB:error', 'For C=A^B, A must be square') ;
@@ -35,10 +35,10 @@ else
         elseif (isequal (atype, 'double complex'))
             atype = 'double' ;
         end
-        C = GrB (gb_speye ('mpower', an, atype)) ;
+        C = gb_speye ('mpower', an, atype) ;
     else
         % C = A^b where b > 0 is an integer
-        C = GrB (gb_mpower (A, b)) ;
+        C = gb_mpower (A, b) ;
     end
 end
 

@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// gb_export exports C as a MATLAB 8-byte C.opaque uint8 mxArray, containing a
-// single pointer to a GrB_Matrix.  The input GrB_Matrix C may be shallow or
-// deep.
+// gb_export exports C as a @GrB matrix object, but one that is ready to be
+// copied into a regular built-in MATLAB/Octave matrix.  The input GrB_Matrix C
+// may be shallow or deep.
 
 // No mx* methods are called, so that any memory allocation failures can
 // be properly handled.

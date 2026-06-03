@@ -6,10 +6,10 @@ function C = gb_maxbyrow (op, A)
 % SPDX-License-Identifier: Apache-2.0
 
 % C = max (A, [ ], 2) reduces each row to a scalar; C is m-by-1
-c = GrB (gbvreduce (op, A)) ;
+C = GrB (gbvreduce (op, A)) ;
 
-% if c(i) < 0, but if A(i,:) is sparse, then assign c(i) = 0.
-ctype = gbtype (c) ;
+% if C(i) < 0, but if A(i,:) is sparse, then assign C(i) = 0.
+ctype = gbtype (C) ;
 
 if (gb_issigned (ctype))
     % d (i) = number of entries in A(i,:); d (i) not present if A(i,:) empty
@@ -20,13 +20,11 @@ if (gb_issigned (ctype))
     zero = GrB (0, ctype) ;
     if (gbnvals (s) == m)
         % all rows A(i,:) have between 1 and n-1 entries
-        C = GrB (gbapply2 (op, c, zero)) ;
+        C = GrB (gbapply2 (op, C, zero)) ;
     else
         z = GrB (gbapply2 (['2nd.' ctype], s, zero)) ;
-        % if z(i) is between 1 and n-1 and c(i) < 0 then C(i) = 0
-        C = GrB (gbeadd (op, c, z)) ;
+        % if z(i) is between 1 and n-1 and C(i) < 0 then C(i) = 0
+        C = GrB (gbeadd (op, C, z)) ;
     end
-else
-    C = c ;
 end
 

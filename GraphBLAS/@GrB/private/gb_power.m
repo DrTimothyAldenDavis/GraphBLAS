@@ -58,7 +58,7 @@ if (a_is_scalar)
     %----------------------------------------------------------------------
 
     a = GrB (gbfull (A, ctype)) ;
-    T = gbapply2 (op, a, B2) ;
+    C = GrB (gbapply2 (op, a, B2)) ;
 
 else
 
@@ -70,33 +70,29 @@ else
         % A is a matrix, B2 is a scalar
         b = gb_scalar (B2) ;
         if (b == 0)
-            % special case:  T = A.^0 = ones (am, an, ctype)
+            % special case:  C = A.^0 = ones (am, an, ctype)
             C = gb_scalar_to_full (am, an, ctype, gb_fmt (A), 1) ;
-            return ;
         elseif (b == 1)
-            % special case: T = A.^1 = A
+            % special case: C = A.^1 = A
             C = GrB (A) ;
-            return
         elseif (b <= 0)
             % 0.^b where b < 0 is Inf, so C is full
             a = GrB (gbfull (A, ctype)) ;
-            T = GrB (gbapply2 (op, a, B2)) ;
+            C = GrB (gbapply2 (op, a, B2)) ;
         else
             % The scalar b is > 0, and thus 0.^b is zero, so C is sparse.
-            T = GrB (gbapply2 (op, A, B2)) ;
+            C = GrB (gbapply2 (op, A, B2)) ;
         end
     else
         % both A and B2 are matrices.  0.^0 is 1, so C is full.
         a = GrB (gbfull (A, ctype)) ;
-        T = GrB (gbemult (op, a, B2)) ;
+        C = GrB (gbemult (op, a, B2)) ;
     end
 
 end
 
 % convert C to real if imaginary part is zero
-if (~c_is_real)
-    C = gb_make_real (T) ;
-else
-    C = T ;
+if (~c_is_real && gb_make_real (C))
+    C = GrB (gbapply ('creal', C)) ;
 end
 

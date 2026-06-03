@@ -18,7 +18,7 @@ if (nargin == 1)
     if (~gb_isfloat (atype))
         atype = 'double' ;
     end
-    C = GrB (gbapply ('pow2', gbfull (A, atype))) ;
+    C = GrB (gbapply ('pow2', GrB (gbfull (A, atype)))) ;
 else
     % C = A.*(2.^B)
     type = gboptype (atype, gbtype (B)) ;

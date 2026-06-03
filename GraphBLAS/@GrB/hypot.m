@@ -15,18 +15,18 @@ atype = gbtype (A_arg) ;
 btype = gbtype (B_arg) ;
 
 if (gb_contains (atype, 'complex'))
-    A = gbapply ('abs', A_arg) ;
+    A = GrB (gbapply ('abs', A_arg)) ;
 elseif (~gb_isfloat (atype))
-    A = gbnew (A_arg, 'double') ;
+    A = GrB (A_arg, 'double') ;
 else
     % use A_arg as-is
     A = A_arg ;
 end
 
 if (gb_contains (btype, 'complex'))
-    B = gbapply ('abs', B_arg) ;
+    B = GrB (gbapply ('abs', B_arg)) ;
 elseif (~gb_isfloat (btype))
-    B = gbnew (B_arg, 'double') ;
+    B = GrB (B_arg, 'double') ;
 else
     % use B_arg as-is
     B = B_arg ;

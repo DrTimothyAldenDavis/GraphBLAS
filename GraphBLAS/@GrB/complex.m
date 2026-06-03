@@ -32,7 +32,7 @@ if (nargin == 1)
     % with a single input, A must be a GraphBLAS matrix (otherwise,
     % this overloaded method for GrB objects would not be called).
     % Convert A to a built-in double complex matrix C.
-    C = gbcast (A, 'double complex') ;
+    C = GrB (gbcast (A, 'double complex')) ;
 
 else
 
@@ -52,23 +52,23 @@ else
     if (a_is_scalar)
         if (b_is_scalar)
             % both A and B are scalars.  C is also a scalar.
-            a = gbfull (A, 'double') ;
-            b = gbfull (B, 'double') ;
+            a = GrB (gbfull (A, 'double')) ;
+            b = GrB (gbfull (B, 'double')) ;
             desc.kind = 'full' ;
-            C = gbemult ('cmplx.double', a, b, desc) ;
+            C = GrB (gbemult ('cmplx.double', a, b, desc)) ;
         else
             % A is a scalar, B is a matrix.  C is full, unless A == 0.
             if (gb_scalar (A) == 0)
                 % C = 1i*B, so A = zero, C is sparse or full.
                 desc.kind = 'builtin' ;
-                C = gbapply2 ('cmplx.double', 0, B, desc) ;
+                C = GrB (gbapply2 ('cmplx.double', 0, B, desc)) ;
             else
                 % expand A and B to full double matrices; C is full
                 bfmt = gb_fmt (B) ;
                 desc.kind = 'full' ;
-                C = gbemult ('cmplx.double', ...
-                    gb_scalar_to_full (bm, bn, 'double', bfmt, A), ...
-                    gbfull (B, 'double'), desc) ;
+                a = gb_scalar_to_full (bm, bn, 'double', bfmt, A) ;
+                b = GrB (gbfull (B, 'double')) ;
+                C = GrB (gbemult ('cmplx.double', a, b, desc)) ;
             end
         end
     else
@@ -76,18 +76,20 @@ else
             % A is a matrix, B is a scalar.  C is full, unless B == 0.
             if (gb_scalar (B) == 0)
                 % C = complex (A); C is sparse or full
-                C = gbcast (A, 'double.complex') ;
+                C = GrB (gbcast (A, 'double.complex')) ;
             else
                 % expand A and B to full double matrices; C is full
                 afmt = gb_fmt (A) ;
                 desc.kind = 'full' ;
-                C = gbemult ('cmplx.double', gbfull (A, 'double'), ...
-                    gb_scalar_to_full (am, an, 'double', afmt, B), desc) ;
+                a = GrB (gbfull (A, 'double')) ;
+                b = gb_scalar_to_full (am, an, 'double', afmt, B) ;
+                C = GrB (gbemult ('cmplx.double', a, b, desc)) ;
             end
         else
             % both A and B are matrices.  C is sparse or full.
             desc.kind = 'builtin' ;
-            C = gbeadd (A, '+', gbapply2 (B, '*', 1i), desc) ;
+            b = GrB (gbapply2 (B, '*', 1i)) ;
+            C = GrB (gbeadd (A, '+', b, desc)) ;
         end
     end
 

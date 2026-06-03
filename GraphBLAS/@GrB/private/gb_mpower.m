@@ -7,12 +7,10 @@ function C = gb_mpower (A, b)
 if (b == 1)
     C = GrB (A) ;
 else
-    T = gb_mpower (A, floor (b/2)) ;
-    S = GrB (gbmxm (T, '+.*', T)) ;
+    C = gb_mpower (A, floor (b/2)) ;
+    C = GrB (gbmxm (C, '+.*', C)) ;
     if (mod (b, 2) == 1)
-        C = GrB (gbmxm (S, '+.*', A)) ;
-    else
-        C = S ;
+        C = GrB (gbmxm (C, '+.*', A)) ;
     end
 end
 

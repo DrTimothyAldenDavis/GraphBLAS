@@ -13,8 +13,8 @@ function C = all (G, option)
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 1)
-    C = GrB (gb_prod ('&.logical', 'logical', G)) ;
+    C = gb_prod ('&.logical', 'logical', G) ;
 else
-    C = GrB (gb_prod ('&.logical', 'logical', G, option)) ;
+    C = gb_prod ('&.logical', 'logical', G, option) ;
 end
 

@@ -12,6 +12,6 @@ if (gb_contains (type, 'complex'))
     C = GrB (gbapply ('carg', G)) ;
 else
     % C is all zero
-    C = GrB (gbnew (m, n, type)) ;
+    C = GrB (m, n, type) ;
 end
 

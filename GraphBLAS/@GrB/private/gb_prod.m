@@ -23,9 +23,9 @@ switch (option)
 
         % C = prod (G, 'all'), reducing all entries to a scalar
         if (m*n == gbnvals (G))
-            C = gbreduce (op, G) ;
+            C = GrB (gbreduce (op, G)) ;
         else
-            C = gbnew (0, type) ;
+            C = GrB (0, type) ;
         end
 
     case { 1 }
@@ -33,29 +33,21 @@ switch (option)
         % C = prod (G,1) reduces each column to a scalar,
         % giving a 1-by-n row vector.
         % M = find (column degree of G == m)
-        M = gbselect (gbdegree (G, 'col'), '==', int64 (m)) ;
-        Cin = gbnew (n, 1, type) ;
+        M = GrB (gbselect (GrB (gbdegree (G, 'col')), '==', int64 (m))) ;
+        Cin = GrB (n, 1, type) ;
         % C<M> = op (G')
         desc.in0 = 'transpose' ;
-        T = gbvreduce (Cin, M, op, G, desc) ;
-        C = gbtrans (T) ;
-        gbdelete (T) ;
-        gbdelete (Cin) ;
-        gbdelete (M) ;
+        C = GrB (gbtrans (GrB (gbvreduce (Cin, M, op, G, desc)))) ;
 
     case { 2 }
 
         % C = prod (G,2) reduces each row to a scalar,
         % giving an m-by-1 column vector.
         % M = find (row degree of G == n)
-        d = gbdegree (G, 'row') ;
-        M = gbselect (d, '==', int64 (n)) ;
-        gbdelete (d) ;
+        M = GrB (gbselect (GrB (gbdegree (G, 'row')), '==', int64 (n))) ;
         % C<M> = op (G)
-        Cin = gbnew (m, 1, type) ;
-        C = gbvreduce (Cin, M, op, G) ;
-        gbdelete (Cin) ;
-        gbdelete (M) ;
+        Cin = GrB (m, 1, type) ;
+        C = GrB (gbvreduce (Cin, M, op, G)) ;
 
     otherwise
 

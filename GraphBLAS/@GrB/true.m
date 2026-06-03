@@ -16,5 +16,5 @@ function C = true (varargin)
 % SPDX-License-Identifier: Apache-2.0
 
 [m, n, ~] = gb_parse_args ('true', varargin {:}) ;
-C = GrB (gb_scalar_to_full (m, n, 'logical', gbformat, true)) ;
+C = gb_scalar_to_full (m, n, 'logical', gbformat, true) ;
 

@@ -26,20 +26,22 @@ ctype = gboptype (atype, btype) ;
 if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars.  C is full.
-        C = GrB (gbemult (gbfull (A, ctype), '==', gbfull (B, ctype))) ;
+        a = GrB (gbfull (A, ctype)) ;
+        b = GrB (gbfull (B, ctype)) ;
+        C = GrB (gbemult (a, '==', b)) ;
     else
         % A is a scalar, B is a matrix
         if (gb_scalar (A) == 0)
             % since a == 0, entries not present in B result in a true
             % value, so the result is full.  Expand A to a full matrix.
-            C = GrB (gbemult ( ...
-                gb_scalar_to_full (bm, bn, ctype, gb_fmt (B), A), ...
-                '==', gbfull (B, ctype))) ;
+            a = gb_scalar_to_full (bm, bn, ctype, gb_fmt (B), A) ;
+            b = GrB (gbfull (B, ctype)) ;
+            C = GrB (gbemult (a, '==', b)) ;
         else
             % since a ~= 0, entries not present in B result in a false
             % value, so the result is a sparse subset of B.  select all
             % entries in B == a, then convert to true.
-            C = GrB (gbapply ('1.logical', gbselect (B, '==', A))) ;
+            C = GrB (gbapply ('1.logical', GrB (gbselect (B, '==', A)))) ;
         end
     end
 else
@@ -48,17 +50,20 @@ else
         if (gb_scalar (B) == 0)
             % since b == 0, entries not present in A result in a true
             % value, so the result is full.  Expand B to a full matrix.
-            C = GrB (gbemult (gbfull (A, ctype), '==', ...
-                gb_scalar_to_full (am, an, ctype, gb_fmt (A), B))) ;
+            a = GrB (gbfull (A, ctype)) ;
+            b = gb_scalar_to_full (am, an, ctype, gb_fmt (A), B) ;
+            C = GrB (gbemult (a, '==', b)) ;
         else
             % since b ~= 0, entries not present in A result in a false
             % value, so the result is a sparse subset of A.  select all
             % entries in A == b, then convert to true.
-            C = GrB (gbapply ('1.logical', gbselect (A, '==', B))) ;
+            C = GrB (gbapply ('1.logical', GrB (gbselect (A, '==', B)))) ;
         end
     else
         % both A and B are matrices.  C is full.
-        C = GrB (gbemult (gbfull (A, ctype), '==', gbfull (B, ctype))) ;
+        a = GrB (gbfull (A, ctype)) ;
+        b = GrB (gbfull (B, ctype)) ;
+        C = GrB (gbemult (a, '==', b)) ;
     end
 end
 

@@ -45,7 +45,7 @@ end
 % apply the options
 if (omitself)
     % ignore diagonal entries of G
-    G = gbselect ('offdiag', G_arg, 0) ;
+    G = GrB (gbselect ('offdiag', G_arg, 0)) ;
 else
     % use G_arg as-is
     G = G_arg ;
@@ -65,11 +65,11 @@ switch (type)
 
         % The digraph(...) function allows for logical
         % adjacency matrices (no edge weights are created).
-        DiGraph = digraph (gb2builtin (gbcast (G, 'logical'))) ;
+        DiGraph = digraph (gb2builtin (GrB (gbcast (G, 'logical')))) ;
 
     otherwise
 
         % typecast to double
-        DiGraph = digraph (gb2builtin (gbcast (G, 'double'))) ;
+        DiGraph = digraph (gb2builtin (GrB (gbcast (G, 'double')))) ;
 end
 

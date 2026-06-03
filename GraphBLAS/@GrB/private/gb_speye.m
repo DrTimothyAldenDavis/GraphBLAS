@@ -23,5 +23,5 @@ else
     X = ones (mn, 1, type) ;
 end
 
-C = gbbuild (I, I, X, m, n, '1st', type, desc) ;
+C = GrB (gbbuild (I, I, X, m, n, '1st', type, desc)) ;
 

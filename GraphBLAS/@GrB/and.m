@@ -21,10 +21,10 @@ if (a_is_scalar)
         % A is a scalar, B is a matrix
         if (gb_scalar (A) == 0)
             % A is false, so C is empty, the same size as B
-            C = GrB (gbnew (bm, bn, 'logical')) ;
+            C = GrB (bm, bn, 'logical') ;
         else
             % A is true, so C is B typecasted to logical
-            C = GrB (gbnew (B, 'logical')) ;
+            C = GrB (B, 'logical') ;
         end
     end
 else
@@ -32,10 +32,10 @@ else
         % A is a matrix, B is a scalar
         if (gb_scalar (B) == 0)
             % B is false, so C is empty, the same size as A
-            C = GrB (gbnew (am, an, 'logical')) ;
+            C = GrB (am, an, 'logical') ;
         else
             % B is true, so C is A typecasted to logical
-            C = GrB (gbnew (A, 'logical')) ;
+            C = GrB (A, 'logical') ;
         end
     else
         % both A and B are matrices.  C is the set intersection of A and B

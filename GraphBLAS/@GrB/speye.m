@@ -8,5 +8,5 @@ function C = speye (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-C = GrB (gb_speye ('speye', varargin {:})) ;
+C = gb_speye ('speye', varargin {:}) ;
 

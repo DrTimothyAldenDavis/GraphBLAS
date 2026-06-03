@@ -11,9 +11,9 @@ function C = isfinite (G)
 [m, n, type] = gbsize (G) ;
 
 if (gb_isfloat (type) && m > 0 && n > 0)
-    C = GrB (gbapply ('isfinite', gbfull (G))) ;
+    C = GrB (gbapply ('isfinite', GrB (gbfull (G)))) ;
 else
     % C is all true
-    C = GrB (true (m, n)) ;
+    C = GrB.true (m, n) ;
 end
 

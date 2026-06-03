@@ -25,5 +25,5 @@ if (nargin < 3)
     type = gbtype (scalar) ;
 end
 
-C = GrB (gb_expand (scalar, S, type)) ;
+C = gb_expand (scalar, S, type) ;
 

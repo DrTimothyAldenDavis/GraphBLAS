@@ -14,6 +14,6 @@ if (gb_contains (type, 'complex'))
     C = GrB (gbapply ('cimag', G)) ;
 else
     % G is real, so C = zeros (m,n)
-    C = GrB (gbnew (m, n, type)) ;
+    C = GrB (m, n, type) ;
 end
 

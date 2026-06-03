@@ -7,8 +7,7 @@ function C = gb_expand (scalar, S, type)
 % SPDX-License-Identifier: Apache-2.0
 
 % typecast the scalar to the desired type, and make sure it's full
-s = GrB (scalar, type) ;
-t = GrB (gbfull (s)) ;
+t = GrB (gbfull (GrB (scalar, type))) ;
 
 % expand the scalar into the pattern of S
 C = GrB (gbapply2 (['2nd.' type], S, t)) ;

@@ -73,8 +73,8 @@ if (ndims == 1)
                 if (am == 1 && an == 1)
                     % C (:) = scalar, the same as C (:,:) = scalar.
                     % C becomes an iso full matrix
-                    C_empty = gbnew (cm, cn, gbtype (C)) ;
-                    C = GrB (gbsubassign (C_empty, { }, { }, A)) ;
+                    Cin = GrB (cm, cn, gbtype (C)) ;
+                    C = GrB (gbsubassign (Cin, { }, { }, A)) ;
                 else
                     % C (:) = A for a matrix C and vector A
                     C = GrB (gbreshape (A, cm, cn, 'by column')) ;
@@ -90,13 +90,6 @@ if (ndims == 1)
 elseif (ndims == 2)
 
     % C (I,J) = A where A is length(I)-by-length(J), or a scalar
-%   S.subs
-%   'gb_index for 1=-----------------------'
-%   S.subs{1}
-%   gb_index (S.subs {1})
-%   'gb_index for 2=-----------------------'
-%   S.subs{2}
-%   gb_index (S.subs {2})
     C = GrB (gbsubassign (C, gb_index (S.subs {1}), gb_index (S.subs {2}), A)) ;
 
 else

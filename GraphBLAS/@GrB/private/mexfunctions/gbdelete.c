@@ -12,8 +12,9 @@
 // gbdelete (G)
 
 // Deletes the @GrB matrix G.  Does nothing if the input is not a @GrB handle
-// object from GraphBLAS v10.4.0 or later.  This method must not throw an
-// error, since it is called by the @GrB delete method.
+// object from GraphBLAS v10.4.0 or later.  Since this is called by the @GrB
+// delete method, this method must not throw an error (per the MATLAB
+// specification of how handle objects are deleted).
 
 #include "gb_interface.h"
 

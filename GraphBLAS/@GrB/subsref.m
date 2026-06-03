@@ -61,15 +61,14 @@ if (ndims == 1)
         if (m == 1 || n == 1)
             % C = A (I) for a vector A
             if (m > 1)
-                C = gbextract (A, I, { }) ;
+                C = GrB (gbextract (A, I, { })) ;
             else
-                C = gbextract (A, { }, I) ;
+                C = GrB (gbextract (A, { }, I)) ;
             end
             [cm, ~] = gbsize (C) ;
             if (whole && cm == 1)
-                C = gbtrans (C) ;
+                C = GrB (gbtrans (C)) ;
             end
-            C = GrB (C) ;
         else
             % C = A (I) for a matrix A
             if (whole)

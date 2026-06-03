@@ -7,6 +7,5 @@ function [parent, varargout] = etree (G, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[parent, varargout{1:nargout-1}] = ...
-    builtin ('etree', logical (G), varargin {:}) ;
+[parent, varargout{1:nargout-1}] = builtin ('etree', logical (G), varargin {:});
 

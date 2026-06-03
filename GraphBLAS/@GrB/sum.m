@@ -30,8 +30,8 @@ else
 end
 
 if (nargin == 1)
-    C = GrB (gb_sum (op, G)) ;
+    C = gb_sum (op, G) ;
 else
-    C = GrB (gb_sum (op, G, option)) ;
+    C = gb_sum (op, G, option) ;
 end
 

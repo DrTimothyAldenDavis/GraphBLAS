@@ -68,19 +68,19 @@ switch (kind)
 
         % create the incidence matrix of a directed graph, using all of A;
         % except that diagonal entries are ignored.
-        A = gbselect ('offdiag', A_arg, 0) ;
+        A = GrB (gbselect ('offdiag', A_arg, 0)) ;
 
     case { 'upper' }
 
         % create the incidence matrix of an undirected graph, using only
         % entries in the strictly upper triangular part of A.
-        A = gbselect ('triu', A_arg, 1) ;
+        A = GrB (gbselect ('triu', A_arg, 1)) ;
 
     otherwise   % 'undirected', 'symmetric', or 'lower'
 
         % create the incidence matrix of an undirected graph, using only
         % entries in the strictly lower triangular part of A.
-        A = gbselect ('tril', A_arg, -1) ;
+        A = GrB (gbselect ('tril', A_arg, -1)) ;
 
 end
 

@@ -58,8 +58,3 @@ function result = entries (A, varargin)
 % get the count/list of the entries of A
 result = gb_entries (A, varargin {:}) ;
 
-% if gb_entries returned a GraphBLAS struct, return it as a GrB matrix
-if (isstruct (result))
-    result = GrB (result) ;
-end
-

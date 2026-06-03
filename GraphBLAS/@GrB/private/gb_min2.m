@@ -19,7 +19,7 @@ if (a_is_scalar)
         % A is a scalar, B is a matrix
         if (gb_scalar (A) < 0)
             % since A < 0, the result is full
-            a = GrB (gb_scalar_to_full (bm, bn, ctype, gb_fmt (B), A)) ;
+            a = gb_scalar_to_full (bm, bn, ctype, gb_fmt (B), A) ;
             C = GrB (gbeadd (a, op, B)) ;
         else
             % since A >= 0, the result is sparse.
@@ -32,7 +32,7 @@ else
         % A is a matrix, B is a scalar
         if (gb_scalar (B) < 0)
             % since B < 0, the result is full
-            b = GrB (gb_scalar_to_full (am, an, ctype, gb_fmt (A), B)) ;
+            b = gb_scalar_to_full (am, an, ctype, gb_fmt (A), B) ;
             C = GrB (gbeadd (A, op, b)) ;
         else
             % since B >= 0, the result is sparse.

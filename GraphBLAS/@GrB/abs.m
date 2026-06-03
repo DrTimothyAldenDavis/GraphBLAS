@@ -8,5 +8,9 @@ function C = abs (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-C = GrB (gb_abs (G)) ;
+if (gb_issigned (gbtype (G)))
+    C = GrB (gbapply ('abs', G)) ;
+else
+    C = GrB (G) ;
+end
 

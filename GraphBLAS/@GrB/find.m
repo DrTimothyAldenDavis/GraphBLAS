@@ -31,7 +31,7 @@ function [I, J, X] = find (G_arg, k, search)
 % SPDX-License-Identifier: Apache-2.0
 
 % prune explicit zeros
-G = gbselect (G_arg, 'nonzero') ;
+G = GrB (gbselect (G_arg, 'nonzero')) ;
 
 if (nargin > 1)
     k = ceil (double (gb_get_scalar (k))) ;
@@ -41,7 +41,7 @@ if (nargin > 1)
     if (~isequal (gbformat (G), 'by col'))
         % find (G, k) assumes the matrix is stored by column, so reformat G
         % if it is stored by row.
-        G = gbnew (G, 'by col') ;
+        G = GrB (G, 'by col') ;
     end
 end
 

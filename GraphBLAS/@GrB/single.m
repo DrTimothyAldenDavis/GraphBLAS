@@ -23,5 +23,6 @@ else
     ctype = 'single' ;
 end
 
-C = gb2builtin (gbfull (G, ctype, z, desc)) ; % export as a full matrix
+% export C as a full matrix
+C = gb2builtin (GrB (gbfull (G, ctype, z, desc))) ;
 

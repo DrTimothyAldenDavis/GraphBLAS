@@ -13,12 +13,14 @@ if (gb_isscalar (A))
         C = GrB (gbemult ('atan2', A, B)) ;
     else
         % A is a scalar, B is a matrix
-        C = GrB (gbapply2 ('atan2', gbfull (A), B)) ;
+        a = GrB (gbfull (A)) ;
+        C = GrB (gbapply2 ('atan2', a, B)) ;
     end
 else
     if (gb_isscalar (B))
         % A is a matrix, B is a scalar
-        C = GrB (gbapply2 ('atan2', A, gbfull (B))) ;
+        b = GrB (gbfull (B)) ;
+        C = GrB (gbapply2 ('atan2', A, b)) ;
     else
         % both A and B are matrices.  C is the set union of A and B.
         C = GrB (gbeunion ('atan2', A, 0, B, 0)) ;

@@ -71,19 +71,14 @@ end
 
 if (id ~= 0)
     % id is nonzero, so prune A first (for any matrix A)
-    result = gb_entries (gbselect (A, '~=', id), varargin {1:nargs-1}) ;
+    result = gb_entries (GrB (gbselect (A, '~=', id)), varargin {1:nargs-1}) ;
 elseif (~builtin_sparse)
     % id is zero, so prune A only if it is a GraphBLAS matrix,
     % or a built-in full matrix.  A built-in sparse matrix can remain
     % unchanged.
-    result = gb_entries (gbselect (A, 'nonzero'), varargin {1:nargs-1}) ;
+    result = gb_entries (GrB (gbselect (A, 'nonzero')), varargin {1:nargs-1}) ;
 else
     % get the count/list of the entries of A
     result = gb_entries (A, varargin {1:nargs-1}) ;
-end
-
-% if gb_entries returned a GraphBLAS struct, return it as a GrB matrix
-if (isstruct (result))
-    result = GrB (result) ;
 end
 

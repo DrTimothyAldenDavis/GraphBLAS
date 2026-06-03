@@ -13,5 +13,5 @@ function C = zeros (varargin)
 % SPDX-License-Identifier: Apache-2.0
 
 [m, n, type] = gb_parse_args ('zeros', varargin {:}) ;
-C = GrB (gbnew (m, n, type)) ;
+C = GrB (m, n, type) ;
 

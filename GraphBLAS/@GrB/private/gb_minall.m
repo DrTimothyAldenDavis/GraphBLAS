@@ -10,7 +10,6 @@ C = GrB (gbreduce (op, A)) ;
 if ((m*n ~= gbnvals (A)) && gb_scalar (C) >= 0)
     % A is not full, and the min of the entries present is >= 0,
     % so C is an empty scalar (an implicit zero)
-    ctype = gbtype (C) ;
-    C = GrB (gbnew (1, 1, ctype)) ;
+    C = GrB (1, 1, gbtype (C)) ;
 end
 

@@ -19,19 +19,13 @@ if (gb_isfloat (atype))
     if (gb_isfloat (btype))
         C = gb_atan2 (A, B) ;
     else
-        b = gbnew (B, 'double') ;
-        C = gb_atan2 (A, b) ;
-        gbdelete (b) ;
+        C = gb_atan2 (A, GrB (B, 'double')) ;
     end
 else
-    a = gbnew (A, 'double') ;
     if (gb_isfloat (btype))
-        C = gb_atan2 (a, B) ;
+        C = gb_atan2 (GrB (A, 'double'), B) ;
     else
-        b = gbnew (B, 'double') ;
-        C = gb_atan2 (a, b) ;
-        gbdelete (b) ;
+        C = gb_atan2 (GrB (A, 'double'), GrB (B, 'double')) ;
     end
-    gbdelete (a) ;
 end
 

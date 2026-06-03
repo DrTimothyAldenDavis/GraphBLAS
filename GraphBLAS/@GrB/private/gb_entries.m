@@ -38,20 +38,20 @@ if (isequal (dim, 'all'))
 else
 
     % get the row or column degree
-    result = gbdegree (A, dim) ;    % dim is 'row' or 'col'
+    result = GrB (gbdegree (A, dim)) ;    % dim is 'row' or 'col'
 
     switch kind
         case 'count'
             % number of non-empty rows/cols
             % e = GrB.entries (A, 'row')
             % e = GrB.entries (A, 'col')
-            result = gbnvals (gbselect (result, 'nonzero')) ;
+            result = gbnvals (GrB (gbselect (result, 'nonzero'))) ;
         case 'list'
             % list of non-empty rows/cols
             % I = GrB.entries (A, 'row', 'list')
             % J = GrB.entries (A, 'col', 'list')
             desc.base = 'one-based int' ;
-            result = gbextracttuples (gbselect (result, 'nonzero'), desc) ;
+            result = gbextracttuples (GrB (gbselect (result, 'nonzero')), desc);
         % case 'degree'
             % degree of all rows/cols
             % d = GrB.entries (A, 'row', 'degree')

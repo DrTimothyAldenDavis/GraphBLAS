@@ -7,10 +7,10 @@ function C = gb_maxbycol (op, A)
 
 % C = max (A, [ ], 1) reduces each col to a scalar; C is 1-by-n
 desc.in0 = 'transpose' ;
-c = GrB (gbvreduce (op, A, desc)) ;
+C = GrB (gbvreduce (op, A, desc)) ;
 
-% if c(j) < 0, but if A(:,j) is sparse, then assign c(j) = 0.
-ctype = gbtype (c) ;
+% if C(j) < 0, but if A(:,j) is sparse, then assign C(j) = 0.
+ctype = gbtype (C) ;
 
 if (gb_issigned (ctype))
     % d (j) = number of entries in A(:,j); d (j) not present if A(:,j) empty
@@ -21,15 +21,13 @@ if (gb_issigned (ctype))
     zero = GrB (0, ctype) ;
     if (gbnvals (s) == n)
         % all columns A(:,j) have between 1 and m-1 entries
-        T = GrB (gbapply2 (op, c, zero)) ;
+        C = GrB (gbapply2 (op, C, zero)) ;
     else
         z = GrB (gbapply2 (['2nd.' ctype], s, zero)) ;
-        % if z (j) is between 1 and m-1 and c (j) < 0 then T (j) = 0
-        T = GrB (gbeadd (op, c, z)) ;
+        % if z (j) is between 1 and m-1 and C (j) < 0 then C (j) = 0
+        C = GrB (gbeadd (op, C, z)) ;
     end
-else
-    T = c ;
 end
 
-C = GrB (gbtrans (T)) ;
+C = GrB (gbtrans (C)) ;
 

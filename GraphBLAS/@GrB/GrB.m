@@ -999,7 +999,7 @@ methods
     % of the @GrB matrix G.  S is not an object.  S.blob is a dense
     % builtin MATLAB/Octave array of type uint8.  It will be loaded back
     % using loadobj, below.
-    S.blob = gb2builtin (gbserialize (G)) ;
+    S.blob = gb2builtin (GrB (gbserialize (G))) ;
     end
 
 end

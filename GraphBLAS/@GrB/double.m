@@ -15,8 +15,8 @@ function C = double (G)
 % SPDX-License-Identifier: Apache-2.0
 
 if (gb_contains (gbtype (G), 'complex'))
-    C = gb2builtin (gbcast (G, 'double complex')) ;
+    C = gb2builtin (GrB (gbcast (G, 'double complex'))) ;
 else
-    C = gb2builtin (gbcast (G, 'double')) ;
+    C = gb2builtin (GrB (gbcast (G, 'double'))) ;
 end
 

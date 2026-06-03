@@ -28,11 +28,11 @@ function C = sprandsym (arg1, arg2)
 
 if (nargin == 1)
     % C = sprandsym (G)
-    C = GrB (gb_random (arg1, 'symmetric', 'normal')) ;
+    C = gb_random (arg1, 'symmetric', 'normal') ;
 else
     % C = sprandsym (n, d)
     n = gb_get_scalar (arg1) ;
     d = gb_get_scalar (arg2) ;
-    C = GrB (gb_random (n, d, 'symmetric', 'normal')) ;
+    C = gb_random (n, d, 'symmetric', 'normal') ;
 end
 

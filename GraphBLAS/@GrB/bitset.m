@@ -150,13 +150,13 @@ else
 
     if (a_is_scalar)
         % expand A to a full matrix the same size as V.
-        A2 = GrB (gb_scalar_to_full (m, n, atype, gb_fmt (V), A)) ;
+        A2 = gb_scalar_to_full (m, n, atype, gb_fmt (V), A) ;
     else
         A2 = A ;
     end
     if (b_is_scalar)
         % expand B to a full matrix the same size as V.
-        B2 = GrB (gb_scalar_to_full (m, n, atype, gb_fmt (V), B)) ;
+        B2 = gb_scalar_to_full (m, n, atype, gb_fmt (V), B) ;
     else
         B2 = B ;
     end
@@ -170,7 +170,7 @@ else
     % as the bits in B(i,j) that must be set to 0; B0<~V>=B defines the
     % pattern of bit positions B0 to set to 0 in A.
     d.mask = 'complement' ;
-    E = GrB (gbnew (m, n, atype)) ;
+    E = GrB (m, n, atype) ;
     B0 = GrB (gbassign (E, V, B2, d)) ;
 
     % Clear the bits in C, referenced by B0(i,j), where V(i,j) is zero.

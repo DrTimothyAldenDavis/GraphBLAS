@@ -15,8 +15,11 @@ function [F, E] = log2 (G)
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargout == 1)
-    % C = log2 (G)
-    F = GrB (gb_make_real (gb_trig ('log2', gbfull (G)))) ;
+    % F = log2 (G)
+    F = gb_trig ('log2', GrB (gbfull (G))) ;
+    if (gb_make_real (F))
+        F = GrB (gbapply ('creal', F)) ;
+    end
 else
     % [F,E] = log2 (G)
     type = gbtype (G) ;

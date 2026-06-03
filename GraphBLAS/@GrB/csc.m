@@ -14,5 +14,5 @@ else
     op = 'sin' ;
 end
 
-C = GrB (gbapply ('minv', gbfull (gbapply (op, G)))) ;
+C = GrB (gbapply ('minv', GrB (gbfull (GrB (gbapply (op, G)))))) ;
 

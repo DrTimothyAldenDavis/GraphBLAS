@@ -43,7 +43,6 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
-    // printf ("---------------------- start gbnew\n") ;
 
     //--------------------------------------------------------------------------
     // check inputs and construct outputs
@@ -198,10 +197,7 @@ void mexFunction
         //----------------------------------------------------------------------
 
         // GraphBLAS copy of A, same type and format as A
-        // printf ("Get C deep:\n") ;
         OK (gb_get_deep (&C, &(Matrix [0]), err)) ;
-        // printf ("Got C deep:\n") ;
-        // GxB_Matrix_fprint (C, "C=GrB(A)", 5, NULL) ;
 
     }
     else if (nargin == 2)
@@ -406,6 +402,5 @@ void mexFunction
     FREE_WORK ;
     OK (gb_export (C_opaque, &C, KIND_GRB, err)) ;
     gb_wrapup ( ) ;
-    // printf ("---------------------- end gbnew\n") ;
 }
 

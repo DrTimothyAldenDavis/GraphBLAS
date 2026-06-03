@@ -17,5 +17,5 @@ if (~gb_isfloat (type))
     type = 'double' ;
 end
 
-C = GrB (gbapply ('gammaln', gbfull (G, type))) ;
+C = GrB (gbapply ('gammaln', GrB (gbfull (G, type)))) ;
 

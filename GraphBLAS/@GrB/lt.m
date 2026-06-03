@@ -29,19 +29,19 @@ if (a_is_scalar)
         if (gb_scalar (A) < 0)
             if (~gb_issigned (btype))
                 % a < 0, and B has an unsigned type.  C is all true.
-                C = GrB (gb_scalar_to_full (bm, bn, 'logical', ...
-                    gb_fmt (B), true)) ;
+                C = gb_scalar_to_full (bm, bn, 'logical', gb_fmt (B), true) ;
             else
                 % since a < 0, entries not present in B result in a true
                 % value, so the result is full.  Expand A to full.
                 a = gb_scalar_to_full (bm, bn, ctype, gb_fmt (B), A) ;
-                C = GrB (gbemult (a, '<', gbfull (B, ctype))) ;
+                b = GrB (gbfull (B, ctype)) ;
+                C = GrB (gbemult (a, '<', b)) ;
             end
         else
             % since a >= 0, entries not present in B result in a false
             % value, so the result is a sparse subset of B.  select all
             % entries in B > a, then convert to true.
-            C = GrB (gbapply ('1.logical', gbselect (B, '>', A))) ;
+            C = GrB (gbapply ('1.logical', GrB (gbselect (B, '>', A)))) ;
         end
     end
 else
@@ -50,17 +50,18 @@ else
         b = gb_scalar (B) ;
         if (b < 0 && ~gb_issigned (atype))
             % b is negative, and A has an unsigned type.  C is all false.
-            C = GrB (gbnew (am, an, 'logical')) ;
+            C = GrB (am, an, 'logical') ;
         elseif (b > 0)
             % since b > 0, entries not present in A result in a true
             % value, so the result is full.  Expand B to a full matrix.
+            a = GrB (gbfull (A, ctype)) ;
             b = gb_scalar_to_full (am, an, ctype, gb_fmt (A), B) ;
-            C = GrB (gbemult (gbfull (A, ctype), '<', b)) ;
+            C = GrB (gbemult (a, '<', b)) ;
         else
             % since b <= 0, entries not present in A result in a false
             % value, so the result is a sparse subset of A.  Select all
             % entries in A < b, then convert to true.
-            C = GrB (gbapply ('1.logical', gbselect (A, '<', B))) ;
+            C = GrB (gbapply ('1.logical', GrB (gbselect (A, '<', B)))) ;
         end
     else
         % both A and B are matrices.  C is the set union of A and B.

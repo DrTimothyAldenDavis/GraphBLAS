@@ -14,7 +14,7 @@ type = gbtype (G) ;
 if (isequal (type, 'logical'))
     C = GrB (G) ;
 elseif (~gb_isfloat (type))
-    C = GrB (gbnew (gbapply ('signum.single', G), type)) ;
+    C = GrB (GrB (gbapply ('signum.single', G)), type) ;
 else
     C = GrB (gbapply ('signum', G)) ;
 end
