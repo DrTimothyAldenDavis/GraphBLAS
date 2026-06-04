@@ -22,7 +22,7 @@ switch (option)
     case { 'all' }
 
         % C = prod (G, 'all'), reducing all entries to a scalar
-        if (m*n == gbnvals (G))
+        if (gb_isfull (G))
             C = GrB (gbreduce (op, G)) ;
         else
             C = GrB (0, type) ;

@@ -41,7 +41,6 @@ for xr = list
             fprintf (' err: %g', err) ;
             fprintf (' DOUBLE DIFFERS') ;
             fprintf ('\n') ;
-            % pause
         end
         if (~errnan)
             maxerr = max (maxerr, err) ;
@@ -66,7 +65,6 @@ for xr = list
             fprintf (' err: %g', err) ;
             fprintf (' SINGLE DIFFERS') ;
             fprintf ('\n') ;
-            % pause
         end
 
         % assert (maxerr_single < 1e-6) ;

@@ -37,7 +37,11 @@ void mexFunction
         if (G_opaque != NULL)
         {
             GrB_Matrix *C_handle = (GrB_Matrix *) mxGetData (G_opaque) ;
+//          bool pr = (*C_handle != NULL) ;
+//          if (pr) printf ("gbdelete %p : %d to ", *C_handle,
+//              GB_Global_nmalloc_get ( )) ;
             GrB_Matrix_free (C_handle) ;
+//          if (pr) printf ("%d\n", GB_Global_nmalloc_get ( )) ;
         }
     }
 }

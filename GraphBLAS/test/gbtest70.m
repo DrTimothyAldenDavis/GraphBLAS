@@ -130,6 +130,5 @@ for k = 1:length(types)
 
 end
 
-
 fprintf ('gbtest70: all tests passed\n') ;
 

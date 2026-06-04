@@ -13,55 +13,60 @@ D = A.*B ;
 F = A-B ;
 
 G = GrB.eadd ('+', A, B) ;
-err = norm (C-G, 1) %#ok<*NOPRT>
+err = norm (C-G, 1) ;
 assert (logical (err < 1e-12))
 
 H = GrB.emult ('*', A, B) ;
-err = norm (D-H, 1)
+err = norm (D-H, 1) ;
 assert (logical (err < 1e-12))
 
 G = GrB.eunion ('-', A, 0, B, 0) ;
-err = norm (F-G, 1) %#ok<*NOPRT>
+err = norm (F-G, 1) ;
 assert (logical (err < 1e-12))
 
 d.kind = 'sparse' ;
 d.in0 = 'transpose' ;
-d
 
 G = GrB.eadd ('+', A, B, d) ;
 C = A'+B ;
-err = norm (C-G, 1)
+err = norm (C-G, 1) ;
 assert (logical (err < 1e-12))
 
 H = GrB.emult ('*', A, B, d) ;
 D = A'.*B ;
-err = norm (H-D, 1)
+err = norm (H-D, 1) ;
 assert (logical (err < 1e-12))
 
 d.kind = 'GrB' ;
 G = GrB.eadd ('+', A, B, d) ;
-err = norm (C-G, 1) %#ok<*NASGU>
+err = norm (C-G, 1) ;
+assert (logical (err < 1e-12)) ;
 
 H = GrB.emult ('*', A, B, d) ;
-err = norm (D-H, 1)
+err = norm (D-H, 1) ;
+assert (logical (err < 1e-12)) ;
 
 E = sparse (rand (2)) ;
 C = E + A+B ;
 G = GrB.eadd (E, '+', '+', A, B) ;
-C-G %#ok<*MNEFF>
+C_minus_G = C-G ;
+err = norm (C_minus_G, 1) ;
+assert (logical (err < 1e-12)) ;
 
 F = sparse (rand (2)) ;
 D = F + A.*B ;
 H = GrB.emult (F, '+', '*', A, B) ;
-D-H
+D_minus_H = D-H ;
+err = norm (D_minus_H, 1) ;
+assert (logical (err < 1e-12)) ;
 assert (gbtest_eq (D, H)) ;
 
-G = GrB.eadd ('+', A, B)
-C = A+B
+G = GrB.eadd ('+', A, B) ;
+C = A+B ;
 assert (gbtest_eq (C, G)) ;
 
-H = GrB.emult ('*', A, B)
-D = A.*B
+H = GrB.emult ('*', A, B) ;
+D = A.*B ;
 assert (gbtest_eq (D, H)) ;
 
 m = 10 ;

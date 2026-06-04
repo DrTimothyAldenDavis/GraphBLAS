@@ -92,16 +92,8 @@ for k = 1:8
         A2 = GrB (A) ;
         B2 = GrB (B) ;
 
-%       A
-%       B
         C1 = bitget (A, B, type) ;
-%       C1
-%       A2
-%       B2
-%       C2
         C2 = bitget (A2, B2, type) ;
-%       C1
-%       C2
         assert (isequal (C1, C2)) ;
 
         C1 = bitset (A, B, type) ;

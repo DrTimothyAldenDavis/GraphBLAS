@@ -33,7 +33,6 @@ while (e < 4.2e9)
     t = toc ;
     e = GrB.entries (C) ;
     fprintf ('mxm: %g sec, nvals: %g million\n', t, e/1e6) ;
-%   disp (C, 1) ;
     clear C
 
 end

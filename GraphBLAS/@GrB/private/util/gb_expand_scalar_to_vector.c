@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_expand_scalar_to_vector: V (1:nvals) = V (1)
+// gb_expand_scalar_to_vector: V (1:nvals) = W (1st entry)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -20,7 +20,10 @@
 
 GrB_Info gb_expand_scalar_to_vector
 (
+    // output
     GrB_Vector *V,
+    // input
+    GrB_Vector W,
     GrB_Type type,
     uint64_t nvals,
     char err [ERRLEN]
@@ -28,20 +31,19 @@ GrB_Info gb_expand_scalar_to_vector
 { 
 
     //--------------------------------------------------------------------------
-    // get the single entry from the input vector V, and then free it
+    // get the single entry from the input vector V
     //--------------------------------------------------------------------------
 
     GrB_Scalar x = NULL ;
-    OK (gb_get_first_scalar (&x, *V, type, err)) ;
-    GrB_Vector_free (V) ;
+    OK (gb_get_first_scalar (&x, W, type, err)) ;
 
     //--------------------------------------------------------------------------
-    // expand the scalar back into V, expanding V to length nvals
+    // expand the scalar into V, of length nvals
     //--------------------------------------------------------------------------
 
     OK (GrB_Vector_new (V, type, nvals)) ;
     OK (GxB_Vector_assign_Scalar_Vector (*V, NULL, NULL, x, NULL, NULL)) ;
-    GrB_Scalar_free (&x) ;
+    FREE_WORK ;
     return (GrB_SUCCESS) ;
 }
 

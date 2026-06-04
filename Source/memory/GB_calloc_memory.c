@@ -11,6 +11,9 @@
 // CUDA will rely on its own method and will not call this method.
 
 #include "GB.h"
+#ifdef GB_MEMDUMP
+#include <execinfo.h>
+#endif
 
 //------------------------------------------------------------------------------
 // GB_calloc_helper:  malloc/memset to allocate an initialized block
@@ -29,6 +32,17 @@ static inline void *GB_calloc_helper
 
     // make sure the block is at least 8 bytes in size
     (*memsize) = GB_IMAX (*memsize, 8) ;
+
+    #ifdef GB_MEMDUMP
+    // this only works for Linux
+    GBMDUMP ("\n------------- Starting calloc\n") ;
+    {
+        int nptrs ;
+        void *buffer [30] ;
+        nptrs = backtrace (buffer, 30) ;
+        backtrace_symbols_fd (buffer, nptrs, 0) ;
+    }
+    #endif
 
     p = GB_Global_malloc_function (*memsize, arena) ;
 
@@ -138,7 +152,8 @@ GB_CALLBACK_CALLOC_MEMORY_PROTO (GB_calloc_memory)
         #ifdef GB_MEMTABLE_DEBUG
         if (arena != GB_Global_memtable_arena (p))
         {
-            printf ("\narena: (%d,%d)!!\n", arena, GB_Global_memtable_arena (p)) ;
+            printf ("\narena: (%d,%d)!!\n", arena,
+                GB_Global_memtable_arena (p)) ;
         }
         #endif
         MEMTABLE_ASSERT (arena == GB_Global_memtable_arena (p)) ;

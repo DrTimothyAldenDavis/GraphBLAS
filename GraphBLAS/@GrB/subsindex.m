@@ -13,16 +13,10 @@ function I = subsindex (G_arg)
 
 % As an extension to the expression A(G), prune zeros and negative
 % values first.  The expression A(G) becomes A (G (find (G > 0))).
-G = gbselect ('>0', G_arg) ;
+G = GrB (gbselect ('>0', G_arg)) ;
 
 [m, n, type] = gbsize (G) ;
-if (isinteger (m))
-    % G is so huge that gbsize returns m and n as int64.  This means
-    % that m or n (or both) are bigger than flintmax, so G cannot be full.
-    G_is_full = false ;
-else
-    G_is_full = (m*n == gbnvals (G)) ;
-end
+G_is_full = gb_isfull (G) ;
 
 if (isequal (type, 'double') || isequal (type, 'single'))
     % double or single: convert to int64
@@ -38,6 +32,8 @@ else
     % logical or complex
     error ('GrB:error', 'array indices must be integers') ;
 end
+
+clear G
 
 % I must contain entries in range 0 to prod (size (A)) - 1,
 % so subtract the offset

@@ -43,6 +43,5 @@ for k = 1:6
     assert (isequal (L0, double (L2))) ;
 end
 
-
 fprintf ('gbtest61: all tests passed\n') ;
 

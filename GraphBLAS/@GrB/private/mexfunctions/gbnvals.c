@@ -65,6 +65,8 @@ void mexFunction
     double anvals ;
     if (nvals == INT64_MAX)
     { 
+        // A is a huge iso hypersparse matrix with too many entries to fit
+        // into a 64-bit integer
         uint64_t nrows, ncols ;
         OK (GrB_Matrix_nrows (&nrows, A)) ;
         OK (GrB_Matrix_ncols (&ncols, A)) ;

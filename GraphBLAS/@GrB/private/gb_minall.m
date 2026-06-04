@@ -6,8 +6,7 @@ function C = gb_minall (op, A)
 % SPDX-License-Identifier: Apache-2.0
 
 C = GrB (gbreduce (op, A)) ;
-[m, n] = gbsize (A) ;
-if ((m*n ~= gbnvals (A)) && gb_scalar (C) >= 0)
+if (~gb_isfull (A) && gb_scalar (C) >= 0)
     % A is not full, and the min of the entries present is >= 0,
     % so C is an empty scalar (an implicit zero)
     C = GrB (1, 1, gbtype (C)) ;

@@ -187,6 +187,7 @@ void mexFunction
     // return result
     //--------------------------------------------------------------------------
 
+    FREE_WORK ;
     (*lo_output) = (int64_t) lo ;
     (*hi_output) = (int64_t) hi ;
     gb_wrapup ( ) ;

@@ -146,11 +146,12 @@ GrB_Info gb_cell_to_list
             iend-- ;
         }
 
-        // I = [ibegin, iend, iinc]
+        // I = [ibegin, iend, iinc], to be freed by the caller
         OK (GrB_Vector_new (&I, GrB_INT64, 3)) ;
         OK (GrB_Vector_setElement_INT64 (I, ibegin, GxB_BEGIN)) ;
         OK (GrB_Vector_setElement_INT64 (I, iend  , GxB_END)) ;
         OK (GrB_Vector_setElement_INT64 (I, iinc  , GxB_INC)) ;
+        I_to_free = I ;
 
         //----------------------------------------------------------------------
         // determine the properties of ibegin:iinc:iend

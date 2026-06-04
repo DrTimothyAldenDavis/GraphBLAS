@@ -42,6 +42,9 @@
     GrB_Vector_free (&I_to_free) ;  \
     GrB_Vector_free (&J_to_free) ;  \
     GrB_Vector_free (&X_to_free) ;  \
+    GrB_Vector_free (&I2) ;         \
+    GrB_Vector_free (&J2) ;         \
+    GrB_Vector_free (&X2) ;         \
     GrB_Scalar_free (&x) ;
 
 #define FREE_ALL                    \
@@ -65,7 +68,10 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Vector I = NULL, J = NULL, X = NULL,
+    GrB_Vector
+        I  = NULL, J  = NULL, X  = NULL,    // never freed; alias of [IJX][12]
+        I1 = NULL, J1 = NULL, X1 = NULL,    // never freed
+        I2 = NULL, J2 = NULL, X2 = NULL,    // from gb_expand_scalar_to_vector
         I_to_free = NULL, J_to_free = NULL, X_to_free = NULL ;
     GrB_Matrix *C_opaque = NULL, C = NULL ;
     uint64_t nrows = 0, ncols = 0 ;
@@ -134,9 +140,14 @@ void mexFunction
     // get I, J, and X and their properties
     //--------------------------------------------------------------------------
 
-    OK (gb_matrix_to_list (&I, &I_to_free, &(Matrix [0]), base_offset, err)) ;
-    OK (gb_matrix_to_list (&J, &J_to_free, &(Matrix [1]), base_offset, err)) ;
-    OK (gb_matrix_to_list (&X, &X_to_free, &(Matrix [2]), 0, err)) ;
+    OK (gb_matrix_to_list (&I1, &I_to_free, &(Matrix [0]), base_offset, err)) ;
+    OK (gb_matrix_to_list (&J1, &J_to_free, &(Matrix [1]), base_offset, err)) ;
+    OK (gb_matrix_to_list (&X1, &X_to_free, &(Matrix [2]), 0, err)) ;
+
+    // use the input I, J, X unless they are revised, below
+    I = I1 ;
+    J = J1 ;
+    X = X1 ;
 
     uint64_t ni, nj, nx ;
     OK (GrB_Vector_nvals (&ni, I)) ;
@@ -175,8 +186,9 @@ void mexFunction
         { 
             OK (GrB_Vector_reduce_UINT64 (&Imax, NULL, max, I, NULL)) ;
         }
-        OK (gb_expand_scalar_to_vector (&I,
-            (Imax < UINT32_MAX) ? GrB_UINT32 : GrB_UINT64, nvals, err)) ;
+        GrB_Type itype = (Imax < UINT32_MAX) ? GrB_UINT32 : GrB_UINT64 ;
+        OK (gb_expand_scalar_to_vector (&I2, I, itype, nvals, err)) ;
+        I = I2 ;
     }
 
     if (nj == 1 && nj < nvals)
@@ -185,8 +197,9 @@ void mexFunction
         { 
             OK (GrB_Vector_reduce_UINT64 (&Jmax, NULL, max, J, NULL)) ;
         }
-        OK (gb_expand_scalar_to_vector (&J,
-            (Jmax < UINT32_MAX) ? GrB_UINT32 : GrB_UINT64, nvals, err)) ;
+        GrB_Type jtype = (Jmax < UINT32_MAX) ? GrB_UINT32 : GrB_UINT64 ;
+        OK (gb_expand_scalar_to_vector (&J2, J, jtype, nvals, err)) ;
+        J = J2 ;
     }
 
     //--------------------------------------------------------------------------
@@ -348,7 +361,8 @@ void mexFunction
             if (X_is_scalar)
             { 
                 // expand X from a scalar to a vector of length nvals
-                OK (gb_expand_scalar_to_vector (&X, xtype, nvals, err)) ;
+                OK (gb_expand_scalar_to_vector (&X2, X, xtype, nvals, err)) ;
+                X = X2 ;
             }
             OK1 (C, GxB_Matrix_build_Vector (C, I, J, X, dup, NULL)) ;
         }
