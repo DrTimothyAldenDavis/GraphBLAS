@@ -18,7 +18,7 @@
 // C = gbapply2 (Cin, M, op, A, B, desc)
 // C = gbapply2 (Cin, M, accum, op, A, B, desc)
 
-// FIXME: add in-place:
+// TODO: add in-place:
 // gbapply2 (C, accum, op, A, B, desc)
 // gbapply2 (C, M, op, A, B, desc)
 // gbapply2 (C, M, accum, op, A, B, desc)

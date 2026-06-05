@@ -959,6 +959,16 @@ void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
     const char *usage           // usage string to print if error
 ) ;
 
+void gbmx_ewise_mexFunction
+(
+    int nargout,                // # output arguments for mexFunction
+    mxArray *pargout [ ],       // output arguments for mexFunction
+    int nargin,                 // # input arguments for mexFunction
+    const mxArray *pargin [ ],  // input arguments for mexFunction
+    const bool do_eadd,         // true: eadd, false: emult
+    const char *usage           // usage string to print if error
+) ;
+
 //------------------------------------------------------------------------------
 // remove access to GraphBLAS polymorphic methods
 //------------------------------------------------------------------------------

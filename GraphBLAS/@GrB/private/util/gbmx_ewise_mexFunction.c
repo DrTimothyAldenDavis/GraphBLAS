@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbapply: apply a unary operator to a sparse matrix
+// gbmx_ewise_mexFunction: eWiseAdd and eWiseMult
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -7,27 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-// gbapply is an interface to GrB_Matrix_apply.
-
-// Usage:
-
-// C = gbapply (unop, A)
-// C = gbapply (unop, A, desc)
-// C = gbapply (Cin, accum, unop, A, desc)
-// C = gbapply (Cin, M, unop, A, desc)
-// C = gbapply (Cin, M, accum, unop, A, desc)
-
-// TODO: in-place handle-based usage:
-// gbapply (C, accum, unop, A, desc)
-// gbapply (C, M, unop, A, desc)
-// gbapply (C, M, accum, unop, A, desc)
-
-// If Cin is not present then it is implicitly a matrix with no entries, of the
-// right size (which depends on A, B, and the descriptor).
+// This method implements the gbeadd and gbemult mexFunctions.
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&M_to_free) ;  \
     GrB_Matrix_free (&A_to_free) ;  \
+    GrB_Matrix_free (&B_to_free) ;  \
     GrB_Descriptor_free (&desc) ;
 
 #define FREE_ALL                    \
@@ -36,14 +21,14 @@
 
 #include "gb_interface.h"
 
-#define USAGE "usage: C = GrB.apply (Cin, M, accum, op, A, desc)"
-
-void mexFunction
+void gbmx_ewise_mexFunction
 (
-    int nargout,
-    mxArray *pargout [ ],
-    int nargin,
-    const mxArray *pargin [ ]
+    int nargout,                // # output arguments for mexFunction
+    mxArray *pargout [ ],       // output arguments for mexFunction
+    int nargin,                 // # input arguments for mexFunction
+    const mxArray *pargin [ ],  // input arguments for mexFunction
+    const bool do_eadd,         // true: eadd, false: emult
+    const char *usage           // usage string to print if error
 )
 {
 
@@ -51,12 +36,12 @@ void mexFunction
     // check inputs and construct outputs
     //--------------------------------------------------------------------------
 
-    GrB_Type atype, ctype = NULL ;
-    GrB_Matrix *C_opaque = NULL, C = NULL, M = NULL, A = NULL,
-        M_to_free = NULL, A_to_free = NULL ;
+    GrB_Type atype, btype, ctype = NULL ;
+    GrB_Matrix *C_opaque = NULL, C = NULL, M = NULL, A = NULL, B = NULL,
+        M_to_free = NULL, A_to_free = NULL, B_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    GBMX_USAGE (nargin >= 2 && nargin <= 6 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 3 && nargin <= 7 && nargout <= 2, usage) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
@@ -71,11 +56,11 @@ void mexFunction
     char String [2][LEN+2] ;
     int nmatrices, nstrings, ncells ;
     struct gb_descriptor_struct gbdesc ;
-    gbmx_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String,
+    gbmx_get_mxargs (nargin, pargin, usage, Matrix, &nmatrices, String,
         &nstrings, Cell, &ncells, &gbdesc) ;
 
-    CHECK_ERROR (nmatrices < 1 || nmatrices > 3 || nstrings < 1 || ncells > 0,
-        USAGE) ;
+    CHECK_ERROR (nmatrices < 2 || nmatrices > 4 || nstrings < 1 || ncells > 0,
+        usage) ;
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -89,23 +74,27 @@ void mexFunction
     // get the matrices
     //--------------------------------------------------------------------------
 
-    if (nmatrices == 1)
+    if (nmatrices == 2)
     { 
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+        OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]), err)) ;
     }
-    else if (nmatrices == 2)
+    else if (nmatrices == 3)
     { 
         OK (gb_get_deep   (&C,             &(Matrix [0]), err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), err)) ;
+        OK (gb_get_matrix (&B, &B_to_free, &(Matrix [2]), err)) ;
     }
-    else // if (nmatrices == 3)
+    else // if (nmatrices == 4)
     { 
         OK (gb_get_deep   (&C,             &(Matrix [0]), err)) ;
         OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), err)) ;
+        OK (gb_get_matrix (&B, &B_to_free, &(Matrix [3]), err)) ;
     }
 
     OK (GxB_Matrix_type (&atype, A)) ;
+    OK (GxB_Matrix_type (&btype, B)) ;
     if (C != NULL)
     { 
         OK (GxB_Matrix_type (&ctype, C)) ;
@@ -115,19 +104,18 @@ void mexFunction
     // get the operators
     //--------------------------------------------------------------------------
 
-    GrB_BinaryOp accum = NULL ;
-    GrB_UnaryOp op = NULL ;
+    GrB_BinaryOp accum = NULL, op = NULL ;
 
     if (nstrings == 1)
     { 
-        OK (gb_string_to_unop (&op, &(String [0][0]), atype, err)) ;
+        OK (gb_string_to_binop (&op, String [0], atype, btype, err)) ;
     }
     else 
     { 
-        // if accum appears, then C must also appear as an input argument
-        CHECK_ERROR (C == NULL, USAGE) ;
-        OK (gb_string_to_binop (&accum, &(String [0][0]), ctype, ctype, err)) ;
-        OK (gb_string_to_unop (&op, &(String [1][0]), atype, err)) ;
+        // if accum appears, then Cin must also appear
+        CHECK_ERROR (C == NULL, usage) ;
+        OK (gb_string_to_binop (&accum, String [0], ctype, ctype, err)) ;
+        OK (gb_string_to_binop (&op   , String [1], atype, btype, err)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -139,9 +127,10 @@ void mexFunction
 
     if (C == NULL)
     { 
-
         // get the descriptor contents to determine if A is transposed
-        bool A_transpose = (gbdesc.in0 == GrB_TRAN) ;
+        int in0 ;
+        OK (GrB_Descriptor_get_INT32 (desc, &in0, GrB_INP0)) ;
+        bool A_transpose = (in0 == GrB_TRAN) ;
 
         // get the size of A
         uint64_t anrows, ancols ;
@@ -153,22 +142,27 @@ void mexFunction
         uint64_t cncols = (A_transpose) ? anrows : ancols ;
 
         // use the ztype of the op as the type of C
-        int code ;
-        OK (GrB_UnaryOp_get_INT32 (op, &code, GrB_OUTP_TYPE_CODE)) ;
-        ctype = gb_code_to_type (code) ;
+        OK (gb_binaryop_ztype (&ctype, op, err)) ;
 
         // create the matrix C and set its format and sparsity
-        OK (gb_get_format (cnrows, cncols, A, NULL, &(gbdesc.fmt), err)) ;
-        OK (gb_get_sparsity (A, NULL, &(gbdesc.sparsity), err)) ;
+        OK (gb_get_format (cnrows, cncols, A, B, &(gbdesc.fmt), err)) ;
+        OK (gb_get_sparsity (A, B, &(gbdesc.sparsity), err)) ;
         OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity,
             err)) ;
     }
 
     //--------------------------------------------------------------------------
-    // compute C<M> += f(A)
+    // compute C<M> += (A+B) or (A.*B)
     //--------------------------------------------------------------------------
 
-    OK1 (C, GrB_Matrix_apply (C, M, accum, op, A, desc)) ;
+    if (do_eadd)
+    { 
+        OK1 (C, GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, op, A, B, desc)) ;
+    }
+    else
+    { 
+        OK1 (C, GrB_Matrix_eWiseMult_BinaryOp (C, M, accum, op, A, B, desc)) ;
+    }
 
     //--------------------------------------------------------------------------
     // free workspace and return result
