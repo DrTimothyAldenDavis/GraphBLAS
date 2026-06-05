@@ -53,6 +53,7 @@ end
 % 'fun' is not a string, or not a built-in GraphBLAS operator
 [m, n] = gbsize (G) ;
 desc.base = 'zero-based' ;
+gbwait (G) ;
 [i, j, x] = gbextracttuples (G, desc) ; % OK: zero-based integers
 x = feval (fun, x) ;
 C = GrB.build (i, j, x, m, n, '1st', desc) ;

@@ -59,7 +59,7 @@ void gbmx_usage     // check usage and make sure GrB.init has been called
     GxB_initialized (&GrB_init_has_been_called) ;
 
     if (!GrB_init_has_been_called)
-    { 
+    {
 
         //----------------------------------------------------------------------
         // tell MATLAB to call GrB_finalize when this mexFunction is cleared
@@ -83,7 +83,7 @@ void gbmx_usage     // check usage and make sure GrB.init has been called
     //--------------------------------------------------------------------------
 
     if (!ok)
-    { 
+    {
         ERROR (usage, GrB_INVALID_VALUE) ;
     }
 

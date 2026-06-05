@@ -58,7 +58,7 @@ void mexFunction
     // useless, so this error check ensures this method is never used when not
     // needed.
     CHECK_ERROR (! (mxIsStruct (pargin [0]) || mxIsClass (pargin [0], "GrB")),
-        "internal error 707") ;
+        "internal error 0") ;
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -94,28 +94,28 @@ void mexFunction
     int fmt, bits, will_wait, iso ;
 
     CHECK_ERROR (!(sparsity_status == GxB_SPARSE
-                || sparsity_status == GxB_FULL), "internal error 722") ;
+                || sparsity_status == GxB_FULL), "internal error 1") ;
 
     OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
-    CHECK_ERROR (fmt != GxB_BY_COL, "internal error 717") ;
+    CHECK_ERROR (fmt != GxB_BY_COL, "internal error 2") ;
 
     if (sparsity_status == GxB_SPARSE)
     {
         OK (GrB_Matrix_get_INT32 (A, &bits, GxB_OFFSET_INTEGER_BITS)) ;
-        CHECK_ERROR (bits != 64, "internal error 718") ;
+        CHECK_ERROR (bits != 64, "internal error 3") ;
 
         OK (GrB_Matrix_get_INT32 (A, &bits, GxB_ROWINDEX_INTEGER_BITS)) ;
-        CHECK_ERROR (bits != 64, "internal error 719") ;
+        CHECK_ERROR (bits != 64, "internal error 4") ;
 
         CHECK_ERROR (!(Matrix.type == GrB_BOOL || Matrix.type == GrB_FP64 ||
-                    Matrix.type == GxB_FC64), "internal error 723") ;
+                    Matrix.type == GxB_FC64), "internal error 5") ;
     }
 
     OK (GrB_Matrix_get_INT32 (A, &will_wait, GxB_WILL_WAIT)) ;
-    CHECK_ERROR (will_wait, "internal error 720") ;
+    CHECK_ERROR (will_wait, "internal error 6") ;
 
     OK (GrB_Matrix_get_INT32 (A, &iso, GxB_ISO)) ;
-    CHECK_ERROR (iso, "internal error 721") ;
+    CHECK_ERROR (iso, "internal error 7") ;
 
     //--------------------------------------------------------------------------
     // construct the output MATLAB/Octave matrix

@@ -12,7 +12,6 @@ AT = A' ;
 M = sparse (rand (n)) > 0.5 ;
 Cin = sprand (n, n, 0.5) ;
 
-
 Cout = GrB.assign (Cin, A) ;
 assert (gbtest_eq (A, Cout)) ;
 
@@ -53,17 +52,34 @@ C2 (I,J) = B ;
 assert (gbtest_eq (C2, Cout)) ;
 
 A = rand (4) ;
-G = GrB (A, 'by row') 
+G = GrB (A, 'by row') ;
 M = logical (eye (4)) ;
 B = rand (4) ;
-H = GrB (B, 'by row') 
-A (M) = B (M) 
-G (M) = H (M)
+H = GrB (B, 'by row') ;
+A (M) = B (M) ;
+G (M) = H (M) ;
 assert (isequal (A, G)) ;
 
-A = sprand (4, 4, 0.5) %#ok<*NOPRT>
-C1 = pi * spones (A)
-C2 = GrB.expand (pi, A)
+G = GrB (A, 'by row') ;
+G (M) = GrB (H (M), 'bitmap') ;
+assert (isequal (A, G)) ;
+
+try
+    G (M) = rand (2) ;
+    ok = false ;
+    msg = '' ;
+catch me
+    msg = me.message ;
+    ok = true ;
+end
+msg
+assert (ok) ;
+assert (isequal (msg, ...
+    'A must be a vector of length nnz(M) for logical indexing, C(M)=A')) ;
+
+A = sprand (4, 4, 0.5) ;
+C1 = pi * spones (A) ;
+C2 = GrB.expand (pi, A) ;
 assert (isequal (C1, C2)) ;
 
 fprintf ('gbtest10: all tests passed\n') ;

@@ -18,7 +18,7 @@
 // C = gbapply2 (Cin, M, op, A, B, desc)
 // C = gbapply2 (Cin, M, accum, op, A, B, desc)
 
-// TODO
+// FIXME: add in-place:
 // gbapply2 (C, accum, op, A, B, desc)
 // gbapply2 (C, M, op, A, B, desc)
 // gbapply2 (C, M, accum, op, A, B, desc)
@@ -155,7 +155,7 @@ void mexFunction
         scalar = (GrB_Scalar) A ;   // NOTE: this is not allowed by the spec
     }
     else
-    { 
+    {
         ERROR ("either A or B must be a non-empty scalar", GrB_INVALID_VALUE) ;
     }
 

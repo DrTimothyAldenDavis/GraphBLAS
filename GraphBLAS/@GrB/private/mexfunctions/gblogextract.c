@@ -165,8 +165,8 @@ void mexFunction
     OK (GrB_Matrix_nvals (&mnz, M)) ;
     int sparsity ;
     OK (GrB_Matrix_get_INT32 (M, &sparsity, GxB_SPARSITY_STATUS)) ;
-    CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 5") ;
-    CHECK_ERROR (!M->iso, "internal error 42")  ;            	
+    CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 8") ;
+    CHECK_ERROR (!M->iso, "internal error 9")  ;            	
 
     //--------------------------------------------------------------------------
     // G<M> = A
@@ -190,7 +190,7 @@ void mexFunction
     OK1 (G, GrB_Matrix_wait (G, GrB_MATERIALIZE)) ;
     OK (GrB_Matrix_nvals (&gnvals, G)) ;
     OK (GrB_Matrix_get_INT32 (G, &sparsity, GxB_SPARSITY_STATUS)) ;
-    CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 0") ;
+    CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 10") ;
 
     // Remove G->x from G
     void *Gx = G->x ;
@@ -220,7 +220,7 @@ void mexFunction
 
     OK (GB_shallow_copy (K, GxB_BY_COL, M, NULL)) ;
     OK (GrB_Matrix_get_INT32 (K, &sparsity, GxB_SPARSITY_STATUS)) ;
-    CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 10") ;
+    CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 11") ;
 
     // Kx = uint64 (0:mnz-1)
     size_t Kx_memsize = (MAX (mnz, 1) * sizeof (uint64_t)) ;
@@ -264,7 +264,7 @@ void mexFunction
     T->x = NULL ; T->x_mem = 0 ;
 
     // gnvals and tnvals are identical, by construction
-    CHECK_ERROR (gnvals != tnvals, "internal error 1") ;
+    CHECK_ERROR (gnvals != tnvals, "internal error 12") ;
 
     //--------------------------------------------------------------------------
     // construct the result C

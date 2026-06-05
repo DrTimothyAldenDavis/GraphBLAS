@@ -21,7 +21,7 @@ mxArray *gbmx_new_matlab_matrix // return new MATLAB full matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    CHECK_ERROR (type == NULL, "internal error 11") ;
+    CHECK_ERROR (type == NULL, "internal error 18") ;
 
     //--------------------------------------------------------------------------
     // allocate a full matrix of the right type

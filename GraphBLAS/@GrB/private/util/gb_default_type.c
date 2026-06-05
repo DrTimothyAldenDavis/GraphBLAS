@@ -182,11 +182,9 @@ GrB_Type gb_default_type        // return the default type to use
 
     }
     else
-    { 
-
+    {
         // unknown type
         return (NULL) ;
-
     }
 }
 

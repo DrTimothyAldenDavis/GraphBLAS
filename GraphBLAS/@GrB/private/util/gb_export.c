@@ -7,9 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// gb_export exports C as a @GrB matrix object, but one that is ready to be
-// copied into a regular built-in MATLAB/Octave matrix.  The input GrB_Matrix C
-// may be shallow or deep.
+// gb_export exports C as a @GrB matrix object into the C.opaque struct, but
+// with 4 possible kinds:
+//
+// KIND_GRB        C will remain a @GrB matrix object
+// KIND_SPARSE     C will become a built-in MATLAB/Octave sparse matrix
+// KIND_FULL       C will become a built-in MATLAB/Octave full matrix
+// KIND_BUILTIN    C will become a built-in MATLAB/Octave sparse or full matrix
+//
+// If kind is KIND_GRB, the matrix will remain a @GrB matrix object.
+// Otherwise, it will be directly copied into a MATLAB/Octave matrix by
+// gb2builtin.
 
 // No mx* methods are called, so that any memory allocation failures can
 // be properly handled.
@@ -41,7 +49,7 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = NULL, T = NULL ;
-    CHECK_ERROR (C_handle == NULL || (*C_handle == NULL), "internal error 3") ;
+    CHECK_ERROR (C_handle == NULL || (*C_handle == NULL), "internal error 13") ;
     C = (*C_handle) ;
 
     //--------------------------------------------------------------------------
@@ -109,7 +117,7 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
 
     // C should now be deep, but double-check here
     OK (GrB_Matrix_get_INT32 (C, &readonly, GxB_IS_READONLY)) ;
-    CHECK_ERROR (readonly, "internal error 7") ;
+    CHECK_ERROR (readonly, "internal error 14") ;
 
     (*C_opaque) = C ;       // copy the GraphBLAS C header into C_opaque
     (*C_handle) = NULL ;    // flag C as no longer available to the caller

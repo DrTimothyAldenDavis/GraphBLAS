@@ -11,7 +11,6 @@
 #include "gb_interface.h"
 
 // A is dense if it is in the full format, or if all entries are present.
-// If A is NULL, it is not dense; this is not an error condition.
 
 GrB_Info gb_is_dense            // determine if A is dense
 (
@@ -22,12 +21,6 @@ GrB_Info gb_is_dense            // determine if A is dense
     char err [ERRLEN]
 )
 { 
-
-    if (A == NULL)
-    { 
-        (*is_dense) = false ;
-        return (GrB_SUCCESS) ;
-    }
 
     int sparsity ;
     OK (GrB_Matrix_get_INT32 (A, &sparsity, GxB_SPARSITY_STATUS)) ;

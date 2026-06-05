@@ -3,7 +3,7 @@ function gbcovmake
 %
 % See also: gbcover, gbcov_edit
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 fprintf ('Compiling @GrB interface for mexFunction statement coverage...\n') ;
@@ -47,7 +47,7 @@ fclose (f) ;
 % compile the modified interface
 
 % use -R2018a for the new interleaved complex API
-flags = '-g -R2018a -DGBCOV' ;
+flags = '-g -R2018a -DGBCOV -DMALLOC_TRACKING' ;
 
 if ispc
     library_path = sprintf ('%s/../../build/Release', pwd) ;

@@ -50,6 +50,8 @@ void gbmx_get_matrix
         // X is a @GrB object
         //----------------------------------------------------------------------
 
+        // matrix->nvals is only accurate if X has no pending work.
+
         matrix->G = gbmx_get_grb_matrix (X) ;
         CHECK_ERROR (matrix->G == NULL, "invalid @GrB matrix") ;
         matrix->will_wait = GB_will_wait (matrix->G) ;

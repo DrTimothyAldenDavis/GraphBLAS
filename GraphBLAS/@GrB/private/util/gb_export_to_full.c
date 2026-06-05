@@ -31,14 +31,14 @@ GrB_Info gb_export_to_full
     GrB_Matrix *C_handle,   // GraphBLAS matrix to modify for export to MATLAB
     char err [ERRLEN]
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = NULL, T = NULL ;
-    CHECK_ERROR (C_handle == NULL || (*C_handle == NULL), "internal error 3") ;
+    CHECK_ERROR (C_handle == NULL || (*C_handle == NULL), "internal error 15") ;
     C = (*C_handle) ;
 
     //--------------------------------------------------------------------------

@@ -76,6 +76,7 @@ switch (type)
 
         % The graph(...) function can accept x as single, but not from a
         % built-in sparse matrix.  So extract the tuples of G first.
+        gbwait (G) ;
         [i, j, x] = gbextracttuples (G) ;
         Graph = graph (i, j, x, n) ;
 

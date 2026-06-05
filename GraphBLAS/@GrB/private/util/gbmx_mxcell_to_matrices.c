@@ -23,7 +23,7 @@ void gbmx_mxcell_to_matrices
     // check inputs
     //--------------------------------------------------------------------------
 
-    CHECK_ERROR (Cell == NULL || !mxIsCell (Cell), "internal error 6") ;
+    CHECK_ERROR (Cell == NULL || !mxIsCell (Cell), "internal error 17") ;
     (*len) = mxGetNumberOfElements (Cell) ;
     CHECK_ERROR ((*len) > 3, "index must be a cell array of length 0 to 3") ;
 

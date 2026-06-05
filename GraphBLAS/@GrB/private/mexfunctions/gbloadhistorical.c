@@ -355,7 +355,7 @@ void mexFunction
     OK (GxB_Container_new (&Container)) ;
 
     if (Yp != NULL)
-    { 
+    {
         // import the Y matrix using the Container
         OK (GrB_Matrix_new (&Y, GrB_UINT64, 0, 0)) ;
         Container->nrows = vdim ;

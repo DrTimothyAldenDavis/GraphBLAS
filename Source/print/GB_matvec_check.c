@@ -10,9 +10,9 @@
 // in production: turn off developer flag
 #define GB_DEVELOPER 0
 
-// For development only: FIXME
-#undef  GB_DEVELOPER
-#define GB_DEVELOPER 1
+// For development only:
+// #undef  GB_DEVELOPER
+// #define GB_DEVELOPER 1
 
 #include "GB.h"
 #include "pending/GB_Pending.h"
@@ -593,21 +593,18 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     char *given_name = A->user_name ;
     if (GB_memsize (A->user_name_mem) > 0 && given_name != NULL)
     { 
-        GBPR0 ("    %s given name: [%s]\n", kind, given_name) ;
+        GBPR0 ("  %s given name: [%s]\n", kind, given_name) ;
     }
 
     //--------------------------------------------------------------------------
-    // report the number of pending tuples and zombies
+    // report the number of zombies
     //--------------------------------------------------------------------------
 
     GB_Pending Pending = A->Pending ;
 
-    if (Pending != NULL || A->nzombies != 0)
-    { 
-        GBPR0 ("  pending tuples: " GBd " max pending: " GBd 
-            " zombies: " GBd "\n", GB_Pending_n (A),
-            (Pending == NULL) ? 0 : (Pending->nmax),
-            A->nzombies) ;
+    if (A->nzombies != 0)
+    {
+        GBPR0 ("  zombies: " GBd "\n", A->nzombies) ;
     }
 
     if (is_full || is_bitmap)
@@ -620,14 +617,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             GB_FREE_MEMORY (&string, string_mem) ;
             return (GrB_INVALID_OBJECT) ;
         }
-        if (Pending != NULL)
-        { 
-            // full/bitmap cannot have pending tuples
-            GBPR0 ("  %s %s cannot have pending tuples\n",
-                is_full ? "full" : "bitmap", kind) ;
-            GB_FREE_MEMORY (&string, string_mem) ;
-            return (GrB_INVALID_OBJECT) ;
-        }
+
         if (A->jumbled)
         { 
             // full/bitmap jumbled
@@ -852,6 +842,17 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         // A has pending tuples
         //---------------------------------------------------------------------
 
+        GBPR0 ("  pending tuples: " GBd "\n", Pending->n) ;
+
+        if (is_full || is_bitmap)
+        { 
+            // full/bitmap cannot have pending tuples
+            GBPR0 ("  %s %s cannot have pending tuples\n",
+                is_full ? "full" : "bitmap", kind) ;
+            GB_FREE_MEMORY (&string, string_mem) ;
+            return (GrB_INVALID_OBJECT) ;
+        }
+
         GB_MDECL (Pending_i, , u) ; GB_GET_PENDINGi_PTR (Pending_i, A) ;
         GB_MDECL (Pending_j, , u) ; GB_GET_PENDINGj_PTR (Pending_j, A) ;
         GB_void *Pending_x = Pending->x ;
@@ -862,6 +863,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             GBPR ("  Pending_i %p\n", Pending_i) ;
             GBPR ("  Pending_j %p\n", Pending_j) ;
             GBPR ("  Pending_x %p\n", Pending_x) ;
+            GBPR ("  max pending: " GBd "\n", Pending->nmax) ;
         }
         #endif
 
@@ -883,8 +885,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             GB_FREE_MEMORY (&string, string_mem) ;
             return (GrB_INVALID_OBJECT) ;
         }
-
-        GBPR0 ("  pending tuples:\n") ;
 
         info = GB_Type_check (Pending->type, "", pr, f) ;
         if (info != GrB_SUCCESS || (Pending->type->size != Pending->size))

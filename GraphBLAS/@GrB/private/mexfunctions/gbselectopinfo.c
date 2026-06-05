@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbidxunopinfo : print a GraphBLAS GrB_IndexUnaryOp (for illustration only)
+// gbselectopinfo : print a GraphBLAS GrB_IndexUnaryOp (for illustration only)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -9,9 +9,9 @@
 
 // Usage:
 
-// gbidxunopinfo (idxunop)
-// gbidxunopinfo (idxunop, type)
-// ok = gbidxunopinfo (idxunop)
+// gbselectopinfo (idxunop)
+// gbselectopinfo (idxunop, type)
+// ok = gbselectopinfo (idxunop)
 
 #include "gb_interface.h"
 
@@ -31,7 +31,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_IndexUnaryOp idxunop = NULL ;
-    GrB_Type type = GrB_FP64 ;
+    GrB_Type type = NULL ;
 
     GBMX_USAGE (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
 
@@ -61,7 +61,6 @@ void mexFunction
     if (nargin > 1)
     { 
         type = gb_string_to_type (type_string) ;
-        CHECK_ERROR (type == NULL, "unknown type") ;
     }
 
     bool ignore1, ignore2 ;

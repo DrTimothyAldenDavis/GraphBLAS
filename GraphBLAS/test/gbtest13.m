@@ -116,5 +116,17 @@ assert (isequal (x1, x2)) ;
 assert (isequal (i1, i2)) ;
 assert (isequal (j1, j2)) ;
 
+n = 2^60 ;
+H = GrB (n,n) ;
+H (1:5, 1:5) = magic (5) ;
+% H has pending tuples:
+H
+desc2.base = 'double' ;
+[i,j,x] = GrB.extracttuples (H, desc2) ;
+assert (isequal (class (i), 'int64')) ;
+assert (min (i) == 1) ;
+% H no longer has pending tuples:
+H
+
 fprintf ('\ngbtest13: all tests passed\n') ;
 

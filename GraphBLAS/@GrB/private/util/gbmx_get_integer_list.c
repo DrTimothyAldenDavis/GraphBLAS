@@ -8,9 +8,9 @@
 
 //------------------------------------------------------------------------------
 
-// uint64_t *List = gbmx_get_integer_list (mxList, &len) returns an
-// mxMalloc-allocated array, List, of size len, containing a list of integers
-// contained in the mxArray mxList.
+// uint64_t *List = gbmx_get_integer_list (mxList, &len) returns an mxMalloc
+// allocated array, List, of size len, containing a list of integers contained
+// in the mxArray mxList.
 
 #include "gb_interface.h"
 
@@ -24,7 +24,6 @@ uint64_t *gbmx_get_integer_list
     (*len) = (uint64_t) n ;
     mxClassID class = mxGetClassID (mxList) ;
     uint64_t *List = mxMalloc (n * sizeof (uint64_t)) ;
-    // use mxGetData (best for Octave, fine for MATLAB)
     if (class == mxINT64_CLASS)
     { 
         int64_t *p = (int64_t *) mxGetData (mxList) ;
@@ -46,7 +45,7 @@ uint64_t *gbmx_get_integer_list
         }
     }
     else
-    {
+    { 
         ERROR ("unsupported type", GrB_DOMAIN_MISMATCH) ;
     }
     return (List) ;

@@ -11,6 +11,17 @@ s1 = norm (x, 2) ;
 s2 = norm (double (x), 2) ;
 assert (abs (s1-s2) < 1e-12) ;
 
+y = GrB.random (10, 1, inf, 'range', double ([0 1])) ;
+x = x + y*1i ;
+s1 = norm (x, 2) ;
+s2 = norm (double (x), 2) ;
+assert (abs (s1-s2) < 1e-12) ;
+
+x = GrB (x, 'single complex') ;
+s1 = norm (x, 2) ;
+s2 = norm (single (x), 2) ;
+assert (abs (s1-s2) < 1e-6) ;
+
 x = GrB.random (10, 1, inf, 'range', int16 ([1 16])) ;
 s1 = norm (x, 2) ;
 s2 = norm (double (x), 2) ;

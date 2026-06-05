@@ -1,4 +1,4 @@
-function gbdisp (C, cnz, level)     %#ok
+function gbdisp (C, level)     %#ok
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

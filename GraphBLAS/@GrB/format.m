@@ -71,7 +71,7 @@ function [f,s,iso] = format (arg)
 % Use G = GrB (G, 'by row') or G = GrB (G, 'by col') to change the format
 % of G after it is constructed.
 %
-% Individual matrices are held in one of four data structurs, each of
+% Individual matrices are held in one of four data structures, each of
 % which can be held 'by row' and 'by col'.  By default, GraphBLAS selects
 % automatically between the following four formats.  Let A by m-by-n with
 % e entries:

@@ -21,7 +21,7 @@ int64_t gbmx_get_int64_scalar   // return int64 value of a MATLAB scalar
     //--------------------------------------------------------------------------
 
     if (!gbmx_mxarray_is_scalar (mxscalar))
-    { 
+    {
         ERROR2 ("%s must be a scalar", name, GrB_INVALID_VALUE) ;
     }
 

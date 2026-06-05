@@ -17,7 +17,7 @@
 // C = gbapply (Cin, M, unop, A, desc)
 // C = gbapply (Cin, M, accum, unop, A, desc)
 
-// TODO: in-place handle-based usage:
+// FIXME: in-place handle-based usage:
 // gbapply (C, accum, unop, A, desc)
 // gbapply (C, M, unop, A, desc)
 // gbapply (C, M, accum, unop, A, desc)

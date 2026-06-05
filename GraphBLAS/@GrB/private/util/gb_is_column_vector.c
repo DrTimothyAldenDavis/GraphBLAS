@@ -20,12 +20,6 @@ GrB_Info gb_is_column_vector    // determine if A is a column vector
 )
 { 
 
-    if (A == NULL)
-    { 
-        (*is_column_vector) = false ;
-        return (GrB_SUCCESS) ;
-    }
-
     uint64_t ncols ;
     int sparsity, orientation ;
 

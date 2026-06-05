@@ -45,6 +45,15 @@ for trial = 1:40
     C1 = GrB.apply (Cin, M, '', '-', A) ;
     assert (isequal (C0, C1)) ;
 
+    N = logical (sprand (4, 4, 0.5)) ;
+    C0 = M & N ;
+    C1 = GrB.emult ('&', M, N) ;
+    d.kind = 'builtin' ;
+    d.format = 'by row' ;
+    C2 = GrB.emult ('&', GrB (M, 'by row'), GrB (N, 'by row'), d) ;
+    assert (isequal (C0, C1)) ;
+    assert (isequal (C0, C2)) ;
+
 end
 
 fprintf ('gbtest48: all tests passed\n') ;

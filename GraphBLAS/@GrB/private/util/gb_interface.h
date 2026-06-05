@@ -173,6 +173,11 @@
     }                                                               \
 }
 
+// for test coverage only:
+#define GOTCHA                                                      \
+    mexErrMsgIdAndTxt ("GraphBLAS:gotcha", "gotcha! %s line %d",    \
+        __FILE__, __LINE__) ;
+
 //------------------------------------------------------------------------------
 // basic macros
 //------------------------------------------------------------------------------
@@ -927,8 +932,6 @@ int64_t gbmx_norm_kind      // determine the kind of norm to compute
 (   
     const mxArray *arg
 ) ;
-
-void gbmx_set_double_scalar (mxArray *scalar, double value) ;
 
 mxArray * gbmx_type_to_mxstring // return the built-in string from a GrB_Type
 (

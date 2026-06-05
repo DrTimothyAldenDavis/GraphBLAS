@@ -2666,7 +2666,7 @@ void mexFunction
 
     }
     else if (A_type == GrB_INT8)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // int8
@@ -2741,7 +2741,7 @@ void mexFunction
 
     }
     else if (A_type == GrB_INT16)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // int16
@@ -2817,7 +2817,7 @@ void mexFunction
 
     }
     else if (A_type == GrB_INT32)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // int32
@@ -2893,7 +2893,7 @@ void mexFunction
 
     }
     else if (A_type == GrB_INT64)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // int64
@@ -2969,7 +2969,7 @@ void mexFunction
 
     }
     else if (A_type == GrB_UINT8)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // uint8
@@ -2979,7 +2979,8 @@ void mexFunction
             "gb_tuple_uint8", UINT8_K)) ;
         OK (GxB_IndexBinaryOp_new (&Iop,
             (GxB_index_binary_function) gb_make_uint8,
-            Tuple, GrB_UINT8, GrB_BOOL, GrB_BOOL, "gb_make_uint8", MAKE_UINT8)) ;
+            Tuple, GrB_UINT8, GrB_BOOL, GrB_BOOL, "gb_make_uint8",
+            MAKE_UINT8)) ;
         OK (GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
         gb_tuple_uint8 id ;
         memset (&id, 0, sizeof (gb_tuple_uint8)) ;
@@ -3044,7 +3045,7 @@ void mexFunction
 
     }
     else if (A_type == GrB_UINT16)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // uint16
@@ -3122,7 +3123,7 @@ void mexFunction
 
     }
     else if (A_type == GrB_UINT32)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // uint32
@@ -3200,7 +3201,7 @@ void mexFunction
 
     }
     else if (A_type == GrB_UINT64)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // uint64
@@ -3278,7 +3279,7 @@ void mexFunction
 
     }
     else if (A_type == GrB_FP32)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // fp32

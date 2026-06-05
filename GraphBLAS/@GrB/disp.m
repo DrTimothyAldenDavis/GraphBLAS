@@ -40,7 +40,7 @@ if (level > 0)
     end
 end
 
-gbdisp (A, gb_nnz (A), level) ;
+gbdisp (A, level) ;
 
 if (level > 0)
     fprintf ('\n') ;

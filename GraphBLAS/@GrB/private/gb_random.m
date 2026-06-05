@@ -62,6 +62,7 @@ if (firstchar == 2)
     if ((symmetric || hermitian) && (m ~= n))
         error ('GrB:error', 'input matrix must be square') ;
     end
+    gbwait (A) ;
     [I, J] = gbextracttuples (A, desc) ;
     e = length (I) ;
 

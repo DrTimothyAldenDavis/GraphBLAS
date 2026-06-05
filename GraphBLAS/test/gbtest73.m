@@ -12,5 +12,15 @@ e1 = GrB.normdiff (x, y) ;
 e2 = norm (x-y) ;
 assert (abs (e1 - e2) < 1e-12) ;
 
+try
+    y = rand (2, 4) ;
+    e1 = GrB.normdiff (x, y) ;
+    ok = false ;
+catch expected_error
+    expected_error
+    ok = true ;
+end
+assert (ok) ;
+
 fprintf ('gbtest73: all tests passed\n') ;
 

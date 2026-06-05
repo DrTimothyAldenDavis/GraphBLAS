@@ -115,12 +115,12 @@ GrB_Info gb_norm            // compute norm (A,kind)
                     OK1 (X, GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;
                     // X = X.^2
                     if (atype == GxB_FC32)
-                    {
+                    { 
                         OK1 (X, GrB_Matrix_apply_BinaryOp2nd_FP32 (X, NULL,
                             NULL, GxB_POW_FP32, X, (float) 2.0, NULL)) ;
                     }
                     else
-                    {
+                    { 
                         OK1 (X, GrB_Matrix_apply_BinaryOp2nd_FP64 (X, NULL,
                             NULL, GxB_POW_FP64, X, (double) 2.0, NULL)) ;
                     }

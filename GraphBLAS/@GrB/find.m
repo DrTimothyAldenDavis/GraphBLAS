@@ -31,6 +31,7 @@ function [I, J, X] = find (G_arg, k, search)
 % SPDX-License-Identifier: Apache-2.0
 
 % prune explicit zeros
+gbwait (G_arg) ;
 G = GrB (gbselect (G_arg, 'nonzero')) ;
 
 if (nargin > 1)
@@ -46,6 +47,7 @@ if (nargin > 1)
 end
 
 [m, n] = gbsize (G) ;
+gbwait (G) ;
 
 if (nargout == 3)
     [I, J, X] = gbextracttuples (G) ;

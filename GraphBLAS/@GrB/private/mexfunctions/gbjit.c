@@ -104,7 +104,7 @@ void mexFunction
     if (nargin > 1)
     { 
         if (!mxIsChar (pargin[1]))
-        {
+        { 
             ERROR ("path must be a string", GrB_INVALID_VALUE) ;
         }
         size_t pathlen = mxGetNumberOfElements (pargin [1]) + 2 ;

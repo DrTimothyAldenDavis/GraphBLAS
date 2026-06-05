@@ -482,8 +482,6 @@ classdef GrB < handle
 %   The @GrB matrix is a handle object, so C can also be modified in place.
 %   Using this in-place syntax:
 %
-% FIXME: test for memory leaks
-% FIXME: do test coverage for gbtest
 % FIXME: modify C in place for these 12
 %
 %       GrB.apply     (C, M, accum, op, A,          desc)
@@ -1083,6 +1081,7 @@ methods (Static)
     monoidinfo (monoid, type) ;
     list = monoids ;
     C = mxm (Cin, M, accum, semiring, A, B, desc) ;
+    n = nmalloc ;  % for testing/development only
     result = nonz (A, varargin) ;
     e = nvals (A) ;
     s = normdiff (A, B, kind) ;
@@ -1112,8 +1111,8 @@ methods (Static)
     v = version ;
     v = ver ;
     C = vreduce (Cin, M, accum, monoid, A, desc) ;
+    wait (C) ;
     C = zeros (varargin) ;
-    n = nmalloc ;  % for testing/development only
 
 end
 end

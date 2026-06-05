@@ -36,7 +36,8 @@ function C = diag (A, k)
 
 if (nargin < 2)
     k = 0 ;
-else
+end
+if (isobject (k))
     k = gb_get_scalar (k) ;
 end
 

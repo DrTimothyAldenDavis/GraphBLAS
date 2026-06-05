@@ -39,6 +39,9 @@ if (nargin < 2)
     desc.base = 'default' ;
 end
 
+% gbextracttuples requires A to have no pending work
+gbwait (A) ;
+
 switch (nargout)
     case 1
         I = gbextracttuples (A, desc) ;

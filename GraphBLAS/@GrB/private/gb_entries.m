@@ -30,6 +30,7 @@ if (isequal (dim, 'all'))
         case 'list'
             % list of values of unique entries
             % X = GrB.entries (A, 'list')
+            gbwait (A) ;
             result = unique (gbextractvalues (A)) ;
         otherwise
             error ('GrB:error', '''all'' and ''degree'' cannot be combined') ;
@@ -51,7 +52,9 @@ else
             % I = GrB.entries (A, 'row', 'list')
             % J = GrB.entries (A, 'col', 'list')
             desc.base = 'one-based int' ;
-            result = gbextracttuples (GrB (gbselect (result, 'nonzero')), desc);
+            S = GrB (gbselect (result, 'nonzero')) ;
+            gbwait (S) ;
+            result = gbextracttuples (S, desc);
         % case 'degree'
             % degree of all rows/cols
             % d = GrB.entries (A, 'row', 'degree')

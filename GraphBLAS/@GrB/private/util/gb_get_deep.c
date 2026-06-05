@@ -44,7 +44,6 @@ GrB_Info gb_get_deep        // get a deep GrB_Matrix copy of a matrix
     char err [ERRLEN]
 )
 { 
-    // printf ("start gb_get_deep\n") ;
 
     //--------------------------------------------------------------------------
     // get the GrB_Matrix Cin and optional C_to_free of a MATLAB matrix
@@ -57,8 +56,7 @@ GrB_Info gb_get_deep        // get a deep GrB_Matrix copy of a matrix
     // ensure Cin has no pending work
     //--------------------------------------------------------------------------
 
-    // a MATLAB matrix has no pending work; only check if X is a @GrB object
-    if (X->G != NULL)
+    if (X->will_wait)
     { 
         OK (GrB_Matrix_wait (Cin, GrB_MATERIALIZE)) ;
     }
@@ -77,7 +75,6 @@ GrB_Info gb_get_deep        // get a deep GrB_Matrix copy of a matrix
 
     FREE_WORK ;
     (*C_handle) = C ;
-    // printf ("end gb_get_deep, C is %p\n", C) ;
     return (GrB_SUCCESS) ;
 }
 

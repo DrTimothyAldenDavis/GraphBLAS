@@ -24,7 +24,7 @@
 #include "gb_interface.h"
 
 int gbmx_flush ( void )       // flush mexPrintf output to Command Window
-{ 
+{
     return (mexEvalString ("pause (1e-8) ;")) ;
 }
 

@@ -209,7 +209,7 @@ void mexFunction
         }
     }
     else
-    { 
+    {
         ERROR (ERR, GrB_DIMENSION_MISMATCH) ;
     }
 

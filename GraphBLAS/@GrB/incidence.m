@@ -86,6 +86,7 @@ end
 
 % build the incidence matrix
 desc.base = 'zero-based' ;
+gbwait (A) ;
 [I, J] = gbextracttuples (A, desc) ;
 e = length (I) ;
 I = [I ; J] ;

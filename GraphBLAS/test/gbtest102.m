@@ -64,6 +64,33 @@ for n = 100:100:1000
         S1 = mat2cell (C1, [n n], [n n]) ;
         S2 = mat2cell (C2, [n n], [n n]) ;
         assert (isequal (S1, S2)) ;
+        S1 = mat2cell (C1, int64 ([n n]), [n n]) ;
+        assert (isequal (S1, S2)) ;
+        S1 = mat2cell (C1, uint64 ([n n]), [n n]) ;
+        assert (isequal (S1, S2)) ;
+
+        try
+            S1 = mat2cell (C1, single ([n n]), [n n]) ;
+            msg = [ ] ;
+            ok = false ;
+        catch me
+            msg = me.message ;
+            ok = true ;
+        end
+        assert (ok) ;
+        assert (isequal (msg, 'unsupported type')) ;
+
+        try
+            % 2nd and 3rd arguments must be built-in integer arrays
+            S1 = mat2cell (C1, GrB ([n n]), [n n]) ;
+            msg = [ ] ;
+            ok = false ;
+        catch me
+            msg = me.message ;
+            ok = true ;
+        end
+        assert (ok) ;
+        assert (isequal (msg, 'unsupported type')) ;
 
         % test GrB.cell2mat
         S1 = cell (2,2) ;

@@ -14,7 +14,7 @@ function C = single (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-desc.kind = 'full' ;
+desc.kind = 'builtin' ;
 if (gb_contains (gbtype (G), 'complex'))
     z = complex (single (0)) ;
     ctype = 'single complex' ;

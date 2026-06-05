@@ -11,8 +11,8 @@ function C = apply2 (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % inputs being the matrix and the other input is bound to a scalar.  See
 % 'help GrB.binopinfo'.
 %
-% The op, A, and B arguments are required.  One of A or B must be a scalar.
-% If a scalar is sparse with no entries, it is treated as the value zero.
+% The op, A, and B arguments are required.  One of A or B must be a scalar
+% with a single entry.
 %
 % accum: a binary operator to accumulate the results.
 %

@@ -31,7 +31,7 @@ void mexFunction
     int nargin,
     const mxArray *pargin [ ]
 )
-{ 
+{
     gbmx_assign_mexFunction (nargout, pargout, nargin, pargin, true, USAGE) ;
 }
 

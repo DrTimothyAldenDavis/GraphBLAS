@@ -52,7 +52,7 @@ make_all = (isequal (what, 'all')) ;
 
 % use -R2018a for the interleaved complex API
 % flags = '-O -R2018a -DGBNCPUFEAT' ;   % FIXME
-  flags = '-g -R2018a -DGBNCPUFEAT' ;   % debug build
+  flags = '-g -R2018a -DGBNCPUFEAT -DMALLOC_TRACKING' ;   % debug build
 
 if ispc
     % First do the following in GraphBLAS/build, in the Windows console:

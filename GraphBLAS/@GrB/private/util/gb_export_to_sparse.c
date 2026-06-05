@@ -10,11 +10,11 @@
 // The input GrB_Matrix C is being exported to a G.opaque handle, to become a
 // @GrB object.  This method modifies its format and integer sizes to be
 // directly compatible with a MATLAB sparse matrix.  After the caller
-// mexFunction finishes, another mexFunction will copy G into a proper MATLAB
-// sparse matrix.
+// mexFunction finishes, another mexFunction (gb2builtin) will copy G into a
+// proper MATLAB sparse matrix.
 
-// No mx* methods are called, so that any memory allocation failures can
-// be properly handled.
+// No mx* methods are called, so that any memory allocation failures can be
+// properly handled.
 
 #define GB_UTIL
 
@@ -42,7 +42,7 @@ GrB_Info gb_export_to_sparse
 
     GrB_Matrix C = NULL, T = NULL ;
     GrB_Scalar zero = NULL ;
-    CHECK_ERROR (C_handle == NULL || (*C_handle) == NULL, "internal error 2") ;
+    CHECK_ERROR (C_handle == NULL || (*C_handle) == NULL, "internal error 16") ;
 
     //--------------------------------------------------------------------------
     // typecast to a native MATLAB sparse type
@@ -67,6 +67,10 @@ GrB_Info gb_export_to_sparse
         // GxB_FC64, respectively.  C is typecasted to logical, double or
         // double complex, and converted to CSC format if not already in that
         // format.
+
+        // FUTURE: recent versions of MATLAB (R2025a and later) support
+        // GrB_FP32 and GxB_FC32 sparse matrices.  Check for the version of
+        // MATLAB and exploit those data types.
 
         if (type == GxB_FC32 || type == GxB_FC64)
         { 

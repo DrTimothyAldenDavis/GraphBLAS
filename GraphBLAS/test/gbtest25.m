@@ -56,5 +56,35 @@ for trials = 1:10
     end
 end
 
+n = uint64 (2^60) ;
+A = magic (5) ;
+I = [1 2 3 4 5] ;
+H = GrB (n,n) ;
+H (I,I) = A ;
+d = diag (H) ;
+[~,~,x] = find (d) ;
+e = diag (A) ;
+assert (isequal (e, x))
+
+for k = 1:length(I)
+    i = I (k) - 1 ;
+    d = diag (H, i) ;
+    [~,~,x] = find (d) ;
+    e = diag (A, k-1) ;
+    assert (isequal (e, x)) ;
+    d = diag (H, -i) ;
+    [~,~,x] = find (d) ;
+    e = diag (A, -(k-1)) ;
+    assert (isequal (e, x)) ;
+end
+
+I = [1 2 3 n-1 n] ;
+H = GrB (n,n) ;
+H (I,I) = A ;
+d = diag (H, n-2) ;
+[~,~,x] = find (d) ;
+e = diag (A, 3) ;
+assert (isequal (e, x)) ;
+
 fprintf ('\ngbtest25: all tests passed\n') ;
 

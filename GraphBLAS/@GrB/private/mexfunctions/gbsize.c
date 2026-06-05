@@ -112,4 +112,5 @@ void mexFunction
         pargout [0] = mxCreateDoubleScalar ((double) nrows) ;
         pargout [1] = mxCreateDoubleScalar ((double) ncols) ;
     }
+    gb_wrapup ( ) ;
 }

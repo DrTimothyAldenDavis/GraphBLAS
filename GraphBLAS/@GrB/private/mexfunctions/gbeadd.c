@@ -18,7 +18,7 @@
 // C = gbeadd (Cin, M, binop, A, B, desc)
 // C = gbeadd (Cin, M, accum, binop, A, B, desc)
 
-// TODO:
+// FIXME: add in-place syntax
 // gbeadd (C, accum, binop, A, B, desc)
 // gbeadd (C, M, binop, A, B, desc)
 // gbeadd (C, M, accum, binop, A, B, desc)
@@ -33,7 +33,7 @@
     GrB_Descriptor_free (&desc) ;
 
 #define FREE_ALL                    \
-    FREE_WORK                       \
+    FREE_WORK ;                     \
     GrB_Matrix_free (&C) ;
 
 #include "gb_interface.h"

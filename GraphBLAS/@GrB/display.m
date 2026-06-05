@@ -14,6 +14,5 @@ if (~isempty (name))
     fprintf ('\n%s =\n', name) ;
 end
 
-nz = gb_nnz (G) ;
-gbdisp (G, nz, 2) ;
+gbdisp (G, 2) ;
 

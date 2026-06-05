@@ -71,6 +71,8 @@ void mexFunction
     GrB_Type type = gb_string_to_type (type_string) ;
     OK (gb_typecast (&C, X, type, GxB_BY_COL, GxB_SPARSE + GxB_FULL, err)) ;
 
+    // GrB_Matrix_wait is not yet called; this is done by gb_export below.
+
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------

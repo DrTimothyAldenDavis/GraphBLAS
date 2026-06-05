@@ -1,5 +1,5 @@
 function gbtest101
-%GBTEST101 test loading of v3 GraphBLAS objects
+%GBTEST101 test loading of v3 and v10.3.1 GraphBLAS objects
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -47,8 +47,6 @@ assert (isequal (f1, f2)) ;
 
 t1 = GrB.type (H2) ;
 t2 = GrB.type (H) ;
-t1
-t2
 assert (isequal (t1, t2)) ;
 
 R2 = GrB (R) ;
@@ -73,4 +71,37 @@ catch expected_error
 end
 assert (ok) ;
 
+% H was constructed in GraphBLAS v10.3.1 as:
+% n = 2^60 ; H = GrB (n,n) ;
+% load west0479_correct ;
+% H (1:479,1:479) = GrB (Problem.A) ;
+% k = 2000 ; H (1:k,1:k) = speye (k)
+clear H H2 H3
+load gbtestv10_3_1 %#ok<LOAD>
+
+% Now construct H again
+load west0479_correct ;
+A = GrB (Problem.A) ;
+n = 2^60 ;
+H2 = GrB (n,n) ;
+H2 (1:479, 1:479) = A ;
+k = 2000 ;
+H2 (1:k, 1:k) = speye (k) ;
+assert (isequal (H, H2)) ;
+[f,s] = GrB.format (H) ;
+assert (isequal (s, 'hypersparse')) ;
+
+% G was constructed in GraphBLAS v10.3.1 as:
+% load west0479_correct ;
+% G = GrB (Problem.A, 'bitmap') ;
+clear G G2
+load gbtestv10_3_1b %#ok<LOAD>
+
+% Now construct G again
+G2 = GrB (A, 'bitmap') ;
+assert (isequal (G, G2)) ;
+[f,s] = GrB.format (G) ;
+assert (isequal (s, 'bitmap')) ;
+
 fprintf ('gbtest101: all tests passed\n') ;
+
