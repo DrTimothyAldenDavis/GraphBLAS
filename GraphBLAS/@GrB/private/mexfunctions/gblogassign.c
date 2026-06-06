@@ -124,7 +124,7 @@ void mexFunction
     // get a deep copy of C, of any sparsity structure
     //--------------------------------------------------------------------------
 
-    OK (gb_get_deep (&C, &(Matrix [0]), err)) ;
+    OK (gb_get_deep (&C, false, &(Matrix [0]), err)) ;
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, C)) ;
     OK (GrB_Matrix_ncols (&ncols, C)) ;

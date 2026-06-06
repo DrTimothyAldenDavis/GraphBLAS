@@ -454,9 +454,9 @@ classdef GrB < handle
 %
 %   accum is optional; if not is not present, then the operation becomes
 %   C<...> = operation(A,B).  Otherwise, C = C + operation(A,B) is computed
-%   where '+' is the accum operator.  It acts like a sparse matrix addition
-%   (see GrB.eadd), in terms of the structure of the result C, but any
-%   binary operator can be used.
+%   where '+' is the accum operator.  The accum acts like a sparse matrix
+%   addition (see GrB.eadd), in terms of the structure of the result C, but
+%   any binary operator can be used.
 %
 %   The mask M acts like MATLAB logical indexing.  If M(i,j)=1 then C(i,j)
 %   can be modified; if zero, it cannot be modified by the operation.

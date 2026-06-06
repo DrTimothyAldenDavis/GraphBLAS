@@ -17,12 +17,13 @@
 // need Cin, just its deep copy C, which the caller will then modify and
 // return as pargout [0].  Thus Cin is not returned to the caller.
 
-// This method is not used for the in-place syntax:
+// This method is also used for the in-place syntax:
 //
 //      GrB.apply (C, ... )
 //
 // with nargout = 0, since in this case, C is modified in place (and it must
-// also be a @GrB object, not a MATLAB matrix).
+// also be a @GrB object, not a MATLAB matrix).  In this case, C and Cin are
+// the same matrix.
 
 #define GB_UTIL
 
@@ -35,42 +36,65 @@
 
 #include "gb_interface.h"
 
-GrB_Info gb_get_deep        // get a deep GrB_Matrix copy of a matrix
+GrB_Info gb_get_deep        // get the input/output matrix C
 (
     // output:
-    GrB_Matrix *C_handle,   // deep copy of the input matrix
+    GrB_Matrix *C_handle,   // matrix C: deep copy if in-place
     // input:
-    gb_matrix X,            // input MATLAB or @GrB matrix
+    bool inplace,           // if true, C is modified in-place (C is Cin)
+    gb_matrix matrix,       // input MATLAB or @GrB matrix
     char err [ERRLEN]
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // get the GrB_Matrix Cin and optional C_to_free of a MATLAB matrix
     //--------------------------------------------------------------------------
 
     GrB_Matrix Cin = NULL, C = NULL, C_to_free = NULL ;
-    OK (gb_get_matrix (&Cin, &C_to_free, X, err)) ;
+    OK (gb_get_matrix (&Cin, &C_to_free, matrix, err)) ;
 
     //--------------------------------------------------------------------------
-    // ensure Cin has no pending work
+    // get the GrB_Matrix C
     //--------------------------------------------------------------------------
 
-    if (X->will_wait)
+    if (inplace)
     { 
-        OK (GrB_Matrix_wait (Cin, GrB_MATERIALIZE)) ;
+
+        //----------------------------------------------------------------------
+        // usage: GrB.method (C, ...)
+        //----------------------------------------------------------------------
+
+        // ensure C is a @GrB matrix argument
+        if (matrix->G == NULL)
+        {
+            ERROR ("For the in-place syntax, C must be a @GrB matrix",
+                GrB_INVALID_VALUE) ;
+        }
+
+        // C is modified in-place.  Any pending work is left undone.
+        C = Cin ;
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // usage: C = GrB.method (Cin, ...)
+        //----------------------------------------------------------------------
+
+        if (matrix->will_wait)
+        { 
+            // ensure Cin has no pending work
+            OK (GrB_Matrix_wait (Cin, GrB_MATERIALIZE)) ;
+        }
+
+        // make a deep copy of Cin
+        OK (gb_dup (&C, Cin, err)) ;
     }
 
     //--------------------------------------------------------------------------
-    // make a deep copy of Cin, typecasting from a MATLAB matrix if needed
-    //--------------------------------------------------------------------------
-
-    int fmt ;   // by row or by column
-    OK (GrB_Matrix_get_INT32 (Cin, &fmt, GxB_FORMAT)) ;
-    OK (gb_typecast (&C, Cin, NULL, fmt, 0, err)) ;
-
-    //--------------------------------------------------------------------------
-    // return result
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
     FREE_WORK ;

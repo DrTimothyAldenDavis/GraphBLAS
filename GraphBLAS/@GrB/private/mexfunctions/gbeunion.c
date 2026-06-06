@@ -98,7 +98,7 @@ void mexFunction
     }
     else if (nmatrices == 5)
     { 
-        OK (gb_get_deep   (&C    ,                 &(Matrix [0]), err)) ;
+        OK (gb_get_deep   (&C    , false,          &(Matrix [0]), err)) ;
         OK (gb_get_matrix (&A    , &A_to_free    , &(Matrix [1]), err)) ;
         OK (gb_get_matrix (&alpha, &alpha_to_free, &(Matrix [2]), err)) ;
         OK (gb_get_matrix (&B    , &B_to_free    , &(Matrix [3]), err)) ;
@@ -106,7 +106,7 @@ void mexFunction
     }
     else // if (nmatrices == 6)
     { 
-        OK (gb_get_deep   (&C    ,                 &(Matrix [0]), err)) ;
+        OK (gb_get_deep   (&C    , false,          &(Matrix [0]), err)) ;
         OK (gb_get_matrix (&M    , &M_to_free    , &(Matrix [1]), err)) ;
         OK (gb_get_matrix (&A    , &A_to_free    , &(Matrix [2]), err)) ;
         OK (gb_get_matrix (&alpha, &alpha_to_free, &(Matrix [3]), err)) ;

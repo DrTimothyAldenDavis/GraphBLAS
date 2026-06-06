@@ -106,12 +106,12 @@ void mexFunction
     }
     else if (nmatrices == 2)
     { 
-        OK (gb_get_deep   (&C,             &(Matrix [0]), err)) ;
+        OK (gb_get_deep   (&C, false,      &(Matrix [0]), err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), err)) ;
     }
     else // if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C,             &(Matrix [0]), err)) ;
+        OK (gb_get_deep   (&C, false,      &(Matrix [0]), err)) ;
         OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), err)) ;
     }

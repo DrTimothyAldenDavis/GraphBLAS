@@ -35,7 +35,7 @@ GrB_Info gb_by_col
     if (fmt == GxB_BY_ROW)
     { 
         // make a deep copy of A_input and change it to be stored by column
-        OK (GrB_Matrix_dup (&A_copy, A_input)) ;
+        OK (gb_dup (&A_copy, A_input, err)) ;
         OK1 (A_copy, GrB_Matrix_set_INT32 (A_copy, GxB_BY_COL, GxB_FORMAT)) ;
         OK1 (A_copy, GrB_Matrix_wait (A_copy, GrB_MATERIALIZE)) ;
         A = A_copy ;

@@ -198,7 +198,9 @@ void mexFunction
 
         // GraphBLAS copy of A, same type and format as A
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
-        OK (GrB_Matrix_dup (&C, A)) ;
+//      GxB_Matrix_fprint (A, "A for C=GrB(A)", 5, NULL) ;
+        OK (gb_dup (&C, A, err)) ;
+//      GxB_Matrix_fprint (C, "C for C=GrB(A)", 5, NULL) ;
 
     }
     else if (nargin == 2)

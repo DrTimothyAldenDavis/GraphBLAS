@@ -95,12 +95,12 @@ void mexFunction
     }
     else if (nmatrices == 2)
     { 
-        OK (gb_get_deep   (&C,             &(Matrix [0]), err)) ;
+        OK (gb_get_deep   (&C, false,      &(Matrix [0]), err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), err)) ;
     }
     else // if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C,             &(Matrix [0]), err)) ;
+        OK (gb_get_deep   (&C, false,      &(Matrix [0]), err)) ;
         OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), err)) ;
     }
@@ -124,7 +124,7 @@ void mexFunction
     }
     else 
     { 
-        // if accum appears, then C must also appear as an input argument
+        // if accum appears, then Cin must also appear
         CHECK_ERROR (C == NULL, USAGE) ;
         OK (gb_string_to_binop (&accum, &(String [0][0]), ctype, ctype, err)) ;
         OK (gb_string_to_unop (&op, &(String [1][0]), atype, err)) ;

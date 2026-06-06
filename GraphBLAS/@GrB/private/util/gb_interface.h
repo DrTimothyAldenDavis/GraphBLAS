@@ -414,6 +414,15 @@ GrB_Type gb_default_type        // return the default type to use
     const GrB_Type btype        // type of the B matrix
 ) ;
 
+GrB_Info gb_dup             // copy a matrix
+(
+    // output:
+    GrB_Matrix *C_handle,   // copy of the input matrix
+    // input:
+    GrB_Matrix Cin,         // matrix to copy
+    char err [ERRLEN]
+) ;
+
 const char *gb_error_string     // return an error string from a GrB_Info value
 (
     GrB_Info info
@@ -481,12 +490,13 @@ GrB_Info gb_first_binop     // construct GrB_FIRST_[type] operator
     char err [ERRLEN]
 ) ;
 
-GrB_Info gb_get_deep        // get a deep GrB_Matrix copy of a matrix
+GrB_Info gb_get_deep        // get the input/output matrix C
 (
     // output:
-    GrB_Matrix *C_handle,   // deep copy of the input matrix
+    GrB_Matrix *C_handle,   // matrix C: deep copy if in-place
     // input:
-    gb_matrix X,            // input MATLAB or @GrB matrix
+    bool inplace,           // if true, C is modified in-place (C is Cin)
+    gb_matrix matrix,       // input MATLAB or @GrB matrix
     char err [ERRLEN]
 ) ;
 
