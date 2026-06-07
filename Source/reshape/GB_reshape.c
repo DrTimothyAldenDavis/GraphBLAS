@@ -164,7 +164,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
     {
 
         //----------------------------------------------------------------------
-        // T and C are both full or both bitmap
+        // T and C have the same dimensions
         //----------------------------------------------------------------------
 
         if (in_place)

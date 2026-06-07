@@ -11,8 +11,11 @@
 // CUDA will rely on its own method and will not call this method.
 
 #include "GB.h"
+
+#if 0
 #ifdef GB_MEMDUMP
 #include <execinfo.h>
+#endif
 #endif
 
 //------------------------------------------------------------------------------
@@ -34,14 +37,16 @@ static inline void *GB_calloc_helper
     (*memsize) = GB_IMAX (*memsize, 8) ;
 
     #ifdef GB_MEMDUMP
-    // this only works for Linux
-    GBMDUMP ("\n------------- Starting calloc\n") ;
+    GBMDUMP ("\n------------- Starting calloc:\n") ;
+    #if 0
     {
+        // this only works for Linux
         int nptrs ;
         void *buffer [30] ;
         nptrs = backtrace (buffer, 30) ;
         backtrace_symbols_fd (buffer, nptrs, 0) ;
     }
+    #endif
     #endif
 
     p = GB_Global_malloc_function (*memsize, arena) ;

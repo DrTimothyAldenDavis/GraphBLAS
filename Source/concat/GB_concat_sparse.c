@@ -168,9 +168,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             {
                 if (T == NULL)
                 {
-                    // copy A into T
-                    GB_OK (GB_dup_worker (&T, A->iso, A, /* numeric: */ true,
-                        NULL, data_arena, data_arena)) ;
+                    // copy A into T, making an exact copy
+                    GB_OK (GB_dup (&T, A, data_arena, data_arena, Werk)) ;
                     // save T in array S
                     if (csc)
                     { 

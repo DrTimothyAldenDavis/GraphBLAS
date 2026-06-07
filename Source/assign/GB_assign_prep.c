@@ -1083,9 +1083,8 @@ if (C==A && !GB_any_aliased (C, M) && Mask_struct && Mask_comp && whole_C_matrix
             ASSERT (!GB_ZOMBIES (C)) ;
             ASSERT (GB_JUMBLED_OK (C)) ;
             ASSERT (!GB_PENDING (C)) ;
-            // Cwork = duplicate of C, which must be freed when done
-            GB_OK (GB_dup_worker (&Cwork, C->iso, C, true, NULL,
-                data_arena, data_arena)) ;
+            // Cwork = exact duplicate of C, which must be freed when done
+            GB_OK (GB_dup (&Cwork, C, data_arena, data_arena, Werk)) ;
         }
         // Cwork must be transplanted back into C when done
         C = Cwork ;

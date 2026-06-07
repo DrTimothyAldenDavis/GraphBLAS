@@ -142,8 +142,12 @@ static GrB_Info GB_export_worker  // export a matrix
         else
         { 
             // T = A
+            // T is allocated with its desired pji ints, which can differ from A
+            bool Tp_is_32, Tj_is_32, Ti_is_32 ;
+            GB_determine_pji_is_32 (&Tp_is_32, &Tj_is_32, &Ti_is_32,
+                GB_sparsity (A), GB_nnz (A), A->vlen, A->vdim, Werk) ;
             GB_OK (GB_dup_worker (&T, A->iso, A, /* numeric: */ true, A->type,
-                data_arena, data_arena)) ;
+                Tp_is_32, Tj_is_32, Ti_is_32, data_arena, data_arena, Werk)) ;
         }
 
         switch (format)

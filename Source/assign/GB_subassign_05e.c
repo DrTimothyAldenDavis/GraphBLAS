@@ -79,10 +79,16 @@ GrB_Info GB_subassign_05e
     // the same type and CSR/CSC for C.  Allocate C->x and assign to it the
     // scalar.
 
+    // C is allocated with its desired pji integers, which can differ from M.
+
     bool C_is_csc = C->is_csc ;
     GB_phybix_free (C) ;
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        GB_sparsity (M), GB_nnz (M), M->vlen, M->vdim, Werk) ;
     GB_OK (GB_dup_worker (&C, /* C_iso: */ true, M, /* numeric: */ false,
-        C->type, header_arena, data_arena)) ;
+        C->type, Cp_is_32, Cj_is_32, Ci_is_32, header_arena, data_arena,
+        Werk)) ;
     C->is_csc = C_is_csc ;
     GB_cast_scalar (C->x, C->type->code, scalar, scalar_type->code,
         scalar_type->size) ;

@@ -39,8 +39,7 @@ GrB_Info gb_defaults            // set global GraphBLAS defaults for MATLAB
     OK (GrB_Global_set_INT32 (GrB_GLOBAL, GxB_JIT_ON, GxB_JIT_C_CONTROL)) ;
 
     // built-in matrices are stored by column
-    OK (GrB_Global_set_INT32 (GrB_GLOBAL,
-        GrB_COLMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, GrB_COLMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
 
     // print 1-based indices
     OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, GxB_PRINT_1BASED)) ;
@@ -56,8 +55,7 @@ GrB_Info gb_defaults            // set global GraphBLAS defaults for MATLAB
     OK (GxB_Global_Option_set_FP64 (GxB_CHUNK, (double) (64 * 1024))) ;
 
     // for printing memory sizes of matrices
-    OK (GrB_Global_set_INT32 (GrB_GLOBAL, true,
-        GxB_INCLUDE_READONLY_STATISTICS)) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, GxB_INCLUDE_READONLY_STATISTICS)) ;
 
     return (GrB_SUCCESS) ;
 }

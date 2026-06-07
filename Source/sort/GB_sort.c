@@ -438,8 +438,14 @@ GrB_Info GB_sort
             if (!sort_in_place)
             { 
                 // C = A
+                // C is allocated with its desired pji ints, which can differ
+                // from A
+                bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+                GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+                    GB_sparsity (A), GB_nnz (A), A->vlen, A->vdim, Werk) ;
                 GB_OK (GB_dup_worker (&C, A_iso, A, /* numeric: */ true, atype,
-                    header_arena, data_arena)) ;
+                    Cp_is_32, Cj_is_32, Ci_is_32, header_arena, data_arena,
+                    Werk)) ;
             }
         }
         else
@@ -466,8 +472,14 @@ GrB_Info GB_sort
             if (!sort_in_place)
             { 
                 // C = A
+                // C is allocated with its desired pji ints, which can differ
+                // from A
+                bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+                GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+                    GB_sparsity (A), GB_nnz (A), A->vlen, A->vdim, Werk) ;
                 GB_OK (GB_dup_worker (&C, A_iso, A, /* numeric: */ true, atype,
-                    header_arena, data_arena)) ;
+                    Cp_is_32, Cj_is_32, Ci_is_32, header_arena, data_arena,
+                    Werk)) ;
             }
         }
         else

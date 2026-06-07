@@ -17,6 +17,16 @@
 // or jumbled).  The pending work is copied into the output matrix C.  It is
 // not finished.  This case is only supported if numeric is true.
 
+// The p/j/i integers can differ from A.
+
+#define GB_FREE_ALL                                     \
+    GB_FREE_MEMORY (&C_user_name, C_user_name_mem) ;    \
+    GB_phybix_free (C) ;                                \
+    if (!preexisting_header)                            \
+    {                                                   \
+        GB_Matrix_free (Chandle) ;                      \
+    }
+
 #include "GB.h"
 #include "get_set/GB_get_set.h"
 #include "pending/GB_Pending.h"
@@ -30,8 +40,12 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
                             // iso, only the first entry is copied, regardless
                             // of C_iso on input
     const GrB_Type ctype,   // type of C, if numeric is false
+    const bool Cp_is_32,    // type of C->p
+    const bool Cj_is_32,    // type of C->h and C->Y
+    const bool Ci_is_32,    // type of C->i
     const int header_arena,
-    const int data_arena
+    const int data_arena,
+    GB_Werk Werk
 )
 {
 
@@ -79,81 +93,61 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     uint64_t C_user_name_mem = mem ;
     if (A->user_name != NULL)
     { 
-        info = GB_user_name_set (&C_user_name, &C_user_name_mem,
-            A->user_name, false, header_arena) ;
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory
-            return (info) ;
-        }
+        GB_OK (GB_user_name_set (&C_user_name, &C_user_name_mem,
+            A->user_name, false, header_arena)) ;
     }
 
     //--------------------------------------------------------------------------
     // create C
     //--------------------------------------------------------------------------
 
-    // create C; allocate C->p and do not initialize it.
-    // C has the exact same sparsity structure and integer sizes as A.
-
-    // allocate a new user header for C if (*Chandle) is NULL, or reuse the
-    // existing static or dynamic header if (*Chandle) is not NULL.
-    info = GB_new_bix (Chandle, // can be new or existing header
+    // C has the exact same sparsity structure and as A, but can have different
+    // pji integer sizes.  A new header for C is allocated if (*Chandle) is
+    // NULL on input, or the existing header is used if (*Chandle) is not NULL
+    // on input.
+    GB_OK (GB_new_bix (Chandle, // can be new or existing header
         numeric ? atype : ctype, A->vlen, A->vdim, GB_ph_malloc, A->is_csc,
         GB_sparsity (A), false, A->hyper_switch, A->plen, anz, true, C_iso,
-        A->p_is_32, A->j_is_32, A->i_is_32, header_arena, data_arena) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        GB_FREE_MEMORY (&C_user_name, C_user_name_mem) ;
-        return (info) ;
-    }
+        Cp_is_32, Cj_is_32, Ci_is_32, header_arena, data_arena)) ;
     C = (*Chandle) ;
 
     //--------------------------------------------------------------------------
     // allocate the pending tuples, if present
     //--------------------------------------------------------------------------
 
-    bool ok = true ;
-
     if (A_Pending != NULL && numeric)
     { 
         // A has pending tuples; allocate space for them in C.  This case is
         // only supported if numeric is true.
         ASSERT (C_iso == A->iso) ;
-        ok = GB_Pending_alloc (C, A->iso, A_Pending->type, A_Pending->op,
-            A_Pending->nmax) ;
+        if (!GB_Pending_alloc (C, A->iso, A_Pending->type, A_Pending->op,
+            A_Pending->nmax))
+        {
+            // out of memory
+            GB_FREE_ALL ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
     }
 
     //--------------------------------------------------------------------------
-    // copy the hyper hash, if present
+    // copy the A->Y hyper hash into C, if present
     //--------------------------------------------------------------------------
 
     ASSERT (C->Y == NULL) ;
-    if (ok && A->Y != NULL)
+    if (A->Y != NULL)
     { 
-        info = GB_dup_worker (&(C->Y), /* Y is not iso: */ false, A->Y,
-            /* numeric: */ true, NULL, data_arena, data_arena) ;
-        ok = (info == GrB_SUCCESS) ;
+        GB_MATRIX_WAIT (A->Y) ;
+        GrB_Type cytype = (C->j_is_32) ? GrB_UINT32 : GrB_UINT64 ;
+        // create C->Y but just allocate C->Y->x
+        GB_OK (GB_dup_worker (&(C->Y), /* Y is not iso: */ false, A->Y,
+            /* numeric: */ false, cytype, C->j_is_32, C->j_is_32, C->j_is_32,
+            data_arena, data_arena, Werk)) ;
+        // typecast A->Y->x into C->Y->x
+        GB_OK (GB_cast_matrix (C->Y, A->Y)) ;
     }
 
     //--------------------------------------------------------------------------
-    // check if out of memory
-    //--------------------------------------------------------------------------
-
-    if (!ok)
-    { 
-        // out of memory
-        GB_FREE_MEMORY (&C_user_name, C_user_name_mem) ;
-        GB_phybix_free (C) ;
-        if (!preexisting_header)
-        { 
-            GB_Matrix_free (Chandle) ;
-        }
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // copy the contents of A into C
+    // copy the A->[phbix] contents of A into C
     //--------------------------------------------------------------------------
 
     C->nvec = anvec ;
@@ -167,13 +161,20 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     size_t jsize = A->j_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t isize = A->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
+    GB_Type_code cpcode = (C->p_is_32) ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code apcode = (A->p_is_32) ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code cjcode = (C->j_is_32) ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code ajcode = (A->j_is_32) ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code cicode = (C->i_is_32) ? GB_INT32_code  : GB_INT64_code ;
+    GB_Type_code aicode = (A->i_is_32) ? GB_INT32_code  : GB_INT64_code ;
+
     if (A->p != NULL)
     { 
-        GB_memcpy (C->p, A->p, (anvec+1) * psize, nthreads_max) ;
+        GB_cast_int (C->p, cpcode, A->p, apcode, anvec+1, nthreads_max) ;
     }
     if (A->h != NULL)
     { 
-        GB_memcpy (C->h, A->h, anvec * jsize, nthreads_max) ;
+        GB_cast_int (C->h, cjcode, A->h, ajcode, anvec, nthreads_max) ;
     }
     if (A->b != NULL)
     { 
@@ -181,7 +182,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     }
     if (A->i != NULL)
     { 
-        GB_memcpy (C->i, A->i, anz * isize, nthreads_max) ;
+        GB_cast_int (C->i, cicode, A->i, aicode, anz, nthreads_max) ;
     }
     if (numeric)
     { 
@@ -202,10 +203,12 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
         size_t jsize = (A->j_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
         size_t isize = (A->i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
         size_t xsize = A_Pending->size ;
-        GB_memcpy (C_Pending->i, A_Pending->i, n * isize, nthreads_max) ;
+        GB_cast_int (C_Pending->i, cicode, A_Pending->i, aicode, n,
+            nthreads_max) ;
         if (is_matrix)
         { 
-            GB_memcpy (C_Pending->j, A_Pending->j, n * jsize, nthreads_max) ;
+            GB_cast_int (C_Pending->j, cjcode, A_Pending->j, ajcode, n,
+                nthreads_max) ;
         }
         if (!A->iso)
         { 

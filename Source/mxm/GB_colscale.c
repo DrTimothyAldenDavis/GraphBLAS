@@ -103,8 +103,13 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     //--------------------------------------------------------------------------
 
     // allocate C->x but do not initialize it
+    // C is allocated with its desired pji ints, which can differ from A
+
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        GB_sparsity (A), GB_nnz (A), A->vlen, A->vdim, Werk) ;
     GB_OK (GB_dup_worker (&C, C_iso, A, /* numeric: */ false, ztype,
-        header_arena, data_arena)) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, header_arena, data_arena, Werk)) ;
     info = GrB_NO_VALUE ;
     ASSERT (C->type == ztype) ;
 

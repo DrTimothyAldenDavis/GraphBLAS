@@ -26,6 +26,8 @@
 
 // A is the new copy and B is the old copy.  Each should be freed when done.
 
+// The p/j/i integers in the output C are identical to the p/j/i ints in A.
+
 #include "GB.h"
 
 #define GB_FREE_ALL ;
@@ -55,6 +57,7 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     GB_BURBLE_MATRIX (A, "(%sdup) ", A->iso ? "iso " : "") ;
     return (GB_dup_worker (Chandle, A->iso, A, /* numeric: */ true,
         /* C->type is the same as A->type: */ NULL,
-        header_arena, data_arena)) ;
+        /* C has the same ints as A: */ A->p_is_32, A->j_is_32, A->i_is_32,
+        header_arena, data_arena, Werk)) ;
 }
 

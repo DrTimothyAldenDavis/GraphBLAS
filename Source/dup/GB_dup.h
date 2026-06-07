@@ -28,8 +28,12 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
                             // iso, only the first entry is copied, regardless
                             // of C_iso on input
     const GrB_Type ctype,   // type of C, if numeric is false
+    const bool Cp_is_32,
+    const bool Cj_is_32,
+    const bool Ci_is_32,
     const int header_arena,
-    const int data_arena
+    const int data_arena,
+    GB_Werk Werk
 ) ;
 
 #endif

@@ -309,7 +309,7 @@
 %   grblines             - total # of lines in the test coverage
 %   set_malloc_debug     - Turn on/off malloc debugging and mark the log.txt
 %   bench3               - test and benchmark qsort and msort
-%   GB_isequal_ignore_32 - compare two structs but ignore [phi]_is_32 fields
+%   GB_isequal_ignore_32 - compare two structs but ignore [pji]_is_32 fields
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

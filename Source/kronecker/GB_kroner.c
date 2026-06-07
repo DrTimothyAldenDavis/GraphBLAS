@@ -74,8 +74,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (A))
     { 
         GBURBLE ("A:") ;
-        GB_OK (GB_dup_worker (&Awork, A->iso, A, /* numeric: */ true, NULL,
-            data_arena, data_arena)) ;
+        // Awork = an exact copy of A, then convert Awork to sparse
+        GB_OK (GB_dup (&Awork, A, data_arena, data_arena, Werk)) ;
         ASSERT_MATRIX_OK (Awork, "dup Awork for kron (A,B)", GB0) ;
         GB_OK (GB_convert_bitmap_to_sparse (Awork, Werk)) ;
         ASSERT_MATRIX_OK (Awork, "to sparse, Awork for kron (A,B)", GB0) ;
@@ -86,8 +86,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (B))
     { 
         GBURBLE ("B:") ;
-        GB_OK (GB_dup_worker (&Bwork, B->iso, B, /* numeric: */ true, NULL, 
-            data_arena, data_arena)) ;
+        // Bwork = an exact copy of B, then convert Bwork to sparse
+        GB_OK (GB_dup (&Bwork, B, data_arena, data_arena, Werk)) ;
         ASSERT_MATRIX_OK (Bwork, "dup Bwork for kron (A,B)", GB0) ;
         GB_OK (GB_convert_bitmap_to_sparse (Bwork, Werk)) ;
         ASSERT_MATRIX_OK (Bwork, "to sparse, Bwork for kron (A,B)", GB0) ;

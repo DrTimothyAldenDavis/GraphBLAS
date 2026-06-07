@@ -12,7 +12,7 @@
 // ignored.  Then A is freed, except for any shallow components of A which are
 // left untouched (after unlinking them from A).  The resulting matrix C is not
 // shallow.  This function is not user-callable.  The new type of C (ctype)
-// must be compatible with A->type.
+// must be compatible with A->type.  The pji integer sizes are unchanged.
 
 // C->hyper_switch, C->bitmap_switch, C->sparsity_control, C->header_mem,
 // C->user_name, C->user_name_mem, C->p_control, C->j_control, and
@@ -98,7 +98,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
     C->is_csc = A->is_csc ;
     C->vlen = avlen ;
     C->vdim = avdim ;
-//  C->nvec_nonempty = A->nvec_nonempty ;
     GB_nvec_nonempty_set (C, GB_nvec_nonempty_get (A)) ;
     C->iso = A_iso ;
 

@@ -82,6 +82,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     //--------------------------------------------------------------------------
     // determine if C is iso (ignore the monoid since it isn't used)
     //--------------------------------------------------------------------------
+
     size_t zsize = ztype->size ;
     GB_void cscalar [GB_VLA(zsize)] ;
     bool C_iso = GB_AxB_iso (cscalar, D, B, D->vdim, semiring, flipxy, true) ;
@@ -91,8 +92,13 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     //--------------------------------------------------------------------------
 
     // allocate C->x but do not initialize it
+    // C is allocated with its desired pji ints, which can differ from A
+
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        GB_sparsity (B), GB_nnz (B), B->vlen, B->vdim, Werk) ;
     GB_OK (GB_dup_worker (&C, C_iso, B, /* numeric: */ false, ztype,
-        header_arena, data_arena)) ;
+        Cp_is_32, Cj_is_32, Ci_is_32, header_arena, data_arena, Werk)) ;
     info = GrB_NO_VALUE ;
     ASSERT (C->type == ztype) ;
 
