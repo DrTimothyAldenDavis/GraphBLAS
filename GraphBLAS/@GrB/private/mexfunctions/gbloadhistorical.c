@@ -67,39 +67,46 @@ void mexFunction
     // get the content of the historical @GrB matrix from the struct
     //--------------------------------------------------------------------------
 
+    bool GraphBLASv10 = false ;
     bool GraphBLASv4 = false ;
     bool GraphBLASv3 = false ;
 
     // get the type
     mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv10") ;
+    GraphBLASv10 = (mx_type != NULL) ;
+
     if (mx_type == NULL)
-    {
+    { 
         // check if it is a GraphBLASv7_3 struct
         mx_type = mxGetField (pargin [0], 0, "GraphBLASv7_3") ;
     }
+
     if (mx_type == NULL)
-    {
+    { 
         // check if it is a GraphBLASv5_1 struct
         mx_type = mxGetField (pargin [0], 0, "GraphBLASv5_1") ;
     }
 
     if (mx_type == NULL)
-    {
+    { 
         // check if it is a GraphBLASv5 struct
         mx_type = mxGetField (pargin [0], 0, "GraphBLASv5") ;
     }
+
     if (mx_type == NULL)
-    {
+    { 
         // check if it is a GraphBLASv4 struct
         mx_type = mxGetField (pargin [0], 0, "GraphBLASv4") ;
-        GraphBLASv4 = true ;
+        GraphBLASv4 = (mx_type != NULL) ;
     }
+
     if (mx_type == NULL)
-    {
+    { 
         // check if it is a GraphBLASv3 struct
         mx_type = mxGetField (pargin [0], 0, "GraphBLAS") ;
-        GraphBLASv3 = true ;
+        GraphBLASv3 = (mx_type != NULL) ;
     }
+
     CHECK_ERROR (mx_type == NULL, "not a GraphBLAS struct") ;
 
     char *typename [LEN+2] ;
@@ -113,50 +120,69 @@ void mexFunction
     IF (opaque == NULL, ".s missing") ;
     IF (mxGetM (opaque) != 1, ".s wrong size") ;
     size_t s_size = mxGetN (opaque) ;
-    if (GraphBLASv3)
+    int64_t *s = (int64_t *) mxGetData (opaque) ;
+    int64_t plen, vlen, vdim, nvec, nvec_nonempty, nzmax ;
+    bool by_col ;
+    if (GraphBLASv3 && s_size == 9)
     {
-        IF (s_size != 8, ".s wrong size") ;
-    }
-    else if (GraphBLASv4)
-    {
-        IF (s_size != 9, ".s wrong size") ;
+        // v3.1.1 had 9 items in s, starting with s [0] = hyper_ratio.
+        // s was also saved as double.
+        double *sdouble = (double *) mxGetData (opaque) ;
+        plen          = (int64_t) sdouble [1] ;
+        vlen          = (int64_t) sdouble [2] ;
+        vdim          = (int64_t) sdouble [3] ;
+        nvec          = (int64_t) sdouble [4] ;
+        nvec_nonempty = (int64_t) sdouble [5] ;
+        by_col        = (bool) (sdouble [7]) ;
+        nzmax         = (int64_t) sdouble [8] ;
     }
     else
     {
-        IF (s_size != 10, ".s wrong size") ;
+        if (GraphBLASv3)
+        {
+            // v3.2.2 had 8 items in s, all int64
+            IF (s_size != 8, ".s wrong size") ;
+        }
+        else if (GraphBLASv4)
+        {
+            IF (s_size != 9, ".s wrong size") ;
+        }
+        else
+        {
+            IF (s_size != 10, ".s wrong size") ;
+        }
+        plen          = s [0] ;
+        vlen          = s [1] ;
+        vdim          = s [2] ;
+        nvec          = s [3] ;
+        nvec_nonempty = s [4] ;
+        by_col        = (bool) (s [6]) ;
+        nzmax         = s [7] ;
     }
-    int64_t *s = (int64_t *) mxGetData (opaque) ;
-    int64_t plen          = s [0] ;
-    int64_t vlen          = s [1] ;
-    int64_t vdim          = s [2] ;
-    int64_t nvec          = s [3] ;
-    int64_t nvec_nonempty = s [4] ;
-    bool    by_col        = (bool) (s [6]) ;
-    int64_t nzmax         = s [7] ;
 
     int sparsity_status, sparsity_control ;
     int64_t nvals ;
     bool iso ;
 
     if (GraphBLASv3)
-    {
+    { 
         // GraphBLASv3 struct: sparse or hypersparse only
         sparsity_control = GxB_AUTO_SPARSITY ;
-        nvals            = 0 ;
-        iso              = false ;
+        nvals = 0 ;
+        iso = false ;
     }
     else
-    {
+    { 
         // GraphBLASv4 or later struct: sparse, hypersparse, bitmap, or full
         sparsity_control = (int) (s [5]) ;
-        nvals            = s [8] ;
+        nvals = s [8] ; // for bitmap case only, zero otherwise
         if (GraphBLASv4)
         {
             // GraphBLASv4: iso is always false
             iso = false ;
         }
         else
-        {
+        { 
             // GraphBLASv5 and GraphBLASv5_1: iso is present as s [9]
             // GraphBLASv5: iso is present as s [9] but always false
             iso = (bool) s [9] ;
@@ -166,18 +192,18 @@ void mexFunction
     int nfields = mxGetNumberOfFields (pargin [0]) ;
     switch (nfields)
     {
-        case 3 :
+        case 3 : 
             // C is full, with 3 fields: GraphBLAS*, s, x
             sparsity_status = GxB_FULL ;
             break ;
 
-        case 5 :
+        case 5 : 
             // C is sparse, with 5 fields: GraphBLAS*, s, x, p, i
             sparsity_status = GxB_SPARSE ;
             break ;
 
-        case 6 :
-        case 9 :
+        case 6 : 
+        case 9 : 
             // C is hypersparse, with 6 fields: GraphBLAS*, s, x, p, i, h
             // or with 9 fields: Yp, Yi, and Yx added.
             sparsity_status = GxB_HYPERSPARSE ;
@@ -186,7 +212,7 @@ void mexFunction
             plen = nvec ;
             break ;
 
-        case 4 :
+        case 4 : 
             // C is bitmap, with 4 fields: GraphBLAS*, s, x, b
             sparsity_status = GxB_BITMAP ;
             break ;
@@ -217,7 +243,7 @@ void mexFunction
     GrB_Type Ai_type = Ai_is_32 ? GrB_UINT32 : GrB_UINT64 ;
 
     if (sparsity_status == GxB_HYPERSPARSE || sparsity_status == GxB_SPARSE)
-    {
+    { 
         // C is hypersparse or sparse
 
         // get Ap
@@ -232,9 +258,10 @@ void mexFunction
         Ap_type = Ap_is_32 ? GrB_UINT32 : GrB_UINT64 ;
         Ap = (void *) mxGetData (Ap_mx) ;
         Ap_size = mxGetN (Ap_mx) * psize ;
-        IF (mxGetN (Ap_mx) < plen+1, ".p wrong size")
-        if (GraphBLASv3)
-        {
+        IF ((int64_t) mxGetN (Ap_mx) < plen+1, ".p wrong size")
+
+        if (!GraphBLASv10)
+        { 
             uint64_t *Ap64 = (uint64_t *) Ap ;
             nvals = Ap64 [plen] ;
         }
@@ -250,7 +277,7 @@ void mexFunction
         isize = Ai_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
         Ai_type = Ai_is_32 ? GrB_UINT32 : GrB_UINT64 ;
         Ai_size = mxGetN (Ai_mx) * isize ;
-        IF (mxGetN (Ai_mx) < nvals, ".i wrong size") ;
+        IF ((int64_t) mxGetN (Ai_mx) < nvals, ".i wrong size") ;
         Ai = (Ai_size == 0) ? NULL : ((void *) mxGetData (Ai_mx)) ;
     }
 
@@ -263,7 +290,7 @@ void mexFunction
     Ax = (Ax_size == 0) ? NULL : ((void *) mxGetData (Ax_mx)) ;
 
     if (sparsity_status == GxB_SPARSE)
-    {
+    { 
         // C is sparse; determine Aj_is_32
         Aj_is_32 = (vdim <= ((int64_t) (1ULL << 31))) ;
         Aj_type = Aj_is_32 ? GrB_UINT32 : GrB_UINT64 ;
@@ -282,6 +309,7 @@ void mexFunction
               Ah_class == mxINT64_CLASS), ".h wrong class")
         Aj_is_32 = (Ah_class == mxUINT32_CLASS) ;
         Aj_type = Aj_is_32 ? GrB_UINT32 : GrB_UINT64 ;
+
         jsize = Aj_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
         Ah_size = mxGetN (Ah_mx) * jsize ;
         Ah = (Ah_size == 0) ? NULL : ((void *) mxGetData (Ah_mx)) ;
@@ -297,7 +325,11 @@ void mexFunction
             IF (Yp_mx == NULL, ".Yp missing") ;
             IF (mxGetM (Yp_mx) != 1, ".Yp wrong size") ;
             yvdim = mxGetN (Yp_mx) - 1 ;
-            IF (mxGetClassID (Yp_mx) != Ah_class, ".Yp wrong class") ;
+            mxClassID Yp_class = mxGetClassID (Yp_mx) ;
+            IF (!(Yp_class == mxUINT64_CLASS || Yp_class == mxUINT32_CLASS ||
+                  Yp_class == mxINT64_CLASS), ".Yp wrong class")
+            bool Yp_is_32 = (Yp_class == mxUINT32_CLASS) ;
+            IF (Yp_is_32 != Aj_is_32, ".Yp wrong class 32/64") ;
             Yp_len = mxGetN (Yp_mx) ;
             Yp_size = Yp_len * jsize ;
             Yp = (Yp_size == 0) ? NULL : ((void *) mxGetData (Yp_mx)) ;
@@ -307,7 +339,11 @@ void mexFunction
             IF (Yi_mx == NULL, ".Yi missing") ;
             IF (mxGetM (Yi_mx) != 1, ".Yi wrong size") ;
             IF (mxGetN (Yi_mx) != nvec, ".Yi wrong size") ;
-            IF (mxGetClassID (Yi_mx) != Ah_class, ".Yi wrong class") ;
+            mxClassID Yi_class = mxGetClassID (Yi_mx) ;
+            IF (!(Yi_class == mxUINT64_CLASS || Yi_class == mxUINT32_CLASS ||
+                  Yi_class == mxINT64_CLASS), ".Yi wrong class")
+            bool Yi_is_32 = (Yi_class == mxUINT32_CLASS) ;
+            IF (Yi_is_32 != Aj_is_32, ".Yi wrong class 32/64") ;
             Yi_len = mxGetN (Yi_mx) ;
             Yi_size = Yi_len * jsize ;
             Yi = (Yi_size == 0) ? NULL : ((void *) mxGetData (Yi_mx)) ;
@@ -317,7 +353,11 @@ void mexFunction
             IF (Yx_mx == NULL, ".Yx missing") ;
             IF (mxGetM (Yx_mx) != 1, ".Yx wrong size") ;
             IF (mxGetN (Yx_mx) != nvec, ".Yx wrong size") ;
-            IF (mxGetClassID (Yx_mx) != Ah_class, ".Yx wrong class") ;
+            mxClassID Yx_class = mxGetClassID (Yx_mx) ;
+            IF (!(Yx_class == mxUINT64_CLASS || Yx_class == mxUINT32_CLASS ||
+                  Yx_class == mxINT64_CLASS), ".Yx wrong class")
+            bool Yx_is_32 = (Yx_class == mxUINT32_CLASS) ;
+            IF (Yx_is_32 != Aj_is_32, ".Yx wrong class 32/64") ;
             Yx_len = mxGetN (Yx_mx) ;
             Yx_size = Yi_len * jsize ;
             Yx = (Yx_size == 0) ? NULL : ((void *) mxGetData (Yx_mx)) ;
@@ -355,7 +395,7 @@ void mexFunction
     OK (GxB_Container_new (&Container)) ;
 
     if (Yp != NULL)
-    {
+    { 
         // import the Y matrix using the Container
         OK (GrB_Matrix_new (&Y, GrB_UINT64, 0, 0)) ;
         Container->nrows = vdim ;

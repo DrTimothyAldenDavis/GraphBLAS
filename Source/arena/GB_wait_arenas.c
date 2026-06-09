@@ -37,7 +37,7 @@ GrB_Info GB_wait_arenas         // align data with A->data_arena
     int header_arena = GB_arena (A->header_mem) ;
     int data_arena = A->data_arena ;
 
-    ASSERT_MATRIX_OK (A, "A to wait_arenas: start", GB2_Z) ;
+    ASSERT_MATRIX_OK (A, "A to wait_arenas: start", GB0_Z) ;
 
     //--------------------------------------------------------------------------
     // align the data arenas with A->data_arena
@@ -51,7 +51,7 @@ GrB_Info GB_wait_arenas         // align data with A->data_arena
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (A, "A wait_arenas: done", GB2_Z) ;
+    ASSERT_MATRIX_OK (A, "A wait_arenas: done", GB0_Z) ;
     ASSERT (!GB_arenas_will_wait (A)) ;
     return (GrB_SUCCESS) ;
 }

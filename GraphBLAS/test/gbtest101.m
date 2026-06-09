@@ -4,7 +4,8 @@ function gbtest101
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-load gbtestv3 %#ok<LOAD>
+[filepath, name, ext] = fileparts (mfilename ('fullpath')) ;
+load ([filepath '/gbtest101_matfiles/gbtestv3.mat']) ; %#ok<LOAD>
 whos
 
 fprintf ('================== v3 sparse:\n') ;
@@ -62,14 +63,12 @@ X
 fprintf ('================== latest dense:\n') ;
 X2
 
-ok = false ;
-try
-    struct (G)
-catch expected_error
-    expected_error
-    ok = true ;
-end
-assert (ok) ;
+% test GrB/struct:
+S = struct (G) ;
+assert (isstruct (S)) ;
+assert (isfield (S, 'opaque')) ;
+assert (isequal (size (S.opaque), [1 8])) ;
+assert (isequal (class (S.opaque), 'uint8')) ;
 
 % H was constructed in GraphBLAS v10.3.1 as:
 % n = 2^60 ; H = GrB (n,n) ;
@@ -77,7 +76,7 @@ assert (ok) ;
 % H (1:479,1:479) = GrB (Problem.A) ;
 % k = 2000 ; H (1:k,1:k) = speye (k)
 clear H H2 H3
-load gbtestv10_3_1 %#ok<LOAD>
+load ([filepath '/gbtest101_matfiles/gbtestv10_3_1.mat']) ; %#ok<LOAD>
 
 % Now construct H again
 load west0479_correct ;
@@ -95,7 +94,7 @@ assert (isequal (s, 'hypersparse')) ;
 % load west0479_correct ;
 % G = GrB (Problem.A, 'bitmap') ;
 clear G G2
-load gbtestv10_3_1b %#ok<LOAD>
+load ([filepath '/gbtest101_matfiles/gbtestv10_3_1b.mat']) ; %#ok<LOAD>
 
 % Now construct G again
 G2 = GrB (A, 'bitmap') ;

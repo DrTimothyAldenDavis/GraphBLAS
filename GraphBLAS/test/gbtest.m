@@ -312,6 +312,10 @@ gbtest129 % test jit
 assert (GrB.nmalloc == 0) ;
 gbtest130 % test argmin and argmax
 assert (GrB.nmalloc == 0) ;
+gbtest131 % misc error handling
+assert (GrB.nmalloc == 0) ;
+gbtest132 % test load/save from prior versions of GraphBLAS
+assert (GrB.nmalloc == 0) ;
 gbtest96  % test GrB.optype
 assert (GrB.nmalloc == 0) ;
 
