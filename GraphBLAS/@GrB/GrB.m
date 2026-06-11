@@ -1,4 +1,4 @@
-classdef GrB < handle
+classdef (HandleCompatible) GrB < handle
 %GrB GraphBLAS sparse matrices for Octave/MATLAB.
 %
 % GraphBLAS is a library for creating graph algorithms based on sparse

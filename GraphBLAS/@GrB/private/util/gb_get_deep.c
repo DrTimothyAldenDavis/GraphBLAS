@@ -68,7 +68,7 @@ GrB_Info gb_get_deep        // get the input/output matrix C
         // ensure C is a @GrB matrix argument
         if (matrix->G == NULL)
         {
-            ERROR ("For the in-place syntax, C must be a @GrB matrix",
+            ERROR ("For in-place syntax, C must be a @GrB matrix",
                 GrB_INVALID_VALUE) ;
         }
 
