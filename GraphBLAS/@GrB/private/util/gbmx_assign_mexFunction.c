@@ -25,8 +25,8 @@
 
 // Usage:
 
-//      C = gbassign    (Cin, M, accum, A, I, J, desc)
-//      C = gbsubassign (Cin, M, accum, A, I, J, desc)
+//      C = gbmex_assign    (Cin, M, accum, A, I, J, desc)
+//      C = gbmex_subassign (Cin, M, accum, A, I, J, desc)
 
 // Cin and A are required.  See GrB.m for more details.
 
@@ -46,7 +46,7 @@
 
 #include "gb_interface.h"
 
-void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
+void gbmx_assign_mexFunction    // gbmex_assign or gbmex_subassign mexFunctions
 (
     int nargout,                // # output arguments for mexFunction
     mxArray *pargout [ ],       // output arguments for mexFunction

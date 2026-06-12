@@ -106,8 +106,8 @@ function unopinfo (op, type)
 if (nargin == 0)
     help GrB.unopinfo
 elseif (nargin == 1)
-    gbunopinfo (op) ;
+    gbmex_unopinfo (op) ;
 else
-    gbunopinfo (op, type) ;
+    gbmex_unopinfo (op, type) ;
 end
 

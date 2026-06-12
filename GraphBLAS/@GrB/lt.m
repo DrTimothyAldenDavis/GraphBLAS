@@ -14,16 +14,16 @@ function C = lt (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[am, an, atype] = gbsize (A) ;
-[bm, bn, btype] = gbsize (B) ;
+[am, an, atype] = gbmex_size (A) ;
+[bm, bn, btype] = gbmex_size (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
 b_is_scalar = (bm == 1) && (bn == 1) ;
-ctype = gboptype (atype, btype) ;
+ctype = gbmex_optype (atype, btype) ;
 
 if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars
-        C = GrB (gbeunion (A, 0, '<', B, 0)) ;
+        C = GrB (gbmex_eunion (A, 0, '<', B, 0)) ;
     else
         % A is a scalar, B is a matrix
         if (gb_scalar (A) < 0)
@@ -34,14 +34,14 @@ if (a_is_scalar)
                 % since a < 0, entries not present in B result in a true
                 % value, so the result is full.  Expand A to full.
                 a = gb_scalar_to_full (bm, bn, ctype, gb_fmt (B), A) ;
-                b = GrB (gbfull (B, ctype)) ;
-                C = GrB (gbemult (a, '<', b)) ;
+                b = GrB (gbmex_full (B, ctype)) ;
+                C = GrB (gbmex_emult (a, '<', b)) ;
             end
         else
             % since a >= 0, entries not present in B result in a false
             % value, so the result is a sparse subset of B.  select all
             % entries in B > a, then convert to true.
-            C = GrB (gbapply ('1.logical', GrB (gbselect (B, '>', A)))) ;
+            C = GrB (gbmex_apply ('1.logical', GrB (gbmex_select (B, '>', A)))) ;
         end
     end
 else
@@ -54,18 +54,18 @@ else
         elseif (b > 0)
             % since b > 0, entries not present in A result in a true
             % value, so the result is full.  Expand B to a full matrix.
-            a = GrB (gbfull (A, ctype)) ;
+            a = GrB (gbmex_full (A, ctype)) ;
             b = gb_scalar_to_full (am, an, ctype, gb_fmt (A), B) ;
-            C = GrB (gbemult (a, '<', b)) ;
+            C = GrB (gbmex_emult (a, '<', b)) ;
         else
             % since b <= 0, entries not present in A result in a false
             % value, so the result is a sparse subset of A.  Select all
             % entries in A < b, then convert to true.
-            C = GrB (gbapply ('1.logical', GrB (gbselect (A, '<', B)))) ;
+            C = GrB (gbmex_apply ('1.logical', GrB (gbmex_select (A, '<', B)))) ;
         end
     else
         % both A and B are matrices.  C is the set union of A and B.
-        C = GrB (gbeunion (A, 0, '<', B, 0)) ;
+        C = GrB (gbmex_eunion (A, 0, '<', B, 0)) ;
     end
 end
 

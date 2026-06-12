@@ -28,7 +28,7 @@ function C = mat2cell (A, m, n)
 
 if (isobject (A))
     if (nargin < 3)
-        [~, n] = gbsize (A) ;
+        [~, n] = gbmex_size (A) ;
     end
 else
     m = double (m) ;
@@ -38,7 +38,7 @@ else
 end
 
 % S is returned as a cell array of @GrB opaque handle structs.
-S = gbsplit (A, m, n) ;
+S = gbmex_split (A, m, n) ;
 
 % convert each entry in S to a @GrB object
 C = cell (size (S)) ;
@@ -48,7 +48,7 @@ end
 
 % NOTE: this method has a near zero chance of causing a memory leak.  If one of
 % the conversions C {k} = GrB (S {k}) fails, this method returns immediately.
-% MATLAB will know how to delete all @GrB objects in C, by calling gbdelete.
+% MATLAB will know how to delete all @GrB objects in C, by calling gbmex_delete.
 % It will not know how to properly delete all of the @GrB handle structs in S
 % that remain.  These point to GraphBLAS matrices in malloc/free space, so this
 % will cause a leak.  However, this failure is remote.  Each conversion of

@@ -7,7 +7,7 @@ function C = cbrt (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-type = gbtype (G) ;
+type = gbmex_type (G) ;
 if (gb_contains (type, 'complex'))
     error ('GrB:error', 'input must be real') ;
 elseif (gb_isfloat (type))
@@ -16,5 +16,5 @@ else
     op = 'cbrt.double' ;
 end
 
-C = GrB (gbapply (op, G)) ;
+C = GrB (gbmex_apply (op, G)) ;
 

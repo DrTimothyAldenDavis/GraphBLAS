@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// This method implements the gbeadd and gbemult mexFunctions.
+// This method implements the gbmex_eadd and gbmex_emult mexFunctions.
 
 // It is in the util folder, but it is an entire mexFunction, not a
 // utility.

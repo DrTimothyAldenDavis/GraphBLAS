@@ -6,8 +6,8 @@ function C = ceil (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (gb_isfloat (gbtype (G)) && gbnvals (G) > 0)
-    C = GrB (gbapply ('ceil', G)) ;
+if (gb_isfloat (gbmex_type (G)) && gbmex_nvals (G) > 0) % FIXME remove nvals
+    C = GrB (gbmex_apply ('ceil', G)) ;
 else
     C = GrB (G) ;
 end

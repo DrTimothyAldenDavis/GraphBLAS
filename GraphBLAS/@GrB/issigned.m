@@ -16,9 +16,9 @@ if (ischar (arg))
     type = arg ;
 elseif (isobject (arg))
     arg = arg.opaque ;
-    type = gbtype (arg) ;
+    type = gbmex_type (arg) ;
 else
-    type = gbtype (arg) ;
+    type = gbmex_type (arg) ;
 end
 
 s = gb_issigned (type) ;

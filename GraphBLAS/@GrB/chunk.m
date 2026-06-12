@@ -23,8 +23,8 @@ function c = chunk (c_arg)
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 0)
-    c = gbchunk ;
+    c = gbmex_chunk ;
 else
-    c = gbchunk (c_arg) ;
+    c = gbmex_chunk (c_arg) ;
 end
 

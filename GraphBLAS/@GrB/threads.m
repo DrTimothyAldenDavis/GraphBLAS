@@ -26,8 +26,8 @@ function nthreads = threads (nthreads)
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 0)
-    nthreads = gbthreads ;
+    nthreads = gbmex_threads ;
 else
-    nthreads = gbthreads (nthreads) ;
+    nthreads = gbmex_threads (nthreads) ;
 end
 

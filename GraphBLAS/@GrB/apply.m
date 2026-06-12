@@ -26,33 +26,33 @@ function C = apply (arg1, arg2, arg3, arg4, arg5, arg6)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (nargout == 0)
+% FIXME: handle feature for @GhB
+% if (nargout == 0)
+%   switch (nargin)
+%       case 2
+%           gbmex_apply (arg1, arg2) ;
+%       case 3
+%           gbmex_apply (arg1, arg2, arg3) ;
+%       case 4
+%           gbmex_apply (arg1, arg2, arg3, arg4) ;
+%       case 5
+%           gbmex_apply (arg1, arg2, arg3, arg4, arg5) ;
+%       case 6
+%           gbmex_apply (arg1, arg2, arg3, arg4, arg5, arg6) ;
+%   end
+% else
     switch (nargin)
         case 2
-            gbapply (arg1, arg2) ;
+            [C_opaque, kind] = gbmex_apply (arg1, arg2) ;
         case 3
-            gbapply (arg1, arg2, arg3) ;
+            [C_opaque, kind] = gbmex_apply (arg1, arg2, arg3) ;
         case 4
-            gbapply (arg1, arg2, arg3, arg4) ;
+            [C_opaque, kind] = gbmex_apply (arg1, arg2, arg3, arg4) ;
         case 5
-            gbapply (arg1, arg2, arg3, arg4, arg5) ;
+            [C_opaque, kind] = gbmex_apply (arg1, arg2, arg3, arg4, arg5) ;
         case 6
-            gbapply (arg1, arg2, arg3, arg4, arg5, arg6) ;
-    end
-else
-    switch (nargin)
-        case 2
-            [C_opaque, kind] = gbapply (arg1, arg2) ;
-        case 3
-            [C_opaque, kind] = gbapply (arg1, arg2, arg3) ;
-        case 4
-            [C_opaque, kind] = gbapply (arg1, arg2, arg3, arg4) ;
-        case 5
-            [C_opaque, kind] = gbapply (arg1, arg2, arg3, arg4, arg5) ;
-        case 6
-            [C_opaque, kind] = gbapply (arg1, arg2, arg3, arg4, arg5, arg6) ;
+            [C_opaque, kind] = gbmex_apply (arg1, arg2, arg3, arg4, arg5, arg6) ;
     end
     C = gb_mexfunction_result (C_opaque, kind) ;
-end
-
+% end
 

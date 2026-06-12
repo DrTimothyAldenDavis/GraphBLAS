@@ -8,10 +8,10 @@ function C = sec (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-type = gbtype (G) ;
+type = gbmex_type (G) ;
 if (~gb_isfloat (type))
     type = 'double' ;
 end
 
-C = GrB (gbapply ('minv', GrB (gbapply ('cos', GrB (gbfull (G, type)))))) ;
+C = GrB (gbmex_apply ('minv', GrB (gbmex_apply ('cos', GrB (gbmex_full (G, type)))))) ;
 

@@ -56,7 +56,7 @@ end
             end
 
             try
-                ok = gbbinopinfo (binop) ;
+                ok = gbmex_binopinfo (binop) ;
                 nbinops = nbinops + 1 ;
                 if (nargout > 0)
                     result = [result ; binop] ; %#ok<AGROW>

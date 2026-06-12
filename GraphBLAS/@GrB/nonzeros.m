@@ -11,7 +11,7 @@ function X = nonzeros (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-S = GrB (gbselect ('nonzero', G)) ;
-gbwait (S) ;
-X = gbextractvalues (S) ;
+S = GrB (gbmex_select ('nonzero', G)) ;
+gbmex_wait (S) ;
+X = gbmex_extractvalues (S) ;
 

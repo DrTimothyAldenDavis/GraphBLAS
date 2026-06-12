@@ -7,7 +7,7 @@ function s = gb_issymmetric (G_arg, option, herm)
 
 % FUTURE: this can be much faster; see spsym in CHOLMOD.
 
-[m, n, type] = gbsize (G_arg) ;
+[m, n, type] = gbmex_size (G_arg) ;
 
 if (m ~= n)
 
@@ -24,10 +24,10 @@ else
     if (herm && gb_contains (type, 'complex'))
         % T = G', complex conjugate transpose
         desc.in0 = 'transpose' ;
-        T = GrB (gbapply ('conj', G, desc)) ;
+        T = GrB (gbmex_apply ('conj', G, desc)) ;
     else
         % T = G.', array transpose
-        T = GrB (gbtrans (G)) ;
+        T = GrB (gbmex_trans (G)) ;
     end
 
     switch (option)
@@ -35,12 +35,12 @@ else
         case { 'skew' }
 
             % G is skew symmetric/Hermitian if G+T is zero
-            s = (gbnorm (gb_eadd (G, '+', T), 1) == 0) ;
+            s = (gbmex_norm (gb_eadd (G, '+', T), 1) == 0) ;
 
         case { 'nonskew' }
 
             % G is symmetric/Hermitian if G-T is zero
-            s = (gbnormdiff (G, T, 1) == 0) ;
+            s = (gbmex_normdiff (G, T, 1) == 0) ;
 
         otherwise
 
@@ -51,8 +51,8 @@ else
     if (s)
         % also check the pattern; G might have explicit zeros
         S = gb_spones (G, 'logical') ;
-        T = GrB (gbtrans (S)) ;
-        s = gbisequal (S, T) ;
+        T = GrB (gbmex_trans (S)) ;
+        s = gbmex_isequal (S, T) ;
     end
 end
 

@@ -27,7 +27,7 @@ for k = 1:nargin
                 dist = arg ;
             case { 'range' }
                 r = varargin {k+1} ;
-                [rm, rn, type] = gbsize (r) ;
+                [rm, rn, type] = gbmex_size (r) ;
                 if (rm*rn > 2)
                     error ('GrB:error', 'range can contain at most 2 entries') ;
                 end
@@ -37,7 +37,7 @@ for k = 1:nargin
                 else
                     rtype = type ;
                 end
-                range = GrB (gbfull (r, rtype, 0, struct ('kind', 'full'))) ;
+                range = GrB (gbmex_full (r, rtype, 0, struct ('kind', 'full'))) ;
             case { 'unsymmetric', 'symmetric', 'hermitian' }
                 sym_option = arg ;
             otherwise
@@ -58,12 +58,12 @@ if (firstchar == 2)
 
     % C = GrB.random (A, ...) ;
     A = varargin {1} ;
-    [m, n] = gbsize (A) ;
+    [m, n] = gbmex_size (A) ;
     if ((symmetric || hermitian) && (m ~= n))
         error ('GrB:error', 'input matrix must be square') ;
     end
-    gbwait (A) ;
-    [I, J] = gbextracttuples (A, desc) ;
+    gbmex_wait (A) ;
+    [I, J] = gbmex_extracttuples (A, desc) ;
     e = length (I) ;
 
 elseif (firstchar == (4 - (symmetric || hermitian)))
@@ -149,30 +149,30 @@ end
 % build the matrix
 %---------------------------------------------------------------------------
 
-C = GrB (gbbuild (I, J, X, m, n, '2nd', desc)) ;
+C = GrB (gbmex_build (I, J, X, m, n, '2nd', desc)) ;
 
 % make it symmetric or hermitian, if requested
-L = GrB (gbselect ('tril', C, -1)) ;
+L = GrB (gbmex_select ('tril', C, -1)) ;
 
 if (symmetric)
 
     % C = tril (C) + tril (C,-1)'
-    C = GrB (gbeadd (GrB (gbselect ('tril', C, 0)), '+', GrB (gbtrans (L)))) ;
+    C = GrB (gbmex_eadd (GrB (gbmex_select ('tril', C, 0)), '+', GrB (gbmex_trans (L)))) ;
 
 elseif (hermitian)
 
     % C = L + L' + real (diag (C))
-    LT = GrB (gbtrans (L)) ;
-    if (gb_contains (gbtype (LT), 'complex'))
-        LT = GrB (gbapply ('conj', LT)) ;
+    LT = GrB (gbmex_trans (L)) ;
+    if (gb_contains (gbmex_type (LT), 'complex'))
+        LT = GrB (gbmex_apply ('conj', LT)) ;
     end
-    D = GrB (gbselect ('diag', C, 0)) ;
-    if (gb_contains (gbtype (D), 'complex'))
-        LT = GrB (gbeadd (LT, '+', GrB (gbapply ('creal', D)))) ;
+    D = GrB (gbmex_select ('diag', C, 0)) ;
+    if (gb_contains (gbmex_type (D), 'complex'))
+        LT = GrB (gbmex_eadd (LT, '+', GrB (gbmex_apply ('creal', D)))) ;
     else
-        LT = GrB (gbeadd (LT, '+', D)) ;
+        LT = GrB (gbmex_eadd (LT, '+', D)) ;
     end
-    C = GrB (gbeadd (L, '+', LT)) ;
+    C = GrB (gbmex_eadd (L, '+', LT)) ;
 
 end
 

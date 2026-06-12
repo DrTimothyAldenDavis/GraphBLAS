@@ -30,7 +30,7 @@ if (nargin < 2)
     assumedtype = 'uint64' ;
 end
 
-atype = gbtype (A) ;
+atype = gbmex_type (A) ;
 
 if (gb_contains (atype, 'complex'))
     error ('GrB:error', 'inputs must be real') ;
@@ -49,14 +49,14 @@ ctype = atype ;
 
 if (isequal (atype, 'double') || isequal (atype, 'single'))
     % cast A to the assumedtype
-    C = GrB (gbfull (GrB (A, assumedtype))) ;
+    C = GrB (gbmex_full (GrB (A, assumedtype))) ;
 else
-    C = GrB (gbfull (A)) ;
+    C = GrB (gbmex_full (A)) ;
 end
 
-C = GrB (gbapply ('bitcmp', C)) ;
+C = GrB (gbmex_apply ('bitcmp', C)) ;
 
-if (~isequal (gbtype (C), ctype))
+if (~isequal (gbmex_type (C), ctype))
     C = GrB (C, ctype) ;
 end
 

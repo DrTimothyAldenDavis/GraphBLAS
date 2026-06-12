@@ -13,24 +13,24 @@ function I = subsindex (G_arg)
 
 % As an extension to the expression A(G), prune zeros and negative
 % values first.  The expression A(G) becomes A (G (find (G > 0))).
-gbwait (G_arg) ;
-G = GrB (gbselect ('>0', G_arg)) ;
+gbmex_wait (G_arg) ;
+G = GrB (gbmex_select ('>0', G_arg)) ;
 
-[m, n, type] = gbsize (G) ;
+[m, n, type] = gbmex_size (G) ;
 G_is_full = gb_isfull (G) ;
 
-gbwait (G) ;
+gbmex_wait (G) ;
 
 if (isequal (type, 'double') || isequal (type, 'single'))
     % double or single: convert to int64
-    I = gbextractvalues (G) ;
+    I = gbmex_extractvalues (G) ;
     if (~isequal (I, round (I)))
         error ('GrB:error', 'array indices must be integers') ;
     end
     I = int64 (I) ;
 elseif (gb_contains (type, 'int'))
     % any integer: just extract the values
-    I = gbextractvalues (G) ;
+    I = gbmex_extractvalues (G) ;
 else
     % logical or complex
     error ('GrB:error', 'array indices must be integers') ;

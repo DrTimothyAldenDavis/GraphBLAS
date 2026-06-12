@@ -8,9 +8,9 @@ if (b == 1)
     C = GrB (A) ;
 else
     C = gb_mpower (A, floor (b/2)) ;
-    C = GrB (gbmxm (C, '+.*', C)) ;
+    C = GrB (gbmex_mxm (C, '+.*', C)) ;
     if (mod (b, 2) == 1)
-        C = GrB (gbmxm (C, '+.*', A)) ;
+        C = GrB (gbmex_mxm (C, '+.*', A)) ;
     end
 end
 

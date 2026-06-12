@@ -51,25 +51,25 @@ function [status,path] = jit (status_arg,path_arg)
 if (nargin == 0)
 
     if (nargout <= 1)
-        [status] = gbjit ;
+        [status] = gbmex_jit ;
     else
-        [status, path] = gbjit ;
+        [status, path] = gbmex_jit ;
     end
 
 elseif (nargin == 1)
 
     if (nargout <= 1)
-        [status] = gbjit (status_arg) ;
+        [status] = gbmex_jit (status_arg) ;
     else
-        [status, path] = gbjit (status_arg) ;
+        [status, path] = gbmex_jit (status_arg) ;
     end
 
 else
 
     if (nargout <= 1)
-        [status] = gbjit (status_arg, path_arg) ;
+        [status] = gbmex_jit (status_arg, path_arg) ;
     else
-        [status, path] = gbjit (status_arg, path_arg) ;
+        [status, path] = gbmex_jit (status_arg, path_arg) ;
     end
 
 end

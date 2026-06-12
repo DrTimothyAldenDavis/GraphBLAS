@@ -39,8 +39,8 @@ function semiringinfo (s, type)
 if (nargin == 0)
     help GrB.semiringinfo
 elseif (nargin == 1)
-    gbsemiringinfo (s) ;
+    gbmex_semiringinfo (s) ;
 else
-    gbsemiringinfo (s, type) ;
+    gbmex_semiringinfo (s, type) ;
 end
 

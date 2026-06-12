@@ -7,8 +7,8 @@ function x = gb_scalar (A)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-gbwait (A) ;
-[~, ~, x] = gbextracttuples (A) ;
+gbmex_wait (A) ;
+[~, ~, x] = gbmex_extracttuples (A) ;
 if (isempty (x))
     x = 0 ;
 else

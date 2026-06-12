@@ -6,5 +6,5 @@ function e = gb_nnz (G)
 % SPDX-License-Identifier: Apache-2.0
 
 % count entries in G and then subtract the number explicit zero entries
-e = gbnvals (G) - gbnvals (GrB (gbselect (G, '==0'))) ;
+e = gbmex_nvals (G) - gbmex_nvals (GrB (gbmex_select (G, '==0'))) ;
 

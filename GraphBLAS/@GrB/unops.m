@@ -95,7 +95,7 @@ for k1 = 1:nops
         type = types {k2}  ;
         unop = [op '.' type] ;
         try
-            ok = gbunopinfo (unop) ;
+            ok = gbmex_unopinfo (unop) ;
             nunops = nunops + 1 ;
             if (nargout > 0)
                 result = [result ; unop] ; %#ok<AGROW>

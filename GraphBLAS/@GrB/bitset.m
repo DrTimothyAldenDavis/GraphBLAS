@@ -43,8 +43,8 @@ function C = bitset (A_arg, B_arg, arg3, arg4)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[am, an, atype] = gbsize (A_arg) ;
-[bm, bn, btype] = gbsize (B_arg) ;
+[am, an, atype] = gbmex_size (A_arg) ;
+[bm, bn, btype] = gbmex_size (B_arg) ;
 
 if (gb_contains (atype, 'complex') || gb_contains (btype, 'complex'))
     error ('GrB:error', 'inputs must be real') ;
@@ -101,7 +101,7 @@ else
 end
 
 % get the matrix or scalar V
-[m, n] = gbsize (V) ;
+[m, n] = gbmex_size (V) ;
 V_is_scalar = (m == 1) && (n == 1) ;
 
 if (V_is_scalar)
@@ -119,21 +119,21 @@ if (V_is_scalar)
         % A is a scalar
         if (b_is_scalar)
             % both A and B are scalars
-            T = GrB (gbeunion (op, A, 0, B, 0)) ;
+            T = GrB (gbmex_eunion (op, A, 0, B, 0)) ;
         else
             % A is a scalar, B is a matrix
-            a = GrB (gbfull (A)) ;
-            T = GrB (gbapply2 (op, a, B)) ;
+            a = GrB (gbmex_full (A)) ;
+            T = GrB (gbmex_apply2 (op, a, B)) ;
         end
     else
         % A is a matrix
         if (b_is_scalar)
             % A is a matrix, B is scalar
-            b = GrB (gbfull (B)) ;
-            T = GrB (gbapply2 (op, A, b)) ;
+            b = GrB (gbmex_full (B)) ;
+            T = GrB (gbmex_apply2 (op, A, b)) ;
         else
             % both A and B are matrices
-            T = GrB (gbeunion (op, A, 0, B, 0)) ;
+            T = GrB (gbmex_eunion (op, A, 0, B, 0)) ;
         end
     end
 
@@ -163,7 +163,7 @@ else
 
     % Set all bits referenced by B(i,j) to 1, even those that need to be
     % set to 0, without considering V(i,j).
-    S = GrB (gbeunion (['bitset.', atype], A2, 0, B2, 0)) ;
+    S = GrB (gbmex_eunion (['bitset.', atype], A2, 0, B2, 0)) ;
 
     % The pattern of S is now the set intersection of A and B, but
     % bits referenced by B(i,j) have been set to 1, not 0.  Construct B0
@@ -171,15 +171,15 @@ else
     % pattern of bit positions B0 to set to 0 in A.
     d.mask = 'complement' ;
     E = GrB (m, n, atype) ;
-    B0 = GrB (gbassign (E, V, B2, d)) ;
+    B0 = GrB (gbmex_assign (E, V, B2, d)) ;
 
     % Clear the bits in C, referenced by B0(i,j), where V(i,j) is zero.
-    T = GrB (gbeadd (['bitclr.', atype], S, B0)) ;
+    T = GrB (gbmex_eadd (['bitclr.', atype], S, B0)) ;
 
 end
 
 % return result
-if (isequal (gbtype (T), ctype))
+if (isequal (gbmex_type (T), ctype))
     C = T ;
 else
     C = GrB (T, ctype) ;

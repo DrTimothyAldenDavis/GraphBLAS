@@ -5,7 +5,7 @@ function s = gb_numel (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[m, n] = gbsize (G) ;
+[m, n] = gbmex_size (G) ;
 s = m*n ;
 
 if (m > flintmax || n > flintmax || s > flintmax)

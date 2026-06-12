@@ -29,5 +29,5 @@ switch (type)
         error ('GrB:error', 'unknown reshape option') ;
 end
 
-C = GrB (gbreshape (G, mnew, nnew, by_col)) ;
+C = GrB (gbmex_reshape (G, mnew, nnew, by_col)) ;
 

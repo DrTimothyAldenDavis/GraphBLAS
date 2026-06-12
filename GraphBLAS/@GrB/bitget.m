@@ -42,8 +42,8 @@ if (nargin < 3)
     assumedtype = 'uint64' ;
 end
 
-atype = gbtype (A) ;
-btype = gbtype (B) ;
+atype = gbmex_type (A) ;
+btype = gbmex_type (B) ;
 
 if (gb_contains (atype, 'complex') || gb_contains (btype, 'complex'))
     error ('GrB:error', 'inputs must be real') ;
@@ -78,7 +78,7 @@ else
     end
 end
 
-if (~isequal (gbtype (C), ctype))
+if (~isequal (gbmex_type (C), ctype))
     C = GrB (C, ctype) ;
 end
 

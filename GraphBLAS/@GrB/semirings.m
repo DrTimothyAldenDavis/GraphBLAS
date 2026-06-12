@@ -70,7 +70,7 @@ for k1 = 1:nops
             end
 
             try
-                ok = gbsemiringinfo (semiring) ;
+                ok = gbmex_semiringinfo (semiring) ;
                 nsemirings = nsemirings + 1 ;
                 if (nargout > 0)
                     result = [result ; semiring] ; %#ok<AGROW>

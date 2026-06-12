@@ -10,5 +10,6 @@ function e = nzmax (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-e = max (gbnvals (G), 1) ;
+% FIXME: do not use nvals; it requires a wait...
+e = max (gbmex_nvals (G), 1) ;
 

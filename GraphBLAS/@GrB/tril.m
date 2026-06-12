@@ -16,5 +16,5 @@ else
     k = gb_get_scalar (k) ;
 end
 
-L = GrB (gbselect ('tril', G, k)) ;
+L = GrB (gbmex_select ('tril', G, k)) ;
 

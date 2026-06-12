@@ -65,7 +65,7 @@ for k1 = 1:nops
             end
 
             try
-                ok = gbmonoidinfo (monoid) ;
+                ok = gbmex_monoidinfo (monoid) ;
                 nmonoids = nmonoids + 1 ;
                 if (nargout > 0)
                     result = [result ; monoid] ; %#ok<AGROW>

@@ -18,5 +18,5 @@ function s = isequal (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-s = gbisequal (A, B) ;
+s = gbmex_isequal (A, B) ;
 

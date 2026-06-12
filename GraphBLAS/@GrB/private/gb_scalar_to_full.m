@@ -11,6 +11,6 @@ else
 end
 
 E = GrB (m, n, type, fmt) ;
-S = GrB (gbfull (scalar)) ;
-C = GrB (gbsubassign (E, S)) ;
+S = GrB (gbmex_full (scalar)) ;
+C = GrB (gbmex_subassign (E, S)) ;
 

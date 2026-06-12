@@ -47,8 +47,8 @@ function selectopinfo (op,optype)
 if (nargin == 0)
     help GrB.selectopinfo
 elseif (nargin == 1)
-    gbselectopinfo (op) ;
+    gbmex_selectopinfo (op) ;
 else
-    gbselectopinfo (op, optype) ;
+    gbmex_selectopinfo (op, optype) ;
 end
 

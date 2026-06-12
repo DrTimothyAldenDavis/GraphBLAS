@@ -8,10 +8,10 @@ function C = acsc (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-type = gbtype (G) ;
+type = gbmex_type (G) ;
 if (~gb_isfloat (type))
     type = 'double' ;
 end
 
-C = gb_trig ('asin', GrB (gbapply ('minv', GrB (gbfull (G, type))))) ;
+C = gb_trig ('asin', GrB (gbmex_apply ('minv', GrB (gbmex_full (G, type))))) ;
 

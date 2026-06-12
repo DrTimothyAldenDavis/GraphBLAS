@@ -7,10 +7,10 @@ function C = ctranspose (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (gb_contains (gbtype (G), 'complex'))
+if (gb_contains (gbmex_type (G), 'complex'))
     desc.in0 = 'transpose' ;
-    C = GrB (gbapply ('conj', G, desc)) ;
+    C = GrB (gbmex_apply ('conj', G, desc)) ;
 else
-    C = GrB (gbtrans (G)) ;
+    C = GrB (gbmex_trans (G)) ;
 end
 

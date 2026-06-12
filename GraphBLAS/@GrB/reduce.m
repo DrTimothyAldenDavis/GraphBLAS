@@ -33,13 +33,13 @@ function C = reduce (arg1, arg2, arg3, arg4, arg5)
 
 switch (nargin)
     case 2
-        [C_opaque, kind] = gbreduce (arg1, arg2) ;
+        [C_opaque, kind] = gbmex_reduce (arg1, arg2) ;
     case 3
-        [C_opaque, kind] = gbreduce (arg1, arg2, arg3) ;
+        [C_opaque, kind] = gbmex_reduce (arg1, arg2, arg3) ;
     case 4
-        [C_opaque, kind] = gbreduce (arg1, arg2, arg3, arg4) ;
+        [C_opaque, kind] = gbmex_reduce (arg1, arg2, arg3, arg4) ;
     case 5
-        [C_opaque, kind] = gbreduce (arg1, arg2, arg3, arg4, arg5) ;
+        [C_opaque, kind] = gbmex_reduce (arg1, arg2, arg3, arg4, arg5) ;
 end
 
 C = gb_mexfunction_result (C_opaque, kind) ;

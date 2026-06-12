@@ -42,5 +42,5 @@ function s = type (X)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-s = gbtype (X) ;
+s = gbmex_type (X) ;
 

@@ -14,5 +14,5 @@ function C = logical (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-C = gb2builtin (GrB (gbcast (G, 'logical'))) ;
+C = gbmex_builtin (GrB (gbmex_cast (G, 'logical'))) ;
 

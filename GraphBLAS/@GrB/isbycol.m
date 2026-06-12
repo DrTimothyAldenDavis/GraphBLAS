@@ -10,7 +10,7 @@ function s = isbycol (A)
 % SPDX-License-Identifier: Apache-2.0
 
 if (isobject (A))
-    s = isequal (gbformat (A), 'by col')  ;
+    s = isequal (gbmex_format (A), 'by col')  ;
 else
     s = true ;
 end

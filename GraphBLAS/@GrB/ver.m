@@ -9,8 +9,8 @@ function v = ver
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargout == 0)
-    gbver ;
+    gbmex_ver ;
 else
-    v = gbver ;
+    v = gbmex_ver ;
 end
 

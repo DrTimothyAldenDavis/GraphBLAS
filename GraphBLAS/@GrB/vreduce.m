@@ -36,15 +36,15 @@ function C = vreduce (arg1, arg2, arg3, arg4, arg5, arg6)
 
 switch (nargin)
     case 2
-        [C_opaque, kind] = gbvreduce (arg1, arg2) ;
+        [C_opaque, kind] = gbmex_vreduce (arg1, arg2) ;
     case 3
-        [C_opaque, kind] = gbvreduce (arg1, arg2, arg3) ;
+        [C_opaque, kind] = gbmex_vreduce (arg1, arg2, arg3) ;
     case 4
-        [C_opaque, kind] = gbvreduce (arg1, arg2, arg3, arg4) ;
+        [C_opaque, kind] = gbmex_vreduce (arg1, arg2, arg3, arg4) ;
     case 5
-        [C_opaque, kind] = gbvreduce (arg1, arg2, arg3, arg4, arg5) ;
+        [C_opaque, kind] = gbmex_vreduce (arg1, arg2, arg3, arg4, arg5) ;
     case 6
-        [C_opaque, kind] = gbvreduce (arg1, arg2, arg3, arg4, arg5, arg6) ;
+        [C_opaque, kind] = gbmex_vreduce (arg1, arg2, arg3, arg4, arg5, arg6) ;
 end
 
 C = gb_mexfunction_result (C_opaque, kind) ;

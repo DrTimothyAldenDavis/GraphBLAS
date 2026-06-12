@@ -52,14 +52,14 @@ function type = optype (a, b)
 if (ischar (a))
     atype = a ;
 else
-    atype = gbtype (a) ;
+    atype = gbmex_type (a) ;
 end
 
 if (ischar (b))
     btype = b ;
 else
-    btype = gbtype (b) ;
+    btype = gbmex_type (b) ;
 end
 
-type = gboptype (atype, btype) ;
+type = gbmex_optype (atype, btype) ;
 

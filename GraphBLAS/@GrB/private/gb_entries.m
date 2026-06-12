@@ -26,12 +26,12 @@ if (isequal (dim, 'all'))
         case 'count'
             % number of entries in A
             % e = GrB.entries (A)
-            result = gbnvals (A) ;
+            result = gbmex_nvals (A) ;
         case 'list'
             % list of values of unique entries
             % X = GrB.entries (A, 'list')
-            gbwait (A) ;
-            result = unique (gbextractvalues (A)) ;
+            gbmex_wait (A) ;
+            result = unique (gbmex_extractvalues (A)) ;
         otherwise
             error ('GrB:error', '''all'' and ''degree'' cannot be combined') ;
     end
@@ -39,22 +39,22 @@ if (isequal (dim, 'all'))
 else
 
     % get the row or column degree
-    result = GrB (gbdegree (A, dim)) ;    % dim is 'row' or 'col'
+    result = GrB (gbmex_degree (A, dim)) ;    % dim is 'row' or 'col'
 
     switch kind
         case 'count'
             % number of non-empty rows/cols
             % e = GrB.entries (A, 'row')
             % e = GrB.entries (A, 'col')
-            result = gbnvals (GrB (gbselect (result, 'nonzero'))) ;
+            result = gbmex_nvals (GrB (gbmex_select (result, 'nonzero'))) ;
         case 'list'
             % list of non-empty rows/cols
             % I = GrB.entries (A, 'row', 'list')
             % J = GrB.entries (A, 'col', 'list')
             desc.base = 'one-based int' ;
-            S = GrB (gbselect (result, 'nonzero')) ;
-            gbwait (S) ;
-            result = gbextracttuples (S, desc);
+            S = GrB (gbmex_select (result, 'nonzero')) ;
+            gbmex_wait (S) ;
+            result = gbmex_extracttuples (S, desc);
         % case 'degree'
             % degree of all rows/cols
             % d = GrB.entries (A, 'row', 'degree')

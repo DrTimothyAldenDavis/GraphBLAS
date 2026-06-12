@@ -24,15 +24,15 @@ function C = trans (arg1, arg2, arg3, arg4, arg5)
 
 switch (nargin)
     case 1
-        [C_opaque, kind] = gbtrans (arg1) ;
+        [C_opaque, kind] = gbmex_trans (arg1) ;
     case 2
-        [C_opaque, kind] = gbtrans (arg1, arg2) ;
+        [C_opaque, kind] = gbmex_trans (arg1, arg2) ;
     case 3
-        [C_opaque, kind] = gbtrans (arg1, arg2, arg3) ;
+        [C_opaque, kind] = gbmex_trans (arg1, arg2, arg3) ;
     case 4
-        [C_opaque, kind] = gbtrans (arg1, arg2, arg3, arg4) ;
+        [C_opaque, kind] = gbmex_trans (arg1, arg2, arg3, arg4) ;
     case 5
-        [C_opaque, kind] = gbtrans (arg1, arg2, arg3, arg4, arg5) ;
+        [C_opaque, kind] = gbmex_trans (arg1, arg2, arg3, arg4, arg5) ;
 end
 
 C = gb_mexfunction_result (C_opaque, kind) ;

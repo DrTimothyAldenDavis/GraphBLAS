@@ -34,10 +34,10 @@ function G = deserialize (blob, mode, arg3)
 
 % deserialize the blob into a @GrB matrix
 if (nargin == 1)
-    G = GrB (gbdeserialize (blob)) ;
+    G = GrB (gbmex_deserialize (blob)) ;
 elseif (nargin == 2)
-    G = GrB (gbdeserialize (blob, mode)) ;
+    G = GrB (gbmex_deserialize (blob, mode)) ;
 else
-    G = GrB (gbdeserialize (blob, mode, arg3)) ;
+    G = GrB (gbmex_deserialize (blob, mode, arg3)) ;
 end
 

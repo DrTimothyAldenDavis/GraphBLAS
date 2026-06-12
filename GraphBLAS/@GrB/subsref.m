@@ -36,7 +36,7 @@ function C = subsref (A, S)
 
 % FUTURE: add all forms of linear indexing.
 
-[m, n] = gbsize (A) ;
+[m, n] = gbmex_size (A) ;
 
 if (length (S) > 1)
     error ('GrB:error', 'nested indexing not supported') ;
@@ -52,29 +52,29 @@ if (ndims == 1)
 
     % C = A(M) if M is logical, or C=A(I) otherwise
     S1 = S.subs {1} ;
-    if (isequal (gbtype (S1), 'logical'))
+    if (isequal (gbmex_type (S1), 'logical'))
         % C = A (M) for logical indexing
-        C = GrB (gblogextract (A, S1)) ;
+        C = GrB (gbmex_logextract (A, S1)) ;
     else
         % C = A (I)
         [I, whole] = gb_index (S1) ;
         if (m == 1 || n == 1)
             % C = A (I) for a vector A
             if (m > 1)
-                C = GrB (gbextract (A, I, { })) ;
+                C = GrB (gbmex_extract (A, I, { })) ;
             else
-                C = GrB (gbextract (A, { }, I)) ;
+                C = GrB (gbmex_extract (A, { }, I)) ;
             end
-            [cm, ~] = gbsize (C) ;
+            [cm, ~] = gbmex_size (C) ;
             if (whole && cm == 1)
-                C = GrB (gbtrans (C)) ;
+                C = GrB (gbmex_trans (C)) ;
             end
         else
             % C = A (I) for a matrix A
             if (whole)
                 % C = A (:), whole matrix case
                 [~, mn] = gb_2d_to_1d (0, 0, m, n) ;
-                C = GrB (gbreshape (A, mn, 1, 'by column')) ;
+                C = GrB (gbmex_reshape (A, mn, 1, 'by column')) ;
             else
                 % C = A (I), general case not yet supported
                 error ('GrB:error', ...
@@ -86,7 +86,7 @@ if (ndims == 1)
 elseif (ndims == 2)
 
     % C = A (I,J)
-    C = GrB (gbextract (A, gb_index (S.subs {1}), gb_index (S.subs {2}))) ;
+    C = GrB (gbmex_extract (A, gb_index (S.subs {1}), gb_index (S.subs {2}))) ;
 
 else
 

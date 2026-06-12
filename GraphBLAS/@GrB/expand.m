@@ -22,7 +22,7 @@ if (~gb_isscalar (scalar))
 end
 
 if (nargin < 3)
-    type = gbtype (scalar) ;
+    type = gbmex_type (scalar) ;
 end
 
 C = gb_expand (scalar, S, type) ;

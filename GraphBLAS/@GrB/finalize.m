@@ -12,5 +12,5 @@ function finalize
 % SPDX-License-Identifier: Apache-2.0
 
 % does not call GrB_finalize
-gbclear ;
+gbmex_clear ;
 

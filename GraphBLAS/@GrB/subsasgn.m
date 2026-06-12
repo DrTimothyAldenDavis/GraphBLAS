@@ -50,34 +50,34 @@ if (ndims == 1)
 
     % C (M) = A if M is logical, or C (I) = A otherwise
     S1 = S.subs {1} ;
-    if (isequal (gbtype (S1), 'logical'))
+    if (isequal (gbmex_type (S1), 'logical'))
         % C (M) = A for logical assignment
-        [am, an] = gbsize (A) ;
+        [am, an] = gbmex_size (A) ;
         if (am == 1 && an == 1)
             % C (M) = scalar
-            C = GrB (gbsubassign (C, S1, A)) ;
+            C = GrB (gbmex_subassign (C, S1, A)) ;
         else
             % C (M) = A where A is a vector
-            C = GrB (gblogassign (C, S1, A)) ;
+            C = GrB (gbmex_logassign (C, S1, A)) ;
         end
     else
         % C (I) = A
-        [cm, cn] = gbsize (C) ;
+        [cm, cn] = gbmex_size (C) ;
         [I, whole] = gb_index (S1) ;
         if (cm == 1 || cn == 1)
             % C (I) = A for a vector or scalar C
-            C = GrB (gbsubassign (C, I, A)) ;
+            C = GrB (gbmex_subassign (C, I, A)) ;
         else
             if (whole)
-                [am, an] = gbsize (A) ;
+                [am, an] = gbmex_size (A) ;
                 if (am == 1 && an == 1)
                     % C (:) = scalar, the same as C (:,:) = scalar.
                     % C becomes an iso full matrix
-                    Cin = GrB (cm, cn, gbtype (C)) ;
-                    C = GrB (gbsubassign (Cin, { }, { }, A)) ;
+                    Cin = GrB (cm, cn, gbmex_type (C)) ;
+                    C = GrB (gbmex_subassign (Cin, { }, { }, A)) ;
                 else
                     % C (:) = A for a matrix C and vector A
-                    C = GrB (gbreshape (A, cm, cn, 'by column')) ;
+                    C = GrB (gbmex_reshape (A, cm, cn, 'by column')) ;
                 end
             else
                 % C (I) = A, general case not yet supported
@@ -90,7 +90,7 @@ if (ndims == 1)
 elseif (ndims == 2)
 
     % C (I,J) = A where A is length(I)-by-length(J), or a scalar
-    C = GrB (gbsubassign (C, gb_index (S.subs {1}), gb_index (S.subs {2}), A)) ;
+    C = GrB (gbmex_subassign (C, gb_index (S.subs {1}), gb_index (S.subs {2}), A)) ;
 
 else
 

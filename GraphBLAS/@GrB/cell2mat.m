@@ -61,5 +61,5 @@ if (ndims (A) > 2) %#ok<ISMAT>
     error ('GrB:error', 'only 2D cell arrays are supported') ;
 end
 
-C = GrB (gbcat (A)) ;
+C = GrB (gbmex_cat (A)) ;
 

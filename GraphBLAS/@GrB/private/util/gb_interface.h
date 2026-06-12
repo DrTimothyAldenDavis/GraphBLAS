@@ -959,7 +959,7 @@ void gbmx_usage       // check usage and make sure GxB_init has been called
 // mexFunctions in the util folder 
 //------------------------------------------------------------------------------
 
-void gbmx_assign_mexFunction    // gbassign or gbsubassign mexFunctions
+void gbmx_assign_mexFunction    // gbmex_assign or gbmex_subassign mexFunctions
 (
     int nargout,                // # output arguments for mexFunction
     mxArray *pargout [ ],       // output arguments for mexFunction

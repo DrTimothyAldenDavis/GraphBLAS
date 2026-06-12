@@ -13,5 +13,5 @@ function C = int32 (G)
 % SPDX-License-Identifier: Apache-2.0
 
 desc.kind = 'full' ;
-C = gb2builtin (GrB (gbfull (G, 'int32', int32 (0), desc))) ;
+C = gbmex_builtin (GrB (gbmex_full (G, 'int32', int32 (0), desc))) ;
 

@@ -9,13 +9,13 @@ function C = sign (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-type = gbtype (G) ;
+type = gbmex_type (G) ;
 
 if (isequal (type, 'logical'))
     C = GrB (G) ;
 elseif (~gb_isfloat (type))
-    C = GrB (GrB (gbapply ('signum.single', G)), type) ;
+    C = GrB (GrB (gbmex_apply ('signum.single', G)), type) ;
 else
-    C = GrB (gbapply ('signum', G)) ;
+    C = GrB (gbmex_apply ('signum', G)) ;
 end
 

@@ -82,7 +82,7 @@ end
             end
 
             try
-                ok = gbselectopinfo (selectop) ;
+                ok = gbmex_selectopinfo (selectop) ;
                 nselectops = nselectops + 1 ;
                 if (nargout > 0)
                     result = [result ; selectop] ; %#ok<AGROW>

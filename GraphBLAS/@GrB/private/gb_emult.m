@@ -15,18 +15,18 @@ function C = gb_emult (A, op, B)
 if (gb_isscalar (A))
     if (gb_isscalar (B))
         % both A and B are scalars
-        C = GrB (gbemult (A, op, B)) ;
+        C = GrB (gbmex_emult (A, op, B)) ;
     else
         % A is a scalar, B is a matrix
-        C = GrB (gbapply2 (GrB (gbfull (A)), op, B)) ;
+        C = GrB (gbmex_apply2 (GrB (gbmex_full (A)), op, B)) ;
     end
 else
     if (gb_isscalar (B))
         % A is a matrix, B is a scalar
-        C = GrB (gbapply2 (A, op, GrB (gbfull (B)))) ;
+        C = GrB (gbmex_apply2 (A, op, GrB (gbmex_full (B)))) ;
     else
         % both A and B are matrices
-        C = GrB (gbemult (A, op, B)) ;
+        C = GrB (gbmex_emult (A, op, B)) ;
     end
 end
 

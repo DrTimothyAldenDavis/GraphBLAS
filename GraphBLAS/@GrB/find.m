@@ -31,33 +31,33 @@ function [I, J, X] = find (G_arg, k, search)
 % SPDX-License-Identifier: Apache-2.0
 
 % prune explicit zeros
-gbwait (G_arg) ;
-G = GrB (gbselect (G_arg, 'nonzero')) ;
+gbmex_wait (G_arg) ;
+G = GrB (gbmex_select (G_arg, 'nonzero')) ;
 
 if (nargin > 1)
     k = ceil (double (gb_get_scalar (k))) ;
     if (k < 1)
         error ('GrB:error', 'k must be positive') ;
     end
-    if (~isequal (gbformat (G), 'by col'))
+    if (~isequal (gbmex_format (G), 'by col'))
         % find (G, k) assumes the matrix is stored by column, so reformat G
         % if it is stored by row.
         G = GrB (G, 'by col') ;
     end
 end
 
-[m, n] = gbsize (G) ;
-gbwait (G) ;
+[m, n] = gbmex_size (G) ;
+gbmex_wait (G) ;
 
 if (nargout == 3)
-    [I, J, X] = gbextracttuples (G) ;
+    [I, J, X] = gbmex_extracttuples (G) ;
     if (m == 1)
         I = I' ;
         J = J' ;
         X = X' ;
     end
 elseif (nargout == 2)
-    [I, J] = gbextracttuples (G) ;
+    [I, J] = gbmex_extracttuples (G) ;
     if (m == 1)
         I = I' ;
         J = J' ;
@@ -65,14 +65,14 @@ elseif (nargout == 2)
 else
     if (m == 1)
         % extract indices from a row vector
-        [~, I] = gbextracttuples (G) ;
+        [~, I] = gbmex_extracttuples (G) ;
         I = I' ;
     elseif (n == 1)
         % extract indices from a column vector
-        I = gbextracttuples (G) ;
+        I = gbmex_extracttuples (G) ;
     else
         % extract linear indices from a matrix
-        [I, J] = gbextracttuples (G) ;
+        [I, J] = gbmex_extracttuples (G) ;
         % use the built-in sub2ind to convert the 2D indices to 1D indices
         I = sub2ind ([m n], I, J) ;
     end

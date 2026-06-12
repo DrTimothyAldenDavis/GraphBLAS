@@ -12,8 +12,8 @@ function C = round (G)
 
 % FUTURE: round (x,n) and round (x,n,type)
 
-if (gb_isfloat (gbtype (G)) && gbnvals (G) > 0)
-    C = GrB (gbapply ('round', G)) ;
+if (gb_isfloat (gbmex_type (G)) && gbmex_nvals (G) > 0) % FIXME remove nvals
+    C = GrB (gbmex_apply ('round', G)) ;
 else
     C = GrB (G) ;
 end

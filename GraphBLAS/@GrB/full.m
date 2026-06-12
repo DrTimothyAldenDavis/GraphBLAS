@@ -28,10 +28,10 @@ function C = full (A, type, identity)
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin < 2)
-    type = gbtype (A) ;
+    type = gbmex_type (A) ;
     right_type = true ;
 else
-    right_type = isequal (type, gbtype (A)) ;
+    right_type = isequal (type, gbmex_type (A)) ;
 end
 
 if (gb_isfull (A) && right_type)
@@ -45,7 +45,7 @@ else
     if (nargin < 3)
         identity = 0 ;
     end
-    C = GrB (gbfull (A, type, identity)) ;
+    C = GrB (gbmex_full (A, type, identity)) ;
 
 end
 

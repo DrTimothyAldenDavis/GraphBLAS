@@ -4,8 +4,8 @@ function C = gb_bitwise (op, A_arg, B_arg, assumedtype)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-atype = gbtype (A_arg) ;
-btype = gbtype (B_arg) ;
+atype = gbmex_type (A_arg) ;
+btype = gbmex_type (B_arg) ;
 
 if (gb_contains (atype, 'complex') || gb_contains (btype, 'complex'))
     error ('GrB:error', 'inputs must be real') ;
@@ -34,10 +34,10 @@ if (isequal (op, 'bitshift'))
     if (~isequal (btype, 'int8'))
         % convert B to int8, and ensure all values are in range -64:64
         % ensure all entries in B are <= 64
-        B = GrB (gbapply2 (['min.' btype], B_arg, 64)) ;
+        B = GrB (gbmex_apply2 (['min.' btype], B_arg, 64)) ;
         if (gb_issigned (btype))
             % ensure all entries in B are >= -64
-            B = GrB (gbapply2 (['max.' btype], B, -64)) ;
+            B = GrB (gbmex_apply2 (['max.' btype], B, -64)) ;
         end
         B = GrB (B, 'int8') ;
     else
@@ -49,15 +49,15 @@ if (isequal (op, 'bitshift'))
 
     if (a_is_scalar && ~b_is_scalar)
         % A is a scalar, B is a matrix
-        C = GrB (gbapply2 (['bitshift.' atype], GrB (gbfull (A)), B)) ;
+        C = GrB (gbmex_apply2 (['bitshift.' atype], GrB (gbmex_full (A)), B)) ;
     elseif (~a_is_scalar && b_is_scalar)
         % A is a matrix, B is a scalar
-        C = GrB (gbapply2 (['bitshift.' atype], A, GrB (gbfull (B)))) ;
+        C = GrB (gbmex_apply2 (['bitshift.' atype], A, GrB (gbmex_full (B)))) ;
     else
         % both A and B are matrices, or both are scalars
         % expand B by padding it with zeros from the pattern of A
-        b = GrB (gbeadd ('1st.int8', B, gb_expand (0, A, 'int8'))) ;
-        C = GrB (gbemult (['bitshift.' atype], A, b)) ;
+        b = GrB (gbmex_eadd ('1st.int8', B, gb_expand (0, A, 'int8'))) ;
+        C = GrB (gbmex_emult (['bitshift.' atype], A, b)) ;
     end
 
 else
@@ -80,7 +80,7 @@ else
     end
 end
 
-if (~isequal (gbtype (C), ctype))
+if (~isequal (gbmex_type (C), ctype))
     C = GrB (C, ctype) ;
 end
 

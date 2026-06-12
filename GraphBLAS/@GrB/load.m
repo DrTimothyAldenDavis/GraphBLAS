@@ -33,7 +33,7 @@ S = load (filename) ;
 
 if (isfield (S, 'GraphBLAS_struct_from_GrB_save'))
     % S was created by GrB.save from GraphBLAS v10.3.1 or earlier
-    C = GrB (gbloadhistorical (S.GraphBLAS_struct_from_GrB_save)) ;
+    C = GrB (gbmex_loadhistorical (S.GraphBLAS_struct_from_GrB_save)) ;
 elseif (isfield (S, 'GrB_Matrix_from_GrB_save'))
     % S was created by GrB.save from GraphBLAS v10.4.0 or later,
     % and it already contains a properly loaded @GrB matrix.

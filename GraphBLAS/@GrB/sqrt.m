@@ -10,6 +10,6 @@ function C = sqrt (G)
 C = gb_trig ('sqrt', G) ;
 
 if (gb_make_real (C))
-    C = GrB (gbapply ('creal', C)) ;
+    C = GrB (gbmex_apply ('creal', C)) ;
 end
 

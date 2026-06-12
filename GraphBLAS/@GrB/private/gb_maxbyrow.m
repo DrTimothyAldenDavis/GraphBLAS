@@ -6,25 +6,25 @@ function C = gb_maxbyrow (op, A)
 % SPDX-License-Identifier: Apache-2.0
 
 % C = max (A, [ ], 2) reduces each row to a scalar; C is m-by-1
-C = GrB (gbvreduce (op, A)) ;
+C = GrB (gbmex_vreduce (op, A)) ;
 
 % if C(i) < 0, but if A(i,:) is sparse, then assign C(i) = 0.
-ctype = gbtype (C) ;
+ctype = gbmex_type (C) ;
 
 if (gb_issigned (ctype))
     % d (i) = number of entries in A(i,:); d (i) not present if A(i,:) empty
-    [m, n] = gbsize (A) ;
-    d = GrB (gbdegree (A, 'row')) ;
+    [m, n] = gbmex_size (A) ;
+    d = GrB (gbmex_degree (A, 'row')) ;
     % d (i) is an explicit zero if A(i,:) has 1 to n-1 entries
-    s = GrB (gbselect (d, '<', int64 (n))) ;
+    s = GrB (gbmex_select (d, '<', int64 (n))) ;
     zero = GrB (0, ctype) ;
-    if (gbnvals (s) == m)
+    if (gbmex_nvals (s) == m)
         % all rows A(i,:) have between 1 and n-1 entries
-        C = GrB (gbapply2 (op, C, zero)) ;
+        C = GrB (gbmex_apply2 (op, C, zero)) ;
     else
-        z = GrB (gbapply2 (['2nd.' ctype], s, zero)) ;
+        z = GrB (gbmex_apply2 (['2nd.' ctype], s, zero)) ;
         % if z(i) is between 1 and n-1 and C(i) < 0 then C(i) = 0
-        C = GrB (gbeadd (op, C, z)) ;
+        C = GrB (gbmex_eadd (op, C, z)) ;
     end
 end
 

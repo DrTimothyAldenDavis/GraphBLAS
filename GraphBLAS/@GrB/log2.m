@@ -16,13 +16,13 @@ function [F, E] = log2 (G)
 
 if (nargout == 1)
     % F = log2 (G)
-    F = gb_trig ('log2', GrB (gbfull (G))) ;
+    F = gb_trig ('log2', GrB (gbmex_full (G))) ;
     if (gb_make_real (F))
-        F = GrB (gbapply ('creal', F)) ;
+        F = GrB (gbmex_apply ('creal', F)) ;
     end
 else
     % [F,E] = log2 (G)
-    type = gbtype (G) ;
+    type = gbmex_type (G) ;
     switch (type)
         case { 'logical', 'int8', 'int16', 'int32', 'int64', ...
             'uint8', 'uint16', 'uint32', 'uint64', 'double complex' }
@@ -32,7 +32,7 @@ else
         case { 'single', 'double' }
             % type remains the same
     end
-    F = GrB (gbapply (['frexpx.' type], G)) ;
-    E = GrB (gbapply (['frexpe.' type], G)) ;
+    F = GrB (gbmex_apply (['frexpx.' type], G)) ;
+    E = GrB (gbmex_apply (['frexpe.' type], G)) ;
 end
 

@@ -6,7 +6,7 @@ function C = gb_spones (G, type)
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 1)
-    switch (gbtype (G))
+    switch (gbmex_type (G))
         case { 'single complex' }
             op = '1.single' ;
         case { 'double complex' }
@@ -21,5 +21,5 @@ else
     op = ['1.' type] ;
 end
 
-C = GrB (gbapply (op, G)) ;
+C = GrB (gbmex_apply (op, G)) ;
 

@@ -43,18 +43,18 @@ function C = spfun (fun, G)
 
 if (ischar (fun))
     try
-        C = GrB (gbapply (fun, G)) ;
+        C = GrB (gbmex_apply (fun, G)) ;
         return ;
     catch me %#ok<NASGU>
-        % gbapply failed; fall through to feval below
+        % gbmex_apply failed; fall through to feval below
     end
 end
 
 % 'fun' is not a string, or not a built-in GraphBLAS operator
-[m, n] = gbsize (G) ;
+[m, n] = gbmex_size (G) ;
 desc.base = 'zero-based' ;
-gbwait (G) ;
-[i, j, x] = gbextracttuples (G, desc) ; % OK: zero-based integers
+gbmex_wait (G) ;
+[i, j, x] = gbmex_extracttuples (G, desc) ; % OK: zero-based integers
 x = feval (fun, x) ;
 C = GrB.build (i, j, x, m, n, '1st', desc) ;
 

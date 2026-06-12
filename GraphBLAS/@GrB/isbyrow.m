@@ -10,7 +10,7 @@ function s = isbyrow (A)
 % SPDX-License-Identifier: Apache-2.0
 
 if (isobject (A))
-    s = isequal (gbformat (A), 'by row')  ;
+    s = isequal (gbmex_format (A), 'by row')  ;
 else
     s = false ;
 end

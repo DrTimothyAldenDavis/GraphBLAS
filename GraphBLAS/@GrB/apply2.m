@@ -29,15 +29,15 @@ function C = apply2 (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 
 switch (nargin)
     case 3
-        [C_opaque, kind] = gbapply2 (arg1, arg2, arg3) ;
+        [C_opaque, kind] = gbmex_apply2 (arg1, arg2, arg3) ;
     case 4
-        [C_opaque, kind] = gbapply2 (arg1, arg2, arg3, arg4) ;
+        [C_opaque, kind] = gbmex_apply2 (arg1, arg2, arg3, arg4) ;
     case 5
-        [C_opaque, kind] = gbapply2 (arg1, arg2, arg3, arg4, arg5) ;
+        [C_opaque, kind] = gbmex_apply2 (arg1, arg2, arg3, arg4, arg5) ;
     case 6
-        [C_opaque, kind] = gbapply2 (arg1, arg2, arg3, arg4, arg5, arg6) ;
+        [C_opaque, kind] = gbmex_apply2 (arg1, arg2, arg3, arg4, arg5, arg6) ;
     case 7
-        [C_opaque, kind] = gbapply2 (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
+        [C_opaque, kind] = gbmex_apply2 (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
 end
 
 C = gb_mexfunction_result (C_opaque, kind) ;

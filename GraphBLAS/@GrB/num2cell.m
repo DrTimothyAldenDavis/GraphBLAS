@@ -30,20 +30,20 @@ else
 
     % split into scalars, rows, or columns
     if (isobject (A))
-        [m, n] = gbsize (A) ;
+        [m, n] = gbmex_size (A) ;
     else
         [m, n] = size (A) ;
     end
 
     if (nargin == 1)
         % split A into scalars
-        S = gbsplit (A, ones (m, 1), ones (n, 1)) ;
+        S = gbmex_split (A, ones (m, 1), ones (n, 1)) ;
     elseif (isequal (dim, 1))
         % split A into columns
-        S = gbsplit (A, m, ones (n, 1)) ;
+        S = gbmex_split (A, m, ones (n, 1)) ;
     elseif (isequal (dim, 2))
         % split A into rows
-        S = gbsplit (A, ones (m, 1), n) ;
+        S = gbmex_split (A, ones (m, 1), n) ;
     else
         error ('GrB:error', 'unknown option') ;
     end

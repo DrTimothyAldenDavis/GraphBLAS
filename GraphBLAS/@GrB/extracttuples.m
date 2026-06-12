@@ -39,15 +39,15 @@ if (nargin < 2)
     desc.base = 'default' ;
 end
 
-% gbextracttuples requires A to have no pending work
-gbwait (A) ;
+% gbmex_extracttuples requires A to have no pending work
+gbmex_wait (A) ;
 
 switch (nargout)
     case 1
-        I = gbextracttuples (A, desc) ;
+        I = gbmex_extracttuples (A, desc) ;
     case 2
-        [I, J] = gbextracttuples (A, desc) ;
+        [I, J] = gbmex_extracttuples (A, desc) ;
     case 3
-        [I, J, X] = gbextracttuples (A, desc) ;
+        [I, J, X] = gbmex_extracttuples (A, desc) ;
 end
 

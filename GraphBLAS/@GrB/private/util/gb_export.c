@@ -17,7 +17,7 @@
 //
 // If kind is KIND_GRB, the matrix will remain a @GrB matrix object.
 // Otherwise, it will be directly copied into a MATLAB/Octave matrix by
-// gb2builtin.
+// gbmex_builtin.
 
 // No mx* methods are called, so that any memory allocation failures can
 // be properly handled.

@@ -5,7 +5,7 @@ function C = gb_prod (op, type, G, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[m, n] = gbsize (G) ;
+[m, n] = gbmex_size (G) ;
 
 if (nargin == 3)
     % C = prod (G)
@@ -23,7 +23,7 @@ switch (option)
 
         % C = prod (G, 'all'), reducing all entries to a scalar
         if (gb_isfull (G))
-            C = GrB (gbreduce (op, G)) ;
+            C = GrB (gbmex_reduce (op, G)) ;
         else
             C = GrB (0, type) ;
         end
@@ -33,21 +33,21 @@ switch (option)
         % C = prod (G,1) reduces each column to a scalar,
         % giving a 1-by-n row vector.
         % M = find (column degree of G == m)
-        M = GrB (gbselect (GrB (gbdegree (G, 'col')), '==', int64 (m))) ;
+        M = GrB (gbmex_select (GrB (gbmex_degree (G, 'col')), '==', int64 (m))) ;
         Cin = GrB (n, 1, type) ;
         % C<M> = op (G')
         desc.in0 = 'transpose' ;
-        C = GrB (gbtrans (GrB (gbvreduce (Cin, M, op, G, desc)))) ;
+        C = GrB (gbmex_trans (GrB (gbmex_vreduce (Cin, M, op, G, desc)))) ;
 
     case { 2 }
 
         % C = prod (G,2) reduces each row to a scalar,
         % giving an m-by-1 column vector.
         % M = find (row degree of G == n)
-        M = GrB (gbselect (GrB (gbdegree (G, 'row')), '==', int64 (n))) ;
+        M = GrB (gbmex_select (GrB (gbmex_degree (G, 'row')), '==', int64 (n))) ;
         % C<M> = op (G)
         Cin = GrB (m, 1, type) ;
-        C = GrB (gbvreduce (Cin, M, op, G)) ;
+        C = GrB (gbmex_vreduce (Cin, M, op, G)) ;
 
     otherwise
 

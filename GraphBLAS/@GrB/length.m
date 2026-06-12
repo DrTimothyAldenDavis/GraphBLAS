@@ -10,7 +10,7 @@ function n = length (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[m, n] = gbsize (G) ;
+[m, n] = gbmex_size (G) ;
 
 if (m == 0 || n == 0)
     n = 0 ;

@@ -39,7 +39,7 @@ function C = incidence (A_arg, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[m, n] = gbsize (A_arg) ;
+[m, n] = gbmex_size (A_arg) ;
 if (m ~= n)
     error ('GrB:error', 'A must be square') ;
 end
@@ -68,26 +68,26 @@ switch (kind)
 
         % create the incidence matrix of a directed graph, using all of A;
         % except that diagonal entries are ignored.
-        A = GrB (gbselect ('offdiag', A_arg, 0)) ;
+        A = GrB (gbmex_select ('offdiag', A_arg, 0)) ;
 
     case { 'upper' }
 
         % create the incidence matrix of an undirected graph, using only
         % entries in the strictly upper triangular part of A.
-        A = GrB (gbselect ('triu', A_arg, 1)) ;
+        A = GrB (gbmex_select ('triu', A_arg, 1)) ;
 
     otherwise   % 'undirected', 'symmetric', or 'lower'
 
         % create the incidence matrix of an undirected graph, using only
         % entries in the strictly lower triangular part of A.
-        A = GrB (gbselect ('tril', A_arg, -1)) ;
+        A = GrB (gbmex_select ('tril', A_arg, -1)) ;
 
 end
 
 % build the incidence matrix
 desc.base = 'zero-based' ;
-gbwait (A) ;
-[I, J] = gbextracttuples (A, desc) ;
+gbmex_wait (A) ;
+[I, J] = gbmex_extracttuples (A, desc) ;
 e = length (I) ;
 I = [I ; J] ;
 if (e > intmax ('uint32'))
@@ -100,5 +100,5 @@ end
 J = [J ; J] ;
 X = ones (e, 1, type) ;
 X = [-X ; X] ;
-C = GrB (gbbuild (I, J, X, n, e, desc)) ;
+C = GrB (gbmex_build (I, J, X, n, e, desc)) ;
 

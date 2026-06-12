@@ -7,8 +7,8 @@ function C = atan2 (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-atype = gbtype (A) ;
-btype = gbtype (B) ;
+atype = gbmex_type (A) ;
+btype = gbmex_type (B) ;
 
 if (gb_contains (atype, 'complex') || gb_contains (btype, 'complex'))
     error ('GrB:error', 'inputs must be real') ;

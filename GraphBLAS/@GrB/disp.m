@@ -40,7 +40,7 @@ if (level > 0)
     end
 end
 
-gbdisp (A, level) ;
+gbmex_disp (A, level) ;
 
 if (level > 0)
     fprintf ('\n') ;

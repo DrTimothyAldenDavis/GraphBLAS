@@ -81,8 +81,8 @@ function descriptorinfo (d)
 
 if (nargin == 0)
     help GrB.descriptorinfo
-    gbdescriptorinfo ;
+    gbmex_descriptorinfo ;
 else
-    gbdescriptorinfo (d) ;
+    gbmex_descriptorinfo (d) ;
 end
 

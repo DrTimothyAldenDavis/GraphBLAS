@@ -35,9 +35,9 @@ function C = cat (dim, varargin)
 % concatenate the matrices
 if (dim == 1)
     % same as vertcat
-    C = GrB (gbcat (varargin')) ;
+    C = GrB (gbmex_cat (varargin')) ;
 else
     % same as horzcat
-    C = GrB (gbcat (varargin)) ;
+    C = GrB (gbmex_cat (varargin)) ;
 end
 

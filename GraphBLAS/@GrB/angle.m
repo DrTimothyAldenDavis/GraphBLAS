@@ -7,9 +7,9 @@ function C = angle (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[m, n, type] = gbsize (G) ;
+[m, n, type] = gbmex_size (G) ;
 if (gb_contains (type, 'complex'))
-    C = GrB (gbapply ('carg', G)) ;
+    C = GrB (gbmex_apply ('carg', G)) ;
 else
     % C is all zero
     C = GrB (m, n, type) ;

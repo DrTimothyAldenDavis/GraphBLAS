@@ -150,8 +150,8 @@ function binopinfo (op, optype)
 if (nargin == 0)
     help GrB.binopinfo
 elseif (nargin == 1)
-    gbbinopinfo (op) ;
+    gbmex_binopinfo (op) ;
 else
-    gbbinopinfo (op, optype) ;
+    gbmex_binopinfo (op, optype) ;
 end
 

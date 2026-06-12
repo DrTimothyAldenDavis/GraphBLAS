@@ -8,5 +8,5 @@ function C = mtimes (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-C = GrB (gbmtimes (A, B)) ;
+C = GrB (gbmex_mtimes (A, B)) ;
 

@@ -11,17 +11,17 @@ function [arg1, arg2] = bandwidth (G, uplo)
 
 if (nargin == 1)
     % compute lo, and compute hi if present in output argument list
-    [lo, hi] = gbbandwidth (G, 1, nargout > 1) ;
+    [lo, hi] = gbmex_bandwidth (G, 1, nargout > 1) ;
     arg1 = lo ;
     arg2 = hi ;
 else
     if (nargout > 1)
         error ('GrB:error', 'too many output arguments') ;
     elseif isequal (uplo, 'lower')
-        [lo, ~] = gbbandwidth (G, 1, 0) ;
+        [lo, ~] = gbmex_bandwidth (G, 1, 0) ;
         arg1 = lo ;
     elseif isequal (uplo, 'upper')
-        [~, hi] = gbbandwidth (G, 0, 1) ;
+        [~, hi] = gbmex_bandwidth (G, 0, 1) ;
         arg1 = hi ;
     else
         error ('GrB:error', 'unrecognized option') ;

@@ -11,5 +11,5 @@ function C = horzcat (varargin)
 % SPDX-License-Identifier: Apache-2.0
 
 % concatenate the matrices
-C = GrB (gbcat (varargin)) ;
+C = GrB (gbmex_cat (varargin)) ;
 

@@ -33,5 +33,5 @@ else
     kind = 2 ;
 end
 
-s = gbnorm (G, kind) ;
+s = gbmex_norm (G, kind) ;
 

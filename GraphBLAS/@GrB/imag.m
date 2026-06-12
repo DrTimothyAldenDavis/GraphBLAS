@@ -7,11 +7,11 @@ function C = imag (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[m, n, type] = gbsize (G) ;
+[m, n, type] = gbmex_size (G) ;
 
 if (gb_contains (type, 'complex'))
     % C = imag (G) where G is complex
-    C = GrB (gbapply ('cimag', G)) ;
+    C = GrB (gbmex_apply ('cimag', G)) ;
 else
     % G is real, so C = zeros (m,n)
     C = GrB (m, n, type) ;

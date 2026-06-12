@@ -25,5 +25,5 @@ if (nargin < 3)
     kind = 2 ;
 end
 
-s = gbnormdiff (A, B, kind) ;
+s = gbmex_normdiff (A, B, kind) ;
 

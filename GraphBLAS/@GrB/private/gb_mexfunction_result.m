@@ -12,6 +12,6 @@ if (kind == 0)
     C = GrB (C_opaque) ;
 else
     % return a built-in MATLAB/Octave matrix from the C_opaque handle
-    C = gb2builtin (GrB (C_opaque)) ;
+    C = gbmex_builtin (GrB (C_opaque)) ;
 end
 

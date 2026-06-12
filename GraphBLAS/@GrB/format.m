@@ -124,14 +124,14 @@ if (nargin == 0)
     if (nargout > 1)
         error ('GrB:error', 'usage: f = GrB.format') ;
     end
-    f = gbformat ;
+    f = gbmex_format ;
 else
     % f = GrB.format (A) ; get the format of A (built-in or GraphBLAS)
     % f = GrB.format (f) ; set the global format for all matrices.
     if (nargout <= 1)
-        f = gbformat (arg) ;
+        f = gbmex_format (arg) ;
     else
-        [f,s,iso] = gbformat (arg) ;
+        [f,s,iso] = gbmex_format (arg) ;
     end
 end
 

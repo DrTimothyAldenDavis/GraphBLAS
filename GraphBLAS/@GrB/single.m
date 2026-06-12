@@ -15,7 +15,7 @@ function C = single (G)
 % SPDX-License-Identifier: Apache-2.0
 
 desc.kind = 'builtin' ;
-if (gb_contains (gbtype (G), 'complex'))
+if (gb_contains (gbmex_type (G), 'complex'))
     z = complex (single (0)) ;
     ctype = 'single complex' ;
 else
@@ -24,5 +24,5 @@ else
 end
 
 % export C as a full matrix
-C = gb2builtin (GrB (gbfull (G, ctype, z, desc))) ;
+C = gbmex_builtin (GrB (gbmex_full (G, ctype, z, desc))) ;
 

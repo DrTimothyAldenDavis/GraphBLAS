@@ -47,14 +47,14 @@ function blob = serialize (G, method, level)
 % serialize the matrix into a uint8 blob
 if (nargin == 1)
     % use the default compression method and default level
-    b = GrB (gbserialize (G)) ;
+    b = GrB (gbmex_serialize (G)) ;
 elseif (nargin == 2)
     % use the given compression method and default level
-    b = GrB (gbserialize (G, method)) ;
+    b = GrB (gbmex_serialize (G, method)) ;
 else
     % use the given compression method and given level
-    b = GrB (gbserialize (G, method, level)) ;
+    b = GrB (gbmex_serialize (G, method, level)) ;
 end
 
-blob = gb2builtin (b) ;
+blob = gbmex_builtin (b) ;
 

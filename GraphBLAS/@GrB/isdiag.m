@@ -7,6 +7,6 @@ function s = isdiag (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[lo,hi] = gbbandwidth (G, 1, 1) ;
+[lo,hi] = gbmex_bandwidth (G, 1, 1) ;
 s = (lo == 0) && (hi == 0) ;
 

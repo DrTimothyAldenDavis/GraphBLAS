@@ -10,20 +10,20 @@ function C = gb_atan2 (A, B)
 if (gb_isscalar (A))
     if (gb_isscalar (B))
         % both A and B are scalars
-        C = GrB (gbemult ('atan2', A, B)) ;
+        C = GrB (gbmex_emult ('atan2', A, B)) ;
     else
         % A is a scalar, B is a matrix
-        a = GrB (gbfull (A)) ;
-        C = GrB (gbapply2 ('atan2', a, B)) ;
+        a = GrB (gbmex_full (A)) ;
+        C = GrB (gbmex_apply2 ('atan2', a, B)) ;
     end
 else
     if (gb_isscalar (B))
         % A is a matrix, B is a scalar
-        b = GrB (gbfull (B)) ;
-        C = GrB (gbapply2 ('atan2', A, b)) ;
+        b = GrB (gbmex_full (B)) ;
+        C = GrB (gbmex_apply2 ('atan2', A, b)) ;
     else
         % both A and B are matrices.  C is the set union of A and B.
-        C = GrB (gbeunion ('atan2', A, 0, B, 0)) ;
+        C = GrB (gbmex_eunion ('atan2', A, 0, B, 0)) ;
     end
 end
 

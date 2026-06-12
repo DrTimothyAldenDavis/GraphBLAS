@@ -52,8 +52,8 @@ function monoidinfo (monoid, type)
 if (nargin == 0)
     help GrB.monoidinfo
 elseif (nargin == 1)
-    gbmonoidinfo (monoid) ;
+    gbmex_monoidinfo (monoid) ;
 else
-    gbmonoidinfo (monoid, type) ;
+    gbmex_monoidinfo (monoid, type) ;
 end
 

@@ -8,7 +8,7 @@ function [m, n] = size (G, dim)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[m, n] = gbsize (G) ;
+[m, n] = gbmex_size (G) ;
 
 if (nargin == 2)
     s = [m n] ;

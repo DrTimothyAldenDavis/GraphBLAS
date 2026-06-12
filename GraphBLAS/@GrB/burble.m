@@ -13,8 +13,8 @@ function b = burble (b_arg)
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 0)
-    b = gbburble ;
+    b = gbmex_burble ;
 else
-    b = gbburble (b_arg) ;
+    b = gbmex_burble (b_arg) ;
 end
 

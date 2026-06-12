@@ -8,11 +8,11 @@ function C = coth (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (~gb_isfloat (gbtype (G)))
+if (~gb_isfloat (gbmex_type (G)))
     op = 'tanh.double' ;
 else
     op = 'tanh' ;
 end
 
-C = GrB (gbapply ('minv', GrB (gbfull (GrB (gbapply (op, G)))))) ;
+C = GrB (gbmex_apply ('minv', GrB (gbmex_full (GrB (gbmex_apply (op, G)))))) ;
 

@@ -8,8 +8,8 @@ function C = mpower (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[am, an, atype] = gbsize (A) ;
-[bm, bn] = gbsize (B) ;
+[am, an, atype] = gbmex_size (A) ;
+[bm, bn] = gbmex_size (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
 b_is_scalar = (bm == 1) && (bn == 1) ;
 
