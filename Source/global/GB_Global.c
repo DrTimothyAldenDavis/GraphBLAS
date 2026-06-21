@@ -22,6 +22,7 @@
 #include "GB.h"
 #include "include/GB_unused.h"
 #include "cpu/GB_cpu_features.h"
+#include "include/GB_pedantic_disable.h"
 
 //------------------------------------------------------------------------------
 // Global storage: for all threads in a user application that uses GraphBLAS
@@ -554,6 +555,10 @@ void GB_Global_abort (void)
 }
 
 //------------------------------------------------------------------------------
+// arena
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 // malloc debuging
 //------------------------------------------------------------------------------
 
@@ -769,8 +774,6 @@ void GB_Global_memtable_remove (void *p)
 // malloc_function
 //------------------------------------------------------------------------------
 
-#include "include/GB_pedantic_disable.h"
-
 void GB_Global_malloc_function_set
 (
     GB_malloc_function_t malloc_function,
@@ -787,6 +790,12 @@ void * GB_Global_malloc_function_get (int arena)
 
 void * GB_Global_malloc_function (uint64_t memsize, int arena)
 { 
+    if (GB_Global.malloc_function [arena] == NULL)
+    { 
+        // arena not initialized
+        return (NULL) ;
+    }
+
     void *p = NULL ;
     p = GB_Global.malloc_function [arena] (memsize) ;
     GB_Global_memtable_add (p, GB_mem (arena, memsize)) ;
@@ -796,6 +805,10 @@ void * GB_Global_malloc_function (uint64_t memsize, int arena)
 //------------------------------------------------------------------------------
 // calloc_function
 //------------------------------------------------------------------------------
+
+// The calloc function pointer is not used by GraphBLAS, but it is kept as part
+// of the arena allocator, so that the user application can get/set the
+// function pointer.
 
 void GB_Global_calloc_function_set
 (
@@ -836,6 +849,14 @@ bool GB_Global_realloc_function_have (int arena)
 
 void * GB_Global_realloc_function (void *p, uint64_t memsize, int arena)
 { 
+    if (!GB_Global_realloc_function_have (arena))
+    {
+        // This is just sanity check, since this method is not called if
+        // GB_Global_realloc_function_have returns false.  The arena not
+        // initialized, or arena has no realloc function.  GB_realloc_memory
+        // will attempt to use GB_malloc_memory instead.
+        return (NULL) ;
+    }
     void *pnew = NULL ;
     pnew = GB_Global.realloc_function [arena] (p, memsize) ;
     if (pnew != NULL)
@@ -862,6 +883,12 @@ void * GB_Global_free_function_get (int arena)
 
 void GB_Global_free_function (void *p, int arena)
 { 
+    if (GB_Global.free_function [arena] == NULL)
+    { 
+        // sanity check: do nothing if the arena is not initialized.
+        // This should never happen, so this is just an extra safeguard.
+        return ;
+    }
     GB_Global.free_function [arena] (p) ;
     GB_Global_memtable_remove (p) ;
 }
