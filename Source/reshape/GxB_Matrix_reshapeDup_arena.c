@@ -18,7 +18,7 @@
 #include "GB.h"
 #include "reshape/GB_reshape.h"
 
-GrB_Info GxB_Matrix_reshapeDup  // reshape a GrB_Matrix into another GrB_Matrix
+GrB_Info GxB_Matrix_reshapeDup_arena  // reshape into another GrB_Matrix
 (
     // output:
     GrB_Matrix *C,              // newly created output matrix, not in place
@@ -27,12 +27,30 @@ GrB_Info GxB_Matrix_reshapeDup  // reshape a GrB_Matrix into another GrB_Matrix
     bool by_col,                // true if reshape by column, false if by row
     uint64_t nrows_new,         // number of rows of C
     uint64_t ncols_new,         // number of columns of C
+    const int header_arena,
+    const int data_arena,
     const GrB_Descriptor desc   // to control # of threads used
 )
 { 
-    int header_arena = GrB_DEFAULT ;
-    int data_arena = GrB_DEFAULT ;
-    return (GxB_Matrix_reshapeDup_arena (C, A, by_col, nrows_new, ncols_new,
-        header_arena, data_arena, desc)) ;
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_RETURN_IF_NULL (C) ;
+    GB_RETURN_IF_NULL (A) ;
+    GB_WHERE_1 (A, "GxB_Matrix_reshapeDup (&C, A, nrows_new, ncols_new, desc)");
+    GB_BURBLE_START ("GxB_Matrix_reshapeDup") ;
+
+    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
+
+    //--------------------------------------------------------------------------
+    // reshape the matrix
+    //--------------------------------------------------------------------------
+
+    info = GB_reshape (C, A, by_col, nrows_new, ncols_new,
+        header_arena, data_arena, Werk) ;
+    GB_BURBLE_END ;
+    return (info) ;
 }
 

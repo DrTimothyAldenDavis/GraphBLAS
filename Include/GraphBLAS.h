@@ -7396,6 +7396,21 @@ GrB_Info GxB_Matrix_reshapeDup // reshape a GrB_Matrix into another GrB_Matrix
     GrB_Index ncols_new,        // number of columns of C
     const GrB_Descriptor desc   // to control # of threads used
 ) ;
+
+GrB_Info GxB_Matrix_reshapeDup_arena  // reshape into another GrB_Matrix
+(
+    // output:
+    GrB_Matrix *C,              // newly created output matrix, not in place;
+                                // allocated in given header and data arenas
+    // input:
+    GrB_Matrix A,               // input matrix, not modified
+    bool by_col,                // true if reshape by column, false if by row
+    uint64_t nrows_new,         // number of rows of C
+    uint64_t ncols_new,         // number of columns of C
+    const int header_arena,
+    const int data_arena,
+    const GrB_Descriptor desc   // to control # of threads used
+) ;
 #endif
 
 //==============================================================================

@@ -51,6 +51,8 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
     bool by_col,            // true if reshape by column, false if by row
     int64_t nrows_new,      // number of rows of C
     int64_t ncols_new,      // number of columns of C
+    const int header_arena,
+    const int data_arena,
     GB_Werk Werk
 )
 {
@@ -62,8 +64,6 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
     GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A for reshape", GB0) ;
 
-    int header_arena = GB_arena (A->header_mem) ;
-    int data_arena = A->data_arena ;
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     GB_MDECL (I_work, , u) ; uint64_t I_work_mem = mem ;

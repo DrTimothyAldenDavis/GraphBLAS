@@ -3884,6 +3884,7 @@
 #define GxB_Matrix_pack_HyperCSR GxM_Matrix_pack_HyperCSR
 #define GxB_Matrix_reduce_FC32 GxM_Matrix_reduce_FC32
 #define GxB_Matrix_reduce_FC64 GxM_Matrix_reduce_FC64
+#define GxB_Matrix_reshapeDup_arena GxM_Matrix_reshapeDup_arena
 #define GxB_Matrix_reshapeDup GxM_Matrix_reshapeDup
 #define GxB_Matrix_reshape GxM_Matrix_reshape
 #define GxB_Matrix_resize GxM_Matrix_resize
