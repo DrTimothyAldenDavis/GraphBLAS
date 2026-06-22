@@ -5,7 +5,9 @@ function C = gb_minall (op, A)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-C = GrB (gbmex_reduce (op, A)) ;
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
+C = GrB (gbmex_reduce (ghb, op, A)) ;
 if (~gb_isfull (A) && gb_scalar (C) >= 0)
     % A is not full, and the min of the entries present is >= 0,
     % so C is an empty scalar (an implicit zero)

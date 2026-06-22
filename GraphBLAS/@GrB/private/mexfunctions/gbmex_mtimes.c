@@ -22,8 +22,8 @@
 
 // Usage:
 
-// C = gbmex_mtimes (A, B)
-// C = gbmex_mtimes (A, B, desc)
+// C = gbmex_mtimes (ghb, A, B)
+// C = gbmex_mtimes (ghb, A, B, desc)
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&A_to_free) ;  \
@@ -37,7 +37,7 @@
 
 #include "gb_interface.h"
 
-#define USAGE "usage: C = gbmex_mtimes (A, B, desc)"
+#define USAGE "usage: C = gbmex_mtimes (ghb, A, B, desc)"
 
 void mexFunction
 (
@@ -58,7 +58,8 @@ void mexFunction
     GrB_Scalar scalar = NULL, zero = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    GBMX_USAGE (nargin >= 2 && nargin <= 3 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 2+1 && nargin <= 3+1 && nargout <= 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;

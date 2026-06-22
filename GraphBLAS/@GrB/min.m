@@ -21,6 +21,8 @@ function C = min (A, B, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 type = gbmex_type (A) ;
 if (gb_contains (type, 'complex'))
     error ('GrB:error', 'complex matrices not yet supported') ;

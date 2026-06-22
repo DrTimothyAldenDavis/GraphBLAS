@@ -43,6 +43,8 @@ function C = bitset (A_arg, B_arg, arg3, arg4)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 [am, an, atype] = gbmex_size (A_arg) ;
 [bm, bn, btype] = gbmex_size (B_arg) ;
 
@@ -119,21 +121,21 @@ if (V_is_scalar)
         % A is a scalar
         if (b_is_scalar)
             % both A and B are scalars
-            T = GrB (gbmex_eunion (op, A, 0, B, 0)) ;
+            T = GrB (gbmex_eunion (ghb, op, A, 0, B, 0)) ;
         else
             % A is a scalar, B is a matrix
-            a = GrB (gbmex_full (A)) ;
-            T = GrB (gbmex_apply2 (op, a, B)) ;
+            a = GrB (gbmex_full (ghb, A)) ;
+            T = GrB (gbmex_apply2 (ghb, op, a, B)) ;
         end
     else
         % A is a matrix
         if (b_is_scalar)
             % A is a matrix, B is scalar
-            b = GrB (gbmex_full (B)) ;
-            T = GrB (gbmex_apply2 (op, A, b)) ;
+            b = GrB (gbmex_full (ghb, B)) ;
+            T = GrB (gbmex_apply2 (ghb, op, A, b)) ;
         else
             % both A and B are matrices
-            T = GrB (gbmex_eunion (op, A, 0, B, 0)) ;
+            T = GrB (gbmex_eunion (ghb, op, A, 0, B, 0)) ;
         end
     end
 
@@ -163,7 +165,7 @@ else
 
     % Set all bits referenced by B(i,j) to 1, even those that need to be
     % set to 0, without considering V(i,j).
-    S = GrB (gbmex_eunion (['bitset.', atype], A2, 0, B2, 0)) ;
+    S = GrB (gbmex_eunion (ghb, ['bitset.', atype], A2, 0, B2, 0)) ;
 
     % The pattern of S is now the set intersection of A and B, but
     % bits referenced by B(i,j) have been set to 1, not 0.  Construct B0
@@ -171,10 +173,10 @@ else
     % pattern of bit positions B0 to set to 0 in A.
     d.mask = 'complement' ;
     E = GrB (m, n, atype) ;
-    B0 = GrB (gbmex_assign (E, V, B2, d)) ;
+    B0 = GrB (gbmex_assign (ghb, E, V, B2, d)) ;
 
     % Clear the bits in C, referenced by B0(i,j), where V(i,j) is zero.
-    T = GrB (gbmex_eadd (['bitclr.', atype], S, B0)) ;
+    T = GrB (gbmex_eadd (ghb, ['bitclr.', atype], S, B0)) ;
 
 end
 

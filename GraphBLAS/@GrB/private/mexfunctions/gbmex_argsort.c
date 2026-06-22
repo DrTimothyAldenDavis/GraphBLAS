@@ -24,7 +24,7 @@
 
 #include "gb_interface.h"
 
-#define USAGE "usage: [C,P] = gbmex_argsort (A, dim, direction)"
+#define USAGE "usage: [C,P] = gbmex_argsort (ghb, A, dim, direction)"
 
 void mexFunction
 (
@@ -42,7 +42,8 @@ void mexFunction
     GrB_Matrix *C_opaque = NULL, *P_opaque = NULL,
         A = NULL, A_to_free = NULL, C = NULL, P = NULL ;
 
-    GBMX_USAGE (nargin == 3 && (nargout == 2 || nargout == 1), USAGE) ;
+    GBMX_USAGE (nargin == 3+1 && (nargout == 2 || nargout == 1), USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     if (nargout > 1)
@@ -55,13 +56,13 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     struct gb_matrix_struct Matrix [1] ;
-    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
 
-    int dim = (int) mxGetScalar (pargin [1]) ;
+    int dim = (int) mxGetScalar (pargin [2]) ;
     CHECK_ERROR (dim < 0 || dim > 2, "invalid dim") ;
 
     char direction [LEN+2] ;
-    gbmx_mxstring_to_string (direction, LEN, pargin [2], "direction") ;
+    gbmx_mxstring_to_string (direction, LEN, pargin [3], "direction") ;
 
     ////////////////////////////////////////////////////////////////////////////
 

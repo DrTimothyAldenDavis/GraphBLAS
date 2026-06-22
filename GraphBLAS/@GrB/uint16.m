@@ -14,6 +14,8 @@ function C = uint16 (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 desc.kind = 'full' ;
-C = gbmex_builtin (GrB (gbmex_full (G, 'uint16', uint16 (0), desc))) ;
+C = gbmex_builtin (GrB (gbmex_full (ghb, G, 'uint16', uint16 (0), desc))) ;
 

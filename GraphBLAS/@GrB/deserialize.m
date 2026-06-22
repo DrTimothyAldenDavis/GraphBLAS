@@ -1,4 +1,4 @@
-function G = deserialize (blob, mode, arg3)
+function G = deserialize (blob)
 %GRB.DESERIALIZE convert a serialized blob into a matrix.
 % G = GrB.deserialize (blob) returns a @GrB matrix constructed from the
 % uint8 array blob constructed by GrB.serialize.  The input blob may be
@@ -26,18 +26,8 @@ function G = deserialize (blob, mode, arg3)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% The type may also be specified, as an optional arg3 string:
-% G = GrB.deserialize (blob, 'fast', 'single') for example.  This is
-% feature not documented, and is only intended for testing.  The ANSI C
-% rules for casting floating-point to integers are used (truncation), not
-% the MATLAB rules (rounding to nearest integer).
+ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 % deserialize the blob into a @GrB matrix
-if (nargin == 1)
-    G = GrB (gbmex_deserialize (blob)) ;
-elseif (nargin == 2)
-    G = GrB (gbmex_deserialize (blob, mode)) ;
-else
-    G = GrB (gbmex_deserialize (blob, mode, arg3)) ;
-end
+G = GrB (gbmex_deserialize (ghb, blob)) ;
 

@@ -650,19 +650,20 @@ methods
     % C = GrB (m,n,format,type) ; ditto
     %
     % See also sparse.
+        ghb = 1 ;     % 0 for GrB, 1 for GhB
         switch (nargin)
             case 1
                 if (isstruct (arg1))
                     C.opaque = arg1 ;
                 else
-                    C.opaque = gbmex_new (arg1) ;
+                    C.opaque = gbmex_new (ghb, arg1) ;
                 end
             case 2
-                C.opaque = gbmex_new (arg1, arg2) ;
+                C.opaque = gbmex_new (ghb, arg1, arg2) ;
             case 3
-                C.opaque = gbmex_new (arg1, arg2, arg3) ;
+                C.opaque = gbmex_new (ghb, arg1, arg2, arg3) ;
             case 4
-                C.opaque = gbmex_new (arg1, arg2, arg3, arg4) ;
+                C.opaque = gbmex_new (ghb, arg1, arg2, arg3, arg4) ;
         end
     end
 
@@ -670,6 +671,7 @@ methods
     % GrB: GraphBLAS matrix destructor
     %---------------------------------------------------------------------
 
+% FIXME: for GhB only:
     function delete (C)
     %DELETE delete a GraphBLAS matrix
     gbmex_delete (C) ;
@@ -997,7 +999,8 @@ methods
     % of the @GrB matrix G.  S is not an object.  S.blob is a dense
     % builtin MATLAB/Octave array of type uint8.  It will be loaded back
     % using loadobj, below.
-    S.blob = gbmex_builtin (GrB (gbmex_serialize (G))) ;
+    ghb = 1 ;     % 0 for GrB, 1 for GhB
+    S.blob = gbmex_builtin (GrB (gbmex_serialize (ghb, G))) ;
     end
 
 end
@@ -1012,16 +1015,17 @@ methods (Static)
     %LOADOBJ loads a @GrB matrix from a file.
     % MATLAB/Octave first reads in the struct S that saveobj created, and
     % then passes it to this method.
+        ghb = 1 ;     % 0 for GrB, 1 for GhB
         if (isobject (S))
             % S is a @GrB matrix from GraphBLAS 10.3.1 or earlier, which
             % did not have saveobj and loadobj methods.  S is not a
             % handle object.  It must be converted here into a @GrB
             % handle object for the current version of GraphBLAS.
-            G = GrB (gbmex_loadhistorical (S.opaque)) ;
+            G = GrB (gbmex_loadhistorical (ghb, S.opaque)) ;
         else
             % S is a struct created by saveobj, above, with a single
             % S.blob field containing the serialized matrix.
-            G = GrB (gbmex_deserialize (S.blob)) ;
+            G = GrB (gbmex_deserialize (ghb, S.blob)) ;
         end
     end
 
@@ -1052,7 +1056,7 @@ methods (Static)
     clear ;
     [C, I, J] = compact (A, id, symmetric) ;
     descriptorinfo (d) ;
-    C = deserialize (blob, mode, arg3) ;        % arg3 for testing only
+    C = deserialize (blob) ;
     Y = dnn (W, bias, Y0) ;
     C = eadd (Cin, M, accum, op, A, B, desc) ;
     C = empty (arg1, arg2) ;

@@ -7,18 +7,20 @@
 
 //------------------------------------------------------------------------------
 
-// gbmx_get_mxargs collects all the input arguments for the 12 foundational
-// GraphBLAS operations.  The user-level view is described below.  For
-// the private mexFunctions, the descriptor optionally appears as the last
-// argument.  The matrix arguments are either built-in sparse or full matrices,
-// GraphBLAS matrices.
+#define GB_DEBUG
+
+// gbmx_get_mxargs collects all the input arguments for the GraphBLAS
+// mexFunctions.  The user-level view is described below.  For the private
+// mexFunctions, the descriptor optionally appears as the last argument.  The
+// matrix arguments are either built-in sparse or full matrices, GraphBLAS
+// matrices.
 
 #include "gb_interface.h"
 
 void gbmx_get_mxargs
 (
     // input:
-    int nargin,                 // # inputs for mexFunction (may be zero)
+    int nargin,                 // # inputs for mexFunction (must be > 0)
     const mxArray *pargin [ ],  // input arguments for mexFunction
     const char *usage,          // usage to print, if too many args appear
     // output:
@@ -37,13 +39,14 @@ void gbmx_get_mxargs
     //--------------------------------------------------------------------------
 
     ASSERT (gbdesc != NULL) ;
-    gbmx_mxarray_to_descriptor (gbdesc,
-        (nargin == 0) ? NULL : pargin [nargin-1]) ;
+    ASSERT (nargin > 1) ;
+    gbmx_mxarray_to_descriptor (gbdesc, pargin [nargin-1]) ;
     if (gbdesc->is_present)
     { 
         // descriptor is present, remove it from further consideration
         nargin-- ;
     }
+    ASSERT (nargin > 1) ;
 
     //--------------------------------------------------------------------------
     // find the remaining arguments
@@ -55,7 +58,7 @@ void gbmx_get_mxargs
     String [0][0] = '\0' ;
     String [1][0] = '\0' ;
 
-    for (int k = 0 ; k < nargin ; k++)
+    for (int k = 1 ; k < nargin ; k++)
     {
         if (mxIsCell (pargin [k]))
         {

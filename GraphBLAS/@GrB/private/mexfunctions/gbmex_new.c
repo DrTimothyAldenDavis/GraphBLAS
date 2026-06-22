@@ -13,16 +13,16 @@
 
 // Usage:
 
-// C = gbmex_new (A)
-// C = gbmex_new (A, type)
-// C = gbmex_new (A, format)
-// C = gbmex_new (m, n)
-// C = gbmex_new (m, n, format)
-// C = gbmex_new (m, n, type)
-// C = gbmex_new (A, type, format)
-// C = gbmex_new (A, format, type)
-// C = gbmex_new (m, n, type, format)
-// C = gbmex_new (m, n, format, type)
+// C = gbmex_new (ghb, A)
+// C = gbmex_new (ghb, A, type)
+// C = gbmex_new (ghb, A, format)
+// C = gbmex_new (ghb, m, n)
+// C = gbmex_new (ghb, m, n, format)
+// C = gbmex_new (ghb, m, n, type)
+// C = gbmex_new (ghb, A, type, format)
+// C = gbmex_new (ghb, A, format, type)
+// C = gbmex_new (ghb, m, n, type, format)
+// C = gbmex_new (ghb, m, n, format, type)
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&A_to_free) ;
@@ -50,7 +50,8 @@ void mexFunction
 
     GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_to_free = NULL ;
 
-    GBMX_USAGE (nargin >= 1 && nargin <= 4 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin >= 1+1 && nargin <= 4+1 && nargout <= 1, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
@@ -70,9 +71,9 @@ void mexFunction
     uint64_t nrows = 0, ncols = 0 ;
 
     struct gb_matrix_struct Matrix [1] ;
-    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
 
-    if (nargin == 1)
+    if (nargin == 2)
     { 
 
         //----------------------------------------------------------------------
@@ -80,7 +81,7 @@ void mexFunction
         //----------------------------------------------------------------------
 
     }
-    else if (nargin == 2)
+    else if (nargin == 3)
     { 
 
         //----------------------------------------------------------------------
@@ -89,7 +90,7 @@ void mexFunction
         // C = GrB (m, n)
         //----------------------------------------------------------------------
 
-        if (mxIsChar (pargin [1]))
+        if (mxIsChar (pargin [2]))
         { 
 
             //------------------------------------------------------------------
@@ -98,11 +99,11 @@ void mexFunction
             //------------------------------------------------------------------
 
             nargin_2_is_char = true ;
-            gbmx_mxstring_to_string (string_1, LEN, pargin [1], "") ;
+            gbmx_mxstring_to_string (string_1, LEN, pargin [2], "") ;
 
         }
-        else if (gbmx_mxarray_is_scalar (pargin [0]) &&
-                 gbmx_mxarray_is_scalar (pargin [1]))
+        else if (gbmx_mxarray_is_scalar (pargin [1]) &&
+                 gbmx_mxarray_is_scalar (pargin [2]))
         { 
 
             //------------------------------------------------------------------
@@ -110,12 +111,12 @@ void mexFunction
             //------------------------------------------------------------------
 
             nargin_2_is_mn = true ;
-            nrows = gbmx_get_uint64_scalar (pargin [0], "m") ;
-            ncols = gbmx_get_uint64_scalar (pargin [1], "n") ;
+            nrows = gbmx_get_uint64_scalar (pargin [1], "m") ;
+            ncols = gbmx_get_uint64_scalar (pargin [2], "n") ;
         }
 
     }
-    else if (nargin == 3)
+    else if (nargin == 4)
     { 
 
         //----------------------------------------------------------------------
@@ -125,8 +126,8 @@ void mexFunction
         // C = GrB (A, format, type)
         //----------------------------------------------------------------------
 
-        if (gbmx_mxarray_is_scalar (pargin [0]) &&
-            gbmx_mxarray_is_scalar (pargin [1]) && mxIsChar (pargin [2]))
+        if (gbmx_mxarray_is_scalar (pargin [1]) &&
+            gbmx_mxarray_is_scalar (pargin [2]) && mxIsChar (pargin [3]))
         { 
 
             //------------------------------------------------------------------
@@ -135,12 +136,12 @@ void mexFunction
             //------------------------------------------------------------------
 
             nargin_3_first_case = true ;
-            nrows = gbmx_get_uint64_scalar (pargin [0], "m") ;
-            ncols = gbmx_get_uint64_scalar (pargin [1], "n") ;
-            gbmx_mxstring_to_string (string_1, LEN, pargin [2], "") ;
+            nrows = gbmx_get_uint64_scalar (pargin [1], "m") ;
+            ncols = gbmx_get_uint64_scalar (pargin [2], "n") ;
+            gbmx_mxstring_to_string (string_1, LEN, pargin [3], "") ;
 
         }
-        else if (mxIsChar (pargin [1]) && mxIsChar (pargin [2]))
+        else if (mxIsChar (pargin [2]) && mxIsChar (pargin [3]))
         { 
 
             //------------------------------------------------------------------
@@ -148,8 +149,8 @@ void mexFunction
             // C = GrB (A, format, type)
             //------------------------------------------------------------------
 
-            gbmx_mxstring_to_string (string_1, LEN, pargin [1], "") ;
-            gbmx_mxstring_to_string (string_2, LEN, pargin [2], "") ;
+            gbmx_mxstring_to_string (string_1, LEN, pargin [2], "") ;
+            gbmx_mxstring_to_string (string_2, LEN, pargin [3], "") ;
         }
         else
         { 
@@ -157,7 +158,7 @@ void mexFunction
         }
 
     }
-    else // if (nargin == 4)
+    else // if (nargin == 5)
     { 
 
         //----------------------------------------------------------------------
@@ -165,14 +166,14 @@ void mexFunction
         // C = GrB (m, n, format, type)
         //----------------------------------------------------------------------
 
-        if (gbmx_mxarray_is_scalar (pargin [0]) &&
-            gbmx_mxarray_is_scalar (pargin [1]) &&
-            mxIsChar (pargin [2]) && mxIsChar (pargin [3]))
+        if (gbmx_mxarray_is_scalar (pargin [1]) &&
+            gbmx_mxarray_is_scalar (pargin [2]) &&
+            mxIsChar (pargin [3]) && mxIsChar (pargin [4]))
         { 
-            nrows = gbmx_get_uint64_scalar (pargin [0], "m") ;
-            ncols = gbmx_get_uint64_scalar (pargin [1], "n") ;
-            gbmx_mxstring_to_string (string_1, LEN, pargin [2], "") ;
-            gbmx_mxstring_to_string (string_2, LEN, pargin [3], "") ;
+            nrows = gbmx_get_uint64_scalar (pargin [1], "m") ;
+            ncols = gbmx_get_uint64_scalar (pargin [2], "n") ;
+            gbmx_mxstring_to_string (string_1, LEN, pargin [3], "") ;
+            gbmx_mxstring_to_string (string_2, LEN, pargin [4], "") ;
         }
         else
         { 
@@ -189,7 +190,7 @@ void mexFunction
     int fmt = GxB_BY_COL ;
     int sparsity = 0 ;
 
-    if (nargin == 1)
+    if (nargin == 2)
     { 
 
         //----------------------------------------------------------------------
@@ -203,7 +204,7 @@ void mexFunction
 //      GxB_Matrix_fprint (C, "C for C=GrB(A)", 5, NULL) ;
 
     }
-    else if (nargin == 2)
+    else if (nargin == 3)
     { 
 
         //----------------------------------------------------------------------
@@ -284,7 +285,7 @@ void mexFunction
         }
 
     }
-    else if (nargin == 3)
+    else if (nargin == 4)
     { 
 
         //----------------------------------------------------------------------
@@ -365,7 +366,7 @@ void mexFunction
         }
 
     }
-    else // if (nargin == 4)
+    else // if (nargin == 5)
     { 
 
         //----------------------------------------------------------------------

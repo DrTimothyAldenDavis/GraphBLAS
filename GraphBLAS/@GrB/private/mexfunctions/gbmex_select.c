@@ -11,18 +11,18 @@
 
 // Usage:
 
-// C = gbmex_select (op, A)
-// C = gbmex_select (op, A, desc)
-// C = gbmex_select (op, A, b, desc)
+// C = gbmex_select (ghb, op, A)
+// C = gbmex_select (ghb, op, A, desc)
+// C = gbmex_select (ghb, op, A, b, desc)
 
-// C = gbmex_select (Cin, accum, op, A, desc)
-// C = gbmex_select (Cin, accum, op, A, b, desc)
+// C = gbmex_select (ghb, Cin, accum, op, A, desc)
+// C = gbmex_select (ghb, Cin, accum, op, A, b, desc)
 
-// C = gbmex_select (Cin, M, op, A, desc)
-// C = gbmex_select (Cin, M, op, A, b, desc)
+// C = gbmex_select (ghb, Cin, M, op, A, desc)
+// C = gbmex_select (ghb, Cin, M, op, A, b, desc)
 
-// C = gbmex_select (Cin, M, accum, op, A, desc)
-// C = gbmex_select (Cin, M, accum, op, A, b, desc)
+// C = gbmex_select (ghb, Cin, M, accum, op, A, desc)
+// C = gbmex_select (ghb, Cin, M, accum, op, A, b, desc)
 
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A, and the descriptor).  The type of Cin, if
@@ -206,7 +206,8 @@ void mexFunction
     GrB_Scalar Zero = NULL ;
     GrB_IndexUnaryOp nan_test = NULL ;
 
-    GBMX_USAGE (nargin >= 2 && nargin <= 7 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 2+1 && nargin <= 7+1 && nargout <= 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;

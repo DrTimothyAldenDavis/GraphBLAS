@@ -4,6 +4,8 @@ function s = gb_isfull (A)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 [m, n] = gbmex_size (A) ;
 if (isinteger (m))
     % gbmex_size returms m and n as integer if either m or n are larger

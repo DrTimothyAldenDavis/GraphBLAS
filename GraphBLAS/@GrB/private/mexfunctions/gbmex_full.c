@@ -18,10 +18,10 @@
 // 'builtin' are treated as 'full'.
 
 // Usage:
-//  C = gbmex_full (A)
-//  C = gbmex_full (A, type)
-//  C = gbmex_full (A, type, id)
-//  C = gbmex_full (A, type, id, desc)
+//  C = gbmex_full (ghb, A)
+//  C = gbmex_full (ghb, A, type)
+//  C = gbmex_full (ghb, A, type, id)
+//  C = gbmex_full (ghb, A, type, id, desc)
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&A_to_free) ;  \
@@ -33,7 +33,7 @@
 
 #include "gb_interface.h"
 
-#define USAGE "usage: C = gbmex_full (A, type, id, desc)"
+#define USAGE "usage: C = gbmex_full (ghb, A, type, id, desc)"
 
 void mexFunction
 (
@@ -51,7 +51,8 @@ void mexFunction
     GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_to_free = NULL,
         id = NULL, id_to_free = NULL ;
 
-    GBMX_USAGE (nargin >= 1 && nargin <= 4 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 1+1 && nargin <= 4+1 && nargout <= 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
@@ -62,7 +63,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     struct gb_matrix_struct Matrix [2] ;
-    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
 
     struct gb_descriptor_struct gbdesc ;
     if (gbmx_mxarray_to_descriptor (&gbdesc, pargin [nargin-1]))
@@ -72,14 +73,14 @@ void mexFunction
     }
 
     char type_string [LEN+2] ;
-    if (nargin > 1)
-    { 
-        gbmx_mxstring_to_string (type_string, LEN, pargin [1], "type") ;
-    }
-
     if (nargin > 2)
     { 
-        gbmx_get_matrix (&(Matrix [1]), pargin [2]) ;
+        gbmx_mxstring_to_string (type_string, LEN, pargin [2], "type") ;
+    }
+
+    if (nargin > 3)
+    { 
+        gbmx_get_matrix (&(Matrix [1]), pargin [3]) ;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -98,7 +99,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Type type ;
-    if (nargin > 1)
+    if (nargin > 2)
     { 
         type = gb_string_to_type (type_string) ;
     }
@@ -112,7 +113,7 @@ void mexFunction
     // get the identity scalar
     //--------------------------------------------------------------------------
 
-    if (nargin > 2)
+    if (nargin > 3)
     { 
         OK (gb_get_matrix (&id, &id_to_free, &(Matrix [1]), err)) ;
     }

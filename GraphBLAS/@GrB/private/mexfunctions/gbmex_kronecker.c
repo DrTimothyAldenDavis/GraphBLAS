@@ -11,11 +11,11 @@
 
 // Usage:
 
-// C = gbmex_kronecker (op, A, B)
-// C = gbmex_kronecker (op, A, B, desc)
-// C = gbmex_kronecker (Cin, accum, op, A, B, desc)
-// C = gbmex_kronecker (Cin, M, op, A, B, desc)
-// C = gbmex_kronecker (Cin, M, accum, op, A, B, desc)
+// C = gbmex_kronecker (ghb, op, A, B)
+// C = gbmex_kronecker (ghb, op, A, B, desc)
+// C = gbmex_kronecker (ghb, Cin, accum, op, A, B, desc)
+// C = gbmex_kronecker (ghb, Cin, M, op, A, B, desc)
+// C = gbmex_kronecker (ghb, Cin, M, accum, op, A, B, desc)
 
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A, B, and the descriptor).
@@ -52,7 +52,8 @@ void mexFunction
         M_to_free = NULL, A_to_free = NULL, B_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    GBMX_USAGE (nargin >= 3 && nargin <= 7 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 3+1 && nargin <= 7+1 && nargout <= 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;

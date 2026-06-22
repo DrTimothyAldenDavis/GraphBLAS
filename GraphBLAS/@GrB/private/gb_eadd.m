@@ -13,6 +13,8 @@ function C = gb_eadd (A, op, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 [am, an, atype] = gbmex_size (A) ;
 [bm, bn, btype] = gbmex_size (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
@@ -22,7 +24,7 @@ type = gbmex_optype (atype, btype) ;
 if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars.  Result is also a scalar.
-        C = GrB (gbmex_eadd (A, op, B)) ;
+        C = GrB (gbmex_eadd (ghb, A, op, B)) ;
     else
         % A is a scalar, B is a matrix.  Result is full, unless A == 0.
         if (gb_scalar (A) == 0)
@@ -30,7 +32,7 @@ if (a_is_scalar)
         else
             % expand A to a full matrix
             a = gb_scalar_to_full (bm, bn, type, gb_fmt (B), A) ;
-            C = GrB (gbmex_eadd (a, op, B)) ;
+            C = GrB (gbmex_eadd (ghb, a, op, B)) ;
         end
     end
 else
@@ -41,11 +43,11 @@ else
         else
             % expand B to a full matrix
             b = gb_scalar_to_full (am, an, type, gb_fmt (A), B) ;
-            C = GrB (gbmex_eadd (A, op, b)) ;
+            C = GrB (gbmex_eadd (ghb, A, op, b)) ;
         end
     else
         % both A and B are matrices.  Result is sparse.
-        C = GrB (gbmex_eadd (A, op, B)) ;
+        C = GrB (gbmex_eadd (ghb, A, op, B)) ;
     end
 end
 

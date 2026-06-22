@@ -26,6 +26,8 @@ function Graph = graph (G_arg, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 [m, n, type] = gbmex_size (G_arg) ;
 if (m ~= n)
     error ('GrB:error', 'G must be square') ;
@@ -50,9 +52,9 @@ end
 if (omitself)
     % ignore diagonal entries of G
     if (isequal (side, 'upper'))
-        G = GrB (gbmex_select ('triu', G_arg, 1)) ;
+        G = GrB (gbmex_select (ghb, 'triu', G_arg, 1)) ;
     elseif (isequal (side, 'lower'))
-        G = GrB (gbmex_select ('tril', G_arg, -1)) ;
+        G = GrB (gbmex_select (ghb, 'tril', G_arg, -1)) ;
     else
         % use G_arg as-is
         G = G_arg ;
@@ -60,9 +62,9 @@ if (omitself)
 else
     % include diagonal entries of G
     if (isequal (side, 'upper'))
-        G = GrB (gbmex_select ('triu', G_arg, 0)) ;
+        G = GrB (gbmex_select (ghb, 'triu', G_arg, 0)) ;
     elseif (isequal (side, 'lower'))
-        G = GrB (gbmex_select ('tril', G_arg, 0)) ;
+        G = GrB (gbmex_select (ghb, 'tril', G_arg, 0)) ;
     else
         % use G_arg as-is
         G = G_arg ;
@@ -77,18 +79,18 @@ switch (type)
         % The graph(...) function can accept x as single, but not from a
         % built-in sparse matrix.  So extract the tuples of G first.
         gbmex_wait (G) ;
-        [i, j, x] = gbmex_extracttuples (G) ;
+        [i, j, x] = gbmex_extracttuples (ghb, G) ;
         Graph = graph (i, j, x, n) ;
 
     case { 'logical' }
 
         % The digraph(...) function allows for logical
         % adjacency matrices (no edge weights are created).
-        Graph = graph (gbmex_builtin (GrB (gbmex_cast (G, 'logical'))), side) ;
+        Graph = graph (gbmex_builtin (GrB (gbmex_cast (ghb, G, 'logical'))), side) ;
 
     otherwise
 
         % typecast to double
-        Graph = graph (gbmex_builtin (GrB (gbmex_cast (G, 'double'))), side) ;
+        Graph = graph (gbmex_builtin (GrB (gbmex_cast (ghb, G, 'double'))), side) ;
 end
 

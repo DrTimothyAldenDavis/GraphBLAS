@@ -11,9 +11,9 @@
 
 // Usage:
 
-//  cout = gbmex_reduce (op, A)
-//  cout = gbmex_reduce (op, A, desc)
-//  cout = gbmex_reduce (cin, accum, op, A, desc)
+//  cout = gbmex_reduce (ghb, op, A)
+//  cout = gbmex_reduce (ghb, op, A, desc)
+//  cout = gbmex_reduce (ghb, cin, accum, op, A, desc)
 
 // If cin is not present then it is implicitly a 1-by-1 matrix with no entries.
 
@@ -46,7 +46,8 @@ void mexFunction
     GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    GBMX_USAGE (nargin >= 2 && nargin <= 5 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 2+1 && nargin <= 5+1 && nargout <= 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;

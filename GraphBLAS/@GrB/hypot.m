@@ -11,11 +11,13 @@ function C = hypot (A_arg, B_arg)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 atype = gbmex_type (A_arg) ;
 btype = gbmex_type (B_arg) ;
 
 if (gb_contains (atype, 'complex'))
-    A = GrB (gbmex_apply ('abs', A_arg)) ;
+    A = GrB (gbmex_apply (ghb, 'abs', A_arg)) ;
 elseif (~gb_isfloat (atype))
     A = GrB (A_arg, 'double') ;
 else
@@ -24,7 +26,7 @@ else
 end
 
 if (gb_contains (btype, 'complex'))
-    B = GrB (gbmex_apply ('abs', B_arg)) ;
+    B = GrB (gbmex_apply (ghb, 'abs', B_arg)) ;
 elseif (~gb_isfloat (btype))
     B = GrB (B_arg, 'double') ;
 else
@@ -32,5 +34,5 @@ else
     B = B_arg ;
 end
 
-C = GrB (gbmex_apply ('abs', gb_eadd (A, 'hypot', B))) ;
+C = GrB (gbmex_apply (ghb, 'abs', gb_eadd (A, 'hypot', B))) ;
 

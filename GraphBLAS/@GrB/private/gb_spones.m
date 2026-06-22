@@ -5,6 +5,8 @@ function C = gb_spones (G, type)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (nargin == 1)
     switch (gbmex_type (G))
         case { 'single complex' }
@@ -21,5 +23,5 @@ else
     op = ['1.' type] ;
 end
 
-C = GrB (gbmex_apply (op, G)) ;
+C = GrB (gbmex_apply (ghb, op, G)) ;
 

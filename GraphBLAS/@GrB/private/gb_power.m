@@ -5,6 +5,8 @@ function C = gb_power (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 [am, an, atype] = gbmex_size (A) ;
 [bm, bn, btype] = gbmex_size (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
@@ -18,10 +20,10 @@ if (a_is_real && b_is_real)
     if (gb_contains (btype, 'int') || isequal (btype, 'logical'))
         % B is logical or integer, so C is real
         c_is_real = true ;
-    elseif (gbmex_isequal (B, GrB (gbmex_apply ('round', B))))
+    elseif (gbmex_isequal (B, GrB (gbmex_apply (ghb, 'round', B))))
         % B is floating point, but all values are equal to integers
         c_is_real = true ;
-    elseif (gb_scalar (GrB (gbmex_reduce ('min', A))) >= 0)
+    elseif (gb_scalar (GrB (gbmex_reduce (ghb, 'min', A))) >= 0)
         % All entries in A are non-negative, so C is real
         c_is_real = true ;
     else
@@ -46,7 +48,7 @@ else
 end
 
 % B is always full
-B2 = GrB (gbmex_full (B, ctype)) ;
+B2 = GrB (gbmex_full (ghb, B, ctype)) ;
 
 % determine the operator
 op = ['pow.' ctype] ;
@@ -57,8 +59,8 @@ if (a_is_scalar)
     % A is a scalar: C is a full matrix
     %----------------------------------------------------------------------
 
-    a = GrB (gbmex_full (A, ctype)) ;
-    C = GrB (gbmex_apply2 (op, a, B2)) ;
+    a = GrB (gbmex_full (ghb, A, ctype)) ;
+    C = GrB (gbmex_apply2 (ghb, op, a, B2)) ;
 
 else
 
@@ -77,22 +79,22 @@ else
             C = GrB (A) ;
         elseif (b <= 0)
             % 0.^b where b < 0 is Inf, so C is full
-            a = GrB (gbmex_full (A, ctype)) ;
-            C = GrB (gbmex_apply2 (op, a, B2)) ;
+            a = GrB (gbmex_full (ghb, A, ctype)) ;
+            C = GrB (gbmex_apply2 (ghb, op, a, B2)) ;
         else
             % The scalar b is > 0, and thus 0.^b is zero, so C is sparse.
-            C = GrB (gbmex_apply2 (op, A, B2)) ;
+            C = GrB (gbmex_apply2 (ghb, op, A, B2)) ;
         end
     else
         % both A and B2 are matrices.  0.^0 is 1, so C is full.
-        a = GrB (gbmex_full (A, ctype)) ;
-        C = GrB (gbmex_emult (op, a, B2)) ;
+        a = GrB (gbmex_full (ghb, A, ctype)) ;
+        C = GrB (gbmex_emult (ghb, op, a, B2)) ;
     end
 
 end
 
 % convert C to real if imaginary part is zero
 if (~c_is_real && gb_make_real (C))
-    C = GrB (gbmex_apply ('creal', C)) ;
+    C = GrB (gbmex_apply (ghb, 'creal', C)) ;
 end
 

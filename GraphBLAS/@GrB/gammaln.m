@@ -9,6 +9,8 @@ function C = gammaln (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 type = gbmex_type (G) ;
 if (gb_contains (type, 'complex'))
     error ('GrB:error', 'input must be real') ;
@@ -17,5 +19,5 @@ if (~gb_isfloat (type))
     type = 'double' ;
 end
 
-C = GrB (gbmex_apply ('gammaln', GrB (gbmex_full (G, type)))) ;
+C = GrB (gbmex_apply (ghb, 'gammaln', GrB (gbmex_full (ghb, G, type)))) ;
 

@@ -25,8 +25,8 @@
 
 // Usage:
 
-//      C = gbmex_assign    (Cin, M, accum, A, I, J, desc)
-//      C = gbmex_subassign (Cin, M, accum, A, I, J, desc)
+//      C = gbmex_assign    (ghb, Cin, M, accum, A, I, J, desc)
+//      C = gbmex_subassign (ghb, Cin, M, accum, A, I, J, desc)
 
 // Cin and A are required.  See GrB.m for more details.
 
@@ -67,7 +67,8 @@ void gbmx_assign_mexFunction    // gbmex_assign or gbmex_subassign mexFunctions
     GrB_Vector I = NULL, J = NULL, I_to_free = NULL, J_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    GBMX_USAGE (nargin >= 2 && nargin <= 7 && nargout <= 2, usage) ;
+    GBMX_USAGE (nargin >= 2+1 && nargin <= 7+1 && nargout <= 2, usage) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;

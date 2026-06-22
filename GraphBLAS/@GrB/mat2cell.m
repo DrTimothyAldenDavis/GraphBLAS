@@ -26,6 +26,8 @@ function C = mat2cell (A, m, n)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (isobject (A))
     if (nargin < 3)
         [~, n] = gbmex_size (A) ;
@@ -38,7 +40,7 @@ else
 end
 
 % S is returned as a cell array of @GrB opaque handle structs.
-S = gbmex_split (A, m, n) ;
+S = gbmex_split (ghb, A, m, n) ;
 
 % convert each entry in S to a @GrB object
 C = cell (size (S)) ;

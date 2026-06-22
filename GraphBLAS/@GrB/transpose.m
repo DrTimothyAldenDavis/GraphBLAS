@@ -7,5 +7,7 @@ function C = transpose (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-C = GrB (gbmex_trans (G)) ;
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
+C = GrB (gbmex_trans (ghb, G)) ;
 

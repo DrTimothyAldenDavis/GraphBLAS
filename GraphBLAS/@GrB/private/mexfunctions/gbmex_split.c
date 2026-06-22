@@ -11,7 +11,7 @@
 
 // Usage:
 
-// C = gbmex_split (A, m, n, desc)
+// C = gbmex_split (ghb, A, m, n, desc)
 
 // where C is a 2D cell array of matrices.
 
@@ -48,15 +48,16 @@ void mexFunction
 
     GrB_Matrix A = NULL, A_to_free = NULL ;
 
-    GBMX_USAGE (nargin == 3 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 3+1 && nargout <= 1, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     //--------------------------------------------------------------------------
     // get the tile sizes, kind, and create the output arguments
     //--------------------------------------------------------------------------
 
     uint64_t m, n ;
-    uint64_t *Tile_nrows = gbmx_get_integer_list (pargin [1], &m) ;
-    uint64_t *Tile_ncols = gbmx_get_integer_list (pargin [2], &n) ;
+    uint64_t *Tile_nrows = gbmx_get_integer_list (pargin [2], &m) ;
+    uint64_t *Tile_ncols = gbmx_get_integer_list (pargin [3], &n) ;
 
     GrB_Matrix *Tiles = mxCalloc (m * n, sizeof (GrB_Matrix)) ;
     GrB_Matrix **Tiles_opaque = mxCalloc (m * n, sizeof (GrB_Matrix *)) ;
@@ -74,7 +75,7 @@ void mexFunction
     }
 
     struct gb_matrix_struct Matrix [1] ;
-    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
 
     ////////////////////////////////////////////////////////////////////////////
 

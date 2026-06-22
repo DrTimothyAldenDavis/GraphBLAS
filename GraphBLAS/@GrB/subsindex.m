@@ -8,13 +8,15 @@ function I = subsindex (G_arg)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 % On input, G must contain integers in the range 1 to prod (size (A))-1.
 % The dimensions of A are not provided to subsindex.
 
 % As an extension to the expression A(G), prune zeros and negative
 % values first.  The expression A(G) becomes A (G (find (G > 0))).
 gbmex_wait (G_arg) ;
-G = GrB (gbmex_select ('>0', G_arg)) ;
+G = GrB (gbmex_select (ghb, '>0', G_arg)) ;
 
 [m, n, type] = gbmex_size (G) ;
 G_is_full = gb_isfull (G) ;

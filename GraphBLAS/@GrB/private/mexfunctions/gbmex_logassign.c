@@ -17,7 +17,7 @@
 
 // Usage:
 
-//      C = gbmex_logassign (C, M, A)
+//      C = gbmex_logassign (ghb, C, M, A)
 
 //  This function is the C equivalent of the following m-function:
 
@@ -84,7 +84,7 @@
 
 #include "gb_interface.h"
 
-#define USAGE "usage: C = gbmex_logassign (C, M, A)"
+#define USAGE "usage: C = gbmex_logassign (ghb, C, M, A)"
 #define ERR "A must be a vector of length nnz(M) for logical indexing, C(M)=A"
 
 void mexFunction
@@ -105,7 +105,8 @@ void mexFunction
         A_copy2 = NULL, S = NULL ;
     uint64_t *Si = NULL, *Sj = NULL, *Mj = NULL ;
 
-    GBMX_USAGE (nargin == 3 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 3+1 && nargout <= 1, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
@@ -114,9 +115,9 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     struct gb_matrix_struct Matrix [3] ;
-    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
-    gbmx_get_matrix (&(Matrix [1]), pargin [1]) ;
-    gbmx_get_matrix (&(Matrix [2]), pargin [2]) ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
+    gbmx_get_matrix (&(Matrix [1]), pargin [2]) ;
+    gbmx_get_matrix (&(Matrix [2]), pargin [3]) ;
 
     ////////////////////////////////////////////////////////////////////////////
 

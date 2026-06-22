@@ -39,15 +39,8 @@ void mexFunction
     // find the arguments
     //--------------------------------------------------------------------------
 
-    struct gb_matrix_struct Matrix [6] ;
-    mxArray *Cell [2] ;
-    char String [2][LEN+2] ;
-    int nmatrices, nstrings, ncells ;
     struct gb_descriptor_struct gbdesc ;
-    gbmx_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String,
-        &nstrings, Cell, &ncells, &gbdesc) ;
-
-    CHECK_ERROR (nmatrices > 0 || nstrings > 0 || ncells > 0, USAGE) ;
+    gbmx_mxarray_to_descriptor (&gbdesc, (nargin == 0) ? NULL : pargin [0]) ;
 
     ////////////////////////////////////////////////////////////////////////////
 

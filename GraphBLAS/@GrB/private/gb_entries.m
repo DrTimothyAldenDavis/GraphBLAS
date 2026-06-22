@@ -5,6 +5,8 @@ function result = gb_entries (A, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 % get the string arguments
 dim = 'all' ;           % 'all', 'row', or 'col'
 kind = 'count' ;        % 'count', 'list', or 'degree'
@@ -39,22 +41,22 @@ if (isequal (dim, 'all'))
 else
 
     % get the row or column degree
-    result = GrB (gbmex_degree (A, dim)) ;    % dim is 'row' or 'col'
+    result = GrB (gbmex_degree (ghb, A, dim)) ;    % dim is 'row' or 'col'
 
     switch kind
         case 'count'
             % number of non-empty rows/cols
             % e = GrB.entries (A, 'row')
             % e = GrB.entries (A, 'col')
-            result = gbmex_nvals (GrB (gbmex_select (result, 'nonzero'))) ;
+            result = gbmex_nvals (GrB (gbmex_select (ghb, result, 'nonzero'))) ;
         case 'list'
             % list of non-empty rows/cols
             % I = GrB.entries (A, 'row', 'list')
             % J = GrB.entries (A, 'col', 'list')
             desc.base = 'one-based int' ;
-            S = GrB (gbmex_select (result, 'nonzero')) ;
+            S = GrB (gbmex_select (ghb, result, 'nonzero')) ;
             gbmex_wait (S) ;
-            result = gbmex_extracttuples (S, desc);
+            result = gbmex_extracttuples (ghb, S, desc);
         % case 'degree'
             % degree of all rows/cols
             % d = GrB.entries (A, 'row', 'degree')

@@ -54,6 +54,8 @@ function C = cell2mat (A)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (~iscell (A))
     error ('GrB:error', 'input must be a cell array') ;
 end
@@ -61,5 +63,5 @@ if (ndims (A) > 2) %#ok<ISMAT>
     error ('GrB:error', 'only 2D cell arrays are supported') ;
 end
 
-C = GrB (gbmex_cat (A)) ;
+C = GrB (gbmex_cat (ghb, A)) ;
 

@@ -11,7 +11,7 @@
 
 // Usage:
 
-// C = gbmex_cat (Tiles, desc)
+// C = gbmex_cat (ghb, Tiles, desc)
 
 // where Tiles is a 2D cell array of matrices.
 
@@ -55,7 +55,8 @@ void mexFunction
     gb_matrix gb_Tiles = NULL ;
     int64_t m = 0, n = 0, mn = 0 ;
 
-    GBMX_USAGE (nargin >= 1 && nargin <= 2 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 1+1 && nargin <= 2+1 && nargout <= 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;

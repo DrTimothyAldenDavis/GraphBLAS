@@ -44,6 +44,8 @@ function [C, I, J] = compact (A, id, symmetric)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 symmetric = (nargin > 2 && isequal (symmetric, 'symmetric')) ;
 if (symmetric)
     [m n] = gbmex_size (A) ;
@@ -57,10 +59,10 @@ if (nargin > 1 && ~isempty (id))
     id = gb_get_scalar (id) ;
     if (id ~= 0)
         % prune a nonzero identity value from A
-        [C, I, J] = gb_compact (GrB (gbmex_select (A, '~=', id)), symmetric) ;
+        [C, I, J] = gb_compact (GrB (gbmex_select (ghb, A, '~=', id)), symmetric) ;
     elseif (~builtin ('issparse', A))
         % prune zeros from A
-        [C, I, J] = gb_compact (GrB (gbmex_select (A, 'nonzero')), symmetric) ;
+        [C, I, J] = gb_compact (GrB (gbmex_select (ghb, A, 'nonzero')), symmetric) ;
     else
         % compact A as-is
         [C, I, J] = gb_compact (A, symmetric) ;

@@ -16,7 +16,7 @@
 
 // Usage:
 
-// C = gbmex_logextract (A, M)
+// C = gbmex_logextract (ghb, A, M)
 
 //  This function is the C equivalent of the following m-function:
 
@@ -97,7 +97,7 @@
 #include "gb_interface.h"
 #include "GB_transpose.h"
 
-#define USAGE "usage: C = gbmex_logextract (A, M)"
+#define USAGE "usage: C = gbmex_logextract (ghb, A, M)"
 
 void mexFunction
 (
@@ -118,7 +118,8 @@ void mexFunction
     GrB_Vector V = NULL ;
     uint64_t *Kx = NULL ;
 
-    GBMX_USAGE (nargin == 2 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 2+1 && nargout <= 1, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
@@ -127,8 +128,8 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     struct gb_matrix_struct Matrix [2] ;
-    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
-    gbmx_get_matrix (&(Matrix [1]), pargin [1]) ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
+    gbmx_get_matrix (&(Matrix [1]), pargin [2]) ;
 
     ////////////////////////////////////////////////////////////////////////////
 

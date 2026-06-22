@@ -5,6 +5,8 @@ function s = gb_issymmetric (G_arg, option, herm)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 % FUTURE: this can be much faster; see spsym in CHOLMOD.
 
 [m, n, type] = gbmex_size (G_arg) ;
@@ -24,10 +26,10 @@ else
     if (herm && gb_contains (type, 'complex'))
         % T = G', complex conjugate transpose
         desc.in0 = 'transpose' ;
-        T = GrB (gbmex_apply ('conj', G, desc)) ;
+        T = GrB (gbmex_apply (ghb, 'conj', G, desc)) ;
     else
         % T = G.', array transpose
-        T = GrB (gbmex_trans (G)) ;
+        T = GrB (gbmex_trans (ghb, G)) ;
     end
 
     switch (option)
@@ -51,7 +53,7 @@ else
     if (s)
         % also check the pattern; G might have explicit zeros
         S = gb_spones (G, 'logical') ;
-        T = GrB (gbmex_trans (S)) ;
+        T = GrB (gbmex_trans (ghb, S)) ;
         s = gbmex_isequal (S, T) ;
     end
 end

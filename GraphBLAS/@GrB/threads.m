@@ -25,6 +25,8 @@ function nthreads = threads (nthreads)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (nargin == 0)
     nthreads = gbmex_threads ;
 else

@@ -8,10 +8,12 @@ function C = isfinite (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 [m, n, type] = gbmex_size (G) ;
 
 if (gb_isfloat (type) && m > 0 && n > 0)
-    C = GrB (gbmex_apply ('isfinite', GrB (gbmex_full (G)))) ;
+    C = GrB (gbmex_apply (ghb, 'isfinite', GrB (gbmex_full (ghb, G)))) ;
 else
     % C is all true
     C = GrB.true (m, n) ;

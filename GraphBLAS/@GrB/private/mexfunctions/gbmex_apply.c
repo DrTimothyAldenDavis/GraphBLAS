@@ -11,16 +11,16 @@
 
 // Usage:
 
-// C = gbmex_apply (unop, A)
-// C = gbmex_apply (unop, A, desc)
-// C = gbmex_apply (Cin, accum, unop, A, desc)
-// C = gbmex_apply (Cin, M, unop, A, desc)
-// C = gbmex_apply (Cin, M, accum, unop, A, desc)
+// C = gbmex_apply (ghb, unop, A)
+// C = gbmex_apply (ghb, unop, A, desc)
+// C = gbmex_apply (ghb, Cin, accum, unop, A, desc)
+// C = gbmex_apply (ghb, Cin, M, unop, A, desc)
+// C = gbmex_apply (ghb, Cin, M, accum, unop, A, desc)
 
 // TODO: in-place handle-based usage:
-// gbmex_apply (C, accum, unop, A, desc)
-// gbmex_apply (C, M, unop, A, desc)
-// gbmex_apply (C, M, accum, unop, A, desc)
+// gbmex_apply (ghb, C, accum, unop, A, desc)
+// gbmex_apply (ghb, C, M, unop, A, desc)
+// gbmex_apply (ghb, C, M, accum, unop, A, desc)
 
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A, B, and the descriptor).
@@ -56,7 +56,8 @@ void mexFunction
         M_to_free = NULL, A_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    GBMX_USAGE (nargin >= 2 && nargin <= 6 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 2+1 && nargin <= 6+1 && nargout <= 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;

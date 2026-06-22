@@ -5,6 +5,8 @@ function C = gb_random (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 %--------------------------------------------------------------------------
 % parse inputs
 %---------------------------------------------------------------------------
@@ -37,7 +39,7 @@ for k = 1:nargin
                 else
                     rtype = type ;
                 end
-                range = GrB (gbmex_full (r, rtype, 0, struct ('kind', 'full'))) ;
+                range = GrB (gbmex_full (ghb, r, rtype, 0, struct ('kind', 'full'))) ;
             case { 'unsymmetric', 'symmetric', 'hermitian' }
                 sym_option = arg ;
             otherwise
@@ -63,7 +65,7 @@ if (firstchar == 2)
         error ('GrB:error', 'input matrix must be square') ;
     end
     gbmex_wait (A) ;
-    [I, J] = gbmex_extracttuples (A, desc) ;
+    [I, J] = gbmex_extracttuples (ghb, A, desc) ;
     e = length (I) ;
 
 elseif (firstchar == (4 - (symmetric || hermitian)))
@@ -149,30 +151,30 @@ end
 % build the matrix
 %---------------------------------------------------------------------------
 
-C = GrB (gbmex_build (I, J, X, m, n, '2nd', desc)) ;
+C = GrB (gbmex_build (ghb, I, J, X, m, n, '2nd', desc)) ;
 
 % make it symmetric or hermitian, if requested
-L = GrB (gbmex_select ('tril', C, -1)) ;
+L = GrB (gbmex_select (ghb, 'tril', C, -1)) ;
 
 if (symmetric)
 
     % C = tril (C) + tril (C,-1)'
-    C = GrB (gbmex_eadd (GrB (gbmex_select ('tril', C, 0)), '+', GrB (gbmex_trans (L)))) ;
+    C = GrB (gbmex_eadd (ghb, GrB (gbmex_select (ghb, 'tril', C, 0)), '+', GrB (gbmex_trans (ghb, L)))) ;
 
 elseif (hermitian)
 
     % C = L + L' + real (diag (C))
-    LT = GrB (gbmex_trans (L)) ;
+    LT = GrB (gbmex_trans (ghb, L)) ;
     if (gb_contains (gbmex_type (LT), 'complex'))
-        LT = GrB (gbmex_apply ('conj', LT)) ;
+        LT = GrB (gbmex_apply (ghb, 'conj', LT)) ;
     end
-    D = GrB (gbmex_select ('diag', C, 0)) ;
+    D = GrB (gbmex_select (ghb, 'diag', C, 0)) ;
     if (gb_contains (gbmex_type (D), 'complex'))
-        LT = GrB (gbmex_eadd (LT, '+', GrB (gbmex_apply ('creal', D)))) ;
+        LT = GrB (gbmex_eadd (ghb, LT, '+', GrB (gbmex_apply (ghb, 'creal', D)))) ;
     else
-        LT = GrB (gbmex_eadd (LT, '+', D)) ;
+        LT = GrB (gbmex_eadd (ghb, LT, '+', D)) ;
     end
-    C = GrB (gbmex_eadd (L, '+', LT)) ;
+    C = GrB (gbmex_eadd (ghb, L, '+', LT)) ;
 
 end
 

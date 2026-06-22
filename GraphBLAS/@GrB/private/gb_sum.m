@@ -4,6 +4,8 @@ function C = gb_sum (op, G, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (nargin == 2)
     % C = sum (G)
     if (gb_isvector (G))
@@ -18,21 +20,21 @@ switch (option)
     case { 'all' }
 
         % C = sum (G, 'all'), reducing all entries to a scalar
-        C = GrB (gbmex_reduce (op, G)) ;
+        C = GrB (gbmex_reduce (ghb, op, G)) ;
 
     case { 1 }
 
         % C = sum (G, 1) reduces each column to a scalar,
         % giving a 1-by-n row vector.
         desc.in0 = 'transpose' ;
-        C = GrB (gbmex_trans (GrB (gbmex_vreduce (op, G, desc)))) ;
+        C = GrB (gbmex_trans (ghb, GrB (gbmex_vreduce (ghb, op, G, desc)))) ;
 
 
     case { 2 }
 
         % C = sum (G, 2) reduces each row to a scalar,
         % giving an m-by-1 column vector.
-        C = GrB (gbmex_vreduce (op, G)) ;
+        C = GrB (gbmex_vreduce (ghb, op, G)) ;
 
     otherwise
 

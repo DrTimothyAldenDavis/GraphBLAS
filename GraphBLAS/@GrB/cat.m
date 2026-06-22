@@ -32,12 +32,14 @@ function C = cat (dim, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 % concatenate the matrices
 if (dim == 1)
     % same as vertcat
-    C = GrB (gbmex_cat (varargin')) ;
+    C = GrB (gbmex_cat (ghb, varargin')) ;
 else
     % same as horzcat
-    C = GrB (gbmex_cat (varargin)) ;
+    C = GrB (gbmex_cat (ghb, varargin)) ;
 end
 

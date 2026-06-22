@@ -8,6 +8,8 @@ function C = and (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 [am, an] = gbmex_size (A) ;
 [bm, bn] = gbmex_size (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
@@ -16,7 +18,7 @@ b_is_scalar = (bm == 1) && (bn == 1) ;
 if (a_is_scalar)
     if (b_is_scalar)
         % A and B are scalars
-        C = GrB (gbmex_emult (A, '&.logical', B)) ;
+        C = GrB (gbmex_emult (ghb, A, '&.logical', B)) ;
     else
         % A is a scalar, B is a matrix
         if (gb_scalar (A) == 0)
@@ -39,7 +41,7 @@ else
         end
     else
         % both A and B are matrices.  C is the set intersection of A and B
-        C = GrB (gbmex_emult (A, '&.logical', B)) ;
+        C = GrB (gbmex_emult (ghb, A, '&.logical', B)) ;
     end
 end
 

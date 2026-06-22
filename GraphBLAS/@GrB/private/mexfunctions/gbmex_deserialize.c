@@ -43,12 +43,13 @@ void mexFunction
 
     GrB_Matrix *C_opaque = NULL, C = NULL, Blob = NULL, Blob_to_free = NULL ;
 
-    GBMX_USAGE ((nargin >= 1 || nargin <= 3) && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 1+1 && nargout <= 1, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
     struct gb_matrix_struct Matrix [1] ;
-    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
 
     CHECK_ERROR (Matrix [0].type != GrB_UINT8,
         "blob must be a uint8 dense matrix/vector") ;

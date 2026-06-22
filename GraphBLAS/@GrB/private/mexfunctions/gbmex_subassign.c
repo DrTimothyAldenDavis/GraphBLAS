@@ -16,7 +16,7 @@
 
 // Usage:
 
-//      C = gbmex_subassign (Cin, M, accum, A, I, J, desc)
+//      C = gbmex_subassign (ghb, Cin, M, accum, A, I, J, desc)
 
 // Cin and A required.  See GrB.m for more details.
 

@@ -10,8 +10,8 @@
 // The input may be either a GraphBLAS matrix struct or a standard built-in
 // sparse matrix.
 
-//  gbmex_degree (A, 'row')     row degree
-//  gbmex_degree (A, 'col')     column degree
+//  gbmex_degree (ghb, A, 'row')     row degree
+//  gbmex_degree (ghb, A, 'col')     column degree
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&x) ;          \
@@ -23,7 +23,7 @@
 
 #include "gb_interface.h"
 
-#define USAGE "usage: degree = gbmex_degree (A, dim)"
+#define USAGE "usage: degree = gbmex_degree (ghb, A, dim)"
 
 void mexFunction
 (
@@ -41,7 +41,8 @@ void mexFunction
     GrB_Matrix *d_opaque = NULL, d = NULL, x = NULL, A = NULL,
         A_to_free = NULL ;
 
-    GBMX_USAGE (nargin == 2 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 2+1 && nargout <= 1, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&d_opaque) ;
 
@@ -50,10 +51,10 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     struct gb_matrix_struct Matrix [1] ;
-    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
 
     char dim_string [LEN+2] ;
-    gbmx_mxstring_to_string (dim_string, LEN, pargin [1], "dim") ;
+    gbmx_mxstring_to_string (dim_string, LEN, pargin [2], "dim") ;
 
     ////////////////////////////////////////////////////////////////////////////
 

@@ -30,9 +30,11 @@ function [I, J, X] = find (G_arg, k, search)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 % prune explicit zeros
 gbmex_wait (G_arg) ;
-G = GrB (gbmex_select (G_arg, 'nonzero')) ;
+G = GrB (gbmex_select (ghb, G_arg, 'nonzero')) ;
 
 if (nargin > 1)
     k = ceil (double (gb_get_scalar (k))) ;
@@ -50,14 +52,14 @@ end
 gbmex_wait (G) ;
 
 if (nargout == 3)
-    [I, J, X] = gbmex_extracttuples (G) ;
+    [I, J, X] = gbmex_extracttuples (ghb, G) ;
     if (m == 1)
         I = I' ;
         J = J' ;
         X = X' ;
     end
 elseif (nargout == 2)
-    [I, J] = gbmex_extracttuples (G) ;
+    [I, J] = gbmex_extracttuples (ghb, G) ;
     if (m == 1)
         I = I' ;
         J = J' ;
@@ -65,14 +67,14 @@ elseif (nargout == 2)
 else
     if (m == 1)
         % extract indices from a row vector
-        [~, I] = gbmex_extracttuples (G) ;
+        [~, I] = gbmex_extracttuples (ghb, G) ;
         I = I' ;
     elseif (n == 1)
         % extract indices from a column vector
-        I = gbmex_extracttuples (G) ;
+        I = gbmex_extracttuples (ghb, G) ;
     else
         % extract linear indices from a matrix
-        [I, J] = gbmex_extracttuples (G) ;
+        [I, J] = gbmex_extracttuples (ghb, G) ;
         % use the built-in sub2ind to convert the 2D indices to 1D indices
         I = sub2ind ([m n], I, J) ;
     end

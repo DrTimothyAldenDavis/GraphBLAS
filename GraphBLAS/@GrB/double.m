@@ -14,9 +14,11 @@ function C = double (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (gb_contains (gbmex_type (G), 'complex'))
-    C = gbmex_builtin (GrB (gbmex_cast (G, 'double complex'))) ;
+    C = gbmex_builtin (GrB (gbmex_cast (ghb, G, 'double complex'))) ;
 else
-    C = gbmex_builtin (GrB (gbmex_cast (G, 'double'))) ;
+    C = gbmex_builtin (GrB (gbmex_cast (ghb, G, 'double'))) ;
 end
 

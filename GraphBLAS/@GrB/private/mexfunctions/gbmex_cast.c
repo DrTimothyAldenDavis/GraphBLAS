@@ -14,7 +14,7 @@
 
 // Usage:
 
-// C = gbmex_cast (X, type)
+// C = gbmex_cast (ghb, X, type)
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&X_to_free) ;
@@ -25,7 +25,7 @@
 
 #include "gb_interface.h"
 
-#define USAGE "usage: C = gbmex_cast (X, type)"
+#define USAGE "usage: C = gbmex_cast (ghb, X, type)"
 
 void mexFunction
 (
@@ -42,7 +42,8 @@ void mexFunction
 
     GrB_Matrix *C_opaque = NULL, X = NULL, X_to_free = NULL, C = NULL ;
 
-    GBMX_USAGE (nargin == 2 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 2+1 && nargout <= 1, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
@@ -51,10 +52,10 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     struct gb_matrix_struct Matrix [1] ;
-    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
 
     char type_string [LEN+2] ;
-    gbmx_mxstring_to_string (type_string, LEN, pargin [1], "type") ;
+    gbmx_mxstring_to_string (type_string, LEN, pargin [2], "type") ;
 
     ////////////////////////////////////////////////////////////////////////////
 

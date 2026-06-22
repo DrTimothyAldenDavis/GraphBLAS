@@ -9,7 +9,7 @@
 
 // usage:
 
-// C = gbmex_reshape (A, nrows_new, ncols_new, by_col)
+// C = gbmex_reshape (ghb, A, nrows_new, ncols_new, by_col)
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&A_to_free) ;
@@ -18,7 +18,7 @@
     FREE_WORK ;                     \
     GrB_Matrix_free (&C) ;
 
-#define USAGE "usage: C = gbmex_reshape (A, nrows_new, ncols_new, by_col)"
+#define USAGE "usage: C = gbmex_reshape (ghb, A, nrows_new, ncols_new, by_col)"
 
 #include "gb_interface.h"
 
@@ -37,7 +37,8 @@ void mexFunction
 
     GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_to_free = NULL ;
 
-    GBMX_USAGE ((nargin == 3 || nargin == 4) && nargout == 1, USAGE) ;
+    GBMX_USAGE ((nargin == 3+1 || nargin == 4+1) && nargout == 1, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
@@ -46,11 +47,11 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     struct gb_matrix_struct Matrix [1] ;
-    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
 
-    uint64_t nrows_new = gbmx_get_uint64_scalar (pargin [1], "nrows_new") ;
-    uint64_t ncols_new = gbmx_get_uint64_scalar (pargin [2], "ncols_new") ;
-    bool by_col = (nargin == 3) ? true : ((bool) mxGetScalar (pargin [3])) ;
+    uint64_t nrows_new = gbmx_get_uint64_scalar (pargin [2], "nrows_new") ;
+    uint64_t ncols_new = gbmx_get_uint64_scalar (pargin [3], "ncols_new") ;
+    bool by_col = (nargin == 3) ? true : ((bool) mxGetScalar (pargin [4])) ;
 
     ////////////////////////////////////////////////////////////////////////////
 

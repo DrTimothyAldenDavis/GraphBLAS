@@ -4,13 +4,15 @@ function C = gb_mpower (A, b)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (b == 1)
     C = GrB (A) ;
 else
     C = gb_mpower (A, floor (b/2)) ;
-    C = GrB (gbmex_mxm (C, '+.*', C)) ;
+    C = GrB (gbmex_mxm (ghb, C, '+.*', C)) ;
     if (mod (b, 2) == 1)
-        C = GrB (gbmex_mxm (C, '+.*', A)) ;
+        C = GrB (gbmex_mxm (ghb, C, '+.*', A)) ;
     end
 end
 

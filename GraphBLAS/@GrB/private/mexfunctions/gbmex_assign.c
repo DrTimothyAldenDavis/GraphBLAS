@@ -16,13 +16,13 @@
 
 // Usage:
 
-//      C = gbmex_assign (Cin, M, accum, A, I, J, desc)
+//      C = gbmex_assign (ghb, Cin, M, accum, A, I, J, desc)
 
 // Cin and A required.  See GrB.m for more details.
 
 #include "gb_interface.h"
 
-#define USAGE "usage: C = GrB.assign (Cin, M, accum, A, I, J, desc"
+#define USAGE "usage: C = GrB.assign (Cin, M, accum, A, I, J, desc)"
 
 void mexFunction
 (

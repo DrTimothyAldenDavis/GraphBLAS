@@ -7,9 +7,11 @@ function C = sqrt (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 C = gb_trig ('sqrt', G) ;
 
 if (gb_make_real (C))
-    C = GrB (gbmex_apply ('creal', C)) ;
+    C = GrB (gbmex_apply (ghb, 'creal', C)) ;
 end
 

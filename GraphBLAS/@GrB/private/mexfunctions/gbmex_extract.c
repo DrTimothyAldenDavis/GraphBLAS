@@ -15,7 +15,7 @@
 
 // Usage:
 
-//      C = gbmex_extract (Cin, M, accum, A, I, J, desc)
+//      C = gbmex_extract (ghb, Cin, M, accum, A, I, J, desc)
 
 // A is required.  See GrB.m for more details.
 // If accum or M is used, then Cin must appear.
@@ -54,7 +54,8 @@ void mexFunction
     GrB_Vector I = NULL, J = NULL, I_to_free = NULL, J_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    GBMX_USAGE (nargin >= 1 && nargin <= 7 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 1+1 && nargin <= 7+1 && nargout <= 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;

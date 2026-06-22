@@ -57,7 +57,8 @@ void mexFunction
     GrB_Vector I = NULL, J = NULL, X = NULL, T = NULL ;
     void *x = NULL ;
 
-    GBMX_USAGE (nargin >= 1 && nargin <= 2 && nargout <= 3, USAGE) ;
+    GBMX_USAGE (nargin >= 1+1 && nargin <= 2+1 && nargout <= 3, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     //--------------------------------------------------------------------------
     // find the arguments

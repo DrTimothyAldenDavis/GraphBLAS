@@ -10,6 +10,8 @@ function C = rdivide (A_arg, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 [am, an, atype] = gbmex_size (A_arg) ;
 [bm, bn, btype] = gbmex_size (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
@@ -25,13 +27,13 @@ end
 if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars
-        b = GrB (gbmex_full (B)) ;
-        C = GrB (gbmex_emult (A, '/', b)) ;
+        b = GrB (gbmex_full (ghb, B)) ;
+        C = GrB (gbmex_emult (ghb, A, '/', b)) ;
     else
         % A is a scalar, B is a matrix.
         % Expand B to full with type of C
-        b = GrB (gbmex_full (B, ctype)) ;
-        C = GrB (gbmex_apply2 (A, '/', b)) ;
+        b = GrB (gbmex_full (ghb, B, ctype)) ;
+        C = GrB (gbmex_apply2 (ghb, A, '/', b)) ;
     end
 else
     if (b_is_scalar)
@@ -41,17 +43,17 @@ else
             % floating-point.  The result is a full matrix.
             % expand B into a full matrix and cast to the type of A
             b = gb_scalar_to_full (am, an, atype, gb_fmt (A), B) ;
-            C = GrB (gbmex_emult (A, '/', b)) ;
+            C = GrB (gbmex_emult (ghb, A, '/', b)) ;
         else
             % The scalar B is nonzero so just compute A/B in the pattern
             % of A.  The result is sparse (the pattern of A).
-            C = GrB (gbmex_apply2 (A, '/', B)) ;
+            C = GrB (gbmex_apply2 (ghb, A, '/', B)) ;
         end
     else
         % both A and B are matrices.  The result is a full matrix.
-        a = GrB (gbmex_full (A, ctype)) ;
-        b = GrB (gbmex_full (B, ctype)) ;
-        C = GrB (gbmex_emult (a, '/', b)) ;
+        a = GrB (gbmex_full (ghb, A, ctype)) ;
+        b = GrB (gbmex_full (ghb, B, ctype)) ;
+        C = GrB (gbmex_emult (ghb, a, '/', b)) ;
     end
 end
 

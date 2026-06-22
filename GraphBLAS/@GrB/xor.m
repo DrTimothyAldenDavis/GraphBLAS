@@ -8,10 +8,12 @@ function C = xor (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (gb_isscalar (A))
     if (gb_isscalar (B))
         % A and B are scalars
-        C = GrB (gbmex_emult (A, 'xor.logical', B)) ;
+        C = GrB (gbmex_emult (ghb, A, 'xor.logical', B)) ;
     else
         % A is a scalar, B is a matrix
         if (gb_scalar (A) == 0)
@@ -19,8 +21,8 @@ if (gb_isscalar (A))
             C = GrB (B, 'logical') ;
         else
             % A is true, so C is a full matrix the same size as B
-            b = GrB (gbmex_full (B, 'logical')) ;
-            C = GrB (gbmex_apply ('~', b)) ;
+            b = GrB (gbmex_full (ghb, B, 'logical')) ;
+            C = GrB (gbmex_apply (ghb, '~', b)) ;
         end
     end
 else
@@ -31,12 +33,12 @@ else
             C = GrB (A, 'logical') ;
         else
             % B is true, so C is a full matrix the same size as A
-            a = GrB (gbmex_full (A, 'logical')) ;
-            C = GrB (gbmex_apply ('~', a)) ;
+            a = GrB (gbmex_full (ghb, A, 'logical')) ;
+            C = GrB (gbmex_apply (ghb, '~', a)) ;
         end
     else
         % both A and B are matrices.  C is the set union of A and B
-        C = GrB (gbmex_eadd (A, 'xor.logical', B)) ;
+        C = GrB (gbmex_eadd (ghb, A, 'xor.logical', B)) ;
     end
 end
 

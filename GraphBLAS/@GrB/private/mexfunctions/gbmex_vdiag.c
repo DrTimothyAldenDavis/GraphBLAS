@@ -9,7 +9,7 @@
 
 // Usage:
 
-// v = gbmex_vdiag (A, k, desc)
+// v = gbmex_vdiag (ghb, A, k, desc)
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&A_to_free) ;  \
@@ -21,7 +21,7 @@
 
 #include "gb_interface.h"
 
-#define USAGE "usage: v = gbmex_vdiag (A, k, desc)"
+#define USAGE "usage: v = gbmex_vdiag (ghb, A, k, desc)"
 
 void mexFunction
 (
@@ -40,7 +40,8 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
     int64_t k = 0 ;
 
-    GBMX_USAGE (nargin >= 1 && nargin <= 3 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 1+1 && nargin <= 3+1 && nargout <= 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&V_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
@@ -60,9 +61,9 @@ void mexFunction
 
     if (gbdesc.is_present) nargin-- ;
 
-    if (nargin > 1)
+    if (nargin > 2)
     { 
-        k = gbmx_get_int64_scalar (pargin [1], "k") ;
+        k = gbmx_get_int64_scalar (pargin [2], "k") ;
     }
 
     ////////////////////////////////////////////////////////////////////////////

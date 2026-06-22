@@ -35,6 +35,8 @@ function [I,J,X] = extracttuples (A, desc)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (nargin < 2)
     desc.base = 'default' ;
 end
@@ -44,10 +46,10 @@ gbmex_wait (A) ;
 
 switch (nargout)
     case 1
-        I = gbmex_extracttuples (A, desc) ;
+        I = gbmex_extracttuples (ghb, A, desc) ;
     case 2
-        [I, J] = gbmex_extracttuples (A, desc) ;
+        [I, J] = gbmex_extracttuples (ghb, A, desc) ;
     case 3
-        [I, J, X] = gbmex_extracttuples (A, desc) ;
+        [I, J, X] = gbmex_extracttuples (ghb, A, desc) ;
 end
 

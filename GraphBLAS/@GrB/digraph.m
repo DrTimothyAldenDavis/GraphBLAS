@@ -27,6 +27,8 @@ function DiGraph = digraph (G_arg, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 [m, n, type] = gbmex_size (G_arg) ;
 if (m ~= n)
     error ('GrB:error', 'G must be square') ;
@@ -45,7 +47,7 @@ end
 % apply the options
 if (omitself)
     % ignore diagonal entries of G
-    G = GrB (gbmex_select ('offdiag', G_arg, 0)) ;
+    G = GrB (gbmex_select (ghb, 'offdiag', G_arg, 0)) ;
 else
     % use G_arg as-is
     G = G_arg ;
@@ -59,18 +61,18 @@ switch (type)
         % The digraph(...) function can accept x as single, but not
         % from a sparse matrix.  So extract the tuples of G first.
         gbmex_wait (G) ;
-        [i, j, x] = gbmex_extracttuples (G) ;
+        [i, j, x] = gbmex_extracttuples (ghb, G) ;
         DiGraph = digraph (i, j, x, n) ;
 
     case { 'logical' }
 
         % The digraph(...) function allows for logical
         % adjacency matrices (no edge weights are created).
-        DiGraph = digraph (gbmex_builtin (GrB (gbmex_cast (G, 'logical')))) ;
+        DiGraph = digraph (gbmex_builtin (GrB (gbmex_cast (ghb, G, 'logical')))) ;
 
     otherwise
 
         % typecast to double
-        DiGraph = digraph (gbmex_builtin (GrB (gbmex_cast (G, 'double')))) ;
+        DiGraph = digraph (gbmex_builtin (GrB (gbmex_cast (ghb, G, 'double')))) ;
 end
 

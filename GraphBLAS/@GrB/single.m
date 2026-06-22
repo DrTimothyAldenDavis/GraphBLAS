@@ -14,6 +14,8 @@ function C = single (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 desc.kind = 'builtin' ;
 if (gb_contains (gbmex_type (G), 'complex'))
     z = complex (single (0)) ;
@@ -24,5 +26,5 @@ else
 end
 
 % export C as a full matrix
-C = gbmex_builtin (GrB (gbmex_full (G, ctype, z, desc))) ;
+C = gbmex_builtin (GrB (gbmex_full (ghb, G, ctype, z, desc))) ;
 

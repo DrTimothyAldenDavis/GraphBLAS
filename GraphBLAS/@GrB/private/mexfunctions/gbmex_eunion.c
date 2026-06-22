@@ -11,11 +11,11 @@
 
 // Usage:
 
-// C = gbmex_eunion (binop, A, alpha, B, beta)
-// C = gbmex_eunion (binop, A, alpha, B, beta, desc)
-// C = gbmex_eunion (Cin, accum, binop, A, alpha, B, beta, desc)
-// C = gbmex_eunion (Cin, M, binop, A, alpha, B, beta, desc)
-// C = gbmex_eunion (Cin, M, accum, binop, A, alpha, B, beta, desc)
+// C = gbmex_eunion (ghb, binop, A, alpha, B, beta)
+// C = gbmex_eunion (ghb, binop, A, alpha, B, beta, desc)
+// C = gbmex_eunion (ghb, Cin, accum, binop, A, alpha, B, beta, desc)
+// C = gbmex_eunion (ghb, Cin, M, binop, A, alpha, B, beta, desc)
+// C = gbmex_eunion (ghb, Cin, M, accum, binop, A, alpha, B, beta, desc)
 
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A, B, and the descriptor).
@@ -57,7 +57,8 @@ void mexFunction
         beta_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    GBMX_USAGE (nargin >= 3 && nargin <= 9 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 3+1 && nargin <= 9+1 && nargout <= 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;

@@ -34,6 +34,8 @@ function C = subsref (A, S)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 % FUTURE: add all forms of linear indexing.
 
 [m, n] = gbmex_size (A) ;
@@ -54,27 +56,27 @@ if (ndims == 1)
     S1 = S.subs {1} ;
     if (isequal (gbmex_type (S1), 'logical'))
         % C = A (M) for logical indexing
-        C = GrB (gbmex_logextract (A, S1)) ;
+        C = GrB (gbmex_logextract (ghb, A, S1)) ;
     else
         % C = A (I)
         [I, whole] = gb_index (S1) ;
         if (m == 1 || n == 1)
             % C = A (I) for a vector A
             if (m > 1)
-                C = GrB (gbmex_extract (A, I, { })) ;
+                C = GrB (gbmex_extract (ghb, A, I, { })) ;
             else
-                C = GrB (gbmex_extract (A, { }, I)) ;
+                C = GrB (gbmex_extract (ghb, A, { }, I)) ;
             end
             [cm, ~] = gbmex_size (C) ;
             if (whole && cm == 1)
-                C = GrB (gbmex_trans (C)) ;
+                C = GrB (gbmex_trans (ghb, C)) ;
             end
         else
             % C = A (I) for a matrix A
             if (whole)
                 % C = A (:), whole matrix case
                 [~, mn] = gb_2d_to_1d (0, 0, m, n) ;
-                C = GrB (gbmex_reshape (A, mn, 1, 'by column')) ;
+                C = GrB (gbmex_reshape (ghb, A, mn, 1, 'by column')) ;
             else
                 % C = A (I), general case not yet supported
                 error ('GrB:error', ...
@@ -86,7 +88,7 @@ if (ndims == 1)
 elseif (ndims == 2)
 
     % C = A (I,J)
-    C = GrB (gbmex_extract (A, gb_index (S.subs {1}), gb_index (S.subs {2}))) ;
+    C = GrB (gbmex_extract (ghb, A, gb_index (S.subs {1}), gb_index (S.subs {2}))) ;
 
 else
 

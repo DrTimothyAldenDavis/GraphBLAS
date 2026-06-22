@@ -9,7 +9,7 @@
 
 // usage:
 
-// [x,p] = gbmex_argminmax (A, minmax, dim)
+// [x,p] = gbmex_argminmax (ghb, A, minmax, dim)
 
 // where minmax is 0 for min or 1 for max, and where dim = 1 to compute the
 // argmin/max of each column of A, dim = 2 to compute the argmin/max of each
@@ -44,7 +44,7 @@
 
 #include "gb_interface.h"
 
-#define USAGE "usage: [x,p] = gbmex_argminmax (A, minmax, dim)"
+#define USAGE "usage: [x,p] = gbmex_argminmax (ghb, A, minmax, dim)"
 
 //------------------------------------------------------------------------------
 // tuple types
@@ -2519,7 +2519,7 @@ void gb_getk_fp64   (int64_t *z, const gb_tuple_fp64   *x) { (*z) = x->k ; }
 #define GETK_FP64   "void gb_getk_fp64   (int64_t *z, const gb_tuple_fp64   *x) { (*z) = x->k ; }"
 
 //------------------------------------------------------------------------------
-// gbmex_argminmax: mexFunction to compute the argmin/max of each row/column of A
+// gbmex_argminmax: compute the argmin/max of each row/column of A
 //------------------------------------------------------------------------------
 
 void mexFunction
@@ -2547,7 +2547,8 @@ void mexFunction
     GrB_UnaryOp Getv = NULL, Getk = NULL ;
     GrB_Scalar s = NULL ;
 
-    GBMX_USAGE (nargin == 3 && nargout == 2, USAGE) ;
+    GBMX_USAGE (nargin == 3+1 && nargout == 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&x_opaque) ;
     pargout [1] = gbmx_export_struct (&p_opaque) ;
@@ -2557,10 +2558,10 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     struct gb_matrix_struct Matrix [1] ;
-    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
 
-    bool is_min = (bool) (mxGetScalar (pargin [1]) == 0) ;
-    int dim = (int) mxGetScalar (pargin [2]) ;
+    bool is_min = (bool) (mxGetScalar (pargin [2]) == 0) ;
+    int dim = (int) mxGetScalar (pargin [3]) ;
     CHECK_ERROR (dim < 0 || dim > 2, "invalid dim") ;
 
     ////////////////////////////////////////////////////////////////////////////

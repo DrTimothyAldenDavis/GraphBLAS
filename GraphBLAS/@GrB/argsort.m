@@ -36,6 +36,8 @@ function [C,P] = argsort (A, arg1, arg2)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 dim = 1 ;
 direction = 'ascend' ;
 
@@ -51,9 +53,9 @@ elseif (nargin == 2)
 end
 
 if (nargout == 1)
-    C = GrB (gbmex_argsort (A, dim, direction)) ;
+    C = GrB (gbmex_argsort (ghb, A, dim, direction)) ;
 else
-    [C_opaque, P_opaque] = gbmex_argsort (A, dim, direction) ;
+    [C_opaque, P_opaque] = gbmex_argsort (ghb, A, dim, direction) ;
     C = GrB (C_opaque) ;
     P = GrB (P_opaque) ;
 end

@@ -11,6 +11,8 @@ function C = pow2 (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 atype = gbmex_type (A) ;
 
 if (nargin == 1)
@@ -18,7 +20,7 @@ if (nargin == 1)
     if (~gb_isfloat (atype))
         atype = 'double' ;
     end
-    C = GrB (gbmex_apply ('pow2', GrB (gbmex_full (A, atype)))) ;
+    C = GrB (gbmex_apply (ghb, 'pow2', GrB (gbmex_full (ghb, A, atype)))) ;
 else
     % C = A.*(2.^B)
     type = gbmex_optype (atype, gbmex_type (B)) ;

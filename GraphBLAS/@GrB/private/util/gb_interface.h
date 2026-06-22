@@ -873,7 +873,7 @@ void gbmx_get_matrix
 void gbmx_get_mxargs
 (
     // input:
-    int nargin,                 // # inputs for mexFunction (may be zero)
+    int nargin,                 // # inputs for mexFunction (must be > 0)
     const mxArray *pargin [ ],  // input arguments for mexFunction
     const char *usage,          // usage to print, if too many args appear
     // output:

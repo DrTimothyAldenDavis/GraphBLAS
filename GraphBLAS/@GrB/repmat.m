@@ -9,6 +9,8 @@ function C = repmat (G, m, n)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 type = gbmex_type (G) ;
 
 if (nargin == 3)
@@ -17,5 +19,5 @@ else
     R = ones (m, 'logical') ;
 end
 op = ['2nd.' type] ;
-C = GrB (gbmex_kronecker (R, op, G)) ;
+C = GrB (gbmex_kronecker (ghb, R, op, G)) ;
 

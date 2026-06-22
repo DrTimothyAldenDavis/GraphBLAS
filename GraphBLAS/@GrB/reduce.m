@@ -31,15 +31,17 @@ function C = reduce (arg1, arg2, arg3, arg4, arg5)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 switch (nargin)
     case 2
-        [C_opaque, kind] = gbmex_reduce (arg1, arg2) ;
+        [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2) ;
     case 3
-        [C_opaque, kind] = gbmex_reduce (arg1, arg2, arg3) ;
+        [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2, arg3) ;
     case 4
-        [C_opaque, kind] = gbmex_reduce (arg1, arg2, arg3, arg4) ;
+        [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2, arg3, arg4) ;
     case 5
-        [C_opaque, kind] = gbmex_reduce (arg1, arg2, arg3, arg4, arg5) ;
+        [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2, arg3, arg4, arg5) ;
 end
 
 C = gb_mexfunction_result (C_opaque, kind) ;

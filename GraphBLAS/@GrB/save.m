@@ -22,6 +22,8 @@ function filename_used = save (GrB_Matrix_from_GrB_save, filename)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 % determine the default filename
 if (nargin < 2)
     filename = inputname (1) ;

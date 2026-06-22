@@ -29,6 +29,8 @@ function L = laplacian (A, type, check)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 [m, n] = gbmex_size (A) ;
 if (m ~= n)
     error ('GrB:error', 'A must be square and symmetric') ;
@@ -43,7 +45,7 @@ elseif (~gb_issigned (type))
 end
 
 % S = spones (A)
-S = GrB (gbmex_apply (['1.' type], A)) ;
+S = GrB (gbmex_apply (ghb, ['1.' type], A)) ;
 
 % check the input matrix, if requested
 if (nargin > 2 && isequal (check, 'check'))
@@ -56,11 +58,11 @@ end
 % D = diagonal matrix with d(i,i) = row/column degree of node i
 fmt = gbmex_format (S) ;
 if (isequal (fmt, 'by row'))
-    D = GrB (gbmex_degree (S, 'row')) ;
+    D = GrB (gbmex_degree (ghb, S, 'row')) ;
 else
-    D = GrB (gbmex_degree (S, 'col')) ;
+    D = GrB (gbmex_degree (ghb, S, 'col')) ;
 end
-D = GrB (gbmex_mdiag (D, 0)) ;
+D = GrB (gbmex_mdiag (ghb, D, 0)) ;
 if (~isequal (type, gbmex_type (D)))
     % gbmex_degree returns its result as int64; typecast to desired type
     D = GrB (D, type) ;
@@ -68,5 +70,5 @@ end
 
 % construct the Laplacian
 % L = D-S
-L = GrB (gbmex_eadd (D, '+', GrB (gbmex_apply ('-', S)))) ;
+L = GrB (gbmex_eadd (ghb, D, '+', GrB (gbmex_apply (ghb, '-', S)))) ;
 

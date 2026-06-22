@@ -69,21 +69,23 @@ function C = extract (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 switch (nargin)
     case 1
-        [C_opaque, kind] = gbmex_extract (arg1) ;
+        [C_opaque, kind] = gbmex_extract (ghb, arg1) ;
     case 2
-        [C_opaque, kind] = gbmex_extract (arg1, arg2) ;
+        [C_opaque, kind] = gbmex_extract (ghb, arg1, arg2) ;
     case 3
-        [C_opaque, kind] = gbmex_extract (arg1, arg2, arg3) ;
+        [C_opaque, kind] = gbmex_extract (ghb, arg1, arg2, arg3) ;
     case 4
-        [C_opaque, kind] = gbmex_extract (arg1, arg2, arg3, arg4) ;
+        [C_opaque, kind] = gbmex_extract (ghb, arg1, arg2, arg3, arg4) ;
     case 5
-        [C_opaque, kind] = gbmex_extract (arg1, arg2, arg3, arg4, arg5) ;
+        [C_opaque, kind] = gbmex_extract (ghb, arg1, arg2, arg3, arg4, arg5) ;
     case 6
-        [C_opaque, kind] = gbmex_extract (arg1, arg2, arg3, arg4, arg5, arg6) ;
+        [C_opaque, kind] = gbmex_extract (ghb, arg1, arg2, arg3, arg4, arg5, arg6) ;
     case 7
-        [C_opaque, kind] = gbmex_extract (arg1, arg2, arg3, arg4, arg5, arg6, ...
+        [C_opaque, kind] = gbmex_extract (ghb, arg1, arg2, arg3, arg4, arg5, arg6, ...
             arg7) ;
 end
 

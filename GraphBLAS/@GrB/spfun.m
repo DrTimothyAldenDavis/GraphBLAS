@@ -41,9 +41,11 @@ function C = spfun (fun, G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (ischar (fun))
     try
-        C = GrB (gbmex_apply (fun, G)) ;
+        C = GrB (gbmex_apply (ghb, fun, G)) ;
         return ;
     catch me %#ok<NASGU>
         % gbmex_apply failed; fall through to feval below
@@ -54,7 +56,7 @@ end
 [m, n] = gbmex_size (G) ;
 desc.base = 'zero-based' ;
 gbmex_wait (G) ;
-[i, j, x] = gbmex_extracttuples (G, desc) ; % OK: zero-based integers
+[i, j, x] = gbmex_extracttuples (ghb, G, desc) ; % OK: zero-based integers
 x = feval (fun, x) ;
 C = GrB.build (i, j, x, m, n, '1st', desc) ;
 

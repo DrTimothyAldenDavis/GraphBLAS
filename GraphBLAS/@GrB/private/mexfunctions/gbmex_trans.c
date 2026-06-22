@@ -11,11 +11,11 @@
 
 // Usage:
 
-// C = gbmex_trans (A)
-// C = gbmex_trans (A, desc)
-// C = gbmex_trans (Cin, accum, A, desc)
-// C = gbmex_trans (Cin, M, A, desc)
-// C = gbmex_trans (Cin, M, accum, A, desc)
+// C = gbmex_trans (ghb, A)
+// C = gbmex_trans (ghb, A, desc)
+// C = gbmex_trans (ghb, Cin, accum, A, desc)
+// C = gbmex_trans (ghb, Cin, M, A, desc)
+// C = gbmex_trans (ghb, Cin, M, accum, A, desc)
 
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A and the descriptor).  Note that if desc.in0
@@ -53,7 +53,8 @@ void mexFunction
         M_to_free = NULL, A_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    GBMX_USAGE (nargin >= 1 && nargin <= 5 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 1+1 && nargin <= 5+1 && nargout <= 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;

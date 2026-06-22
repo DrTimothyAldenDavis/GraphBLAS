@@ -7,11 +7,13 @@ function C = atan (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (~gb_isfloat (gbmex_type (G)))
     op = 'atan.double' ;
 else
     op = 'atan' ;
 end
 
-C = GrB (gbmex_apply (op, G)) ;
+C = GrB (gbmex_apply (ghb, op, G)) ;
 

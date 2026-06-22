@@ -8,8 +8,10 @@ function C = floor (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (gb_isfloat (gbmex_type (G)) && gbmex_nvals (G) > 0) % FIXME remove nvals
-    C = GrB (gbmex_apply ('floor', G)) ;
+    C = GrB (gbmex_apply (ghb, 'floor', G)) ;
 else
     C = GrB (G) ;
 end

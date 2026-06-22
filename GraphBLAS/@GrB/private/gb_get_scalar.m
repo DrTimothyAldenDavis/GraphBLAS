@@ -4,6 +4,8 @@ function x = gb_get_scalar (A)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 [m, n] = gbmex_size (A) ;
 if (m ~= 1 || n ~= 1)
     error ('GrB:error', 'input parameter %s must be a scalar', inputname (1)) ;

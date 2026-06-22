@@ -12,21 +12,23 @@ function C = gb_emult (A, op, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (gb_isscalar (A))
     if (gb_isscalar (B))
         % both A and B are scalars
-        C = GrB (gbmex_emult (A, op, B)) ;
+        C = GrB (gbmex_emult (ghb, A, op, B)) ;
     else
         % A is a scalar, B is a matrix
-        C = GrB (gbmex_apply2 (GrB (gbmex_full (A)), op, B)) ;
+        C = GrB (gbmex_apply2 (ghb, GrB (gbmex_full (ghb, A)), op, B)) ;
     end
 else
     if (gb_isscalar (B))
         % A is a matrix, B is a scalar
-        C = GrB (gbmex_apply2 (A, op, GrB (gbmex_full (B)))) ;
+        C = GrB (gbmex_apply2 (ghb, A, op, GrB (gbmex_full (ghb, B)))) ;
     else
         % both A and B are matrices
-        C = GrB (gbmex_emult (A, op, B)) ;
+        C = GrB (gbmex_emult (ghb, A, op, B)) ;
     end
 end
 

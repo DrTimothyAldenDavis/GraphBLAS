@@ -5,6 +5,8 @@ function C = gb_speye (func, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 % get the size and type
 [m, n, type] = gb_parse_args (func, varargin {:}) ;
 
@@ -23,5 +25,5 @@ else
     X = ones (mn, 1, type) ;
 end
 
-C = GrB (gbmex_build (I, I, X, m, n, '1st', type, desc)) ;
+C = GrB (gbmex_build (ghb, I, I, X, m, n, '1st', type, desc)) ;
 

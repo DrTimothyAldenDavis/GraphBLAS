@@ -11,11 +11,11 @@
 
 // Usage:
 
-// C = gbmex_mxm (semiring, A, B)
-// C = gbmex_mxm (semiring, A, B, desc)
-// C = gbmex_mxm (Cin, accum, semiring, A, B, desc)
-// C = gbmex_mxm (Cin, M, semiring, A, B, desc)
-// C = gbmex_mxm (Cin, M, accum, semiring, A, B, desc)
+// C = gbmex_mxm (ghb, semiring, A, B)
+// C = gbmex_mxm (ghb, semiring, A, B, desc)
+// C = gbmex_mxm (ghb, Cin, accum, semiring, A, B, desc)
+// C = gbmex_mxm (ghb, Cin, M, semiring, A, B, desc)
+// C = gbmex_mxm (ghb, Cin, M, accum, semiring, A, B, desc)
 
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A, B, and the descriptor).
@@ -52,7 +52,8 @@ void mexFunction
         M_to_free = NULL, A_to_free = NULL, B_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    GBMX_USAGE (nargin >= 3 && nargin <= 7 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 3+1 && nargin <= 7+1 && nargout <= 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;

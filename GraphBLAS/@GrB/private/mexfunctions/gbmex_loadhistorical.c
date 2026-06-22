@@ -34,7 +34,7 @@
 #define IF(error,message) \
     CHECK_ERROR (error, "invalid GraphBLAS struct (" message ")" ) ;
 
-#define USAGE "usage: C = gbmex_loadhistorical (S)"
+#define USAGE "usage: C = gbmex_loadhistorical (ghb, S)"
 
 void mexFunction
 (
@@ -53,7 +53,8 @@ void mexFunction
     GrB_Matrix *C_opaque = NULL, C = NULL, Y = NULL ;
     int burble = false ;
 
-    GBMX_USAGE (nargin == 1 && nargout == 1, USAGE) ;
+    GBMX_USAGE (nargin == 1+1 && nargout == 1, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
@@ -61,7 +62,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    CHECK_ERROR (!mxIsStruct (pargin [0]), USAGE " where S is a struct") ;
+    CHECK_ERROR (!mxIsStruct (pargin [1]), USAGE " where S is a struct") ;
 
     //--------------------------------------------------------------------------
     // get the content of the historical @GrB matrix from the struct
@@ -72,38 +73,38 @@ void mexFunction
     bool GraphBLASv3 = false ;
 
     // get the type
-    mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv10") ;
+    mxArray *mx_type = mxGetField (pargin [1], 0, "GraphBLASv10") ;
     GraphBLASv10 = (mx_type != NULL) ;
 
     if (mx_type == NULL)
     { 
         // check if it is a GraphBLASv7_3 struct
-        mx_type = mxGetField (pargin [0], 0, "GraphBLASv7_3") ;
+        mx_type = mxGetField (pargin [1], 0, "GraphBLASv7_3") ;
     }
 
     if (mx_type == NULL)
     { 
         // check if it is a GraphBLASv5_1 struct
-        mx_type = mxGetField (pargin [0], 0, "GraphBLASv5_1") ;
+        mx_type = mxGetField (pargin [1], 0, "GraphBLASv5_1") ;
     }
 
     if (mx_type == NULL)
     { 
         // check if it is a GraphBLASv5 struct
-        mx_type = mxGetField (pargin [0], 0, "GraphBLASv5") ;
+        mx_type = mxGetField (pargin [1], 0, "GraphBLASv5") ;
     }
 
     if (mx_type == NULL)
     { 
         // check if it is a GraphBLASv4 struct
-        mx_type = mxGetField (pargin [0], 0, "GraphBLASv4") ;
+        mx_type = mxGetField (pargin [1], 0, "GraphBLASv4") ;
         GraphBLASv4 = (mx_type != NULL) ;
     }
 
     if (mx_type == NULL)
     { 
         // check if it is a GraphBLASv3 struct
-        mx_type = mxGetField (pargin [0], 0, "GraphBLAS") ;
+        mx_type = mxGetField (pargin [1], 0, "GraphBLAS") ;
         GraphBLASv3 = (mx_type != NULL) ;
     }
 
@@ -116,7 +117,7 @@ void mexFunction
     OK (GxB_Type_size (&type_size, Ax_type)) ;
 
     // get the scalar info
-    mxArray *opaque = mxGetField (pargin [0], 0, "s") ;
+    mxArray *opaque = mxGetField (pargin [1], 0, "s") ;
     IF (opaque == NULL, ".s missing") ;
     IF (mxGetM (opaque) != 1, ".s wrong size") ;
     size_t s_size = mxGetN (opaque) ;
@@ -189,7 +190,7 @@ void mexFunction
         }
     }
 
-    int nfields = mxGetNumberOfFields (pargin [0]) ;
+    int nfields = mxGetNumberOfFields (pargin [1]) ;
     switch (nfields)
     {
         case 3 : 
@@ -247,7 +248,7 @@ void mexFunction
         // C is hypersparse or sparse
 
         // get Ap
-        mxArray *Ap_mx = mxGetField (pargin [0], 0, "p") ;
+        mxArray *Ap_mx = mxGetField (pargin [1], 0, "p") ;
         IF (Ap_mx == NULL, ".p missing") ;
         IF (mxGetM (Ap_mx) != 1, ".p wrong size") ;
         mxClassID class = mxGetClassID (Ap_mx) ;
@@ -267,7 +268,7 @@ void mexFunction
         }
 
         // get Ai
-        mxArray *Ai_mx = mxGetField (pargin [0], 0, "i") ;
+        mxArray *Ai_mx = mxGetField (pargin [1], 0, "i") ;
         IF (Ai_mx == NULL, ".i missing") ;
         IF (mxGetM (Ai_mx) != 1, ".i wrong size") ;
         class = mxGetClassID (Ai_mx) ;
@@ -282,7 +283,7 @@ void mexFunction
     }
 
     // get the values
-    mxArray *Ax_mx = mxGetField (pargin [0], 0, "x") ;
+    mxArray *Ax_mx = mxGetField (pargin [1], 0, "x") ;
     IF (Ax_mx == NULL, ".x missing") ;
     IF (mxGetM (Ax_mx) != 1, ".x wrong size") ;
     Ax_size = mxGetN (Ax_mx) ;
@@ -301,7 +302,7 @@ void mexFunction
     { 
         // C is hypersparse
         // get the hyperlist
-        mxArray *Ah_mx = mxGetField (pargin [0], 0, "h") ;
+        mxArray *Ah_mx = mxGetField (pargin [1], 0, "h") ;
         IF (Ah_mx == NULL, ".h missing") ;
         IF (mxGetM (Ah_mx) != 1, ".h wrong size") ;
         mxClassID Ah_class = mxGetClassID (Ah_mx) ;
@@ -321,7 +322,7 @@ void mexFunction
             // get Yp, Yi, and Yx
 
             // Yp must be 1-by-(yvdim+1), with the same class as Ah
-            mxArray *Yp_mx = mxGetField (pargin [0], 0, "Yp") ;
+            mxArray *Yp_mx = mxGetField (pargin [1], 0, "Yp") ;
             IF (Yp_mx == NULL, ".Yp missing") ;
             IF (mxGetM (Yp_mx) != 1, ".Yp wrong size") ;
             yvdim = mxGetN (Yp_mx) - 1 ;
@@ -335,7 +336,7 @@ void mexFunction
             Yp = (Yp_size == 0) ? NULL : ((void *) mxGetData (Yp_mx)) ;
 
             // Yi must be 1-by-nvec, with the same class as Ah
-            mxArray *Yi_mx = mxGetField (pargin [0], 0, "Yi") ;
+            mxArray *Yi_mx = mxGetField (pargin [1], 0, "Yi") ;
             IF (Yi_mx == NULL, ".Yi missing") ;
             IF (mxGetM (Yi_mx) != 1, ".Yi wrong size") ;
             IF (mxGetN (Yi_mx) != nvec, ".Yi wrong size") ;
@@ -349,7 +350,7 @@ void mexFunction
             Yi = (Yi_size == 0) ? NULL : ((void *) mxGetData (Yi_mx)) ;
 
             // Yx must be 1-by-nvec
-            mxArray *Yx_mx = mxGetField (pargin [0], 0, "Yx") ;
+            mxArray *Yx_mx = mxGetField (pargin [1], 0, "Yx") ;
             IF (Yx_mx == NULL, ".Yx missing") ;
             IF (mxGetM (Yx_mx) != 1, ".Yx wrong size") ;
             IF (mxGetN (Yx_mx) != nvec, ".Yx wrong size") ;
@@ -368,7 +369,7 @@ void mexFunction
     { 
         // C is bitmap
         // get the bitmap
-        mxArray *Ab_mx = mxGetField (pargin [0], 0, "b") ;
+        mxArray *Ab_mx = mxGetField (pargin [1], 0, "b") ;
         IF (Ab_mx == NULL, ".b missing") ;
         IF (mxGetM (Ab_mx) != 1, ".b wrong size") ;
         IF (mxGetClassID (Ab_mx) != mxINT8_CLASS, ".Ab wrong class") ;

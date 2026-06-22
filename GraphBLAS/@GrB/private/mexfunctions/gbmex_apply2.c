@@ -12,16 +12,16 @@
 
 // Usage:
 
-// C = gbmex_apply2 (op, A, B)
-// C = gbmex_apply2 (op, A, B, desc)
-// C = gbmex_apply2 (Cin, accum, op, A, B, desc)
-// C = gbmex_apply2 (Cin, M, op, A, B, desc)
-// C = gbmex_apply2 (Cin, M, accum, op, A, B, desc)
+// C = gbmex_apply2 (ghb, op, A, B)
+// C = gbmex_apply2 (ghb, op, A, B, desc)
+// C = gbmex_apply2 (ghb, Cin, accum, op, A, B, desc)
+// C = gbmex_apply2 (ghb, Cin, M, op, A, B, desc)
+// C = gbmex_apply2 (ghb, Cin, M, accum, op, A, B, desc)
 
 // TODO: add in-place:
-// gbmex_apply2 (C, accum, op, A, B, desc)
-// gbmex_apply2 (C, M, op, A, B, desc)
-// gbmex_apply2 (C, M, accum, op, A, B, desc)
+// gbmex_apply2 (ghb, C, accum, op, A, B, desc)
+// gbmex_apply2 (ghb, C, M, op, A, B, desc)
+// gbmex_apply2 (ghb, C, M, accum, op, A, B, desc)
 
 // Either A or B (or both) must be a non-empty scalar (1-by-1, with 1 entry).
 // If both A and B are non-empty scalars, then A is treated as the input
@@ -64,7 +64,8 @@ void mexFunction
     GrB_Scalar Thunk = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    GBMX_USAGE (nargin >= 3 && nargin <= 7 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 3+1 && nargin <= 7+1 && nargout <= 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;

@@ -27,12 +27,14 @@ function C = complex (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (nargin == 1)
 
     % with a single input, A must be a GraphBLAS matrix (otherwise,
     % this overloaded method for GrB objects would not be called).
     % Convert A to a built-in double complex matrix C.
-    C = GrB (gbmex_cast (A, 'double complex')) ;
+    C = GrB (gbmex_cast (ghb, A, 'double complex')) ;
 
 else
 
@@ -52,23 +54,23 @@ else
     if (a_is_scalar)
         if (b_is_scalar)
             % both A and B are scalars.  C is also a scalar.
-            a = GrB (gbmex_full (A, 'double')) ;
-            b = GrB (gbmex_full (B, 'double')) ;
+            a = GrB (gbmex_full (ghb, A, 'double')) ;
+            b = GrB (gbmex_full (ghb, B, 'double')) ;
             desc.kind = 'full' ;
-            C = GrB (gbmex_emult ('cmplx.double', a, b, desc)) ;
+            C = GrB (gbmex_emult (ghb, 'cmplx.double', a, b, desc)) ;
         else
             % A is a scalar, B is a matrix.  C is full, unless A == 0.
             if (gb_scalar (A) == 0)
                 % C = 1i*B, so A = zero, C is sparse or full.
                 desc.kind = 'builtin' ;
-                C = GrB (gbmex_apply2 ('cmplx.double', 0, B, desc)) ;
+                C = GrB (gbmex_apply2 (ghb, 'cmplx.double', 0, B, desc)) ;
             else
                 % expand A and B to full double matrices; C is full
                 bfmt = gb_fmt (B) ;
                 desc.kind = 'full' ;
                 a = gb_scalar_to_full (bm, bn, 'double', bfmt, A) ;
-                b = GrB (gbmex_full (B, 'double')) ;
-                C = GrB (gbmex_emult ('cmplx.double', a, b, desc)) ;
+                b = GrB (gbmex_full (ghb, B, 'double')) ;
+                C = GrB (gbmex_emult (ghb, 'cmplx.double', a, b, desc)) ;
             end
         end
     else
@@ -76,20 +78,20 @@ else
             % A is a matrix, B is a scalar.  C is full, unless B == 0.
             if (gb_scalar (B) == 0)
                 % C = complex (A); C is sparse or full
-                C = GrB (gbmex_cast (A, 'double.complex')) ;
+                C = GrB (gbmex_cast (ghb, A, 'double.complex')) ;
             else
                 % expand A and B to full double matrices; C is full
                 afmt = gb_fmt (A) ;
                 desc.kind = 'full' ;
-                a = GrB (gbmex_full (A, 'double')) ;
+                a = GrB (gbmex_full (ghb, A, 'double')) ;
                 b = gb_scalar_to_full (am, an, 'double', afmt, B) ;
-                C = GrB (gbmex_emult ('cmplx.double', a, b, desc)) ;
+                C = GrB (gbmex_emult (ghb, 'cmplx.double', a, b, desc)) ;
             end
         else
             % both A and B are matrices.  C is sparse or full.
             desc.kind = 'builtin' ;
-            b = GrB (gbmex_apply2 (B, '*', 1i)) ;
-            C = GrB (gbmex_eadd (A, '+', b, desc)) ;
+            b = GrB (gbmex_apply2 (ghb, B, '*', 1i)) ;
+            C = GrB (gbmex_eadd (ghb, A, '+', b, desc)) ;
         end
     end
 

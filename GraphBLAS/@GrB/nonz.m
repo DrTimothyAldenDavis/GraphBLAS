@@ -55,6 +55,8 @@ function result = nonz (A, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 builtin_sparse = builtin ('issparse', A) ;
 
 % get the identity value
@@ -71,12 +73,12 @@ end
 
 if (id ~= 0)
     % id is nonzero, so prune A first (for any matrix A)
-    result = gb_entries (GrB (gbmex_select (A, '~=', id)), varargin {1:nargs-1}) ;
+    result = gb_entries (GrB (gbmex_select (ghb, A, '~=', id)), varargin {1:nargs-1}) ;
 elseif (~builtin_sparse)
     % id is zero, so prune A only if it is a GraphBLAS matrix,
     % or a built-in full matrix.  A built-in sparse matrix can remain
     % unchanged.
-    result = gb_entries (GrB (gbmex_select (A, 'nonzero')), varargin {1:nargs-1}) ;
+    result = gb_entries (GrB (gbmex_select (ghb, A, 'nonzero')), varargin {1:nargs-1}) ;
 else
     % get the count/list of the entries of A
     result = gb_entries (A, varargin {1:nargs-1}) ;

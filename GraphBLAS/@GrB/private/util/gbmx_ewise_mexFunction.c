@@ -44,7 +44,8 @@ void gbmx_ewise_mexFunction
         M_to_free = NULL, A_to_free = NULL, B_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    GBMX_USAGE (nargin >= 3 && nargin <= 7 && nargout <= 2, usage) ;
+    GBMX_USAGE (nargin >= 3+1 && nargin <= 7+1 && nargout <= 2, usage) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;

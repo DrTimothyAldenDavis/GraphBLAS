@@ -9,12 +9,12 @@
 
 // Usage:
 
-// C = gbmex_build (I, J, X)
-// C = gbmex_build (I, J, X, desc)
-// C = gbmex_build (I, J, X, m, desc)
-// C = gbmex_build (I, J, X, m, n, desc)
-// C = gbmex_build (I, J, X, m, n, dup, desc) ;
-// C = gbmex_build (I, J, X, m, n, dup, type, desc) ;
+// C = gbmex_build (ghb, I, J, X)
+// C = gbmex_build (ghb, I, J, X, desc)
+// C = gbmex_build (ghb, I, J, X, m, desc)
+// C = gbmex_build (ghb, I, J, X, m, n, desc)
+// C = gbmex_build (ghb, I, J, X, m, n, dup, desc) ;
+// C = gbmex_build (ghb, I, J, X, m, n, dup, type, desc) ;
 
 // X and either I or J may be a scalars, in which case they are effectively
 // expanded so that they all have the same length.  X is only implicitly
@@ -79,7 +79,8 @@ void mexFunction
     GrB_Type type = NULL ;
     GrB_Scalar x = NULL ;
 
-    GBMX_USAGE (nargin >= 3 && nargin <= 8 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 3+1 && nargin <= 8+1 && nargout <= 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
@@ -90,9 +91,9 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     struct gb_matrix_struct Matrix [3] ;
-    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
-    gbmx_get_matrix (&(Matrix [1]), pargin [1]) ;
-    gbmx_get_matrix (&(Matrix [2]), pargin [2]) ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
+    gbmx_get_matrix (&(Matrix [1]), pargin [2]) ;
+    gbmx_get_matrix (&(Matrix [2]), pargin [3]) ;
 
     //--------------------------------------------------------------------------
     // get the descriptor
@@ -105,31 +106,31 @@ void mexFunction
         nargin-- ;
     }
 
-    if (nargin >= 4)
-    { 
-        // m is provided on input
-        nrows = gbmx_get_uint64_scalar (pargin [3], "m") ;
-    }
-
     if (nargin >= 5)
     { 
-        // n is provided on input
-        ncols = gbmx_get_uint64_scalar (pargin [4], "n") ;
+        // m is provided on input
+        nrows = gbmx_get_uint64_scalar (pargin [4], "m") ;
     }
 
-    bool default_dup = (nargin < 6) ;
+    if (nargin >= 6)
+    { 
+        // n is provided on input
+        ncols = gbmx_get_uint64_scalar (pargin [5], "n") ;
+    }
+
+    bool default_dup = (nargin < 7) ;
     char op_string [LEN+2] ;
     op_string [0] = '\0' ;
     if (!default_dup)
     { 
-        gbmx_mxstring_to_string (op_string, LEN, pargin [5], "dup") ;
+        gbmx_mxstring_to_string (op_string, LEN, pargin [6], "dup") ;
     }
 
     char type_string [LEN+2] ;
     type_string [0] = '\0' ;
-    if (nargin > 6)
+    if (nargin > 7)
     { 
-        gbmx_mxstring_to_string (type_string, LEN, pargin [6], "type") ;
+        gbmx_mxstring_to_string (type_string, LEN, pargin [7], "type") ;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -206,7 +207,7 @@ void mexFunction
     // get m and n if present
     //--------------------------------------------------------------------------
 
-    if (nargin < 4)
+    if (nargin < 5)
     { 
         // nrows = max entry in I + 1
         if (Imax == UINT64_MAX)
@@ -216,7 +217,7 @@ void mexFunction
         nrows = Imax + 1 ;
     }
 
-    if (nargin < 5)
+    if (nargin < 6)
     { 
         // ncols = max entry in J + 1
         if (Jmax == UINT64_MAX)
@@ -327,7 +328,7 @@ void mexFunction
     // get the output matrix type
     //--------------------------------------------------------------------------
 
-    if (nargin > 6)
+    if (nargin > 7)
     { 
         type = gb_string_to_type (type_string) ;
         CHECK_ERROR (type == NULL, "unknown type") ;

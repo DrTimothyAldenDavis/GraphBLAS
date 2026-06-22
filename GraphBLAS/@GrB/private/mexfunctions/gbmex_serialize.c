@@ -11,7 +11,7 @@
 
 // Usage:
 
-// blob = gbmex_serialize (A, method)
+// blob = gbmex_serialize (ghb, A, method, level)
 
 // The blob is returned as the opaque content of an n-by-1 uint8 @GrB matrix.
 
@@ -46,7 +46,8 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
     void *blob = NULL ;
 
-    GBMX_USAGE ((nargin >= 1 && nargin <= 3) && nargout <= 1, USAGE) ;
+    GBMX_USAGE ((nargin >= 1+1 && nargin <= 3+1) && nargout <= 1, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&Blob_opaque) ;
 
@@ -57,20 +58,20 @@ void mexFunction
     char method_name [LEN+2] ;
 
     struct gb_matrix_struct Matrix [1] ;
-    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
 
     int method = GxB_COMPRESSION_DEFAULT ;
     int level = 0 ;     // use whatever is the default for the method
 
-    if (nargin > 1)
+    if (nargin > 2)
     { 
-        gbmx_mxstring_to_string (method_name, LEN, pargin [1], "method") ;
+        gbmx_mxstring_to_string (method_name, LEN, pargin [2], "method") ;
     }
 
     // get the method level
-    if (nargin > 2)
+    if (nargin > 3)
     { 
-        level = (int) mxGetScalar (pargin [2]) ;
+        level = (int) mxGetScalar (pargin [3]) ;
     }
     if (level < 0 || level > 999) level = 0 ;
 
@@ -87,7 +88,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     bool debug = false ;
-    if (nargin > 1)
+    if (nargin > 2)
     { 
         // create the descriptor
         OK (GrB_Descriptor_new (&desc)) ;

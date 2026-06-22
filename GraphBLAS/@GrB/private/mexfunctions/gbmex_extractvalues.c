@@ -12,6 +12,7 @@
 // X = gbmex_extractvalues (A)
 
 // X is returned as a MATLAB matrix of size nvals-by-1.
+// The input matrix A must have no pending work.
 
 #define FREE_WORK                   \
     gb_free (&x) ;                  \

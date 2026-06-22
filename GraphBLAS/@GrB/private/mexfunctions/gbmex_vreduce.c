@@ -11,11 +11,11 @@
 
 // Usage:
 
-//  C = gbmex_vreduce (op, A)
-//  C = gbmex_vreduce (op, A, desc)
-//  C = gbmex_vreduce (Cin, M, op, A, desc)
-//  C = gbmex_vreduce (Cin, accum, op, A, desc)
-//  C = gbmex_vreduce (Cin, M, accum, op, A, desc)
+//  C = gbmex_vreduce (ghb, op, A)
+//  C = gbmex_vreduce (ghb, op, A, desc)
+//  C = gbmex_vreduce (ghb, Cin, M, op, A, desc)
+//  C = gbmex_vreduce (ghb, Cin, accum, op, A, desc)
+//  C = gbmex_vreduce (ghb, Cin, M, accum, op, A, desc)
 
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A and the descriptor).
@@ -51,7 +51,8 @@ void mexFunction
         M_to_free = NULL, A_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
 
-    GBMX_USAGE (nargin >= 2 && nargin <= 6 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 2+1 && nargin <= 6+1 && nargout <= 2, USAGE) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;

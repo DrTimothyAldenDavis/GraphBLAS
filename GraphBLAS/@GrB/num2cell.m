@@ -16,6 +16,8 @@ function C = num2cell (A, dim)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (nargin == 2 && isequal (dim, [1 2]))
 
     % whole matrix, not transposed
@@ -37,13 +39,13 @@ else
 
     if (nargin == 1)
         % split A into scalars
-        S = gbmex_split (A, ones (m, 1), ones (n, 1)) ;
+        S = gbmex_split (ghb, A, ones (m, 1), ones (n, 1)) ;
     elseif (isequal (dim, 1))
         % split A into columns
-        S = gbmex_split (A, m, ones (n, 1)) ;
+        S = gbmex_split (ghb, A, m, ones (n, 1)) ;
     elseif (isequal (dim, 2))
         % split A into rows
-        S = gbmex_split (A, ones (m, 1), n) ;
+        S = gbmex_split (ghb, A, ones (m, 1), n) ;
     else
         error ('GrB:error', 'unknown option') ;
     end

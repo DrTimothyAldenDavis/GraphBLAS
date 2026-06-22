@@ -14,11 +14,13 @@ function [F, E] = log2 (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 if (nargout == 1)
     % F = log2 (G)
-    F = gb_trig ('log2', GrB (gbmex_full (G))) ;
+    F = gb_trig ('log2', GrB (gbmex_full (ghb, G))) ;
     if (gb_make_real (F))
-        F = GrB (gbmex_apply ('creal', F)) ;
+        F = GrB (gbmex_apply (ghb, 'creal', F)) ;
     end
 else
     % [F,E] = log2 (G)
@@ -32,7 +34,7 @@ else
         case { 'single', 'double' }
             % type remains the same
     end
-    F = GrB (gbmex_apply (['frexpx.' type], G)) ;
-    E = GrB (gbmex_apply (['frexpe.' type], G)) ;
+    F = GrB (gbmex_apply (ghb, ['frexpx.' type], G)) ;
+    E = GrB (gbmex_apply (ghb, ['frexpe.' type], G)) ;
 end
 
