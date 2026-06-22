@@ -271,11 +271,8 @@ int main (int argc, char **argv)
     printf ("\nfree T:\n") ;
     GrB_Matrix_free (&T) ;
 
-    printf ("\nchange default data arena:\n") ;
-    OK (GrB_Global_set_INT32 (GrB_GLOBAL, (int) 2, GxB_ARENA_DATA)) ;
-
     printf ("\nT = A with data arena 2\n") ;
-    OK (GrB_Matrix_dup (&T, A)) ;
+    OK (GxB_Matrix_dup_arena (&T, A, GrB_DEFAULT, (int) 2)) ;
     OK (GxB_Matrix_fprint (T, "T with data arena 2", 2, stdout)) ;
 
     printf ("\nfree T:\n") ;

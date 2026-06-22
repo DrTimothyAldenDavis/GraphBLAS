@@ -9,9 +9,6 @@
 
 // deserialize: create a GrB_Matrix from a blob of bytes
 
-// Identical to GrB_Matrix_deserialize, except that this method has
-// a descriptor as the last parameter, to control the # of threads used.
-
 #include "GB.h"
 #include "serialize/GB_serialize.h"
 
@@ -19,7 +16,7 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
 (
     // output:
     GrB_Matrix *C,      // output matrix created from the blob, created in the
-                        // header and data arena of the current Context
+                        // default header and data arena
     // input:
     GrB_Type type,      // type of the matrix C.  Required if the blob holds a
                         // matrix of user-defined type.  May be NULL if blob
@@ -30,25 +27,9 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     const GrB_Descriptor desc       // to control # of threads used
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_CHECK_INIT ;
-    GB_RETURN_IF_NULL (blob) ;
-    GB_RETURN_IF_NULL (C) ;
-    GB_BURBLE_START ("GxB_Matrix_deserialize") ;
-
-    GrB_Info info ;
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
-
-    //--------------------------------------------------------------------------
-    // deserialize the blob into a matrix
-    //--------------------------------------------------------------------------
-
-    info = GB_deserialize (C, type, (const GB_void *) blob, blob_memsize) ;
-    GB_BURBLE_END ;
-    return (info) ;
+    int header_arena = GrB_DEFAULT ;
+    int data_arena = GrB_DEFAULT ;
+    return (GxB_Matrix_deserialize_arena (C, type, blob, blob_memsize,
+        header_arena, data_arena, desc)) ;
 }
 

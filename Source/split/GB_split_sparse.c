@@ -30,6 +30,8 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
     const GrB_Matrix A,             // input matrix
+    const int header_arena,
+    const int data_arena,
     GB_Werk Werk
 )
 {
@@ -45,8 +47,6 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    int header_arena = GB_Context_header_arena ( ) ;
-    int data_arena = GB_Context_data_arena ( ) ;
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     int A_sparsity = GB_sparsity (A) ;

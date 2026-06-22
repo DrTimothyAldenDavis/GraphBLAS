@@ -20,7 +20,8 @@ GrB_Info GB_Semiring_new            // create a semiring
 (
     GrB_Semiring semiring,          // semiring to create
     GrB_Monoid add,                 // additive monoid of the semiring
-    GrB_BinaryOp multiply           // multiply operator of the semiring
+    GrB_BinaryOp multiply,          // multiply operator of the semiring
+    const int header_arena
 )
 {
 
@@ -34,7 +35,6 @@ GrB_Info GB_Semiring_new            // create a semiring
     ASSERT_MONOID_OK (add, "semiring->add", GB0) ;
     ASSERT_BINARYOP_OK (multiply, "semiring->multiply", GB0) ;
 
-    int header_arena = GB_Context_header_arena ( ) ;
     uint64_t mem = GB_mem (header_arena, 0) ;
 
     //--------------------------------------------------------------------------

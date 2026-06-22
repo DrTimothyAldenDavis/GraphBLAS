@@ -35,6 +35,7 @@ typedef struct
     char **logger_handle ;          // logger string for error report
     uint64_t *logger_mem_handle ;   // memsize and arena of logger string
     int pwerk ;                     // top of Werk stack, initially zero
+    int logger_arena ;
 
     // integer control, combines C->[pji]_control and Global [pji]_control:
     uint8_t p_control ;             // effective p_control for this method

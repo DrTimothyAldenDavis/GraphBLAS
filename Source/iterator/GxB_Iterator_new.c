@@ -11,19 +11,7 @@
 
 GrB_Info GxB_Iterator_new (GxB_Iterator *iterator)
 {
-    GB_CHECK_INIT ;
-    GB_RETURN_IF_NULL (iterator) ;
-    int header_arena = GB_Context_header_arena ( ) ;
-    uint64_t header_mem = GB_mem (header_arena, 0) ;
-    (*iterator) = GB_CALLOC_MEMORY (1, sizeof (struct GB_Iterator_opaque),
-        &header_mem) ;
-    if (*iterator == NULL)
-    { 
-        // out of memory
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-    (*iterator)->header_size = (size_t) GB_memsize (header_mem) ;
-    (*iterator)->header_arena = header_arena ;
-    return (GrB_SUCCESS) ;
+    int header_arena = GrB_DEFAULT ;
+    return (GxB_Iterator_new_arena (iterator, header_arena)) ;
 }
 

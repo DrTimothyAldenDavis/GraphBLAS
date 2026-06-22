@@ -35,11 +35,13 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 (
     // output:
     GrB_Matrix *Chandle, // output matrix created from the blob, created in the
-                         // header and data arena of the current Context
+                         // given header and data arena
     // input:
     GrB_Type type_expected,         // type expected (NULL for any built-in)
     const GB_void *blob,            // serialized matrix 
-    uint64_t blob_memsize           // size of the blob
+    uint64_t blob_memsize,          // size of the blob
+    const int header_arena,
+    const int data_arena
 ) ;
 
 typedef struct

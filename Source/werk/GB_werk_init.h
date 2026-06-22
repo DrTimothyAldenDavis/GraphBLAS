@@ -22,6 +22,7 @@ static inline GB_Werk GB_Werk_init (GB_Werk Werk, const char *where_string)
     // get the pointer to where any error will be logged
     Werk->logger_handle = NULL ;
     Werk->logger_mem_handle = NULL ;
+    Werk->logger_arena = GrB_DEFAULT ;
 
     // initialize the Werk stack
     Werk->pwerk = 0 ;
@@ -191,6 +192,7 @@ static inline GrB_Info GB_valid1
         /* get the error logger */                                  \
         Werk->logger_handle = &(C->logger) ;                        \
         Werk->logger_mem_handle = &(C->logger_mem) ;                \
+        Werk->logger_arena = GB_arena (C->header_mem) ;             \
         /* combine the matrix and global pji_control */             \
         Werk->p_control = GB_pji_control (C->p_control, Werk->p_control) ; \
         Werk->j_control = GB_pji_control (C->j_control, Werk->j_control) ; \
@@ -261,6 +263,7 @@ static inline GrB_Info GB_valid1
         desc->logger_mem = 0 ;                                      \
         Werk->logger_handle = &(desc->logger) ;                     \
         Werk->logger_mem_handle = &(desc->logger_mem) ;             \
+        Werk->logger_arena = GB_arena (desc->header_mem) ;          \
     }
 
 //------------------------------------------------------------------------------
@@ -294,8 +297,7 @@ const char *GB_status_code (GrB_Info info) ;
         if (logger_handle != NULL)                                          \
         {                                                                   \
             uint64_t *logger_mem_handle = Werk->logger_mem_handle ;         \
-            int header_arena = GB_Context_header_arena ( ) ;                \
-            (*logger_mem_handle) = GB_mem (header_arena, 0) ;               \
+            (*logger_mem_handle) = GB_mem (Werk->logger_arena, 0) ;         \
             (*logger_handle) = GB_CALLOC_MEMORY (GB_LOGGER_LEN+1,           \
                 sizeof (char), logger_mem_handle) ;                         \
             if ((*logger_handle) != NULL)                                   \

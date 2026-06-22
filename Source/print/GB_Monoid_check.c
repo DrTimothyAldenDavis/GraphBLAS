@@ -81,13 +81,12 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
     if (pr != GxB_SILENT)
     { 
         char *string = NULL ;
-        int header_arena = GB_Context_header_arena ( ) ;  // for GB_entry_check
         uint64_t string_mem = 0 ;       // set by GB_entry_check
 
         // print the identity value, if present
         GBPR ("    identity: [ ") ;
         info = GB_entry_check (monoid->op->ztype, monoid->identity, pr, f,
-            &string, &string_mem, header_arena) ;
+            &string, &string_mem) ;
         GB_FREE_MEMORY (&string, string_mem) ;
         if (info != GrB_SUCCESS) return (info) ;
         GBPR (" ] ") ;
@@ -97,7 +96,7 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
         { 
             GBPR ("terminal: [ ") ;
             info = GB_entry_check (monoid->op->ztype, monoid->terminal, pr, f,
-                &string, &string_mem, header_arena) ;
+                &string, &string_mem) ;
             GB_FREE_MEMORY (&string, string_mem) ;
             if (info != GrB_SUCCESS) return (info) ;
             GBPR (" ]") ;

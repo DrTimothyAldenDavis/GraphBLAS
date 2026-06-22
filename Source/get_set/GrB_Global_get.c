@@ -122,16 +122,6 @@ static GrB_Info GB_global_enum_get (int32_t *value, int field)
             (*value) = GB_Global_gpu_count_get ( ) ;
             break ;
 
-        case GxB_ARENA_DATA : 
-
-            (*value) = GB_Context_data_arena_get (NULL) ;
-            break ;
-
-        case GxB_ARENA_HEADER : 
-
-            (*value) = GB_Context_header_arena_get (NULL) ;
-            break ;
-
         case GxB_BURBLE : 
 
             (*value) = (int) GB_Global_burble_get ( ) ;

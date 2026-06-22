@@ -37,10 +37,8 @@ GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
     // no descriptor, so assume the default method
     int method = GxB_DEFAULT ;
 
-    int data_arena = GB_Context_data_arena ( ) ;
-
-    // Werk will hold the default # of threads, which can be controlled
-    // by GxB_Global_Option_set.
+    // use the default arena
+    int data_arena = GrB_DEFAULT ;
 
     //--------------------------------------------------------------------------
     // serialize the matrix

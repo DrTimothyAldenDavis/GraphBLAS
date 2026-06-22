@@ -19,7 +19,7 @@ GrB_Info GrB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
 (
     // output:
     GrB_Matrix *C,      // output matrix created from the blob, created in the
-                        // header and data arena of the current Context
+                        // default header and data arena
     // input:
     GrB_Type type,      // type of the matrix C.  Required if the blob holds a
                         // matrix of user-defined type.  May be NULL if blob
@@ -43,8 +43,11 @@ GrB_Info GrB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     // deserialize the blob into a matrix
     //--------------------------------------------------------------------------
 
+    int header_arena = GrB_DEFAULT ;
+    int data_arena = GrB_DEFAULT ;
+
     GrB_Info info = GB_deserialize (C, type, (const GB_void *) blob,
-        blob_memsize) ;
+        blob_memsize, header_arena, data_arena) ;
     GB_BURBLE_END ;
     return (info) ;
 }

@@ -23,11 +23,14 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 (
     // output:
     GrB_Matrix *Chandle, // output matrix created from the blob, created in the
-                         // header and data arena of the current Context
+                         // header and data arena given by input parameters
+                         // below
     // input:
     GrB_Type type_expected,         // type expected (NULL for any built-in)
     const GB_void *blob,            // serialized matrix 
-    uint64_t blob_memsize           // size of the blob
+    uint64_t blob_memsize,          // size of the blob
+    const int header_arena,
+    const int data_arena
 )
 {
 
@@ -39,9 +42,6 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     ASSERT (blob != NULL && Chandle != NULL) ;
     (*Chandle) = NULL ;
     GrB_Matrix C = NULL, T = NULL ;
-
-    int header_arena = GB_Context_header_arena ( ) ;
-    int data_arena = GB_Context_data_arena ( ) ;
 
     //--------------------------------------------------------------------------
     // read the content of the header (160 bytes)

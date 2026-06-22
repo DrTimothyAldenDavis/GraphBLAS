@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_Matrix_new: create a new matrix
+// GxB_Matrix_new_arena: create a new matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -51,7 +51,7 @@
 
 #include "GB.h"
 
-GrB_Info GB_Matrix_new          // create a new matrix with no entries
+GrB_Info GxB_Matrix_new_arena // create a new matrix with no entries
 (
     GrB_Matrix *A,              // handle of matrix to create
     GrB_Type type,              // type of matrix to create

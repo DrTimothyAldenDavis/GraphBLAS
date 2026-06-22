@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 // gbmx_get_mxargs collects all the input arguments for the GraphBLAS
 // mexFunctions.  The user-level view is described below.  For the private
 // mexFunctions, the descriptor optionally appears as the last argument.  The

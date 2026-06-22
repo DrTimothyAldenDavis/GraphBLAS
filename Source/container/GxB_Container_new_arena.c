@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_Container_new: create a new Container
+// GxB_Container_new_arena: create a new Container
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -10,7 +10,7 @@
 #include "GB_container.h"
 #define GB_FREE_ALL GxB_Container_free (Container) ;
 
-GrB_Info GB_Container_new
+GrB_Info GxB_Container_new_arena
 (
     GxB_Container *Container,
     int header_arena,

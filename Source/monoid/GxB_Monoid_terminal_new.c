@@ -28,7 +28,9 @@ GrB_Info GB_EVAL2 (GXB (Monoid_terminal_new_), T) /* create a new monoid */ \
         " (&monoid, op, identity, terminal)") ;                             \
     type id = identity ;                                                    \
     type tr = terminal ;                                                    \
-    return (GB_Monoid_new (monoid, op, &id, &tr, GB_ ## T ## _code, Werk)) ;\
+    int header_arena = GrB_DEFAULT ;                                        \
+    return (GB_Monoid_new (monoid, op, &id, &tr, GB_ ## T ## _code,         \
+        header_arena, Werk)) ;                                              \
 }
 
 GB_MONOID_TERMINAL_NEW (bool      , BOOL   )
@@ -57,7 +59,8 @@ GrB_Info GxB_Monoid_terminal_new_UDT        // create a monoid with a user type
     GB_WERK ("GxB_Monoid_terminal_new_UDT "
         "(&monoid, op, identity, terminal)") ;
     GB_RETURN_IF_NULL (terminal) ;
+    int header_arena = GrB_DEFAULT ;
     return (GB_Monoid_new (monoid, op, identity, terminal, GB_UDT_code,
-        Werk)) ;
+        header_arena, Werk)) ;
 }
 

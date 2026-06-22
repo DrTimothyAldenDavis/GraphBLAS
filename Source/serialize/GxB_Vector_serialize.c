@@ -30,7 +30,7 @@
     free (blob) ;                                   // user frees the blob
 */
 
-// The blob is created in the current data arena, as defined by the Context.
+// The blob is created in the default data arena.
 
 #include "GB.h"
 #include "serialize/GB_serialize.h"
@@ -46,35 +46,8 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
                                     // and to control # of threads used
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_RETURN_IF_NULL (blob_handle) ;
-    GB_RETURN_IF_NULL (blob_memsize_handle) ;
-    GB_RETURN_IF_NULL (u) ;
-    GB_WHERE_1 (u, "GxB_Vector_serialize (&blob, &blob_memsize, u, desc)") ;
-    GB_BURBLE_START ("GxB_Vector_serialize") ;
-
-    int data_arena = GB_Context_data_arena ( ) ;
-
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
-
-    // get the compression method from the descriptor
-    int method = (desc == NULL) ? GxB_DEFAULT : desc->compression ;
-
-    //--------------------------------------------------------------------------
-    // serialize the vector
-    //--------------------------------------------------------------------------
-
-    (*blob_handle) = NULL ;
-    uint64_t blob_memsize = 0 ;
-    info = GB_serialize ((GB_void **) blob_handle, &blob_memsize,
-        (GrB_Matrix) u, method, data_arena, Werk) ;
-    (*blob_memsize_handle) = (uint64_t) blob_memsize ;
-    GB_BURBLE_END ;
-    #pragma omp flush
-    return (info) ;
+    int data_arena = GrB_DEFAULT ;
+    return (GxB_Vector_serialize_arena (blob_handle, blob_memsize_handle, u,
+        data_arena, desc)) ;
 }
 

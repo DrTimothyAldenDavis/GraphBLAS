@@ -52,8 +52,7 @@ GrB_Info GB_entry_check     // print a single value
     FILE *f,                // file to print to
     // for user-defined types only:
     char **string_handle,   // string buffer for printing
-    uint64_t *string_mem,   // memsize and arena of the string buffer
-    int data_arena
+    uint64_t *string_mem    // memsize and arena of the string buffer
 )
 {
 
@@ -159,8 +158,9 @@ GrB_Info GB_entry_check     // print a single value
                     if ((*string_handle) == NULL)
                     { 
                         // allocate the string buffer with its initial size;
-                        // it is not freed here but in the caller
-                        uint64_t mem = GB_mem (data_arena, 0) ;
+                        // it is not freed here but in the caller.
+                        // Uses the default arena.
+                        uint64_t mem = GB_mem (GrB_DEFAULT, 0) ;
                         (*string_mem) = mem ;
                         (*string_handle) = GB_MALLOC_MEMORY (1024,
                             sizeof (char), string_mem) ;

@@ -28,71 +28,8 @@ GrB_Info GxB_BinaryOp_new
     const char *binop_defn          // definition of the user function
 )
 {
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_CHECK_INIT ;
-    GB_RETURN_IF_NULL (op_handle) ;
-    (*op_handle) = NULL ;
-    GB_RETURN_IF_NULL_OR_FAULTY (ztype) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (xtype) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (ytype) ;
-
-    //--------------------------------------------------------------------------
-    // allocate the binary op
-    //--------------------------------------------------------------------------
-
-    int header_arena = GB_Context_header_arena ( ) ;
-    uint64_t mem = GB_mem (header_arena, 0) ;
-    uint64_t header_mem = mem ;
-    GrB_BinaryOp op = GB_CALLOC_MEMORY (1, sizeof (struct GB_BinaryOp_opaque),
-        &header_mem) ;
-    if (op == NULL)
-    { 
-        // out of memory
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-    op->header_mem = header_mem ;
-
-    //--------------------------------------------------------------------------
-    // create the binary op
-    //--------------------------------------------------------------------------
-
-    GrB_Info info = GB_binop_new (op, function, ztype, xtype, ytype,
-        binop_name, binop_defn, GB_USER_binop_code, header_arena) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        GB_FREE_MEMORY (&op, header_mem) ;
-        return (info) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // create the function pointer, if NULL
-    //--------------------------------------------------------------------------
-
-    if (function == NULL)
-    { 
-        GB_BURBLE_START ("GxB_BinaryOp_new") ;
-        void *user_function ;
-        info = GB_user_op_jit (&user_function, (GB_Operator) op) ;
-        if (info != GrB_SUCCESS)
-        { 
-            // unable to construct the function pointer
-            GB_Op_free ((GB_Operator *) &op) ;
-            // If the JIT fails, it returns GrB_NO_VALUE or GxB_JIT_ERROR.
-            // Convert GrB_NO_VALUE to GrB_NULL_POINTER (the function is NULL
-            // and cannot be compiled by the JIT).
-            return (info == GrB_NO_VALUE ? GrB_NULL_POINTER : info) ;
-        }
-        #include "include/GB_pedantic_disable.h"
-        op->binop_function = (GxB_binary_function) user_function ;
-        GB_BURBLE_END ;
-    }
-
-    (*op_handle) = op ;
-    return (GrB_SUCCESS) ;
+    int header_arena = GrB_DEFAULT ;
+    return (GxB_BinaryOp_new_arena (op_handle, function, ztype, xtype, ytype,
+        binop_name, binop_defn, header_arena)) ;
 }
 

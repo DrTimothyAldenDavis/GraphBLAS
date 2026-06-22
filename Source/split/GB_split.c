@@ -28,6 +28,8 @@ GrB_Info GB_split                   // split a matrix
     const int64_t *Tile_nrows,      // array of size m
     const int64_t *Tile_ncols,      // array of size n
     const GrB_Matrix A,             // input matrix
+    const int header_arena,
+    const int data_arena,
     GB_Werk Werk
 )
 {
@@ -39,7 +41,6 @@ GrB_Info GB_split                   // split a matrix
     // set all Tiles to NULL
     GrB_Info info ;
 
-    int data_arena = A->data_arena ;            // for workspace only
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     ASSERT (Tiles != NULL) ;
@@ -116,19 +117,22 @@ GrB_Info GB_split                   // split a matrix
     { 
         // A is full
         GBURBLE ("(full split) ") ;
-        GB_OK (GB_split_full (Tiles, m, n, Tile_rows, Tile_cols, A, Werk)) ;
+        GB_OK (GB_split_full (Tiles, m, n, Tile_rows, Tile_cols, A,
+            header_arena, data_arena, Werk)) ;
     }
     else if (GB_IS_BITMAP (A))
     { 
         // A is bitmap
         GBURBLE ("(bitmap split) ") ;
-        GB_OK (GB_split_bitmap (Tiles, m, n, Tile_rows, Tile_cols, A, Werk));
+        GB_OK (GB_split_bitmap (Tiles, m, n, Tile_rows, Tile_cols, A,
+            header_arena, data_arena, Werk)) ;
     }
     else
     { 
         // A is sparse/hypersparse, each Tile has the same sparsity as A
         GBURBLE ("(sparse/hyper split) ") ;
-        GB_OK (GB_split_sparse (Tiles, m, n, Tile_rows, Tile_cols, A, Werk));
+        GB_OK (GB_split_sparse (Tiles, m, n, Tile_rows, Tile_cols, A,
+            header_arena, data_arena, Werk)) ;
     }
 
     //--------------------------------------------------------------------------

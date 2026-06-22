@@ -56,16 +56,6 @@ GrB_Info GxB_Context_get_Scalar
             ivalue = GB_Context_gpu_ids_get (Context, NULL) ;
             break ;
 
-        case GxB_ARENA_DATA : 
-
-            ivalue = GB_Context_data_arena_get (Context) ;
-            break ;
-
-        case GxB_ARENA_HEADER : 
-
-            ivalue = GB_Context_header_arena_get (Context) ;
-            break ;
-
         default : 
 
             return (GrB_INVALID_VALUE) ;
@@ -171,16 +161,6 @@ GrB_Info GxB_Context_get_INT
         case GxB_CONTEXT_NGPUS : 
 
             (*value) = GB_Context_gpu_ids_get (Context, NULL) ;
-            break ;
-
-        case GxB_ARENA_DATA : 
-
-            (*value) = GB_Context_data_arena_get (Context) ;
-            break ;
-
-        case GxB_ARENA_HEADER : 
-
-            (*value) = GB_Context_header_arena_get (Context) ;
             break ;
 
         default : 

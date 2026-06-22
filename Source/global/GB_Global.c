@@ -555,10 +555,6 @@ void GB_Global_abort (void)
 }
 
 //------------------------------------------------------------------------------
-// arena
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
 // malloc debuging
 //------------------------------------------------------------------------------
 
@@ -780,22 +776,30 @@ void GB_Global_malloc_function_set
     int arena
 )
 { 
-    GB_Global.malloc_function [arena] = malloc_function ;
+    if (arena >= 0 && arena < GB_NARENAS)
+    { 
+        GB_Global.malloc_function [arena] = malloc_function ;
+    }
 }
 
 void * GB_Global_malloc_function_get (int arena)
 { 
+    if (arena < 0 || arena >= GB_NARENAS)
+    { 
+        // arena out of range
+        return (NULL) ;
+    }
     return ((void *) GB_Global.malloc_function [arena] ) ;
 }
 
 void * GB_Global_malloc_function (uint64_t memsize, int arena)
 { 
-    if (GB_Global.malloc_function [arena] == NULL)
+    if (arena < 0 || arena >= GB_NARENAS ||
+        GB_Global.malloc_function [arena] == NULL)
     { 
-        // arena not initialized
+        // arena not initialized or out of range
         return (NULL) ;
     }
-
     void *p = NULL ;
     p = GB_Global.malloc_function [arena] (memsize) ;
     GB_Global_memtable_add (p, GB_mem (arena, memsize)) ;
@@ -816,11 +820,19 @@ void GB_Global_calloc_function_set
     int arena
 )
 { 
-    GB_Global.calloc_function [arena] = calloc_function ;
+    if (arena >= 0 && arena < GB_NARENAS)
+    { 
+        GB_Global.calloc_function [arena] = calloc_function ;
+    }
 }
 
 void * GB_Global_calloc_function_get (int arena)
 { 
+    if (arena < 0 || arena >= GB_NARENAS)
+    { 
+        // arena out of range
+        return (NULL) ;
+    }
     return ((void *) GB_Global.calloc_function [arena]) ;
 }
 
@@ -834,7 +846,10 @@ void GB_Global_realloc_function_set
     int arena
 )
 { 
-    GB_Global.realloc_function [arena] = realloc_function ;
+    if (arena >= 0 && arena < GB_NARENAS)
+    { 
+        GB_Global.realloc_function [arena] = realloc_function ;
+    }
 }
 
 void * GB_Global_realloc_function_get (int arena)
@@ -844,6 +859,11 @@ void * GB_Global_realloc_function_get (int arena)
 
 bool GB_Global_realloc_function_have (int arena)
 { 
+    if (arena < 0 || arena >= GB_NARENAS)
+    { 
+        // arena out of range
+        return (false) ;
+    }
     return (GB_Global.realloc_function [arena] != NULL) ;
 }
 
@@ -851,10 +871,7 @@ void * GB_Global_realloc_function (void *p, uint64_t memsize, int arena)
 { 
     if (!GB_Global_realloc_function_have (arena))
     {
-        // This is just sanity check, since this method is not called if
-        // GB_Global_realloc_function_have returns false.  The arena not
-        // initialized, or arena has no realloc function.  GB_realloc_memory
-        // will attempt to use GB_malloc_memory instead.
+        // invalid arena or arena has no realloc function
         return (NULL) ;
     }
     void *pnew = NULL ;
@@ -873,20 +890,28 @@ void * GB_Global_realloc_function (void *p, uint64_t memsize, int arena)
 
 void GB_Global_free_function_set (GB_free_function_t free_function, int arena)
 { 
-    GB_Global.free_function [arena] = free_function ;
+    if (arena >= 0 && arena < GB_NARENAS)
+    { 
+        GB_Global.free_function [arena] = free_function ;
+    }
 }
 
 void * GB_Global_free_function_get (int arena)
 { 
+    if (arena < 0 || arena >= GB_NARENAS)
+    { 
+        // arena out of range
+        return (NULL) ;
+    }
     return ((void *) GB_Global.free_function [arena]) ;
 }
 
 void GB_Global_free_function (void *p, int arena)
 { 
-    if (GB_Global.free_function [arena] == NULL)
+    if (arena < 0 || arena >= GB_NARENAS ||
+        GB_Global.free_function [arena] == NULL)
     { 
-        // sanity check: do nothing if the arena is not initialized.
-        // This should never happen, so this is just an extra safeguard.
+        // invalid arena
         return ;
     }
     GB_Global.free_function [arena] (p) ;

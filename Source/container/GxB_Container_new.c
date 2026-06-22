@@ -31,8 +31,8 @@ GrB_Info GxB_Container_new
     // allocate the new Container
     //--------------------------------------------------------------------------
 
-    int header_arena = GB_Context_header_arena ( ) ;
-    int data_arena = GB_Context_data_arena ( ) ;
-    return (GB_Container_new (Container, header_arena, data_arena)) ;
+    int header_arena = GrB_DEFAULT ;
+    int data_arena = GrB_DEFAULT ;
+    return (GxB_Container_new_arena (Container, header_arena, data_arena)) ;
 }
 

@@ -45,43 +45,7 @@ GrB_Info GrB_Semiring_new           // create a semiring
     GrB_BinaryOp multiply           // multiply operator of the semiring
 )
 {
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_CHECK_INIT ;
-    GB_RETURN_IF_NULL (semiring) ;
-
-    GrB_Info info ;
-    (*semiring) = NULL ;
-    GB_RETURN_IF_NULL_OR_FAULTY (add) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (multiply) ;
-    ASSERT_MONOID_OK (add, "semiring->add", GB0) ;
-    ASSERT_BINARYOP_OK (multiply, "semiring->multiply", GB0) ;
-
-    //--------------------------------------------------------------------------
-    // allocate the semiring
-    //--------------------------------------------------------------------------
-
-    int header_arena = GB_Context_header_arena ( ) ;
-    uint64_t mem = GB_mem (header_arena, 0) ;
-    uint64_t header_mem = mem ;
-    (*semiring) = GB_MALLOC_MEMORY (1, sizeof (struct GB_Semiring_opaque),
-        &header_mem) ;
-    if (*semiring == NULL)
-    { 
-        // out of memory
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-
-    (*semiring)->header_mem = header_mem ;
-
-    //--------------------------------------------------------------------------
-    // create the semiring
-    //--------------------------------------------------------------------------
-
-    GB_OK (GB_Semiring_new (*semiring, add, multiply)) ;
-    return (GrB_SUCCESS) ;
+    int header_arena = GrB_DEFAULT ;
+    return (GxB_Semiring_new_arena (semiring, add, multiply, header_arena));
 }
 

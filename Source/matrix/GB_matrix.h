@@ -10,16 +10,6 @@
 #ifndef GB_MATRIX_H
 #define GB_MATRIX_H
 
-GrB_Info GB_Matrix_new          // create a new matrix with no entries
-(
-    GrB_Matrix *A,              // handle of matrix to create
-    GrB_Type type,              // type of matrix to create
-    uint64_t nrows,             // matrix dimension is nrows-by-ncols
-    uint64_t ncols,
-    int header_arena,           // arena for the matrix header
-    int data_arena              // arena for the matrix data
-) ;
-
 GrB_Info GB_new                 // create matrix, except for indices & values
 (
     // output:

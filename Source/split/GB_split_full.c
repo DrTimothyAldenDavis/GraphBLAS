@@ -25,6 +25,8 @@ GrB_Info GB_split_full              // split a full matrix
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
     const GrB_Matrix A,             // input matrix
+    const int header_arena,
+    const int data_arena,
     GB_Werk Werk
 )
 {
@@ -36,9 +38,6 @@ GrB_Info GB_split_full              // split a full matrix
     GrB_Info info ;
     ASSERT (GB_IS_FULL (A)) ;
     GrB_Matrix C = NULL ;
-
-    int header_arena = GB_Context_header_arena ( ) ;
-    int data_arena = GB_Context_data_arena ( ) ;
 
     int sparsity_control = A->sparsity_control ;
     float hyper_switch = A->hyper_switch ;

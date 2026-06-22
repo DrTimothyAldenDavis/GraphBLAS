@@ -562,8 +562,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         GBPR0 ("  iso value: ") ;
         if (pr > 0)
         { 
-            info = GB_entry_check (A->type, A->x, pr, f, &string, &string_mem,
-                A->data_arena) ;
+            info = GB_entry_check (A->type, A->x, pr, f, &string, &string_mem) ;
             if (info != GrB_SUCCESS)
             { 
                 GB_FREE_MEMORY (&string, string_mem) ;
@@ -748,7 +747,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                     GB_void *Ax = (GB_void *) A->x ;
                     info = GB_entry_check (A->type,
                         Ax + (A->iso ? 0 : (p * (A->type->size))), pr, f,
-                        &string, &string_mem, A->data_arena) ;
+                        &string, &string_mem) ;
                     if (info != GrB_SUCCESS)
                     { 
                         GB_FREE_MEMORY (&string, string_mem) ;
@@ -914,7 +913,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 { 
                     info = GB_entry_check (Pending->type,
                         Pending_x +(k * Pending->type->size), pr, f,
-                        &string, &string_mem, A->data_arena) ;
+                        &string, &string_mem) ;
                     if (info != GrB_SUCCESS)
                     { 
                         GB_FREE_MEMORY (&string, string_mem) ;

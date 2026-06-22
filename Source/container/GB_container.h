@@ -86,12 +86,5 @@ GrB_Info GB_container_component_new
     int data_arena
 ) ;
 
-GrB_Info GB_Container_new
-(
-    GxB_Container *Container,
-    int header_arena,
-    int data_arena
-) ;
-
 #endif
 

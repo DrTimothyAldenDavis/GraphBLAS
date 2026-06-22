@@ -186,7 +186,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     semiring = &semiring_header ;
     semiring->header_mem = 0 ;  // static header for semiring
-    info = GB_Semiring_new (semiring, monoid, op) ;
+    info = GB_Semiring_new (semiring, monoid, op, data_arena) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

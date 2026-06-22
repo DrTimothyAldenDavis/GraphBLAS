@@ -30,6 +30,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     const void *identity,       // identity value, if any
     const void *terminal,       // terminal value, if any (may be NULL)
     GB_Type_code idcode,        // identity and terminal type code
+    const int header_arena,
     GB_Werk Werk
 )
 {
@@ -88,7 +89,6 @@ GrB_Info GB_Monoid_new          // create a monoid
     //--------------------------------------------------------------------------
 
     // allocate the monoid
-    int header_arena = GB_Context_header_arena ( ) ;
     uint64_t mem = GB_mem (header_arena, 0) ;
     uint64_t header_mem = mem ;
     (*monoid) = GB_MALLOC_MEMORY (1, sizeof (struct GB_Monoid_opaque),

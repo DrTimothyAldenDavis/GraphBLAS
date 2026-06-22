@@ -22,12 +22,10 @@
     GrB_Matrix_serializeSize (&blob_memsize, A) ;      // loose upper bound
     blob = malloc (blob_memsize) ;                     // user mallocs the blob
     GrB_Matrix_serialize (blob, &blob_memsize, A) ;    // returns actual size
-    blob = realloc (blob, blob_memsize) ;              // user can shrink the blob
+    blob = realloc (blob, blob_memsize) ;              // user can shrink blob
     GrB_Matrix_deserialize (&B, atype, blob, blob_memsize) ;
     free (blob) ;                                   // user frees the blob
 */
-
-// The blob is created in the current data arena, as defined by the Context.
 
 #include "GB.h"
 #include "serialize/GB_serialize.h"
@@ -55,12 +53,9 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     GB_BURBLE_START ("GrB_Matrix_serialize") ;
 
     // no descriptor, so assume the default method
-    int method = GxB_DEFAULT ;
+    int method = GrB_DEFAULT ;
 
-    int data_arena = GB_Context_data_arena ( ) ;
-
-    // Werk will hold the default # of threads, which can be controlled
-    // by GxB_Global_Option_set.
+    int data_arena = A->data_arena ;    // for temporary workspace
 
     //--------------------------------------------------------------------------
     // serialize the matrix into the preallocated blob
