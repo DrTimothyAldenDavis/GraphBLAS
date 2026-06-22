@@ -9,17 +9,17 @@
 
 // Usage
 
-// fmt = gbmex_format ;                   get the global default format (row/col)
-// fmt = gbmex_format (fmt) ;             set the global default format
-// [f,sparsity,iso] = gbmex_format (G) ;  get the format, sparsity, and iso status
-//                                    of a matrix (either @GrB or built-in)
+// fmt = gbmex_format ;         get the global default format (row/col)
+// fmt = gbmex_format (fmt) ;   set the global default format
+// [f,sparsity,iso] = gbmex_format (A) ;  get the format, sparsity,
+//                              and iso status of a matrix (@GrB or built-in)
 
-// Calls to GrB_* and mx* methods are intermingled since none of the GrB
-// methods allocate any memory.
+#define FREE_WORK GrB_Matrix_free (&A_to_free) ;
 
 #include "gb_interface.h"
 
-#define USAGE "usage: [f,s,iso] = GrB.format(G), f = GrB.format (f), or f = GrB.format"
+#define USAGE "usage: [f,s,iso] = GrB.format(A), " \
+    "f = GrB.format (f), or f = GrB.format"
 
 void mexFunction
 (
@@ -34,7 +34,26 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Matrix A = NULL, A_to_free = NULL ;
+
     GBMX_USAGE (nargin <= 1 && nargout <= 3, USAGE) ;
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
+    struct gb_matrix_struct Matrix [1] ;
+    if (nargin == 1 && !mxIsChar (pargin [0]))
+    {
+        gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Calls to mx* and GrB methods are intermingled below.  This usage is safe
+    // from memory leaks because (a) the get/set methods do not allocate any
+    // memory, and (b) the shallow matrix A is created and then freed before
+    // any subsequent mx* methods are used.
 
     //--------------------------------------------------------------------------
     // get/set the format
@@ -76,33 +95,26 @@ void mexFunction
             OK (GrB_Global_set_INT32 (GrB_GLOBAL, fmt, GxB_FORMAT)) ;
 
         }
-        else if (mxIsClass (pargin [0], "GrB"))
-        { 
-
-            //------------------------------------------------------------------
-            // GrB.format (G) for a GraphBLAS matrix G
-            //------------------------------------------------------------------
-
-            GrB_Matrix A = gbmx_get_grb_matrix (pargin [0]) ;
-            CHECK_ERROR (A == NULL, "invalid @GrB matrix") ;
-            OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
-            OK (GrB_Matrix_get_INT32 (A, &sparsity, GxB_SPARSITY_STATUS)) ;
-            OK (GrB_Matrix_get_INT32 (A, &iso, GxB_ISO)) ;
-
-        }
         else
         { 
 
             //------------------------------------------------------------------
-            // GrB.format (A) for a built-in matrix A
+            // GrB.format (A)
             //------------------------------------------------------------------
+    
+            // The input matrix is freed, so that mx* methods can allocate
+            // memory below.  This eliminates any potential memory leaks if A
+            // is a handle GrB matrix using malloc/free.
 
-            // built-in matrices are always stored by column
-            fmt = GxB_BY_COL ;
-            // built-in matrices are sparse or full, never hypersparse or bitmap
-            sparsity = mxIsSparse (pargin [0]) ? GxB_SPARSE : GxB_FULL ;
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+            OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
+            OK (GrB_Matrix_get_INT32 (A, &sparsity, GxB_SPARSITY_STATUS)) ;
+            OK (GrB_Matrix_get_INT32 (A, &iso, GxB_ISO)) ;
+            FREE_WORK ;
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////////
 
     //--------------------------------------------------------------------------
     // return result

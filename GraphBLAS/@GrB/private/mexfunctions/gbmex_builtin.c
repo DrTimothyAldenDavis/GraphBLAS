@@ -52,14 +52,6 @@ void mexFunction
 
     GBMX_USAGE (nargin == 1 && nargout == 1, USAGE) ;
 
-    // The input must be a @GrB object or its opaque content as a struct.  The
-    // input is never a MATLAB/Octave matrix, since this is not required.
-    // However, it would work if this error check is removed.  It would just be
-    // useless, so this error check ensures this method is never used when not
-    // needed.
-    CHECK_ERROR (! (mxIsStruct (pargin [0]) || mxIsClass (pargin [0], "GrB")),
-        "internal error 0") ;
-
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------

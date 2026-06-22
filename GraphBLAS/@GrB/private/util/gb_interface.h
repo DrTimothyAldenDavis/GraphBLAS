@@ -919,8 +919,6 @@ void gbmx_mxcell_to_matrices
     const mxArray *Cell         // built-in MATLAB cell array (at most 3 items)
 ) ;
 
-mxArray *gbmx_mxclass_to_mxstring (mxClassID class, bool is_complex) ;
-
 void gbmx_mxstring_to_string  // copy a built-in string into a C string
 (
     // output:

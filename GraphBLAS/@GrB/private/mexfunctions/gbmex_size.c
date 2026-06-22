@@ -8,19 +8,18 @@
 //------------------------------------------------------------------------------
 
 // The input may be either a GraphBLAS @GrB matrix or a standard built-in
-// matrix.  Note that the output is int64, to accomodate huge hypersparse
-// matrices.  Also returns the type of the matrix.
+// matrix.  Note that the [m n] output can be int64 to accomodate huge
+// hypersparse matrices.  Also returns the type of the matrix.
 
 // Usage:
 
-// [m, n, type] = gbmex_size (X)
+// [m, n, type] = gbmex_size (A)
 
-// Calls to GrB_* and mx* methods are intermingled since none of the GrB
-// methods allocate any memory.
+#define FREE_WORK GrB_Matrix_free (&A_to_free) ;
 
 #include "gb_interface.h"
 
-#define USAGE "usage: [m n type] = gbmex_size (X)"
+#define USAGE "usage: [m n type] = gbmex_size (A)"
 
 void mexFunction
 (
@@ -32,85 +31,74 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // check inputs and construct outputs
+    // check inputs
     //--------------------------------------------------------------------------
+
+    GrB_Matrix A = NULL, A_to_free = NULL ;
 
     GBMX_USAGE (nargin == 1 && nargout <= 4, USAGE) ;
 
     //--------------------------------------------------------------------------
-    // get the # of rows and columns of a GraphBLAS or built-in matrix
+    // get inputs
     //--------------------------------------------------------------------------
 
-    uint64_t nrows, ncols ;
+    struct gb_matrix_struct Matrix [1] ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
 
-    if (mxIsStruct (pargin [0]) || mxIsClass (pargin [0], "GrB"))
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // get the input matrix properties
+    //--------------------------------------------------------------------------
+
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+
+    uint64_t anrows, ancols ;
+    OK (GrB_Matrix_nrows (&anrows, A)) ;
+    OK (GrB_Matrix_ncols (&ancols, A)) ;
+
+    GrB_Type type ;
+    OK (GxB_Matrix_type (&type, A)) ;
+
+    // The input matrix is freed, so that mx* methods can allocate memory
+    // below.  This eliminates any potential memory leaks if A is a handle GrB
+    // matrix using malloc/free.
+
+    FREE_WORK ;
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // return the type
+    //--------------------------------------------------------------------------
+
+    if (nargout > 2)
     { 
-
-        //----------------------------------------------------------------------
-        // get the size of a GraphBLAS matrix
-        //----------------------------------------------------------------------
-
-        GrB_Matrix A = gbmx_get_grb_matrix (pargin [0]) ;
-        CHECK_ERROR (A == NULL, "invalid @GrB matrix") ;
-        OK (GrB_Matrix_nrows (&nrows, A)) ;
-        OK (GrB_Matrix_ncols (&ncols, A)) ;
-
-        //----------------------------------------------------------------------
-        // return type of a GraphBLAS matrix, if requested
-        //----------------------------------------------------------------------
-
-        if (nargout > 2)
-        { 
-            // return the type
-            GrB_Type type ;
-            OK (GxB_Matrix_type (&type, A)) ;
-            pargout [2] = gbmx_type_to_mxstring (type) ;
-        }
-
-    }
-    else
-    { 
-
-        //----------------------------------------------------------------------
-        // get the size of a built-in matrix
-        //----------------------------------------------------------------------
-
-        nrows = (uint64_t) mxGetM (pargin [0]) ;
-        ncols = (uint64_t) mxGetN (pargin [0]) ;
-
-        //----------------------------------------------------------------------
-        // get the type of a built-in matrix, if requested
-        //----------------------------------------------------------------------
-
-        if (nargout > 2)
-        { 
-            mxClassID class = mxGetClassID (pargin [0]) ;
-            bool is_complex = mxIsComplex (pargin [0]) ;
-            pargout [2] = gbmx_mxclass_to_mxstring (class, is_complex) ;
-        }
+        pargout [2] = gbmx_type_to_mxstring (type) ;
     }
 
     //--------------------------------------------------------------------------
     // return the size as int64 or double
     //--------------------------------------------------------------------------
 
-    if (nrows > FLINTMAX || ncols > FLINTMAX)
+    if (anrows > FLINTMAX || ancols > FLINTMAX)
     { 
         // output is int64 to avoid flint overflow
         int64_t *p ;
         pargout [0] = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
         // use mxGetData (best for Octave, fine for MATLAB)
         p = (int64_t *) mxGetData (pargout [0]) ;
-        p [0] = (int64_t) nrows ;
+        p [0] = (int64_t) anrows ;
         pargout [1] = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
         p = (int64_t *) mxGetData (pargout [1]) ;
-        p [0] = (int64_t) ncols ;
+        p [0] = (int64_t) ancols ;
     }
     else
     { 
         // output is double
-        pargout [0] = mxCreateDoubleScalar ((double) nrows) ;
-        pargout [1] = mxCreateDoubleScalar ((double) ncols) ;
+        pargout [0] = mxCreateDoubleScalar ((double) anrows) ;
+        pargout [1] = mxCreateDoubleScalar ((double) ancols) ;
     }
     gb_wrapup ( ) ;
 }
+

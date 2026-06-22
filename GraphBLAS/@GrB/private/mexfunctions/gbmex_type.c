@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmex_type: type of a GraphBLAS matrix struct, or any built-in variable
+// gbmex_type: type of a GraphBLAS or built-in matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -7,19 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-// The input may be any built-in variable.  If it is a GraphBLAS G.opaque
-// struct, then its internal type is returned.
-
 // Usage
 
-// type = gbmex_type (X)
+// type = gbmex_type (A)
 
-// Calls to GrB_* and mx* methods are intermingled since none of the GrB
-// methods allocate any memory.
+#define FREE_WORK GrB_Matrix_free (&A_to_free) ;
 
 #include "gb_interface.h"
 
-#define USAGE "usage: type = gbmex_type (X)"
+#define USAGE "usage: type = gbmex_type (A)"
 
 void mexFunction
 (
@@ -34,32 +30,58 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Matrix A = NULL, A_to_free = NULL ;
+
     GBMX_USAGE (nargin == 1 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
-    // get the type of the matrix
+    // get the type of the input
     //--------------------------------------------------------------------------
 
-    if (mxIsStruct (pargin [0]) || mxIsClass (pargin [0], "GrB"))
+    mxClassID class = mxGetClassID (pargin [0]) ;
+    if (class == mxCELL_CLASS)
     { 
-        // get the type of a @GrB matrix
-        GrB_Type type ;
-        GrB_Matrix A = gbmx_get_grb_matrix (pargin [0]) ;
-        CHECK_ERROR (A == NULL, "invalid @GrB matrix") ;
-        OK (GxB_Matrix_type (&type, A)) ;
-        pargout [0] = gbmx_type_to_mxstring (type) ;
+        pargout [0] = mxCreateString ("cell") ;
+    }
+    else if (class == mxCHAR_CLASS)
+    { 
+        pargout [0] = mxCreateString ("char") ;
     }
     else
     { 
-        // get the type of a MATLAB matrix
-        mxClassID class = mxGetClassID (pargin [0]) ;
-        bool is_complex = mxIsComplex (pargin [0]) ;
-        pargout [0] = gbmx_mxclass_to_mxstring (class, is_complex) ;
-    }
 
-    //--------------------------------------------------------------------------
-    // return the result
-    //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // get inputs
+        //----------------------------------------------------------------------
+
+        struct gb_matrix_struct Matrix [1] ;
+        gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+
+        ////////////////////////////////////////////////////////////////////////
+
+        //----------------------------------------------------------------------
+        // get the input matrix properties
+        //----------------------------------------------------------------------
+
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+
+        GrB_Type type ;
+        OK (GxB_Matrix_type (&type, A)) ;
+
+        // The input matrix is freed, so that mx* methods can allocate memory
+        // below.  This eliminates any potential memory leaks if A is a handle
+        // GrB matrix using malloc/free.
+
+        FREE_WORK ;
+
+        ////////////////////////////////////////////////////////////////////////
+
+        //----------------------------------------------------------------------
+        // return the type
+        //----------------------------------------------------------------------
+
+        pargout [0] = gbmx_type_to_mxstring (type) ;
+    }
 
     gb_wrapup ( ) ;
 }
