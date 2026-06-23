@@ -63,13 +63,13 @@ GrB_Info gb_get_deep        // get the input/output matrix C
     { 
 
         //----------------------------------------------------------------------
-        // usage: GrB.method (C, ...)
+        // usage: GhB.method (C, ...)
         //----------------------------------------------------------------------
 
-        // ensure C is a @GrB matrix argument
+        // ensure C is a @GhB handle matrix argument
         if (matrix->G == NULL)
         {
-            ERROR ("For in-place syntax, C must be a @GrB matrix",
+            ERROR ("For in-place syntax, C must be a @GhB handle matrix",
                 GrB_INVALID_VALUE) ;
         }
 
@@ -97,6 +97,11 @@ GrB_Info gb_get_deep        // get the input/output matrix C
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
+
+    // sanity check
+    int readonly ;
+    OK (GrB_Matrix_get_INT32 (C, &readonly, GxB_IS_READONLY)) ;
+    CHECK_ERROR (readonly, "matrix cannot have read-only content") ;
 
     FREE_WORK ;
     (*C_handle) = C ;

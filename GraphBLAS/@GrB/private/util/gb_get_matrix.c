@@ -55,7 +55,7 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
 
     if (matrix->G != NULL)
     { 
-        // matrix is a @GrB object
+        // matrix is a @GrB or @GhB object
         (*A_handle) = matrix->G ;
         (*A_to_free) = NULL ;           // no shallow copy to free when done
     }

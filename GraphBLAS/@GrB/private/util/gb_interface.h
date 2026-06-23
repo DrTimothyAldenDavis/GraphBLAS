@@ -76,6 +76,7 @@
     // error handling for gb_* utilities
     #define ERROR2(errmsg,arg,info)                             \
     {                                                           \
+        printf ("Hey %d : %s\n", __LINE__, __FILE__) ; \
         if (err [0] == '\0')                                    \
         {                                                       \
             snprintf (err, ERRLEN, errmsg, arg) ;               \
@@ -87,6 +88,7 @@
 
     #define ERROR(errmsg,info)                                  \
     {                                                           \
+        printf ("Hey %d : %s\n", __LINE__, __FILE__) ; \
         if (err [0] == '\0')                                    \
         {                                                       \
             GB_string_copy (err, errmsg, ERRLEN) ;              \
@@ -101,12 +103,14 @@
     // error handling for mexFunctions and gbmx_* utilities
     #define ERROR2(errmsg,arg,info)                             \
     {                                                           \
+        printf ("Hey %d : %s\n", __LINE__, __FILE__) ; \
         gbcov_put ( ) ;                                         \
         FREE_ALL ;                                              \
         mexErrMsgIdAndTxt ("GrB:error", errmsg, arg) ;          \
     }
     #define ERROR(errmsg,info)                                  \
     {                                                           \
+        printf ("Hey %d : %s\n", __LINE__, __FILE__) ; \
         gbcov_put ( ) ;                                         \
         FREE_ALL ;                                              \
         mexErrMsgIdAndTxt ("GrB:error", errmsg) ;               \
@@ -126,6 +130,7 @@
     GrB_Info this_info = method ;                           \
     if (this_info != GrB_SUCCESS)                           \
     {                                                       \
+        printf ("Hey %d : %s\n", __LINE__, __FILE__) ; \
         const char *errmsg = (err [0] != '\0') ? err :      \
             gb_error_string (this_info) ;                   \
         ERROR (errmsg, this_info) ;                         \
@@ -137,6 +142,7 @@
     GrB_Info this_info = method ;                                   \
     if (!(this_info == GrB_SUCCESS || this_info == GrB_NO_VALUE))   \
     {                                                               \
+        printf ("Hey %d : %s\n", __LINE__, __FILE__) ; \
         const char *errmsg = (err [0] != '\0') ? err :              \
             gb_error_string (this_info) ;                           \
         ERROR (errmsg, this_info) ;                                 \
@@ -148,6 +154,7 @@
     GrB_Info this_info = method ;                                   \
     if (this_info != GrB_SUCCESS)                                   \
     {                                                               \
+        printf ("Hey %d : %s\n", __LINE__, __FILE__) ; \
         const char *err2 ;                                          \
         GrB_Matrix_error (&err2, C) ;                               \
         if (err2 != NULL && err2 [0] != '\0')                       \
@@ -292,48 +299,67 @@ struct gb_matrix_struct
     uint64_t nvals ;    // # of entries (for a GraphBLAS matrix, includes
                         // zombies but excludes pending tuples). 
     GrB_Type type ;     // type of the MATLAB matrix, as a GrB_Type
-    uint64_t nrows ;    // from mxGetM
-    uint64_t ncols ;    // from mxGetN
+    uint64_t nrows ;
+    uint64_t ncols ;
     size_t typesize ;   // size of the data type
 
     //--------------------------------------------------------------------------
 
     // Only one of the two sections are present.  This struct is memset to all
     // zero, and then only one of the two sections are filled.  If the matrix
-    // is a GraphBLAS matrix, then G is non-NULL.  Otherwise, the matrix is a
-    // built-in MATLAB sparse or full matrix.
+    // is a @GhB GraphBLAS matrix, then G is non-NULL.  Otherwise, the matrix
+    // is a built-in MATLAB sparse or full matrix, or a @GrB value matrix.
 
     //--------------------------------------------------------------------------
-    // for a GraphBLAS matrix; NULL if the matrix is a MATLAB matrix
+    // for a @GhB handle matrix; NULL if the matrix is a MATLAB or @GrB matrix
     //--------------------------------------------------------------------------
 
     GrB_Matrix G ;
 
     //--------------------------------------------------------------------------
-    // for a MATLAB matrix: populated if G is non-NULL
+    // for a @GrB value matrix or MATLAB matrix: populated if G is non-NULL
     //--------------------------------------------------------------------------
 
     // If the input is a 0-by-0 MATLAB matrix, the [p,i,x] content below is
-    // NULL, and is_sparse is false.
+    // NULL, and sparsity is GxB_FULL.
 
-    uint64_t *p ;       // from mxGetJc, NULL if the matrix is full
-    uint64_t *i ;       // from mxGetIr, NULL if the matrix is full
-    uint64_t *x ;       // from mxGetData
+    void *p ;
+    void *h ;
+    void *b ;
+    void *i ;
+    void *x ;
+
+    void *Yp ;
+    void *Yi ;
+    void *Yx ;
+
+    int64_t plen ;      // # of items in p
+    int64_t nvec ;
+    int64_t nvec_nonempty ;
+    int64_t yvdim ;
+    int64_t Yp_len ;
+
+    int sparsity ;      // sparse/hyper/bitmap/full
+
+    bool by_col ;       // true if held by column, false if by row
+    bool p_is_32 ;      // type of p (32 bit or 64 bit)
+    bool j_is_32 ;      // type of h, Yp, Yi, and Yx (32 bit or 64 bit)
+    bool i_is_32 ;      // type of i (32 bit or 64 bit)
+
+    bool iso ;          // true if iso-valued
 
     //--------------------------------------------------------------------------
     // bool content for a MATLAB matrix
     //--------------------------------------------------------------------------
 
-    bool is_sparse ;    // from mxIsSparse, for a MATLAB matrix; ignored for
-                        // a GraphBLAS matrix
     bool is_empty ;     // true for an empty MATLAB matrix
 
     //--------------------------------------------------------------------------
-    // bool content for a GraphBLAS matrix
+    // bool content for a @GhB matrix
     //--------------------------------------------------------------------------
 
     bool will_wait ;    // true if G has any pending work; always false for a
-                        // MATLAB matrix
+                        // MATLAB matrix or @GrB matrix
 
 } ;
 
@@ -459,9 +485,10 @@ GrB_Info gb_expand_to_full      // C = full (A), and typecast
 GrB_Info gb_export              // export a GrB_Matrix to MATLAB
 (
     // output:
-    GrB_Matrix *C_opaque,
+    GrB_Matrix *C_opaque,       // matrix for export as @GhB;
+                                // NULL if in-place
     // input/output:
-    GrB_Matrix *C_handle,       // GrB_Matrix to export, set to NULL on output
+    GrB_Matrix *C_handle,       // GrB_Matrix to export
     // input:
     kind_enum_t kind,           // GrB, sparse, full, or built-in
     const bool ghb,
@@ -849,23 +876,28 @@ void gbmx_abort ( void ) ;  // terminate immediately (debug assertions only)
 
 mxArray *gbmx_export_struct ( GrB_Matrix **C_opaque_handle ) ;
 
-void gbmx_free              // mxFree wrapper
+mxArray *gbmx_export_to_mxstruct    // return exported MATLAB struct G
 (
-    void **p_handle         // handle to pointer to be freed
+    GrB_Matrix *C_handle            // matrix to export; freed on output
+) ;
+
+void gbmx_free                  // mxFree wrapper
+(
+    void **p_handle             // handle to pointer to be freed
 ) ;
 
 int gbmx_flush ( void ) ;       // flush mexPrintf output to Command Window
 
-GrB_Matrix gbmx_get_grb_matrix  // the content of a MATLAB @GrB handle object
+GrB_Matrix gbmx_get_ghb_matrix  // the content of a MATLAB @GhB handle object
 (
     // input
-    const mxArray *G            // must be a @GrB object
+    const mxArray *G            // must be a @GhB object
 ) ;
 
-mxArray *gbmx_get_grb_handle    // the MATLAB @GrB opaque handle
+mxArray *gbmx_get_ghb_handle    // the MATLAB @GhB opaque handle
 (
     // input
-    const mxArray *G            // must be a @GrB object
+    const mxArray *G            // must be a @GhB object
 ) ;
 
 int64_t gbmx_get_int64_scalar   // return int64 value of a MATLAB scalar

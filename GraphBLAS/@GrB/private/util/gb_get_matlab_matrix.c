@@ -53,14 +53,14 @@ GrB_Info gb_get_matlab_matrix    // shallow copy of MATLAB sparse matrix
     Container->iso = false ;
     Container->jumbled = false ;
 
-    if (matrix->is_sparse)
+    if (matrix->sparsity == GxB_SPARSE)
     { 
         // import the matrix in CSC format (all-64-bit)
         uint64_t Xp_memsize = (matrix->ncols + 1) * sizeof (uint64_t) ;
         uint64_t Xi_memsize = matrix->nvals * sizeof (uint64_t) ;
-        OK (GxB_Vector_load (Container->p, (void **) &(matrix->p), GrB_UINT64,
+        OK (GxB_Vector_load (Container->p, &(matrix->p), GrB_UINT64,
             matrix->ncols + 1, Xp_memsize, GxB_IS_READONLY + MXARENA, NULL)) ;
-        OK (GxB_Vector_load (Container->i, (void **) &(matrix->i), GrB_UINT64,
+        OK (GxB_Vector_load (Container->i,  &(matrix->i), GrB_UINT64,
             matrix->nvals, Xi_memsize, GxB_IS_READONLY + MXARENA, NULL)) ;
         Container->format = GxB_SPARSE ;
     }
@@ -71,7 +71,7 @@ GrB_Info gb_get_matlab_matrix    // shallow copy of MATLAB sparse matrix
     }
 
     uint64_t Xx_memsize = matrix->nvals * matrix->typesize  ;
-    OK (GxB_Vector_load (Container->x, (void **) &(matrix->x), matrix->type,
+    OK (GxB_Vector_load (Container->x, &(matrix->x), matrix->type,
         matrix->nvals, Xx_memsize, GxB_IS_READONLY + MXARENA, NULL)) ;
 
     //--------------------------------------------------------------------------

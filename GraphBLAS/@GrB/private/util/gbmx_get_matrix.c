@@ -7,14 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// gbmx_get_matrix (matrix,X) gets the contents of a GraphBLAS @GrB matrix
-// object, or the properties of a MATLAB matrix (type, dimensions, and pointers
-// to p,i,x, etc), and saves them in the gb_matrix struct.
+// gbmx_get_matrix (matrix,X) gets the contents of a GraphBLAS @GrB or @GrB
+// matrix object, or the properties of a MATLAB matrix (type, dimensions, and
+// pointers to p,i,x, etc), and saves them in the gb_matrix struct.
 
 // X must not be NULL, but it can be an empty matrix, as X = [ ].  In this
 // case, the gb_matrix will be 0-by-0.
 
-// This method allocates no memory, and thus mx* and GrB* methods are
+// This method allocates no memory, and thus mx* and GrB_* methods are
 // intermingled.
 
 #include "gb_interface.h"
@@ -25,7 +25,7 @@ void gbmx_get_matrix
     gb_matrix matrix,       // either a GraphBLAS or MATLAB matrix, statically
                             // allocated (but undefined) on input
     // input
-    const mxArray *X        // @GrB object or MATLAB matrix
+    const mxArray *X        // @GrB or @GhB object or MATLAB matrix
 )
 {
 
@@ -43,19 +43,29 @@ void gbmx_get_matrix
     // construct the gb_matrix
     //--------------------------------------------------------------------------
 
-    if (mxIsStruct (X) || mxIsClass (X, "GrB"))
+    bool is_struct = mxIsStruct (X) ;
+    int nfields = (is_struct) ? mxGetNumberOfFields (X) : 0 ;
+    bool is_grb = mxIsClass (X, "GrB") || (is_struct && nfields > 1) ;
+    bool is_ghb = mxIsClass (X, "GhB") || (is_struct && nfields == 1) ;
+
+    if (is_grb || is_ghb)
     { 
 
         //----------------------------------------------------------------------
-        // X is a @GrB object
+        // X is a @GhB handle object or @GrB value object
         //----------------------------------------------------------------------
 
-        // matrix->nvals is only accurate if X has no pending work.
+        // if ghb:
+            matrix->G = gbmx_get_ghb_matrix (X) ;
+            CHECK_ERROR (matrix->G == NULL, "invalid @GhB matrix") ;
+            matrix->will_wait = GB_will_wait (matrix->G) ;
+        // else grb
+        //  matrix->G = gbmx_get_grb_matrix (X) ;
+        //  CHECK_ERROR (matrix->G == NULL, "invalid @GrB matrix") ;
+        //  matrix->will_wait = false ;
 
-        matrix->G = gbmx_get_grb_matrix (X) ;
-        CHECK_ERROR (matrix->G == NULL, "invalid @GrB matrix") ;
-        matrix->will_wait = GB_will_wait (matrix->G) ;
-        matrix->nvals = GB_nnz (matrix->G) ;
+        // for both @GrB and @GhB objects:
+        matrix->nvals = GB_nnz (matrix->G) ; // valid if no pending work
         OK (GrB_Matrix_nrows (&matrix->nrows, matrix->G)) ;
         OK (GrB_Matrix_ncols (&matrix->ncols, matrix->G)) ;
         OK (GxB_Matrix_type (&matrix->type, matrix->G)) ;
@@ -83,6 +93,7 @@ void gbmx_get_matrix
             //------------------------------------------------------------------
 
             matrix->is_empty = true ;
+            matrix->sparsity = GxB_FULL ;
 
         }
         else
@@ -92,15 +103,16 @@ void gbmx_get_matrix
             // X is a non-empty MATLAB matrix
             //------------------------------------------------------------------
 
-            matrix->is_sparse = mxIsSparse (X) ;
+            matrix->sparsity = mxIsSparse (X) ? GxB_SPARSE : GxB_FULL ;
             // get matrix->p, matrix->i, and matrix->nvals, which depend on
             // whether or not the MATLAB matrix is sparse or full
-            if (matrix->is_sparse)
+            if (matrix->sparsity == GxB_SPARSE)
             { 
                 // X is a sparse MATLAB matrix
-                matrix->p = (uint64_t *) mxGetJc (X) ;
-                matrix->i = (uint64_t *) mxGetIr (X) ;
-                matrix->nvals = matrix->p [matrix->ncols] ;
+                matrix->p = (void *) mxGetJc (X) ;
+                matrix->i = (void *) mxGetIr (X) ;
+                uint64_t *Xp = (uint64_t *) matrix->p ;
+                matrix->nvals = Xp [matrix->ncols] ;
             }
             else
             { 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_export: export a GrB_Matrix as a GraphBLAS C.opaque @GrB handle
+// gb_export: export a GrB_Matrix as a GraphBLAS @GrB handle or @GrB matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -7,20 +7,18 @@
 
 //------------------------------------------------------------------------------
 
-// gb_export exports C as a @GrB matrix object into the C.opaque struct, but
+// gb_export prepares C for export as a @GrB or @GhB matrix object for MATLAB,
 // with 4 possible kinds:
 //
-// KIND_GRB        C will remain a @GrB matrix object
+// KIND_GRB        C will remain a @GrB or @GhB matrix object
 // KIND_SPARSE     C will become a built-in MATLAB/Octave sparse matrix
 // KIND_FULL       C will become a built-in MATLAB/Octave full matrix
 // KIND_BUILTIN    C will become a built-in MATLAB/Octave sparse or full matrix
 //
-// If kind is KIND_GRB, the matrix will remain a @GrB matrix object.
-// Otherwise, it will be directly copied into a MATLAB/Octave matrix by
-// gbmex_builtin.
-
-// No mx* methods are called, so that any memory allocation failures can
-// be properly handled.
+// If kind is KIND_GRB, the matrix will remain a @GrB or @GhB matrix object.
+// Otherwise, it is exported as a GrB_Matrix (handle or struct) and then
+// directly copied into a MATLAB/Octave matrix in a subsequent call to
+// the gbmex_builtin mexFunction.
 
 #define GB_UTIL
 
@@ -35,9 +33,9 @@
 GrB_Info gb_export              // export a GrB_Matrix to MATLAB
 (
     // output:
-    GrB_Matrix *C_opaque,
+    GrB_Matrix *C_opaque,       // matrix for export as @GhB
     // input/output:
-    GrB_Matrix *C_handle,       // GrB_Matrix to export, set to NULL on output
+    GrB_Matrix *C_handle,       // GrB_Matrix to export
     // input:
     kind_enum_t kind,           // GrB, sparse, full, or built-in
     const bool ghb,
@@ -64,11 +62,20 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
     if (readonly)
     { 
         // C has readonly components so make a deep copy
-        OK (GrB_Matrix_dup (&T, C)) ;
+        OK (GxB_Matrix_dup_arena (&T, C, arena, arena)) ;
         GrB_Matrix_free (C_handle) ;
         (*C_handle) = T ;
         T = NULL ;
         C = (*C_handle) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // for @GrB value matrices, ensure C has no pending work
+    //--------------------------------------------------------------------------
+
+    if (!ghb)
+    { 
+        OK (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -94,7 +101,7 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
     { 
 
         //----------------------------------------------------------------------
-        // export C as a @GrB matrix, to become a MATLAB sparse matrix
+        // C will become a MATLAB sparse matrix
         //----------------------------------------------------------------------
 
         // Typecast to double, if C is integer (int8, ..., uint64)
@@ -106,7 +113,7 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
     { 
 
         //----------------------------------------------------------------------
-        // export C as a @GrB matrix, to become a MATLAB full matrix
+        // C will become a MATLAB full matrix
         //----------------------------------------------------------------------
 
         OK (gb_export_to_full (C_handle, arena, err)) ;
@@ -114,15 +121,19 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
     }
 
     //--------------------------------------------------------------------------
-    // copy the handle into C_opaque and return result
+    // export the result
     //--------------------------------------------------------------------------
 
     // C should now be deep, but double-check here
     OK (GrB_Matrix_get_INT32 (C, &readonly, GxB_IS_READONLY)) ;
     CHECK_ERROR (readonly, "internal error 14") ;
 
-    (*C_opaque) = C ;       // copy the GraphBLAS C header into C_opaque
-    (*C_handle) = NULL ;    // flag C as no longer available to the caller
+    if (C_opaque != NULL)
+    {
+        // export the @GhB handle to the output
+        (*C_opaque) = C ;
+        (*C_handle) = NULL ;
+    }
     return (GrB_SUCCESS) ;
 }
 

@@ -9,21 +9,48 @@
 
 // gbmex_apply is an interface to GrB_Matrix_apply.
 
-// Usage:
+// Usage for @GrB and @GhB:
 
-// C = gbmex_apply (ghb, unop, A)
-// C = gbmex_apply (ghb, unop, A, desc)
-// C = gbmex_apply (ghb, Cin, accum, unop, A, desc)
-// C = gbmex_apply (ghb, Cin, M, unop, A, desc)
-// C = gbmex_apply (ghb, Cin, M, accum, unop, A, desc)
+// C = gbapply (unop, A)                        C = unop (A)
+// C = gbapply (Cin, unop, A)                   C = Cin ; C = unop (A) (***)
+// C = gbapply (Cin, accum, unop, A)            C = Cin + unop (A)
+// C = gbapply (Cin, M, unop, A)                C = Cin ; C<M> = unop (A)
+// C = gbapply (Cin, M, accum, unop, A)         C = Cin ; C<M> += unop(A)
 
-// TODO: in-place handle-based usage:
-// gbmex_apply (ghb, C, accum, unop, A, desc)
-// gbmex_apply (ghb, C, M, unop, A, desc)
-// gbmex_apply (ghb, C, M, accum, unop, A, desc)
+// C = gbapply (unop, A, desc)                  ditto, with desc
+// C = gbapply (Cin, unop, A, desc)
+// C = gbapply (Cin, accum, unop, A, desc)
+// C = gbapply (Cin, M, unop, A, desc)
+// C = gbapply (Cin, M, accum, unop, A, desc)
 
-// If Cin is not present then it is implicitly a matrix with no entries, of the
-// right size (which depends on A, B, and the descriptor).
+// Usage for @GhB only:
+
+// gbapply (C, unop)                            C = unop (C)
+// gbapply (C, accum, unop)                     C += unop (C)
+// gbapply (C, unop, A)                         C = unop (A)
+// gbapply (C, accum, unop, A)                  C += unop (A)
+// gbapply (C, M, unop, A)                      C<M> = unop (A)
+// gbapply (C, M, accum, unop, A)               C<M> += unop (A)
+
+// gbapply (C, unop, desc)                      ditto, with desc
+// gbapply (C, accum, unop, desc)
+// gbapply (C, unop, A, desc)
+// gbapply (C, accum, unop, A, desc)
+// gbapply (C, M, unop, A, desc)
+// gbapply (C, M, accum, unop, A, desc)
+
+// C is Cin for the inplace usage, and must be present.  For the non-inplace
+// usage, if Cin is not present then it is implicitly a matrix with no entries,
+// of the right size (which depends on A, B, and the descriptor).
+
+// (***) note: the usage C = gbapply (Cin, unop, A) works, but is not useful.
+// It does the same thing as C = gbapply (unop, A).  The corresponding in-place
+// syntax, gbapply (C, unop, A), is useful, and does C = unop (A).  It is
+// similar to C = gbapply (unop, A) which creates a new C.  The in-place usage
+// gbapply (C, unop, A) uses an existing matrix C.  Its contents are
+// overwritten, but its type is preserved, so the assignment will do a
+// typecast.  This cannot be done with the non-in-place syntax C = gbapply
+// (unop, A), where C takes its type from the output type of unop.
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&M_to_free) ;  \
@@ -57,13 +84,18 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
     int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin >= 2+1 && nargin <= 6+1 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 3 && nargin <= 7 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
+    bool inplace = false ; // ghb && (nargout == 0) ;   // FIXME
+    double *kind_output = NULL ;
 
-    pargout [0] = gbmx_export_struct (&C_opaque) ;
-    pargout [1] = mxCreateDoubleScalar (0) ;
-    double *kind_output = (double *) mxGetData (pargout [1]) ;
+    if (!inplace)
+    { 
+        if (ghb) pargout [0] = gbmx_export_struct (&C_opaque) ;
+        pargout [1] = mxCreateDoubleScalar (0) ;
+        kind_output = (double *) mxGetData (pargout [1]) ;
+    }
 
     //--------------------------------------------------------------------------
     // find the arguments
@@ -94,16 +126,26 @@ void mexFunction
 
     if (nmatrices == 1)
     { 
-        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
+        if (inplace)
+        { 
+            // C = unop (C), in place usage, C and A are aliased
+            OK (gb_get_deep (&C, inplace, &(Matrix [0]), arena, err)) ;
+            A = C ;
+        }
+        else
+        { 
+            // C = unop (A), not in place; C created below
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
+        }
     }
     else if (nmatrices == 2)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
     }
     else // if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
     }
@@ -142,6 +184,7 @@ void mexFunction
 
     if (C == NULL)
     { 
+        ASSERT (!inplace) ;
 
         // get the descriptor contents to determine if A is transposed
         bool A_transpose = (gbdesc.in0 == GrB_TRAN) ;
@@ -178,8 +221,16 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, gbdesc.kind, ghb, err)) ;
-    (*kind_output) = (double) gbdesc.kind ;
+    if (!inplace)
+    { 
+        OK (gb_export (C_opaque, &C, gbdesc.kind, ghb, err)) ;
+        (*kind_output) = (double) gbdesc.kind ;
+    }
+    ////////////////////////////////////////////////////////////////////////////
+    if (!ghb)
+    { 
+        pargout [0] = gbmx_export_to_mxstruct (&C) ;
+    }
     gb_wrapup ( ) ;
 }
 

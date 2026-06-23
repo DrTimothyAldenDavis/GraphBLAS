@@ -14,9 +14,9 @@
 
 #include "gb_interface.h"
 
-void gbmx_free              // mxFree wrapper
+void gbmx_free                  // mxFree wrapper
 (
-    void **p_handle         // handle to pointer to be freed
+    void **p_handle             // handle to pointer to be freed
 )
 {
 
