@@ -1,5 +1,5 @@
 function s = gb_isfull (A)
-%GB_ISFULL determine if all entries are present in a GraphBLAS struct.
+%GB_ISFULL determine if all entries are present in a GraphBLAS matrix.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -12,7 +12,8 @@ if (isinteger (m))
     % than flintmax.  In this case, A must be sparse.
     s = false ;
 else
-    % FIXME: gbmex_nvals requires a wait
+    % note that gbmex_nvals requires a wait, but this is required to determine
+    % if all entries are present anyway.
     s = (m*n == gbmex_nvals (A)) ;
 end
 

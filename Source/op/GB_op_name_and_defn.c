@@ -54,11 +54,8 @@ GrB_Info GB_op_name_and_defn
     if (input_name != NULL)
     {
         // copy the input_name
-        strncpy (op_name, input_name, GxB_MAX_NAME_LEN-1) ;
+        GB_string_copy (op_name, input_name, GxB_MAX_NAME_LEN) ;
     }
-
-    // ensure op_name is null-terminated
-    op_name [GxB_MAX_NAME_LEN-1] = '\0' ;
 
     // get the operator name length (zero if no name given)
     (*op_name_len) = (int32_t) strlen (op_name) ;

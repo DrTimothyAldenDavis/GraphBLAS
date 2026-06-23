@@ -21,6 +21,7 @@ GrB_Info gb_by_col
     GrB_Matrix *A_copy_handle,  // copy made of A, stored by column, or NULL
     // input
     GrB_Matrix A_input,         // input matrix, by row or column
+    const int arena,
     char err [ERRLEN]
 )
 {
@@ -35,7 +36,7 @@ GrB_Info gb_by_col
     if (fmt == GxB_BY_ROW)
     { 
         // make a deep copy of A_input and change it to be stored by column
-        OK (gb_dup (&A_copy, A_input, err)) ;
+        OK (gb_dup (&A_copy, A_input, arena, err)) ;
         OK1 (A_copy, GrB_Matrix_set_INT32 (A_copy, GxB_BY_COL, GxB_FORMAT)) ;
         OK1 (A_copy, GrB_Matrix_wait (A_copy, GrB_MATERIALIZE)) ;
         A = A_copy ;

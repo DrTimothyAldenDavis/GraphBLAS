@@ -21,6 +21,7 @@ GrB_Info gb_norm            // compute norm (A,kind)
     // inputs:
     GrB_Matrix A,
     int64_t norm_kind,      // 0, 1, 2, INT64_MAX, or INT64_MIN
+    const int arena,
     char err [ERRLEN]
 )
 {
@@ -90,7 +91,7 @@ GrB_Info gb_norm            // compute norm (A,kind)
         minop = GrB_MIN_MONOID_FP64 ;
     }
 
-    OK (GrB_Matrix_new (&X, xtype, nrows, ncols)) ;
+    OK (GxB_Matrix_new_arena (&X, xtype, nrows, ncols, arena, arena)) ;
 
     //--------------------------------------------------------------------------
     // compute the norm
@@ -192,7 +193,7 @@ GrB_Info gb_norm            // compute norm (A,kind)
                 // X = abs (A)
                 OK1 (X, GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;
                 // t = zeros (ncols,1)
-                OK (GrB_Vector_new (&t, xtype, ncols)) ;
+                OK (GxB_Vector_new_arena (&t, xtype, ncols, arena, arena)) ;
                 // t(j) = sum of the ith column, X(:,j)
                 OK (GrB_Matrix_reduce_Monoid (t, NULL, NULL, sumop, X,
                     GrB_DESC_T0)) ;
@@ -205,7 +206,7 @@ GrB_Info gb_norm            // compute norm (A,kind)
                 // X = abs (A)
                 OK1 (X, GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;
                 // t = zeros (nrows,1)
-                OK (GrB_Vector_new (&t, xtype, nrows)) ;
+                OK (GxB_Vector_new_arena (&t, xtype, nrows, arena, arena)) ;
                 // t(i) = sum of the ith row, X(i,:)
                 OK (GrB_Matrix_reduce_Monoid (t, NULL, NULL, sumop, X, NULL)) ;
                 // s = max (t)

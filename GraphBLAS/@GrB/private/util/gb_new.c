@@ -21,13 +21,14 @@ GrB_Info gb_new       // create and empty matrix C
     uint64_t ncols,     // # of rows
     int fmt,            // requested format, if < 0 use default
     int sparsity,       // sparsity control for C, 0 for default
+    int arena,
     char err [ERRLEN]
 )
 {
 
     // create the matrix
     GrB_Matrix C = NULL ;
-    OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
+    OK (GxB_Matrix_new_arena (&C, type, nrows, ncols, arena, arena)) ;
 
     // get the default format, if needed
     if (fmt < 0)

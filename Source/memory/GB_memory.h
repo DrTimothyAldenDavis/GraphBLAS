@@ -58,5 +58,16 @@ void GB_memcpy                  // parallel memcpy
     int nthreads                // # of threads to use
 ) ;
 
+//------------------------------------------------------------------------------
+// GB_string_copy: a replacement for strncpy
+//------------------------------------------------------------------------------
+
+void GB_string_copy
+(
+    char *dest,
+    const char *source,
+    size_t dest_size
+) ;
+
 #endif
 

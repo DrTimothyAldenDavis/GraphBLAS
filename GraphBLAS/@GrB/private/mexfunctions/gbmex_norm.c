@@ -27,6 +27,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix A = NULL, A_to_free = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 2 && nargout <= 1, USAGE) ;
 
@@ -48,7 +49,7 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
 
     GrB_Type atype ;
     OK (GxB_Matrix_type (&atype, A)) ;
@@ -89,7 +90,7 @@ void mexFunction
     else
     { 
         // s = norm (A, norm_kind)
-        OK (gb_norm (&s, A, norm_kind, err)) ;
+        OK (gb_norm (&s, A, norm_kind, arena, err)) ;
     }
 
     //--------------------------------------------------------------------------

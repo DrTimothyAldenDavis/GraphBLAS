@@ -43,6 +43,7 @@ GrB_Info gb_get_deep        // get the input/output matrix C
     // input:
     bool inplace,           // if true, C is modified in-place (C is Cin)
     gb_matrix matrix,       // input MATLAB or @GrB matrix
+    const int arena,
     char err [ERRLEN]
 )
 {
@@ -52,7 +53,7 @@ GrB_Info gb_get_deep        // get the input/output matrix C
     //--------------------------------------------------------------------------
 
     GrB_Matrix Cin = NULL, C = NULL, C_to_free = NULL ;
-    OK (gb_get_matrix (&Cin, &C_to_free, matrix, err)) ;
+    OK (gb_get_matrix (&Cin, &C_to_free, matrix, arena, err)) ;
 
     //--------------------------------------------------------------------------
     // get the GrB_Matrix C
@@ -90,7 +91,7 @@ GrB_Info gb_get_deep        // get the input/output matrix C
         }
 
         // make a deep copy of Cin
-        OK (gb_dup (&C, Cin, err)) ;
+        OK (gb_dup (&C, Cin, arena, err)) ;
     }
 
     //--------------------------------------------------------------------------

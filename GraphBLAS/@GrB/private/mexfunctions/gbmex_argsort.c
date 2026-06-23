@@ -41,9 +41,11 @@ void mexFunction
 
     GrB_Matrix *C_opaque = NULL, *P_opaque = NULL,
         A = NULL, A_to_free = NULL, C = NULL, P = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 3+1 && (nargout == 2 || nargout == 1), USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     if (nargout > 1)
@@ -70,7 +72,7 @@ void mexFunction
     // get inputs
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
 
     GrB_Type type ;
     OK (GxB_Matrix_type (&type, A)) ;
@@ -132,10 +134,10 @@ void mexFunction
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
-    OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
+    OK (GxB_Matrix_new_arena (&C, type, nrows, ncols, arena, arena)) ;
     if (nargout > 1)
     { 
-        OK (GrB_Matrix_new (&P, GrB_INT64, nrows, ncols)) ;
+        OK (GxB_Matrix_new_arena (&P, GrB_INT64, nrows, ncols, arena, arena)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -159,10 +161,10 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, KIND_GRB, err)) ;
+    OK (gb_export (C_opaque, &C, KIND_GRB, ghb, err)) ;
     if (nargout > 1)
     { 
-        OK (gb_export (P_opaque, &P, KIND_GRB, err)) ;
+        OK (gb_export (P_opaque, &P, KIND_GRB, ghb, err)) ;
     }
     gb_wrapup ( ) ;
 }

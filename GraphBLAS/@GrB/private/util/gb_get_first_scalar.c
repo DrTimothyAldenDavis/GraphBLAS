@@ -25,6 +25,7 @@ GrB_Info gb_get_first_scalar
     // input:
     GrB_Vector V,
     GrB_Type type,
+    const int arena,
     char err [ERRLEN]
 )
 { 
@@ -36,8 +37,8 @@ GrB_Info gb_get_first_scalar
     (*x) = NULL ;
     GrB_Vector T = NULL ;
 
-    OK (GrB_Scalar_new (x, type)) ;
-    OK (GrB_Vector_new (&T, type, 0)) ;
+    OK (GxB_Scalar_new_arena (x, type, arena, arena)) ;
+    OK (GxB_Vector_new_arena (&T, type, 0, arena, arena)) ;
     OK (GxB_Vector_extractTuples_Vector (NULL, T, V, NULL)) ;
     OK (GrB_Vector_extractElement_Scalar (*x, T, 0)) ;
 

@@ -41,9 +41,11 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix *C_opaque = NULL, X = NULL, X_to_free = NULL, C = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 2+1 && nargout <= 1, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
@@ -63,14 +65,15 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&X, &X_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&X, &X_to_free, &(Matrix [0]), arena, err)) ;
 
     //--------------------------------------------------------------------------
     // make a deep copy and typecast to the desired type
     //--------------------------------------------------------------------------
 
     GrB_Type type = gb_string_to_type (type_string) ;
-    OK (gb_typecast (&C, X, type, GxB_BY_COL, GxB_SPARSE + GxB_FULL, err)) ;
+    OK (gb_typecast (&C, X, type, GxB_BY_COL, GxB_SPARSE + GxB_FULL, arena,
+        err)) ;
 
     // GrB_Matrix_wait is not yet called; this is done by gb_export below.
 
@@ -79,7 +82,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, KIND_BUILTIN, err)) ;
+    OK (gb_export (C_opaque, &C, KIND_BUILTIN, ghb, err)) ;
     gb_wrapup ( ) ;
 }
 

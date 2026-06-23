@@ -39,9 +39,11 @@ void mexFunction
     GrB_Matrix *V_opaque = NULL, V = NULL, A = NULL, A_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
     int64_t k = 0 ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin >= 1+1 && nargin <= 3+1 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&V_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
@@ -72,7 +74,7 @@ void mexFunction
     // get the inputs
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
 
     //--------------------------------------------------------------------------
     // construct V
@@ -100,7 +102,7 @@ void mexFunction
         n = MIN (nrows + k, ncols) ;
     }
 
-    OK (gb_new (&V, vtype, n, 1, GxB_BY_COL, 0, err)) ;
+    OK (gb_new (&V, vtype, n, 1, GxB_BY_COL, 0, arena, err)) ;
 
     //--------------------------------------------------------------------------
     // compute v = diag (A, k)
@@ -113,7 +115,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (V_opaque, &V, gbdesc.kind, err)) ;
+    OK (gb_export (V_opaque, &V, gbdesc.kind, ghb, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }

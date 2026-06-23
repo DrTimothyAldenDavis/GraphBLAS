@@ -26,6 +26,7 @@ GrB_Info gb_expand_scalar_to_vector
     GrB_Vector W,
     GrB_Type type,
     uint64_t nvals,
+    const int arena,
     char err [ERRLEN]
 )
 { 
@@ -35,13 +36,13 @@ GrB_Info gb_expand_scalar_to_vector
     //--------------------------------------------------------------------------
 
     GrB_Scalar x = NULL ;
-    OK (gb_get_first_scalar (&x, W, type, err)) ;
+    OK (gb_get_first_scalar (&x, W, type, arena, err)) ;
 
     //--------------------------------------------------------------------------
     // expand the scalar into V, of length nvals
     //--------------------------------------------------------------------------
 
-    OK (GrB_Vector_new (V, type, nvals)) ;
+    OK (GxB_Vector_new_arena (V, type, nvals, arena, arena)) ;
     OK (GxB_Vector_assign_Scalar_Vector (*V, NULL, NULL, x, NULL, NULL)) ;
     FREE_WORK ;
     return (GrB_SUCCESS) ;

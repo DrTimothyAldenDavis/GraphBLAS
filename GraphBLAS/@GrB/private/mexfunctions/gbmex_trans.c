@@ -52,9 +52,11 @@ void mexFunction
     GrB_Matrix *C_opaque = NULL, C = NULL, M = NULL, A,
         M_to_free = NULL, A_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin >= 1+1 && nargin <= 5+1 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
@@ -81,7 +83,7 @@ void mexFunction
     // get the GrB_Descriptor
     //--------------------------------------------------------------------------
 
-    OK (gb_get_descriptor (&desc, &gbdesc, err)) ;
+    OK (gb_get_descriptor (&desc, &gbdesc, arena, err)) ;
 
     //--------------------------------------------------------------------------
     // get the matrices
@@ -89,18 +91,18 @@ void mexFunction
 
     if (nmatrices == 1)
     { 
-        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
     }
     else if (nmatrices == 2)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), err)) ;
-        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), err)) ;
+        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
     }
     else // if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), err)) ;
-        OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), err)) ;
-        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), err)) ;
+        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), arena, err)) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
     }
 
     OK (GxB_Matrix_type (&atype, A)) ;
@@ -152,7 +154,7 @@ void mexFunction
         OK (gb_get_format (cnrows, cncols, A, NULL, &(gbdesc.fmt), err)) ;
         OK (gb_get_sparsity (A, NULL, &(gbdesc.sparsity), err)) ;
         OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity,
-            err)) ;
+            arena, err)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -166,7 +168,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, gbdesc.kind, err)) ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind, ghb, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }

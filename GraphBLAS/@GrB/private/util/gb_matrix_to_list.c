@@ -29,6 +29,7 @@ static GrB_Info gb_subtract_base
     GrB_Vector *S_to_free,      // set to NULL on output
     // input:
     const int base_offset,      // 1 or 0
+    const int arena,
     char err [ERRLEN]
 )
 {
@@ -62,7 +63,7 @@ static GrB_Info gb_subtract_base
         }
         uint64_t n ;
         OK (GrB_Vector_size (&n, *S)) ;
-        OK (GrB_Vector_new (V_to_free, type, n)) ;
+        OK (GxB_Vector_new_arena (V_to_free, type, n, arena, arena)) ;
         ASSERT_VECTOR_OK (*S, "S before apply", GB0) ;
         OK (GrB_Vector_apply_BinaryOp2nd_UINT64 (*V_to_free, NULL, NULL, minus,
             *S, 1, NULL)) ;
@@ -98,6 +99,7 @@ GrB_Info gb_matrix_to_list
     // inputs:
     gb_matrix matrix,
     const int base_offset,  // 1 or 0
+    const int arena,
     char err [ERRLEN]
 )
 { 
@@ -111,7 +113,7 @@ GrB_Info gb_matrix_to_list
     (*V_handle) = NULL ;
     (*V_to_free_handle) = NULL ;
 
-    OK (gb_get_matrix (&S, &S_to_free, matrix, err)) ;
+    OK (gb_get_matrix (&S, &S_to_free, matrix, arena, err)) ;
 
     //--------------------------------------------------------------------------
     // get the properties of S
@@ -139,7 +141,7 @@ GrB_Info gb_matrix_to_list
 
         GrB_Type type ;
         OK (GxB_Matrix_type (&type, S)) ;
-        OK (GrB_Vector_new (&V, type, 0)) ;
+        OK (GxB_Vector_new_arena (&V, type, 0, arena, arena)) ;
         V_to_free = V ;
         ASSERT_VECTOR_OK (V, "V result, empty", GB0) ;
 
@@ -156,7 +158,8 @@ GrB_Info gb_matrix_to_list
         ASSERT_VECTOR_OK ((GrB_Vector) S, "S as vector", GB0) ;
         // V = S - base_offset
         OK (gb_subtract_base (&V, &V_to_free,
-            (GrB_Vector *) &S, (GrB_Vector *) &S_to_free, base_offset, err)) ;
+            (GrB_Vector *) &S, (GrB_Vector *) &S_to_free, base_offset, arena,
+            err)) ;
         ASSERT_VECTOR_OK (V, "V result, quick", GB0) ;
 
     }
@@ -173,7 +176,8 @@ GrB_Info gb_matrix_to_list
             ERROR ("input matrix dimensions are too large",
                 GrB_DIMENSION_MISMATCH) ;
         }
-        OK (GxB_Matrix_reshapeDup (&C, S, true, nrows * ncols, 1, NULL)) ;
+        OK (GxB_Matrix_reshapeDup_arena (&C, S, true, nrows * ncols, 1,
+            arena, arena, NULL)) ;
         GrB_Matrix_free (&S_to_free) ;
 
         // ensure C is not hypersparse, and is stored by column
@@ -188,7 +192,7 @@ GrB_Info gb_matrix_to_list
         // V = C - base_offset
         C_to_free = (GrB_Vector) C ;
         OK (gb_subtract_base (&V, &V_to_free,
-            (GrB_Vector *) &C, &C_to_free, base_offset, err)) ;
+            (GrB_Vector *) &C, &C_to_free, base_offset, arena, err)) ;
 
         // V is now a valid GrB_Vector; must be freed by the caller
         ASSERT_VECTOR_OK (V, "V result, slow", GB0) ;

@@ -201,7 +201,7 @@ static void check_table (void)
     ASSERT (src != NULL) ;                              \
     uint64_t mem = GB_mem (0, strlen (src)) ;           \
     GB_MALLOC_STUFF (X, mem) ;                          \
-    strncpy (X, src, X ## _allocated) ;                 \
+    GB_string_copy (X, src, X ## _allocated) ;          \
 }
 
 //------------------------------------------------------------------------------
@@ -427,8 +427,7 @@ GrB_Info GB_jitifyer_init (void)
         GB_jit_query_func dl_query = GB_jitifyer_get_query (Queries [k]) ;
         ASSERT (dl_function != NULL && dl_query != NULL && Names [k] != NULL) ;
         char kernel_name [GB_KLEN+1] ;
-        strncpy (kernel_name, Names [k], GB_KLEN) ;
-        kernel_name [GB_KLEN] = '\0' ;
+        GB_string_copy (kernel_name, Names [k], GB_KLEN) ;
 
         //----------------------------------------------------------------------
         // parse the kernel name
@@ -2291,7 +2290,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
                     // JIT error: out of memory
                     return (false) ;
                 }
-                strncpy (e->suffix, suffix, suffix_len+1) ;
+                GB_string_copy (e->suffix, suffix, suffix_len+1) ;
             }
             e->hash = hash ;
             memcpy (&(e->encoding), encoding, sizeof (GB_jit_encoding)) ;

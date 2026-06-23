@@ -34,6 +34,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix A = NULL, A_to_free = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 1 && nargout <= 1, USAGE) ;
 
@@ -53,7 +54,7 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
 
     //--------------------------------------------------------------------------
     // get the # of entries in the matrix

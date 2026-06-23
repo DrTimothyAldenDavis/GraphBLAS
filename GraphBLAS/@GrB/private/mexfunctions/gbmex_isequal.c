@@ -35,6 +35,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix A = NULL, B = NULL, A_to_free = NULL, B_to_free = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 2 && nargout <= 1, USAGE) ;
 
@@ -55,15 +56,15 @@ void mexFunction
     // get the arguments
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
-    OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
+    OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]), arena, err)) ;
 
     //--------------------------------------------------------------------------
     // check if they are equal
     //--------------------------------------------------------------------------
 
     bool is_equal ;
-    OK (gb_is_equal (&is_equal, A, B, err)) ;
+    OK (gb_is_equal (&is_equal, A, B, arena, err)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

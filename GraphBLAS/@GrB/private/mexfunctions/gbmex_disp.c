@@ -31,6 +31,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = NULL, C_to_free = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 2 && nargout == 0, USAGE) ;
 
@@ -48,7 +49,7 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&C, &C_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&C, &C_to_free, &(Matrix [0]), arena, err)) ;
 
     //--------------------------------------------------------------------------
     // print the GraphBLAS matrix

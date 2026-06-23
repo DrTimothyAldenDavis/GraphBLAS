@@ -33,6 +33,7 @@ void mexFunction
 
     GrB_Matrix A = NULL, B = NULL, X = NULL, A_to_free = NULL,
         B_to_free = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 3 && nargout <= 1, USAGE) ;
 
@@ -55,8 +56,8 @@ void mexFunction
     // get the inputs 
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
-    OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
+    OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]), arena, err)) ;
 
     GrB_Type atype, btype ;
     OK (GxB_Matrix_type (&atype, A)) ;
@@ -125,11 +126,11 @@ void mexFunction
         }
 
         // X = A-B
-        OK (GrB_Matrix_new (&X, xtype, anrows, ancols)) ;
+        OK (GxB_Matrix_new_arena (&X, xtype, anrows, ancols, arena, arena)) ;
         OK1 (X, GrB_Matrix_eWiseAdd_BinaryOp (X, NULL, NULL, op, A, B, NULL)) ;
 
         // s = norm (X, norm_kind)
-        OK (gb_norm (&s, X, norm_kind, err)) ;
+        OK (gb_norm (&s, X, norm_kind, arena, err)) ;
     }
 
     //--------------------------------------------------------------------------

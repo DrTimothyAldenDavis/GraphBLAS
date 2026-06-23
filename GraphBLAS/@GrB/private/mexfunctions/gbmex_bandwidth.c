@@ -37,6 +37,7 @@ void mexFunction
 
     GrB_Matrix A = NULL, A_to_free = NULL, x = NULL, imin = NULL, imax = NULL,
         idiag = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 3 && nargout == 2, USAGE) ;
 
@@ -61,7 +62,7 @@ void mexFunction
     // get input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
 
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
@@ -84,10 +85,10 @@ void mexFunction
         // A is held by column
         //----------------------------------------------------------------------
 
-        OK (GrB_Matrix_new (&x, GrB_BOOL, 1, nrows)) ;
-        OK (GrB_Matrix_new (&imin, GrB_INT64, 1, ncols)) ;
-        OK (GrB_Matrix_new (&imax, GrB_INT64, 1, ncols)) ;
-        OK (GrB_Matrix_new (&idiag, GrB_INT64, 1, ncols)) ;
+        OK (GxB_Matrix_new_arena (&x, GrB_BOOL, 1, nrows, arena, arena)) ;
+        OK (GxB_Matrix_new_arena (&imin, GrB_INT64, 1, ncols, arena, arena)) ;
+        OK (GxB_Matrix_new_arena (&imax, GrB_INT64, 1, ncols, arena, arena)) ;
+        OK (GxB_Matrix_new_arena (&idiag, GrB_INT64, 1, ncols, arena, arena)) ;
 
         // x = true (1, nrows)
         OK (GrB_Matrix_assign_BOOL (x, NULL, NULL, true, GrB_ALL, 1, GrB_ALL,
@@ -137,10 +138,10 @@ void mexFunction
         // A is held by row
         //----------------------------------------------------------------------
 
-        OK (GrB_Matrix_new (&x, GrB_BOOL, ncols, 1)) ;
-        OK (GrB_Matrix_new (&imin, GrB_INT64, nrows, 1)) ;
-        OK (GrB_Matrix_new (&imax, GrB_INT64, nrows, 1)) ;
-        OK (GrB_Matrix_new (&idiag, GrB_INT64, nrows, 1)) ;
+        OK (GxB_Matrix_new_arena (&x, GrB_BOOL, ncols, 1, arena, arena)) ;
+        OK (GxB_Matrix_new_arena (&imin, GrB_INT64, nrows, 1, arena, arena)) ;
+        OK (GxB_Matrix_new_arena (&imax, GrB_INT64, nrows, 1, arena, arena)) ;
+        OK (GxB_Matrix_new_arena (&idiag, GrB_INT64, nrows, 1, arena, arena)) ;
 
         // x = true (ncols, 1)
         OK (GrB_Matrix_assign_BOOL (x, NULL, NULL, true, GrB_ALL, ncols,

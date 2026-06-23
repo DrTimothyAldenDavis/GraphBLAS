@@ -35,10 +35,10 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
     GrB_Matrix *A_to_free,  // must be freed by the caller if not NULL
     // input
     gb_matrix matrix,       // input MATLAB or @GrB matrix
+    const int arena,
     char err [ERRLEN]
 )
 {
-    // printf ("start gb_get_matrix:\n") ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -64,7 +64,7 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
         // matrix is a 0-by-0 MATLAB matrix.  Create a new 0-by-0 matrix of the
         // same type as matrix, with the default format.  The new matrix must
         // be freed by the caller when done.
-        OK (GrB_Matrix_new (&A, matrix->type, 0, 0)) ;
+        OK (GxB_Matrix_new_arena (&A, matrix->type, 0, 0, arena, arena)) ;
         (*A_handle) = A ;
         (*A_to_free) = A ;
     }
@@ -73,7 +73,7 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
         // construct a shallow GrB_Matrix copy of a built-in MATLAB matrix,
         // which must be freed by the caller when done.
         // printf ("start get_matlab_matrix\n") ;
-        OK (gb_get_matlab_matrix (&A, matrix, err)) ;
+        OK (gb_get_matlab_matrix (&A, matrix, arena, err)) ;
         // printf ("got get_matlab_matrix: %p\n", A) ;
         (*A_handle) = A ;
         (*A_to_free) = A ;

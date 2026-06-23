@@ -46,6 +46,7 @@ GrB_Info gb_cell_to_list
     const int len,              // # of items in Cell_Matrix
     const int base_offset,      // 1 or 0
     const uint64_t n,           // dimension of the matrix
+    const int arena,
     char err [ERRLEN]
 )
 {
@@ -85,7 +86,7 @@ GrB_Info gb_cell_to_list
         //----------------------------------------------------------------------
 
         OK (gb_matrix_to_list (&I, &I_to_free, &(Cell_Matrix [0]),
-            base_offset, err)) ;
+            base_offset, arena, err)) ;
 
         if (I_max != NULL)
         { 
@@ -108,9 +109,9 @@ GrB_Info gb_cell_to_list
         if (len == 2)
         { 
             OK (gb_matrix_to_list (&Start, &Start_to_free, &(Cell_Matrix [0]),
-                0, err)) ;
+                0, arena, err)) ;
             OK (gb_matrix_to_list (&Fini , &Fini_to_free , &(Cell_Matrix [1]),
-                0, err)) ;
+                0, arena, err)) ;
             OK (gb_is_scalar (&Start_is_scalar, (GrB_Matrix) Start, err)) ;
             OK (gb_is_scalar (&Fini_is_scalar, (GrB_Matrix) Fini, err)) ;
             CHECK_ERROR (!Start_is_scalar || !Fini_is_scalar,
@@ -119,11 +120,11 @@ GrB_Info gb_cell_to_list
         else // if (len == 3)
         { 
             OK (gb_matrix_to_list (&Start, &Start_to_free, &(Cell_Matrix [0]),
-                0, err)) ;
+                0, arena, err)) ;
             OK (gb_matrix_to_list (&Inc  , &Inc_to_free  , &(Cell_Matrix [1]),
-                0, err)) ;
+                0, arena, err)) ;
             OK (gb_matrix_to_list (&Fini , &Fini_to_free , &(Cell_Matrix [2]),
-                0, err)) ;
+                0, arena, err)) ;
             OK (gb_is_scalar (&Start_is_scalar, (GrB_Matrix) Start, err)) ;
             OK (gb_is_scalar (&Inc_is_scalar, (GrB_Matrix) Inc, err)) ;
             OK (gb_is_scalar (&Fini_is_scalar, (GrB_Matrix) Fini, err)) ;
@@ -147,7 +148,7 @@ GrB_Info gb_cell_to_list
         }
 
         // I = [ibegin, iend, iinc], to be freed by the caller
-        OK (GrB_Vector_new (&I, GrB_INT64, 3)) ;
+        OK (GxB_Vector_new_arena (&I, GrB_INT64, 3, arena, arena)) ;
         OK (GrB_Vector_setElement_INT64 (I, ibegin, GxB_BEGIN)) ;
         OK (GrB_Vector_setElement_INT64 (I, iend  , GxB_END)) ;
         OK (GrB_Vector_setElement_INT64 (I, iinc  , GxB_INC)) ;

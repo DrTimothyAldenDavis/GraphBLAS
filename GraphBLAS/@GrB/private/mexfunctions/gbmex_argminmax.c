@@ -2546,9 +2546,11 @@ void mexFunction
     GrB_Scalar Theta = NULL ;
     GrB_UnaryOp Getv = NULL, Getk = NULL ;
     GrB_Scalar s = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 3+1 && nargout == 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&x_opaque) ;
     pargout [1] = gbmx_export_struct (&p_opaque) ;
@@ -2570,7 +2572,7 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
 
     //--------------------------------------------------------------------------
     // get the matrix properties
@@ -2588,7 +2590,7 @@ void mexFunction
     // types, ops, and semirings for argmin and argmax
     //--------------------------------------------------------------------------
 
-    OK (GrB_Scalar_new (&Theta, GrB_BOOL)) ;
+    OK (GxB_Scalar_new_arena (&Theta, GrB_BOOL, arena, arena)) ;
     OK (GrB_Scalar_setElement_BOOL (Theta, 0)) ;
 
     if (A_type == GrB_BOOL)
@@ -2598,44 +2600,49 @@ void mexFunction
         // boolean
         //----------------------------------------------------------------------
 
-        OK (GxB_Type_new (&Tuple, sizeof (gb_tuple_bool), "gb_tuple_bool",
-            BOOL_K)) ;
-        OK (GxB_IndexBinaryOp_new (&Iop,
+        OK (GxB_Type_new_arena (&Tuple, sizeof (gb_tuple_bool), "gb_tuple_bool",
+            BOOL_K, arena)) ;
+        OK (GxB_IndexBinaryOp_new_arena (&Iop,
             (GxB_index_binary_function) gb_make_bool,
-            Tuple, GrB_BOOL, GrB_BOOL, GrB_BOOL, "gb_make_bool", MAKE_BOOL)) ;
-        OK (GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
+            Tuple, GrB_BOOL, GrB_BOOL, GrB_BOOL, "gb_make_bool", MAKE_BOOL,
+            arena)) ;
+        OK (GxB_BinaryOp_new_IndexOp_arena (&Bop, Iop, Theta, arena)) ;
         gb_tuple_bool id ;
         memset (&id, 0, sizeof (gb_tuple_bool)) ;
         id.k = INT64_MAX ;
         if (is_min)
         { 
             id.v = true ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_min_bool,
-                Tuple, Tuple, Tuple, "gb_min_bool", MIN_BOOL)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_min_bool,
+                Tuple, Tuple, Tuple, "gb_min_bool", MIN_BOOL, arena)) ;
         }
         else
         { 
             id.v = false ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_max_bool,
-                Tuple, Tuple, Tuple, "gb_max_bool", MAX_BOOL)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_max_bool,
+                Tuple, Tuple, Tuple, "gb_max_bool", MAX_BOOL, arena)) ;
         }
-        OK (GrB_Monoid_new_UDT (&Monoid, MonOp, &id)) ;
-        OK (GrB_Semiring_new (&Semiring, Monoid, Bop)) ;
+        OK (GxB_Monoid_new_arena_UDT (&Monoid, MonOp, &id, arena)) ;
+        OK (GxB_Semiring_new_arena (&Semiring, Monoid, Bop, arena)) ;
         if (dim == 0)
         {
-            OK (GxB_Type_new (&Tuple3, sizeof (gb_tuple3_bool),
-                "gb_tuple3_bool", BOOL_IJ)) ;
+            OK (GxB_Type_new_arena (&Tuple3, sizeof (gb_tuple3_bool),
+                "gb_tuple3_bool", BOOL_IJ, arena)) ;
             if (fmt == GxB_BY_ROW)
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3a_bool,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_bool", MAKE3a_BOOL)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_bool", MAKE3a_BOOL,
+                    arena)) ;
             }
             else
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3b_bool,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_bool", MAKE3b_BOOL)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_bool", MAKE3b_BOOL,
+                    arena)) ;
             }
             gb_tuple3_bool id3 ;
             memset (&id3, 0, sizeof (gb_tuple3_bool)) ;
@@ -2644,25 +2651,29 @@ void mexFunction
             if (is_min)
             { 
                 id3.v = true ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_min3_bool,
-                    Tuple3, Tuple3, Tuple3, "gb_min3_bool", MIN3_BOOL)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_min3_bool", MIN3_BOOL,
+                    arena)) ;
             }
             else
             { 
                 id3.v = false ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_max3_bool,
-                    Tuple3, Tuple3, Tuple3, "gb_max3_bool", MAX3_BOOL)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_max3_bool", MAX3_BOOL,
+                    arena)) ;
             }
-            OK (GrB_Monoid_new_UDT (&Monoid3, Mon3Op, &id3)) ;
+            OK (GxB_Monoid_new_arena_UDT (&Monoid3, Mon3Op, &id3, arena)) ;
         }
         else
         { 
-            OK (GxB_UnaryOp_new (&Getk, (GxB_unary_function) gb_getk_bool,
-                GrB_INT64, Tuple, "gb_getk_bool", GETK_BOOL)) ;
-            OK (GxB_UnaryOp_new (&Getv, (GxB_unary_function) gb_getv_bool,
-                GrB_BOOL, Tuple, "gb_getv_bool", GETV_BOOL)) ;
+            OK (GxB_UnaryOp_new_arena (&Getk, (GxB_unary_function) gb_getk_bool,
+                GrB_INT64, Tuple, "gb_getk_bool", GETK_BOOL,
+                arena)) ;
+            OK (GxB_UnaryOp_new_arena (&Getv, (GxB_unary_function) gb_getv_bool,
+                GrB_BOOL, Tuple, "gb_getv_bool", GETV_BOOL,
+                arena)) ;
         }
 
     }
@@ -2673,44 +2684,49 @@ void mexFunction
         // int8
         //----------------------------------------------------------------------
 
-        OK (GxB_Type_new (&Tuple, sizeof (gb_tuple_int8), "gb_tuple_int8",
-            INT8_K)) ;
-        OK (GxB_IndexBinaryOp_new (&Iop,
+        OK (GxB_Type_new_arena (&Tuple, sizeof (gb_tuple_int8), "gb_tuple_int8",
+            INT8_K, arena)) ;
+        OK (GxB_IndexBinaryOp_new_arena (&Iop,
             (GxB_index_binary_function) gb_make_int8,
-            Tuple, GrB_INT8, GrB_BOOL, GrB_BOOL, "gb_make_int8", MAKE_INT8)) ;
-        OK (GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
+            Tuple, GrB_INT8, GrB_BOOL, GrB_BOOL, "gb_make_int8", MAKE_INT8,
+            arena)) ;
+        OK (GxB_BinaryOp_new_IndexOp_arena (&Bop, Iop, Theta, arena)) ;
         gb_tuple_int8 id ;
         memset (&id, 0, sizeof (gb_tuple_int8)) ;
         id.k = INT64_MAX ;
         if (is_min)
         { 
             id.v = INT8_MAX ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_min_int8,
-                Tuple, Tuple, Tuple, "gb_min_int8", MIN_INT8)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_min_int8,
+                Tuple, Tuple, Tuple, "gb_min_int8", MIN_INT8, arena)) ;
         }
         else
         { 
             id.v = INT8_MIN ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_max_int8,
-                Tuple, Tuple, Tuple, "gb_max_int8", MAX_INT8)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_max_int8,
+                Tuple, Tuple, Tuple, "gb_max_int8", MAX_INT8, arena)) ;
         }
-        OK (GrB_Monoid_new_UDT (&Monoid, MonOp, &id)) ;
-        OK (GrB_Semiring_new (&Semiring, Monoid, Bop)) ;
+        OK (GxB_Monoid_new_arena_UDT (&Monoid, MonOp, &id, arena)) ;
+        OK (GxB_Semiring_new_arena (&Semiring, Monoid, Bop, arena)) ;
         if (dim == 0)
         {
-            OK (GxB_Type_new (&Tuple3, sizeof (gb_tuple3_int8),
-                "gb_tuple3_int8", INT8_IJ)) ;
+            OK (GxB_Type_new_arena (&Tuple3, sizeof (gb_tuple3_int8),
+                "gb_tuple3_int8", INT8_IJ, arena)) ;
             if (fmt == GxB_BY_ROW)
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3a_int8,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_int8", MAKE3a_INT8)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_int8", MAKE3a_INT8,
+                    arena)) ;
             }
             else
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3b_int8,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_int8", MAKE3b_INT8)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_int8", MAKE3b_INT8,
+                    arena)) ;
             }
             gb_tuple3_int8 id3 ;
             memset (&id3, 0, sizeof (gb_tuple3_int8)) ;
@@ -2719,25 +2735,27 @@ void mexFunction
             if (is_min)
             { 
                 id3.v = INT8_MAX ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_min3_int8,
-                    Tuple3, Tuple3, Tuple3, "gb_min3_int8", MIN3_INT8)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_min3_int8", MIN3_INT8,
+                    arena)) ;
             }
             else
             { 
                 id3.v = INT8_MIN ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_max3_int8,
-                    Tuple3, Tuple3, Tuple3, "gb_max3_int8", MAX3_INT8)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_max3_int8", MAX3_INT8,
+                    arena)) ;
             }
-            OK (GrB_Monoid_new_UDT (&Monoid3, Mon3Op, &id3)) ;
+            OK (GxB_Monoid_new_arena_UDT (&Monoid3, Mon3Op, &id3, arena)) ;
         }
         else
         { 
-            OK (GxB_UnaryOp_new (&Getk, (GxB_unary_function) gb_getk_int8,
-                GrB_INT64, Tuple, "gb_getk_int8", GETK_INT8)) ;
-            OK (GxB_UnaryOp_new (&Getv, (GxB_unary_function) gb_getv_int8,
-                GrB_INT8, Tuple, "gb_getv_int8", GETV_INT8)) ;
+            OK (GxB_UnaryOp_new_arena (&Getk, (GxB_unary_function) gb_getk_int8,
+                GrB_INT64, Tuple, "gb_getk_int8", GETK_INT8, arena)) ;
+            OK (GxB_UnaryOp_new_arena (&Getv, (GxB_unary_function) gb_getv_int8,
+                GrB_INT8, Tuple, "gb_getv_int8", GETV_INT8, arena)) ;
         }
 
     }
@@ -2748,45 +2766,49 @@ void mexFunction
         // int16
         //----------------------------------------------------------------------
 
-        OK (GxB_Type_new (&Tuple, sizeof (gb_tuple_int16),
-            "gb_tuple_int16", INT16_K)) ;
-        OK (GxB_IndexBinaryOp_new (&Iop,
+        OK (GxB_Type_new_arena (&Tuple, sizeof (gb_tuple_int16),
+            "gb_tuple_int16", INT16_K, arena)) ;
+        OK (GxB_IndexBinaryOp_new_arena (&Iop,
             (GxB_index_binary_function) gb_make_int16,
             Tuple, GrB_INT16, GrB_BOOL, GrB_BOOL, "gb_make_int16",
-            MAKE_INT16)) ;
-        OK (GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
+            MAKE_INT16, arena)) ;
+        OK (GxB_BinaryOp_new_IndexOp_arena (&Bop, Iop, Theta, arena)) ;
         gb_tuple_int16 id ;
         memset (&id, 0, sizeof (gb_tuple_int16)) ;
         id.k = INT64_MAX ;
         if (is_min)
         { 
             id.v = INT16_MAX ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_min_int16,
-                Tuple, Tuple, Tuple, "gb_min_int16", MIN_INT16)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_min_int16,
+                Tuple, Tuple, Tuple, "gb_min_int16", MIN_INT16, arena)) ;
         }
         else
         { 
             id.v = INT16_MIN ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_max_int16,
-                Tuple, Tuple, Tuple, "gb_max_int16", MAX_INT16)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_max_int16,
+                Tuple, Tuple, Tuple, "gb_max_int16", MAX_INT16, arena)) ;
         }
-        OK (GrB_Monoid_new_UDT (&Monoid, MonOp, &id)) ;
-        OK (GrB_Semiring_new (&Semiring, Monoid, Bop)) ;
+        OK (GxB_Monoid_new_arena_UDT (&Monoid, MonOp, &id, arena)) ;
+        OK (GxB_Semiring_new_arena (&Semiring, Monoid, Bop, arena)) ;
         if (dim == 0)
         {
-            OK (GxB_Type_new (&Tuple3, sizeof (gb_tuple3_int16),
-                "gb_tuple3_int16", INT16_IJ)) ;
+            OK (GxB_Type_new_arena (&Tuple3, sizeof (gb_tuple3_int16),
+                "gb_tuple3_int16", INT16_IJ, arena)) ;
             if (fmt == GxB_BY_ROW)
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3a_int16,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_int16", MAKE3a_INT16)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_int16", MAKE3a_INT16,
+                    arena)) ;
             }
             else
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3b_int16,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_int16", MAKE3b_INT16)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_int16", MAKE3b_INT16,
+                    arena)) ;
             }
             gb_tuple3_int16 id3 ;
             memset (&id3, 0, sizeof (gb_tuple3_int16)) ;
@@ -2795,25 +2817,29 @@ void mexFunction
             if (is_min)
             { 
                 id3.v = INT16_MAX ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_min3_int16,
-                    Tuple3, Tuple3, Tuple3, "gb_min3_int16", MIN3_INT16)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_min3_int16", MIN3_INT16,
+                    arena)) ;
             }
             else
             { 
                 id3.v = INT16_MIN ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_max3_int16,
-                    Tuple3, Tuple3, Tuple3, "gb_max3_int16", MAX3_INT16)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_max3_int16", MAX3_INT16,
+                    arena)) ;
             }
-            OK (GrB_Monoid_new_UDT (&Monoid3, Mon3Op, &id3)) ;
+            OK (GxB_Monoid_new_arena_UDT (&Monoid3, Mon3Op, &id3, arena)) ;
         }
         else
         { 
-            OK (GxB_UnaryOp_new (&Getk, (GxB_unary_function) gb_getk_int16,
-                GrB_INT64, Tuple, "gb_getk_int16", GETK_INT16)) ;
-            OK (GxB_UnaryOp_new (&Getv, (GxB_unary_function) gb_getv_int16,
-                GrB_INT16, Tuple, "gb_getv_int16", GETV_INT16)) ;
+            OK (GxB_UnaryOp_new_arena (&Getk,
+                (GxB_unary_function) gb_getk_int16,
+                GrB_INT64, Tuple, "gb_getk_int16", GETK_INT16, arena)) ;
+            OK (GxB_UnaryOp_new_arena (&Getv,
+                (GxB_unary_function) gb_getv_int16,
+                GrB_INT16, Tuple, "gb_getv_int16", GETV_INT16, arena)) ;
         }
 
     }
@@ -2824,45 +2850,49 @@ void mexFunction
         // int32
         //----------------------------------------------------------------------
 
-        OK (GxB_Type_new (&Tuple, sizeof (gb_tuple_int32),
-            "gb_tuple_int32", INT32_K)) ;
-        OK (GxB_IndexBinaryOp_new (&Iop,
+        OK (GxB_Type_new_arena (&Tuple, sizeof (gb_tuple_int32),
+            "gb_tuple_int32", INT32_K, arena)) ;
+        OK (GxB_IndexBinaryOp_new_arena (&Iop,
             (GxB_index_binary_function) gb_make_int32,
             Tuple, GrB_INT32, GrB_BOOL, GrB_BOOL, "gb_make_int32",
-            MAKE_INT32)) ;
-        OK (GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
+            MAKE_INT32, arena)) ;
+        OK (GxB_BinaryOp_new_IndexOp_arena (&Bop, Iop, Theta, arena)) ;
         gb_tuple_int32 id ;
         memset (&id, 0, sizeof (gb_tuple_int32)) ;
         id.k = INT64_MAX ;
         if (is_min)
         { 
             id.v = INT32_MAX ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_min_int32,
-                Tuple, Tuple, Tuple, "gb_min_int32", MIN_INT32)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_min_int32,
+                Tuple, Tuple, Tuple, "gb_min_int32", MIN_INT32, arena)) ;
         }
         else
         { 
             id.v = INT32_MIN ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_max_int32,
-                Tuple, Tuple, Tuple, "gb_max_int32", MAX_INT32)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_max_int32,
+                Tuple, Tuple, Tuple, "gb_max_int32", MAX_INT32, arena)) ;
         }
-        OK (GrB_Monoid_new_UDT (&Monoid, MonOp, &id)) ;
-        OK (GrB_Semiring_new (&Semiring, Monoid, Bop)) ;
+        OK (GxB_Monoid_new_arena_UDT (&Monoid, MonOp, &id, arena)) ;
+        OK (GxB_Semiring_new_arena (&Semiring, Monoid, Bop, arena)) ;
         if (dim == 0)
         {
-            OK (GxB_Type_new (&Tuple3, sizeof (gb_tuple3_int32),
-                "gb_tuple3_int32", INT32_IJ)) ;
+            OK (GxB_Type_new_arena (&Tuple3, sizeof (gb_tuple3_int32),
+                "gb_tuple3_int32", INT32_IJ, arena)) ;
             if (fmt == GxB_BY_ROW)
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3a_int32,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_int32", MAKE3a_INT32)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_int32", MAKE3a_INT32,
+                    arena)) ;
             }
             else
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3b_int32,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_int32", MAKE3b_INT32)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_int32", MAKE3b_INT32,
+                    arena)) ;
             }
             gb_tuple3_int32 id3 ;
             memset (&id3, 0, sizeof (gb_tuple3_int32)) ;
@@ -2871,25 +2901,29 @@ void mexFunction
             if (is_min)
             { 
                 id3.v = INT32_MAX ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_min3_int32,
-                    Tuple3, Tuple3, Tuple3, "gb_min3_int32", MIN3_INT32)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_min3_int32", MIN3_INT32,
+                    arena)) ;
             }
             else
             { 
                 id3.v = INT32_MIN ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_max3_int32,
-                    Tuple3, Tuple3, Tuple3, "gb_max3_int32", MAX3_INT32)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_max3_int32", MAX3_INT32,
+                        arena)) ;
             }
-            OK (GrB_Monoid_new_UDT (&Monoid3, Mon3Op, &id3)) ;
+            OK (GxB_Monoid_new_arena_UDT (&Monoid3, Mon3Op, &id3, arena)) ;
         }
         else
         { 
-            OK (GxB_UnaryOp_new (&Getk, (GxB_unary_function) gb_getk_int32,
-                GrB_INT64, Tuple, "gb_getk_int32", GETK_INT32)) ;
-            OK (GxB_UnaryOp_new (&Getv, (GxB_unary_function) gb_getv_int32,
-                GrB_INT32, Tuple, "gb_getv_int32", GETV_INT32)) ;
+            OK (GxB_UnaryOp_new_arena (&Getk,
+                (GxB_unary_function) gb_getk_int32,
+                GrB_INT64, Tuple, "gb_getk_int32", GETK_INT32, arena)) ;
+            OK (GxB_UnaryOp_new_arena (&Getv,
+                (GxB_unary_function) gb_getv_int32,
+                GrB_INT32, Tuple, "gb_getv_int32", GETV_INT32, arena)) ;
         }
 
     }
@@ -2900,45 +2934,49 @@ void mexFunction
         // int64
         //----------------------------------------------------------------------
 
-        OK (GxB_Type_new (&Tuple, sizeof (gb_tuple_int64),
-            "gb_tuple_int64", INT64_K)) ;
-        OK (GxB_IndexBinaryOp_new (&Iop,
+        OK (GxB_Type_new_arena (&Tuple, sizeof (gb_tuple_int64),
+            "gb_tuple_int64", INT64_K, arena)) ;
+        OK (GxB_IndexBinaryOp_new_arena (&Iop,
             (GxB_index_binary_function) gb_make_int64,
             Tuple, GrB_INT64, GrB_BOOL, GrB_BOOL, "gb_make_int64",
-            MAKE_INT64)) ;
-        OK (GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
+            MAKE_INT64, arena)) ;
+        OK (GxB_BinaryOp_new_IndexOp_arena (&Bop, Iop, Theta, arena)) ;
         gb_tuple_int64 id ;
         memset (&id, 0, sizeof (gb_tuple_int64)) ;
         id.k = INT64_MAX ;
         if (is_min)
         { 
             id.v = INT64_MAX ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_min_int64,
-                Tuple, Tuple, Tuple, "gb_min_int64", MIN_INT64)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_min_int64,
+                Tuple, Tuple, Tuple, "gb_min_int64", MIN_INT64, arena)) ;
         }
         else
         { 
             id.v = INT64_MIN ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_max_int64,
-                Tuple, Tuple, Tuple, "gb_max_int64", MAX_INT64)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_max_int64,
+                Tuple, Tuple, Tuple, "gb_max_int64", MAX_INT64, arena)) ;
         }
-        OK (GrB_Monoid_new_UDT (&Monoid, MonOp, &id)) ;
-        OK (GrB_Semiring_new (&Semiring, Monoid, Bop)) ;
+        OK (GxB_Monoid_new_arena_UDT (&Monoid, MonOp, &id, arena)) ;
+        OK (GxB_Semiring_new_arena (&Semiring, Monoid, Bop, arena)) ;
         if (dim == 0)
         {
-            OK (GxB_Type_new (&Tuple3, sizeof (gb_tuple3_int64),
-                "gb_tuple3_int64", INT64_IJ)) ;
+            OK (GxB_Type_new_arena (&Tuple3, sizeof (gb_tuple3_int64),
+                "gb_tuple3_int64", INT64_IJ, arena)) ;
             if (fmt == GxB_BY_ROW)
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3a_int64,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_int64", MAKE3a_INT64)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_int64", MAKE3a_INT64,
+                    arena)) ;
             }
             else
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3b_int64,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_int64", MAKE3b_INT64)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_int64", MAKE3b_INT64,
+                    arena)) ;
             }
             gb_tuple3_int64 id3 ;
             memset (&id3, 0, sizeof (gb_tuple3_int64)) ;
@@ -2947,25 +2985,29 @@ void mexFunction
             if (is_min)
             { 
                 id3.v = INT64_MAX ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_min3_int64,
-                    Tuple3, Tuple3, Tuple3, "gb_min3_int64", MIN3_INT64)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_min3_int64", MIN3_INT64,
+                    arena)) ;
             }
             else
             { 
                 id3.v = INT64_MIN ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_max3_int64,
-                    Tuple3, Tuple3, Tuple3, "gb_max3_int64", MAX3_INT64)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_max3_int64", MAX3_INT64,
+                    arena)) ;
             }
-            OK (GrB_Monoid_new_UDT (&Monoid3, Mon3Op, &id3)) ;
+            OK (GxB_Monoid_new_arena_UDT (&Monoid3, Mon3Op, &id3, arena)) ;
         }
         else
         { 
-            OK (GxB_UnaryOp_new (&Getk, (GxB_unary_function) gb_getk_int64,
-                GrB_INT64, Tuple, "gb_getk_int64", GETK_INT64)) ;
-            OK (GxB_UnaryOp_new (&Getv, (GxB_unary_function) gb_getv_int64,
-                GrB_INT64, Tuple, "gb_getv_int64", GETV_INT64)) ;
+            OK (GxB_UnaryOp_new_arena (&Getk,
+                (GxB_unary_function) gb_getk_int64,
+                GrB_INT64, Tuple, "gb_getk_int64", GETK_INT64, arena)) ;
+            OK (GxB_UnaryOp_new_arena (&Getv,
+                (GxB_unary_function) gb_getv_int64,
+                GrB_INT64, Tuple, "gb_getv_int64", GETV_INT64, arena)) ;
         }
 
     }
@@ -2976,45 +3018,49 @@ void mexFunction
         // uint8
         //----------------------------------------------------------------------
 
-        OK (GxB_Type_new (&Tuple, sizeof (gb_tuple_uint8),
-            "gb_tuple_uint8", UINT8_K)) ;
-        OK (GxB_IndexBinaryOp_new (&Iop,
+        OK (GxB_Type_new_arena (&Tuple, sizeof (gb_tuple_uint8),
+            "gb_tuple_uint8", UINT8_K, arena)) ;
+        OK (GxB_IndexBinaryOp_new_arena (&Iop,
             (GxB_index_binary_function) gb_make_uint8,
             Tuple, GrB_UINT8, GrB_BOOL, GrB_BOOL, "gb_make_uint8",
-            MAKE_UINT8)) ;
-        OK (GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
+            MAKE_UINT8, arena)) ;
+        OK (GxB_BinaryOp_new_IndexOp_arena (&Bop, Iop, Theta, arena)) ;
         gb_tuple_uint8 id ;
         memset (&id, 0, sizeof (gb_tuple_uint8)) ;
         id.k = INT64_MAX ;
         if (is_min)
         { 
             id.v = UINT8_MAX ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_min_uint8,
-                Tuple, Tuple, Tuple, "gb_min_uint8", MIN_UINT8)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_min_uint8,
+                Tuple, Tuple, Tuple, "gb_min_uint8", MIN_UINT8, arena)) ;
         }
         else
         { 
             id.v = 0 ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_max_uint8,
-                Tuple, Tuple, Tuple, "gb_max_uint8", MAX_UINT8)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_max_uint8,
+                Tuple, Tuple, Tuple, "gb_max_uint8", MAX_UINT8, arena)) ;
         }
-        OK (GrB_Monoid_new_UDT (&Monoid, MonOp, &id)) ;
-        OK (GrB_Semiring_new (&Semiring, Monoid, Bop)) ;
+        OK (GxB_Monoid_new_arena_UDT (&Monoid, MonOp, &id, arena)) ;
+        OK (GxB_Semiring_new_arena (&Semiring, Monoid, Bop, arena)) ;
         if (dim == 0)
         {
-            OK (GxB_Type_new (&Tuple3, sizeof (gb_tuple3_uint8),
-                "gb_tuple3_uint8", UINT8_IJ)) ;
+            OK (GxB_Type_new_arena (&Tuple3, sizeof (gb_tuple3_uint8),
+                "gb_tuple3_uint8", UINT8_IJ, arena)) ;
             if (fmt == GxB_BY_ROW)
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3a_uint8,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_uint8", MAKE3a_UINT8)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_uint8", MAKE3a_UINT8,
+                    arena)) ;
             }
             else
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3b_uint8,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_uint8", MAKE3b_UINT8)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_uint8", MAKE3b_UINT8,
+                    arena)) ;
             }
             gb_tuple3_uint8 id3 ;
             memset (&id3, 0, sizeof (gb_tuple3_uint8)) ;
@@ -3023,25 +3069,29 @@ void mexFunction
             if (is_min)
             { 
                 id3.v = UINT8_MAX ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_min3_uint8,
-                    Tuple3, Tuple3, Tuple3, "gb_min3_uint8", MIN3_UINT8)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_min3_uint8", MIN3_UINT8,
+                    arena)) ;
             }
             else
             { 
                 id3.v = 0 ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_max3_uint8,
-                    Tuple3, Tuple3, Tuple3, "gb_max3_uint8", MAX3_UINT8)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_max3_uint8", MAX3_UINT8,
+                    arena)) ;
             }
-            OK (GrB_Monoid_new_UDT (&Monoid3, Mon3Op, &id3)) ;
+            OK (GxB_Monoid_new_arena_UDT (&Monoid3, Mon3Op, &id3, arena)) ;
         }
         else
         { 
-            OK (GxB_UnaryOp_new (&Getk, (GxB_unary_function) gb_getk_uint8,
-                GrB_INT64, Tuple, "gb_getk_uint8", GETK_UINT8)) ;
-            OK (GxB_UnaryOp_new (&Getv, (GxB_unary_function) gb_getv_uint8,
-                GrB_UINT8, Tuple, "gb_getv_uint8", GETV_UINT8)) ;
+            OK (GxB_UnaryOp_new_arena (&Getk,
+                (GxB_unary_function) gb_getk_uint8,
+                GrB_INT64, Tuple, "gb_getk_uint8", GETK_UINT8, arena)) ;
+            OK (GxB_UnaryOp_new_arena (&Getv,
+                (GxB_unary_function) gb_getv_uint8,
+                GrB_UINT8, Tuple, "gb_getv_uint8", GETV_UINT8, arena)) ;
         }
 
     }
@@ -3052,47 +3102,49 @@ void mexFunction
         // uint16
         //----------------------------------------------------------------------
 
-        OK (GxB_Type_new (&Tuple, sizeof (gb_tuple_uint16),
-            "gb_tuple_uint16", UINT16_K)) ;
-        OK (GxB_IndexBinaryOp_new (&Iop,
+        OK (GxB_Type_new_arena (&Tuple, sizeof (gb_tuple_uint16),
+            "gb_tuple_uint16", UINT16_K, arena)) ;
+        OK (GxB_IndexBinaryOp_new_arena (&Iop,
             (GxB_index_binary_function) gb_make_uint16,
             Tuple, GrB_UINT16, GrB_BOOL, GrB_BOOL, "gb_make_uint16",
-            MAKE_UINT16)) ;
-        OK (GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
+            MAKE_UINT16, arena)) ;
+        OK (GxB_BinaryOp_new_IndexOp_arena (&Bop, Iop, Theta, arena)) ;
         gb_tuple_uint16 id ;
         memset (&id, 0, sizeof (gb_tuple_uint16)) ;
         id.k = INT64_MAX ;
         if (is_min)
         { 
             id.v = UINT16_MAX ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_min_uint16,
-                Tuple, Tuple, Tuple, "gb_min_uint16", MIN_UINT16)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_min_uint16,
+                Tuple, Tuple, Tuple, "gb_min_uint16", MIN_UINT16, arena)) ;
         }
         else
         { 
             id.v = 0 ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_max_uint16,
-                Tuple, Tuple, Tuple, "gb_max_uint16", MAX_UINT16)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_max_uint16,
+                Tuple, Tuple, Tuple, "gb_max_uint16", MAX_UINT16, arena)) ;
         }
-        OK (GrB_Monoid_new_UDT (&Monoid, MonOp, &id)) ;
-        OK (GrB_Semiring_new (&Semiring, Monoid, Bop)) ;
+        OK (GxB_Monoid_new_arena_UDT (&Monoid, MonOp, &id, arena)) ;
+        OK (GxB_Semiring_new_arena (&Semiring, Monoid, Bop, arena)) ;
         if (dim == 0)
         {
-            OK (GxB_Type_new (&Tuple3, sizeof (gb_tuple3_uint16),
-                "gb_tuple3_uint16", UINT16_IJ)) ;
+            OK (GxB_Type_new_arena (&Tuple3, sizeof (gb_tuple3_uint16),
+                "gb_tuple3_uint16", UINT16_IJ, arena)) ;
             if (fmt == GxB_BY_ROW)
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3a_uint16,
                     Tuple3, Tuple, GrB_BOOL, "gb_make3a_uint16",
-                    MAKE3a_UINT16)) ;
+                    MAKE3a_UINT16, arena)) ;
             }
             else
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3b_uint16,
                     Tuple3, Tuple, GrB_BOOL, "gb_make3b_uint16",
-                    MAKE3b_UINT16)) ;
+                    MAKE3b_UINT16, arena)) ;
             }
             gb_tuple3_uint16 id3 ;
             memset (&id3, 0, sizeof (gb_tuple3_uint16)) ;
@@ -3101,25 +3153,29 @@ void mexFunction
             if (is_min)
             { 
                 id3.v = UINT16_MAX ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function)gb_min3_uint16,
-                    Tuple3, Tuple3, Tuple3, "gb_min3_uint16", MIN3_UINT16)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_min3_uint16", MIN3_UINT16,
+                    arena)) ;
             }
             else
             { 
                 id3.v = 0 ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function)gb_max3_uint16,
-                    Tuple3, Tuple3, Tuple3, "gb_max3_uint16", MAX3_UINT16)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_max3_uint16", MAX3_UINT16,
+                    arena)) ;
             }
-            OK (GrB_Monoid_new_UDT (&Monoid3, Mon3Op, &id3)) ;
+            OK (GxB_Monoid_new_arena_UDT (&Monoid3, Mon3Op, &id3, arena)) ;
         }
         else
         { 
-            OK (GxB_UnaryOp_new (&Getk, (GxB_unary_function) gb_getk_uint16,
-                GrB_INT64, Tuple, "gb_getk_uint16", GETK_UINT16)) ;
-            OK (GxB_UnaryOp_new (&Getv, (GxB_unary_function) gb_getv_uint16,
-                GrB_UINT16, Tuple, "gb_getv_uint16", GETV_UINT16)) ;
+            OK (GxB_UnaryOp_new_arena (&Getk,
+                (GxB_unary_function) gb_getk_uint16,
+                GrB_INT64, Tuple, "gb_getk_uint16", GETK_UINT16, arena)) ;
+            OK (GxB_UnaryOp_new_arena (&Getv,
+                (GxB_unary_function) gb_getv_uint16,
+                GrB_UINT16, Tuple, "gb_getv_uint16", GETV_UINT16, arena)) ;
         }
 
     }
@@ -3130,47 +3186,49 @@ void mexFunction
         // uint32
         //----------------------------------------------------------------------
 
-        OK (GxB_Type_new (&Tuple, sizeof (gb_tuple_uint32),
-            "gb_tuple_uint32", UINT32_K)) ;
-        OK (GxB_IndexBinaryOp_new (&Iop,
+        OK (GxB_Type_new_arena (&Tuple, sizeof (gb_tuple_uint32),
+            "gb_tuple_uint32", UINT32_K, arena)) ;
+        OK (GxB_IndexBinaryOp_new_arena (&Iop,
             (GxB_index_binary_function) gb_make_uint32,
             Tuple, GrB_UINT32, GrB_BOOL, GrB_BOOL, "gb_make_uint32",
-            MAKE_UINT32)) ;
-        OK (GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
+            MAKE_UINT32, arena)) ;
+        OK (GxB_BinaryOp_new_IndexOp_arena (&Bop, Iop, Theta, arena)) ;
         gb_tuple_uint32 id ;
         memset (&id, 0, sizeof (gb_tuple_uint32)) ;
         id.k = INT64_MAX ;
         if (is_min)
         { 
             id.v = UINT32_MAX ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_min_uint32,
-                Tuple, Tuple, Tuple, "gb_min_uint32", MIN_UINT32)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_min_uint32,
+                Tuple, Tuple, Tuple, "gb_min_uint32", MIN_UINT32, arena)) ;
         }
         else
         { 
             id.v = 0 ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_max_uint32,
-                Tuple, Tuple, Tuple, "gb_max_uint32", MAX_UINT32)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_max_uint32,
+                Tuple, Tuple, Tuple, "gb_max_uint32", MAX_UINT32, arena)) ;
         }
-        OK (GrB_Monoid_new_UDT (&Monoid, MonOp, &id)) ;
-        OK (GrB_Semiring_new (&Semiring, Monoid, Bop)) ;
+        OK (GxB_Monoid_new_arena_UDT (&Monoid, MonOp, &id, arena)) ;
+        OK (GxB_Semiring_new_arena (&Semiring, Monoid, Bop, arena)) ;
         if (dim == 0)
         {
-            OK (GxB_Type_new (&Tuple3, sizeof (gb_tuple3_uint32),
-                "gb_tuple3_uint32", UINT32_IJ)) ;
+            OK (GxB_Type_new_arena (&Tuple3, sizeof (gb_tuple3_uint32),
+                "gb_tuple3_uint32", UINT32_IJ, arena)) ;
             if (fmt == GxB_BY_ROW)
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3a_uint32,
                     Tuple3, Tuple, GrB_BOOL, "gb_make3a_uint32",
-                    MAKE3a_UINT32)) ;
+                    MAKE3a_UINT32, arena)) ;
             }
             else
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3b_uint32,
                     Tuple3, Tuple, GrB_BOOL, "gb_make3b_uint32",
-                    MAKE3b_UINT32)) ;
+                    MAKE3b_UINT32, arena)) ;
             }
             gb_tuple3_uint32 id3 ;
             memset (&id3, 0, sizeof (gb_tuple3_uint32)) ;
@@ -3179,25 +3237,29 @@ void mexFunction
             if (is_min)
             { 
                 id3.v = UINT32_MAX ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function)gb_min3_uint32,
-                    Tuple3, Tuple3, Tuple3, "gb_min3_uint32", MIN3_UINT32)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_min3_uint32", MIN3_UINT32,
+                    arena)) ;
             }
             else
             { 
                 id3.v = 0 ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function)gb_max3_uint32,
-                    Tuple3, Tuple3, Tuple3, "gb_max3_uint32", MAX3_UINT32)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_max3_uint32", MAX3_UINT32,
+                    arena)) ;
             }
-            OK (GrB_Monoid_new_UDT (&Monoid3, Mon3Op, &id3)) ;
+            OK (GxB_Monoid_new_arena_UDT (&Monoid3, Mon3Op, &id3, arena)) ;
         }
         else
         { 
-            OK (GxB_UnaryOp_new (&Getk, (GxB_unary_function) gb_getk_uint32,
-                GrB_INT64, Tuple, "gb_getk_uint32", GETK_UINT32)) ;
-            OK (GxB_UnaryOp_new (&Getv, (GxB_unary_function) gb_getv_uint32,
-                GrB_UINT32, Tuple, "gb_getv_uint32", GETV_UINT32)) ;
+            OK (GxB_UnaryOp_new_arena (&Getk,
+                (GxB_unary_function) gb_getk_uint32,
+                GrB_INT64, Tuple, "gb_getk_uint32", GETK_UINT32, arena)) ;
+            OK (GxB_UnaryOp_new_arena (&Getv,
+                (GxB_unary_function) gb_getv_uint32,
+                GrB_UINT32, Tuple, "gb_getv_uint32", GETV_UINT32, arena)) ;
         }
 
     }
@@ -3208,47 +3270,49 @@ void mexFunction
         // uint64
         //----------------------------------------------------------------------
 
-        OK (GxB_Type_new (&Tuple, sizeof (gb_tuple_uint64),
-            "gb_tuple_uint64", UINT64_K)) ;
-        OK (GxB_IndexBinaryOp_new (&Iop,
+        OK (GxB_Type_new_arena (&Tuple, sizeof (gb_tuple_uint64),
+            "gb_tuple_uint64", UINT64_K, arena)) ;
+        OK (GxB_IndexBinaryOp_new_arena (&Iop,
             (GxB_index_binary_function) gb_make_uint64,
             Tuple, GrB_UINT64, GrB_BOOL, GrB_BOOL, "gb_make_uint64",
-            MAKE_UINT64)) ;
-        OK (GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
+            MAKE_UINT64, arena)) ;
+        OK (GxB_BinaryOp_new_IndexOp_arena (&Bop, Iop, Theta, arena)) ;
         gb_tuple_uint64 id ;
         memset (&id, 0, sizeof (gb_tuple_uint64)) ;
         id.k = INT64_MAX ;
         if (is_min)
         { 
             id.v = UINT64_MAX ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_min_uint64,
-                Tuple, Tuple, Tuple, "gb_min_uint64", MIN_UINT64)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_min_uint64,
+                Tuple, Tuple, Tuple, "gb_min_uint64", MIN_UINT64, arena)) ;
         }
         else
         { 
             id.v = 0 ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_max_uint64,
-                Tuple, Tuple, Tuple, "gb_max_uint64", MAX_UINT64)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_max_uint64,
+                Tuple, Tuple, Tuple, "gb_max_uint64", MAX_UINT64, arena)) ;
         }
-        OK (GrB_Monoid_new_UDT (&Monoid, MonOp, &id)) ;
-        OK (GrB_Semiring_new (&Semiring, Monoid, Bop)) ;
+        OK (GxB_Monoid_new_arena_UDT (&Monoid, MonOp, &id, arena)) ;
+        OK (GxB_Semiring_new_arena (&Semiring, Monoid, Bop, arena)) ;
         if (dim == 0)
         {
-            OK (GxB_Type_new (&Tuple3, sizeof (gb_tuple3_uint64),
-                "gb_tuple3_uint64", UINT64_IJ)) ;
+            OK (GxB_Type_new_arena (&Tuple3, sizeof (gb_tuple3_uint64),
+                "gb_tuple3_uint64", UINT64_IJ, arena)) ;
             if (fmt == GxB_BY_ROW)
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3a_uint64,
                     Tuple3, Tuple, GrB_BOOL, "gb_make3a_uint64",
-                    MAKE3a_UINT64)) ;
+                    MAKE3a_UINT64, arena)) ;
             }
             else
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3b_uint64,
                     Tuple3, Tuple, GrB_BOOL, "gb_make3b_uint64",
-                    MAKE3b_UINT64)) ;
+                    MAKE3b_UINT64, arena)) ;
             }
             gb_tuple3_uint64 id3 ;
             memset (&id3, 0, sizeof (gb_tuple3_uint64)) ;
@@ -3257,25 +3321,29 @@ void mexFunction
             if (is_min)
             { 
                 id3.v = UINT64_MAX ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_min3_uint64,
-                    Tuple3, Tuple3, Tuple3, "gb_min3_uint64", MIN3_UINT64)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_min3_uint64", MIN3_UINT64,
+                    arena)) ;
             }
             else
             { 
                 id3.v = 0 ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function)gb_max3_uint64,
-                    Tuple3, Tuple3, Tuple3, "gb_max3_uint64", MAX3_UINT64)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_max3_uint64", MAX3_UINT64,
+                    arena)) ;
             }
-            OK (GrB_Monoid_new_UDT (&Monoid3, Mon3Op, &id3)) ;
+            OK (GxB_Monoid_new_arena_UDT (&Monoid3, Mon3Op, &id3, arena)) ;
         }
         else
         { 
-            OK (GxB_UnaryOp_new (&Getk, (GxB_unary_function) gb_getk_uint64,
-                GrB_INT64, Tuple, "gb_getk_uint64", GETK_UINT64)) ;
-            OK (GxB_UnaryOp_new (&Getv, (GxB_unary_function) gb_getv_uint64,
-                GrB_UINT64, Tuple, "gb_getv_uint64", GETV_UINT64)) ;
+            OK (GxB_UnaryOp_new_arena (&Getk,
+                (GxB_unary_function) gb_getk_uint64,
+                GrB_INT64, Tuple, "gb_getk_uint64", GETK_UINT64, arena)) ;
+            OK (GxB_UnaryOp_new_arena (&Getv,
+                (GxB_unary_function) gb_getv_uint64,
+                GrB_UINT64, Tuple, "gb_getv_uint64", GETV_UINT64, arena)) ;
         }
 
     }
@@ -3286,44 +3354,49 @@ void mexFunction
         // fp32
         //----------------------------------------------------------------------
 
-        OK (GxB_Type_new (&Tuple, sizeof (gb_tuple_fp32), "gb_tuple_fp32",
-            FP32_K)) ;
-        OK (GxB_IndexBinaryOp_new (&Iop,
+        OK (GxB_Type_new_arena (&Tuple, sizeof (gb_tuple_fp32), "gb_tuple_fp32",
+            FP32_K, arena)) ;
+        OK (GxB_IndexBinaryOp_new_arena (&Iop,
             (GxB_index_binary_function) gb_make_fp32,
-            Tuple, GrB_FP32, GrB_BOOL, GrB_BOOL, "gb_make_fp32", MAKE_FP32)) ;
-        OK (GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
+            Tuple, GrB_FP32, GrB_BOOL, GrB_BOOL, "gb_make_fp32", MAKE_FP32,
+            arena)) ;
+        OK (GxB_BinaryOp_new_IndexOp_arena (&Bop, Iop, Theta, arena)) ;
         gb_tuple_fp32 id ;
         memset (&id, 0, sizeof (gb_tuple_fp32)) ;
         id.k = INT64_MAX ;
         if (is_min)
         { 
             id.v = (float) INFINITY ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_min_fp32,
-                Tuple, Tuple, Tuple, "gb_min_fp32", MIN_FP32)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_min_fp32,
+                Tuple, Tuple, Tuple, "gb_min_fp32", MIN_FP32, arena)) ;
         }
         else
         { 
             id.v = (float) (-INFINITY) ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_max_fp32,
-                Tuple, Tuple, Tuple, "gb_max_fp32", MAX_FP32)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_max_fp32,
+                Tuple, Tuple, Tuple, "gb_max_fp32", MAX_FP32, arena)) ;
         }
-        OK (GrB_Monoid_new_UDT (&Monoid, MonOp, &id)) ;
-        OK (GrB_Semiring_new (&Semiring, Monoid, Bop)) ;
+        OK (GxB_Monoid_new_arena_UDT (&Monoid, MonOp, &id, arena)) ;
+        OK (GxB_Semiring_new_arena (&Semiring, Monoid, Bop, arena)) ;
         if (dim == 0)
         {
-            OK (GxB_Type_new (&Tuple3, sizeof (gb_tuple3_fp32),
-                "gb_tuple3_fp32", FP32_IJ)) ;
+            OK (GxB_Type_new_arena (&Tuple3, sizeof (gb_tuple3_fp32),
+                "gb_tuple3_fp32", FP32_IJ, arena)) ;
             if (fmt == GxB_BY_ROW)
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3a_fp32,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_fp32", MAKE3a_FP32)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_fp32", MAKE3a_FP32,
+                    arena)) ;
             }
             else
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3b_fp32,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_fp32", MAKE3b_FP32)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_fp32", MAKE3b_FP32,
+                    arena)) ;
             }
             gb_tuple3_fp32 id3 ;
             memset (&id3, 0, sizeof (gb_tuple3_fp32)) ;
@@ -3332,25 +3405,25 @@ void mexFunction
             if (is_min)
             { 
                 id3.v = (float) INFINITY ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_min3_fp32,
-                    Tuple3, Tuple3, Tuple3, "gb_min3_fp32", MIN3_FP32)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_min3_fp32", MIN3_FP32, arena)) ;
             }
             else
             { 
                 id3.v = (float) (-INFINITY) ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_max3_fp32,
-                    Tuple3, Tuple3, Tuple3, "gb_max3_fp32", MAX3_FP32)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_max3_fp32", MAX3_FP32, arena)) ;
             }
-            OK (GrB_Monoid_new_UDT (&Monoid3, Mon3Op, &id3)) ;
+            OK (GxB_Monoid_new_arena_UDT (&Monoid3, Mon3Op, &id3, arena)) ;
         }
         else
         { 
-            OK (GxB_UnaryOp_new (&Getk, (GxB_unary_function) gb_getk_fp32,
-                GrB_INT64, Tuple, "gb_getk_fp32", GETK_FP32)) ;
-            OK (GxB_UnaryOp_new (&Getv, (GxB_unary_function) gb_getv_fp32,
-                GrB_FP32, Tuple, "gb_getv_fp32", GETV_FP32)) ;
+            OK (GxB_UnaryOp_new_arena (&Getk, (GxB_unary_function) gb_getk_fp32,
+                GrB_INT64, Tuple, "gb_getk_fp32", GETK_FP32, arena)) ;
+            OK (GxB_UnaryOp_new_arena (&Getv, (GxB_unary_function) gb_getv_fp32,
+                GrB_FP32, Tuple, "gb_getv_fp32", GETV_FP32, arena)) ;
         }
 
     }
@@ -3361,44 +3434,49 @@ void mexFunction
         // fp64
         //----------------------------------------------------------------------
 
-        OK (GxB_Type_new (&Tuple, sizeof (gb_tuple_fp64), "gb_tuple_fp64",
-            FP64_K)) ;
-        OK (GxB_IndexBinaryOp_new (&Iop,
+        OK (GxB_Type_new_arena (&Tuple, sizeof (gb_tuple_fp64), "gb_tuple_fp64",
+            FP64_K, arena)) ;
+        OK (GxB_IndexBinaryOp_new_arena (&Iop,
             (GxB_index_binary_function) gb_make_fp64,
-            Tuple, GrB_FP64, GrB_BOOL, GrB_BOOL, "gb_make_fp64", MAKE_FP64)) ;
-        OK (GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
+            Tuple, GrB_FP64, GrB_BOOL, GrB_BOOL, "gb_make_fp64", MAKE_FP64,
+            arena)) ;
+        OK (GxB_BinaryOp_new_IndexOp_arena (&Bop, Iop, Theta, arena)) ;
         gb_tuple_fp64 id ;
         memset (&id, 0, sizeof (gb_tuple_fp64)) ;
         id.k = INT64_MAX ;
         if (is_min)
         { 
             id.v = (double) INFINITY ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_min_fp64,
-                Tuple, Tuple, Tuple, "gb_min_fp64", MIN_FP64)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_min_fp64,
+                Tuple, Tuple, Tuple, "gb_min_fp64", MIN_FP64, arena)) ;
         }
         else
         { 
             id.v = (double) (-INFINITY) ;
-            OK (GxB_BinaryOp_new (&MonOp, (GxB_binary_function) gb_max_fp64,
-                Tuple, Tuple, Tuple, "gb_max_fp64", MAX_FP64)) ;
+            OK (GxB_BinaryOp_new_arena (&MonOp,
+                (GxB_binary_function) gb_max_fp64,
+                Tuple, Tuple, Tuple, "gb_max_fp64", MAX_FP64, arena)) ;
         }
-        OK (GrB_Monoid_new_UDT (&Monoid, MonOp, &id)) ;
-        OK (GrB_Semiring_new (&Semiring, Monoid, Bop)) ;
+        OK (GxB_Monoid_new_arena_UDT (&Monoid, MonOp, &id, arena)) ;
+        OK (GxB_Semiring_new_arena (&Semiring, Monoid, Bop, arena)) ;
         if (dim == 0)
         {
-            OK (GxB_Type_new (&Tuple3, sizeof (gb_tuple3_fp64),
-                "gb_tuple3_fp64", FP64_IJ)) ;
+            OK (GxB_Type_new_arena (&Tuple3, sizeof (gb_tuple3_fp64),
+                "gb_tuple3_fp64", FP64_IJ, arena)) ;
             if (fmt == GxB_BY_ROW)
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3a_fp64,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_fp64", MAKE3a_FP64)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3a_fp64", MAKE3a_FP64,
+                    arena)) ;
             }
             else
             { 
-                OK (GxB_IndexUnaryOp_new (&Make3,
+                OK (GxB_IndexUnaryOp_new_arena (&Make3,
                     (GxB_index_unary_function) gb_make3b_fp64,
-                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_fp64", MAKE3b_FP64)) ;
+                    Tuple3, Tuple, GrB_BOOL, "gb_make3b_fp64", MAKE3b_FP64,
+                    arena)) ;
             }
             gb_tuple3_fp64 id3 ;
             memset (&id3, 0, sizeof (gb_tuple3_fp64)) ;
@@ -3407,25 +3485,27 @@ void mexFunction
             if (is_min)
             { 
                 id3.v = (double) INFINITY ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_min3_fp64,
-                    Tuple3, Tuple3, Tuple3, "gb_min3_fp64", MIN3_FP64)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_min3_fp64", MIN3_FP64,
+                    arena)) ;
             }
             else
             { 
                 id3.v = (double) (-INFINITY) ;
-                OK (GxB_BinaryOp_new (&Mon3Op,
+                OK (GxB_BinaryOp_new_arena (&Mon3Op,
                     (GxB_binary_function) gb_max3_fp64,
-                    Tuple3, Tuple3, Tuple3, "gb_max3_fp64", MAX3_FP64)) ;
+                    Tuple3, Tuple3, Tuple3, "gb_max3_fp64", MAX3_FP64,
+                    arena)) ;
             }
-            OK (GrB_Monoid_new_UDT (&Monoid3, Mon3Op, &id3)) ;
+            OK (GxB_Monoid_new_arena_UDT (&Monoid3, Mon3Op, &id3, arena)) ;
         }
         else
         { 
-            OK (GxB_UnaryOp_new (&Getk, (GxB_unary_function) gb_getk_fp64,
-                GrB_INT64, Tuple, "gb_getk_fp64", GETK_FP64)) ;
-            OK (GxB_UnaryOp_new (&Getv, (GxB_unary_function) gb_getv_fp64,
-                GrB_FP64, Tuple, "gb_getv_fp64", GETV_FP64)) ;
+            OK (GxB_UnaryOp_new_arena (&Getk, (GxB_unary_function) gb_getk_fp64,
+                GrB_INT64, Tuple, "gb_getk_fp64", GETK_FP64, arena)) ;
+            OK (GxB_UnaryOp_new_arena (&Getv, (GxB_unary_function) gb_getv_fp64,
+                GrB_FP64, Tuple, "gb_getv_fp64", GETV_FP64, arena)) ;
         }
 
     }
@@ -3449,43 +3529,43 @@ void mexFunction
         { 
             // A is held by row
             // y = zeros (ncols,1) ;
-            OK (GrB_Matrix_new (&y, GrB_BOOL, ncols, 1)) ;
+            OK (GxB_Matrix_new_arena (&y, GrB_BOOL, ncols, 1, arena, arena)) ;
             OK (GrB_Matrix_assign_BOOL (y, NULL, NULL, 0,
                 GrB_ALL, ncols, GrB_ALL, 1, NULL)) ;
 
             // c = A*y using the argmin/argmax semiring
-            OK (GrB_Matrix_new (&c, Tuple, nrows, 1)) ;
+            OK (GxB_Matrix_new_arena (&c, Tuple, nrows, 1, arena, arena)) ;
             OK (GrB_mxm (c, NULL, NULL, Semiring, A, y, NULL)) ;
 
             // create z
-            OK (GrB_Matrix_new (&z, Tuple3, nrows, 1)) ;
+            OK (GxB_Matrix_new_arena (&z, Tuple3, nrows, 1, arena, arena)) ;
         }
         else
         { 
             // A is held by column (the default for MATLAB)
             // y = zeros (nrows,1) ;
-            OK (GrB_Matrix_new (&y, GrB_BOOL, nrows, 1)) ;
+            OK (GxB_Matrix_new_arena (&y, GrB_BOOL, nrows, 1, arena, arena)) ;
             OK (GrB_Matrix_assign_BOOL (y, NULL, NULL, 0,
                 GrB_ALL, nrows, GrB_ALL, 1, NULL)) ;
 
             // c = A'*y using the argmin/argmax semiring
-            OK (GrB_Matrix_new (&c, Tuple, ncols, 1)) ;
+            OK (GxB_Matrix_new_arena (&c, Tuple, ncols, 1, arena, arena)) ;
             OK (GrB_mxm (c, NULL, NULL, Semiring, A, y, GrB_DESC_T0)) ;
 
             // create z
-            OK (GrB_Matrix_new (&z, Tuple3, ncols, 1)) ;
+            OK (GxB_Matrix_new_arena (&z, Tuple3, ncols, 1, arena, arena)) ;
         }
 
         // z = make3 (c)
         OK (GrB_Matrix_apply_IndexOp_BOOL (z, NULL, NULL, Make3, c, 0, NULL)) ;
 
         // s = max3 (z)
-        OK (GrB_Scalar_new (&s, Tuple3)) ;
+        OK (GxB_Scalar_new_arena (&s, Tuple3, arena, arena)) ;
         OK (GrB_Matrix_reduce_Monoid_Scalar (s, NULL, Monoid3, z, NULL)) ;
 
         // x = s.v, p = {s.i, s.j}
-        OK (GrB_Matrix_new (&x, A_type, 1, 1)) ;
-        OK (GrB_Matrix_new (&p, GrB_INT64, 2, 1)) ;
+        OK (GxB_Matrix_new_arena (&x, A_type, 1, 1, arena, arena)) ;
+        OK (GxB_Matrix_new_arena (&p, GrB_INT64, 2, 1, arena, arena)) ;
         OK (GrB_Scalar_nvals (&nvals, s)) ;
         int64_t si = INT64_MAX, sj = INT64_MAX ;
         if (nvals > 0)
@@ -3594,17 +3674,17 @@ void mexFunction
             //------------------------------------------------------------------
 
             // y = zeros (nrows,1) ;
-            OK (GrB_Matrix_new (&y, GrB_BOOL, nrows, 1)) ;
+            OK (GxB_Matrix_new_arena (&y, GrB_BOOL, nrows, 1, arena, arena)) ;
             OK (GrB_Matrix_assign_BOOL (y, NULL, NULL, 0,
                 GrB_ALL, nrows, GrB_ALL, 1, NULL)) ;
 
             // c = A'*y using the argmin/argmax semiring
-            OK (GrB_Matrix_new (&c, Tuple, ncols, 1)) ;
+            OK (GxB_Matrix_new_arena (&c, Tuple, ncols, 1, arena, arena)) ;
             OK (GrB_mxm (c, NULL, NULL, Semiring, A, y, GrB_DESC_T0)) ;
 
             // create x and p
-            OK (GrB_Matrix_new (&x, A_type, ncols, 1)) ;
-            OK (GrB_Matrix_new (&p, GrB_INT64, ncols, 1)) ;
+            OK (GxB_Matrix_new_arena (&x, A_type, ncols, 1, arena, arena)) ;
+            OK (GxB_Matrix_new_arena (&p, GrB_INT64, ncols, 1, arena, arena)) ;
 
         }
         else
@@ -3615,17 +3695,17 @@ void mexFunction
             //------------------------------------------------------------------
 
             // y = zeros (ncols,1) ;
-            OK (GrB_Matrix_new (&y, GrB_BOOL, ncols, 1)) ;
+            OK (GxB_Matrix_new_arena (&y, GrB_BOOL, ncols, 1, arena, arena)) ;
             OK (GrB_Matrix_assign_BOOL (y, NULL, NULL, 0,
                 GrB_ALL, ncols, GrB_ALL, 1, NULL)) ;
 
             // c = A*y using the argmin/argmax semiring
-            OK (GrB_Matrix_new (&c, Tuple, nrows, 1)) ;
+            OK (GxB_Matrix_new_arena (&c, Tuple, nrows, 1, arena, arena)) ;
             OK (GrB_mxm (c, NULL, NULL, Semiring, A, y, NULL)) ;
 
             // create x and p
-            OK (GrB_Matrix_new (&x, A_type, nrows, 1)) ;
-            OK (GrB_Matrix_new (&p, GrB_INT64, nrows, 1)) ;
+            OK (GxB_Matrix_new_arena (&x, A_type, nrows, 1, arena, arena)) ;
+            OK (GxB_Matrix_new_arena (&p, GrB_INT64, nrows, 1, arena, arena)) ;
         }
 
         // x = getv (c)
@@ -3639,8 +3719,8 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (x_opaque, &x, KIND_GRB, err)) ;
-    OK (gb_export (p_opaque, &p, KIND_GRB, err)) ;
+    OK (gb_export (x_opaque, &x, KIND_GRB, ghb, err)) ;
+    OK (gb_export (p_opaque, &p, KIND_GRB, ghb, err)) ;
     gb_wrapup ( ) ;
 }
 

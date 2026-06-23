@@ -96,11 +96,8 @@ GrB_Info GxB_Type_new_arena
     if (type_name != NULL)
     {
         // copy the type_name into the working name
-        strncpy (t->name, type_name, GxB_MAX_NAME_LEN-1) ;
+        GB_string_copy (t->name, type_name, GxB_MAX_NAME_LEN) ;
     }
-
-    // ensure t->name is null-terminated
-    t->name [GxB_MAX_NAME_LEN-1] = '\0' ;
 
     // get the type name length and hash the name
     t->name_len = (int32_t) strlen (t->name) ;

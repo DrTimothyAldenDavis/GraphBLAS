@@ -11,7 +11,7 @@ ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 [m, n, type] = gbmex_size (G) ;
 
-if (gb_isfloat (type) && gbmex_nvals (G) > 0)   % FIXME remove nvals
+if (gb_isfloat (type))
     C = GrB (gbmex_apply (ghb, 'isnan', G)) ;
 else
     % C is all false

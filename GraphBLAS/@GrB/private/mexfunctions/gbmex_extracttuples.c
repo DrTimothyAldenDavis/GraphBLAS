@@ -34,7 +34,7 @@
     GrB_Vector_free (&X) ;          \
     GrB_Vector_free (&T) ;          \
     GrB_Matrix_free (&A_to_free) ;  \
-    gb_free (&x) ;
+    gb_free (&x, xarena) ;
 
 #include "gb_interface.h"
 
@@ -56,9 +56,12 @@ void mexFunction
     GrB_Matrix A = NULL, A_to_free = NULL ;
     GrB_Vector I = NULL, J = NULL, X = NULL, T = NULL ;
     void *x = NULL ;
+    int xarena = GrB_DEFAULT ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin >= 1+1 && nargin <= 2+1 && nargout <= 3, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     //--------------------------------------------------------------------------
     // find the arguments
@@ -143,7 +146,7 @@ void mexFunction
     // get the matrix; disable burble for scalars
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
     int burble ;
     bool disable_burble = (nrows <= 1 && ncols <= 1) ;
     if (disable_burble)
@@ -157,9 +160,9 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // type of I and J will be revised as needed by GxB_Matrix_extractTuples
-    if (extract_I) OK (GrB_Vector_new (&I, GrB_UINT64, 0)) ;
-    if (extract_J) OK (GrB_Vector_new (&J, GrB_UINT64, 0)) ;
-    if (extract_X) OK (GrB_Vector_new (&X, X_type, 0)) ;
+    if (extract_I) OK (GxB_Vector_new_arena (&I, GrB_UINT64, 0, arena, arena)) ;
+    if (extract_J) OK (GxB_Vector_new_arena (&J, GrB_UINT64, 0, arena, arena)) ;
+    if (extract_X) OK (GxB_Vector_new_arena (&X, X_type, 0, arena, arena)) ;
 
     //--------------------------------------------------------------------------
     // extract the tuples from A into I, J, and X
@@ -186,7 +189,7 @@ void mexFunction
         if (gbdesc.base == BASE_1_DOUBLE)
         { 
             // I = (double) (I + 1)
-            OK (GrB_Vector_new (&T, GrB_FP64, nvals)) ;
+            OK (GxB_Vector_new_arena (&T, GrB_FP64, nvals, arena, arena)) ;
             OK (GrB_Vector_apply_BinaryOp2nd_FP64 (T, NULL, NULL,
                 GrB_PLUS_FP64, I, base_offset, NULL)) ;
             GrB_Vector_free (&I) ;
@@ -200,13 +203,16 @@ void mexFunction
                 GrB_PLUS_UINT64, I, 1, NULL)) ;
         }
         uint64_t nvals2 ;
-        OK (GxB_Vector_unload (I, &x, &type, &nvals2, &size, &ignore, NULL)) ;
+        int handling ;
+        OK (GxB_Vector_unload (I, &x, &type, &nvals2, &size, &handling, NULL)) ;
+        xarena = (handling >= GxB_IS_READONLY) ?
+            (handling - GxB_IS_READONLY) : handling ;
         if (type == GrB_UINT32) type = GrB_INT32 ;
         if (type == GrB_UINT64) type = GrB_INT64 ;
         ASSERT (type == I_type) ;
         ASSERT (nvals == nvals2) ;
         GB_memcpy (I_out, x, nvals * I_typesize, nthreads) ;
-        gb_free (&x) ;
+        gb_free (&x, xarena) ;
         GrB_Vector_free (&I) ;
     }
 
@@ -219,7 +225,7 @@ void mexFunction
         if (gbdesc.base == BASE_1_DOUBLE)
         { 
             // J = (double) (J + 1)
-            OK (GrB_Vector_new (&T, GrB_FP64, nvals)) ;
+            OK (GxB_Vector_new_arena (&T, GrB_FP64, nvals, arena, arena)) ;
             OK (GrB_Vector_apply_BinaryOp2nd_FP64 (T, NULL, NULL,
                 GrB_PLUS_FP64, J, base_offset, NULL)) ;
             GrB_Vector_free (&J) ;
@@ -232,13 +238,16 @@ void mexFunction
             OK (GrB_Vector_apply_BinaryOp2nd_UINT64 (J, NULL, NULL,
                 GrB_PLUS_UINT64, J, 1, NULL)) ;
         }
-        OK (GxB_Vector_unload (J, &x, &type, &nvals2, &size, &ignore, NULL)) ;
+        int handling ;
+        OK (GxB_Vector_unload (J, &x, &type, &nvals2, &size, &handling, NULL)) ;
+        xarena = (handling >= GxB_IS_READONLY) ?
+            (handling - GxB_IS_READONLY) : handling ;
         if (type == GrB_UINT32) type = GrB_INT32 ;
         if (type == GrB_UINT64) type = GrB_INT64 ;
         ASSERT (type == J_type) ;
         ASSERT (nvals == nvals2) ;
         GB_memcpy (J_out, x, nvals * J_typesize, nthreads) ;
-        gb_free (&x) ;
+        gb_free (&x, xarena) ;
         GrB_Vector_free (&J) ;
     }
 
@@ -248,11 +257,14 @@ void mexFunction
 
     if (extract_X)
     { 
-        OK (GxB_Vector_unload (X, &x, &type, &nvals2, &size, &ignore, NULL)) ;
+        int handling ;
+        OK (GxB_Vector_unload (X, &x, &type, &nvals2, &size, &handling, NULL)) ;
+        xarena = (handling >= GxB_IS_READONLY) ?
+            (handling - GxB_IS_READONLY) : handling ;
         ASSERT (type == X_type) ;
         ASSERT (nvals == nvals2) ;
         GB_memcpy (X_out, x, nvals * X_typesize, nthreads) ;
-        gb_free (&x) ;
+        gb_free (&x, xarena) ;
         GrB_Vector_free (&X) ;
     }
 

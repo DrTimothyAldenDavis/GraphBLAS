@@ -35,6 +35,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix A = NULL, A_to_free = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin <= 1 && nargout <= 3, USAGE) ;
 
@@ -106,7 +107,7 @@ void mexFunction
             // memory below.  This eliminates any potential memory leaks if A
             // is a handle GrB matrix using malloc/free.
 
-            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
             OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
             OK (GrB_Matrix_get_INT32 (A, &sparsity, GxB_SPARSITY_STATUS)) ;
             OK (GrB_Matrix_get_INT32 (A, &iso, GxB_ISO)) ;

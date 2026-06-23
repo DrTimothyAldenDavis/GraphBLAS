@@ -78,9 +78,11 @@ void mexFunction
     GrB_BinaryOp dup = GxB_IGNORE_DUP ;
     GrB_Type type = NULL ;
     GrB_Scalar x = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin >= 3+1 && nargin <= 8+1 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
@@ -141,9 +143,11 @@ void mexFunction
     // get I, J, and X and their properties
     //--------------------------------------------------------------------------
 
-    OK (gb_matrix_to_list (&I1, &I_to_free, &(Matrix [0]), base_offset, err)) ;
-    OK (gb_matrix_to_list (&J1, &J_to_free, &(Matrix [1]), base_offset, err)) ;
-    OK (gb_matrix_to_list (&X1, &X_to_free, &(Matrix [2]), 0, err)) ;
+    OK (gb_matrix_to_list (&I1, &I_to_free, &(Matrix [0]), base_offset, arena,
+        err)) ;
+    OK (gb_matrix_to_list (&J1, &J_to_free, &(Matrix [1]), base_offset, arena,
+        err)) ;
+    OK (gb_matrix_to_list (&X1, &X_to_free, &(Matrix [2]), 0, arena, err)) ;
 
     // use the input I, J, X unless they are revised, below
     I = I1 ;
@@ -188,7 +192,7 @@ void mexFunction
             OK (GrB_Vector_reduce_UINT64 (&Imax, NULL, max, I, NULL)) ;
         }
         GrB_Type itype = (Imax < UINT32_MAX) ? GrB_UINT32 : GrB_UINT64 ;
-        OK (gb_expand_scalar_to_vector (&I2, I, itype, nvals, err)) ;
+        OK (gb_expand_scalar_to_vector (&I2, I, itype, nvals, arena, err)) ;
         I = I2 ;
     }
 
@@ -199,7 +203,7 @@ void mexFunction
             OK (GrB_Vector_reduce_UINT64 (&Jmax, NULL, max, J, NULL)) ;
         }
         GrB_Type jtype = (Jmax < UINT32_MAX) ? GrB_UINT32 : GrB_UINT64 ;
-        OK (gb_expand_scalar_to_vector (&J2, J, jtype, nvals, err)) ;
+        OK (gb_expand_scalar_to_vector (&J2, J, jtype, nvals, arena, err)) ;
         J = J2 ;
     }
 
@@ -344,7 +348,8 @@ void mexFunction
 
     OK (gb_get_format (nrows, ncols, NULL, NULL, &(gbdesc.fmt), err)) ;
     OK (gb_get_sparsity (NULL, NULL, &(gbdesc.sparsity), err)) ;
-    OK (gb_new (&C, type, nrows, ncols, gbdesc.fmt, gbdesc.sparsity, err)) ;
+    OK (gb_new (&C, type, nrows, ncols, gbdesc.fmt, gbdesc.sparsity, arena,
+        err)) ;
 
     if (nvals > 0)
     {
@@ -353,7 +358,7 @@ void mexFunction
         if (iso_build)
         { 
             // build an iso matrix, with no dup operator
-            OK (gb_get_first_scalar (&x, X, xtype, err)) ;
+            OK (gb_get_first_scalar (&x, X, xtype, arena, err)) ;
             OK1 (C, GxB_Matrix_build_Scalar_Vector (C, I, J, x, NULL)) ;
         }
         else
@@ -362,7 +367,8 @@ void mexFunction
             if (X_is_scalar)
             { 
                 // expand X from a scalar to a vector of length nvals
-                OK (gb_expand_scalar_to_vector (&X2, X, xtype, nvals, err)) ;
+                OK (gb_expand_scalar_to_vector (&X2, X, xtype, nvals, arena,
+                    err)) ;
                 X = X2 ;
             }
             OK1 (C, GxB_Matrix_build_Vector (C, I, J, X, dup, NULL)) ;
@@ -374,7 +380,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, gbdesc.kind, err)) ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind, ghb, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }

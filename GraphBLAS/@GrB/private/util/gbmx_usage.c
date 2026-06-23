@@ -9,32 +9,38 @@
 
 // This is a gbmx_* utility but it calls GrB_* methods.  However, if GrB_init
 // fails, it frees any memory it has allocated (such as the JIT hash table).
-// Since GrB_init relies on malloc/free, memory failures are properly handled.
+// Since GrB_init relies on the default allocates in arena 0 (malloc/free),
+// memory failures are properly handled.
 
 #include "gb_interface.h"
 
 //------------------------------------------------------------------------------
-// malloc/free for the default arena 0
+// malloc/free for each arena
 //------------------------------------------------------------------------------
 
 typedef void * (*malloc_t) (size_t) ;
 typedef void   (*free_t) (void *) ;
-static malloc_t gb_malloc0 = malloc ;
-static free_t   gb_free0 = free ;
+static malloc_t gb_malloc_func [4] = { malloc, NULL, mxMalloc, NULL } ;
+static free_t   gb_free_func   [4] = { free  , NULL, mxFree  , NULL } ;
 
-void *gb_malloc (size_t n)
+void *gb_malloc (size_t n, int arena)
 { 
-    // allocate memory in arena 0; at least 8 bytes
-    return (gb_malloc0 (MAX (n, sizeof (uint64_t)))) ;
+    // allocate memory in the arena; at least 8 bytes
+    if (arena < 0 || arena >= 4 || gb_malloc_func [arena] == NULL)
+    {
+        return (NULL) ;
+    }
+    return (gb_malloc_func [arena] (MAX (n, sizeof (uint64_t)))) ;
 }
 
-void gb_free (void **p)
+void gb_free (void **p, int arena)
 {
-    if (p != NULL && *p != NULL)
+    if (p != NULL && *p != NULL && arena >= 0 && arena < 4
+        && gb_free_func [arena] != NULL)
     { 
-        // free the pointer in arena 0 and set the pointer to NULL to indicate
+        // free the pointer in the arena and set the pointer to NULL to indicate
         // it has been freed.
-        gb_free0 (*p) ;
+        gb_free_func [arena] (*p) ;
         (*p) = NULL ;
     }
 }
@@ -72,10 +78,19 @@ void gbmx_usage     // check usage and make sure GrB.init has been called
         //----------------------------------------------------------------------
 
         OK (GrB_init (GrB_NONBLOCKING)) ;
+
+        // use mxMalloc/mxFree for the MATLAB arena
+        OK (GxB_arena_init (MXARENA, mxMalloc, mxCalloc, mxRealloc, mxFree)) ;
+
         OK (gb_defaults (err)) ;        // no memory allocated; "cannot" fail
 
-        OK (GrB_Global_get_VOID (GrB_GLOBAL, &gb_malloc0, GxB_ARENA_MALLOC)) ;
-        OK (GrB_Global_get_VOID (GrB_GLOBAL, &gb_free0, GxB_ARENA_MALLOC)) ;
+        for (int arena = 0 ; arena < 4 ; arena++)
+        { 
+            OK (GrB_Global_get_VOID (GrB_GLOBAL, &(gb_malloc_func [arena]),
+                GxB_ARENA_MALLOC)) ;
+            OK (GrB_Global_get_VOID (GrB_GLOBAL, &(gb_free_func [arena]),
+                GxB_ARENA_FREE)) ;
+        }
     }
 
     //--------------------------------------------------------------------------

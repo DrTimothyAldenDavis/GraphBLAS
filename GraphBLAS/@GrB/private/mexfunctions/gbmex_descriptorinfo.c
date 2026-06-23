@@ -32,6 +32,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Descriptor desc = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin <= 1 && nargout == 0, USAGE) ;
 
@@ -49,7 +50,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gbdesc.nondefault = true ;      // ensure the GrB_Descriptor is allocated
-    OK (gb_get_descriptor (&desc, &gbdesc, err)) ;
+    OK (gb_get_descriptor (&desc, &gbdesc, arena, err)) ;
     ASSERT (desc != NULL) ;
 
     //--------------------------------------------------------------------------

@@ -79,19 +79,19 @@
 
 // C is always returned as a GrB matrix.
 
-#define FREE_WORK                   \
-    gb_free ((void **) &Kx) ;       \
-    GrB_Matrix_free (&G) ;          \
-    GrB_Matrix_free (&K) ;          \
-    GrB_Matrix_free (&T) ;          \
-    GrB_Matrix_free (&M) ;          \
-    GrB_Matrix_free (&M_to_free) ;  \
-    GrB_Matrix_free (&A_copy) ;     \
+#define FREE_WORK                       \
+    gb_free ((void **) &Kx, arena) ;    \
+    GrB_Matrix_free (&G) ;              \
+    GrB_Matrix_free (&K) ;              \
+    GrB_Matrix_free (&T) ;              \
+    GrB_Matrix_free (&M) ;              \
+    GrB_Matrix_free (&M_to_free) ;      \
+    GrB_Matrix_free (&A_copy) ;         \
     GrB_Matrix_free (&A_to_free) ;
 
-#define FREE_ALL                    \
-    FREE_WORK ;                     \
-    GrB_Vector_free (&V) ;          \
+#define FREE_ALL                        \
+    FREE_WORK ;                         \
+    GrB_Vector_free (&V) ;              \
     GrB_Matrix_free (&C) ;
 
 #include "gb_interface.h"
@@ -117,9 +117,11 @@ void mexFunction
         M_input = NULL, M_to_free = NULL ;
     GrB_Vector V = NULL ;
     uint64_t *Kx = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 2+1 && nargout <= 1, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
@@ -140,9 +142,9 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // make sure A is stored by column
-    OK (gb_get_matrix (&A_input, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&A_input, &A_to_free, &(Matrix [0]), arena, err)) ;
 
-    OK (gb_by_col (&A, &A_copy, A_input, err)) ;
+    OK (gb_by_col (&A, &A_copy, A_input, arena, err)) ;
 
     GrB_Index nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
@@ -156,8 +158,9 @@ void mexFunction
     int not_bitmap = GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL ;
 
     // make M boolean, stored by column, and drop explicit zeros
-    OK (gb_get_matrix (&M_input, &M_to_free, &(Matrix [1]), err)) ;
-    OK (gb_new (&M, GrB_BOOL, nrows, ncols, GxB_BY_COL, not_bitmap, err)) ;
+    OK (gb_get_matrix (&M_input, &M_to_free, &(Matrix [1]), arena, err)) ;
+    OK (gb_new (&M, GrB_BOOL, nrows, ncols, GxB_BY_COL, not_bitmap, arena,
+        err)) ;
     OK1 (M, GrB_Matrix_select_BOOL (M, NULL, NULL, GrB_VALUENE_BOOL, M_input,
         0, NULL)) ;
     GrB_Matrix_free (&M_to_free) ;
@@ -177,7 +180,7 @@ void mexFunction
     // Also ensure the G is not bitmap.
     GrB_Type type ;
     OK (GxB_Matrix_type (&type, A)) ;
-    OK (gb_new (&G, type, nrows, ncols, GxB_BY_COL, not_bitmap, err)) ;
+    OK (gb_new (&G, type, nrows, ncols, GxB_BY_COL, not_bitmap, arena, err)) ;
     OK1 (G, GxB_Matrix_subassign (G, M, NULL,
         A, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
     GrB_Matrix_free (&A_copy) ;
@@ -226,7 +229,7 @@ void mexFunction
     // Kx = uint64 (0:mnz-1)
     size_t Kx_memsize = (MAX (mnz, 1) * sizeof (uint64_t)) ;
     uint64_t Kx_mem = GB_mem (GrB_DEFAULT, Kx_memsize) ;
-    Kx = gb_malloc (Kx_memsize) ;
+    Kx = gb_malloc (Kx_memsize, arena) ;
     if (Kx == NULL)
     {
         FREE_ALL ;
@@ -247,7 +250,8 @@ void mexFunction
     // T<G> = K
     //--------------------------------------------------------------------------
 
-    OK (gb_new (&T, GrB_UINT64, nrows, ncols, GxB_BY_COL, not_bitmap, err)) ;
+    OK (gb_new (&T, GrB_UINT64, nrows, ncols, GxB_BY_COL, not_bitmap, arena,
+        err)) ;
     OK1 (T, GxB_Matrix_subassign (T, G, NULL,
         K, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
 
@@ -275,15 +279,15 @@ void mexFunction
     // step takes constant time, using a transplant of the row indices Tx from
     // T and the values Gx from G.  V is sparse (not full, not hypersparse).
 
-    OK (GrB_Vector_new (&V, type, mnz)) ;
+    OK (GxB_Vector_new_arena (&V, type, mnz, arena, arena)) ;
     OK (GrB_Vector_set_INT32 (V, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
 
     GBMDUMP ("remove V->i from memtable: %p\n", V->i) ;
     GBMDUMP ("remove V->x from memtable: %p\n", V->x) ;
     GB_Global_memtable_remove (V->i) ;
-    gb_free ((void **) (&V->i)) ;
+    gb_free ((void **) (&V->i), arena) ;
     GB_Global_memtable_remove (V->x) ;
-    gb_free ((void **) (&V->x)) ;
+    gb_free ((void **) (&V->x), arena) ;
 
     // transplant values of T as the row indices of V
     V->i = (void *) Tx ;
@@ -318,7 +322,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, KIND_GRB, err)) ;
+    OK (gb_export (C_opaque, &C, KIND_GRB, ghb, err)) ;
     gb_wrapup ( ) ;
 }
 

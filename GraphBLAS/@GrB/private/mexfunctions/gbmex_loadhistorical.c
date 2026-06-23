@@ -52,9 +52,11 @@ void mexFunction
     GxB_Container Container = NULL ;
     GrB_Matrix *C_opaque = NULL, C = NULL, Y = NULL ;
     int burble = false ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 1+1 && nargout == 1, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
@@ -391,14 +393,14 @@ void mexFunction
     // import the contents of the S struct into a new read-only GrB_Matrix
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_new (&C, GrB_BOOL, 0, 0)) ;
+    OK (GxB_Matrix_new_arena (&C, GrB_BOOL, 0, 0, arena, arena)) ;
 
-    OK (GxB_Container_new (&Container)) ;
+    OK (GxB_Container_new_arena (&Container, arena, arena)) ;
 
     if (Yp != NULL)
     { 
         // import the Y matrix using the Container
-        OK (GrB_Matrix_new (&Y, GrB_UINT64, 0, 0)) ;
+        OK (GxB_Matrix_new_arena (&Y, GrB_UINT64, 0, 0, arena, arena)) ;
         Container->nrows = vdim ;
         Container->ncols = yvdim ;
         Container->nrows_nonempty = -1 ;
@@ -466,7 +468,7 @@ void mexFunction
 
     OK (GrB_Global_set_INT32 (GrB_GLOBAL, burble, GxB_BURBLE)) ;
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, KIND_GRB, err)) ;
+    OK (gb_export (C_opaque, &C, KIND_GRB, ghb, err)) ;
     gb_wrapup ( ) ;
 }
 

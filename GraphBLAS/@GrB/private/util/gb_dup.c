@@ -25,6 +25,7 @@ GrB_Info gb_dup             // copy a matrix
     GrB_Matrix *C_handle,   // copy of the input matrix
     // input:
     GrB_Matrix Cin,         // matrix to copy
+    const int arena,
     char err [ERRLEN]
 )
 { 
@@ -32,7 +33,7 @@ GrB_Info gb_dup             // copy a matrix
     GrB_Matrix C = NULL ;
     int fmt ;   // by row or by column
     OK (GrB_Matrix_get_INT32 (Cin, &fmt, GxB_FORMAT)) ;
-    OK (gb_typecast (&C, Cin, NULL, fmt, 0, err)) ;
+    OK (gb_typecast (&C, Cin, NULL, fmt, 0, arena, err)) ;
     (*C_handle) = C ;
     return (GrB_SUCCESS) ;
 }

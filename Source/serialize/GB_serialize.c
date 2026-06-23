@@ -412,7 +412,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
         #pragma GCC diagnostic ignored "-Wstringop-truncation"
         #endif
         #endif
-        strncpy ((char *) (blob + s), atype->name, GxB_MAX_NAME_LEN-1) ;
+        GB_string_copy ((char *) (blob + s), atype->name, GxB_MAX_NAME_LEN) ;
         s += GxB_MAX_NAME_LEN ;
     }
 

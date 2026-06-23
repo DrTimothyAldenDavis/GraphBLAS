@@ -19,9 +19,9 @@
     GrB_Matrix_free (&A_to_free) ;  \
     GrB_Descriptor_free (&desc) ;
 
-#define FREE_ALL                    \
-    FREE_WORK ;                     \
-    gb_free ((void **) &blob) ;     \
+#define FREE_ALL                        \
+    FREE_WORK ;                         \
+    gb_free ((void **) &blob, arena) ;  \
     GrB_Vector_free (&Blob) ;
 
 #include "gb_interface.h"
@@ -45,9 +45,11 @@ void mexFunction
     GrB_Vector Blob = NULL ;
     GrB_Descriptor desc = NULL ;
     void *blob = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE ((nargin >= 1+1 && nargin <= 3+1) && nargout <= 1, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&Blob_opaque) ;
 
@@ -81,7 +83,7 @@ void mexFunction
     // get input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
 
     //--------------------------------------------------------------------------
     // create descriptor
@@ -91,7 +93,7 @@ void mexFunction
     if (nargin > 2)
     { 
         // create the descriptor
-        OK (GrB_Descriptor_new (&desc)) ;
+        OK (GxB_Descriptor_new_arena (&desc, arena)) ;
         // get the method
         if (MATCH (method_name, "none"))
         { 
@@ -134,7 +136,7 @@ void mexFunction
     { 
         // debug GrB_Matrix_serializeSize and GrB_Matrix_serialize
         OK (GrB_Matrix_serializeSize (&blob_memsize, A)) ;
-        blob = gb_malloc (blob_memsize) ;
+        blob = gb_malloc (blob_memsize, arena) ;
         OK (GrB_Matrix_serialize (blob, &blob_memsize, A)) ;
         // shrink the blob to its actual size
         // blob = realloc (blob, blob_memsize) ;    // this is skipped
@@ -142,16 +144,16 @@ void mexFunction
     else
     { 
         // use GxB_Matrix_serialize by default
-        OK (GxB_Matrix_serialize (&blob, &blob_memsize, A, desc)) ;
+        OK (GxB_Matrix_serialize_arena (&blob, &blob_memsize, A, arena, desc)) ;
     }
 
     //--------------------------------------------------------------------------
     // transfer the blob into the output Blob vector
     //--------------------------------------------------------------------------
 
-    OK (GrB_Vector_new (&Blob, GrB_UINT8, blob_memsize)) ;
+    OK (GxB_Vector_new_arena (&Blob, GrB_UINT8, blob_memsize, arena, arena)) ;
     OK (GxB_Vector_load (Blob, &blob, GrB_UINT8, blob_memsize, blob_memsize,
-        GrB_DEFAULT, NULL)) ;
+        GrB_DEFAULT + arena, NULL)) ;
     ASSERT (blob == NULL) ;
 
     //--------------------------------------------------------------------------
@@ -159,7 +161,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (Blob_opaque, (GrB_Matrix *) &Blob, KIND_GRB, err)) ;
+    OK (gb_export (Blob_opaque, (GrB_Matrix *) &Blob, KIND_GRB, ghb, err)) ;
     gb_wrapup ( ) ;
 }
 

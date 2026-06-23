@@ -54,9 +54,11 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
     gb_matrix gb_Tiles = NULL ;
     int64_t m = 0, n = 0, mn = 0 ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin >= 1+1 && nargin <= 2+1 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
@@ -105,7 +107,7 @@ void mexFunction
     // get the GrB_Descriptor
     //--------------------------------------------------------------------------
 
-    OK (gb_get_descriptor (&desc, &gbdesc, err)) ;
+    OK (gb_get_descriptor (&desc, &gbdesc, arena, err)) ;
 
     //--------------------------------------------------------------------------
     // get the input matrices
@@ -115,7 +117,7 @@ void mexFunction
     { 
         // get the kth Tiles matrix; all arrays are row-major
         OK (gb_get_matrix (&(Tiles [k]), &(Tiles_to_free [k]),
-            &(gb_Tiles [k]), err)) ;
+            &(gb_Tiles [k]), arena, err)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -160,7 +162,8 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     OK (gb_get_format (cnrows, cncols, NULL, NULL, &(gbdesc.fmt), err)) ;
-    OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity, err)) ;
+    OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity, arena,
+        err)) ;
 
     //--------------------------------------------------------------------------
     // C = concatenate (Tiles)
@@ -173,7 +176,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, gbdesc.kind, err)) ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind, ghb, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }

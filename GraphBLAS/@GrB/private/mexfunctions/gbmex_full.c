@@ -50,9 +50,11 @@ void mexFunction
 
     GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_to_free = NULL,
         id = NULL, id_to_free = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin >= 1+1 && nargin <= 4+1 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
@@ -89,7 +91,7 @@ void mexFunction
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
@@ -115,7 +117,7 @@ void mexFunction
 
     if (nargin > 3)
     { 
-        OK (gb_get_matrix (&id, &id_to_free, &(Matrix [1]), err)) ;
+        OK (gb_get_matrix (&id, &id_to_free, &(Matrix [1]), arena, err)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -143,14 +145,14 @@ void mexFunction
     // expand A to a full matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_expand_to_full (&C, A, type, gbdesc.fmt, id, err)) ;
+    OK (gb_expand_to_full (&C, A, type, gbdesc.fmt, id, arena, err)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, gbdesc.kind, err)) ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind, ghb, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }

@@ -40,6 +40,7 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
     GrB_Matrix *C_handle,       // GrB_Matrix to export, set to NULL on output
     // input:
     kind_enum_t kind,           // GrB, sparse, full, or built-in
+    const bool ghb,
     char err [ERRLEN]
 )
 {
@@ -49,6 +50,7 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = NULL, T = NULL ;
+    int arena = ghb ? GrB_DEFAULT : MXARENA ;
     CHECK_ERROR (C_handle == NULL || (*C_handle == NULL), "internal error 13") ;
     C = (*C_handle) ;
 
@@ -96,7 +98,7 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
         //----------------------------------------------------------------------
 
         // Typecast to double, if C is integer (int8, ..., uint64)
-        OK (gb_export_to_sparse (C_handle, err)) ;
+        OK (gb_export_to_sparse (C_handle, arena, err)) ;
         C = (*C_handle) ;
 
     }
@@ -107,7 +109,7 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
         // export C as a @GrB matrix, to become a MATLAB full matrix
         //----------------------------------------------------------------------
 
-        OK (gb_export_to_full (C_handle, err)) ;
+        OK (gb_export_to_full (C_handle, arena, err)) ;
         C = (*C_handle) ;
     }
 

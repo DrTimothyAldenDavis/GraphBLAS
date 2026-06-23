@@ -32,6 +32,8 @@ GrB_Info gb_export_to_sparse
 (
     // input/output
     GrB_Matrix *C_handle,   // GraphBLAS matrix to modify for export to MATLAB
+    // intput
+    const int arena,
     char err [ERRLEN]
 )
 {
@@ -88,7 +90,7 @@ GrB_Info gb_export_to_sparse
             type = GrB_FP64 ;
         }
 
-        OK (gb_typecast (&T, C, type, GxB_BY_COL, GxB_SPARSE, err)) ;
+        OK (gb_typecast (&T, C, type, GxB_BY_COL, GxB_SPARSE, arena, err)) ;
         GrB_Matrix_free (C_handle) ;
         (*C_handle) = T ;
         T = NULL ;
@@ -112,7 +114,7 @@ GrB_Info gb_export_to_sparse
     { 
         op = GxB_VALUENE_FC64 ;
     }
-    OK (GrB_Scalar_new (&zero, type)) ;
+    OK (GxB_Scalar_new_arena (&zero, type, arena, arena)) ;
     OK (GrB_Scalar_setElement_FP64 (zero, 0)) ;
     OK1 (C, GrB_Matrix_select_Scalar (C, NULL, NULL, op, C, zero, NULL)) ;
 

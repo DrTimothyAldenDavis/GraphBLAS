@@ -15,7 +15,7 @@
 // The input matrix A must have no pending work.
 
 #define FREE_WORK                   \
-    gb_free (&x) ;                  \
+    gb_free (&x, xarena) ;          \
     GrB_Matrix_free (&A_to_free) ;  \
     GrB_Vector_free (&X_vector) ;
 
@@ -40,6 +40,8 @@ void mexFunction
     GrB_Vector X_vector = NULL ;
     GrB_Type xtype = NULL ;
     void *x = NULL ;
+    int xarena = GrB_DEFAULT ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 1 && nargout <= 1, USAGE) ;
 
@@ -76,7 +78,7 @@ void mexFunction
     // get the matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
@@ -95,13 +97,14 @@ void mexFunction
     int handling = 0 ;
     uint64_t X_memsize = 0, nvals2 = 0 ;
 
-    OK (GrB_Vector_new (&X_vector, X_type, 0)) ;
+    OK (GxB_Vector_new_arena (&X_vector, X_type, 0, arena, arena)) ;
     OK (GxB_Matrix_extractTuples_Vector (NULL, NULL, X_vector, A, NULL)) ;
     OK (GxB_Vector_unload (X_vector, &x, &xtype, &nvals2, &X_memsize,
         &handling, NULL)) ;
+    xarena = (handling >= GxB_IS_READONLY) ?
+        (handling - GxB_IS_READONLY) : handling ;
     ASSERT (xtype == X_type) ;
     ASSERT (nvals == nvals2) ;
-    ASSERT (handling == GrB_DEFAULT) ;
     GB_memcpy (X_out, x, nvals * X_typesize, nthreads) ;
 
     //--------------------------------------------------------------------------

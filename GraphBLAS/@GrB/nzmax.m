@@ -12,6 +12,6 @@ function e = nzmax (G)
 
 ghb = 1 ;     % 0 for GrB, 1 for GhB
 
-% FIXME: do not use nvals; it requires a wait...
+% NOTE: gbmex_nvals requires a wait...  consider an alternative approach
 e = max (gbmex_nvals (G), 1) ;
 

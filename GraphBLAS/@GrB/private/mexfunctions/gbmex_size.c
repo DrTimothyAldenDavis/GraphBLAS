@@ -35,6 +35,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix A = NULL, A_to_free = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 1 && nargout <= 4, USAGE) ;
 
@@ -51,7 +52,7 @@ void mexFunction
     // get the input matrix properties
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
 
     uint64_t anrows, ancols ;
     OK (GrB_Matrix_nrows (&anrows, A)) ;

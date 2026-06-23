@@ -53,9 +53,11 @@ void mexFunction
         M_to_free = NULL, A_to_free = NULL ;
     GrB_Vector I = NULL, J = NULL, I_to_free = NULL, J_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin >= 1+1 && nargin <= 7+1 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
@@ -94,7 +96,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gbdesc.nondefault = true ;      // ensure the GrB_Descriptor is allocated
-    OK (gb_get_descriptor (&desc, &gbdesc, err)) ;
+    OK (gb_get_descriptor (&desc, &gbdesc, arena, err)) ;
     ASSERT (desc != NULL) ;
 
     //--------------------------------------------------------------------------
@@ -103,18 +105,18 @@ void mexFunction
 
     if (nmatrices == 1)
     { 
-        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
     }
     else if (nmatrices == 2)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), err)) ;
-        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), err)) ;
+        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
     }
     else // if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), err)) ;
-        OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), err)) ;
-        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), err)) ;
+        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), arena, err)) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
     }
 
     OK (GxB_Matrix_type (&atype, A)) ;
@@ -169,23 +171,23 @@ void mexFunction
     { 
         // only J is present
         OK (gb_cell_to_list (&J, &J_to_free, &cncols, NULL,
-            Cell0_Matrix, Cell0_len, base_offset, ancols, err)) ;
+            Cell0_Matrix, Cell0_len, base_offset, ancols, arena, err)) ;
         jcells = Cell0_len ;
     }
     else if (ncells == 1)
     { 
         // only I is present
         OK (gb_cell_to_list (&I, &I_to_free, &cnrows, NULL,
-            Cell0_Matrix, Cell0_len, base_offset, anrows, err)) ;
+            Cell0_Matrix, Cell0_len, base_offset, anrows, arena, err)) ;
         icells = Cell0_len ;
     }
     else if (ncells == 2)
     { 
         // both I and J are present
         OK (gb_cell_to_list (&I, &I_to_free, &cnrows, NULL,
-            Cell0_Matrix, Cell0_len, base_offset, anrows, err)) ;
+            Cell0_Matrix, Cell0_len, base_offset, anrows, arena, err)) ;
         OK (gb_cell_to_list (&J, &J_to_free, &cncols, NULL,
-            Cell1_Matrix, Cell1_len, base_offset, ancols, err)) ;
+            Cell1_Matrix, Cell1_len, base_offset, ancols, arena, err)) ;
         icells = Cell0_len ;
         jcells = Cell1_len ;
     }
@@ -216,7 +218,7 @@ void mexFunction
         OK (gb_get_format (cnrows, cncols, A, NULL, &(gbdesc.fmt), err)) ;
         OK (gb_get_sparsity (A, NULL, &(gbdesc.sparsity), err)) ;
         OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity,
-            err)) ;
+            arena, err)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -230,7 +232,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, gbdesc.kind, err)) ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind, ghb, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }

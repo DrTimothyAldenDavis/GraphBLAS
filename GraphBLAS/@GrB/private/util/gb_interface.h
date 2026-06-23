@@ -89,7 +89,7 @@
     {                                                           \
         if (err [0] == '\0')                                    \
         {                                                       \
-            strncpy (err, errmsg, ERRLEN) ;                     \
+            GB_string_copy (err, errmsg, ERRLEN) ;              \
             err [ERRLEN-1] = '\0' ;                             \
         }                                                       \
         FREE_ALL ;                                              \
@@ -154,7 +154,7 @@
         {                                                           \
             /* copy the err2 string into err since err2 is freed */ \
             /* when C is freed */                                   \
-            strncpy (err, err2, ERRLEN) ;                           \
+            GB_string_copy (err, err2, ERRLEN) ;                    \
             err [ERRLEN-1] = '\0' ;                                 \
             ERROR (err, this_info) ;                                \
         }                                                           \
@@ -370,6 +370,7 @@ GrB_Info gb_by_col
     GrB_Matrix *A_copy_handle,  // copy made of A, stored by column, or NULL
     // input
     GrB_Matrix A_input,         // input matrix, by row or column
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -385,6 +386,7 @@ GrB_Info gb_cell_to_list
     const int len,              // # of items in Cell_Matrix
     const int base_offset,      // 1 or 0
     const uint64_t n,           // dimension of the matrix
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -420,6 +422,7 @@ GrB_Info gb_dup             // copy a matrix
     GrB_Matrix *C_handle,   // copy of the input matrix
     // input:
     GrB_Matrix Cin,         // matrix to copy
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -436,6 +439,7 @@ GrB_Info gb_expand_scalar_to_vector
     GrB_Vector W,
     GrB_Type type,
     uint64_t nvals,
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -448,6 +452,7 @@ GrB_Info gb_expand_to_full      // C = full (A), and typecast
     GrB_Type type,              // type of C, if NULL use the type of A
     int fmt,                    // format of C
     GrB_Matrix id,              // identity value, use zero if NULL
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -459,12 +464,14 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
     GrB_Matrix *C_handle,       // GrB_Matrix to export, set to NULL on output
     // input:
     kind_enum_t kind,           // GrB, sparse, full, or built-in
+    const bool ghb,
     char err [ERRLEN]
 ) ;
 
 GrB_Info gb_export_to_full
 (
     GrB_Matrix *C_handle,   // GraphBLAS matrix to modify for export to MATLAB
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -472,6 +479,8 @@ GrB_Info gb_export_to_sparse
 (
     // input/output
     GrB_Matrix *C_handle,   // GraphBLAS matrix to modify for export to MATLAB
+    // intput
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -497,6 +506,7 @@ GrB_Info gb_get_deep        // get the input/output matrix C
     // input:
     bool inplace,           // if true, C is modified in-place (C is Cin)
     gb_matrix matrix,       // input MATLAB or @GrB matrix
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -506,6 +516,7 @@ GrB_Info gb_get_descriptor
     GrB_Descriptor *desc_handle,    // GraphBLAS descriptor
     // input:
     gb_descriptor gbdesc,           // gb_descriptor, pointer to static struct
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -515,6 +526,7 @@ GrB_Info gb_get_descriptor_mxm
     GrB_Descriptor *desc_handle,    // GraphBLAS descriptor
     // input:
     gb_descriptor gbdesc,           // gb_descriptor, pointer to static struct
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -525,6 +537,7 @@ GrB_Info gb_get_first_scalar
     // input:
     GrB_Vector V,
     GrB_Type type,
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -546,6 +559,7 @@ GrB_Info gb_get_matlab_matrix    // shallow copy of MATLAB sparse matrix
     GrB_Matrix *A_handle,   // content of A is tagged GxB_IS_READONLY
     // input
     gb_matrix matrix,       // contents of a MATLAB matrix
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -557,6 +571,7 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
     GrB_Matrix *A_to_free,  // must be freed by the caller if not NULL
     // input
     gb_matrix X,            // input MATLAB or @GrB matrix
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -578,6 +593,7 @@ GrB_Info gb_is_all          // check two matrices for equality, given an op
     GrB_Matrix A,
     GrB_Matrix B,
     GrB_BinaryOp op,
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -606,6 +622,7 @@ GrB_Info gb_is_equal
     // input:
     GrB_Matrix A,
     GrB_Matrix B,
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -637,6 +654,7 @@ GrB_Info gb_matrix_to_list
     // inputs:
     gb_matrix matrix,
     const int base_offset,  // 1 or 0
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -659,6 +677,7 @@ GrB_Info gb_new       // create and empty matrix C
     uint64_t ncols,     // # of rows
     int fmt,            // requested format, if < 0 use default
     int sparsity,       // sparsity control for C, 0 for default
+    int arena,
     char err [ERRLEN]
 ) ;
 
@@ -669,6 +688,7 @@ GrB_Info gb_norm            // compute norm (A,kind)
     // inputs:
     GrB_Matrix A,
     int64_t norm_kind,      // 0, 1, 2, INT64_MAX, or INT64_MIN
+    const int arena,
     char err [ERRLEN]
 ) ;
 
@@ -804,12 +824,16 @@ GrB_Info gb_typecast  // C = (type) A, where C is deep
     GrB_Type type,      // if NULL, use the type of A
     int fmt,            // format of C
     int sparsity,       // sparsity control for C, if 0 use A
+    const int arena,
     char err [ERRLEN]
 ) ;
 
-// allocate/free memory space in the default arena 0:
-void *gb_malloc (size_t n) ;
-void gb_free (void **p) ;
+// allocate/free memory space in each arena:
+void *gb_malloc (size_t n, int arena) ;
+void gb_free (void **p, int arena) ;
+
+// the arena for mxMalloc/mxFree:
+#define MXARENA 2
 
 //------------------------------------------------------------------------------
 // mx-based utilties

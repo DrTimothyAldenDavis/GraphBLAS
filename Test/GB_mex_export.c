@@ -103,7 +103,7 @@ GrB_Info import_export ( )
             {
                 printf ("  row %llu value ", Ai [p]) ;
                 GB_entry_check (type, Ax + (iso ? 0:p)*asize, 5, stdout,
-                    &string, &string_mem, GB_ARENA_TEST) ;
+                    &string, &string_mem) ;
                 printf ("\n") ;
             }
             GB_FREE_MEMORY (&string, string_mem) ;
@@ -148,8 +148,7 @@ GrB_Info import_export ( )
                     {
                         printf ("  col %llu value ", Aj [p]) ;
                         GB_entry_check (type, Ax + (iso ? 0:p)*asize,
-                            5, stdout, &string, &string_mem,
-                            GB_ARENA_TEST) ;
+                            5, stdout, &string, &string_mem) ;
                         printf ("\n") ;
                     }
                 }
@@ -189,8 +188,7 @@ GrB_Info import_export ( )
                     {
                         printf ("  row %llu value ", Ai [p]) ;
                         GB_entry_check (type, Ax + (iso ? 0:p)*asize,
-                            5, stdout, &string, &string_mem,
-                            GB_ARENA_TEST) ;
+                            5, stdout, &string, &string_mem) ;
                         printf ("\n") ;
                     }
                 }
@@ -231,8 +229,7 @@ GrB_Info import_export ( )
                     {
                         printf ("  col %llu value ", Aj [p]) ;
                         GB_entry_check (type, Ax + (iso ? 0:p)*asize,
-                            5, stdout, &string, &string_mem,
-                            GB_ARENA_TEST) ;
+                            5, stdout, &string, &string_mem) ;
                         printf ("\n") ;
                     }
                 }
@@ -274,8 +271,7 @@ GrB_Info import_export ( )
                     {
                         printf ("  row %llu value ", Ai [p]) ;
                         GB_entry_check (type, Ax + (iso ? 0:p)*asize,
-                            5, stdout, &string, &string_mem,
-                            GB_ARENA_TEST) ;
+                            5, stdout, &string, &string_mem) ;
                         printf ("\n") ;
                     }
                 }

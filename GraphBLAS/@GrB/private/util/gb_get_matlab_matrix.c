@@ -8,7 +8,9 @@
 //------------------------------------------------------------------------------
 
 // The A->[pix] content is tagged GxB_IS_READONLY, so the arena (MATLAB
-// mxMalloc) doesn't matter; they are thus placed in the default arena.
+// mxMalloc) doesn't matter.  However, the pointers are tagged as in the
+// MXARENA anyway.  The header of A is placed in the arena determined by the
+// input parameter.
 
 #define GB_UTIL
 
@@ -27,6 +29,7 @@ GrB_Info gb_get_matlab_matrix    // shallow copy of MATLAB sparse matrix
     GrB_Matrix *A_handle,   // content of A is tagged GxB_IS_READONLY
     // input
     gb_matrix matrix,       // contents of a MATLAB matrix
+    const int arena,
     char err [ERRLEN]
 )
 {
@@ -39,9 +42,7 @@ GrB_Info gb_get_matlab_matrix    // shallow copy of MATLAB sparse matrix
 
     GxB_Container Container = NULL ;
 
-    // printf ("get container\n") ;
-    OK (GxB_Container_new (&Container)) ;
-    // printf ("got container %p\n", Container) ;
+    OK (GxB_Container_new_arena (&Container, arena, arena)) ;
 
     Container->nrows = matrix->nrows ;
     Container->ncols = matrix->ncols ;
@@ -58,9 +59,9 @@ GrB_Info gb_get_matlab_matrix    // shallow copy of MATLAB sparse matrix
         uint64_t Xp_memsize = (matrix->ncols + 1) * sizeof (uint64_t) ;
         uint64_t Xi_memsize = matrix->nvals * sizeof (uint64_t) ;
         OK (GxB_Vector_load (Container->p, (void **) &(matrix->p), GrB_UINT64,
-            matrix->ncols + 1, Xp_memsize, GxB_IS_READONLY, NULL)) ;
+            matrix->ncols + 1, Xp_memsize, GxB_IS_READONLY + MXARENA, NULL)) ;
         OK (GxB_Vector_load (Container->i, (void **) &(matrix->i), GrB_UINT64,
-            matrix->nvals, Xi_memsize, GxB_IS_READONLY, NULL)) ;
+            matrix->nvals, Xi_memsize, GxB_IS_READONLY + MXARENA, NULL)) ;
         Container->format = GxB_SPARSE ;
     }
     else
@@ -71,18 +72,14 @@ GrB_Info gb_get_matlab_matrix    // shallow copy of MATLAB sparse matrix
 
     uint64_t Xx_memsize = matrix->nvals * matrix->typesize  ;
     OK (GxB_Vector_load (Container->x, (void **) &(matrix->x), matrix->type,
-        matrix->nvals, Xx_memsize, GxB_IS_READONLY, NULL)) ;
-
-    // GxB_Matrix_fprint (Container->p, "Container->p", 5, NULL) ;
-    // GxB_Matrix_fprint (Container->i, "Container->i", 5, NULL) ;
-    // GxB_Matrix_fprint (Container->x, "Container->x", 5, NULL) ;
+        matrix->nvals, Xx_memsize, GxB_IS_READONLY + MXARENA, NULL)) ;
 
     //--------------------------------------------------------------------------
     // unload the Container into A
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_new (&A, matrix->type, matrix->nrows, matrix->ncols)) ;
-    // printf ("new matrix A: %p\n", A) ;
+    OK (GxB_Matrix_new_arena (&A, matrix->type, matrix->nrows, matrix->ncols,
+        arena, arena)) ;
     OK (GxB_load_Matrix_from_Container (A, Container, NULL)) ;
     (*A_handle) = A ;
 
@@ -90,7 +87,6 @@ GrB_Info gb_get_matlab_matrix    // shallow copy of MATLAB sparse matrix
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    // printf ("free container: %p\n", Container) ;
     FREE_WORK ;
     return (GrB_SUCCESS) ;
 }

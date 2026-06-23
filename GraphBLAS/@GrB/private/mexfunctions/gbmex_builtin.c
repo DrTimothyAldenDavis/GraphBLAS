@@ -49,6 +49,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix A = NULL, A_to_free = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 1 && nargout == 1, USAGE) ;
 
@@ -65,7 +66,7 @@ void mexFunction
     // get matrix input
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &Matrix, err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &Matrix, arena, err)) ;
     uint64_t *Ap = (uint64_t *) A->p ;
     uint64_t *Ai = (uint64_t *) A->i ;
     void *Ax = A->x ;
@@ -146,6 +147,7 @@ void mexFunction
 
     void *Cx = mxGetData (pargout [0]) ;
     GB_memcpy (Cx, Ax, Matrix.nvals * Matrix.typesize, nthreads) ;
+    FREE_WORK ;
     gb_wrapup ( ) ;
 }
 

@@ -70,8 +70,7 @@ GrB_Info GB_op_or_type_string_set
             }
 
             // set the name
-            strncpy (name, value, GxB_MAX_NAME_LEN-1) ;
-            name [GxB_MAX_NAME_LEN-1] = '\0' ;
+            GB_string_copy (name, value, GxB_MAX_NAME_LEN) ;
             (*name_len) = (int32_t) len ;
             // compute the hash if the type defn has also been set
             compute_hash = ((*defn) != NULL) ;

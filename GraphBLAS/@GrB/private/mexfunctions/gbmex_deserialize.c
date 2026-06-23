@@ -42,9 +42,11 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix *C_opaque = NULL, C = NULL, Blob = NULL, Blob_to_free = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 1+1 && nargout <= 1, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
@@ -60,7 +62,7 @@ void mexFunction
     // get the blob, normally a row or column vector, but can be a dense matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&Blob, &Blob_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&Blob, &Blob_to_free, &(Matrix [0]), arena, err)) ;
 
     bool Blob_is_dense = false ;
     OK (gb_is_dense (&Blob_is_dense, Blob, err)) ;
@@ -75,14 +77,15 @@ void mexFunction
     // deserialize the blob into a matrix
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_deserialize (&C, NULL, blob, blob_memsize)) ;
+    OK (GxB_Matrix_deserialize_arena (&C, NULL, blob, blob_memsize,
+        arena, arena, NULL)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, KIND_GRB, err)) ;
+    OK (gb_export (C_opaque, &C, KIND_GRB, ghb, err)) ;
     gb_wrapup ( ) ;
 }
 

@@ -31,8 +31,10 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix A = NULL, A_to_free = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 1 && nargout <= 1, USAGE) ;
+    // arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     //--------------------------------------------------------------------------
     // get the type of the input
@@ -63,7 +65,7 @@ void mexFunction
         // get the input matrix properties
         //----------------------------------------------------------------------
 
-        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
 
         GrB_Type type ;
         OK (GxB_Matrix_type (&type, A)) ;

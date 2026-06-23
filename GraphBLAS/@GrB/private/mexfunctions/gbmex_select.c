@@ -205,9 +205,11 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
     GrB_Scalar Zero = NULL ;
     GrB_IndexUnaryOp nan_test = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin >= 2+1 && nargin <= 7+1 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
@@ -234,7 +236,7 @@ void mexFunction
     // get the GrB_Descriptor
     //--------------------------------------------------------------------------
 
-    OK (gb_get_descriptor (&desc, &gbdesc, err)) ;
+    OK (gb_get_descriptor (&desc, &gbdesc, arena, err)) ;
 
     //--------------------------------------------------------------------------
     // get the select operator; determine the type and ithunk later
@@ -255,18 +257,18 @@ void mexFunction
     { 
         if (nmatrices == 1)
         { 
-            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
         }
         else if (nmatrices == 2)
         { 
-            OK (gb_get_deep   (&C, false,      &(Matrix [0]), err)) ;
-            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), err)) ;
+            OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
         }
         else if (nmatrices == 3)
         { 
-            OK (gb_get_deep   (&C, false,      &(Matrix [0]), err)) ;
-            OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), err)) ;
-            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), err)) ;
+            OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+            OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), arena, err)) ;
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
         }
         else // if (nmatrices == 4)
         { 
@@ -281,21 +283,21 @@ void mexFunction
         }
         else if (nmatrices == 2)
         { 
-            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
-            OK (gb_get_matrix (&b, &b_to_free, &(Matrix [1]), err)) ;
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
+            OK (gb_get_matrix (&b, &b_to_free, &(Matrix [1]), arena, err)) ;
         }
         else if (nmatrices == 3)
         { 
-            OK (gb_get_deep   (&C, false,      &(Matrix [0]), err)) ;
-            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), err)) ;
-            OK (gb_get_matrix (&b, &b_to_free, &(Matrix [2]), err)) ;
+            OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
+            OK (gb_get_matrix (&b, &b_to_free, &(Matrix [2]), arena, err)) ;
         }
         else // if (nmatrices == 4)
         { 
-            OK (gb_get_deep   (&C, false,      &(Matrix [0]), err)) ;
-            OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), err)) ;
-            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), err)) ;
-            OK (gb_get_matrix (&b, &b_to_free, &(Matrix [3]), err)) ;
+            OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+            OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), arena, err)) ;
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
+            OK (gb_get_matrix (&b, &b_to_free, &(Matrix [3]), arena, err)) ;
         }
     }
 
@@ -366,7 +368,7 @@ void mexFunction
         OK (gb_get_format (cnrows, cncols, A, NULL, &(gbdesc.fmt), err)) ;
         OK (gb_get_sparsity (A, NULL, &(gbdesc.sparsity), err)) ;
         OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity,
-            err)) ;
+            arena, err)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -377,7 +379,7 @@ void mexFunction
 
     if (thunk_zero)
     { 
-        OK (GrB_Scalar_new (&Zero, atype)) ;
+        OK (GxB_Scalar_new_arena (&Zero, atype, arena, arena)) ;
         OK (GrB_Scalar_setElement_INT32 (Zero, 0)) ;
         b2 = (GrB_Matrix) Zero ;
     }
@@ -389,7 +391,7 @@ void mexFunction
     if (op_is_positional)
     { 
         // construct a new int64 thunk scalar for positional ops
-        OK (GrB_Matrix_new (&b3, GrB_INT64, 1, 1)) ;
+        OK (GxB_Matrix_new_arena (&b3, GrB_INT64, 1, 1, arena, arena)) ;
         OK (GrB_Matrix_setElement_INT64 (b3, ithunk, 0, 0)) ;
         b2 = b3 ;
     }
@@ -429,59 +431,59 @@ void mexFunction
 
             if (idxunop == GrB_VALUEEQ_FP32)
             { 
-                OK (GxB_IndexUnaryOp_new (&nan_test,
+                OK (GxB_IndexUnaryOp_new_arena (&nan_test,
                     (GxB_index_unary_function) gb_isnan32,
                     GrB_BOOL, GrB_FP32, GrB_FP32,
-                    "gb_isnan32", ISNAN32_DEFN)) ;
+                    "gb_isnan32", ISNAN32_DEFN, arena)) ;
             }
             else if (idxunop == GrB_VALUEEQ_FP64)
             { 
-                OK (GxB_IndexUnaryOp_new (&nan_test,
+                OK (GxB_IndexUnaryOp_new_arena (&nan_test,
                     (GxB_index_unary_function) gb_isnan64,
                     GrB_BOOL, GrB_FP64, GrB_FP64,
-                    "gb_isnan64", ISNAN64_DEFN)) ;
+                    "gb_isnan64", ISNAN64_DEFN, arena)) ;
             }
             else if (idxunop == GxB_VALUEEQ_FC32)
             { 
-                OK (GxB_IndexUnaryOp_new (&nan_test,
+                OK (GxB_IndexUnaryOp_new_arena (&nan_test,
                     (GxB_index_unary_function) gb_isnanfc32,
                     GrB_BOOL, GxB_FC32, GxB_FC32,
-                    "gb_isnanfc32", ISNANFC32_DEFN)) ;
+                    "gb_isnanfc32", ISNANFC32_DEFN, arena)) ;
             }
             else if (idxunop == GxB_VALUEEQ_FC64)
             { 
-                OK (GxB_IndexUnaryOp_new (&nan_test,
+                OK (GxB_IndexUnaryOp_new_arena (&nan_test,
                     (GxB_index_unary_function) gb_isnanfc64,
                     GrB_BOOL, GxB_FC64, GxB_FC64,
-                    "gb_isnanfc64", ISNANFC64_DEFN)) ;
+                    "gb_isnanfc64", ISNANFC64_DEFN, arena)) ;
             }
             else if (idxunop == GrB_VALUENE_FP32)
             { 
-                OK (GxB_IndexUnaryOp_new (&nan_test,
+                OK (GxB_IndexUnaryOp_new_arena (&nan_test,
                     (GxB_index_unary_function) gb_isnotnan32,
                     GrB_BOOL, GrB_FP32, GrB_FP32,
-                    "gb_isnotnan32", ISNOTNAN32_DEFN)) ;
+                    "gb_isnotnan32", ISNOTNAN32_DEFN, arena)) ;
             }
             else if (idxunop == GrB_VALUENE_FP64)
             { 
-                OK (GxB_IndexUnaryOp_new (&nan_test,
+                OK (GxB_IndexUnaryOp_new_arena (&nan_test,
                     (GxB_index_unary_function) gb_isnotnan64,
                     GrB_BOOL, GrB_FP64, GrB_FP64,
-                    "gb_isnotnan64", ISNOTNAN64_DEFN)) ;
+                    "gb_isnotnan64", ISNOTNAN64_DEFN, arena)) ;
             }
             else if (idxunop == GxB_VALUENE_FC32)
             { 
-                OK (GxB_IndexUnaryOp_new (&nan_test,
+                OK (GxB_IndexUnaryOp_new_arena (&nan_test,
                     (GxB_index_unary_function) gb_isnotnanfc32,
                     GrB_BOOL, GxB_FC32, GxB_FC32,
-                    "gb_isnotnanfc32", ISNOTNANFC32_DEFN)) ;
+                    "gb_isnotnanfc32", ISNOTNANFC32_DEFN, arena)) ;
             }
             else if (idxunop == GxB_VALUENE_FC64)
             { 
-                OK (GxB_IndexUnaryOp_new (&nan_test,
+                OK (GxB_IndexUnaryOp_new_arena (&nan_test,
                     (GxB_index_unary_function) gb_isnotnanfc64,
                     GrB_BOOL, GxB_FC64, GxB_FC64,
-                    "gb_isnotnanfc64", ISNOTNANFC64_DEFN)) ;
+                    "gb_isnotnanfc64", ISNOTNANFC64_DEFN, arena)) ;
             }
         }
 
@@ -500,7 +502,7 @@ void mexFunction
     int code ;
     OK (GrB_IndexUnaryOp_get_INT32 (idxunop, &code, GrB_INP1_TYPE_CODE)) ;
     GrB_Type ytype = gb_code_to_type (code) ;
-    OK (GrB_Matrix_new (&b4, ytype, 1, 1)) ;
+    OK (GxB_Matrix_new_arena (&b4, ytype, 1, 1, arena, arena)) ;
     OK (GrB_Matrix_assign (b4, NULL, NULL, b2, GrB_ALL, 1, GrB_ALL, 1, NULL)) ;
     OK1 (C, GrB_Matrix_select_Scalar (C, M, accum, idxunop, A,
         (GrB_Scalar) b4, desc)) ;
@@ -510,7 +512,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, gbdesc.kind, err)) ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind, ghb, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }

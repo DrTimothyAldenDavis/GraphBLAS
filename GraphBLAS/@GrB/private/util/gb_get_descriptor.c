@@ -19,6 +19,7 @@ GrB_Info gb_get_descriptor
     GrB_Descriptor *desc_handle,    // GraphBLAS descriptor
     // input:
     gb_descriptor gbdesc,           // gb_descriptor, pointer to static struct
+    const int arena,
     char err [ERRLEN]
 )
 {
@@ -38,7 +39,7 @@ GrB_Info gb_get_descriptor
 
     if (gbdesc->nondefault)
     { 
-        OK (GrB_Descriptor_new (&desc)) ;
+        OK (GxB_Descriptor_new_arena (&desc, arena)) ;
         OK (GrB_Descriptor_set_INT32 (desc, gbdesc->out , GrB_OUTP)) ;
         OK (GrB_Descriptor_set_INT32 (desc, gbdesc->in0 , GrB_INP0)) ;
         OK (GrB_Descriptor_set_INT32 (desc, gbdesc->in1 , GrB_INP1)) ;

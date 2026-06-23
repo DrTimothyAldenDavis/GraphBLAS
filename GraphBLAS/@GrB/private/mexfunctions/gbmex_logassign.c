@@ -7,11 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// gbmex_logassign computes the built-in logical indexing expression C(M) = A.  The
-// matrices C and M must be the same size.  M is normally logical but it can be
-// of any type in this mexFunction.  M should not have any explicit zeros.  A
-// is a sparse vector of size nnz(M)-by-1.  Scalar expansion is not handled.
-// Use GrB.subassign (C, M, scalar) for that case.
+// gbmex_logassign computes the built-in logical indexing expression C(M) = A.
+// The matrices C and M must be the same size.  M is normally logical but it
+// can be of any type in this mexFunction.  M should not have any explicit
+// zeros.  A is a sparse vector of size nnz(M)-by-1.  Scalar expansion is not
+// handled.  Use GrB.subassign (C, M, scalar) for that case.
 
 // This function accesses opaque content and GB_methods inside GraphBLAS.
 
@@ -67,19 +67,19 @@
 
 // C is always returned as a GrB matrix.
 
-#define FREE_WORK                   \
-    gb_free ((void **) (&Si)) ;     \
-    gb_free ((void **) (&Sj)) ;     \
-    gb_free ((void **) (&Mj)) ;     \
-    GrB_Matrix_free (&S) ;          \
-    GrB_Matrix_free (&M) ;          \
-    GrB_Matrix_free (&M_to_free) ;  \
-    GrB_Matrix_free (&A_to_free) ;  \
-    GrB_Matrix_free (&A_copy) ;     \
+#define FREE_WORK                       \
+    gb_free ((void **) (&Si), arena) ;  \
+    gb_free ((void **) (&Sj), arena) ;  \
+    gb_free ((void **) (&Mj), arena) ;  \
+    GrB_Matrix_free (&S) ;              \
+    GrB_Matrix_free (&M) ;              \
+    GrB_Matrix_free (&M_to_free) ;      \
+    GrB_Matrix_free (&A_to_free) ;      \
+    GrB_Matrix_free (&A_copy) ;         \
     GrB_Matrix_free (&A_copy2) ;
 
-#define FREE_ALL                    \
-    FREE_WORK ;                     \
+#define FREE_ALL                        \
+    FREE_WORK ;                         \
     GrB_Matrix_free (&C) ;
 
 #include "gb_interface.h"
@@ -104,9 +104,11 @@ void mexFunction
         A = NULL, M_input = NULL, A_to_free = NULL, A_copy = NULL,
         A_copy2 = NULL, S = NULL ;
     uint64_t *Si = NULL, *Sj = NULL, *Mj = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 3+1 && nargout <= 1, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
@@ -125,7 +127,7 @@ void mexFunction
     // get a deep copy of C, of any sparsity structure
     //--------------------------------------------------------------------------
 
-    OK (gb_get_deep (&C, false, &(Matrix [0]), err)) ;
+    OK (gb_get_deep (&C, false, &(Matrix [0]), arena, err)) ;
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, C)) ;
     OK (GrB_Matrix_ncols (&ncols, C)) ;
@@ -135,10 +137,10 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // make M boolean, sparse/hyper, stored by column, and drop explicit zeros
-    OK (gb_get_matrix (&M_input, &M_to_free, &(Matrix [1]), err)) ;
+    OK (gb_get_matrix (&M_input, &M_to_free, &(Matrix [1]), arena, err)) ;
 
     OK (gb_new (&M, GrB_BOOL, nrows, ncols, GxB_BY_COL,
-        GxB_SPARSE + GxB_HYPERSPARSE, err)) ;
+        GxB_SPARSE + GxB_HYPERSPARSE, arena, err)) ;
     OK1 (M, GrB_Matrix_select_BOOL (M, NULL, NULL, GrB_VALUENE_BOOL, M_input,
         0, NULL)) ;
 
@@ -150,7 +152,7 @@ void mexFunction
     // get A
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
 
     GrB_Type atype ;
     uint64_t anrows, ancols, anz ;
@@ -166,7 +168,7 @@ void mexFunction
     // make sure A is not bitmap; it can be sparse, hypersparse, or full
     if (A_sparsity == GxB_BITMAP)
     { 
-        OK (GrB_Matrix_dup (&A_copy2, A)) ;
+        OK (GxB_Matrix_dup_arena (&A_copy2, A, arena, arena)) ;
         OK1 (A_copy2, GrB_Matrix_set_INT32 (A_copy2,
             GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL, GxB_SPARSITY_CONTROL)) ;
         A = A_copy2 ;
@@ -188,7 +190,7 @@ void mexFunction
         { 
             // A is 1-by-ancols and held by column: transpose it
             OK (gb_new (&A_copy, atype, mnz, 1, GxB_BY_COL,
-                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL, err)) ;
+                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL, arena, err)) ;
             OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A, NULL)) ;
             OK1 (A_copy, GrB_Matrix_wait (A_copy, GrB_MATERIALIZE)) ;
             A = A_copy ;
@@ -203,7 +205,7 @@ void mexFunction
         { 
             // A is anrows-by-1 and held by row: transpose it
             OK (gb_new (&A_copy, atype, 1, mnz, GxB_BY_ROW,
-                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL, err)) ;
+                GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL, arena, err)) ;
             OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A, NULL)) ;
             OK1 (A_copy, GrB_Matrix_wait (A_copy, GrB_MATERIALIZE)) ;
             A = A_copy ;
@@ -228,7 +230,7 @@ void mexFunction
 
     // FUTURE: use GxB_Matrix_extractTuples_Vector so Mj can be 32-bit
 
-    Mj = gb_malloc (mnz * sizeof (uint64_t)) ;
+    Mj = gb_malloc (mnz * sizeof (uint64_t), arena) ;
     if (Mj == NULL) ERROR ("out of memory", GrB_OUT_OF_MEMORY) ;
 
     OK (GrB_Matrix_extractTuples_BOOL (NULL, Mj, NULL, &mnz, M)) ;
@@ -239,19 +241,19 @@ void mexFunction
 
     // FUTURE: allow Si and Sj to be 32-bit
 
-    Si = gb_malloc (anz * sizeof (uint64_t)) ;
-    Sj = gb_malloc (anz * sizeof (uint64_t)) ;
+    Si = gb_malloc (anz * sizeof (uint64_t), arena) ;
+    Sj = gb_malloc (anz * sizeof (uint64_t), arena) ;
     if (Si == NULL || Sj == NULL) ERROR ("out of memory", GrB_OUT_OF_MEMORY) ;
 
     OK (GB_helper5 (Si, Sj, M->i, M->i_is_32, Mj, M->vlen, A->i, A->i_is_32,
         A->vlen, anz)) ;
-    OK (gb_new (&S, atype, nrows, ncols, GxB_BY_COL, 0, err)) ;
+    OK (gb_new (&S, atype, nrows, ncols, GxB_BY_COL, 0, arena, err)) ;
 
     if (A->iso)
     { 
         // build S as an iso matrix
         GrB_Scalar s = NULL ;
-        OK (GrB_Scalar_new (&s, atype)) ;
+        OK (GxB_Scalar_new_arena (&s, atype, arena, arena)) ;
         if (atype == GrB_BOOL)
         { 
             OK (GrB_Scalar_setElement_BOOL (s, (* ((bool *) Ax)))) ;
@@ -383,7 +385,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, KIND_GRB, err)) ;
+    OK (gb_export (C_opaque, &C, KIND_GRB, ghb, err)) ;
     gb_wrapup ( ) ;
 }
 

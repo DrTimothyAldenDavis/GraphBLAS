@@ -36,9 +36,11 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_to_free = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE ((nargin == 3+1 || nargin == 4+1) && nargout == 1, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
@@ -59,7 +61,7 @@ void mexFunction
     // get input matrix
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -67,14 +69,15 @@ void mexFunction
     // reshape the matrix
     //--------------------------------------------------------------------------
 
-    OK (GxB_Matrix_reshapeDup (&C, A, by_col, nrows_new, ncols_new, NULL)) ;
+    OK (GxB_Matrix_reshapeDup_arena (&C, A, by_col, nrows_new, ncols_new,
+        arena, arena, NULL)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, KIND_GRB, err)) ;
+    OK (gb_export (C_opaque, &C, KIND_GRB, ghb, err)) ;
     gb_wrapup ( ) ;
 }
 

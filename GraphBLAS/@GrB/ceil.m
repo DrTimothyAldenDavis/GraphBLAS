@@ -8,7 +8,7 @@ function C = ceil (G)
 
 ghb = 1 ;     % 0 for GrB, 1 for GhB
 
-if (gb_isfloat (gbmex_type (G)) && gbmex_nvals (G) > 0) % FIXME remove nvals
+if (gb_isfloat (gbmex_type (G)))
     C = GrB (gbmex_apply (ghb, 'ceil', G)) ;
 else
     C = GrB (G) ;

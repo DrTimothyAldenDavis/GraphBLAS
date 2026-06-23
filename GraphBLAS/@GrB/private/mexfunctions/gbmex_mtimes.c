@@ -57,9 +57,11 @@ void mexFunction
         A_to_free = NULL, B_to_free = NULL ;
     GrB_Scalar scalar = NULL, zero = NULL ;
     GrB_Descriptor desc = NULL ;
+    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin >= 2+1 && nargin <= 3+1 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     pargout [0] = gbmx_export_struct (&C_opaque) ;
     pargout [1] = mxCreateDoubleScalar (0) ;
@@ -85,14 +87,14 @@ void mexFunction
     // get the GrB_Descriptor
     //--------------------------------------------------------------------------
 
-    OK (gb_get_descriptor_mxm (&desc, &gbdesc, err)) ;
+    OK (gb_get_descriptor_mxm (&desc, &gbdesc, arena, err)) ;
 
     //--------------------------------------------------------------------------
     // get the matrices
     //--------------------------------------------------------------------------
 
-    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), err)) ;
-    OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]), err)) ;
+    OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
+    OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]), arena, err)) ;
 
     OK (GxB_Matrix_type (&atype, A)) ;
     OK (GxB_Matrix_type (&btype, B)) ;
@@ -105,7 +107,7 @@ void mexFunction
     GrB_Monoid plus_monoid = NULL ;
     GrB_Semiring plus_times = NULL ;
     char semiring_string [LEN+2] ;
-    strncpy (semiring_string, "+.*", LEN) ;
+    GB_string_copy (semiring_string, "+.*", LEN) ;
     OK (gb_string_to_semiring (&plus_times, semiring_string, atype, btype,
         err)) ;
     OK (GrB_Semiring_get_VOID (plus_times, (void *) &plus_monoid,
@@ -161,7 +163,8 @@ void mexFunction
     // create the matrix C and set its format and sparsity
     OK (gb_get_format (cnrows, cncols, A, B, &(gbdesc.fmt), err)) ;
     OK (gb_get_sparsity (A, B, &(gbdesc.sparsity), err)) ;
-    OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity, err)) ;
+    OK (gb_new (&C, ctype, cnrows, cncols, gbdesc.fmt, gbdesc.sparsity, arena,
+        err)) ;
 
     //--------------------------------------------------------------------------
     // compute C = A*B
@@ -179,7 +182,7 @@ void mexFunction
         if (nvals == 0)
         { 
             // zero = (ctype) 0
-            OK (GrB_Scalar_new (&zero, ctype)) ;
+            OK (GxB_Scalar_new_arena (&zero, ctype, arena, arena)) ;
             OK (GrB_Scalar_setElement_FP64 (zero, 0)) ;
             scalar = zero ;
         }
@@ -226,7 +229,7 @@ void mexFunction
                 GxB_SPARSITY_CONTROL)) ;
             // C = 0
             // zero = (ctype) 0
-            OK (GrB_Scalar_new (&zero, ctype)) ;
+            OK (GxB_Scalar_new_arena (&zero, ctype, arena, arena)) ;
             OK (GrB_Scalar_setElement_FP64 (zero, 0)) ;
             OK (GrB_Matrix_assign_Scalar (C, NULL, NULL, zero, GrB_ALL, cnrows,
                 GrB_ALL, cncols, NULL)) ;
@@ -254,7 +257,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-    OK (gb_export (C_opaque, &C, gbdesc.kind, err)) ;
+    OK (gb_export (C_opaque, &C, gbdesc.kind, ghb, err)) ;
     (*kind_output) = (double) gbdesc.kind ;
     gb_wrapup ( ) ;
 }

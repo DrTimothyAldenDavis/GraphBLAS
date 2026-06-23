@@ -26,6 +26,7 @@ GrB_Info gb_is_equal
     // input:
     GrB_Matrix A,
     GrB_Matrix B,
+    const int arena,
     char err [ERRLEN]
 )
 {
@@ -62,7 +63,7 @@ GrB_Info gb_is_equal
     }
 
     // check the size, pattern, and values of A and B
-    OK (gb_is_all (is_equal, A, B, op, err)) ;
+    OK (gb_is_all (is_equal, A, B, op, arena, err)) ;
     return (GrB_SUCCESS) ;
 }
 
