@@ -52,24 +52,27 @@ void gbmx_get_matrix
     { 
 
         //----------------------------------------------------------------------
-        // X is a @GhB handle object or @GrB value object
+        // X is a @GhB handle object
         //----------------------------------------------------------------------
 
-        // if ghb:
-            matrix->G = gbmx_get_ghb_matrix (X) ;
-            CHECK_ERROR (matrix->G == NULL, "invalid @GhB matrix") ;
-            matrix->will_wait = GB_will_wait (matrix->G) ;
-        // else grb
-        //  matrix->G = gbmx_get_grb_matrix (X) ;
-        //  CHECK_ERROR (matrix->G == NULL, "invalid @GrB matrix") ;
-        //  matrix->will_wait = false ;
-
-        // for both @GrB and @GhB objects:
+        matrix->G = gbmx_get_ghb_matrix (X) ;
+        CHECK_ERROR (matrix->G == NULL, "invalid @GhB matrix") ;
+        matrix->will_wait = GB_will_wait (matrix->G) ;
         matrix->nvals = GB_nnz (matrix->G) ; // valid if no pending work
         OK (GrB_Matrix_nrows (&matrix->nrows, matrix->G)) ;
         OK (GrB_Matrix_ncols (&matrix->ncols, matrix->G)) ;
         OK (GxB_Matrix_type (&matrix->type, matrix->G)) ;
         OK (GxB_Type_size (&(matrix->typesize), matrix->type)) ;
+
+    }
+    else if (0)
+    {
+
+        //----------------------------------------------------------------------
+        // X is a @GrB value object
+        //----------------------------------------------------------------------
+
+        gbmx_get_grb_matrix (matrix, X) ;
 
     }
     else
@@ -84,6 +87,8 @@ void gbmx_get_matrix
         OK (GxB_Type_size (&(matrix->typesize), matrix->type)) ;
         matrix->nrows = (uint64_t) mxGetM (X) ;
         matrix->ncols = (uint64_t) mxGetN (X) ;
+        matrix->by_col = true ;
+        matrix->nvec_nonempty = -1 ;
 
         if (matrix->nrows == 0 && matrix->ncols == 0)
         {
@@ -104,8 +109,6 @@ void gbmx_get_matrix
             //------------------------------------------------------------------
 
             matrix->sparsity = mxIsSparse (X) ? GxB_SPARSE : GxB_FULL ;
-            // get matrix->p, matrix->i, and matrix->nvals, which depend on
-            // whether or not the MATLAB matrix is sparse or full
             if (matrix->sparsity == GxB_SPARSE)
             { 
                 // X is a sparse MATLAB matrix
@@ -113,12 +116,12 @@ void gbmx_get_matrix
                 matrix->i = (void *) mxGetIr (X) ;
                 uint64_t *Xp = (uint64_t *) matrix->p ;
                 matrix->nvals = Xp [matrix->ncols] ;
+                matrix->plen = matrix->ncols ;
+                matrix->nvec = matrix->ncols ;
             }
             else
             { 
                 // X is a full MATLAB matrix
-                matrix->p = NULL ;
-                matrix->i = NULL ;
                 matrix->nvals = matrix->nrows * matrix->ncols ;
             }
             // get the matrix values

@@ -57,6 +57,10 @@ mxArray *gbmx_export_to_mxstruct    // return exported MATLAB struct G
     GrB_Matrix C = (*C_handle) ;
     GrB_Matrix Y = NULL ;
 
+    int readonly ;
+    OK (GrB_Matrix_get_INT32 (C, &readonly, GxB_IS_READONLY)) ;
+    CHECK_ERROR (readonly, "internal error 901") ;
+
     //--------------------------------------------------------------------------
     // extract the content of the GrB_Matrix and free it
     //--------------------------------------------------------------------------

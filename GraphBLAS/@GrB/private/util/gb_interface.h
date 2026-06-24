@@ -333,11 +333,12 @@ struct gb_matrix_struct
     void *Yi ;
     void *Yx ;
 
-    int64_t plen ;      // # of items in p
-    int64_t nvec ;
+    int64_t plen ;      // p has size plen+1 and h has size plen
+    int64_t nvec ;      // size of Yi and Yx and # entries in Y
     int64_t nvec_nonempty ;
-    int64_t yvdim ;
-    int64_t Yp_len ;
+
+    int64_t yncols ;
+    int64_t ynrows ;
 
     int sparsity ;      // sparse/hyper/bitmap/full
 
@@ -347,10 +348,6 @@ struct gb_matrix_struct
     bool i_is_32 ;      // type of i (32 bit or 64 bit)
 
     bool iso ;          // true if iso-valued
-
-    //--------------------------------------------------------------------------
-    // bool content for a MATLAB matrix
-    //--------------------------------------------------------------------------
 
     bool is_empty ;     // true for an empty MATLAB matrix
 
@@ -580,7 +577,7 @@ GrB_Info gb_get_format      // get the format (by row or by col)
     char err [ERRLEN]
 ) ;
 
-GrB_Info gb_get_matlab_matrix    // shallow copy of MATLAB sparse matrix
+GrB_Info gb_get_matlab_or_grb_matrix   // shallow copy of MATLAB or @GrB matrix
 (
     // output
     GrB_Matrix *A_handle,   // content of A is tagged GxB_IS_READONLY
@@ -898,6 +895,14 @@ mxArray *gbmx_get_ghb_handle    // the MATLAB @GhB opaque handle
 (
     // input
     const mxArray *G            // must be a @GhB object
+) ;
+
+void gbmx_get_grb_matrix        // get content of a @GrB matrix
+(
+    // output
+    gb_matrix matrix,
+    // input
+    const mxArray *X
 ) ;
 
 int64_t gbmx_get_int64_scalar   // return int64 value of a MATLAB scalar

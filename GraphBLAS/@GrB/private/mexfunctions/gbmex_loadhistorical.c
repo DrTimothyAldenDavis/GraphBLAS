@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmex_loadhistorical: create a shallow @GrB matrix for loadobj
+// gbmex_loadhistorical: create a shallow @GrB or @GhB matrix for loadobj
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// C = gbmex_loadhistorical (S) creates a new @GrB handle matrix for GraphBLAS
+// C = gbmex_loadhistorical (S) creates a new @GrB or @GhB matrix for GraphBLAS
 // 10.4.0 or later, from a struct created when a non-handle @GrB matrix was
 // saved to a *.mat file by GraphBLAS v10.3.1 or earlier.
 
@@ -31,8 +31,8 @@
 
 #include "gb_interface.h"
 
-#define IF(error,message) \
-    CHECK_ERROR (error, "invalid GraphBLAS struct (" message ")" ) ;
+// #define IF(error,message) \
+//    CHECK_ERROR (error, "invalid GraphBLAS struct (" message ")" ) ;
 
 #define USAGE "usage: C = gbmex_loadhistorical (ghb, S)"
 
@@ -51,18 +51,27 @@ void mexFunction
 
     GxB_Container Container = NULL ;
     GrB_Matrix *C_opaque = NULL, C = NULL, Y = NULL ;
-    int burble = false ;
+//  int burble = false ;
     int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin == 1+1 && nargout == 1, USAGE) ;
+    GBMX_USAGE (nargin == 2 && nargout == 1, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
+    CHECK_ERROR (!mxIsStruct (pargin [1]), USAGE " where S is a struct") ;
+
     pargout [0] = gbmx_export_struct (&C_opaque) ;
 
+    struct gb_matrix_struct Matrix [1] ;
+    gb_matrix matrix = &(Matrix [0]) ;
+
     //--------------------------------------------------------------------------
-    // check inputs
+    // get the content of the @GrB matrix from the struct
     //--------------------------------------------------------------------------
+
+    gbmx_get_grb_matrix (matrix, pargin [1]) ;
+
+#if 0
 
     CHECK_ERROR (!mxIsStruct (pargin [1]), USAGE " where S is a struct") ;
 
@@ -380,19 +389,61 @@ void mexFunction
         Ab = (Ab_size == 0) ? NULL : ((int8_t *) mxGetData (Ab_mx)) ;
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-
     //--------------------------------------------------------------------------
     // turn off the burble
     //--------------------------------------------------------------------------
 
-    OK (GrB_Global_get_INT32 (GrB_GLOBAL, &burble, GxB_BURBLE)) ;
-    OK (GrB_Global_set_INT32 (GrB_GLOBAL, false, GxB_BURBLE)) ;
+//  OK (GrB_Global_get_INT32 (GrB_GLOBAL, &burble, GxB_BURBLE)) ;
+//  OK (GrB_Global_set_INT32 (GrB_GLOBAL, false, GxB_BURBLE)) ;
+
+    memset (matrix, 0, sizeof (struct gb_matrix_struct)) ;
+    matrix->nvals = nvals ;
+    matrix->type = Ax_type ;
+    matrix->nrows = (by_col) ? vlen : vdim ;
+    matrix->ncols = (by_col) ? vdim : vlen ;
+    matrix->typesize = type_size ;
+
+    matrix->p = Ap ;
+    matrix->h = Ah ;
+    matrix->b = Ab ;
+    matrix->i = Ai ;
+    matrix->x = Ax ;
+
+    matrix->Yp = Yp ;
+    matrix->Yi = Yi ;
+    matrix->Yx = Yx ;
+
+    matrix->plen = plen ;
+    matrix->nvec = nvec ;
+    matrix->nvec_nonempty = nvec_nonempty ;
+    matrix->ynrows = vdim ;
+    matrix->yncols = yvdim ;
+
+    matrix->sparsity = sparsity_status ;
+
+    matrix->by_col = by_col ;
+    matrix->p_is_32 = Ap_is_32 ;
+    matrix->j_is_32 = Aj_is_32 ;
+    matrix->i_is_32 = Ai_is_32 ;
+
+    matrix->iso = iso ;
+
+    matrix->is_empty = false ;
+    matrix->will_wait = false ;
+#endif
+
+    ////////////////////////////////////////////////////////////////////////////
 
     //--------------------------------------------------------------------------
     // import the contents of the S struct into a new read-only GrB_Matrix
     //--------------------------------------------------------------------------
 
+//  printf ("\n===================== calling gb_get_matlab_or_grb_matrix \n") ;
+    OK (gb_get_matlab_or_grb_matrix (&C, matrix, arena, err)) ;
+//  OK (GxB_Matrix_fprint (C, "C first", 5, NULL)) ;
+    // GrB_Matrix_free (&C) ;
+
+#if 0
     OK (GxB_Matrix_new_arena (&C, GrB_BOOL, 0, 0, arena, arena)) ;
 
     OK (GxB_Container_new_arena (&Container, arena, arena)) ;
@@ -461,12 +512,13 @@ void mexFunction
         Ax_size, GxB_IS_READONLY, NULL)) ;
 
     OK (GxB_load_Matrix_from_Container (C, Container, NULL)) ;
+#endif
 
     //--------------------------------------------------------------------------
-    // restore the burble, free workspace, and return result
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
-    OK (GrB_Global_set_INT32 (GrB_GLOBAL, burble, GxB_BURBLE)) ;
+//  OK (GrB_Global_set_INT32 (GrB_GLOBAL, burble, GxB_BURBLE)) ;
     FREE_WORK ;
     OK (gb_export (C_opaque, &C, KIND_GRB, ghb, err)) ;
     gb_wrapup ( ) ;
