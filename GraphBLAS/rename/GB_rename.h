@@ -1258,6 +1258,7 @@
 #define GB_split_sparse GM_split_sparse
 #define GB_split_sparse_jit GM_split_sparse_jit
 #define GB_status_code GM_status_code
+#define GB_string_copy GM_string_copy
 #define GB_subassign_01 GM_subassign_01
 #define GB_subassign_02 GM_subassign_02
 #define GB_subassign_03 GM_subassign_03

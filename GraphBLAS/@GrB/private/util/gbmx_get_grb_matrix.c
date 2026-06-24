@@ -38,6 +38,15 @@ void gbmx_get_grb_matrix
     char err [ERRLEN] ;
     err [0] = '\0' ;
     memset (matrix, 0, sizeof (struct gb_matrix_struct)) ;
+    CHECK_ERROR (X == NULL, "matrix is missing; internal error 899") ;
+
+    if (mxIsClass (X, "GrB"))
+    { 
+        // X is a @GrB object; get its opaque content (which must be a struct).
+        X = mxGetProperty (X, 0, "opaque") ;
+    }
+
+    CHECK_ERROR (!mxIsStruct (X), "input matrix is mangled") ;
 
     bool GraphBLASv10 = false ;
     bool GraphBLASv4 = false ;
@@ -350,7 +359,7 @@ void gbmx_get_grb_matrix
     }
 
     //--------------------------------------------------------------------------
-    // turn off the burble
+    // load the results into the matrix struct
     //--------------------------------------------------------------------------
 
     matrix->nvals = nvals ;

@@ -593,7 +593,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     // allocate the tasks, and workspace to construct fine tasks
     //--------------------------------------------------------------------------
 
-    SaxpyTasks = GB_MALLOC_MEMORY ((*ntasks), sizeof (GB_saxpy3task_struct),
+    SaxpyTasks = GB_CALLOC_MEMORY ((*ntasks), sizeof (GB_saxpy3task_struct),
         &SaxpyTasks_mem) ;
     GB_WERK_PUSH (Coarse_Work, nthreads_max, int64_t) ;
     if (max_bjnz > 0)
@@ -613,9 +613,6 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-
-    // clear SaxpyTasks
-    memset (SaxpyTasks, 0, SaxpyTasks_mem) ;
 
     //--------------------------------------------------------------------------
     // create the tasks

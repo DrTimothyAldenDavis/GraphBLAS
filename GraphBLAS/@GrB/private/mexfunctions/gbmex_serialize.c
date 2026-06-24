@@ -15,8 +15,8 @@
 
 // The blob is returned as the opaque content of an n-by-1 uint8 @GrB matrix.
 
-#define FREE_WORK                   \
-    GrB_Matrix_free (&A_to_free) ;  \
+#define FREE_WORK                       \
+    GrB_Matrix_free (&A_to_free) ;      \
     GrB_Descriptor_free (&desc) ;
 
 #define FREE_ALL                        \
@@ -48,10 +48,10 @@ void mexFunction
     int arena = GrB_DEFAULT ;
 
     GBMX_USAGE ((nargin >= 1+1 && nargin <= 3+1) && nargout <= 1, USAGE) ;
-    bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    bool ghb = false ; // HACK (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    pargout [0] = gbmx_export_struct (&Blob_opaque) ;
+    if (ghb) pargout [0] = gbmx_export_struct (&Blob_opaque) ;
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -161,7 +161,14 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
+
     OK (gb_export (Blob_opaque, (GrB_Matrix *) &Blob, KIND_GRB, ghb, err)) ;
+    ////////////////////////////////////////////////////////////////////////////
+    if (!ghb)
+    { 
+        pargout [0] = gbmx_export_to_mxstruct ((GrB_Matrix *) &Blob) ;
+    }
+
     gb_wrapup ( ) ;
 }
 

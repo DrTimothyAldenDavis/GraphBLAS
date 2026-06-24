@@ -12,6 +12,8 @@
 // the default), and configured to use the SuiteSparse:GraphBLAS functions
 // in place of malloc/calloc/free.
 
+// FIXME: should LZ4 use the current data arena?
+
 #include "GB.h"
 #include "serialize/GB_serialize.h"
 #include "lz4_wrapper/GB_lz4.h"

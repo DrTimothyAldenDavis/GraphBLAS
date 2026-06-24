@@ -55,7 +55,7 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
 
     if (matrix->G != NULL)
     { 
-        // matrix is a @GrB or @GhB object
+        // matrix is a @GhB handle object
         (*A_handle) = matrix->G ;
         (*A_to_free) = NULL ;           // no shallow copy to free when done
     }
@@ -70,8 +70,8 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
     }
     else
     { 
-        // construct a shallow GrB_Matrix copy of a built-in MATLAB matrix,
-        // which must be freed by the caller when done.
+        // construct a shallow GrB_Matrix copy of a built-in MATLAB matrix or
+        // a @GrB value object, which must be freed by the caller when done.
         OK (gb_get_matlab_or_grb_matrix (&A, matrix, arena, err)) ;
         (*A_handle) = A ;
         (*A_to_free) = A ;

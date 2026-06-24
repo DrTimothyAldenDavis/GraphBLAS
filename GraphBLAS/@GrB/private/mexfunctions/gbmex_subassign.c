@@ -19,6 +19,7 @@
 //      C = gbmex_subassign (ghb, Cin, M, accum, A, I, J, desc)
 
 // Cin and A required.  See GrB.m for more details.
+// C can be modified inplace.
 
 #include "gb_interface.h"
 

@@ -76,7 +76,6 @@
     // error handling for gb_* utilities
     #define ERROR2(errmsg,arg,info)                             \
     {                                                           \
-        printf ("Hey %d : %s\n", __LINE__, __FILE__) ; \
         if (err [0] == '\0')                                    \
         {                                                       \
             snprintf (err, ERRLEN, errmsg, arg) ;               \
@@ -88,7 +87,6 @@
 
     #define ERROR(errmsg,info)                                  \
     {                                                           \
-        printf ("Hey %d : %s\n", __LINE__, __FILE__) ; \
         if (err [0] == '\0')                                    \
         {                                                       \
             GB_string_copy (err, errmsg, ERRLEN) ;              \
@@ -103,14 +101,12 @@
     // error handling for mexFunctions and gbmx_* utilities
     #define ERROR2(errmsg,arg,info)                             \
     {                                                           \
-        printf ("Hey %d : %s\n", __LINE__, __FILE__) ; \
         gbcov_put ( ) ;                                         \
         FREE_ALL ;                                              \
         mexErrMsgIdAndTxt ("GrB:error", errmsg, arg) ;          \
     }
     #define ERROR(errmsg,info)                                  \
     {                                                           \
-        printf ("Hey %d : %s\n", __LINE__, __FILE__) ; \
         gbcov_put ( ) ;                                         \
         FREE_ALL ;                                              \
         mexErrMsgIdAndTxt ("GrB:error", errmsg) ;               \
@@ -130,7 +126,6 @@
     GrB_Info this_info = method ;                           \
     if (this_info != GrB_SUCCESS)                           \
     {                                                       \
-        printf ("Hey %d : %s\n", __LINE__, __FILE__) ; \
         const char *errmsg = (err [0] != '\0') ? err :      \
             gb_error_string (this_info) ;                   \
         ERROR (errmsg, this_info) ;                         \
@@ -142,7 +137,6 @@
     GrB_Info this_info = method ;                                   \
     if (!(this_info == GrB_SUCCESS || this_info == GrB_NO_VALUE))   \
     {                                                               \
-        printf ("Hey %d : %s\n", __LINE__, __FILE__) ; \
         const char *errmsg = (err [0] != '\0') ? err :              \
             gb_error_string (this_info) ;                           \
         ERROR (errmsg, this_info) ;                                 \
@@ -154,7 +148,6 @@
     GrB_Info this_info = method ;                                   \
     if (this_info != GrB_SUCCESS)                                   \
     {                                                               \
-        printf ("Hey %d : %s\n", __LINE__, __FILE__) ; \
         const char *err2 ;                                          \
         GrB_Matrix_error (&err2, C) ;                               \
         if (err2 != NULL && err2 [0] != '\0')                       \

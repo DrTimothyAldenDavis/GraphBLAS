@@ -55,12 +55,12 @@ void mexFunction
     int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 2 && nargout == 1, USAGE) ;
-    bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    bool ghb = false ; // HACK (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     CHECK_ERROR (!mxIsStruct (pargin [1]), USAGE " where S is a struct") ;
 
-    pargout [0] = gbmx_export_struct (&C_opaque) ;
+    if (ghb) pargout [0] = gbmx_export_struct (&C_opaque) ;
 
     struct gb_matrix_struct Matrix [1] ;
     gb_matrix matrix = &(Matrix [0]) ;
@@ -438,10 +438,7 @@ void mexFunction
     // import the contents of the S struct into a new read-only GrB_Matrix
     //--------------------------------------------------------------------------
 
-//  printf ("\n===================== calling gb_get_matlab_or_grb_matrix \n") ;
     OK (gb_get_matlab_or_grb_matrix (&C, matrix, arena, err)) ;
-//  OK (GxB_Matrix_fprint (C, "C first", 5, NULL)) ;
-    // GrB_Matrix_free (&C) ;
 
 #if 0
     OK (GxB_Matrix_new_arena (&C, GrB_BOOL, 0, 0, arena, arena)) ;
@@ -518,9 +515,15 @@ void mexFunction
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-//  OK (GrB_Global_set_INT32 (GrB_GLOBAL, burble, GxB_BURBLE)) ;
     FREE_WORK ;
+
     OK (gb_export (C_opaque, &C, KIND_GRB, ghb, err)) ;
+    ////////////////////////////////////////////////////////////////////////////
+    if (!ghb)
+    { 
+        pargout [0] = gbmx_export_to_mxstruct (&C) ;
+    }
+
     gb_wrapup ( ) ;
 }
 

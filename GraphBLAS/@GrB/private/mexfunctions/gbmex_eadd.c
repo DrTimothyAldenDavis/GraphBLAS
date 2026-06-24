@@ -25,6 +25,8 @@
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A, B, and the descriptor).
 
+// C can be modified inplace.
+
 #include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.eadd (Cin, M, accum, binop, A, B, desc)"

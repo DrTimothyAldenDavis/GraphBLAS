@@ -12,6 +12,8 @@
 // the default), and configured to use the SuiteSparse:GraphBLAS functions
 // in place of malloc/calloc/free.
 
+// FIXME: should ZSTD use the current data arena?
+
 #include "GB.h"
 #include "serialize/GB_serialize.h"
 #include "zstd_wrapper/GB_zstd.h"

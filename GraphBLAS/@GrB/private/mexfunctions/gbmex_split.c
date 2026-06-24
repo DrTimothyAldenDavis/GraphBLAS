@@ -50,7 +50,7 @@ void mexFunction
     int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 3+1 && nargout <= 1, USAGE) ;
-    bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    bool ghb = false ; // HACK (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     //--------------------------------------------------------------------------
@@ -62,17 +62,22 @@ void mexFunction
     uint64_t *Tile_ncols = gbmx_get_integer_list (pargin [3], &n) ;
 
     GrB_Matrix *Tiles = mxCalloc (m * n, sizeof (GrB_Matrix)) ;
-    GrB_Matrix **Tiles_opaque = mxCalloc (m * n, sizeof (GrB_Matrix *)) ;
+    GrB_Matrix **Tiles_opaque = NULL ;
 
     pargout [0] = mxCreateCellMatrix (m, n) ;
-    for (int64_t i = 0 ; i < m ; i++)
-    { 
-        for (int64_t j = 0 ; j < n ; j++)
+
+    if (ghb)
+    {
+        Tiles_opaque = mxCalloc (m * n, sizeof (GrB_Matrix *)) ;
+        for (int64_t i = 0 ; i < m ; i++)
         { 
-            // pargout [0] and Tiles_opaque are in column-major form
-            mxArray *mxCell_entry = 
-                gbmx_export_struct (&(Tiles_opaque [i+j*m])) ;
-            mxSetCell (pargout [0], i+j*m, mxCell_entry) ;
+            for (int64_t j = 0 ; j < n ; j++)
+            { 
+                // pargout [0] and Tiles_opaque are in column-major form
+                mxArray *mxCell_entry = 
+                    gbmx_export_struct (&(Tiles_opaque [i+j*m])) ;
+                mxSetCell (pargout [0], i+j*m, mxCell_entry) ;
+            }
         }
     }
 
@@ -104,7 +109,8 @@ void mexFunction
         { 
             // Tiles is in row-major form;
             // Tiles_opaque is in column-major form
-            GrB_Matrix *Cell_opaque = Tiles_opaque [i+j*m] ;
+            GrB_Matrix *Cell_opaque = NULL ;
+            if (ghb) Cell_opaque = Tiles_opaque [i+j*m] ;
             OK (gb_export (Cell_opaque, &Tiles [i*n+j], KIND_GRB, ghb, err)) ;
         }
     }
@@ -112,6 +118,21 @@ void mexFunction
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
+
+    ////////////////////////////////////////////////////////////////////////////
+    if (!ghb)
+    { 
+        for (int64_t i = 0 ; i < m ; i++)
+        { 
+            for (int64_t j = 0 ; j < n ; j++)
+            { 
+                // Tiles is in row-major form;
+                // pargout [0] is in column-major form
+                mxSetCell (pargout [0], i+j*m,  
+                    gbmx_export_to_mxstruct (&Tiles [i*n+j])) ;
+            }
+        }
+    }
 
     FREE_WORK ;
     gb_wrapup ( ) ;

@@ -1,4 +1,4 @@
-classdef (HandleCompatible) GrB < handle
+classdef (HandleCompatible) GrB % < handle
 %GrB GraphBLAS sparse matrices for Octave/MATLAB.
 %
 % GraphBLAS is a library for creating graph algorithms based on sparse
@@ -482,7 +482,7 @@ classdef (HandleCompatible) GrB < handle
 %   The @GrB matrix is a handle object, so C can also be modified in place.
 %   Using this in-place syntax:
 %
-% FIXME: modify C in place for these 12
+% FIXME: modify C inplace for these 14
 %
 %       GrB.apply     (C, M, accum, op, A,          desc)
 %       GrB.apply2    (C, M, accum, op, A, B,       desc)
@@ -672,10 +672,10 @@ methods
     %---------------------------------------------------------------------
 
 % FIXME: for GhB only:
-    function delete (C)
-    %DELETE delete a GraphBLAS matrix
-    gbmex_delete (C) ;
-    end
+%   function delete (C)
+%   %DELETE delete a GraphBLAS matrix
+%   gbmex_delete (C) ;
+%   end
 
     %---------------------------------------------------------------------
     % implicitly-defined methods

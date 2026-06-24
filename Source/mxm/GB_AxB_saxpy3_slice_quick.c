@@ -48,16 +48,13 @@ GrB_Info GB_AxB_saxpy3_slice_quick
 
     uint64_t SaxpyTasks_mem = mem ;
     GB_saxpy3task_struct
-        *SaxpyTasks = GB_MALLOC_MEMORY (1, sizeof (GB_saxpy3task_struct),
+        *SaxpyTasks = GB_CALLOC_MEMORY (1, sizeof (GB_saxpy3task_struct),
             &SaxpyTasks_mem) ;
     if (SaxpyTasks == NULL)
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
-
-    // clear SaxpyTasks
-    memset (SaxpyTasks, 0, SaxpyTasks_mem) ;
 
     //--------------------------------------------------------------------------
     // create a single coarse Gustavson task

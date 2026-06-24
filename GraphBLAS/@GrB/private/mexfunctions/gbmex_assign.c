@@ -7,12 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// gbmex_assign is an interface to GrB_Matrix_assign and GrB_Matrix_assign_[TYPE],
-// computing the GraphBLAS expression:
+// gbmex_assign is an interface to GrB_Matrix_assign and
+// GrB_Matrix_assign_[TYPE], computing the GraphBLAS expression:
 
 //      C<#M,replace>(I,J) = accum (C(I,J), A) or accum(C(I,J), A')
 
 // where A can be a matrix or a scalar.
+// C can be modified inplace.
 
 // Usage:
 

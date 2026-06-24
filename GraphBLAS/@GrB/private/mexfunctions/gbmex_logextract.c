@@ -120,10 +120,10 @@ void mexFunction
     int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 2+1 && nargout <= 1, USAGE) ;
-    bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    bool ghb = false ; // HACK (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    pargout [0] = gbmx_export_struct (&C_opaque) ;
+    if (ghb) pargout [0] = gbmx_export_struct (&C_opaque) ;
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -228,7 +228,7 @@ void mexFunction
 
     // Kx = uint64 (0:mnz-1)
     size_t Kx_memsize = (MAX (mnz, 1) * sizeof (uint64_t)) ;
-    uint64_t Kx_mem = GB_mem (GrB_DEFAULT, Kx_memsize) ;
+    uint64_t Kx_mem = GB_mem (arena, Kx_memsize) ;
     Kx = gb_malloc (Kx_memsize, arena) ;
     if (Kx == NULL)
     {
@@ -322,7 +322,14 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
+
     OK (gb_export (C_opaque, &C, KIND_GRB, ghb, err)) ;
+    ////////////////////////////////////////////////////////////////////////////
+    if (!ghb)
+    { 
+        pargout [0] = gbmx_export_to_mxstruct (&C) ;
+    }
+
     gb_wrapup ( ) ;
 }
 

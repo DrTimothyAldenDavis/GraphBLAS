@@ -66,7 +66,6 @@ GrB_Info gb_typecast  // C = (type) A, where C is deep
     else
     { 
         // C = (type) A, with GraphBLAS typecasting if needed.
-//      printf ("calling Matrix_assing\n") ;
         OK1 (C, GrB_Matrix_assign (C, NULL, NULL, A,
             GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
     }
@@ -76,7 +75,6 @@ GrB_Info gb_typecast  // C = (type) A, where C is deep
     //--------------------------------------------------------------------------
 
     (*C_handle) = C ;
-//  GxB_Matrix_fprint (C, "C casted", 5, NULL) ;
     return (GrB_SUCCESS) ;
 }
  

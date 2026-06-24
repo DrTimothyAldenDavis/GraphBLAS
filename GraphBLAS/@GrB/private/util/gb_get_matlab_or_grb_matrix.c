@@ -34,7 +34,7 @@ GrB_Info gb_get_matlab_or_grb_matrix   // shallow copy of MATLAB or @GrB matrix
     const int arena,
     char err [ERRLEN]
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // load the content of the matrix into the Container, as readonly
@@ -90,7 +90,7 @@ GrB_Info gb_get_matlab_or_grb_matrix   // shallow copy of MATLAB or @GrB matrix
     int64_t x_len = 0 ;
 
     switch (matrix->sparsity)
-    { 
+    {
         case GxB_HYPERSPARSE : 
 
             Container->Y = Y ;
@@ -124,6 +124,11 @@ GrB_Info gb_get_matlab_or_grb_matrix   // shallow copy of MATLAB or @GrB matrix
             break ;
 
         default: ;
+    }
+
+    if (matrix->iso)
+    { 
+        x_len = 1 ;
     }
 
     OK (GxB_Vector_load (Container->x, &(matrix->x), matrix->type,

@@ -64,11 +64,13 @@ fprintf ('================== latest dense:\n') ;
 X2
 
 % test GrB/struct:
-S = struct (G) ;
+S = struct (G)
 assert (isstruct (S)) ;
-assert (isfield (S, 'opaque')) ;
-assert (isequal (size (S.opaque), [1 8])) ;
-assert (isequal (class (S.opaque), 'uint8')) ;
+assert (isfield (S, 'opaque') || isfield (S, 'GraphBLASv10')) ;
+if (isfield (S, 'opaque'))
+    assert (isequal (size (S.opaque), [1 8])) ;
+    assert (isequal (class (S.opaque), 'uint8')) ;
+end
 
 % H was constructed in GraphBLAS v10.3.1 as:
 % n = 2^60 ; H = GrB (n,n) ;

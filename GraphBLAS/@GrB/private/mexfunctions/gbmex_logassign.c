@@ -107,10 +107,10 @@ void mexFunction
     int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 3+1 && nargout <= 1, USAGE) ;
-    bool ghb = (bool) mxGetScalar (pargin [0]) ;
+    bool ghb = false ; // HACK (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    pargout [0] = gbmx_export_struct (&C_opaque) ;
+    if (ghb) pargout [0] = gbmx_export_struct (&C_opaque) ;
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -385,7 +385,14 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
+
     OK (gb_export (C_opaque, &C, KIND_GRB, ghb, err)) ;
+    ////////////////////////////////////////////////////////////////////////////
+    if (!ghb)
+    { 
+        pargout [0] = gbmx_export_to_mxstruct (&C) ;
+    }
+
     gb_wrapup ( ) ;
 }
 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmx_export_struct: construct pargout [arg] for a G.opaque matrix handle
+// gbmx_export_struct: construct pargout [arg] for a @GhB matrix handle
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -7,9 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-// creates an output argument for a mexFunction.  This is done at the start of
-// a mexFunction that needs to return a G.opaque handle, so that if it fails,
-// no memory is leaked by subsequent calls to GraphBLAS in the mexFunction:
+// FIXME: rename to gbmx_export_ghb_struct
+
+// Creates an output @GhB argument for a mexFunction.  This is done at the
+// start of a mexFunction that needs to return a G.opaque handle, so that if it
+// fails, no memory is leaked by subsequent calls to GraphBLAS in the
+// mexFunction.
 
 /* usage:
 

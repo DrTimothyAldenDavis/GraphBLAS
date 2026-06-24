@@ -84,8 +84,9 @@ void gbmx_usage     // check usage and make sure GrB.init has been called
 
         OK (gb_defaults (err)) ;        // no memory allocated; "cannot" fail
 
+        // acquire malloc/free of each arena for gb_malloc and gb_free
         for (int arena = 0 ; arena < 4 ; arena++)
-        { 
+        {
             OK (GrB_Global_get_VOID (GrB_GLOBAL, &(gb_malloc_func [arena]),
                 GxB_ARENA_MALLOC)) ;
             OK (GrB_Global_get_VOID (GrB_GLOBAL, &(gb_free_func [arena]),
