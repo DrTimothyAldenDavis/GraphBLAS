@@ -169,14 +169,14 @@ catch me
         fprintf ('\n    cd %s\n    %s\n    %s\n', build_folder, cmd1, cmd2) ;
         cd (here) ;
         fprintf ('\nThen do this inside MATLAB/Octave:\n\n') ;
-        fprintf ('    cd %s/@GrB/private\n    gbmake\n', here) ;
+        fprintf ('    cd %s/private\n    gbmake\n', here) ;
     end
     return ;
 end
 
 % build the GraphBLAS MATLAB interface
 try
-    cd '@GrB/private'
+    cd 'private'
     gbmake
 catch me
     me

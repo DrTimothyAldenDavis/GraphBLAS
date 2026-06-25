@@ -33,7 +33,7 @@ Linux, Mac, or Windows.
     Next, restart your terminal shell before continuing the steps in the
     section "For Linux/Mac" below.
 
-    HOWEVER, this may fail on MATLAB.
+    HOWEVER, this may fail in MATLAB on the Mac.
 
     MATLAB on the Mac comes with its own copy of libomp.dylib, typically
 

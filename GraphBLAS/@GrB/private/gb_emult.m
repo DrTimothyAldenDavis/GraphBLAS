@@ -7,7 +7,8 @@ function C = gb_emult (A, op, B)
 % matrix.
 %
 % The input matrices may be either GraphBLAS structs and/or built-in
-% matrices, in any combination.  C is returned as a GraphBLAS struct.
+% matrices, in any combination.  C is returned as a GraphBLAS @GrB or @GhB
+% matrix..
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

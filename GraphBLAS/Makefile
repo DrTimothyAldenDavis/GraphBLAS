@@ -63,5 +63,5 @@ purge: distclean
 distclean:
 	rm -rf build/*
 	( cd test/tcov ; $(MAKE) distclean )
-	( cd @GrB/private ; $(MAKE) distclean )
+	( cd private ; $(MAKE) distclean )
 

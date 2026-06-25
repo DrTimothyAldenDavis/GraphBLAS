@@ -9,8 +9,6 @@ ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 % atan2(A,B) gives the set union of the pattern of A and B
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
 if (gb_isscalar (A))
     if (gb_isscalar (B))
         % both A and B are scalars

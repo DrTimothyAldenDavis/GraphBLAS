@@ -10,35 +10,34 @@ fprintf ('Compiling @GrB interface for mexFunction statement coverage...\n') ;
 warning ('off', 'MATLAB:MKDIR:DirectoryExists') ;
 mkdir ('tmp/@GrB/') ;
 mkdir ('tmp/@GrB/private') ;
-mkdir ('tmp/@GrB/util') ;
 mkdir ('tmp/cover') ;
 warning ('on', 'MATLAB:MKDIR:DirectoryExists') ;
 
-% copy all m-files into tmp/@GrB
+% copy all @GrB/*.m files into tmp/@GrB
 mfiles = dir ('../../@GrB/*.m') ;
 for k = 1:length (mfiles)
     copyfile ([(mfiles (k).folder) '/' (mfiles (k).name)], 'tmp/@GrB/') ;
 end
 
-% copy all private m-files into tmp/@GrB/private
+% copy all @GrB/private/*.m files into tmp/@GrB/private
 mfiles = dir ('../../@GrB/private/*.m') ;
 for k = 1:length (mfiles)
     copyfile ([(mfiles (k).folder) '/' (mfiles (k).name)], 'tmp/@GrB/private') ;
 end
 
 % copy the *.h files
-copyfile ('../../@GrB/private/util/*.h', 'tmp/@GrB/util') ;
+copyfile ('../../private/util/*.h', 'tmp') ;
 
 % copy and edit the mexfunction/*.c files
-cfiles = dir ('../../@GrB/private/mexfunctions/*.c') ; 
-count = gbcov_edit (cfiles, 0, 'tmp/@GrB/private') ;
+cfiles = dir ('../../private/mexfunctions/*.c') ; 
+count = gbcov_edit (cfiles, 0, 'tmp') ;
 
 % copy and edit the util/*.c files
-ufiles = [ dir('../../@GrB/private/util/*.c') ; dir('*.c') ] ;
-count = gbcov_edit (ufiles, count, 'tmp/@GrB/util') ;
+ufiles = [ dir('../../private/util/*.c') ; dir('*.c') ] ;
+count = gbcov_edit (ufiles, count, 'tmp') ;
 
-% create the gbfinish.c file and place in tmp/@GrB/util
-f = fopen ('tmp/@GrB/util/gbcovfinish.c', 'w') ;
+% create the gbfinish.c file and place in tmp
+f = fopen ('tmp/gbcovfinish.c', 'w') ;
 fprintf (f, '#include "gb_interface.h"\n') ;
 fprintf (f, 'int64_t gbcov [GBCOV_MAX] ;\n') ;
 fprintf (f, 'int gbcov_max = %d ;\n', count) ;
@@ -60,7 +59,7 @@ here = pwd ;
 % use renamed version for all MATLAB versions:
 flags = [flags ' -DGBMATLAB=1 ' ] ;
 inc = sprintf ('-I%s/../../rename ', here) ;
-libraries = '-L../../../../../build -L. -L/usr/local/lib -lgraphblas_matlab' ;
+libraries = '-L../../build -L. -L/usr/local/lib -lgraphblas_matlab' ;
 
 % revise compiler flags for MATLAB
 if (ismac)
@@ -79,19 +78,19 @@ if (ismac || isunix)
     flags = [ flags ' LDFLAGS=''$LDFLAGS ' ldflags rpath ' '' '] ;
 end
 
-inc = [inc '-I. -I../util '] ;
-    inc = [inc '-I../../../../../.. ' ] ;
-    inc = [inc '-I../../../../../../Include '] ;
-    inc = [inc '-I../../../../../../Source ' ] ;
-    inc = [inc '-I../../../../../../Source/include '] ;
-    inc = [inc '-I../../../../../../Source/ij ' ] ;
-    inc = [inc '-I../../../../../../Source/math ' ] ;
-    inc = [inc '-I../../../../../../Source/cast ' ] ;
-    inc = [inc '-I../../../../../../Source/binaryop ' ] ;
-    inc = [inc '-I../../../../../../Source/transpose ' ] ;
-    inc = [inc '-I../../../../../../Source/helper ' ] ;
-    inc = [inc '-I../../../../../../Source/builtin ' ] ;
-    inc = [inc '-I../../../../../../Source/hyper ' ] ;
+inc = [inc '-I. '] ;
+    inc = [inc '-I../../../.. ' ] ;
+    inc = [inc '-I../../../../Include '] ;
+    inc = [inc '-I../../../../Source ' ] ;
+    inc = [inc '-I../../../../Source/include '] ;
+    inc = [inc '-I../../../../Source/ij ' ] ;
+    inc = [inc '-I../../../../Source/math ' ] ;
+    inc = [inc '-I../../../../Source/cast ' ] ;
+    inc = [inc '-I../../../../Source/binaryop ' ] ;
+    inc = [inc '-I../../../../Source/transpose ' ] ;
+    inc = [inc '-I../../../../Source/helper ' ] ;
+    inc = [inc '-I../../../../Source/builtin ' ] ;
+    inc = [inc '-I../../../../Source/hyper ' ] ;
 
 Lflags = sprintf ('-L''%s''', library_path) ;
 
@@ -100,11 +99,14 @@ fprintf ('compiler incs:  %s\n', inc) ;
 fprintf ('linking flags:  %s\n', Lflags) ;
 fprintf ('libraries:      %s\n', libraries) ;
 
-cd tmp/@GrB/private
+cd tmp
 try
 
     % compile util files
-    cfiles = dir ('../util/*.c') ;
+    cfiles1 = dir ('gb_*.c') ;
+    cfiles2 = dir ('gbmx_*.c') ;
+    cfiles3 = dir ('gbcov*.c') ;
+    cfiles = [ cfiles1 ; cfiles2 ; cfiles3 ] ;
 
     objlist = '' ;
     for k = 1:length (cfiles)
@@ -122,7 +124,7 @@ try
         eval (mexcmd) ;
     end
 
-    mexfunctions = dir ('*.c') ;
+    mexfunctions = dir ('gbmex_*.c') ;
 
     % compile the mexFunctions
     for k = 1:length (mexfunctions)
@@ -142,7 +144,9 @@ try
     fprintf ('\n') ;
 
 catch me
+    fprintf ('\ngbcovmake failed:\n') ;
     disp (me.message)
 end
+
 cd (here)
 

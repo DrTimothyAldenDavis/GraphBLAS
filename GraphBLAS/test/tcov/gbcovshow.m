@@ -21,7 +21,7 @@ fprintf ('test coverage: %d of %d (%0.1f%%), not covered: %d\n', ...
 
 % create the coverage reports in tmp/cover
 
-infiles = dir ('tmp/@GrB/*/*.c') ;
+infiles = dir ('tmp/*.c') ;
 
 nfiles = length (infiles) ;
 

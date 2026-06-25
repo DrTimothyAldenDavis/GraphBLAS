@@ -70,9 +70,9 @@ if ispc
     %   gbmake
     %
     if (need_rename)
-        library_path = sprintf ('%s/../../build/Release', pwd) ;
+        library_path = sprintf ('%s/../build/Release', pwd) ;
     else
-        library_path = sprintf ('%s/../../../build/Release', pwd) ;
+        library_path = sprintf ('%s/../../build/Release', pwd) ;
     end
 else
     % First do one the following in GraphBLAS (use JOBS=n for a parallel
@@ -90,9 +90,9 @@ else
     %
     here = pwd ;
     if (need_rename)
-        cd ../../build
+        cd ../build
     else
-        cd ../../../build
+        cd ../../build
     end
     library_path = pwd
     cd (here) ;
@@ -140,22 +140,22 @@ else
     object_suffix = '.o' ;
 end
 
-inc = '-Iutil -I../../../Include -I../../../Source ' ;
-    inc = [inc '-I../../../Source/include '] ;
-    inc = [inc '-I../../.. ' ] ;
-    inc = [inc '-I../../../Source/ij ' ] ;
-    inc = [inc '-I../../../Source/math ' ] ;
-    inc = [inc '-I../../../Source/cast ' ] ;
-    inc = [inc '-I../../../Source/binaryop ' ] ;
-    inc = [inc '-I../../../Source/transpose ' ] ;
-    inc = [inc '-I../../../Source/helper ' ] ;
-    inc = [inc '-I../../../Source/builtin ' ] ;
-    inc = [inc '-I../../../Source/hyper ' ] ;
+inc = '-Iutil -I../../Include -I../../Source ' ;
+    inc = [inc '-I../../Source/include '] ;
+    inc = [inc '-I../.. ' ] ;
+    inc = [inc '-I../../Source/ij ' ] ;
+    inc = [inc '-I../../Source/math ' ] ;
+    inc = [inc '-I../../Source/cast ' ] ;
+    inc = [inc '-I../../Source/binaryop ' ] ;
+    inc = [inc '-I../../Source/transpose ' ] ;
+    inc = [inc '-I../../Source/helper ' ] ;
+    inc = [inc '-I../../Source/builtin ' ] ;
+    inc = [inc '-I../../Source/hyper ' ] ;
 
 if (need_rename)
     % use the renamed library for MATLAB
     flags = [flags ' -DGBMATLAB=1 ' ] ;
-    inc = [inc ' -I../../rename ' ] ;
+    inc = [inc ' -I../rename ' ] ;
     libgraphblas = '-lgraphblas_matlab' ;
 else
     % use the regular library for Octave
@@ -266,7 +266,7 @@ for k = 1:length (mexfunctions)
 
     % get the compiled mexFunction modification time
     mexfuncname = mexfunc (1:end-2) ;
-    mexfunction_compiled = [ mexfuncname '.' mexext ] ;
+    mexfunction_compiled = [ '../' mexfuncname '.' mexext ] ;
     dobj = dir (mexfunction_compiled) ;
     if (isempty (dobj))
         % there is no compiled mexFunction; it must be compiled
@@ -278,14 +278,14 @@ for k = 1:length (mexfunctions)
     % compile if it is newer than its object file, or if any cfile was compiled
     if (make_all || tc > tobj || any_c_compiled)
         % compile the mexFunction
-        mexcmd = sprintf ('mex %s %s %s %s ''%s'' %s %s', ...
+        mexcmd = sprintf ('mex -outdir .. %s %s %s %s ''%s'' %s %s', ...
             Lflags, silent, flags, inc, mexfunction, objlist, libgraphblas) ;
         % fprintf ('%s\n', mexcmd) ;
         fprintf (':') ;
         eval (mexcmd) ;
 
         if (have_octave && ismac)
-            cmd = sprintf ('install_name_tool -add_rpath ''%s'' %s.mex', ...
+            cmd = sprintf ('install_name_tool -add_rpath ''%s'' ../%s.mex', ...
                 library_path, mexfuncname) ;
             % fprintf ('%s\n', cmd) ;
             system (cmd) ;
@@ -297,7 +297,7 @@ fprintf ('\n') ;
 
 fprintf ('Compilation of the @GrB interface to GraphBLAS is complete.\n') ;
 fprintf ('Add the following commands to your startup.m file:\n\n') ;
-here1 = cd ('../..') ;
+here1 = cd ('..') ;
 here2 = pwd ;
 addpath (here2) ;
 fprintf ('  addpath (''%s'') ;\n', here2) ;

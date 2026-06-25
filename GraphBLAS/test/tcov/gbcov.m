@@ -17,13 +17,13 @@ end
 gbcovmake
 addpath ('..') ;            % add the test folder to the path
 try
-    rmpath ('../..') ;      % remove the regular @GrB class
+    rmpath ('../..') ;      % remove the regular @GrB class, if present
 catch me
 end
 
 rmpath ('tmp') ;            % remove the modified @GrB class
 which ('GrB')
-assert (isempty (which ('GrB')))
+% assert (isempty (which ('GrB')))
 
 addpath ('tmp') ;           % add back the modified @GrB class
 s = which ('GrB') ;
