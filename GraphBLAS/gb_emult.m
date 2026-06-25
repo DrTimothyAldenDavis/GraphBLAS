@@ -18,18 +18,18 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 if (gb_isscalar (A))
     if (gb_isscalar (B))
         % both A and B are scalars
-        C = GrB (gbmex_emult (ghb, A, op, B)) ;
+        C = gzb_emult (ghb, A, op, B) ;
     else
         % A is a scalar, B is a matrix
-        C = GrB (gbmex_apply2 (ghb, GrB (gbmex_full (ghb, A)), op, B)) ;
+        C = gzb_apply2 (ghb, gzb_full (ghb, A), op, B) ;
     end
 else
     if (gb_isscalar (B))
         % A is a matrix, B is a scalar
-        C = GrB (gbmex_apply2 (ghb, A, op, GrB (gbmex_full (ghb, B)))) ;
+        C = gzb_apply2 (ghb, A, op, gzb_full (ghb, B)) ;
     else
         % both A and B are matrices
-        C = GrB (gbmex_emult (ghb, A, op, B)) ;
+        C = gzb_emult (ghb, A, op, B) ;
     end
 end
 

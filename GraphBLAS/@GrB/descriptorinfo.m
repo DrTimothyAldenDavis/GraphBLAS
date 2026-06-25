@@ -43,9 +43,8 @@ function descriptorinfo (d)
 %            n-1, for a matrix of dimension n.
 %
 %   d.format a string that describes the format of the output matrix C.
-%           The following rules are used to determine the format of the result, in
-%   order:
-
+%           The following rules are used to determine the format of the result,
+%           in order:
 %
 %            (1) If d.format appears in the descriptor for a method, then
 %               that determines the format of C.
@@ -77,7 +76,7 @@ function descriptorinfo (d)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
+% NOTE: this is identical for @GrB and @GhB.
 
 % FUTURE: add desc.in* = 'conjugate transpose'
 

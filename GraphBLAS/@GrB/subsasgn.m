@@ -38,6 +38,7 @@ function C = subsasgn (C, S, A)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% FIXME: GhB will be different
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 % FUTURE: add all forms of linear indexing.
@@ -53,14 +54,14 @@ if (ndims == 1)
     % C (M) = A if M is logical, or C (I) = A otherwise
     S1 = S.subs {1} ;
     if (isequal (gbmex_type (S1), 'logical'))
-        % C (M) = A for logical assignment
+        % C (M) = A for logical assignment (where M is S1)
         [am, an] = gbmex_size (A) ;
         if (am == 1 && an == 1)
             % C (M) = scalar
-            C = GrB (gbmex_subassign (ghb, C, S1, A)) ;
+            C = gzb_subassign (ghb, C, S1, A) ;
         else
             % C (M) = A where A is a vector
-            C = GrB (gbmex_logassign (ghb, C, S1, A)) ;
+            C = gzb_logassign (ghb, C, S1, A) ;
         end
     else
         % C (I) = A
@@ -68,18 +69,18 @@ if (ndims == 1)
         [I, whole] = gb_index (S1) ;
         if (cm == 1 || cn == 1)
             % C (I) = A for a vector or scalar C
-            C = GrB (gbmex_subassign (ghb, C, I, A)) ;
+            C = gzb_subassign (ghb, C, I, A) ;
         else
             if (whole)
                 [am, an] = gbmex_size (A) ;
                 if (am == 1 && an == 1)
                     % C (:) = scalar, the same as C (:,:) = scalar.
                     % C becomes an iso full matrix
-                    Cin = GrB (cm, cn, gbmex_type (C)) ;
-                    C = GrB (gbmex_subassign (ghb, Cin, { }, { }, A)) ;
+                    Cin = gzb (ghb, cm, cn, gbmex_type (C)) ;
+                    C = gzb_subassign (ghb, Cin, { }, { }, A) ;
                 else
                     % C (:) = A for a matrix C and vector A
-                    C = GrB (gbmex_reshape (ghb, A, cm, cn, 'by column')) ;
+                    C = gzb_reshape (ghb, A, cm, cn, true) ;
                 end
             else
                 % C (I) = A, general case not yet supported
@@ -92,7 +93,9 @@ if (ndims == 1)
 elseif (ndims == 2)
 
     % C (I,J) = A where A is length(I)-by-length(J), or a scalar
-    C = GrB (gbmex_subassign (ghb, C, gb_index (S.subs {1}), gb_index (S.subs {2}), A)) ;
+    I = gb_index (S.subs {1}) ;
+    J = gb_index (S.subs {2}) ;
+    C = gzb_subassign (ghb, C, I, J, A) ;
 
 else
 

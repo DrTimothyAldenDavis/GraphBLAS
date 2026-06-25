@@ -38,7 +38,7 @@ void mexFunction
     GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_to_free = NULL ;
     int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE ((nargin == 3+1 || nargin == 4+1) && nargout == 1, USAGE) ;
+    GBMX_USAGE ((nargin == 4 || nargin == 5) && nargout == 1, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
@@ -53,7 +53,7 @@ void mexFunction
 
     uint64_t nrows_new = gbmx_get_uint64_scalar (pargin [2], "nrows_new") ;
     uint64_t ncols_new = gbmx_get_uint64_scalar (pargin [3], "ncols_new") ;
-    bool by_col = (nargin == 3) ? true : ((bool) mxGetScalar (pargin [4])) ;
+    bool by_col = (nargin == 4) ? true : ((bool) mxGetScalar (pargin [4])) ;
 
     ////////////////////////////////////////////////////////////////////////////
 

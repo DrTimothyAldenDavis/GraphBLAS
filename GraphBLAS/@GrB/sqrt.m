@@ -12,6 +12,6 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 C = gb_trig ('sqrt', G) ;
 
 if (gb_make_real (C))
-    C = GrB (gbmex_apply (ghb, 'creal', C)) ;
+    C = gzb_apply (ghb, 'creal', C) ;
 end
 

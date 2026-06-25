@@ -1,25 +1,25 @@
-function G = deserialize (blob)
+function C = deserialize (blob)
 %GRB.DESERIALIZE convert a serialized blob into a matrix.
-% G = GrB.deserialize (blob) returns a @GrB matrix constructed from the
+% C = GrB.deserialize (blob) returns a @GrB matrix constructed from the
 % uint8 array blob constructed by GrB.serialize.  The input blob may be
 % dense uint8 MATLAB/Octave or @GrB matrix.
 %
-% G = GrB.deserialize (blob) or GrB.deserialize (blob, 'fast') assume the
-% blob comes from a trusted source.  G = GrB.deserialize (blob, 'secure')
+% C = GrB.deserialize (blob) or GrB.deserialize (blob, 'fast') assume the
+% blob comes from a trusted source.  C = GrB.deserialize (blob, 'secure')
 % does a secure (but slow) deserialization, checking the blob to ensure it
 % is valid, when the blob might not be trusted.
 %
 % Example:
 %
-%   G = GrB (magic (5))
-%   blob = GrB.serialize (G) ;
-%   f = fopen ('G.bin', 'wb') ;
+%   C = GrB (magic (5))
+%   blob = GrB.serialize (C) ;
+%   f = fopen ('C.bin', 'wb') ;
 %   fwrite (f, blob) ;
 %   fclose (f)
 %   clear all
-%   f = fopen ('G.bin', 'r') ;
+%   f = fopen ('C.bin', 'r') ;
 %   blob = fread (f, '*uint8') ;
-%   G = GrB.deserialize (blob)
+%   C = GrB.deserialize (blob)
 %
 % See also GrB.serialize, GrB.load, GrB.save, GrB/struct.
 
@@ -28,6 +28,6 @@ function G = deserialize (blob)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-% deserialize the blob into a @GrB matrix
-G = GrB (gbmex_deserialize (ghb, blob)) ;
+% deserialize the blob into a GraphBLAS matrix
+C = gzb_deserialize (ghb, blob) ;
 

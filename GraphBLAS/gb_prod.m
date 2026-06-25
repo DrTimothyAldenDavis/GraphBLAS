@@ -25,9 +25,9 @@ switch (option)
 
         % C = prod (G, 'all'), reducing all entries to a scalar
         if (gb_isfull (G))
-            C = GrB (gbmex_reduce (ghb, op, G)) ;
+            C = gzb_reduce (ghb, op, G) ;
         else
-            C = GrB (0, type) ;
+            C = gzb (ghb, 0, type) ;
         end
 
     case { 1 }
@@ -35,21 +35,22 @@ switch (option)
         % C = prod (G,1) reduces each column to a scalar,
         % giving a 1-by-n row vector.
         % M = find (column degree of G == m)
-        M = GrB (gbmex_select (ghb, GrB (gbmex_degree (ghb, G, 'col')), '==', int64 (m))) ;
-        Cin = GrB (n, 1, type) ;
-        % C<M> = op (G')
+        M = gzb_select (ghb, gzb_degree (ghb, G, 'col'), '==', int64 (m)) ;
+        Cin = gzb (ghb, n, 1, type) ;
+        % C<M> = op (G.')
         desc.in0 = 'transpose' ;
-        C = GrB (gbmex_trans (ghb, GrB (gbmex_vreduce (ghb, Cin, M, op, G, desc)))) ;
+        GT = gzb_vreduce (ghb, Cin, M, op, G, desc) ;
+        C = gzb_trans (ghb, GT) ;
 
     case { 2 }
 
         % C = prod (G,2) reduces each row to a scalar,
         % giving an m-by-1 column vector.
         % M = find (row degree of G == n)
-        M = GrB (gbmex_select (ghb, GrB (gbmex_degree (ghb, G, 'row')), '==', int64 (n))) ;
+        M = gzb_select (ghb, gzb_degree (ghb, G, 'row'), '==', int64 (n)) ;
         % C<M> = op (G)
-        Cin = GrB (m, 1, type) ;
-        C = GrB (gbmex_vreduce (ghb, Cin, M, op, G)) ;
+        Cin = gzb (ghb, m, 1, type) ;
+        C = gzb_vreduce (ghb, Cin, M, op, G) ;
 
     otherwise
 

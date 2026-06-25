@@ -16,5 +16,5 @@ else
     op = 'tanh' ;
 end
 
-C = GrB (gbmex_apply (ghb, 'minv', GrB (gbmex_full (ghb, GrB (gbmex_apply (ghb, op, G)))))) ;
+C = gzb_apply (ghb, 'minv', gzb_full (ghb, gzb_apply (ghb, op, G))) ;
 

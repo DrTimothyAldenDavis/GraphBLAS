@@ -9,5 +9,5 @@ function C = transpose (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = GrB (gbmex_trans (ghb, G)) ;
+C = gzb_trans (ghb, G) ;
 

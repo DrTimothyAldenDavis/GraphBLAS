@@ -45,7 +45,7 @@ elseif (~gb_issigned (type))
 end
 
 % S = spones (A)
-S = GrB (gbmex_apply (ghb, ['1.' type], A)) ;
+S = gzb_apply (ghb, ['1.' type], A) ;
 
 % check the input matrix, if requested
 if (nargin > 2 && isequal (check, 'check'))
@@ -58,17 +58,17 @@ end
 % D = diagonal matrix with d(i,i) = row/column degree of node i
 fmt = gbmex_format (S) ;
 if (isequal (fmt, 'by row'))
-    D = GrB (gbmex_degree (ghb, S, 'row')) ;
+    dim = 'row' ;
 else
-    D = GrB (gbmex_degree (ghb, S, 'col')) ;
+    dim = 'col' ;
 end
-D = GrB (gbmex_mdiag (ghb, D, 0)) ;
+D = gzb_mdiag (ghb, gzb_degree (ghb, S, 'dim'), 0) ;
 if (~isequal (type, gbmex_type (D)))
-    % gbmex_degree returns its result as int64; typecast to desired type
-    D = GrB (D, type) ;
+    % gzb_degree returns its result as int64; typecast to desired type
+    D = gzb (ghb, D, type) ;
 end
 
 % construct the Laplacian
 % L = D-S
-L = GrB (gbmex_eadd (ghb, D, '+', GrB (gbmex_apply (ghb, '-', S)))) ;
+L = gzb_eadd (ghb, D, '+', gzb_apply (ghb, '-', S)) ;
 

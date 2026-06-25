@@ -14,10 +14,11 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 type = gbmex_type (G) ;
 
 if (isequal (type, 'logical'))
-    C = GrB (G) ;
+    C = gzb (ghb, G) ;
 elseif (~gb_isfloat (type))
-    C = GrB (GrB (gbmex_apply (ghb, 'signum.single', G)), type) ;
+    T = gzb_apply (ghb, 'signum.single', G) ;
+    C = gzb (ghb, T, type) ;
 else
-    C = GrB (gbmex_apply (ghb, 'signum', G)) ;
+    C = gzb_apply (ghb, 'signum', G) ;
 end
 

@@ -26,20 +26,20 @@ ctype = gbmex_optype (atype, btype) ;
 if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars.  C is sparse.
-        C = GrB (gbmex_eunion (ghb, A, 0, '~=', B, 0)) ;
+        C = gzb_eunion (ghb, A, 0, '~=', B, 0) ;
     else
         % A is a scalar, B is a matrix
         if (gb_scalar (A) ~= 0)
             % since a ~= 0, entries not present in B result in a true
             % value, so the result is full.  Expand A to a full matrix.
             a = gb_scalar_to_full (bm, bn, ctype, gb_fmt (B), A) ;
-            b = GrB (gbmex_full (ghb, B, ctype)) ;
-            C = GrB (gbmex_emult (ghb, a, '~=', b)) ;
+            b = gzb_full (ghb, B, ctype) ;
+            C = gzb_emult (ghb, a, '~=', b) ;
         else
             % since a == 0, entries not present in B result in a false
             % value, so the result is a sparse subset of B.  select all
             % entries in B ~= 0, then convert to true.
-            C = GrB (B, 'logical') ;
+            C = gzb (ghb, B, 'logical') ;
         end
     end
 else
@@ -48,20 +48,20 @@ else
         if (gb_scalar (B) ~= 0)
             % since b ~= 0, entries not present in A result in a true
             % value, so the result is full.  Expand B to a full matrix.
-            a = GrB (gbmex_full (ghb, A, ctype)) ;
+            a = gzb_full (ghb, A, ctype) ;
             b = gb_scalar_to_full (am, an, ctype, gb_fmt (A), B) ;
-            C = GrB (gbmex_emult (ghb, a, '~=', b)) ;
+            C = gzb_emult (ghb, a, '~=', b) ;
         else
             % since b == 0, entries not present in A result in a false
             % value, so the result is a sparse subset of A.  Simply
             % typecast A to logical.  Explicit zeroes in A become explicit
             % false entries.  Any other explicit entries not equal to zero
             % become true.
-            C = GrB (A, 'logical') ;
+            C = gzb (ghb, A, 'logical') ;
         end
     else
         % both A and B are matrices.  C is sparse.
-        C = GrB (gbmex_eunion (ghb, A, 0, '~=', B, 0)) ;
+        C = gzb_eunion (ghb, A, 0, '~=', B, 0) ;
     end
 end
 

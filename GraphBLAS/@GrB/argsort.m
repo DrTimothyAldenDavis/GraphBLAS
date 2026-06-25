@@ -53,10 +53,8 @@ elseif (nargin == 2)
 end
 
 if (nargout == 1)
-    C = GrB (gbmex_argsort (ghb, A, dim, direction)) ;
+    C = gzb_argsort (ghb, A, dim, direction) ;
 else
-    [C_opaque, P_opaque] = gbmex_argsort (ghb, A, dim, direction) ;
-    C = GrB (C_opaque) ;
-    P = GrB (P_opaque) ;
+    [C, P] = gzb_argsort (ghb, A, dim, direction) ;
 end
 

@@ -12,20 +12,20 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 if (gb_isscalar (A))
     if (gb_isscalar (B))
         % both A and B are scalars
-        C = GrB (gbmex_emult (ghb, 'atan2', A, B)) ;
+        C = gzb_emult (ghb, 'atan2', A, B) ;
     else
         % A is a scalar, B is a matrix
-        a = GrB (gbmex_full (ghb, A)) ;
-        C = GrB (gbmex_apply2 (ghb, 'atan2', a, B)) ;
+        a = gzb_full (ghb, A) ;
+        C = gzb_apply2 (ghb, 'atan2', a, B) ;
     end
 else
     if (gb_isscalar (B))
         % A is a matrix, B is a scalar
-        b = GrB (gbmex_full (ghb, B)) ;
-        C = GrB (gbmex_apply2 (ghb, 'atan2', A, b)) ;
+        b = gzb_full (ghb, B) ;
+        C = gzb_apply2 (ghb, 'atan2', A, b) ;
     else
         % both A and B are matrices.  C is the set union of A and B.
-        C = GrB (gbmex_eunion (ghb, 'atan2', A, 0, B, 0)) ;
+        C = gzb_eunion (ghb, 'atan2', A, 0, B, 0) ;
     end
 end
 

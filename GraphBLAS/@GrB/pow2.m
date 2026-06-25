@@ -20,7 +20,7 @@ if (nargin == 1)
     if (~gb_isfloat (atype))
         atype = 'double' ;
     end
-    C = GrB (gbmex_apply (ghb, 'pow2', GrB (gbmex_full (ghb, A, atype)))) ;
+    C = gzb_apply (ghb, 'pow2', gzb_full (ghb, A, atype)) ;
 else
     % C = A.*(2.^B)
     type = gbmex_optype (atype, gbmex_type (B)) ;

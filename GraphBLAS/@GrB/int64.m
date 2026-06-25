@@ -15,5 +15,5 @@ function C = int64 (G)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 desc.kind = 'full' ;
-C = gbmex_builtin (GrB (gbmex_full (ghb, G, 'int64', int64 (0), desc))) ;
+C = gbmex_builtin (gzb_full (ghb, G, 'int64', int64 (0), desc)) ;
 

@@ -86,7 +86,7 @@ ctype = atype ;
 % determine the type of A
 cast_A = isequal (atype, 'double') || isequal (atype, 'single') ;
 if (cast_A)
-    A = GrB (A_arg, assumedtype) ;
+    A = gzb (ghb, A_arg, assumedtype) ;
     atype = assumedtype ;
 else
     % use the input A_arg as-is
@@ -96,7 +96,7 @@ end
 % ensure B has the same type as A
 cast_B = ~isequal (btype, atype) ;
 if (cast_B)
-    B = GrB (B_arg, atype) ;
+    B = gzb (ghb, B_arg, atype) ;
 else
     % use the input B_arg as-is
     B = B_arg ;
@@ -121,21 +121,21 @@ if (V_is_scalar)
         % A is a scalar
         if (b_is_scalar)
             % both A and B are scalars
-            T = GrB (gbmex_eunion (ghb, op, A, 0, B, 0)) ;
+            T = gzb_eunion (ghb, op, A, 0, B, 0) ;
         else
             % A is a scalar, B is a matrix
-            a = GrB (gbmex_full (ghb, A)) ;
-            T = GrB (gbmex_apply2 (ghb, op, a, B)) ;
+            a = gzb_full (ghb, A) ;
+            T = gzb_apply2 (ghb, op, a, B) ;
         end
     else
         % A is a matrix
         if (b_is_scalar)
             % A is a matrix, B is scalar
-            b = GrB (gbmex_full (ghb, B)) ;
-            T = GrB (gbmex_apply2 (ghb, op, A, b)) ;
+            b = gzb_full (ghb, B) ;
+            T = gzb_apply2 (ghb, op, A, b) ;
         else
             % both A and B are matrices
-            T = GrB (gbmex_eunion (ghb, op, A, 0, B, 0)) ;
+            T = gzb_eunion (ghb, op, A, 0, B, 0) ;
         end
     end
 
@@ -165,18 +165,18 @@ else
 
     % Set all bits referenced by B(i,j) to 1, even those that need to be
     % set to 0, without considering V(i,j).
-    S = GrB (gbmex_eunion (ghb, ['bitset.', atype], A2, 0, B2, 0)) ;
+    S = gzb_eunion (ghb, ['bitset.', atype], A2, 0, B2, 0) ;
 
     % The pattern of S is now the set intersection of A and B, but
     % bits referenced by B(i,j) have been set to 1, not 0.  Construct B0
     % as the bits in B(i,j) that must be set to 0; B0<~V>=B defines the
     % pattern of bit positions B0 to set to 0 in A.
-    d.mask = 'complement' ;
-    E = GrB (m, n, atype) ;
-    B0 = GrB (gbmex_assign (ghb, E, V, B2, d)) ;
+    desc.mask = 'complement' ;
+    E = gzb (ghb, m, n, atype) ;
+    B0 = gzb_subassign (ghb, E, V, B2, desc) ;
 
     % Clear the bits in C, referenced by B0(i,j), where V(i,j) is zero.
-    T = GrB (gbmex_eadd (ghb, ['bitclr.', atype], S, B0)) ;
+    T = gzb_eadd (ghb, ['bitclr.', atype], S, B0) ;
 
 end
 
@@ -184,6 +184,6 @@ end
 if (isequal (gbmex_type (T), ctype))
     C = T ;
 else
-    C = GrB (T, ctype) ;
+    C = gzb (ghb, T, ctype) ;
 end
 

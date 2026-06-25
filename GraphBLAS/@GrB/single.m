@@ -26,5 +26,5 @@ else
 end
 
 % export C as a full matrix
-C = gbmex_builtin (GrB (gbmex_full (ghb, G, ctype, z, desc))) ;
+C = gbmex_builtin (gzb_full (ghb, G, ctype, z, desc)) ;
 

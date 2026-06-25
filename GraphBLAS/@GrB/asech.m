@@ -16,5 +16,5 @@ if (~gb_isfloat (type))
     type = 'double' ;
 end
 
-C = gb_trig ('acosh', GrB (gbmex_apply (ghb, 'minv', GrB (gbmex_full (ghb, G, type))))) ;
+C = gb_trig ('acosh', gzb_apply (ghb, 'minv', gzb_full (ghb, G, type))) ;
 

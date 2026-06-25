@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// gbmex_apply2 is an interface to GrB_Matrix_apply_BinaryOp1st_Scalar.
+// gbmex_apply2 is an interface to GrB_Matrix_apply_BinaryOp1st_Scalar,
 // GrB_Matrix_apply_BinaryOp2nd_Scalar, and GrB_Matrix_apply_IndexOp_Scalar.
 
 // Usage:

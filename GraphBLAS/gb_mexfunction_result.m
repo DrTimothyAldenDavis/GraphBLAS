@@ -7,13 +7,13 @@ function C = gb_mexfunction_result (C_opaque, kind)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
+ghb = 0 ;     % 0 for GrB, 1 for GhB (FIXME: add as input parameter)
 
 if (kind == 0)
     % return a @GrB object
-    C = GrB (C_opaque) ;
+    C = gzb (ghb, C_opaque) ;
 else
     % return a built-in MATLAB/Octave matrix from the C_opaque handle
-    C = gbmex_builtin (GrB (C_opaque)) ;
+    C = gbmex_builtin (gzb (ghb, C_opaque)) ;
 end
 

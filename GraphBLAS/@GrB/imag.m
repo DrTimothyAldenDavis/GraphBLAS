@@ -13,9 +13,9 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (gb_contains (type, 'complex'))
     % C = imag (G) where G is complex
-    C = GrB (gbmex_apply (ghb, 'cimag', G)) ;
+    C = gzb_apply (ghb, 'cimag', G) ;
 else
     % G is real, so C = zeros (m,n)
-    C = GrB (m, n, type) ;
+    C = gzb (ghb, m, n, type) ;
 end
 

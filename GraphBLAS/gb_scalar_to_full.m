@@ -12,7 +12,7 @@ else
     fmt = 'by col' ;
 end
 
-E = GrB (m, n, type, fmt) ;
-S = GrB (gbmex_full (ghb, scalar)) ;
-C = GrB (gbmex_subassign (ghb, E, S)) ;
+E = gzb (ghb, m, n, type, fmt) ;
+S = gzb_full (ghb, scalar) ;
+C = gzb_subassign (ghb, E, S) ;
 

@@ -17,5 +17,5 @@ if (symmetric)
 end
 
 % C = A (I,J)
-C = GrB (gbmex_extract (ghb, A, { I }, { J })) ;
+C = gzb_extract (ghb, A, { I }, { J }) ;
 

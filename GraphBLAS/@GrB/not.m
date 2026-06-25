@@ -11,5 +11,5 @@ function C = not (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = GrB (gbmex_apply (ghb, '~', GrB (gbmex_full (ghb, G, 'logical')))) ;
+C = gzb_apply (ghb, '~', gzb_full (ghb, G, 'logical')) ;
 

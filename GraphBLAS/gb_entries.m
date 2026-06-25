@@ -41,20 +41,20 @@ if (isequal (dim, 'all'))
 else
 
     % get the row or column degree
-    result = GrB (gbmex_degree (ghb, A, dim)) ;    % dim is 'row' or 'col'
+    result = gzb_degree (ghb, A, dim) ;    % dim is 'row' or 'col'
 
     switch kind
         case 'count'
             % number of non-empty rows/cols
             % e = GrB.entries (A, 'row')
             % e = GrB.entries (A, 'col')
-            result = gbmex_nvals (GrB (gbmex_select (ghb, result, 'nonzero'))) ;
+            result = gbmex_nvals (gzb_select (ghb, result, 'nonzero')) ;
         case 'list'
             % list of non-empty rows/cols
             % I = GrB.entries (A, 'row', 'list')
             % J = GrB.entries (A, 'col', 'list')
             desc.base = 'one-based int' ;
-            S = GrB (gbmex_select (ghb, result, 'nonzero')) ;
+            S = gzb_select (ghb, result, 'nonzero') ;
             gbmex_wait (S) ;
             result = gbmex_extracttuples (ghb, S, desc);
         % case 'degree'

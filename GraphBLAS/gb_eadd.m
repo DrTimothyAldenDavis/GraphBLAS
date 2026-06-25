@@ -24,30 +24,30 @@ type = gbmex_optype (atype, btype) ;
 if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars.  Result is also a scalar.
-        C = GrB (gbmex_eadd (ghb, A, op, B)) ;
+        C = gzb_eadd (ghb, A, op, B) ;
     else
         % A is a scalar, B is a matrix.  Result is full, unless A == 0.
         if (gb_scalar (A) == 0)
-            C = GrB (B) ;
+            C = gzb (ghb, B) ;
         else
             % expand A to a full matrix
             a = gb_scalar_to_full (bm, bn, type, gb_fmt (B), A) ;
-            C = GrB (gbmex_eadd (ghb, a, op, B)) ;
+            C = gzb_eadd (ghb, a, op, B) ;
         end
     end
 else
     if (b_is_scalar)
         % A is a matrix, B is a scalar.  Result is full, unless B == 0.
         if (gb_scalar (B) == 0)
-            C = GrB (A) ;
+            C = gzb (ghb, A) ;
         else
             % expand B to a full matrix
             b = gb_scalar_to_full (am, an, type, gb_fmt (A), B) ;
-            C = GrB (gbmex_eadd (ghb, A, op, b)) ;
+            C = gzb_eadd (ghb, A, op, b) ;
         end
     else
         % both A and B are matrices.  Result is sparse.
-        C = GrB (gbmex_eadd (ghb, A, op, B)) ;
+        C = gzb_eadd (ghb, A, op, B) ;
     end
 end
 

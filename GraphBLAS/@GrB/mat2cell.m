@@ -39,20 +39,6 @@ else
     end
 end
 
-% S is returned as a cell array of @GrB opaque handle structs.
-S = gbmex_split (ghb, A, m, n) ;
-
-% convert each entry in S to a @GrB object
-C = cell (size (S)) ;
-for k = 1:numel(C)
-    C {k} = GrB (S {k}) ;
-end
-
-% NOTE: this method has a near zero chance of causing a memory leak.  If one of
-% the conversions C {k} = GrB (S {k}) fails, this method returns immediately.
-% MATLAB will know how to delete all @GrB objects in C, by calling gbmex_delete.
-% It will not know how to properly delete all of the @GrB handle structs in S
-% that remain.  These point to GraphBLAS matrices in malloc/free space, so this
-% will cause a leak.  However, this failure is remote.  Each conversion of
-% GrB (S {k}) allocates a very small amount of memory and is unlikely to fail.
+% C is returned as a cell array of @GrB or @GhB objects
+C = gzb_split (ghb, A, m, n) ;
 

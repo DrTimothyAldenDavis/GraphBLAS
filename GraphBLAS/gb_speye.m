@@ -25,5 +25,5 @@ else
     X = ones (mn, 1, type) ;
 end
 
-C = GrB (gbmex_build (ghb, I, I, X, m, n, '1st', type, desc)) ;
+C = gzb_build (ghb, I, I, X, m, n, '1st', type, desc) ;
 

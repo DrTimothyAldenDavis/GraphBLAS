@@ -8,6 +8,8 @@ function [m, n] = size (G, dim)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% NOTE: this is identical for @GrB and @GhB.
+
 [m, n] = gbmex_size (G) ;
 
 if (nargin == 2)

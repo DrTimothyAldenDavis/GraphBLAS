@@ -16,5 +16,5 @@ function C = logical (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = gbmex_builtin (GrB (gbmex_cast (ghb, G, 'logical'))) ;
+C = gbmex_builtin (gzb_cast (ghb, G, 'logical')) ;
 

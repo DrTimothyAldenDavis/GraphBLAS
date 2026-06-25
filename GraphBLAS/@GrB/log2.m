@@ -18,9 +18,9 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (nargout == 1)
     % F = log2 (G)
-    F = gb_trig ('log2', GrB (gbmex_full (ghb, G))) ;
+    F = gb_trig ('log2', gzb_full (ghb, G)) ;
     if (gb_make_real (F))
-        F = GrB (gbmex_apply (ghb, 'creal', F)) ;
+        F = gzb_apply (ghb, 'creal', F) ;
     end
 else
     % [F,E] = log2 (G)
@@ -34,7 +34,7 @@ else
         case { 'single', 'double' }
             % type remains the same
     end
-    F = GrB (gbmex_apply (ghb, ['frexpx.' type], G)) ;
-    E = GrB (gbmex_apply (ghb, ['frexpe.' type], G)) ;
+    F = gzb_apply (ghb, ['frexpx.' type], G) ;
+    E = gzb_apply (ghb, ['frexpe.' type], G) ;
 end
 

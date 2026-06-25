@@ -10,5 +10,5 @@ function C = mtimes (A, B)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = GrB (gbmex_mtimes (ghb, A, B)) ;
+C = gzb_mtimes (ghb, A, B) ;
 

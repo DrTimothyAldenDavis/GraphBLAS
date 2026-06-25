@@ -59,7 +59,5 @@ if (nargin < 2)
     dim = 0 ;
 end
 
-[x,p] = gbmex_argminmax (ghb, A, 1, dim) ;
-x = GrB (x) ;
-p = GrB (p) ;
+[x,p] = gzb_argminmax (ghb, A, 1, dim) ;
 

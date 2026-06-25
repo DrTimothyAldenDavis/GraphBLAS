@@ -8,8 +8,8 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 type = gbmex_type (A) ;
 desc.kind = 'full' ;
-a = GrB (gbmex_full (ghb, A, type, 0, desc)) ;
-C = gbmex_builtin (a) ;   % export as a full MATLAB/Octave matrix
+a = gzb_full (ghb, A, type, 0, desc) ;
+C = gbmex_builtin (a) ;
 x = C (1) ;
 y = C (2) ;
 

@@ -9,5 +9,5 @@ function C = kron (A, B)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = GrB (gbmex_kronecker (ghb, A, '*', B)) ;
+C = gzb_kronecker (ghb, A, '*', B) ;
 

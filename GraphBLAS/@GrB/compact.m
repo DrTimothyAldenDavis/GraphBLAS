@@ -59,10 +59,10 @@ if (nargin > 1 && ~isempty (id))
     id = gb_get_scalar (id) ;
     if (id ~= 0)
         % prune a nonzero identity value from A
-        [C, I, J] = gb_compact (GrB (gbmex_select (ghb, A, '~=', id)), symmetric) ;
+        [C, I, J] = gb_compact (gzb_select (ghb, A, '~=', id), symmetric) ;
     elseif (~builtin ('issparse', A))
         % prune zeros from A
-        [C, I, J] = gb_compact (GrB (gbmex_select (ghb, A, 'nonzero')), symmetric) ;
+        [C, I, J] = gb_compact (gzb_select (ghb, A, 'nonzero'), symmetric) ;
     else
         % compact A as-is
         [C, I, J] = gb_compact (A, symmetric) ;

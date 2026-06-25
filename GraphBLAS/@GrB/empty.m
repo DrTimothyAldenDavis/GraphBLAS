@@ -27,5 +27,5 @@ else
     end
 end
 
-C = GrB (m, n) ;
+C = gzb (ghb, m, n) ;
 

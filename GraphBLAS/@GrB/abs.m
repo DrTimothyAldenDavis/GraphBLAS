@@ -11,8 +11,8 @@ function C = abs (G)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (gb_issigned (gbmex_type (G)))
-    C = GrB (gbmex_apply (ghb, 'abs', G)) ;
+    C = gzb_apply (ghb, 'abs', G) ;
 else
-    C = GrB (G) ;
+    C = gzb (ghb, G) ;
 end
 

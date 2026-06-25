@@ -18,9 +18,9 @@ end
 
 if (id == 0)
     % prune zeros
-    C = GrB (gbmex_select (ghb, G, 'nonzero')) ;
+    C = gzb_select (ghb, G, 'nonzero') ;
 else
     % prune entries equal to id
-    C = GrB (gbmex_select (ghb, G, '~=', id)) ;
+    C = gzb_select (ghb, G, '~=', id) ;
 end
 

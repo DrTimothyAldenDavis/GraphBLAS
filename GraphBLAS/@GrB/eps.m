@@ -12,27 +12,28 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 % FUTURE: GraphBLAS should have a built-in eps unary operator.
 
-% convert to a built-in full matrix and use the built-in eps:
-
 % FUTURE: there should be a sparse version of 'eps'.
 % C is full because eps (0) is 2^(-1024).
 
+% convert to a built-in full matrix and use the built-in eps
 switch (GrB.type (G))
 
     case { 'single' }
-        C = GrB (eps (single (full (G)))) ;
+        T = eps (single (full (G))) ;
 
     case { 'double' }
-        C = GrB (eps (double (full (G)))) ;
+        T = eps (double (full (G))) ;
 
     case { 'single complex' }
-        C = max (eps (single (real (G))), eps (single (imag (G)))) ;
+        T = max (eps (single (real (G))), eps (single (imag (G)))) ;
 
     case { 'double complex' }
-        C = max (eps (double (real (G))), eps (double (imag (G)))) ;
+        T = max (eps (double (real (G))), eps (double (imag (G)))) ;
 
     otherwise
         error ('GrB:error', 'input must be floating-point') ;
 
 end
+
+C = gzb (ghb, T) ;
 

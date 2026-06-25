@@ -7,12 +7,12 @@ function C = gb_mpower (A, b)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (b == 1)
-    C = GrB (A) ;
+    C = gzb (ghb, A) ;
 else
     C = gb_mpower (A, floor (b/2)) ;
-    C = GrB (gbmex_mxm (ghb, C, '+.*', C)) ;
+    C = gzb_mtimes (ghb, C, C) ;
     if (mod (b, 2) == 1)
-        C = GrB (gbmex_mxm (ghb, C, '+.*', A)) ;
+        C = gzb_mtimes (ghb, C, A) ;
     end
 end
 

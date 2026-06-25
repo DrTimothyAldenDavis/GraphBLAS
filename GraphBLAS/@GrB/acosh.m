@@ -11,5 +11,5 @@ function C = acosh (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = gb_trig ('acosh', GrB (gbmex_full (ghb, G))) ;
+C = gb_trig ('acosh', gzb_full (ghb, G)) ;
 

@@ -9,8 +9,9 @@ function C = gb_expand (scalar, S, type)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 % typecast the scalar to the desired type, and make sure it's full
-t = GrB (gbmex_full (ghb, GrB (scalar, type))) ;
+s = gzb (ghb, scalar, type) ;
+t = gzb_full (ghb, s) ;
 
 % expand the scalar into the pattern of S
-C = GrB (gbmex_apply2 (ghb, ['2nd.' type], S, t)) ;
+C = gzb_apply2 (ghb, ['2nd.' type], S, t) ;
 

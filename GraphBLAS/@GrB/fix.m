@@ -11,8 +11,8 @@ function C = fix (G)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (gb_isfloat (gbmex_type (G)))
-    C = GrB (gbmex_apply (ghb, 'trunc', G)) ;
+    C = gzb_apply (ghb, 'trunc', G) ;
 else
-    C = GrB (G) ;
+    C = gzb (ghb, G) ;
 end
 

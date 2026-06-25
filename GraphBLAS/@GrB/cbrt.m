@@ -18,5 +18,5 @@ else
     op = 'cbrt.double' ;
 end
 
-C = GrB (gbmex_apply (ghb, op, G)) ;
+C = gzb_apply (ghb, op, G) ;
 

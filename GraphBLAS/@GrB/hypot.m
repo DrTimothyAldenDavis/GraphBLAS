@@ -17,22 +17,22 @@ atype = gbmex_type (A_arg) ;
 btype = gbmex_type (B_arg) ;
 
 if (gb_contains (atype, 'complex'))
-    A = GrB (gbmex_apply (ghb, 'abs', A_arg)) ;
+    A = gzb_apply (ghb, 'abs', A_arg) ;
 elseif (~gb_isfloat (atype))
-    A = GrB (A_arg, 'double') ;
+    A = gzb (ghb, A_arg, 'double') ;
 else
     % use A_arg as-is
     A = A_arg ;
 end
 
 if (gb_contains (btype, 'complex'))
-    B = GrB (gbmex_apply (ghb, 'abs', B_arg)) ;
+    B = gzb_apply (ghb, 'abs', B_arg) ;
 elseif (~gb_isfloat (btype))
-    B = GrB (B_arg, 'double') ;
+    B = gzb (ghb, B_arg, 'double') ;
 else
     % use B_arg as-is
     B = B_arg ;
 end
 
-C = GrB (gbmex_apply (ghb, 'abs', gb_eadd (A, 'hypot', B))) ;
+C = gzb_apply (ghb, 'abs', gb_eadd (A, 'hypot', B)) ;
 

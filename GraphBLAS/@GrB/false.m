@@ -15,5 +15,5 @@ function C = false (varargin)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 [m, n, ~] = gb_parse_args ('false', varargin {:}) ;
-C = GrB (m, n, 'logical') ;
+C = gzb (ghb, m, n, 'logical') ;
 

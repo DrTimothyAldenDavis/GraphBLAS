@@ -18,7 +18,7 @@ if (m ~= n)
 else
 
     if (isequal (type, 'logical'))
-        G = GrB (G_arg, 'double') ;
+        G = gzb (ghb, G_arg, 'double') ;
     else
         G = G_arg ;
     end
@@ -26,10 +26,10 @@ else
     if (herm && gb_contains (type, 'complex'))
         % T = G', complex conjugate transpose
         desc.in0 = 'transpose' ;
-        T = GrB (gbmex_apply (ghb, 'conj', G, desc)) ;
+        T = gzb_apply (ghb, 'conj', G, desc) ;
     else
         % T = G.', array transpose
-        T = GrB (gbmex_trans (ghb, G)) ;
+        T = gzb_trans (ghb, G) ;
     end
 
     switch (option)
@@ -53,7 +53,7 @@ else
     if (s)
         % also check the pattern; G might have explicit zeros
         S = gb_spones (G, 'logical') ;
-        T = GrB (gbmex_trans (ghb, S)) ;
+        T = gzb_trans (ghb, S) ;
         s = gbmex_isequal (S, T) ;
     end
 end

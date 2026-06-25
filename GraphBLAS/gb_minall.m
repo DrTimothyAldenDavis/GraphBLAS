@@ -7,10 +7,10 @@ function C = gb_minall (op, A)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = GrB (gbmex_reduce (ghb, op, A)) ;
+C = gzb_reduce (ghb, op, A) ;
 if (~gb_isfull (A) && gb_scalar (C) >= 0)
     % A is not full, and the min of the entries present is >= 0,
     % so C is an empty scalar (an implicit zero)
-    C = GrB (1, 1, gbmex_type (C)) ;
+    C = gzb (ghb, 1, 1, gbmex_type (C)) ;
 end
 

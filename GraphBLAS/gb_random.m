@@ -39,7 +39,7 @@ for k = 1:nargin
                 else
                     rtype = type ;
                 end
-                range = GrB (gbmex_full (ghb, r, rtype, 0, struct ('kind', 'full'))) ;
+                range = gzb_full (ghb, r, rtype, 0, struct ('kind', 'full')) ;
             case { 'unsymmetric', 'symmetric', 'hermitian' }
                 sym_option = arg ;
             otherwise
@@ -151,30 +151,31 @@ end
 % build the matrix
 %---------------------------------------------------------------------------
 
-C = GrB (gbmex_build (ghb, I, J, X, m, n, '2nd', desc)) ;
+C = gzb_build (ghb, I, J, X, m, n, '2nd', desc) ;
+
+% L = tril (C, -1)
+L = gzb_select (ghb, 'tril', C, -1) ;
 
 % make it symmetric or hermitian, if requested
-L = GrB (gbmex_select (ghb, 'tril', C, -1)) ;
-
 if (symmetric)
 
-    % C = tril (C) + tril (C,-1)'
-    C = GrB (gbmex_eadd (ghb, GrB (gbmex_select (ghb, 'tril', C, 0)), '+', GrB (gbmex_trans (ghb, L)))) ;
+    % C = tril (C) + L'
+    C = gzb_eadd (ghb, gzb_select (ghb, 'tril', C, 0), '+', gzb_trans (ghb, L)) ;
 
 elseif (hermitian)
 
     % C = L + L' + real (diag (C))
-    LT = GrB (gbmex_trans (ghb, L)) ;
+    LT = gzb_trans (ghb, L) ;
     if (gb_contains (gbmex_type (LT), 'complex'))
-        LT = GrB (gbmex_apply (ghb, 'conj', LT)) ;
+        LT = gzb_apply (ghb, 'conj', LT) ;
     end
-    D = GrB (gbmex_select (ghb, 'diag', C, 0)) ;
+    D = gzb_select (ghb, 'diag', C, 0) ;
     if (gb_contains (gbmex_type (D), 'complex'))
-        LT = GrB (gbmex_eadd (ghb, LT, '+', GrB (gbmex_apply (ghb, 'creal', D)))) ;
+        LT = gzb_eadd (ghb, LT, '+', gzb_apply (ghb, 'creal', D)) ;
     else
-        LT = GrB (gbmex_eadd (ghb, LT, '+', D)) ;
+        LT = gzb_eadd (ghb, LT, '+', D) ;
     end
-    C = GrB (gbmex_eadd (ghb, L, '+', LT)) ;
+    C = gzb_eadd (ghb, L, '+', LT) ;
 
 end
 

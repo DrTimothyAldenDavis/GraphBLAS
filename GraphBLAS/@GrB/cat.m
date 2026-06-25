@@ -37,9 +37,9 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 % concatenate the matrices
 if (dim == 1)
     % same as vertcat
-    C = GrB (gbmex_cat (ghb, varargin')) ;
+    C = gzb_cat (ghb, varargin') ;
 else
     % same as horzcat
-    C = GrB (gbmex_cat (ghb, varargin)) ;
+    C = gzb_cat (ghb, varargin) ;
 end
 

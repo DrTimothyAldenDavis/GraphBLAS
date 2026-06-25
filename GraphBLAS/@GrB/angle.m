@@ -11,9 +11,9 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 [m, n, type] = gbmex_size (G) ;
 if (gb_contains (type, 'complex'))
-    C = GrB (gbmex_apply (ghb, 'carg', G)) ;
+    C = gzb_apply (ghb, 'carg', G) ;
 else
     % C is all zero
-    C = GrB (m, n, type) ;
+    C = gzb (ghb, m, n, type) ;
 end
 

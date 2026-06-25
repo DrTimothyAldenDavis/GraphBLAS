@@ -9,5 +9,5 @@ function C = offdiag (A)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = GrB (gbmex_select (ghb, 'offdiag', A, 0)) ;
+C = gzb_select (ghb, 'offdiag', A, 0) ;
 

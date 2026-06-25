@@ -45,10 +45,10 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (ischar (fun))
     try
-        C = GrB (gbmex_apply (ghb, fun, G)) ;
+        C = gzb_apply (ghb, fun, G) ;
         return ;
     catch me %#ok<NASGU>
-        % gbmex_apply failed; fall through to feval below
+        % gzb_apply failed; fall through to feval below
     end
 end
 

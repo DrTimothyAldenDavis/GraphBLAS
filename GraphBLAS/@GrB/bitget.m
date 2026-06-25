@@ -67,20 +67,20 @@ if (isequal (atype, 'double') || isequal (atype, 'single'))
     atype = assumedtype ;
     op = ['bitget.' atype] ;
     if (~isequal (btype, atype))
-        C = gb_emult (GrB (A, atype), op, GrB (B, atype)) ;
+        C = gb_emult (gzb (ghb, A, atype), op, gzb (ghb, B, atype)) ;
     else
-        C = gb_emult (GrB (A, atype), op, B) ;
+        C = gb_emult (gzb (ghb, A, atype), op, B) ;
     end
 else
     op = ['bitget.' atype] ;
     if (~isequal (btype, atype))
-        C = gb_emult (A, op, GrB (B, atype)) ;
+        C = gb_emult (A, op, gzb (ghb, B, atype)) ;
     else
         C = gb_emult (A, op, B) ;
     end
 end
 
 if (~isequal (gbmex_type (C), ctype))
-    C = GrB (C, ctype) ;
+    C = gzb (ghb, C, ctype) ;
 end
 

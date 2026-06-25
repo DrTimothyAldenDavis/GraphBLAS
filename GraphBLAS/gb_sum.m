@@ -20,21 +20,21 @@ switch (option)
     case { 'all' }
 
         % C = sum (G, 'all'), reducing all entries to a scalar
-        C = GrB (gbmex_reduce (ghb, op, G)) ;
+        C = gzb_reduce (ghb, op, G) ;
 
     case { 1 }
 
         % C = sum (G, 1) reduces each column to a scalar,
         % giving a 1-by-n row vector.
         desc.in0 = 'transpose' ;
-        C = GrB (gbmex_trans (ghb, GrB (gbmex_vreduce (ghb, op, G, desc)))) ;
-
+        T = gzb_vreduce (ghb, op, G, desc) ;
+        C = gzb_trans (ghb, T) ;
 
     case { 2 }
 
         % C = sum (G, 2) reduces each row to a scalar,
         % giving an m-by-1 column vector.
-        C = GrB (gbmex_vreduce (ghb, op, G)) ;
+        C = gzb_vreduce (ghb, op, G) ;
 
     otherwise
 

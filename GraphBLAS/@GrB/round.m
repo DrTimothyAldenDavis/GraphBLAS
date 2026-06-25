@@ -15,8 +15,8 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 % FUTURE: round (x,n) and round (x,n,type)
 
 if (gb_isfloat (gbmex_type (G)))
-    C = GrB (gbmex_apply (ghb, 'round', G)) ;
+    C = gzb_apply (ghb, 'round', G) ;
 else
-    C = GrB (G) ;
+    C = gzb (ghb, G) ;
 end
 

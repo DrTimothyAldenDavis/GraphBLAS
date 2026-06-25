@@ -15,5 +15,5 @@ function C = zeros (varargin)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 [m, n, type] = gb_parse_args ('zeros', varargin {:}) ;
-C = GrB (m, n, type) ;
+C = gzb (ghb, m, n, type) ;
 

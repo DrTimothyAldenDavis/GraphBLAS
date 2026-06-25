@@ -39,21 +39,16 @@ else
 
     if (nargin == 1)
         % split A into scalars
-        S = gbmex_split (ghb, A, ones (m, 1), ones (n, 1)) ;
+        C = gzb_split (ghb, A, ones (m, 1), ones (n, 1)) ;
     elseif (isequal (dim, 1))
         % split A into columns
-        S = gbmex_split (ghb, A, m, ones (n, 1)) ;
+        C = gzb_split (ghb, A, m, ones (n, 1)) ;
     elseif (isequal (dim, 2))
         % split A into rows
-        S = gbmex_split (ghb, A, ones (m, 1), n) ;
+        C = gzb_split (ghb, A, ones (m, 1), n) ;
     else
         error ('GrB:error', 'unknown option') ;
     end
 
-    % convert each cell back into GrB matrices
-    C = cell (size (S)) ;
-    for k = 1:numel(S)
-        C {k} = GrB (S {k}) ;
-    end
 end
 

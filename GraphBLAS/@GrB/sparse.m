@@ -16,9 +16,9 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 switch (sparsity)
     case { 'hypersparse', 'sparse' }
         % nothing to do; G is already sparse or hypersparse
-        C = GrB (G) ;
+        C = gzb (ghb, G) ;
     case { 'bitmap', 'full' }
         % convert G to sparse or hypersparse
-        C = GrB (G, 'sparse/hypersparse') ;
+        C = gzb (ghb, G, 'sparse/hypersparse') ;
 end
 

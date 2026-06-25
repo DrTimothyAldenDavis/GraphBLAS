@@ -1001,7 +1001,7 @@ methods
     % builtin MATLAB/Octave array of type uint8.  It will be loaded back
     % using loadobj, below.
     ghb = 0 ;     % 0 for GrB, 1 for GhB
-    S.blob = gbmex_builtin (GrB (gbmex_serialize (ghb, G))) ;
+    S.blob = gbmex_builtin (gzb_serialize (ghb, G)) ;
     end
 
 end
@@ -1020,11 +1020,11 @@ methods (Static)
         if (isobject (S))
             % S is a @GrB matrix from GraphBLAS 10.3.1 or earlier, which
             % did not have saveobj and loadobj methods.
-            G = GrB (gbmex_loadhistorical (ghb, S.opaque)) ;
+            G = gzb_loadhistorical (ghb, S.opaque) ;
         else
             % S is a struct created by saveobj, above, with a single
             % S.blob field containing the serialized matrix.
-            G = GrB (gbmex_deserialize (ghb, S.blob)) ;
+            G = gzb_deserialize (ghb, S.blob) ;
         end
     end
 

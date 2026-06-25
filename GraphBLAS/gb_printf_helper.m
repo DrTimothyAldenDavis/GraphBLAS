@@ -13,7 +13,7 @@ for k = 1:len
     arg = varargin {k} ;
     if (isobject (arg))
         desc.kind = 'full' ;
-        args {k} = gbmex_builtin (GrB (gbmex_full (ghb, arg, gbmex_type (arg), 0, desc))) ;
+        args {k} = gbmex_builtin (gzb_full (ghb, arg, gbmex_type (arg), 0, desc)) ;
     else
         args {k} = arg ;
     end

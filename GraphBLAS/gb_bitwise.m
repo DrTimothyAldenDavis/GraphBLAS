@@ -25,7 +25,7 @@ end
 ctype = atype ;
 
 if (isequal (atype, 'double') || isequal (atype, 'single'))
-    A = GrB (A_arg, assumedtype) ;
+    A = gzb (ghb, A_arg, assumedtype) ;
     atype = assumedtype ;
 else
     A = A_arg ;
@@ -36,12 +36,12 @@ if (isequal (op, 'bitshift'))
     if (~isequal (btype, 'int8'))
         % convert B to int8, and ensure all values are in range -64:64
         % ensure all entries in B are <= 64
-        B = GrB (gbmex_apply2 (ghb, ['min.' btype], B_arg, 64)) ;
+        B = gzb_apply2 (ghb, ['min.' btype], B_arg, 64) ;
         if (gb_issigned (btype))
             % ensure all entries in B are >= -64
-            B = GrB (gbmex_apply2 (ghb, ['max.' btype], B, -64)) ;
+            B = gzb_apply2 (ghb, ['max.' btype], B, -64) ;
         end
-        B = GrB (B, 'int8') ;
+        B = gzb (ghb, B, 'int8') ;
     else
         B = B_arg ;
     end
@@ -51,21 +51,21 @@ if (isequal (op, 'bitshift'))
 
     if (a_is_scalar && ~b_is_scalar)
         % A is a scalar, B is a matrix
-        C = GrB (gbmex_apply2 (ghb, ['bitshift.' atype], GrB (gbmex_full (ghb, A)), B)) ;
+        C = gzb_apply2 (ghb, ['bitshift.' atype], gzb_full (ghb, A), B) ;
     elseif (~a_is_scalar && b_is_scalar)
         % A is a matrix, B is a scalar
-        C = GrB (gbmex_apply2 (ghb, ['bitshift.' atype], A, GrB (gbmex_full (ghb, B)))) ;
+        C = gzb_apply2 (ghb, ['bitshift.' atype], A, gzb_full (ghb, B)) ;
     else
         % both A and B are matrices, or both are scalars
         % expand B by padding it with zeros from the pattern of A
-        b = GrB (gbmex_eadd (ghb, '1st.int8', B, gb_expand (0, A, 'int8'))) ;
-        C = GrB (gbmex_emult (ghb, ['bitshift.' atype], A, b)) ;
+        b = gzb_eadd (ghb, '1st.int8', B, gb_expand (0, A, 'int8')) ;
+        C = gzb_emult (ghb, ['bitshift.' atype], A, b) ;
     end
 
 else
 
     if (isequal (btype, 'double') || isequal (btype, 'single'))
-        B = GrB (B_arg, assumedtype) ;
+        B = gzb (ghb, B_arg, assumedtype) ;
         btype = assumedtype ;
     else
         B = B_arg ;
@@ -83,6 +83,6 @@ else
 end
 
 if (~isequal (gbmex_type (C), ctype))
-    C = GrB (C, ctype) ;
+    C = gzb (ghb, C, ctype) ;
 end
 

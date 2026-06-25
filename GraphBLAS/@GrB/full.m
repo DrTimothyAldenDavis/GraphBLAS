@@ -39,7 +39,7 @@ end
 if (gb_isfull (A) && right_type)
 
     % nothing to do, A is already full and has the right type
-    C = GrB (A) ;
+    C = gzb (ghb, A) ;
 
 else
 
@@ -47,7 +47,7 @@ else
     if (nargin < 3)
         identity = 0 ;
     end
-    C = GrB (gbmex_full (ghb, A, type, identity)) ;
+    C = gzb_full (ghb, A, type, identity) ;
 
 end
 

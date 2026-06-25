@@ -33,12 +33,13 @@ end
 
 if (dim == 1 && m ~= 1)
     % C = A (m:-1:1, :)
-    C = GrB (gbmex_extract (ghb, A, {m,-1,1}, { })) ;
+    C = gzb_extract (ghb, A, {m,-1,1}, { }) ;
 elseif (dim == 2 && n ~= 1)
     % C = A (:, n:-1:1)
-    C = GrB (gbmex_extract (ghb, A, { }, {n,-1,1})) ;
+    C = gzb_extract (ghb, A, { }, {n,-1,1}) ;
 else
     % nothing to do
-    C = GrB (A) ;
+    % C = A
+    C = gzb (ghb, A) ;
 end
 

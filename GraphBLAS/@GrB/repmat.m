@@ -12,12 +12,12 @@ function C = repmat (G, m, n)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 type = gbmex_type (G) ;
-
 if (nargin == 3)
     R = ones (m, n, 'logical') ;
 else
     R = ones (m, 'logical') ;
 end
 op = ['2nd.' type] ;
-C = GrB (gbmex_kronecker (ghb, R, op, G)) ;
+
+C = gzb_kronecker (ghb, R, op, G) ;
 

@@ -52,9 +52,9 @@ end
 if (omitself)
     % ignore diagonal entries of G
     if (isequal (side, 'upper'))
-        G = GrB (gbmex_select (ghb, 'triu', G_arg, 1)) ;
+        G = gzb_select (ghb, 'triu', G_arg, 1) ;
     elseif (isequal (side, 'lower'))
-        G = GrB (gbmex_select (ghb, 'tril', G_arg, -1)) ;
+        G = gzb_select (ghb, 'tril', G_arg, -1) ;
     else
         % use G_arg as-is
         G = G_arg ;
@@ -62,9 +62,9 @@ if (omitself)
 else
     % include diagonal entries of G
     if (isequal (side, 'upper'))
-        G = GrB (gbmex_select (ghb, 'triu', G_arg, 0)) ;
+        G = gzb_select (ghb, 'triu', G_arg, 0) ;
     elseif (isequal (side, 'lower'))
-        G = GrB (gbmex_select (ghb, 'tril', G_arg, 0)) ;
+        G = gzb_select (ghb, 'tril', G_arg, 0) ;
     else
         % use G_arg as-is
         G = G_arg ;
@@ -86,11 +86,11 @@ switch (type)
 
         % The digraph(...) function allows for logical
         % adjacency matrices (no edge weights are created).
-        Graph = graph (gbmex_builtin (GrB (gbmex_cast (ghb, G, 'logical'))), side) ;
+        Graph = graph (gbmex_builtin (gzb_cast (ghb, G, 'logical')), side) ;
 
     otherwise
 
         % typecast to double
-        Graph = graph (gbmex_builtin (GrB (gbmex_cast (ghb, G, 'double'))), side) ;
+        Graph = graph (gbmex_builtin (gzb_cast (ghb, G, 'double')), side) ;
 end
 

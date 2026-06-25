@@ -20,10 +20,10 @@ if (a_is_real && b_is_real)
     if (gb_contains (btype, 'int') || isequal (btype, 'logical'))
         % B is logical or integer, so C is real
         c_is_real = true ;
-    elseif (gbmex_isequal (B, GrB (gbmex_apply (ghb, 'round', B))))
+    elseif (gbmex_isequal (B, gzb_apply (ghb, 'round', B)))
         % B is floating point, but all values are equal to integers
         c_is_real = true ;
-    elseif (gb_scalar (GrB (gbmex_reduce (ghb, 'min', A))) >= 0)
+    elseif (gb_scalar (gzb_reduce (ghb, 'min', A)) >= 0)
         % All entries in A are non-negative, so C is real
         c_is_real = true ;
     else
@@ -48,7 +48,7 @@ else
 end
 
 % B is always full
-B2 = GrB (gbmex_full (ghb, B, ctype)) ;
+B2 = gzb_full (ghb, B, ctype) ;
 
 % determine the operator
 op = ['pow.' ctype] ;
@@ -59,8 +59,8 @@ if (a_is_scalar)
     % A is a scalar: C is a full matrix
     %----------------------------------------------------------------------
 
-    a = GrB (gbmex_full (ghb, A, ctype)) ;
-    C = GrB (gbmex_apply2 (ghb, op, a, B2)) ;
+    a = gzb_full (ghb, A, ctype) ;
+    C = gzb_apply2 (ghb, op, a, B2) ;
 
 else
 
@@ -76,25 +76,25 @@ else
             C = gb_scalar_to_full (am, an, ctype, gb_fmt (A), 1) ;
         elseif (b == 1)
             % special case: C = A.^1 = A
-            C = GrB (A) ;
+            C = gzb (ghb, A) ;
         elseif (b <= 0)
             % 0.^b where b < 0 is Inf, so C is full
-            a = GrB (gbmex_full (ghb, A, ctype)) ;
-            C = GrB (gbmex_apply2 (ghb, op, a, B2)) ;
+            a = gzb_full (ghb, A, ctype) ;
+            C = gzb_apply2 (ghb, op, a, B2) ;
         else
             % The scalar b is > 0, and thus 0.^b is zero, so C is sparse.
-            C = GrB (gbmex_apply2 (ghb, op, A, B2)) ;
+            C = gzb_apply2 (ghb, op, A, B2) ;
         end
     else
         % both A and B2 are matrices.  0.^0 is 1, so C is full.
-        a = GrB (gbmex_full (ghb, A, ctype)) ;
-        C = GrB (gbmex_emult (ghb, op, a, B2)) ;
+        a = gzb_full (ghb, A, ctype) ;
+        C = gzb_emult (ghb, op, a, B2) ;
     end
 
 end
 
 % convert C to real if imaginary part is zero
 if (~c_is_real && gb_make_real (C))
-    C = GrB (gbmex_apply (ghb, 'creal', C)) ;
+    C = gzb_apply (ghb, 'creal', C) ;
 end
 

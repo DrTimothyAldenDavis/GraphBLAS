@@ -48,18 +48,18 @@ end
 if (am == 1)
 
     % C = diag (v,k) where A is a row vector and C is a matrix
-    C = GrB (gbmex_mdiag (ghb, GrB (gbmex_trans (ghb, A)), k)) ;
+    C = gzb_mdiag (ghb, gzb_trans (ghb, A), k) ;
 
 elseif (an == 1)
 
     % C = diag (v,k) where A is a column vector and C is a matrix
-    C = GrB (gbmex_mdiag (ghb, A, k)) ;
+    C = gzb_mdiag (ghb, A, k) ;
 
 else
 
     % v = diag (A,k) is a column vector formed from the elements of the
     % kth diagonal of A
-    C = GrB (gbmex_vdiag (ghb,A, k)) ;
+    C = gzb_vdiag (ghb, A, k) ;
 
 end
 

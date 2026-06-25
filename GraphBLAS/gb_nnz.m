@@ -8,5 +8,5 @@ function e = gb_nnz (G)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 % count entries in G and then subtract the number explicit zero entries
-e = gbmex_nvals (G) - gbmex_nvals (GrB (gbmex_select (ghb, G, '==0'))) ;
+e = gbmex_nvals (G) - gbmex_nvals (gzb_select (ghb, G, '==0')) ;
 

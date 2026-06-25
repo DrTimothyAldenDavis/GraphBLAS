@@ -13,7 +13,7 @@ function X = nonzeros (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-S = GrB (gbmex_select (ghb, 'nonzero', G)) ;
+S = gzb_select (ghb, 'nonzero', G) ;
 gbmex_wait (S) ;
 X = gbmex_extractvalues (S) ;
 

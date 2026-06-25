@@ -9,5 +9,5 @@ function C = uminus (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = GrB (gbmex_apply (ghb, '-', G)) ;
+C = gzb_apply (ghb, '-', G) ;
 

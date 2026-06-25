@@ -10,8 +10,8 @@ function C = conj (G)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (gb_contains (gbmex_type (G), 'complex'))
-    C = GrB (gbmex_apply (ghb, 'conj', G)) ;
+    C = gzb_apply (ghb, 'conj', G) ;
 else
-    C = GrB (G) ;
+    C = gzb (ghb, G) ;
 end
 

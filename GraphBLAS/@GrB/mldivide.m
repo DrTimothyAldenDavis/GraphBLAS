@@ -9,9 +9,11 @@ function C = mldivide (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+ghb = 0 ;       %  0 for GrB, 1 for GhB
+
 if (isscalar (A))
     C = rdivide (B, A) ;
 else
-    C = GrB (builtin ('mldivide', double (A), double (B))) ;
+    C = gzb (ghb, builtin ('mldivide', double (A), double (B))) ;
 end
 

@@ -13,7 +13,7 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 [m, n, type] = gbmex_size (G) ;
 
 if (gb_isfloat (type) && m > 0 && n > 0)
-    C = GrB (gbmex_apply (ghb, 'isfinite', GrB (gbmex_full (ghb, G)))) ;
+    C = gzb_apply (ghb, 'isfinite', gzb_full (ghb, G)) ;
 else
     % C is all true
     C = GrB.true (m, n) ;

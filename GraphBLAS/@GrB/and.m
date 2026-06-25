@@ -18,15 +18,15 @@ b_is_scalar = (bm == 1) && (bn == 1) ;
 if (a_is_scalar)
     if (b_is_scalar)
         % A and B are scalars
-        C = GrB (gbmex_emult (ghb, A, '&.logical', B)) ;
+        C = gzb_emult (ghb, A, '&.logical', B) ;
     else
         % A is a scalar, B is a matrix
         if (gb_scalar (A) == 0)
             % A is false, so C is empty, the same size as B
-            C = GrB (bm, bn, 'logical') ;
+            C = gzb (ghb, bm, bn, 'logical') ;
         else
             % A is true, so C is B typecasted to logical
-            C = GrB (B, 'logical') ;
+            C = gzb (ghb, B, 'logical') ;
         end
     end
 else
@@ -34,14 +34,14 @@ else
         % A is a matrix, B is a scalar
         if (gb_scalar (B) == 0)
             % B is false, so C is empty, the same size as A
-            C = GrB (am, an, 'logical') ;
+            C = gzb (ghb, am, an, 'logical') ;
         else
             % B is true, so C is A typecasted to logical
-            C = GrB (A, 'logical') ;
+            C = gzb (ghb, A, 'logical') ;
         end
     else
         % both A and B are matrices.  C is the set intersection of A and B
-        C = GrB (gbmex_emult (ghb, A, '&.logical', B)) ;
+        C = gzb_emult (ghb, A, '&.logical', B) ;
     end
 end
 

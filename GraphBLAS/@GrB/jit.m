@@ -1,5 +1,5 @@
 function [status,path] = jit (status_arg,path_arg)
-%GRB.JIT controls the GraphBLAS JIT
+%JIT controls the GraphBLAS JIT
 %
 %   status = GrB.jit ;      % get the current status of the JIT
 %   status = GrB.jit (status) ;  % control the JIT and get its status
@@ -47,6 +47,8 @@ function [status,path] = jit (status_arg,path_arg)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
+
+% NOTE: this is identical for @GrB and @GhB.
 
 if (nargin == 0)
 

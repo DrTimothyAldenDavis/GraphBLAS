@@ -15,5 +15,5 @@ if (~gb_isfloat (type))
     type = 'double' ;
 end
 
-C = GrB (gbmex_apply (ghb, 'asinh', GrB (gbmex_apply (ghb, 'minv', GrB (gbmex_full (ghb, G, type)))))) ;
+C = gzb_apply (ghb, 'asinh', gzb_apply (ghb, 'minv', gzb_full (ghb, G, type))) ;
 

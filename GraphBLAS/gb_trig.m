@@ -20,11 +20,11 @@ if (~gb_contains (type, 'complex'))
             % C is complex if any (abs (G) > 1)
             switch (type)
                 case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
-                    T = GrB (gbmex_apply (ghb, 'abs', G)) ;
-                    noutside = gbmex_nvals (GrB (gbmex_select (ghb, T, '>', 1))) ;
+                    T = gzb_apply (ghb, 'abs', G) ;
+                    noutside = gbmex_nvals (gzb_select (ghb, T, '>', 1)) ;
                     clear T
                 case { 'uint8', 'uint16', 'uint32', 'uint64' }
-                    noutside = gbmex_nvals (GrB (gbmex_select (ghb, G, '>', 1))) ;
+                    noutside = gbmex_nvals (gzb_select (ghb, G, '>', 1)) ;
             end
 
         case { 'log', 'log10', 'sqrt', 'log2' }
@@ -32,7 +32,7 @@ if (~gb_contains (type, 'complex'))
             % C is complex if any (G < 0)
             switch (type)
                 case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
-                    noutside = gbmex_nvals (GrB (gbmex_select (ghb, G, '<', 0))) ;
+                    noutside = gbmex_nvals (gzb_select (ghb, G, '<', 0)) ;
             end
 
         case { 'log1p' }
@@ -40,13 +40,13 @@ if (~gb_contains (type, 'complex'))
             % C is complex if any (G < -1)
             switch (type)
                 case { 'int8', 'int16', 'int32', 'int64', 'single', 'double' }
-                    noutside = gbmex_nvals (GrB (gbmex_select (ghb, G, '<', -1))) ;
+                    noutside = gbmex_nvals (gzb_select (ghb, G, '<', -1)) ;
             end
 
         case { 'acosh' }
 
             % C is complex if any (G < 1)
-            noutside = gbmex_nvals (GrB (gbmex_select (ghb, G, '<', 1))) ;
+            noutside = gbmex_nvals (gzb_select (ghb, G, '<', 1)) ;
     end
 
     if (noutside > 0)
@@ -62,7 +62,7 @@ if (~gb_contains (type, 'complex'))
     end
 end
 
-% if G is already complex, gbmex_apply will select a complex operator
+% if G is already complex, gzb_apply will select a complex operator
 
-C = GrB (gbmex_apply (ghb, op, G)) ;
+C = gzb_apply (ghb, op, G) ;
 

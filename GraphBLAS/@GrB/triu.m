@@ -18,5 +18,5 @@ else
     k = gb_get_scalar (k) ;
 end
 
-U = GrB (gbmex_select (ghb, 'triu', G, k)) ;
+U = gzb_select (ghb, 'triu', G, k) ;
 

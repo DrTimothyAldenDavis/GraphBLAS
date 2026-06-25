@@ -55,7 +55,7 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
     int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin >= 1+1 && nargin <= 7+1 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 2 && nargin <= 8 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 

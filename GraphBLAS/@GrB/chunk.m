@@ -22,7 +22,7 @@ function c = chunk (c_arg)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
+% NOTE: this is identical for @GrB and @GhB.
 
 if (nargin == 0)
     c = gbmex_chunk ;

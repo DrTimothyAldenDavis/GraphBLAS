@@ -10,5 +10,5 @@ function C = uplus (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = GrB (G) ;
+C = gzb (ghb, G) ;
 
