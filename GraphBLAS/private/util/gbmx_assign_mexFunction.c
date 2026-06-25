@@ -69,7 +69,7 @@ void gbmx_assign_mexFunction    // gbmex_assign or gbmex_subassign mexFunctions
     int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin >= 2+1 && nargin <= 7+1 && nargout <= 2, usage) ;
-    bool ghb = false ; // HACK (bool) mxGetScalar (pargin [0]) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     bool inplace = false ; // ghb && (nargout == 0) ;   // FIXME

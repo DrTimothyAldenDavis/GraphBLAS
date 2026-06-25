@@ -19,7 +19,7 @@ function C = sprand (arg1, arg2, arg3)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
+ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (nargin == 1)
     % C = sprand (G)

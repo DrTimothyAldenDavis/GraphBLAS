@@ -1,5 +1,5 @@
 function filename_used = save (GrB_Matrix_from_GrB_save, filename)
-%GRB.SAVE Save a single GraphBLAS matrix to a file.
+%SAVE Save a single GraphBLAS matrix to a file.
 % GrB.save (C) saves a single @GrB or built-in matrix C to a file, with a
 % filename of 'C.mat' that matches the matrix name.  If C is an
 % expression, the filename 'GrB_Matrix.mat' is used.  A second parameter
@@ -19,10 +19,10 @@ function filename_used = save (GrB_Matrix_from_GrB_save, filename)
 %
 % See also load, save, GrB.load, GrB.serialize, GrB.deserialize.
 
+% FIXME: same for @GrB and @GhB; revise comments above
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 % determine the default filename
 if (nargin < 2)

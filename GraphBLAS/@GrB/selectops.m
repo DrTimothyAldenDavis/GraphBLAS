@@ -1,5 +1,5 @@
 function result = selectops
-%GRB.SELECTOPS list all select ops
+%SELECTOPS list all select ops
 % Redundant select ops are not listed.  For example 'tril.double'
 % exists, but it is identical to just 'tril'.
 %
@@ -11,8 +11,6 @@ function result = selectops
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 types = {
     'logical'

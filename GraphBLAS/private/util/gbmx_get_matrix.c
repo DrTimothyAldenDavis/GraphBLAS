@@ -46,7 +46,7 @@ void gbmx_get_matrix
     bool is_struct = mxIsStruct (X) ;
     int nfields = (is_struct) ? mxGetNumberOfFields (X) : 0 ;
     bool is_grb = mxIsClass (X, "GrB") || (is_struct && nfields > 1) ;
-    bool is_ghb = false ; // HACK mxIsClass (X, "GhB") || (is_struct && nfields == 1) ;
+    bool is_ghb = mxIsClass (X, "GhB") || (is_struct && nfields == 1) ;
 
     if (is_ghb)
     { 

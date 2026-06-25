@@ -7,7 +7,5 @@ function [p, varargout] = symamd (G, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
 [p, varargout{1:nargout-1}] = symamd (double (G), varargin {:}) ;
 

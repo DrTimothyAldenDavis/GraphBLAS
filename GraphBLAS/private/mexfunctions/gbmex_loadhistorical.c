@@ -41,7 +41,7 @@ void mexFunction
     int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 2 && nargout == 1, USAGE) ;
-    bool ghb = false ; // HACK (bool) mxGetScalar (pargin [0]) ;
+    bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     CHECK_ERROR (!mxIsStruct (pargin [1]), USAGE " where S is a struct") ;

@@ -12,7 +12,7 @@ function C = int32 (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
+ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 desc.kind = 'full' ;
 C = gbmex_builtin (GrB (gbmex_full (ghb, G, 'int32', int32 (0), desc))) ;

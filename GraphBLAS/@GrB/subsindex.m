@@ -8,7 +8,7 @@ function I = subsindex (G_arg)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
+ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 % On input, G must contain integers in the range 1 to prod (size (A))-1.
 % The dimensions of A are not provided to subsindex.

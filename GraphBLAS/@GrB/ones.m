@@ -15,7 +15,7 @@ function C = ones (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
+ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 [m, n, type] = gb_parse_args ('ones', varargin {:}) ;
 C = gb_scalar_to_full (m, n, type, gbmex_format, 1) ;

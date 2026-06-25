@@ -10,8 +10,6 @@ function result = unops
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
 types = {
     'logical'
     'double'
@@ -125,5 +123,4 @@ end
 if (nargout == 0)
     fprintf ('Total number of available unary ops: %d\n', nunops) ;
 end
-
 

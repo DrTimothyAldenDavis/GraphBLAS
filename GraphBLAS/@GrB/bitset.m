@@ -43,7 +43,7 @@ function C = bitset (A_arg, B_arg, arg3, arg4)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
+ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 [am, an, atype] = gbmex_size (A_arg) ;
 [bm, bn, btype] = gbmex_size (B_arg) ;

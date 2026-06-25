@@ -1,4 +1,4 @@
-classdef (HandleCompatible) GrB % < handle
+classdef (HandleCompatible) GrB
 %GrB GraphBLAS sparse matrices for Octave/MATLAB.
 %
 % GraphBLAS is a library for creating graph algorithms based on sparse
@@ -442,7 +442,8 @@ classdef (HandleCompatible) GrB % < handle
 %   C is both an input and output matrix.  In this interface to GraphBLAS,
 %   it can be split into Cin (the value of C on input) and C (the value of
 %   on output) using the functional syntax, or it can be a single
-%   input/output matrix as the first parameter using the in-place syntax.
+%   input/output matrix as the first parameter using the in-place syntax
+%   for the @GhB object.
 %
 %   M is the optional mask matrix, and #M is either M or ~M depending on
 %   whether or not the mask is complemented via the desc.mask option.  The
@@ -479,27 +480,27 @@ classdef (HandleCompatible) GrB % < handle
 %       C = GrB.trans     (Cin, M, accum,     A,          desc)
 %       C = GrB.vreduce   (Cin, M, accum, op, A,          desc)
 %
-%   The @GrB matrix is a handle object, so C can also be modified in place.
+%   The @GhB matrix is a handle object, so C can also be modified in place.
 %   Using this in-place syntax:
 %
 % FIXME: modify C inplace for these 14
 %
-%       GrB.apply     (C, M, accum, op, A,          desc)
-%       GrB.apply2    (C, M, accum, op, A, B,       desc)
-%       GrB.assign    (C, M, accum,     A,    I, J, desc)
-%       GrB.eadd      (C, M, accum, op, A, B,       desc)
-%       GrB.eunion    (C, M, accum, op, A, a, B, b, desc)
-%       GrB.emult     (C, M, accum, op, A, B,       desc)
-%       GrB.extract   (C, M, accum,     A,    I, J, desc)
-%       GrB.kronecker (C, M, accum, op, A, B,       desc)
-%       GrB.mxm       (C, M, accum, op, A, B,       desc)
-%       GrB.reduce    (C,    accum, op, A,          desc)
-%       GrB.select    (C, M, accum, op, A, b,       desc)
-%       GrB.subassign (C, M, accum,     A,    I, J, desc)
-%       GrB.trans     (C, M, accum,     A,          desc)
-%       GrB.vreduce   (C, M, accum, op, A,          desc)
+%       GhB.apply     (C, M, accum, op, A,          desc)
+%       GhB.apply2    (C, M, accum, op, A, B,       desc)
+%       GhB.assign    (C, M, accum,     A,    I, J, desc)
+%       GhB.eadd      (C, M, accum, op, A, B,       desc)
+%       GhB.eunion    (C, M, accum, op, A, a, B, b, desc)
+%       GhB.emult     (C, M, accum, op, A, B,       desc)
+%       GhB.extract   (C, M, accum,     A,    I, J, desc)
+%       GhB.kronecker (C, M, accum, op, A, B,       desc)
+%       GhB.mxm       (C, M, accum, op, A, B,       desc)
+%       GhB.reduce    (C,    accum, op, A,          desc)
+%       GhB.select    (C, M, accum, op, A, b,       desc)
+%       GhB.subassign (C, M, accum,     A,    I, J, desc)
+%       GhB.trans     (C, M, accum,     A,          desc)
+%       GhB.vreduce   (C, M, accum, op, A,          desc)
 %
-%   For the in-place syntax, no output parameter ("C = GrB.method (..)")
+%   For the in-place syntax, no output parameter ("C = GhB.method (..)")
 %   can appear, and the matrix C must appear as a parameter (see below).
 %
 %   The parameters divide into 4 classes: matrices, strings, cells, and a
@@ -650,7 +651,7 @@ methods
     % C = GrB (m,n,format,type) ; ditto
     %
     % See also sparse.
-        ghb = 1 ;     % 0 for GrB, 1 for GhB
+        ghb = 0 ;     % 0 for GrB, 1 for GhB
         switch (nargin)
             case 1
                 if (isstruct (arg1))
@@ -999,7 +1000,7 @@ methods
     % of the @GrB matrix G.  S is not an object.  S.blob is a dense
     % builtin MATLAB/Octave array of type uint8.  It will be loaded back
     % using loadobj, below.
-    ghb = 1 ;     % 0 for GrB, 1 for GhB
+    ghb = 0 ;     % 0 for GrB, 1 for GhB
     S.blob = gbmex_builtin (GrB (gbmex_serialize (ghb, G))) ;
     end
 
@@ -1015,12 +1016,10 @@ methods (Static)
     %LOADOBJ loads a @GrB matrix from a file.
     % MATLAB/Octave first reads in the struct S that saveobj created, and
     % then passes it to this method.
-        ghb = 1 ;     % 0 for GrB, 1 for GhB
+        ghb = 0 ;     % 0 for GrB, 1 for GhB
         if (isobject (S))
             % S is a @GrB matrix from GraphBLAS 10.3.1 or earlier, which
-            % did not have saveobj and loadobj methods.  S is not a
-            % handle object.  It must be converted here into a @GrB
-            % handle object for the current version of GraphBLAS.
+            % did not have saveobj and loadobj methods.
             G = GrB (gbmex_loadhistorical (ghb, S.opaque)) ;
         else
             % S is a struct created by saveobj, above, with a single

@@ -1,0 +1,44 @@
+function C = gb_eunion (A, op, B)
+%GB_EUNION C = A+B, sparse matrix 'addition' using the given op.
+% The pattern of C is the set union of A and B.  Entries in A but not B,
+% or in B but not A, are assumed to have the value zero.  The op is
+% applied to all entries in the set union of the pattern of A and B.
+%
+% The inputs A and B are built-in matrices or @GrB objects or structs.
+% The result a GraphBLAS struct.
+%
+% See also GrB/plus, GrB/minus, GrB/bitxor, GrB/bitor, GrB/hypot.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
+ghb = 0 ;     % 0 for GrB, 1 for GhB
+
+[am, an, atype] = gbmex_size (A) ;
+[bm, bn, btype] = gbmex_size (B) ;
+a_is_scalar = (am == 1) && (an == 1) ;
+b_is_scalar = (bm == 1) && (bn == 1) ;
+type = gbmex_optype (atype, btype) ;
+
+if (a_is_scalar)
+    if (b_is_scalar)
+        % both A and B are scalars.  Result is also a scalar.
+        C = GrB (gbmex_eadd (ghb, A, op, B)) ;
+    else
+        % A is a scalar, B is a matrix.  Result is full.
+        % expand A to a full matrix
+        a = gb_scalar_to_full (bm, bn, type, gb_fmt (B), A) ;
+        C = GrB (gbmex_eadd (ghb, a, op, B)) ;
+    end
+else
+    if (b_is_scalar)
+        % A is a matrix, B is a scalar.  Result is full.
+        % expand B to a full matrix
+        b = gb_scalar_to_full (am, an, type, gb_fmt (A), B) ;
+        C = GrB (gbmex_eadd (ghb, A, op, b)) ;
+    else
+        % both A and B are matrices.  Result is sparse.
+        C = GrB (gbmex_eunion (ghb, A, 0, op, B, 0)) ;
+    end
+end
+

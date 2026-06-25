@@ -25,14 +25,20 @@ for k = 1:length (mfiles)
     copyfile ([(mfiles (k).folder) '/' (mfiles (k).name)], 'tmp/@GrB/private') ;
 end
 
-% copy the *.h files
+% copy all @GrB/../gb*.m files into tmp
+mfiles = dir ('../../@GrB/../gb*.m') ;
+for k = 1:length (mfiles)
+    copyfile ([(mfiles (k).folder) '/' (mfiles (k).name)], 'tmp') ;
+end
+
+% copy the *.h files into tmp
 copyfile ('../../private/util/*.h', 'tmp') ;
 
-% copy and edit the mexfunction/*.c files
+% edit the mexfunction/*.c files and place the editted versions in tmp
 cfiles = dir ('../../private/mexfunctions/*.c') ; 
 count = gbcov_edit (cfiles, 0, 'tmp') ;
 
-% copy and edit the util/*.c files
+% edit the util/*.c files and place the editted versions in tmp
 ufiles = [ dir('../../private/util/*.c') ; dir('*.c') ] ;
 count = gbcov_edit (ufiles, count, 'tmp') ;
 
