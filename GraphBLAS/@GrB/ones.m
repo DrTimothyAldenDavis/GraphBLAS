@@ -17,6 +17,5 @@ function C = ones (varargin)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-[m, n, type] = gb_parse_args ('ones', varargin {:}) ;
-C = gb_scalar_to_full (m, n, type, gbmex_format, 1) ;
+C = gb_ones (ghb, varargin {:}) ;
 

@@ -9,11 +9,5 @@ function C = atan (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (~gb_isfloat (gbmex_type (G)))
-    op = 'atan.double' ;
-else
-    op = 'atan' ;
-end
-
-C = gzb_apply (ghb, op, G) ;
+C = gb_atan (ghb, G)
 

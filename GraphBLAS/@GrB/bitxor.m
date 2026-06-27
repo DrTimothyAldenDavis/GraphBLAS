@@ -32,9 +32,9 @@ function C = bitxor (A, B, assumedtype)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (nargin < 3)
-    assumedtype = 'uint64' ;
+if (nargin == 2)
+    C = gb_bitwise (ghb, 'bitxor', A, B) ;
+else
+    C = gb_bitwise (ghb, 'bitxor', A, B, assumedtype) ;
 end
-
-C = gb_bitwise ('bitxor', A, B, assumedtype) ;
 

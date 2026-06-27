@@ -1,10 +1,12 @@
-function C = gb_bitwise (op, A_arg, B_arg, assumedtype)
-%GB_BITWISE bitwise AND, OR, XOR, ...
+function C = gb_bitwise (ghb, op, A_arg, B_arg, assumedtype)
+%GB_BITWISE bitwise AND, OR, XOR, ...  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
+if (nargin < 5)
+    assumedtype = 'uint64' ;
+end
 
 atype = gbmex_type (A_arg) ;
 btype = gbmex_type (B_arg) ;
@@ -58,7 +60,7 @@ if (isequal (op, 'bitshift'))
     else
         % both A and B are matrices, or both are scalars
         % expand B by padding it with zeros from the pattern of A
-        b = gzb_eadd (ghb, '1st.int8', B, gb_expand (0, A, 'int8')) ;
+        b = gzb_eadd (ghb, '1st.int8', B, gb_expand (ghb, 0, A, 'int8')) ;
         C = gzb_emult (ghb, ['bitshift.' atype], A, b) ;
     end
 
@@ -76,9 +78,9 @@ else
 
     switch (op)
         case { 'bitxor', 'bitor' }
-            C = gb_eadd (A, op, B) ;
+            C = gb_eadd (ghb, A, op, B) ;
         case { 'bitand' }
-            C = gb_emult (A, op, B) ;
+            C = gb_emult (ghb, A, op, B) ;
     end
 end
 

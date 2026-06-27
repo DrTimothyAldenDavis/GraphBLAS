@@ -1,5 +1,5 @@
 function s = gb_numel (G)
-%GB_NUMEL the maximum number of entries a GraphBLAS matrix can hold.
+%GB_NUMEL the maximum number of entries a matrix can hold.  Not user-callable.
 % Implements s = numel (G)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.

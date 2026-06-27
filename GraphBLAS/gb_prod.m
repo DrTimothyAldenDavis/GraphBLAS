@@ -1,15 +1,13 @@
-function C = gb_prod (op, type, G, option)
-%GB_PROD C = prod (G), using the given operator and type
+function C = gb_prod (ghb, op, type, G, option)
+%GB_PROD C = prod (G), using the given operator and type.  Not user-callable.
 % Implements C = prod (G) and C = all (G).
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
 [m, n] = gbmex_size (G) ;
 
-if (nargin == 3)
+if (nargin == 4)
     % C = prod (G)
     if (m == 1 || n == 1)
         option = 'all' ;
@@ -17,7 +15,6 @@ if (nargin == 3)
         option = 1 ;
     end
 end
-
 
 switch (option)
 

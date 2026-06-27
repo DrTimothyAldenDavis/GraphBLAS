@@ -12,11 +12,5 @@ function C = round (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-% FUTURE: round (x,n) and round (x,n,type)
-
-if (gb_isfloat (gbmex_type (G)))
-    C = gzb_apply (ghb, 'round', G) ;
-else
-    C = gzb (ghb, G) ;
-end
+C = gb_round (ghb, G) ;
 

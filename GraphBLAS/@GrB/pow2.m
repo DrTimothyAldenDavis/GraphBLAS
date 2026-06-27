@@ -13,22 +13,9 @@ function C = pow2 (A, B)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-atype = gbmex_type (A) ;
-
 if (nargin == 1)
-    % C = 2.^A
-    if (~gb_isfloat (atype))
-        atype = 'double' ;
-    end
-    C = gzb_apply (ghb, 'pow2', gzb_full (ghb, A, atype)) ;
+    C = gb_pow2 (ghb, A) ;
 else
-    % C = A.*(2.^B)
-    type = gbmex_optype (atype, gbmex_type (B)) ;
-    if (gb_contains (type, 'single'))
-        type = 'single' ;
-    else
-        type = 'double' ;
-    end
-    C = gb_eunion (A, ['pow2.' type], B) ;
+    C = gb_pow2 (ghb, A, B) ;
 end
 

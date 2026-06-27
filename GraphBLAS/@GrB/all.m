@@ -15,8 +15,8 @@ function C = all (G, option)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (nargin == 1)
-    C = gb_prod ('&.logical', 'logical', G) ;
+    C = gb_prod (ghb, '&.logical', 'logical', G) ;
 else
-    C = gb_prod ('&.logical', 'logical', G, option) ;
+    C = gb_prod (ghb, '&.logical', 'logical', G, option) ;
 end
 

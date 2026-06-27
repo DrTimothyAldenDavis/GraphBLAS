@@ -73,5 +73,5 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 [C_opaque, kind] = gbmex_build (ghb, I, J, X, varargin {:}) ;
 
-C = gb_mexfunction_result (C_opaque, kind) ;
+C = gb_mexfunction_result (ghb, C_opaque, kind) ;
 

@@ -10,5 +10,5 @@ function C = log1p (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = gb_trig ('log1p', G) ;
+C = gb_trig (ghb, 'log1p', G) ;
 

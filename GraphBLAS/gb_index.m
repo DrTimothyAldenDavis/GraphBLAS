@@ -1,5 +1,5 @@
 function [I, whole] = gb_index (I_input)
-%GB_INDEX helper function for subsref and subsasgn
+%GB_INDEX helper function for subsref and subsasgn.  Not user-callable.
 % [I, whole] = gb_index (I) converts I into a cell array of built-in
 % matrices or vectors containing integer indices, to access A(I).
 %

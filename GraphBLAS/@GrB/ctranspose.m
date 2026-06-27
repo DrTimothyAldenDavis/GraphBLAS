@@ -9,10 +9,5 @@ function C = ctranspose (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (gb_contains (gbmex_type (G), 'complex'))
-    desc.in0 = 'transpose' ;
-    C = gzb_apply (ghb, 'conj', G, desc) ;
-else
-    C = gzb_trans (ghb, G) ;
-end
+C = gb_ctranspose (ghb, G) ;
 

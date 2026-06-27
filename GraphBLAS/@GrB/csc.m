@@ -10,11 +10,5 @@ function C = csc (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (~gb_isfloat (gbmex_type (G)))
-    op = 'sin.double' ;
-else
-    op = 'sin' ;
-end
-
-C = gzb_apply (ghb, 'minv', gzb_full (ghb, gzb_apply (ghb, op, G))) ;
+C = gb_csc (ghb, G) ;
 

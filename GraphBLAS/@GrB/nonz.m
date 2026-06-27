@@ -57,30 +57,5 @@ function result = nonz (A, varargin)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-builtin_sparse = builtin ('issparse', A) ;
-
-% get the identity value
-id = 0 ;
-nargs = nargin ;
-if (nargin > 1)
-    lastarg = varargin {nargs-1} ;
-    if (~ischar (lastarg))
-        % the last argument is id, if it is not a string
-        id = gb_get_scalar (lastarg) ;
-        nargs = nargs - 1 ;
-    end
-end
-
-if (id ~= 0)
-    % id is nonzero, so prune A first (for any matrix A)
-    result = gb_entries (gzb_select (ghb, A, '~=', id), varargin {1:nargs-1}) ;
-elseif (~builtin_sparse)
-    % id is zero, so prune A only if it is a GraphBLAS matrix,
-    % or a built-in full matrix.  A built-in sparse matrix can remain
-    % unchanged.
-    result = gb_entries (gzb_select (ghb, A, 'nonzero'), varargin {1:nargs-1}) ;
-else
-    % get the count/list of the entries of A
-    result = gb_entries (A, varargin {1:nargs-1}) ;
-end
+result = gb_nonz (ghb, A, varargin {:}) ;
 

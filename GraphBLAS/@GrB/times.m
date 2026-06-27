@@ -12,5 +12,5 @@ function C = times (A, B)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = gb_emult (A, '*', B) ;
+C = gb_emult (ghb, A, '*', B) ;
 

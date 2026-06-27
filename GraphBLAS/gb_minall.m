@@ -1,14 +1,12 @@
-function C = gb_minall (op, A)
-%GB_MINALL reduce a matrix to a scalar
+function C = gb_minall (ghb, op, A)
+%GB_MINALL reduce a matrix to a scalar.  Not user-callable.
 % Implements C = min (A, [ ], 'all') ;
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
 C = gzb_reduce (ghb, op, A) ;
-if (~gb_isfull (A) && gb_scalar (C) >= 0)
+if (~gb_isfull (A) && gb_scalar (ghb, C) >= 0)
     % A is not full, and the min of the entries present is >= 0,
     % so C is an empty scalar (an implicit zero)
     C = gzb (ghb, 1, 1, gbmex_type (C)) ;

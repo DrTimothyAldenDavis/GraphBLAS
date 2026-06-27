@@ -63,6 +63,7 @@ void gbmx_get_matrix
         OK (GrB_Matrix_ncols (&matrix->ncols, matrix->G)) ;
         OK (GxB_Matrix_type (&matrix->type, matrix->G)) ;
         OK (GxB_Type_size (&(matrix->typesize), matrix->type)) ;
+        matrix->kind = KIND_GHB ;
 
     }
     else if (is_grb)
@@ -89,6 +90,7 @@ void gbmx_get_matrix
         matrix->ncols = (uint64_t) mxGetN (X) ;
         matrix->by_col = true ;
         matrix->nvec_nonempty = -1 ;
+        matrix->kind = KIND_BUILTIN ;
 
         if (matrix->nrows == 0 && matrix->ncols == 0)
         {

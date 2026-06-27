@@ -1,11 +1,9 @@
-function s = gb_issymmetric (G_arg, option, herm)
-%GB_ISSYMMETRIC check if symmetric or Hermitian
+function s = gb_issymmetric (ghb, G_arg, option, herm)
+%GB_ISSYMMETRIC check if symmetric or Hermitian.  Not user-callable.
 % Implements issymmetric (G,option) and ishermitian (G,option).
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 % FUTURE: this can be much faster; see spsym in CHOLMOD.
 
@@ -37,7 +35,7 @@ else
         case { 'skew' }
 
             % G is skew symmetric/Hermitian if G+T is zero
-            s = (gbmex_norm (gb_eadd (G, '+', T), 1) == 0) ;
+            s = (gbmex_norm (gb_eadd (ghb, G, '+', T), 1) == 0) ;
 
         case { 'nonskew' }
 
@@ -52,7 +50,7 @@ else
 
     if (s)
         % also check the pattern; G might have explicit zeros
-        S = gb_spones (G, 'logical') ;
+        S = gb_spones (ghb, G, 'logical') ;
         T = gzb_trans (ghb, S) ;
         s = gbmex_isequal (S, T) ;
     end

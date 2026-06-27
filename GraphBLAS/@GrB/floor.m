@@ -10,9 +10,5 @@ function C = floor (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (gb_isfloat (gbmex_type (G)))
-    C = gzb_apply (ghb, 'floor', G) ;
-else
-    C = gzb (ghb, G) ;
-end
+C = gb_floor (ghb, G) ;
 

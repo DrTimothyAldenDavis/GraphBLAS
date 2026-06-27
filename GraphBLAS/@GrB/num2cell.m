@@ -18,37 +18,9 @@ function C = num2cell (A, dim)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (nargin == 2 && isequal (dim, [1 2]))
-
-    % whole matrix, not transposed
-    C = { A } ;
-
-elseif (nargin == 2 && isequal (dim, [2 1]))
-
-    % whole matrix, transposed
-    C = { A.' } ;
-
+if (nargin == 1)
+    C = gb_num2cell (ghb, A) ;
 else
-
-    % split into scalars, rows, or columns
-    if (isobject (A))
-        [m, n] = gbmex_size (A) ;
-    else
-        [m, n] = size (A) ;
-    end
-
-    if (nargin == 1)
-        % split A into scalars
-        C = gzb_split (ghb, A, ones (m, 1), ones (n, 1)) ;
-    elseif (isequal (dim, 1))
-        % split A into columns
-        C = gzb_split (ghb, A, m, ones (n, 1)) ;
-    elseif (isequal (dim, 2))
-        % split A into rows
-        C = gzb_split (ghb, A, ones (m, 1), n) ;
-    else
-        error ('GrB:error', 'unknown option') ;
-    end
-
+    C = gb_num2cell (ghb, A, dim) ;
 end
 

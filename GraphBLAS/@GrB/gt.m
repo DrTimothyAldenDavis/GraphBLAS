@@ -10,5 +10,5 @@ function C = gt (A, B)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = lt (B, A) ;
+C = gb_lt (ghb, B, A) ;
 

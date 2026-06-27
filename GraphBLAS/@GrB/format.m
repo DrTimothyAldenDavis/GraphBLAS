@@ -119,21 +119,13 @@ function [f,s,iso] = format (arg)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
 if (nargin == 0)
-    % f = GrB.format ; get the global format
-    if (nargout > 1)
-        error ('GrB:error', 'usage: f = GrB.format') ;
-    end
-    f = gbmex_format ;
+    f = gb_format ;
 else
-    % f = GrB.format (A) ; get the format of A (built-in or GraphBLAS)
-    % f = GrB.format (f) ; set the global format for all matrices.
     if (nargout <= 1)
-        f = gbmex_format (arg) ;
+        f = gb_format (arg) ;
     else
-        [f,s,iso] = gbmex_format (arg) ;
+        [f, s, iso] = gb_format (arg) ;
     end
 end
 

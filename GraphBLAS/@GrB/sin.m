@@ -9,11 +9,5 @@ function C = sin (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (~gb_isfloat (gbmex_type (G)))
-    op = 'sin.double' ;
-else
-    op = 'sin' ;
-end
-
-C = gzb_apply (ghb, op, G) ;
+C = gb_sin (ghb, G) ;
 

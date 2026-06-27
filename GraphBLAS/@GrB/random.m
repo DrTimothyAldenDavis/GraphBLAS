@@ -98,5 +98,5 @@ function C = random (varargin)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = gb_random (varargin {:}) ;
+C = gb_random (ghb, varargin {:}) ;
 

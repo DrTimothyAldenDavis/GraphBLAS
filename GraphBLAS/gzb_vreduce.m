@@ -1,5 +1,5 @@
 function C = gzb_vreduce (ghb, arg1, arg2, arg3, arg4, arg5)
-%GZB_VREDUCE: wrapper for gbmex_vreduce mexFunction.  Not user callable.
+%GZB_VREDUCE: wrapper for gbmex_vreduce mexFunction.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

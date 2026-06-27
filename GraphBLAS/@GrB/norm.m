@@ -23,13 +23,11 @@ function s = norm (G, kind)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
 % FUTURE: add the p-norm for vectors.
 
 if (nargin == 2)
     if (~ischar (kind))
-        kind = gb_get_scalar (kind) ;
+        kind = gb_get_scalar (0, kind) ;
     end
 else
     kind = 2 ;

@@ -1,11 +1,9 @@
-function C = gb_trig (op, G)
-%GB_TRIG inverse sine, cosine, log, sqrt, ... etc
+function C = gb_trig (ghb, op, G)
+%GB_TRIG inverse sine, cosine, log, sqrt, ... etc.  Not user-callable.
 % Implements C = asin (G), C = acos (G), C = atanh (G), ... etc
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 type = gbmex_type (G) ;
 

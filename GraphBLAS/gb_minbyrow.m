@@ -1,11 +1,9 @@
-function C = gb_minbyrow (op, A)
-%GB_MINBYROW min, by row
+function C = gb_minbyrow (ghb, op, A)
+%GB_MINBYROW min, by row.  Not user-callable.
 % Implements C = min (A, [ ], 2)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 % C = min (A, [ ], 2) reduces each row to a scalar; C is m-by-1
 C = gzb_vreduce (ghb, op, A) ;

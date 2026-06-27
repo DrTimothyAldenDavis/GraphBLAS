@@ -209,7 +209,7 @@ classdef (HandleCompatible) GrB
 %   C = diag (A, k)         diagonal matrices and diagonals
 %   DiGraph = digraph (G,...)   directed Graph
 %   disp (A, level)         display a built-in or GrB matrix A
-%   display (G)             display a GrB matrix G; same as disp(G,2)
+%   display (G)             display a built-in or GrB matrix A, and its name
 %   [...] = dmperm (G)      Dulmage-Mendelsohn permutation
 %   C = double (G)          cast GrB matrix to built-in sparse double
 %
@@ -788,7 +788,6 @@ methods
 
     C = and (A, B) ;            % C = (A & B)
     C = ctranspose (A) ;        % C = A'
-    i = end (A, k, ndims) ;     % for A (1:end,1:end)
     C = eq (A, B) ;             % C = (A == B)
     C = ge (A, B) ;             % C = (A >= B)
     C = gt (A, B) ;             % C = (A > B)
@@ -816,6 +815,9 @@ methods
     C = uplus (G) ;             % C = +A
     C = vertcat (varargin) ;    % C = [A ; B]
 
+    % GrB/end and GhB/end are identical:
+    i = end (A, k, ndims) ;     % for A (1:end,1:end)
+
     %---------------------------------------------------------------------
     % Methods that overload built-in functions:
     %---------------------------------------------------------------------
@@ -838,19 +840,15 @@ methods
     C = acsc (G) ;
     C = acsch (G) ;
     C = all (G, option) ;
-    p = amd (G, varargin) ;
     C = angle (G) ;
     C = any (G, option) ;
     C = asec (G) ;
     C = asech (G) ;
     C = asin (G) ;
     C = asinh (G) ;
-    assert (G) ;            % test assertion 
     C = atan (G) ;
     C = atanh (G) ;
     C = atan2 (A, B) ;
-
-    [lo, hi] = bandwidth (G, uplo) ;
     C = bitand (A, B, assumedtype) ;
     C = bitcmp (A, assumedtype) ;
     C = bitget (A, B, assumedtype) ;
@@ -858,11 +856,9 @@ methods
     C = bitshift (A, B, arg3) ;
     C = bitor (A, B, assumedtype) ;
     C = bitxor (A, B, assumedtype) ;
-
 %   C = cast (G, ...)       built-in works as-is
     C = cat (dim, varargin) ;
     C = ceil (G) ;
-    [p, varargout] = colamd (G, varargin) ;
     C = complex (A, B) ;
     C = conj (G) ;
     C = cos (G) ;
@@ -872,99 +868,62 @@ methods
     C = csc (G) ;
     C = csch (G) ;
     C = cbrt (G) ;
-
     C = diag (A, k) ;
     DiGraph = digraph (G, option) ;
     disp (A, level) ;
     display (G) ;
-    [p, varargout] = dmperm (G) ;
     C = double (G) ;
-
-    [V, varargout] = eig (G, varargin) ;        % uses GrB matrices
     C = eps (G) ;
     C = erf (G) ;
     C = erfc (G) ;
-    [parent, varargout] = etree (G, varargin) ;
     C = exp (G) ;
     C = expm1 (G) ;
-
     [I,J,X] = find (G, k, search) ;
     C = fix (G) ;
     C = flip (G, dim) ;
     C = floor (G) ;
     c = fprintf (varargin) ;
     C = full (A, type, identity) ;
-
     C = gamma (G) ;
     C = gammaln (G) ;
-    Graph = graph (G, varargin) ;               % uses GrB matrices
-
+    Graph = graph (G, varargin) ;
     C = hypot (A, B) ;
-
     C = imag (G) ;
     C = int8 (G) ;
     C = int16 (G) ;
     C = int32 (G) ;
     C = int64 (G) ;
-    s = isa (G, type) ;
-    s = isbanded (G, lo, hi) ;
 %   s = iscolumn (G)        built-in works as-is
-    s = isdiag (G) ;
-    s = isempty (G) ;
-    s = isequal (A, B) ;
     C = isfinite (G) ;
-    s = isfloat (G) ;
     s = ishermitian (G, option) ;
     C = isinf (G) ;
-    s = isinteger (G) ;
-    s = islogical (G) ;
-    s = ismatrix (G) ;
     C = isnan (G) ;
-    s = isnumeric (G) ;
-    s = isreal (G) ;
 %   s = isrow (G)           built-in works as-is
-    s = isscalar (G) ;
-    s = issparse (G) ;
     s = issymmetric (G, option) ;
-    s = istril (G) ;
-    s = istriu (G) ;
-    s = isvector (G) ;
-
     C = kron (A, B) ;
-
-    n = length (G) ;
     C = log (G) ;
     C = log10 (G) ;
     C = log1p (G) ;
     [F, E] = log2 (G) ;
     C = logical (G) ;
-
     C = mat2cell (A, m, n) ;
     C = max (A, B, option) ;
     C = min (A, B, option) ;
-
     e = nnz (G) ;
     X = nonzeros (G) ;
-    s = norm (G, kind) ;
     C = num2cell (A, dim) ;
-    s = numel (G) ;
-    e = nzmax (G) ;
-
     C = pow2 (A, B) ;
     C = prod (G, option) ;
-
     C = real (G) ;
     C = repmat (G, m, n) ;
     C = reshape (G, m, n, by_col) ;
     C = round (G) ;
-
     C = sec (G) ;
     C = sech (G) ;
     C = sign (G) ;
     C = sin (G) ;
     C = single (G) ;
     C = sinh (G) ;
-    [m, n, t] = size (G, dim) ;
     C = sparse (G) ;
     C = spfun (fun, G) ;
     C = spones (G, type) ;
@@ -973,22 +932,52 @@ methods
     C = sprandsym (arg1, arg2) ;
     c = sprintf (varargin) ;
     C = sqrt (G) ;
-    S = struct (G) ;
     C = sum (G, option) ;
-    [p, varargout] = symamd (G, varargin) ;
-    p = symrcm (G) ;
-
     C = tan (G) ;
     C = tanh (G) ;
     L = tril (G, k) ;
     U = triu (G, k) ;
-
     C = uint8 (G) ;
     C = uint16 (G) ;
     C = uint32 (G) ;
     C = uint64 (G) ;
-
     C = xor (A, B) ;
+
+    %---------------------------------------------------------------------
+    % overloaded GrB.methods and GhB.methods that are identical
+    %---------------------------------------------------------------------
+
+    p = amd (G, varargin) ;
+    assert (G) ;            % test assertion 
+    [lo, hi] = bandwidth (G, uplo) ;
+    [p, varargout] = colamd (G, varargin) ;
+    [p, varargout] = dmperm (G) ;
+    [V, varargout] = eig (G, varargin) ;
+    [parent, varargout] = etree (G, varargin) ;
+    s = isa (G, type) ;
+    s = isbanded (G, lo, hi) ;
+    s = isdiag (G) ;
+    s = isempty (G) ;
+    s = isequal (A, B) ;
+    s = isfloat (G) ;
+    s = isinteger (G) ;
+    s = islogical (G) ;
+    s = ismatrix (G) ;
+    s = isnumeric (G) ;
+    s = isreal (G) ;
+    s = isscalar (G) ;
+    s = issparse (G) ;
+    s = istril (G) ;
+    s = istriu (G) ;
+    s = isvector (G) ;
+    n = length (G) ;
+    s = norm (G, kind) ;
+    s = numel (G) ;
+    e = nzmax (G) ;
+    [m, n, t] = size (G, dim) ;
+    S = struct (G) ;
+    [p, varargout] = symamd (G, varargin) ;
+    p = symrcm (G) ;
 
     %---------------------------------------------------------------------
     % saveobj: save a GraphBLAS matrix to a file
@@ -1038,7 +1027,6 @@ methods (Static)
     % matrix by default.  It is a builtin MATLAB/Octave matrix if
     % desc.kind = 'builtin'.
 
-    MATLAB_vs_GrB ;
     C = apply (Cin, M, accum, op, A, desc) ;
     C = apply2 (Cin, M, accum, op, A, B, desc) ;
     [x,p] = argmin (A, dim) ;
@@ -1046,15 +1034,9 @@ methods (Static)
     [x,p] = argmax (A, dim) ;
     C = assign (Cin, M, accum, A, I, J, desc) ;
     [v, parent] = bfs (A, s, varargin) ;
-    binopinfo (op, type) ;
-    list = binops ;
     C = build (I, J, X, m, n, dup, type, desc) ;
-    b = burble (b) ;
     C = cell2mat (A) ;
-    c = chunk (c) ;
-    clear ;
     [C, I, J] = compact (A, id, symmetric) ;
-    descriptorinfo (d) ;
     C = deserialize (blob) ;
     Y = dnn (W, bias, Y0) ;
     C = eadd (Cin, M, accum, op, A, B, desc) ;
@@ -1067,55 +1049,68 @@ methods (Static)
     C = eunion (Cin, M, accum, op, A, a, B, b, desc) ;
     C = eye (m, n, type) ;
     C = false (varargin) ;
-    finalize ;
-    [f, s, iso] = format (arg) ;
     C = incidence (A, varargin) ;
-    init ;
-    s = isbyrow (A) ;
-    s = isbycol (A) ;
-    s = isfull (A) ;
-    s = issigned (arg) ;
-    [s,path] = jit (s,path) ;
     C = kronecker (Cin, M, accum, op, A, B, desc) ;
     C = ktruss (A, k, check) ;
     L = laplacian (A, type, check) ;
     C = load (filename) ;
     iset = mis (A, check) ;
-    monoidinfo (monoid, type) ;
-    list = monoids ;
     C = mxm (Cin, M, accum, semiring, A, B, desc) ;
-    n = nmalloc ;  % for testing/development only
     result = nonz (A, varargin) ;
-    e = nvals (A) ;
-    s = normdiff (A, B, kind) ;
     C = offdiag (A) ;
     C = ones (varargin) ;
-    ctype = optype (a, b) ;
     [r, stats] = pagerank (A, opts) ;
     C = prune (A, identity) ;
     C = random (varargin) ;
     C = reduce (cin, accum, monoid, A, desc) ;
     filename_used = save (C, filename) ;
     C = select (Cin, M, accum, selectop, A, b, desc) ;
+    blob = serialize (A, method, level) ;
+    C = speye (m, n, type) ;
+    C = subassign (Cin, M, accum, A, I, J, desc) ;
+    C = true (varargin) ;
+    C = trans (Cin, M, accum, A, desc) ;
+    s = tricount (A, check, d) ;
+    C = vreduce (Cin, M, accum, monoid, A, desc) ;
+    C = zeros (varargin) ;
+
+    %---------------------------------------------------------------------
+    % static GrB.methods and GhB.methods that are identical
+    %---------------------------------------------------------------------
+
+    MATLAB_vs_GrB ;
+    binopinfo (op, type) ;
+    list = binops ;
+    b = burble (b) ;
+    c = chunk (c) ;
+    clear ;
+    descriptorinfo (d) ;
+    finalize ;
+    [f, s, iso] = format (arg) ;
+    init ;
+    s = isbycol (A) ;
+    s = isbyrow (A) ;
+    s = isfull (A) ;
+    s = issigned (arg) ;
+    [s,path] = jit (s,path) ;
+    monoidinfo (monoid, type) ;
+    list = monoids ;
+    n = nmalloc ;  % for testing/development only
+    s = normdiff (A, B, kind) ;
+    e = nvals (A) ;
+    ctype = optype (a, b) ;
+    print (A, level) ;
     selectopinfo (op, type) ;
     list = selectops ;
     semiringinfo (s, type) ;
     list = semirings ;
-    blob = serialize (A, method, level) ;
-    C = speye (m, n, type) ;
-    C = subassign (Cin, M, accum, A, I, J, desc) ;
     nthreads = threads (nthreads) ;
-    C = true (varargin) ;
-    C = trans (Cin, M, accum, A, desc) ;
-    s = tricount (A, check, d) ;
     s = type (A) ;
     unopinfo (op, type) ;
     list = unops ;
     v = version ;
     v = ver ;
-    C = vreduce (Cin, M, accum, monoid, A, desc) ;
-    wait (C) ;
-    C = zeros (varargin) ;
+    wait (C) ; % for @GhB; does nothing for @GrB matrices
 
 end
 end

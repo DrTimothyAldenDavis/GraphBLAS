@@ -1,21 +1,34 @@
-function [C, I, J] = gb_compact (A, symmetric)
-%GB_COMPACT: helper function for GrB.compact.
-% Returns a @GrB object.
+function [C, I, J] = gb_compact (ghb, A, id, symmetric)
+%GB_COMPACT implements GrB.compact.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-% get the list of non-empty rows and columns
-I = gb_entries (A, 'row', 'list') ;
-J = gb_entries (A, 'col', 'list') ;
-
+symmetric = (nargin > 3 && isequal (symmetric, 'symmetric')) ;
 if (symmetric)
-    I = union (I, J) ;
-    J = I ;
+    [m n] = gbmex_size (A) ;
+    if (m ~= n)
+        error ('A must be square to use the "symmetric" option') ;
+    end
 end
 
-% C = A (I,J)
-C = gzb_extract (ghb, A, { I }, { J }) ;
+if (nargin > 2 && ~isempty (id))
+    % prune identity values from A
+    id = gb_get_scalar (ghb, id) ;
+    if (id ~= 0)
+        % prune a nonzero identity value from A
+        [C, I, J] = gb_compact_worker (ghb, gzb_select (ghb, A, '~=', id), ...
+            symmetric) ;
+    elseif (~builtin ('issparse', A))
+        % prune zeros from A
+        [C, I, J] = gb_compact_worker (ghb, gzb_select (ghb, A, 'nonzero'), ...
+            symmetric) ;
+    else
+        % compact A as-is
+        [C, I, J] = gb_compact_worker (ghb, A, symmetric) ;
+    end
+else
+    % compact A as-is
+    [C, I, J] = gb_compact_worker (ghb, A, symmetric) ;
+end
 

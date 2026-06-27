@@ -43,20 +43,5 @@ function C = spfun (fun, G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (ischar (fun))
-    try
-        C = gzb_apply (ghb, fun, G) ;
-        return ;
-    catch me %#ok<NASGU>
-        % gzb_apply failed; fall through to feval below
-    end
-end
-
-% 'fun' is not a string, or not a built-in GraphBLAS operator
-[m, n] = gbmex_size (G) ;
-desc.base = 'zero-based' ;
-gbmex_wait (G) ;
-[i, j, x] = gbmex_extracttuples (ghb, G, desc) ; % OK: zero-based integers
-x = feval (fun, x) ;
-C = GrB.build (i, j, x, m, n, '1st', desc) ;
+C = gb_spfun (ghb, fun, G) ;
 

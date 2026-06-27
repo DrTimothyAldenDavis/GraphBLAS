@@ -1,11 +1,9 @@
-function C = gb_maxbyrow (op, A)
-%GB_MAXBYROW max, by row
+function C = gb_maxbyrow (ghb, op, A)
+%GB_MAXBYROW max, by row.  Not user-callable.
 % Implements C = max (A, [ ], 2)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 % C = max (A, [ ], 2) reduces each row to a scalar; C is m-by-1
 C = gzb_vreduce (ghb, op, A) ;

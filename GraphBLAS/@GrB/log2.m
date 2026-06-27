@@ -17,24 +17,8 @@ function [F, E] = log2 (G)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (nargout == 1)
-    % F = log2 (G)
-    F = gb_trig ('log2', gzb_full (ghb, G)) ;
-    if (gb_make_real (F))
-        F = gzb_apply (ghb, 'creal', F) ;
-    end
+    F = gb_log2 (ghb, G) ;
 else
-    % [F,E] = log2 (G)
-    type = gbmex_type (G) ;
-    switch (type)
-        case { 'logical', 'int8', 'int16', 'int32', 'int64', ...
-            'uint8', 'uint16', 'uint32', 'uint64', 'double complex' }
-            type = 'double' ;
-        case { 'single complex' }
-            type = 'single' ;
-        case { 'single', 'double' }
-            % type remains the same
-    end
-    F = gzb_apply (ghb, ['frexpx.' type], G) ;
-    E = gzb_apply (ghb, ['frexpe.' type], G) ;
+    [F, E] = gb_log2 (ghb, G) ;
 end
 

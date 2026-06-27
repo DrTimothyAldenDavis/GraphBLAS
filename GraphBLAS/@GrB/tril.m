@@ -13,10 +13,8 @@ function L = tril (G, k)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (nargin < 2)
-    k = 0 ;
+    L = gb_tri (ghb, 'tril', G, 0) ;
 else
-    k = gb_get_scalar (k) ;
+    L = gb_tri (ghb, 'tril', G, k) ;
 end
-
-L = gzb_select (ghb, 'tril', G, k) ;
 

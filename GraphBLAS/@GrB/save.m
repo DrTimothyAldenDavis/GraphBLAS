@@ -35,6 +35,7 @@ if (nargin < 2)
     filename = [filename '.mat'] ;
 end
 
+% use the overloaded @GrB/saveobj or @GhB/saveobj methods
 save (filename, 'GrB_Matrix_from_GrB_save') ;
 
 % return the chosen filename

@@ -12,5 +12,5 @@ function C = minus (A, B)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = gb_eunion (A, '-', B) ;
+C = gb_eunion (ghb, A, '-', B) ;
 

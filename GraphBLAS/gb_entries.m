@@ -1,16 +1,14 @@
-function result = gb_entries (A, varargin)
-%GB_ENTRIES count or query the entries of a matrix.
+function result = gb_entries (ghb, A, varargin)
+%GB_ENTRIES count or query the entries of a matrix.  Not user-callable.
 % Implements GrB.entries (A, ...) and GrB.nonz (A, ...).
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
 % get the string arguments
 dim = 'all' ;           % 'all', 'row', or 'col'
 kind = 'count' ;        % 'count', 'list', or 'degree'
-for k = 1:nargin-1
+for k = 1:nargin-2
     arg = varargin {k} ;
     switch arg
         case { 'all', 'row', 'col' }

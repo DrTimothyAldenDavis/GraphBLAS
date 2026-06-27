@@ -59,5 +59,5 @@ if (nargin < 2)
     dim = 0 ;
 end
 
-[x,p] = gzb_argminmax (ghb, A, 1, dim) ;
+[x, p] = gzb_argminmax (ghb, A, 1, dim) ;
 

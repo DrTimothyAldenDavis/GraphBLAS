@@ -31,44 +31,12 @@ function L = laplacian (A, type, check)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-[m, n] = gbmex_size (A) ;
-if (m ~= n)
-    error ('GrB:error', 'A must be square and symmetric') ;
+switch (nargin)
+    case 1
+        L = gb_laplacian (ghb, A) ;
+    case 2
+        L = gb_laplacian (ghb, A, type) ;
+    case 3
+        L = gb_laplacian (ghb, A, type, check) ;
 end
-
-% get the type
-if (nargin < 2)
-    type = 'double' ;
-elseif (~gb_issigned (type))
-    % type must be signed
-    error ('GrB:error', 'type cannot be logical or unsigned integer') ;
-end
-
-% S = spones (A)
-S = gzb_apply (ghb, ['1.' type], A) ;
-
-% check the input matrix, if requested
-if (nargin > 2 && isequal (check, 'check'))
-    % make sure spones (S) is symmetric
-    if (~gb_issymmetric (S, 'nonskew', false))
-        error ('GrB:error', 'spones(A) must be symmetric') ;
-    end
-end
-
-% D = diagonal matrix with d(i,i) = row/column degree of node i
-fmt = gbmex_format (S) ;
-if (isequal (fmt, 'by row'))
-    dim = 'row' ;
-else
-    dim = 'col' ;
-end
-D = gzb_mdiag (ghb, gzb_degree (ghb, S, 'dim'), 0) ;
-if (~isequal (type, gbmex_type (D)))
-    % gzb_degree returns its result as int64; typecast to desired type
-    D = gzb (ghb, D, type) ;
-end
-
-% construct the Laplacian
-% L = D-S
-L = gzb_eadd (ghb, D, '+', gzb_apply (ghb, '-', S)) ;
 

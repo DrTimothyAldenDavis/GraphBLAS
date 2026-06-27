@@ -11,5 +11,5 @@ function s = sprintf (varargin)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-s = gb_printf_helper ('sprintf', varargin {:}) ;
+s = gb_printf_helper (ghb, 'sprintf', varargin {:}) ;
 

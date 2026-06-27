@@ -9,10 +9,5 @@ function C = real (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (gb_contains (gbmex_type (G), 'complex'))
-    C = gzb_apply (ghb, 'creal', G) ;
-else
-    % G is already real
-    C = gzb (ghb, G) ;
-end
+C = gb_real (ghb, G) ;
 

@@ -1,5 +1,5 @@
 function s = gb_isscalar (G)
-%GB_ISSCALAR determine if the GraphBLAS matrix is a scalar.
+%GB_ISSCALAR determine if the matrix is a scalar.  Not user-callable.
 % isscalar (G) is true for an m-by-n GraphBLAS matrix if m and n are 1.
 % G is an opaque GraphBLAS struct or a built-in matrix.
 

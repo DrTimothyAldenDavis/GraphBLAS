@@ -46,29 +46,12 @@ function [C, I, J] = compact (A, id, symmetric)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-symmetric = (nargin > 2 && isequal (symmetric, 'symmetric')) ;
-if (symmetric)
-    [m n] = gbmex_size (A) ;
-    if (m ~= n)
-        error ('A must be square to use the "symmetric" option') ;
-    end
-end
-
-if (nargin > 1 && ~isempty (id))
-    % prune identity values from A
-    id = gb_get_scalar (id) ;
-    if (id ~= 0)
-        % prune a nonzero identity value from A
-        [C, I, J] = gb_compact (gzb_select (ghb, A, '~=', id), symmetric) ;
-    elseif (~builtin ('issparse', A))
-        % prune zeros from A
-        [C, I, J] = gb_compact (gzb_select (ghb, A, 'nonzero'), symmetric) ;
-    else
-        % compact A as-is
-        [C, I, J] = gb_compact (A, symmetric) ;
-    end
-else
-    % compact A as-is
-    [C, I, J] = gb_compact (A, symmetric) ;
+switch (nargin)
+    case 1
+        [C, I, J] = gb_compact (ghb, A) ;
+    case 2
+        [C, I, J] = gb_compact (ghb, A, id) ;
+    case 3
+        [C, I, J] = gb_compact (ghb, A, id, symmetric) ;
 end
 

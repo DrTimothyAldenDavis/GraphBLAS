@@ -11,5 +11,5 @@ function e = nnz (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-e = gb_nnz (G) ;
+e = gb_nnz (ghb, G) ;
 

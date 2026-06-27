@@ -13,10 +13,8 @@ function U = triu (G, k)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (nargin < 2)
-    k = 0 ;
+    U = gb_tri (ghb, 'triu', G, 0) ;
 else
-    k = gb_get_scalar (k) ;
+    U = gb_tri (ghb, 'triu', G, k) ;
 end
-
-U = gzb_select (ghb, 'triu', G, k) ;
 

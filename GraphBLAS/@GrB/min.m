@@ -23,27 +23,12 @@ function C = min (A, B, option)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-type = gbmex_type (A) ;
-if (gb_contains (type, 'complex'))
-    error ('GrB:error', 'complex matrices not yet supported') ;
-elseif (isequal (type, 'logical'))
-    op = '&.logical' ;
-else
-    op = 'min' ;
-end
-
-if (nargin == 1)
-    % C = min (A)
-    C = gb_min1 (op, A) ;
-elseif (nargin == 2)
-    % C = min (A,B)
-    C = gb_min2 (op, A, B) ;
-else
-    % C = min (A, [ ], option)
-    if (~isempty (B))
-        error ('GrB:error', ...
-            'dimension argument not allowed with 2 input matrices') ;
-    end
-    C = gb_min3 (op, A, option) ;
+switch (nargin)
+    case 1
+        C = gb_min (ghb, A) ;
+    case 2
+        C = gb_min (ghb, A, B) ;
+    case 3
+        C = gb_min (ghb, A, B, option) ;
 end
 

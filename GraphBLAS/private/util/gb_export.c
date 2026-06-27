@@ -10,15 +10,16 @@
 // gb_export prepares C for export as a @GrB or @GhB matrix object for MATLAB,
 // with 4 possible kinds:
 //
-// KIND_GRB        C will remain a @GrB or @GhB matrix object
+// KIND_GRB or KIND_GHB     C will remain a @GrB or @GhB matrix object
 // KIND_SPARSE     C will become a built-in MATLAB/Octave sparse matrix
 // KIND_FULL       C will become a built-in MATLAB/Octave full matrix
 // KIND_BUILTIN    C will become a built-in MATLAB/Octave sparse or full matrix
 //
-// If kind is KIND_GRB, the matrix will remain a @GrB or @GhB matrix object.
-// Otherwise, it is exported as a GrB_Matrix (handle or struct) and then
-// directly copied into a MATLAB/Octave matrix in a subsequent call to
-// the gbmex_builtin mexFunction.
+// If kind is KIND_GRB or KIND_GHB, the matrix will remain a @GrB or @GhB
+// matrix object.  Otherwise, it is exported as a GrB_Matrix (handle or struct)
+// with properties that match a sparse or full MATLAB/Octave matrix.  It is
+// then directly copied into a MATLAB/Octave matrix in a subsequent call to the
+// gbmex_builtin mexFunction.
 
 #define GB_UTIL
 

@@ -10,5 +10,5 @@ function C = speye (varargin)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = gb_speye ('speye', varargin {:}) ;
+C = gb_speye (ghb, 'speye', varargin {:}) ;
 

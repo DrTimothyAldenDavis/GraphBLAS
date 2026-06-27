@@ -102,10 +102,10 @@ void mexFunction
             //------------------------------------------------------------------
             // GrB.format (A)
             //------------------------------------------------------------------
-    
+
             // The input matrix is freed, so that mx* methods can allocate
             // memory below.  This eliminates any potential memory leaks if A
-            // is a handle GrB matrix using malloc/free.
+            // is a handle GhB matrix using malloc/free.
 
             OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
             OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;

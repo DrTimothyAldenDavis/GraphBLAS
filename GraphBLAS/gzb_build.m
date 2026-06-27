@@ -1,5 +1,5 @@
 function C = gzb_build (ghb, I, J, X, m, n, arg7, arg8, arg9)
-%GZB_BUILD: wrapper for gbmex_build mexFunction.  Not user callable.
+%GZB_BUILD: wrapper for gbmex_build mexFunction.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

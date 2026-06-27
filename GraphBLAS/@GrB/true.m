@@ -17,6 +17,5 @@ function C = true (varargin)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-[m, n, ~] = gb_parse_args ('true', varargin {:}) ;
-C = gb_scalar_to_full (m, n, 'logical', gbmex_format, true) ;
+C = gb_true (ghb, varargin {:}) ;
 

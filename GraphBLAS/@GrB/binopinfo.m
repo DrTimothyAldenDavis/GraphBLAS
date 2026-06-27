@@ -147,8 +147,6 @@ function binopinfo (op, optype)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% NOTE: this is identical for @GrB and @GhB.
-
 if (nargin == 0)
     help GrB.binopinfo
 elseif (nargin == 1)

@@ -10,5 +10,5 @@ function C = asin (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = gb_trig ('asin', G) ;
+C = gb_trig (ghb, 'asin', G) ;
 

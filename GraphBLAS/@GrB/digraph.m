@@ -1,4 +1,4 @@
-function DiGraph = digraph (G_arg, option)
+function DiGraph = digraph (G, option)
 %DIGRAPH convert a GraphBLAS matrix into a directed DiGraph.
 % DiGraph = digraph (G) converts a GraphBLAS matrix G into a directed
 % DiGraph.  G must be square.  If G is logical, then no weights are added
@@ -29,50 +29,9 @@ function DiGraph = digraph (G_arg, option)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-[m, n, type] = gbmex_size (G_arg) ;
-if (m ~= n)
-    error ('GrB:error', 'G must be square') ;
-end
-
-% get the string options
-omitself = false ;
-if (nargin > 1)
-    if (isequal (lower (option), 'omitselfloops'))
-        omitself = true ;
-    else
-        error ('GrB:error', 'unknown option') ;
-    end
-end
-
-% apply the options
-if (omitself)
-    % ignore diagonal entries of G
-    G = gzb_select (ghb, 'offdiag', G_arg, 0) ;
+if (nargin == 1)
+    DiGraph = gb_digraph (ghb, G) ;
 else
-    % use G_arg as-is
-    G = G_arg ;
-end
-
-% construct the digraph
-switch (type)
-
-    case { 'single' }
-
-        % The digraph(...) function can accept x as single, but not
-        % from a sparse matrix.  So extract the tuples of G first.
-        gbmex_wait (G) ;
-        [i, j, x] = gbmex_extracttuples (ghb, G) ;
-        DiGraph = digraph (i, j, x, n) ;
-
-    case { 'logical' }
-
-        % The digraph(...) function allows for logical
-        % adjacency matrices (no edge weights are created).
-        DiGraph = digraph (gbmex_builtin (gzb_cast (ghb, G, 'logical'))) ;
-
-    otherwise
-
-        % typecast to double
-        DiGraph = digraph (gbmex_builtin (gzb_cast (ghb, G, 'double'))) ;
+    DiGraph = gb_digraph (ghb, G, option) ;
 end
 

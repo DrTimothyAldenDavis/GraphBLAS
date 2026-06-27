@@ -9,25 +9,5 @@ function C = atan2 (A, B)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-atype = gbmex_type (A) ;
-btype = gbmex_type (B) ;
-
-if (gb_contains (atype, 'complex') || gb_contains (btype, 'complex'))
-    error ('GrB:error', 'inputs must be real') ;
-end
-
-% cast A and/or B to double, if not already a floating-point type
-if (gb_isfloat (atype))
-    if (gb_isfloat (btype))
-        C = gb_atan2 (A, B) ;
-    else
-        C = gb_atan2 (A, gzb (ghb, B, 'double')) ;
-    end
-else
-    if (gb_isfloat (btype))
-        C = gb_atan2 (gzb (ghb, A, 'double'), B) ;
-    else
-        C = gb_atan2 (gzb (ghb, A, 'double'), gzb (ghb, B, 'double')) ;
-    end
-end
+C = gb_atan2 (ghb, A, B) ;
 

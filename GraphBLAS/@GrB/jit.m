@@ -48,31 +48,23 @@ function [status,path] = jit (status_arg,path_arg)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% NOTE: this is identical for @GrB and @GhB.
-
 if (nargin == 0)
-
     if (nargout <= 1)
         [status] = gbmex_jit ;
     else
         [status, path] = gbmex_jit ;
     end
-
 elseif (nargin == 1)
-
     if (nargout <= 1)
         [status] = gbmex_jit (status_arg) ;
     else
         [status, path] = gbmex_jit (status_arg) ;
     end
-
 else
-
     if (nargout <= 1)
         [status] = gbmex_jit (status_arg, path_arg) ;
     else
         [status, path] = gbmex_jit (status_arg, path_arg) ;
     end
-
 end
 

@@ -12,5 +12,5 @@ function C = power (A, B)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = gb_power (A, B) ;
+C = gb_power (ghb, A, B) ;
 

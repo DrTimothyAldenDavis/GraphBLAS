@@ -56,12 +56,5 @@ function C = cell2mat (A)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (~iscell (A))
-    error ('GrB:error', 'input must be a cell array') ;
-end
-if (ndims (A) > 2) %#ok<ISMAT>
-    error ('GrB:error', 'only 2D cell arrays are supported') ;
-end
-
-C = gzb_cat (ghb, A) ;
+C = gb_cell2mat (ghb, A) ;
 

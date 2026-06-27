@@ -9,9 +9,5 @@ function C = conj (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (gb_contains (gbmex_type (G), 'complex'))
-    C = gzb_apply (ghb, 'conj', G) ;
-else
-    C = gzb (ghb, G) ;
-end
+C = gb_conj (ghb, G) ;
 

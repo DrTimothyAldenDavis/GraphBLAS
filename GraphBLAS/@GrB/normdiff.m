@@ -1,5 +1,5 @@
 function s = normdiff (A,B,kind)
-%NORMDIFF norm (A-B,kind)
+%GRB.NORMDIFF norm (A-B,kind)
 % If A-B is a matrix:
 %
 %   norm (A-B,1) is the maximum sum of the columns of abs (A-B).
@@ -20,8 +20,6 @@ function s = normdiff (A,B,kind)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-% NOTE: this is identical for @GrB and @GhB.
 
 if (nargin < 3)
     kind = 2 ;

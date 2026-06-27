@@ -1,11 +1,9 @@
-function C = gb_maxbycol (op, A)
-%GB_MAXBYCOL max, by column
+function C = gb_maxbycol (ghb, op, A)
+%GB_MAXBYCOL max, by column.  Not user-callable.
 % Implements C = max (A, [ ], 1)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 % C = max (A, [ ], 1) reduces each col to a scalar; C is 1-by-n
 desc.in0 = 'transpose' ;

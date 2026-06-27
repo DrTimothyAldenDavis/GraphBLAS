@@ -23,27 +23,12 @@ function C = max (A, B, option)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-type = gbmex_type (A) ;
-if (gb_contains (type, 'complex'))
-    error ('GrB:error', 'complex matrices not yet supported') ;
-elseif (isequal (type, 'logical'))
-    op = '|.logical' ;
-else
-    op = 'max' ;
-end
-
-if (nargin == 1)
-    % C = max (A)
-    C = gb_max1 (op, A) ;
-elseif (nargin == 2)
-    % C = max (A,B)
-    C = gb_max2 (op, A, B) ;
-else
-    % C = max (A, [ ], option)
-    if (~isempty (B))
-        error ('GrB:error', ...
-            'dimension argument not allowed with 2 input matrices') ;
-    end
-    C = gb_max3 (op, A, option) ;
+switch (nargin)
+    case 1
+        C = gb_max (ghb, A) ;
+    case 2
+        C = gb_max (ghb, A, B) ;
+    case 3
+        C = gb_max (ghb, A, B, option) ;
 end
 

@@ -5,6 +5,10 @@ function semiringinfo (s, type)
 %   GrB.semiringinfo (semiring)
 %   GrB.semiringinfo (semiring, type)
 %
+%   GhB.semiringinfo
+%   GhB.semiringinfo (semiring)
+%   GhB.semiringinfo (semiring, type)
+%
 % For GrB.semiring(semiring), the semiring must be a string of the form
 % 'add.mult.type', where 'add' and 'mult' are binary operators.  The
 % second usage allows the type to be omitted from the first argument, as
@@ -35,8 +39,6 @@ function semiringinfo (s, type)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-% NOTE: this is identical for @GrB and @GhB.
 
 if (nargin == 0)
     help GrB.semiringinfo

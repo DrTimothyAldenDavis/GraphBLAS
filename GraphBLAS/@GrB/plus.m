@@ -12,5 +12,5 @@ function C = plus (A, B)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = gb_eadd (A, '+', B) ;
+C = gb_eadd (ghb, A, '+', B) ;
 

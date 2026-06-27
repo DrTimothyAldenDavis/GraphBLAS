@@ -11,9 +11,5 @@ function C = log10 (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = gb_trig ('log10', gzb_full (ghb, G)) ;
-
-if (gb_make_real (C))
-    C = gzb_apply (ghb, 'creal', C) ;
-end
+C = gb_log10 (ghb, G) ;
 

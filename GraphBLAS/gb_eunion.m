@@ -1,5 +1,5 @@
-function C = gb_eunion (A, op, B)
-%GB_EUNION C = A+B, sparse matrix 'addition' using the given op.
+function C = gb_eunion (ghb, A, op, B)
+%GB_EUNION C = A+B, matrix 'addition' using the given op.  Not user-callable.
 % The pattern of C is the set union of A and B.  Entries in A but not B,
 % or in B but not A, are assumed to have the value zero.  The op is
 % applied to all entries in the set union of the pattern of A and B.
@@ -11,8 +11,6 @@ function C = gb_eunion (A, op, B)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 [am, an, atype] = gbmex_size (A) ;
 [bm, bn, btype] = gbmex_size (B) ;
@@ -27,14 +25,14 @@ if (a_is_scalar)
     else
         % A is a scalar, B is a matrix.  Result is full.
         % expand A to a full matrix
-        a = gb_scalar_to_full (bm, bn, type, gb_fmt (B), A) ;
+        a = gb_scalar_to_full (ghb, bm, bn, type, gb_fmt (B), A) ;
         C = gzb_eadd (ghb, a, op, B) ;
     end
 else
     if (b_is_scalar)
         % A is a matrix, B is a scalar.  Result is full.
         % expand B to a full matrix
-        b = gb_scalar_to_full (am, an, type, gb_fmt (A), B) ;
+        b = gb_scalar_to_full (ghb, am, an, type, gb_fmt (A), B) ;
         C = gzb_eadd (ghb, A, op, b) ;
     else
         % both A and B are matrices.  Result is sparse.

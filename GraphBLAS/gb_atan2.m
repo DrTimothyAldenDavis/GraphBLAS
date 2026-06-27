@@ -1,31 +1,29 @@
-function C = gb_atan2 (A, B)
-%GB_ATAN2 four quadrant inverse tangent.
-% C = atan2 (X,Y) is the 4 quadrant arctangent of the entries in X and Y.
+function C = gb_atan2 (ghb, A, B)
+%GB_ATAN2: implements GrB/atan2 and GhB/atan2.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
+atype = gbmex_type (A) ;
+btype = gbmex_type (B) ;
 
-% atan2(A,B) gives the set union of the pattern of A and B
+if (gb_contains (atype, 'complex') || gb_contains (btype, 'complex'))
+    error ('GrB:error', 'inputs must be real') ;
+end
 
-if (gb_isscalar (A))
-    if (gb_isscalar (B))
-        % both A and B are scalars
-        C = gzb_emult (ghb, 'atan2', A, B) ;
+% cast A and/or B to double, if not already a floating-point type
+if (gb_isfloat (atype))
+    if (gb_isfloat (btype))
+        C = gb_atan2b (ghb, A, B) ;
     else
-        % A is a scalar, B is a matrix
-        a = gzb_full (ghb, A) ;
-        C = gzb_apply2 (ghb, 'atan2', a, B) ;
+        C = gb_atan2b (ghb, A, gzb (ghb, B, 'double')) ;
     end
 else
-    if (gb_isscalar (B))
-        % A is a matrix, B is a scalar
-        b = gzb_full (ghb, B) ;
-        C = gzb_apply2 (ghb, 'atan2', A, b) ;
+    if (gb_isfloat (btype))
+        C = gb_atan2b (ghb, gzb (ghb, A, 'double'), B) ;
     else
-        % both A and B are matrices.  C is the set union of A and B.
-        C = gzb_eunion (ghb, 'atan2', A, 0, B, 0) ;
+        C = gb_atan2b (ghb, gzb (ghb, A, 'double'), gzb (ghb, B, 'double')) ;
     end
 end
+
 

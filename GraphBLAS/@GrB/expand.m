@@ -19,13 +19,9 @@ function C = expand (scalar, S, type)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (~gb_isscalar (scalar))
-    error ('GrB:error', 'first input must be a scalar') ;
+if (nargin == 2)
+    C = gb_expand (ghb, scalar, S) ;
+else
+    C = gb_expand (ghb, scalar, S, type) ;
 end
-
-if (nargin < 3)
-    type = gbmex_type (scalar) ;
-end
-
-C = gb_expand (scalar, S, type) ;
 

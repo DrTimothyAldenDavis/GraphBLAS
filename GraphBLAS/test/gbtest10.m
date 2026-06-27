@@ -69,10 +69,10 @@ try
     ok = false ;
     msg = '' ;
 catch me
+    % error is expected
     msg = me.message ;
     ok = true ;
 end
-msg
 assert (ok) ;
 assert (isequal (msg, ...
     'A must be a vector of length nnz(M) for logical indexing, C(M)=A')) ;

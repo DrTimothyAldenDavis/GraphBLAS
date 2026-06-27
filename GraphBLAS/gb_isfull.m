@@ -1,5 +1,5 @@
 function s = gb_isfull (A)
-%GB_ISFULL determine if all entries are present in a GraphBLAS matrix.
+%GB_ISFULL determine if all entries present in a matrix.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

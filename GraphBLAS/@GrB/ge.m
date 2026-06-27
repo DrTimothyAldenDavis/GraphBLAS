@@ -10,5 +10,5 @@ function C = ge (A, B)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = le (B, A) ;
+C = gb_le (ghb, B, A) ;
 

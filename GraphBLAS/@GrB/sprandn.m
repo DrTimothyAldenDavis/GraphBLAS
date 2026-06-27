@@ -21,13 +21,13 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (nargin == 1)
     % C = sprandn (G)
-    C = gb_random (arg1, 'normal') ;
+    C = gb_random (ghb, arg1, 'normal') ;
 elseif (nargin == 3)
     % C = sprandn (m, n, d)
-    m = gb_get_scalar (arg1) ;
-    n = gb_get_scalar (arg2) ;
-    d = gb_get_scalar (arg3) ;
-    C = gb_random (m, n, d, 'normal') ;
+    m = gb_get_scalar (ghb, arg1) ;
+    n = gb_get_scalar (ghb, arg2) ;
+    d = gb_get_scalar (ghb, arg3) ;
+    C = gb_random (ghb, m, n, d, 'normal') ;
 else
     % the 'rc' input option is not supported
     error ('GrB:error', 'usage: sprandn(A) or sprandn(m,n,d)') ;

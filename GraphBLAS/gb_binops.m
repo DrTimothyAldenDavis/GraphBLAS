@@ -1,5 +1,5 @@
 function binops = gb_binops
-%GB_BINOPS: return a list of all binary ops and their descriptions
+%GB_BINOPS: list of binary ops and descriptions.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

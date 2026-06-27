@@ -15,8 +15,8 @@ function C = any (G, option)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (nargin == 1)
-    C = gb_sum ('|.logical', G) ;
+    C = gb_sum (ghb, '|.logical', G) ;
 else
-    C = gb_sum ('|.logical', G, option) ;
+    C = gb_sum (ghb, '|.logical', G, option) ;
 end
 

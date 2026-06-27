@@ -1,12 +1,10 @@
-function C = gb_sum (op, G, option)
-%GB_SUM C = sum (G) or C = any (G)
+function C = gb_sum (ghb, op, G, option)
+%GB_SUM C = sum (G) or C = any (G).  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-if (nargin == 2)
+if (nargin < 4)
     % C = sum (G)
     if (gb_isvector (G))
         option = 'all' ;

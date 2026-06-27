@@ -10,15 +10,5 @@ function C = erf (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-type = gbmex_type (G) ;
-if (gb_contains (type, 'complex'))
-    error ('GrB:error', 'input must be real') ;
-end
-if (~gb_isfloat (type))
-    op = 'erf.double' ;
-else
-    op = 'erf' ;
-end
-
-C = gzb_apply (ghb, op, G) ;
+C = gb_erf (ghb, G) ;
 

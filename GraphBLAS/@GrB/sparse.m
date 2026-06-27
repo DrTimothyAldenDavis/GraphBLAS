@@ -11,14 +11,5 @@ function C = sparse (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-[~, sparsity] = gbmex_format (G) ;
-
-switch (sparsity)
-    case { 'hypersparse', 'sparse' }
-        % nothing to do; G is already sparse or hypersparse
-        C = gzb (ghb, G) ;
-    case { 'bitmap', 'full' }
-        % convert G to sparse or hypersparse
-        C = gzb (ghb, G, 'sparse/hypersparse') ;
-end
+C = gb_sparse (ghb, G) ;
 

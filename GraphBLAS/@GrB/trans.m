@@ -37,5 +37,5 @@ switch (nargin)
         [C_opaque, kind] = gbmex_trans (ghb, arg1, arg2, arg3, arg4, arg5) ;
 end
 
-C = gb_mexfunction_result (C_opaque, kind) ;
+C = gb_mexfunction_result (ghb, C_opaque, kind) ;
 

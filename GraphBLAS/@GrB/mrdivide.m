@@ -11,9 +11,5 @@ function C = mrdivide (A, B)
 
 ghb = 0 ;       %  0 for GrB, 1 for GhB
 
-if (isscalar (B))
-    C = rdivide (A, B) ;
-else
-    C = gzb (ghb, builtin ('mrdivide', double (A), double (B))) ;
-end
+C = gb_mrdivide (ghb, A, B) ;
 

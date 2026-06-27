@@ -9,12 +9,5 @@ function C = isnan (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-[m, n, type] = gbmex_size (G) ;
-
-if (gb_isfloat (type))
-    C = gzb_apply (ghb, 'isnan', G) ;
-else
-    % C is all false
-    C = gzb (ghb, m, n, 'logical') ;
-end
+C = gb_isnan (ghb, G) ;
 

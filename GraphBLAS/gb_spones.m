@@ -1,13 +1,11 @@
-function C = gb_spones (G, type)
-%GB_SPONES return pattern of GraphBLAS matrix.
+function C = gb_spones (ghb, G, type)
+%GB_SPONES return pattern of GraphBLAS matrix.  Not user-callable.
 % Implements C = spones (G).
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-if (nargin == 1)
+if (nargin < 3)
     switch (gbmex_type (G))
         case { 'single complex' }
             op = '1.single' ;

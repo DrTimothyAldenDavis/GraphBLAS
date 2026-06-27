@@ -32,8 +32,8 @@ else
 end
 
 if (nargin == 1)
-    C = gb_sum (op, G) ;
+    C = gb_sum (ghb, op, G) ;
 else
-    C = gb_sum (op, G, option) ;
+    C = gb_sum (ghb, op, G, option) ;
 end
 

@@ -11,7 +11,7 @@ function count = fprintf (varargin)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-c = gb_printf_helper ('fprintf', varargin {:}) ;
+c = gb_printf_helper (ghb, 'fprintf', varargin {:}) ;
 if (nargout > 0)
     count = c ;
 end

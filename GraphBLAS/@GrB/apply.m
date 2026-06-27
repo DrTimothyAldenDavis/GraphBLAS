@@ -55,6 +55,6 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
         case 6
             [C_opaque, kind] = gbmex_apply (ghb, arg1, arg2, arg3, arg4, arg5, arg6) ;
     end
-    C = gb_mexfunction_result (C_opaque, kind) ;
+    C = gb_mexfunction_result (ghb, C_opaque, kind) ;
 % end
 

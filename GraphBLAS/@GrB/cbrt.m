@@ -9,14 +9,5 @@ function C = cbrt (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-type = gbmex_type (G) ;
-if (gb_contains (type, 'complex'))
-    error ('GrB:error', 'input must be real') ;
-elseif (gb_isfloat (type))
-    op = 'cbrt' ;
-else
-    op = 'cbrt.double' ;
-end
-
-C = gzb_apply (ghb, op, G) ;
+C = gb_cbrt (ghb, G) ;
 

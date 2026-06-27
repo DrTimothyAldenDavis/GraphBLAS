@@ -11,14 +11,5 @@ function C = sign (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-type = gbmex_type (G) ;
-
-if (isequal (type, 'logical'))
-    C = gzb (ghb, G) ;
-elseif (~gb_isfloat (type))
-    T = gzb_apply (ghb, 'signum.single', G) ;
-    C = gzb (ghb, T, type) ;
-else
-    C = gzb_apply (ghb, 'signum', G) ;
-end
+C = gb_sign (ghb, G) ;
 

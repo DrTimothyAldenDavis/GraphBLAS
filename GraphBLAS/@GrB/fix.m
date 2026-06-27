@@ -10,9 +10,5 @@ function C = fix (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (gb_isfloat (gbmex_type (G)))
-    C = gzb_apply (ghb, 'trunc', G) ;
-else
-    C = gzb (ghb, G) ;
-end
+C = gb_fix (ghb, G) ;
 

@@ -1,7 +1,7 @@
 function C = load (filename)
 %GRB.LOAD Load a single GraphBLAS matrix from a file.
-% C = GrB.load (filename) loads a single @GrB matrix from a file.  If the
-% filename is not present, it defaults to 'GrB_Matrix.mat'.
+% C = GrB.load (filename) loads a single @GrB or @GhB matrix from a file.
+% If the filename is not present, it defaults to 'GrB_Matrix.mat'.
 %
 % GrB.load can load in *.mat files created by GrB.save from this or earlier
 % versions of GraphBLAS.
@@ -31,18 +31,5 @@ if (nargin < 1)
     filename = 'GrB_Matrix.mat' ;
 end
 
-S = load (filename) ;
-
-if (isfield (S, 'GraphBLAS_struct_from_GrB_save'))
-    % S was created by GrB.save from GraphBLAS v10.3.1 or earlier
-    C = gzb_loadhistorical (ghb, S.GraphBLAS_struct_from_GrB_save) ;
-elseif (isfield (S, 'GrB_Matrix_from_GrB_save'))
-    % S was created by GrB.save from GraphBLAS v10.4.0 or later,
-    % and it already contains a properly loaded @GrB matrix.
-    % FIXME: convert to @GhB or @GrB, depending on ghb.
-    C = S.GrB_Matrix_from_GrB_save ;
-else
-    % S has already been properly loaded by GrB/loadobj
-    C = S ;
-end
+C = gb_load (ghb, filename) ;
 

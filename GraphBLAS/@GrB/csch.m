@@ -10,11 +10,5 @@ function C = csch (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (~gb_isfloat (gbmex_type (G)))
-    op = 'sinh.double' ;
-else
-    op = 'sinh' ;
-end
-
-C = gzb_apply (ghb, 'minv', gzb_full (ghb, gzb_apply (ghb, op, G))) ;
+C = gb_csch (ghb, G) ;
 

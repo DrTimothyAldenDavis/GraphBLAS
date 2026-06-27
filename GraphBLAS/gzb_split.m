@@ -1,5 +1,5 @@
 function C = gzb_split (ghb, A, m, n)
-%GZB_SPLIT: wrapper for gbmex_split mexFunction.  Not user callable.
+%GZB_SPLIT: wrapper for gbmex_split mexFunction.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

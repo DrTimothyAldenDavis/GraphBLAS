@@ -3196,7 +3196,7 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     const char *unop_defn           // definition of the user function
 ) ;
 
-GrB_Info GxB_UnaryOp_new_arena     // create a new user-defined unary operator
+GrB_Info GxB_UnaryOp_new_arena      // create a new user-defined unary operator
 (
     GrB_UnaryOp *op_handle,         // handle for the new unary operator
     GxB_unary_function function,    // pointer to the unary function

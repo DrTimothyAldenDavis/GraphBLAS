@@ -58,5 +58,5 @@ function result = entries (A, varargin)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 % get the count/list of the entries of A
-result = gb_entries (A, varargin {:}) ;
+result = gb_entries (ghb, A, varargin {:}) ;
 

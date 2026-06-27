@@ -16,11 +16,5 @@ function C = double (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (gb_contains (gbmex_type (G), 'complex'))
-    type = 'double complex' ;
-else
-    type = 'double' ;
-end
-
-C = gbmex_builtin (gzb_cast (ghb, G, type)) ;
+C = gb_double (ghb, G) ;
 

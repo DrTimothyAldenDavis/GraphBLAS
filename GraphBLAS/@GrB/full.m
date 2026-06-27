@@ -29,25 +29,12 @@ function C = full (A, type, identity)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (nargin < 2)
-    type = gbmex_type (A) ;
-    right_type = true ;
-else
-    right_type = isequal (type, gbmex_type (A)) ;
-end
-
-if (gb_isfull (A) && right_type)
-
-    % nothing to do, A is already full and has the right type
-    C = gzb (ghb, A) ;
-
-else
-
-    % convert A to a full GraphBLAS matrix
-    if (nargin < 3)
-        identity = 0 ;
-    end
-    C = gzb_full (ghb, A, type, identity) ;
-
+switch (nargin)
+    case 1
+        C = gb_full (ghb, A) ;
+    case 2
+        C = gb_full (ghb, A, type) ;
+    case 3
+        C = gb_full (ghb, A, type, identity) ;
 end
 

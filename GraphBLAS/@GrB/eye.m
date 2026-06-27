@@ -15,5 +15,5 @@ function C = eye (varargin)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = gb_speye ('eye', varargin {:}) ;
+C = gb_speye (ghb, 'eye', varargin {:}) ;
 

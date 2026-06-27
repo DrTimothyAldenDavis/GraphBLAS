@@ -1,5 +1,5 @@
 function [C,P] = gzb_argsort (ghb, A, dim, direction)
-%GZB_ARGSORT: wrapper for gbmex_argsort mexFunction.  Not user callable.
+%GZB_ARGSORT: wrapper for gbmex_argsort mexFunction.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

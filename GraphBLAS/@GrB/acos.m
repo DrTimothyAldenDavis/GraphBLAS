@@ -10,5 +10,5 @@ function C = acos (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = gb_trig ('acos', G) ;
+C = gb_trig (ghb, 'acos', G) ;
 

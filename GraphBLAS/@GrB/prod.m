@@ -35,8 +35,8 @@ else
 end
 
 if (nargin == 1)
-    C = gb_prod (op, type, G) ;
+    C = gb_prod (ghb, op, type, G) ;
 else
-    C = gb_prod (op, type, G, option) ;
+    C = gb_prod (ghb, op, type, G, option) ;
 end
 

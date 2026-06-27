@@ -1,11 +1,9 @@
-function C = gb_power (A, B)
-%GB_POWER .^ Array power.
+function C = gb_power (ghb, A, B)
+%GB_POWER .^ Array power.  Not user-callable.
 % C = A.^B computes element-wise powers.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 [am, an, atype] = gbmex_size (A) ;
 [bm, bn, btype] = gbmex_size (B) ;
@@ -23,7 +21,7 @@ if (a_is_real && b_is_real)
     elseif (gbmex_isequal (B, gzb_apply (ghb, 'round', B)))
         % B is floating point, but all values are equal to integers
         c_is_real = true ;
-    elseif (gb_scalar (gzb_reduce (ghb, 'min', A)) >= 0)
+    elseif (gb_scalar (ghb, gzb_reduce (ghb, 'min', A)) >= 0)
         % All entries in A are non-negative, so C is real
         c_is_real = true ;
     else
@@ -70,10 +68,10 @@ else
 
     if (b_is_scalar)
         % A is a matrix, B2 is a scalar
-        b = gb_scalar (B2) ;
+        b = gb_scalar (ghb, B2) ;
         if (b == 0)
             % special case:  C = A.^0 = ones (am, an, ctype)
-            C = gb_scalar_to_full (am, an, ctype, gb_fmt (A), 1) ;
+            C = gb_scalar_to_full (ghb, am, an, ctype, gb_fmt (A), 1) ;
         elseif (b == 1)
             % special case: C = A.^1 = A
             C = gzb (ghb, A) ;
@@ -94,7 +92,7 @@ else
 end
 
 % convert C to real if imaginary part is zero
-if (~c_is_real && gb_make_real (C))
+if (~c_is_real && gb_make_real (ghb, C))
     C = gzb_apply (ghb, 'creal', C) ;
 end
 

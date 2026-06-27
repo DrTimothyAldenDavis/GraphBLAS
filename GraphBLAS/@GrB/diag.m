@@ -36,30 +36,9 @@ function C = diag (A, k)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (nargin < 2)
-    k = 0 ;
-end
-if (isobject (k))
-    k = gb_get_scalar (k) ;
-end
-
-[am, an, ~] = gbmex_size (A) ;
-
-if (am == 1)
-
-    % C = diag (v,k) where A is a row vector and C is a matrix
-    C = gzb_mdiag (ghb, gzb_trans (ghb, A), k) ;
-
-elseif (an == 1)
-
-    % C = diag (v,k) where A is a column vector and C is a matrix
-    C = gzb_mdiag (ghb, A, k) ;
-
+if (nargin == 1)
+    C = gb_diag (ghb, A) ;
 else
-
-    % v = diag (A,k) is a column vector formed from the elements of the
-    % kth diagonal of A
-    C = gzb_vdiag (ghb, A, k) ;
-
+    C = gb_diag (ghb, A, k) ;
 end
 

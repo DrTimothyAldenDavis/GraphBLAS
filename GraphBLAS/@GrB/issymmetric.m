@@ -15,5 +15,5 @@ if (nargin < 2)
     option = 'nonskew' ;
 end
 
-s = gb_issymmetric (G, option, false) ;
+s = gb_issymmetric (ghb, G, option, false) ;
 

@@ -30,11 +30,11 @@ ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (nargin == 1)
     % C = sprandsym (G)
-    C = gb_random (arg1, 'symmetric', 'normal') ;
+    C = gb_random (ghb, arg1, 'symmetric', 'normal') ;
 else
     % C = sprandsym (n, d)
-    n = gb_get_scalar (arg1) ;
-    d = gb_get_scalar (arg2) ;
-    C = gb_random (n, d, 'symmetric', 'normal') ;
+    n = gb_get_scalar (ghb, arg1) ;
+    d = gb_get_scalar (ghb, arg2) ;
+    C = gb_random (ghb, n, d, 'symmetric', 'normal') ;
 end
 

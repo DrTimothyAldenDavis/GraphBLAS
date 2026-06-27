@@ -1,10 +1,8 @@
-function result = gb_printf_helper (printf_function, varargin)
-%GB_PRINTF_HELPER wrapper for fprintf and sprintf
+function result = gb_printf_helper (ghb, printf_function, varargin)
+%GB_PRINTF_HELPER wrapper for fprintf and sprintf.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 % convert all GraphBLAS matrices to full built-in matrices
 len = length (varargin) ;

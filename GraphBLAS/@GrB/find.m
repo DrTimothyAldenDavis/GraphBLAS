@@ -1,4 +1,4 @@
-function [I, J, X] = find (G_arg, k, search)
+function [I, varargout] = find (G, varargin)
 %FIND extract entries from a matrix.
 % [I, J, X] = find (G) extracts the nonzeros from a matrix G.
 % X has the same type as G ('double', 'single', 'int8', ...).
@@ -32,84 +32,5 @@ function [I, J, X] = find (G_arg, k, search)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-% prune explicit zeros
-gbmex_wait (G_arg) ;
-G = gzb_select (ghb, G_arg, 'nonzero') ;
-
-if (nargin > 1)
-    k = ceil (double (gb_get_scalar (k))) ;
-    if (k < 1)
-        error ('GrB:error', 'k must be positive') ;
-    end
-    if (~isequal (gbmex_format (G), 'by col'))
-        % find (G, k) assumes the matrix is stored by column, so reformat G
-        % if it is stored by row.
-        G = gzb (ghb, G, 'by col') ;
-    end
-end
-
-[m, n] = gbmex_size (G) ;
-gbmex_wait (G) ;
-
-if (nargout == 3)
-    [I, J, X] = gbmex_extracttuples (ghb, G) ;
-    if (m == 1)
-        I = I' ;
-        J = J' ;
-        X = X' ;
-    end
-elseif (nargout == 2)
-    [I, J] = gbmex_extracttuples (ghb, G) ;
-    if (m == 1)
-        I = I' ;
-        J = J' ;
-    end
-else
-    if (m == 1)
-        % extract indices from a row vector
-        [~, I] = gbmex_extracttuples (ghb, G) ;
-        I = I' ;
-    elseif (n == 1)
-        % extract indices from a column vector
-        I = gbmex_extracttuples (ghb, G) ;
-    else
-        % extract linear indices from a matrix
-        [I, J] = gbmex_extracttuples (ghb, G) ;
-        % use the built-in sub2ind to convert the 2D indices to 1D indices
-        I = sub2ind ([m n], I, J) ;
-    end
-end
-
-if (nargin > 1)
-    % find (G, k, ...): get the first or last k entries
-    if (nargin < 3)
-        search = 'first' ;
-    end
-    n = length (I) ;
-    if (k >= n)
-        % output already has all k first or last entries;
-        % nothing more to do
-    elseif (isequal (search, 'first'))
-        % find (G, k, 'first'): get the first k entries
-        I = I (1:k) ;
-        if (nargout > 1)
-            J = J (1:k) ;
-        end
-        if (nargout > 2)
-            X = X (1:k) ;
-        end
-    elseif (isequal (search, 'last'))
-        % find (G, k, 'last'): get the last k entries
-        I = I (n-k+1:n) ;
-        if (nargout > 1)
-            J = J (n-k+1:n) ;
-        end
-        if (nargout > 2)
-            X = X (n-k+1:n) ;
-        end
-    else
-        error ('GrB:error', ...
-            'invalid search option; must be ''first'' or ''last''') ;
-    end
-end
+[I, varargout{1:nargout-1}] = gb_find (ghb, G, varargin {:}) ;
 

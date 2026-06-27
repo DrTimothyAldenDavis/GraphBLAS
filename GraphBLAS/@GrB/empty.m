@@ -15,17 +15,5 @@ function C = empty (varargin)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (nargin == 0)
-    m = 0 ;
-    n = 0 ;
-else
-    [m, n] = gb_parse_dimensions (varargin {:}) ;
-    m = max (m, 0) ;
-    n = max (n, 0) ;
-    if (~ ((m == 0) || (n == 0)))
-        error ('GrB:error', 'at least one dimension must be zero') ;
-    end
-end
-
-C = gzb (ghb, m, n) ;
+C = gb_empty (ghb, varargin {:}) ;
 

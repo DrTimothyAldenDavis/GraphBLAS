@@ -1,6 +1,6 @@
-function [m, n, type] = gb_parse_args (func, varargin)
-%GB_PARSE_ARGS parse arguments for true, false, ones, zeros, eye,
-% and speye.
+function [m, n, type] = gb_parse_args (ghb, func, varargin)
+%GB_PARSE_ARGS parse arguments for various functions.  Not user-callable.
+% For true, false, ones, zeros, eye, and speye.  For example:
 %
 %   C = GrB.ones ;
 %   C = GrB.ones (n) ;
@@ -35,5 +35,5 @@ for k = 1:nargs
 end
 
 % parse the dimensions
-[m, n] = gb_parse_dimensions (varargin {1:nargs}) ;
+[m, n] = gb_parse_dimensions (ghb, varargin {1:nargs}) ;
 

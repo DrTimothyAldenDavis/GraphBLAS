@@ -11,10 +11,5 @@ function C = asech (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-type = gbmex_type (G) ;
-if (~gb_isfloat (type))
-    type = 'double' ;
-end
-
-C = gb_trig ('acosh', gzb_apply (ghb, 'minv', gzb_full (ghb, G, type))) ;
+C = gb_asech (ghb, G)
 

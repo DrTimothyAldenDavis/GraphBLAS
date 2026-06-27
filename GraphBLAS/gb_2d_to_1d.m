@@ -1,5 +1,5 @@
 function [k, mn] = gb_2d_to_1d (i, j, m, n)
-%GB_2D_TO_1D convert 2D indices to 1D; the indices must be zero-based.
+%GB_2D_TO_1D convert 0-based 2D indices to 1D.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

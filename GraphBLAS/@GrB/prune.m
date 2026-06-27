@@ -11,16 +11,8 @@ function C = prune (G, id)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (nargin == 1)
-    id = 0 ;
+    C = gb_prune (ghb, G) ;
 else
-    id = gb_get_scalar (id) ;
-end
-
-if (id == 0)
-    % prune zeros
-    C = gzb_select (ghb, G, 'nonzero') ;
-else
-    % prune entries equal to id
-    C = gzb_select (ghb, G, '~=', id) ;
+    C = gb_prune (ghb, G, id) ;
 end
 

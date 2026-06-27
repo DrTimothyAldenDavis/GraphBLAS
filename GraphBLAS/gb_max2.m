@@ -1,11 +1,9 @@
-function C = gb_max2 (op, A, B)
-%GB_MAX2 2-input max
+function C = gb_max2 (ghb, op, A, B)
+%GB_MAX2 2-input max.  Not user-callable.
 % Implements C = max (A,B)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 [am, an, atype] = gbmex_size (A) ;
 [bm, bn, btype] = gbmex_size (B) ;
@@ -19,9 +17,9 @@ if (a_is_scalar)
         C = gzb_eunion (ghb, op, A, 0, B, 0) ;
     else
         % A is a scalar, B is a matrix
-        if (gb_scalar (A) > 0)
+        if (gb_scalar (ghb, A) > 0)
             % since A > 0, the result is full
-            a = gb_scalar_to_full (bm, bn, ctype, gb_fmt (B), A) ;
+            a = gb_scalar_to_full (ghb, bm, bn, ctype, gb_fmt (B), A) ;
             C = gzb_eadd (ghb, a, op, B) ;
         else
             % since A <= 0, the result is sparse.
@@ -32,9 +30,9 @@ if (a_is_scalar)
 else
     if (b_is_scalar)
         % A is a matrix, B is a scalar
-        if (gb_scalar (B) > 0)
+        if (gb_scalar (ghb, B) > 0)
             % since B > 0, the result is full
-            b = gb_scalar_to_full (am, an, ctype, gb_fmt (A), B) ;
+            b = gb_scalar_to_full (ghb, am, an, ctype, gb_fmt (A), B) ;
             C = gzb_eadd (ghb, A, op, b) ;
         else
             % since B <= 0, the result is sparse.

@@ -1,11 +1,9 @@
-function C = gb_random (varargin)
-%GB_RANDOM uniformly distributed random GraphBLAS matrix.
+function C = gb_random (ghb, varargin)
+%GB_RANDOM uniformly distributed random GraphBLAS matrix.  Not user-callable.
 % Implements C = GrB.random (...), C = sprand (...), C = sprand (...),
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 %--------------------------------------------------------------------------
 % parse inputs
@@ -16,10 +14,10 @@ dist = 'uniform' ;
 type = 'double' ;
 range = [ ] ;
 sym_option = 'unsymmetric' ;
-firstchar = nargin + 1 ;
+firstchar = nargin ;
 
 % look for strings
-for k = 1:nargin
+for k = 1:nargin-1
     arg = varargin {k} ;
     if (ischar (arg))
         arg = lower (arg) ;
@@ -73,13 +71,13 @@ elseif (firstchar == (4 - (symmetric || hermitian)))
     % C = GrB.random (m, n, d, ...)
     % C = GrB.random (n, d, ... 'symmetric')
     % C = GrB.random (n, d, ... 'hermitian')
-    m = gb_get_scalar (varargin {1}) ;
+    m = gb_get_scalar (ghb, varargin {1}) ;
     if (symmetric || hermitian)
         n = m ;
-        d = gb_get_scalar (varargin {2}) ;
+        d = gb_get_scalar (ghb, varargin {2}) ;
     else
-        n = gb_get_scalar (varargin {2}) ;
-        d = gb_get_scalar (varargin {3}) ;
+        n = gb_get_scalar (ghb, varargin {2}) ;
+        d = gb_get_scalar (ghb, varargin {3}) ;
     end
     if (isinf (d))
         % construct a full random matrix

@@ -9,11 +9,5 @@ function C = angle (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-[m, n, type] = gbmex_size (G) ;
-if (gb_contains (type, 'complex'))
-    C = gzb_apply (ghb, 'carg', G) ;
-else
-    % C is all zero
-    C = gzb (ghb, m, n, type) ;
-end
+C = gb_angle (ghb, G) ;
 

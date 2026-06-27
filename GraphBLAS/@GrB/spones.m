@@ -23,8 +23,8 @@ function C = spones (G, type)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (nargin == 1)
-    C = gb_spones (G) ;
+    C = gb_spones (ghb, G) ;
 else
-    C = gb_spones (G, type) ;
+    C = gb_spones (ghb, G, type) ;
 end
 

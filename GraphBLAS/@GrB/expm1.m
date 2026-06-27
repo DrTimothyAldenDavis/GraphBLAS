@@ -9,11 +9,5 @@ function C = expm1 (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (~gb_isfloat (gbmex_type (G)))
-    op = 'expm1.double' ;
-else
-    op = 'expm1' ;
-end
-
-C = gzb_apply (ghb, op, G) ;
+C = gb_expm1 (ghb, G) ;
 

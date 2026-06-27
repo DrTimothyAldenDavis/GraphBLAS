@@ -16,15 +16,5 @@ function C = single (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-desc.kind = 'builtin' ;
-if (gb_contains (gbmex_type (G), 'complex'))
-    z = complex (single (0)) ;
-    ctype = 'single complex' ;
-else
-    z = single (0) ;
-    ctype = 'single' ;
-end
-
-% export C as a full matrix
-C = gbmex_builtin (gzb_full (ghb, G, ctype, z, desc)) ;
+C = gb_single (ghb, G) ;
 

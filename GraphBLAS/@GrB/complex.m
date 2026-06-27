@@ -30,73 +30,8 @@ function C = complex (A, B)
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (nargin == 1)
-
-    % with a single input, A must be a GraphBLAS matrix (otherwise,
-    % this overloaded method for GrB objects would not be called).
-    % Convert A to a built-in double complex matrix C.
-    C = gzb_cast (ghb, A, 'double complex') ;
-
+    C = gb_complex (ghb, A) ;
 else
-
-    % with two inputs, A and B are real matrices (@GrB or built-in)
-    % but at least one must be GrB or otherwise this overloaded method
-    % would not be called).  The output is a double complex matrix.
-
-    [am, an, atype] = gbmex_size (A) ;
-    [bm, bn, btype] = gbmex_size (B) ;
-    a_is_scalar = (am == 1) && (an == 1) ;
-    b_is_scalar = (bm == 1) && (bn == 1) ;
-
-    if (gb_contains (atype, 'complex') || gb_contains (btype, 'complex'))
-        error ('GrB:error', 'inputs must be real') ;
-    end
-
-    if (a_is_scalar)
-        if (b_is_scalar)
-            % both A and B are scalars.  C is also a scalar.
-            a = gzb_full (ghb, A, 'double') ;
-            b = gzb_full (ghb, B, 'double') ;
-            desc.kind = 'full' ;
-            C = gzb_emult (ghb, 'cmplx.double', a, b, desc) ;
-        else
-            % A is a scalar, B is a matrix.  C is full, unless A == 0.
-            if (gb_scalar (A) == 0)
-                % C = 1i*B, so A = zero, C is sparse or full.
-                desc.kind = 'builtin' ;
-                C = gzb_apply2 (ghb, 'cmplx.double', 0, B, desc) ;
-            else
-                % expand A and B to full double matrices; C is full
-                bfmt = gb_fmt (B) ;
-                desc.kind = 'full' ;
-                a = gb_scalar_to_full (bm, bn, 'double', bfmt, A) ;
-                b = gzb_full (ghb, B, 'double') ;
-                C = gzb_emult (ghb, 'cmplx.double', a, b, desc) ;
-            end
-        end
-    else
-        if (b_is_scalar)
-            % A is a matrix, B is a scalar.  C is full, unless B == 0.
-            if (gb_scalar (B) == 0)
-                % C = complex (A); C is sparse or full
-                C = gzb_cast (ghb, A, 'double.complex') ;
-            else
-                % expand A and B to full double matrices; C is full
-                afmt = gb_fmt (A) ;
-                desc.kind = 'full' ;
-                a = gzb_full (ghb, A, 'double') ;
-                b = gb_scalar_to_full (am, an, 'double', afmt, B) ;
-                C = gzb_emult (ghb, 'cmplx.double', a, b, desc) ;
-            end
-        else
-            % both A and B are matrices.  C is sparse or full.
-            desc.kind = 'builtin' ;
-            b = gzb_apply2 (ghb, B, '*', 1i) ;
-            C = gzb_eadd (ghb, A, '+', b, desc) ;
-        end
-    end
-
+    C = gb_complex (ghb, A, B) ;
 end
-
-% return C as a builtin MATLAB/Octave matrix
-C = gbmex_builtin (C) ;
 

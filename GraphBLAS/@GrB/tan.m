@@ -9,11 +9,5 @@ function C = tan (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (~gb_isfloat (gbmex_type (G)))
-    op = 'tan.double' ;
-else
-    op = 'tan' ;
-end
-
-C = gzb_apply (ghb, op, G) ;
+C = gb_tan (ghb, G) ;
 

@@ -32,9 +32,9 @@ function C = bitor (A, B, assumedtype)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-if (nargin < 3)
-    assumedtype = 'uint64' ;
+if (nargin == 2)
+    C = gb_bitwise (ghb, 'bitor', A, B) ;
+else
+    C = gb_bitwise (ghb, 'bitor', A, B, assumedtype) ;
 end
-
-C = gb_bitwise ('bitor', A, B, assumedtype) ;
 

@@ -202,6 +202,7 @@
 typedef enum            // output of GrB.methods
 {
     KIND_GRB = 0,       // return G.opaque containing a GrB_Matrix
+    KIND_GHB = -1,      // same as KIND_GRB, except for display
     KIND_SPARSE = 1,    // return a built-in sparse matrix
     KIND_FULL = 2,      // return a built-in full matrix
     KIND_BUILTIN = 3    // return a built-in sparse or full matrix (full if all
@@ -303,54 +304,48 @@ struct gb_matrix_struct
     // is a @GhB GraphBLAS matrix, then G is non-NULL.  Otherwise, the matrix
     // is a built-in MATLAB sparse or full matrix, or a @GrB value matrix.
 
-    //--------------------------------------------------------------------------
-    // for a @GhB handle matrix; NULL if the matrix is a MATLAB or @GrB matrix
-    //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // (1) @GhB handle matrix; NULL if MATLAB or @GrB matrix
+        //----------------------------------------------------------------------
 
-    GrB_Matrix G ;
+        GrB_Matrix G ;
 
-    //--------------------------------------------------------------------------
-    // for a @GrB value matrix or MATLAB matrix: populated if G is non-NULL
-    //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // (2) @GrB value matrix or MATLAB matrix: populated if G is non-NULL
+        //----------------------------------------------------------------------
 
-    // If the input is a 0-by-0 MATLAB matrix, the [p,i,x] content below is
-    // NULL, and sparsity is GxB_FULL.
+        // If the input is a 0-by-0 MATLAB matrix, the [p,i,x] content below is
+        // NULL, and sparsity is GxB_FULL.
 
-    void *p ;
-    void *h ;
-    void *b ;
-    void *i ;
-    void *x ;
-
-    void *Yp ;
-    void *Yi ;
-    void *Yx ;
-
-    int64_t plen ;      // p has size plen+1 and h has size plen
-    int64_t nvec ;      // size of Yi and Yx and # entries in Y
-    int64_t nvec_nonempty ;
-
-    int64_t yncols ;
-    int64_t ynrows ;
-
-    int sparsity ;      // sparse/hyper/bitmap/full
-
-    bool by_col ;       // true if held by column, false if by row
-    bool p_is_32 ;      // type of p (32 bit or 64 bit)
-    bool j_is_32 ;      // type of h, Yp, Yi, and Yx (32 bit or 64 bit)
-    bool i_is_32 ;      // type of i (32 bit or 64 bit)
-
-    bool iso ;          // true if iso-valued
-
-    bool is_empty ;     // true for an empty MATLAB matrix
+        void *p ;
+        void *h ;
+        void *b ;
+        void *i ;
+        void *x ;
+        void *Yp ;
+        void *Yi ;
+        void *Yx ;
+        int64_t plen ;      // p has size plen+1 and h has size plen
+        int64_t nvec ;      // size of Yi and Yx and # entries in Y
+        int64_t nvec_nonempty ;
+        int64_t yncols ;
+        int64_t ynrows ;
+        int sparsity ;      // sparse/hyper/bitmap/full
+        bool by_col ;       // true if held by column, false if by row
+        bool p_is_32 ;      // type of p (32 bit or 64 bit)
+        bool j_is_32 ;      // type of h, Yp, Yi, and Yx (32 bit or 64 bit)
+        bool i_is_32 ;      // type of i (32 bit or 64 bit)
+        bool iso ;          // true if iso-valued
+        bool is_empty ;     // true for an empty MATLAB matrix
 
     //--------------------------------------------------------------------------
-    // bool content for a @GhB matrix
+    // bool content for a @GhB matrix; not needed for other 
     //--------------------------------------------------------------------------
 
     bool will_wait ;    // true if G has any pending work; always false for a
                         // MATLAB matrix or @GrB matrix
 
+    kind_enum_t kind ;  // for display only
 } ;
 
 typedef struct gb_matrix_struct *gb_matrix ;

@@ -10,10 +10,5 @@ function C = exp (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-type = gbmex_type (G) ;
-if (~gb_isfloat (type))
-    type = 'double' ;
-end
-
-C = gzb_apply (ghb, 'exp', gzb_full (ghb, G, type)) ;
+C = gb_exp (ghb, G) ;
 

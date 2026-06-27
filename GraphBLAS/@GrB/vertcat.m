@@ -12,6 +12,5 @@ function C = vertcat (varargin)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-% concatenate the matrices
 C = gzb_cat (ghb, varargin') ;
 

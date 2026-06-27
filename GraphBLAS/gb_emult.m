@@ -1,5 +1,5 @@
-function C = gb_emult (A, op, B)
-%GB_EMULT C = A.*B, sparse matrix element-wise multiplication.
+function C = gb_emult (ghb, A, op, B)
+%GB_EMULT C = A.*B, matrix element-wise multiplication.  Not user-callable.
 % C = gb_emult (A, op, B) computes the element-wise multiplication of A
 % and B using the operator op, where the op is '*' for C=A.*B.  If both A
 % and B are matrices, the pattern of C is the intersection of A and B.  If
@@ -12,8 +12,6 @@ function C = gb_emult (A, op, B)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 if (gb_isscalar (A))
     if (gb_isscalar (B))

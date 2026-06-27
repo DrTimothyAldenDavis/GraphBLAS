@@ -65,5 +65,5 @@ switch (nargin)
             arg7) ;
 end
 
-C = gb_mexfunction_result (C_opaque, kind) ;
+C = gb_mexfunction_result (ghb, C_opaque, kind) ;
 

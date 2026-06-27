@@ -395,5 +395,6 @@ void gbmx_get_grb_matrix
 
     matrix->is_empty = false ;
     matrix->will_wait = false ;
+    matrix->kind = KIND_GRB ;   // matrix holds a @GrB value matrix
 }
 
