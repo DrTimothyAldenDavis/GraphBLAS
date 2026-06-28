@@ -7,15 +7,21 @@
 
 //------------------------------------------------------------------------------
 
-// gbmex_reduce is an interface to GrB_Matrix_reduce_Monoid_Scalar.
+// gbmex_reduce is an interface to GrB_Matrix_reduce_Monoid_Scalar,
+// for GrB.reduce and GhB.reduce.
 
-// Usage:
+// Usage for @GrB and @GhB (omitting optional final desc argument):
 
-//  cout = gbmex_reduce (ghb, op, A)
-//  cout = gbmex_reduce (ghb, op, A, desc)
-//  cout = gbmex_reduce (ghb, cin, accum, op, A, desc)
+// c = GrB.reduce (op, A)                   c = op (A)
+// c = GrB.reduce (cin, op, A)              c = cin ; c = op (A)
+// c = GrB.reduce (cin, accum, op, A)       c = cin ; c += op (A)
 
-// If cin is not present then it is implicitly a 1-by-1 matrix with no entries.
+// Usage for @GhB only:
+
+// GhB.reduce (c, op, A)                    c = op (A)
+// GhB.reduce (c, accum, op, A)             c += op (A)
+
+// where op(A) refers to reducing A to a scalar using the given op.
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&A_to_free) ;  \
@@ -51,7 +57,7 @@ void mexFunction
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    bool inplace = false ; // ghb && (nargout == 0) ;   // FIXME
+    bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;
     if (!inplace)
     { 
@@ -89,11 +95,12 @@ void mexFunction
 
     if (nmatrices == 1)
     { 
+        CHECK_ERROR (inplace, "invalid in-place usage") ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
     }
     else // if (nmatrices == 2)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
     }
 
@@ -131,6 +138,8 @@ void mexFunction
 
     if (C == NULL)
     { 
+        ASSERT (!inplace) ;
+
         // use the ztype of the monoid as the type of C
         OK (gb_monoid_type (&ctype, monoid, err)) ;
 

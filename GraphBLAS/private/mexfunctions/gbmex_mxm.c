@@ -7,18 +7,24 @@
 
 //------------------------------------------------------------------------------
 
-// gbmex_mxm is an interface to GrB_mxm.
+// gbmex_mxm is an interface to GrB_mxm, for GrB.mxm and GhB.mxm.
 
-// Usage:
+// Usage for @GrB and @GhB (omitting desc argument):
 
-// C = gbmex_mxm (ghb, semiring, A, B)
-// C = gbmex_mxm (ghb, semiring, A, B, desc)
-// C = gbmex_mxm (ghb, Cin, accum, semiring, A, B, desc)
-// C = gbmex_mxm (ghb, Cin, M, semiring, A, B, desc)
-// C = gbmex_mxm (ghb, Cin, M, accum, semiring, A, B, desc)
+// C = GrB.mxm (semiring, A, B)                 C = A*B
+// C = GrB.mxm (Cin, semiring, A, B)            C = Cin ; C = A*B
+// C = GrB.mxm (Cin, accum, semiring, A, B)     C = Cin ; C += A*B
+// C = GrB.mxm (Cin, M, semiring, A, B)         C = Cin ; C<M> = A*B
+// C = GrB.mxm (Cin, M, accum, semiring, A, B)  C = Cin ; C<M> += A*B
 
-// If Cin is not present then it is implicitly a matrix with no entries, of the
-// right size (which depends on A, B, and the descriptor).
+// Usage for @GhB only:
+
+// GhB.mxm (C, semiring, A, B)                  C = A*B
+// GhB.mxm (C, accum, semiring, A, B)           C += A*B
+// GhB.mxm (C, M, semiring, A, B)               C<M> = A*B
+// GhB.mxm (C, M, accum, semiring, A, B)        C<M> += A*B
+
+// A*B is in the given semiring.
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&M_to_free) ;  \
@@ -57,7 +63,7 @@ void mexFunction
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    bool inplace = false ; // ghb && (nargout == 0) ;   // FIXME
+    bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;
     if (!inplace)
     { 
@@ -95,18 +101,19 @@ void mexFunction
 
     if (nmatrices == 2)
     { 
+        CHECK_ERROR (inplace, "invalid in-place usage") ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]), arena, err)) ;
     }
     else if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&B, &B_to_free, &(Matrix [2]), arena, err)) ;
     }
     else // if (nmatrices == 4)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
         OK (gb_get_matrix (&B, &B_to_free, &(Matrix [3]), arena, err)) ;
@@ -147,6 +154,8 @@ void mexFunction
 
     if (C == NULL)
     { 
+        ASSERT (!inplace) ;
+
         // get the descriptor contents to determine if A and B are transposed
         int in0, in1 ;
         OK (GrB_Descriptor_get_INT32 (desc, &in0, GrB_INP0)) ;

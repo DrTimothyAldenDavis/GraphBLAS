@@ -475,6 +475,7 @@
 #define GB_Global_timing_get GM_Global_timing_get
 #define GB_Global_timing_set GM_Global_timing_set
 #define GB_helper10 GM_helper10
+#define GB_helper11 GM_helper11
 #define GB_helper5 GM_helper5
 #define GB_helper7 GM_helper7
 #define GB_HIST_countFast GM_HIST_countFast

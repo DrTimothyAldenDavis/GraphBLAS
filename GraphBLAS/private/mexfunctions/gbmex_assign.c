@@ -8,18 +8,23 @@
 //------------------------------------------------------------------------------
 
 // gbmex_assign is an interface to GrB_Matrix_assign and
-// GrB_Matrix_assign_[TYPE], computing the GraphBLAS expression:
+// GrB_Matrix_assign_[TYPE], for implementing GrB.assign and GhB.assign.
 
-//      C<#M,replace>(I,J) = accum (C(I,J), A) or accum(C(I,J), A')
+// Usage for @GrB and @GhB (omitting desc argument):
 
-// where A can be a matrix or a scalar.
-// C can be modified inplace.
+// C = GrB.assign (Cin, A, I, J)                C = Cin ; C(I,J) = A
+// C = GrB.assign (Cin, accum, A, I, J)         C = Cin ; C(I,J) += A
+// C = GrB.assign (Cin, M, A, I, J)             C = Cin ; C<M>(I,J) = A
+// C = GrB.assign (Cin, M, accum, A, I, J)      C = Cin ; C<M>(I,J) += A
 
-// Usage:
+// Usage for @GhB only:
 
-//      C = gbmex_assign (ghb, Cin, M, accum, A, I, J, desc)
+// GhB.assign (C, A, I, J)                      C(I,J) = A
+// GhB.assign (C, accum, A, I, J)               C(I,J) += A
+// GhB.assign (C, M, A, I, J)                   C<M>(I,J) = A
+// GhB.assign (C, M, accum, A, I, J)            C<M>(I,J) += A
 
-// Cin and A required.  See GrB.m for more details.
+// A can be a matrix or a scalar.
 
 #include "gb_interface.h"
 

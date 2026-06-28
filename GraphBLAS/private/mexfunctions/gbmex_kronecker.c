@@ -7,18 +7,25 @@
 
 //------------------------------------------------------------------------------
 
-// gbmex_kronecker is an interface to GrB_kronecker
+// gbmex_kronecker is an interface to GrB_kronecker, for GrB.kronecker and
+// GhB.kronecker.
 
-// Usage:
+// Usage for @GrB and @GhB (omitting desc argument):
 
-// C = gbmex_kronecker (ghb, op, A, B)
-// C = gbmex_kronecker (ghb, op, A, B, desc)
-// C = gbmex_kronecker (ghb, Cin, accum, op, A, B, desc)
-// C = gbmex_kronecker (ghb, Cin, M, op, A, B, desc)
-// C = gbmex_kronecker (ghb, Cin, M, accum, op, A, B, desc)
+// C = GrB.kronecker (op, A, B)                 C = op(A,B)
+// C = GrB.kronecker (Cin, op, A, B)            C = Cin ; C = op(A,B)
+// C = GrB.kronecker (Cin, accum, op, A, B)     C = Cin ; C += op(A,B)
+// C = GrB.kronecker (Cin, M, op, A, B)         C = Cin ; C<M> = op(A,B)
+// C = GrB.kronecker (Cin, M, accum, op, A, B)  C = Cin ; C<M> += op(A,B)
 
-// If Cin is not present then it is implicitly a matrix with no entries, of the
-// right size (which depends on A, B, and the descriptor).
+// Usage for @GhB only:
+
+// GhB.kronecker (C, op, A, B)                  C = op(A,B)
+// GhB.kronecker (C, accum, op, A, B)           C += op(A,B)
+// GhB.kronecker (C, M, op, A, B)               C<M> = op(A,B)
+// GhB.kronecker (C, M, accum, op, A, B)        C<M> += op(A,B)
+
+// op(A,B) refers to the kronecker product of A and B, using the op.
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&M_to_free) ;  \
@@ -57,7 +64,7 @@ void mexFunction
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    bool inplace = false ; // ghb && (nargout == 0) ;   // FIXME
+    bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;
     if (!inplace)
     { 
@@ -95,18 +102,19 @@ void mexFunction
 
     if (nmatrices == 2)
     { 
+        CHECK_ERROR (inplace, "invalid in-place usage") ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]), arena, err)) ;
     }
     else if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&B, &B_to_free, &(Matrix [2]), arena, err)) ;
     }
     else // if (nmatrices == 4)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
         OK (gb_get_matrix (&B, &B_to_free, &(Matrix [3]), arena, err)) ;
@@ -146,6 +154,8 @@ void mexFunction
 
     if (C == NULL)
     {
+        ASSERT (!inplace) ;
+
         // get the descriptor contents to determine if A and B are transposed
         int in0, in1 ;
         OK (GrB_Descriptor_get_INT32 (desc, &in0, GrB_INP0)) ;

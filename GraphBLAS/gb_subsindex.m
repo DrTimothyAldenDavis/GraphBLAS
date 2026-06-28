@@ -11,11 +11,10 @@ function I = gb_subsindex (ghb, G_arg) ;
 % values first.  The expression A(G) becomes A (G (find (G > 0))).
 gbmex_wait (G_arg) ;
 G = gzb_select (ghb, '>0', G_arg) ;
+gbmex_wait (G) ;
 
 [m, n, type] = gbmex_size (G) ;
 G_is_full = gb_isfull (G) ;
-
-gbmex_wait (G) ;
 
 if (isequal (type, 'double') || isequal (type, 'single'))
     % double or single: convert to int64

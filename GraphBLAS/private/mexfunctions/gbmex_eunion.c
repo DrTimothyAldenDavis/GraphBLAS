@@ -7,18 +7,23 @@
 
 //------------------------------------------------------------------------------
 
-// gbmex_eunion is an interface to GxB_Matrix_eWiseUnion.
+// gbmex_eunion is an interface to GxB_Matrix_eWiseUnion, for GrB.eunion
+// and GhB.eunion.
 
-// Usage:
+// Usage for @GrB and @GhB (omitting desc argument):
 
-// C = gbmex_eunion (ghb, binop, A, alpha, B, beta)
-// C = gbmex_eunion (ghb, binop, A, alpha, B, beta, desc)
-// C = gbmex_eunion (ghb, Cin, accum, binop, A, alpha, B, beta, desc)
-// C = gbmex_eunion (ghb, Cin, M, binop, A, alpha, B, beta, desc)
-// C = gbmex_eunion (ghb, Cin, M, accum, binop, A, alpha, B, beta, desc)
+// C = GrB.eunion (op, A, alpha, B, beta)                 C = op(A,alpha,B,beta)
+// C = GrB.eunion (Cin, op, A, alpha, B, beta)            C = Cin ; C = op(...)
+// C = GrB.eunion (Cin, accum, op, A, alpha, B, beta)     C = Cin ; C += op(...)
+// C = GrB.eunion (Cin, M, op, A, alpha, B, beta)         C = Cin ; C<M> =op(..)
+// C = GrB.eunion (Cin, M, accum, op, A, alpha, B, beta)  C = Cin ; C<M>+=op(..)
 
-// If Cin is not present then it is implicitly a matrix with no entries, of the
-// right size (which depends on A, B, and the descriptor).
+// Usage for @GhB only:
+
+// GhB.eunion (C, op, A, alpha, B, beta)                  C = op(A,alpha,B,beta)
+// GhB.eunion (C, accum, op, A, alpha, B, beta)           C += op(...)
+// GhB.eunion (C, M, op, A, alpha, B, beta)               C<M> = op(...)
+// GhB.eunion (C, M, accum, op, A, alpha, B, beta)        C<M> += op(...)
 
 #define FREE_WORK                       \
     GrB_Matrix_free (&M_to_free) ;      \
@@ -62,7 +67,7 @@ void mexFunction
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    bool inplace = false ; // ghb && (nargout == 0) ;   // FIXME
+    bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;
     if (!inplace)
     { 
@@ -99,6 +104,7 @@ void mexFunction
 
     if (nmatrices == 4)
     { 
+        CHECK_ERROR (inplace, "invalid in-place usage") ;
         OK (gb_get_matrix (&A    , &A_to_free    , &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&alpha, &alpha_to_free, &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&B    , &B_to_free    , &(Matrix [2]), arena, err)) ;
@@ -106,7 +112,7 @@ void mexFunction
     }
     else if (nmatrices == 5)
     { 
-        OK (gb_get_deep   (&C    , false,          &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C    , inplace,        &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&A    , &A_to_free    , &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&alpha, &alpha_to_free, &(Matrix [2]), arena, err)) ;
         OK (gb_get_matrix (&B    , &B_to_free    , &(Matrix [3]), arena, err)) ;
@@ -114,7 +120,7 @@ void mexFunction
     }
     else // if (nmatrices == 6)
     { 
-        OK (gb_get_deep   (&C    , false,          &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C    , inplace,        &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&M    , &M_to_free    , &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&A    , &A_to_free    , &(Matrix [2]), arena, err)) ;
         OK (gb_get_matrix (&alpha, &alpha_to_free, &(Matrix [3]), arena, err)) ;

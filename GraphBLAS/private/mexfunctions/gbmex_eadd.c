@@ -7,26 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// gbmex_eadd is an interface to GrB_Matrix_eWiseAdd_BinaryOp.
-
-// Usage:
-
-// C = gbmex_eadd (ghb, binop, A, B)
-// C = gbmex_eadd (ghb, binop, A, B, desc)
-// C = gbmex_eadd (ghb, Cin, accum, binop, A, B, desc)
-// C = gbmex_eadd (ghb, Cin, M, binop, A, B, desc)
-// C = gbmex_eadd (ghb, Cin, M, accum, binop, A, B, desc)
-
-// TODO: add in-place syntax
-// gbmex_eadd (ghb, C, accum, binop, A, B, desc)
-// gbmex_eadd (ghb, C, M, binop, A, B, desc)
-// gbmex_eadd (ghb, C, M, accum, binop, A, B, desc)
-
-// If Cin is not present then it is implicitly a matrix with no entries, of the
-// right size (which depends on A, B, and the descriptor).
-
-// C can be modified inplace.
-
 #include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.eadd (Cin, M, accum, binop, A, B, desc)"

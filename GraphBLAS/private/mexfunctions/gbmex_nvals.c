@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmex_nvals: number of entries in a GraphBLAS matrix struct
+// gbmex_nvals: number of entries in a GraphBLAS matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -18,7 +18,7 @@
 
 #include "gb_interface.h"
 
-#define USAGE "usage: nvals = gbmex_nvals (A)"
+#define USAGE "usage: [nvals, nzmax] = gbmex_nvals (A)"
 
 void mexFunction
 (
@@ -36,10 +36,16 @@ void mexFunction
     GrB_Matrix A = NULL, A_to_free = NULL ;
     int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin == 1 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 1 && nargout <= 2, USAGE) ;
 
     pargout [0] = mxCreateDoubleScalar (0) ;
     double *anvals_output = (double *) mxGetData (pargout [0]) ;
+    double *anzmax_output = NULL, anzmax = 0 ;
+    if (nargout > 1)
+    { 
+        pargout [1] = mxCreateDoubleScalar (0) ;
+        anzmax_output = (double *) mxGetData (pargout [1]) ;
+    }
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -66,8 +72,9 @@ void mexFunction
     double anvals ;
     if (nvals == INT64_MAX)
     { 
-        // A is a huge iso hypersparse matrix with too many entries to fit
-        // into a 64-bit integer
+        // A is a huge iso full matrix with too many entries to count with
+        // a 64-bit integer.  anvals is recomputed in double, but it will
+        // suffer roundoff errors.
         uint64_t nrows, ncols ;
         OK (GrB_Matrix_nrows (&nrows, A)) ;
         OK (GrB_Matrix_ncols (&ncols, A)) ;
@@ -78,12 +85,23 @@ void mexFunction
         anvals = (double) nvals ;
     }
 
+    // get the # of entries that A can hold.  This ignores the iso property.
+    if (nargout > 1)
+    { 
+        anzmax = (double) GB_helper11 (A) ;
+        anzmax = fmax (anzmax, 1) ;
+    }
+
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
     (*anvals_output) = anvals ;
+    if (nargout > 1)
+    { 
+        (*anzmax_output) = anzmax ;
+    }
     gb_wrapup ( ) ;
 }
 

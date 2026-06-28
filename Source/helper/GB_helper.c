@@ -413,3 +413,32 @@ GrB_Info GB_helper10       // norm (x-y,p), or -1 on error
     return (GrB_SUCCESS) ;
 }
 
+//------------------------------------------------------------------------------
+// GB_helper11: nzmax for MATLAB/Octave
+//------------------------------------------------------------------------------
+
+// For GrB.nzmax (A) and GhB.nzmax (A): storage allocated for entries in A.
+
+double GB_helper11 (GrB_Matrix A)
+{
+    double nheld = 0, npend = 0 ;
+    if (A == NULL || A->magic != GB_MAGIC || A->x == NULL)
+    { 
+        // A is NULL or not initialized: nzmax is zero
+    }
+    else if (A->p != NULL)
+    { 
+        // A is sparse or hypersparse
+        // nheld = entries held, except pending tuples but including zombies
+        nheld = (double) (A->nvals) ;
+        // npend = space for pending tuples
+        npend = (double) ((A->Pending != NULL) ? A->Pending->nmax : 0) ;
+    }
+    else
+    { 
+        // A is bitmap or full: no pending tuples.  Just return nrows*ncols.
+        nheld = ((double) (A->vlen)) * ((double) (A->vdim)) ;
+    }
+    return (nheld + npend) ;
+}
+

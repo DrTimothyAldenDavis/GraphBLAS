@@ -8,18 +8,23 @@
 //------------------------------------------------------------------------------
 
 // gbmex_subassign is an interface to GxB_Matrix_subassign and
-// GxB_Matrix_assign_[TYPE], computing the GraphBLAS expression:
+// GxB_Matrix_subassign_[TYPE], for GrB.subassign and GhB.subassign.
 
-//      C(I,J)<#M,replace> = accum (C(I,J), A) or accum(C(I,J), A')
+// Usage for @GrB and @GhB (omitting desc argument):
 
-// where A can be a matrix or a scalar.
+// C = GrB.subassign (Cin, A, I, J)             C = Cin ; C(I,J) = A
+// C = GrB.subassign (Cin, accum, A, I, J)      C = Cin ; C(I,J) += A
+// C = GrB.subassign (Cin, M, A, I, J)          C = Cin ; C(I,J)<M> = A
+// C = GrB.subassign (Cin, M, accum, A, I, J)   C = Cin ; C(I,J)<M> += A
 
-// Usage:
+// Usage for @GhB only:
 
-//      C = gbmex_subassign (ghb, Cin, M, accum, A, I, J, desc)
+// GhB.subassign (C, A, I, J)                   C(I,J) = A
+// GhB.subassign (C, accum, A, I, J)            C(I,J) += A
+// GhB.subassign (C, M, A, I, J)                C(I,J)<M> = A
+// GhB.subassign (C, M, accum, A, I, J)         C(I,J)<M> += A
 
-// Cin and A required.  See GrB.m for more details.
-// C can be modified inplace.
+// A can be a matrix or a scalar.
 
 #include "gb_interface.h"
 

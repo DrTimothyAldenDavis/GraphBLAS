@@ -7,20 +7,22 @@
 
 //------------------------------------------------------------------------------
 
-// gbmex_trans is an interface to GrB_transpose.
+// gbmex_trans is an interface to GrB_transpose, for GrB.trans and GhB.trans.
 
-// Usage:
+// Usage for @GrB and @GhB (omitting desc argument):
 
-// C = gbmex_trans (ghb, A)
-// C = gbmex_trans (ghb, A, desc)
-// C = gbmex_trans (ghb, Cin, accum, A, desc)
-// C = gbmex_trans (ghb, Cin, M, A, desc)
-// C = gbmex_trans (ghb, Cin, M, accum, A, desc)
+// C = GrB.trans (A)                    C = A'
+// C = GrB.trans (Cin, A)               C = Cin ; C = A'
+// C = GrB.trans (Cin, accum, A)        C = Cin ; C += A'
+// C = GrB.trans (Cin, M, A)            C = Cin ; C<M> = A'
+// C = GrB.trans (Cin, M, accum, A)     C = Cin ; C<M> += A'
 
-// If Cin is not present then it is implicitly a matrix with no entries, of the
-// right size (which depends on A and the descriptor).  Note that if desc.in0
-// is 'transpose', then C<M>=A or C<M>+=A is computed, with A not transposed,
-// since the default behavior is to transpose the input matrix.
+// Usage for @GhB only:
+
+// GhB.trans (C, A)                     C = A'
+// GhB.trans (C, accum, A)              C += A'
+// GhB.trans (C, M, A)                  C<M> = A'
+// GhB.trans (C, M, accum, A)           C<M> += A'
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&M_to_free) ;  \
@@ -58,7 +60,7 @@ void mexFunction
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    bool inplace = false ; // ghb && (nargout == 0) ;   // FIXME
+    bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;
     if (!inplace)
     { 
@@ -96,16 +98,17 @@ void mexFunction
 
     if (nmatrices == 1)
     { 
+        CHECK_ERROR (inplace, "invalid in-place usage") ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
     }
     else if (nmatrices == 2)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
     }
     else // if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
     }
@@ -138,6 +141,8 @@ void mexFunction
 
     if (C == NULL)
     { 
+        ASSERT (!inplace) ;
+
         // get the descriptor contents to determine if A is transposed
         int in0 ;
         OK (GrB_Descriptor_get_INT32 (desc, &in0, GrB_INP0)) ;

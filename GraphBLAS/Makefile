@@ -61,7 +61,7 @@ purge: distclean
 
 # remove all files not in the distribution
 distclean:
-	rm -rf build/*
+	rm -rf build/* *.mex*
 	( cd test/tcov ; $(MAKE) distclean )
 	( cd private ; $(MAKE) distclean )
 

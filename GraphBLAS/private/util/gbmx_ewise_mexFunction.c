@@ -7,10 +7,24 @@
 
 //------------------------------------------------------------------------------
 
-// This method implements the gbmex_eadd and gbmex_emult mexFunctions.
+// This method implements the gbmex_eadd and gbmex_emult mexFunctions
+// for GrB.eadd, GrB.emult, GhB.eadd, and GhB.emult.  Below "ewise" is
+// either eadd or emult.
 
-// It is in the util folder, but it is an entire mexFunction, not a
-// utility.
+// Usage for @GrB and @GhB (omitting desc argument):
+
+// C = GrB.ewise (op, A, B)                 C = op(A,B)
+// C = GrB.ewise (Cin, op, A, B)            C = op(A,B)
+// C = GrB.ewise (Cin, accum, op, A, B)     C = Cin + op(A,B)
+// C = GrB.ewise (Cin, M, op, A, B)         C = Cin ; C<M> = op(A,B)
+// C = GrB.ewise (Cin, M, accum, op, A, B)  C = Cin ; C<M> += op(A,B)
+
+// Usage for @GhB only:
+
+// GhB.ewise (C, op, A, B)                  C = op(A,B)
+// GhB.ewise (C, accum, op, A, B)           C += op(A,B)
+// GhB.ewise (C, M, op, A, B)               C<M> = op(A,B)
+// GhB.ewise (C, M, accum, op, A, B)        C<M> += op(A,B)
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&M_to_free) ;  \
@@ -49,7 +63,7 @@ void gbmx_ewise_mexFunction
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    bool inplace = false ; // ghb && (nargout == 0) ;   // FIXME
+    bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;
     if (!inplace)
     { 
@@ -87,18 +101,19 @@ void gbmx_ewise_mexFunction
 
     if (nmatrices == 2)
     { 
+        CHECK_ERROR (inplace, "invalid in-place usage") ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]), arena, err)) ;
     }
     else if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&B, &B_to_free, &(Matrix [2]), arena, err)) ;
     }
     else // if (nmatrices == 4)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
         OK (gb_get_matrix (&B, &B_to_free, &(Matrix [3]), arena, err)) ;
@@ -138,6 +153,8 @@ void gbmx_ewise_mexFunction
 
     if (C == NULL)
     { 
+        ASSERT (!inplace) 
+
         // get the descriptor contents to determine if A is transposed
         int in0 ;
         OK (GrB_Descriptor_get_INT32 (desc, &in0, GrB_INP0)) ;

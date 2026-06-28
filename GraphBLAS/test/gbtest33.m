@@ -43,7 +43,12 @@ for k1 = 1:length(types)
                 assert (isequal (sparse (C), spones (S))) ;
 
                 assert (numel (G) == m*n) ;
-                assert (nzmax (G) == max (nnz (G), 1))
+                e1 = nzmax (G) ;
+                e2 = nnz (G) ;
+                % G
+                % fprintf ('nzmax(G) is %g\n', e1) ;
+                % fprintf ('nnz (G)  is %g\n', e2) ;
+                assert (e1 >= max (e2, 1))
                 assert (isequal (size (G), [m n])) ;
                 [m1, n1]  = size (G) ;
                 assert (isequal ([m1 n1], [m n])) ;
@@ -60,7 +65,8 @@ for k1 = 1:length(types)
                 assert (isvector (G) == (m == 1 | n == 1)) ;
                 assert (isscalar (G) == (m == 1 & n == 1)) ;
 
-                isfl = gb_contains (type, 'double') | gb_contains (type, 'single') ;
+                isfl = gb_contains (type, 'double') | ...
+                       gb_contains (type, 'single') ;
                 assert (isfloat (G) == isfl) ;
                 assert (isreal (G) == (~gb_contains (type, 'complex'))) ;
                 isint = isequal (type (1:3), 'int') | ...

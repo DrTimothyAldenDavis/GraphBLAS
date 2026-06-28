@@ -7,27 +7,37 @@
 
 //------------------------------------------------------------------------------
 
-// gbmex_select is an interface to GrB_Matrix_select.
+// gbmex_select is an interface to GrB_Matrix_select, for GrB.select
+// and GhB.select.
 
-// Usage:
+// Usage for @GrB and @GhB (omitting desc argument):
 
-// C = gbmex_select (ghb, op, A)
-// C = gbmex_select (ghb, op, A, desc)
-// C = gbmex_select (ghb, op, A, b, desc)
+// C = GrB.select (op, A)                       C = op(A)
+// C = GrB.select (Cin, op, A)                  C = Cin ; C = op(A)
+// C = GrB.select (Cin, accum, op, A)           C = Cin ; C += op(A)
+// C = GrB.select (Cin, M, op, A)               C = Cin ; C<M> = op(A)
+// C = GrB.select (Cin, M, accum, op, A)        C = Cin ; C<M> += op(A)
 
-// C = gbmex_select (ghb, Cin, accum, op, A, desc)
-// C = gbmex_select (ghb, Cin, accum, op, A, b, desc)
+// C = GrB.select (op, A, b)                    C = op(A,b)
+// C = GrB.select (Cin, op, A, b)               C = Cin ; C = op(A,b)
+// C = GrB.select (Cin, accum, op, A, b)        C = Cin ; C += op(A,b)
+// C = GrB.select (Cin, M, op, A, b)            C = Cin ; C<M> = op(A,b)
+// C = GrB.select (Cin, M, accum, op, A, b)     C = Cin ; C<M> += op(A,b)
 
-// C = gbmex_select (ghb, Cin, M, op, A, desc)
-// C = gbmex_select (ghb, Cin, M, op, A, b, desc)
+// Usage for @GhB only:
 
-// C = gbmex_select (ghb, Cin, M, accum, op, A, desc)
-// C = gbmex_select (ghb, Cin, M, accum, op, A, b, desc)
+// GhB.select (C, op, A)                        C = op(A)
+// GhB.select (C, accum, op, A)                 C += op(A)
+// GhB.select (C, M, op, A)                     C<M> = op(A)
+// GhB.select (C, M, accum, op, A)              C<M> += op(A)
 
-// If Cin is not present then it is implicitly a matrix with no entries, of the
-// right size (which depends on A, and the descriptor).  The type of Cin, if
-// not present, is determined by the ztype of the accum, if present, or
-// otherwise it has the same time as A.
+// GhB.select (C, op, A, b)                     C = op(A,b)
+// GhB.select (C, accum, op, A, b)              C += op(A,b)
+// GhB.select (C, M, op, A, b)                  C<M> = op(A,b)
+// GhB.select (C, M, accum, op, A, b)           C<M> += op(A,b)
+
+// where op(A) refers to select(A) using the given op, and op(A,b) uses
+// an operator that requires a scalar input b.
 
 // If op is '==' or '~=' and b is a NaN, and A has type GrB_FP32, GrB_FP64,
 // GxB_FC32, or GxB_FC64, then a user-defined operator is used instead of
@@ -211,7 +221,7 @@ void mexFunction
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    bool inplace = false ; // ghb && (nargout == 0) ;   // FIXME
+    bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;
     if (!inplace)
     { 
@@ -262,16 +272,17 @@ void mexFunction
     { 
         if (nmatrices == 1)
         { 
+            CHECK_ERROR (inplace, "invalid in-place usage") ;
             OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
         }
         else if (nmatrices == 2)
         { 
-            OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+            OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
             OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
         }
         else if (nmatrices == 3)
         { 
-            OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+            OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
             OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), arena, err)) ;
             OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
         }
@@ -288,18 +299,19 @@ void mexFunction
         }
         else if (nmatrices == 2)
         { 
+            CHECK_ERROR (inplace, "invalid in-place usage") ;
             OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
             OK (gb_get_matrix (&b, &b_to_free, &(Matrix [1]), arena, err)) ;
         }
         else if (nmatrices == 3)
         { 
-            OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+            OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
             OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
             OK (gb_get_matrix (&b, &b_to_free, &(Matrix [2]), arena, err)) ;
         }
         else // if (nmatrices == 4)
         { 
-            OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+            OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
             OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), arena, err)) ;
             OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
             OK (gb_get_matrix (&b, &b_to_free, &(Matrix [3]), arena, err)) ;
@@ -352,6 +364,8 @@ void mexFunction
 
     if (C == NULL)
     { 
+        ASSERT (!inplace) ;
+
         // get the descriptor contents to determine if A is transposed
         int in0 ;
         OK (GrB_Descriptor_get_INT32 (desc, &in0, GrB_INP0)) ;

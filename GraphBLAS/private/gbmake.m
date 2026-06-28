@@ -92,7 +92,7 @@ else
     else
         cd ../../build
     end
-    library_path = pwd
+    library_path = pwd ;
     cd (here) ;
 end
 
@@ -209,9 +209,13 @@ for k = 1:length (hfiles)
     htime = max (htime, t) ;
 end
 
+mx_special = { 'gbmex_mxm', 'gbmex_mtimes', 'gbmex_semiringinfo' } ;
+c_special = { 'gb_semiring', 'gb_string_to_semiring' } ;
+
 % compile any source files that need compiling
 any_c_compiled = 0 ;
 objlist = '' ;
+objlist_special = '' ;
 for k = 1:length (cfiles)
 
     % get the full cfile filename and modification time
@@ -219,11 +223,15 @@ for k = 1:length (cfiles)
     tc = datenum (cfiles(k).date) ;
 
     % get the object file name
-    ofile = cfiles(k).name ;
-    objfile = [ ofile(1:end-2) object_suffix ] ;
+    cfilename = cfiles(k).name ;
+    cfilename = cfilename (1:end-2) ;
+    objfile = [ cfilename object_suffix ] ;
 
     % get the object file modification time
-    objlist = [ objlist ' ' objfile ] ;     %#ok
+    if (~any (strcmp (cfilename, c_special)))
+        objlist = [ objlist ' ' objfile ] ;     %#ok
+    end
+    objlist_special = [ objlist_special ' ' objfile ] ;     %#ok
     dobj = dir (objfile) ;
     if (isempty (dobj))
         % there is no object file; the cfile must be compiled
@@ -265,6 +273,7 @@ for k = 1:length (mexfunctions)
 
     % get the compiled mexFunction modification time
     mexfuncname = mexfunc (1:end-2) ;
+    % fprintf ('%s:\n', mexfuncname) ;
     mexfunction_compiled = [ '../' mexfuncname '.' mexext ] ;
     dobj = dir (mexfunction_compiled) ;
     if (isempty (dobj))
@@ -277,8 +286,15 @@ for k = 1:length (mexfunctions)
     % compile if it is newer than its object file, or if any cfile was compiled
     if (make_all || tc > tobj || any_c_compiled)
         % compile the mexFunction
-        mexcmd = sprintf ('mex -outdir .. %s %s %s %s ''%s'' %s %s', ...
-            Lflags, silent, flags, inc, mexfunction, objlist, libgraphblas) ;
+        if (any (strcmp (mexfuncname, mx_special)))
+            mexcmd = sprintf ('mex -outdir .. %s %s %s %s ''%s'' %s %s', ...
+                Lflags, silent, flags, inc, mexfunction, objlist_special, ...
+                libgraphblas) ;
+        else
+            mexcmd = sprintf ('mex -outdir .. %s %s %s %s ''%s'' %s %s', ...
+                Lflags, silent, flags, inc, mexfunction, objlist, ...
+                libgraphblas) ;
+        end
         % fprintf ('%s\n', mexcmd) ;
         fprintf (':') ;
         eval (mexcmd) ;

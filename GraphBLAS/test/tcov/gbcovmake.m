@@ -26,7 +26,7 @@ for k = 1:length (mfiles)
 end
 
 % copy all @GrB/../gb*.m files into tmp
-mfiles = dir ('../../@GrB/../gb*.m') ;
+mfiles = dir ('../../@GrB/../g*.m') ;
 for k = 1:length (mfiles)
     copyfile ([(mfiles (k).folder) '/' (mfiles (k).name)], 'tmp') ;
 end

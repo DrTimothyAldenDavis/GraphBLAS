@@ -7,50 +7,24 @@
 
 //------------------------------------------------------------------------------
 
-// gbmex_apply is an interface to GrB_Matrix_apply.
+// gbmex_apply is an interface to GrB_Matrix_apply, for GrB.apply and GhB.apply.
 
-// Usage for @GrB and @GhB:
+// Usage for @GrB and @GhB (omitting optional final desc argument):
 
-// C = gbapply (unop, A)                        C = unop (A)
-// C = gbapply (Cin, unop, A)                   C = Cin ; C = unop (A) (***)
-// C = gbapply (Cin, accum, unop, A)            C = Cin + unop (A)
-// C = gbapply (Cin, M, unop, A)                C = Cin ; C<M> = unop (A)
-// C = gbapply (Cin, M, accum, unop, A)         C = Cin ; C<M> += unop(A)
-
-// C = gbapply (unop, A, desc)                  ditto, with desc
-// C = gbapply (Cin, unop, A, desc)
-// C = gbapply (Cin, accum, unop, A, desc)
-// C = gbapply (Cin, M, unop, A, desc)
-// C = gbapply (Cin, M, accum, unop, A, desc)
+// C = GrB.apply (unop, A)                        C = unop (A)
+// C = GrB.apply (Cin, unop, A)                   C = Cin ; C = unop (A)
+// C = GrB.apply (Cin, accum, unop, A)            C = Cin ; C += unop (A)
+// C = GrB.apply (Cin, M, unop, A)                C = Cin ; C<M> = unop (A)
+// C = GrB.apply (Cin, M, accum, unop, A)         C = Cin ; C<M> += unop(A)
 
 // Usage for @GhB only:
 
-// gbapply (C, unop)                            C = unop (C)
-// gbapply (C, accum, unop)                     C += unop (C)
-// gbapply (C, unop, A)                         C = unop (A)
-// gbapply (C, accum, unop, A)                  C += unop (A)
-// gbapply (C, M, unop, A)                      C<M> = unop (A)
-// gbapply (C, M, accum, unop, A)               C<M> += unop (A)
-
-// gbapply (C, unop, desc)                      ditto, with desc
-// gbapply (C, accum, unop, desc)
-// gbapply (C, unop, A, desc)
-// gbapply (C, accum, unop, A, desc)
-// gbapply (C, M, unop, A, desc)
-// gbapply (C, M, accum, unop, A, desc)
-
-// C is Cin for the inplace usage, and must be present.  For the non-inplace
-// usage, if Cin is not present then it is implicitly a matrix with no entries,
-// of the right size (which depends on A, B, and the descriptor).
-
-// (***) note: the usage C = gbapply (Cin, unop, A) works, but is not useful.
-// It does the same thing as C = gbapply (unop, A).  The corresponding in-place
-// syntax, gbapply (C, unop, A), is useful, and does C = unop (A).  It is
-// similar to C = gbapply (unop, A) which creates a new C.  The in-place usage
-// gbapply (C, unop, A) uses an existing matrix C.  Its contents are
-// overwritten, but its type is preserved, so the assignment will do a
-// typecast.  This cannot be done with the non-in-place syntax C = gbapply
-// (unop, A), where C takes its type from the output type of unop.
+// GhB.apply (C, unop)                            C = unop (C)
+// GhB.apply (C, accum, unop)                     C += unop (C)
+// GhB.apply (C, unop, A)                         C = unop (A)
+// GhB.apply (C, accum, unop, A)                  C += unop (A)
+// GhB.apply (C, M, unop, A)                      C<M> = unop (A)
+// GhB.apply (C, M, accum, unop, A)               C<M> += unop (A)
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&M_to_free) ;  \

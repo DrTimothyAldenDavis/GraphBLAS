@@ -9,26 +9,27 @@
 
 // gbmex_apply2 is an interface to GrB_Matrix_apply_BinaryOp1st_Scalar,
 // GrB_Matrix_apply_BinaryOp2nd_Scalar, and GrB_Matrix_apply_IndexOp_Scalar.
+// One of the inputs A or B are non-empty scalars.  This method implements
+// GrB.apply2 and GhB.apply2.
 
-// Usage:
+// Usage for @GrB and @GhB (omitting desc argument):
 
-// C = gbmex_apply2 (ghb, op, A, B)
-// C = gbmex_apply2 (ghb, op, A, B, desc)
-// C = gbmex_apply2 (ghb, Cin, accum, op, A, B, desc)
-// C = gbmex_apply2 (ghb, Cin, M, op, A, B, desc)
-// C = gbmex_apply2 (ghb, Cin, M, accum, op, A, B, desc)
+// C = GrB.apply2 (op, A, B)                    C = op(A,B)
+// C = GrB.apply2 (Cin, op, A, B)               C = Cin ; C = op(A,B)
+// C = GrB.apply2 (Cin, accum, op, A, B)        C = Cin ; C += op(A,B)
+// C = GrB.apply2 (Cin, M, op, A, B)            C = Cin ; C<M> = op(A,B)
+// C = GrB.apply2 (Cin, M, accum, op, A, B)     C = Cin ; C<M> += op(A,B)
 
-// TODO: add in-place:
-// gbmex_apply2 (ghb, C, accum, op, A, B, desc)
-// gbmex_apply2 (ghb, C, M, op, A, B, desc)
-// gbmex_apply2 (ghb, C, M, accum, op, A, B, desc)
+// Usage for @GhB only:
+
+// GhB.apply2 (C, op, A, B)                     C = op(A,B)
+// GhB.apply2 (C, accum, op, A, B)              C += op(A,B)
+// GhB.apply2 (C, M, op, A, B)                  C<M> = op(A,B)
+// GhB.apply2 (C, M, accum, op, A, B)           C<M> += op(A,B)
 
 // Either A or B (or both) must be a non-empty scalar (1-by-1, with 1 entry).
 // If both A and B are non-empty scalars, then A is treated as the input
 // 'matrix' and B is treated as the scalar.
-
-// If Cin is not present then it is implicitly a matrix with no entries, of the
-// right size (which depends on A, B, and the descriptor).
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&M_to_free) ;  \
@@ -65,11 +66,11 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
     int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin >= 3+1 && nargin <= 7+1 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 4 && nargin <= 8 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    bool inplace = false ; // ghb && (nargout == 0) ;   // FIXME
+    bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;
     if (!inplace)
     { 
@@ -107,18 +108,19 @@ void mexFunction
 
     if (nmatrices == 2)
     { 
+        CHECK_ERROR (inplace, "invalid in-place usage") ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&B, &B_to_free, &(Matrix [1]), arena, err)) ;
     }
     else if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&B, &B_to_free, &(Matrix [2]), arena, err)) ;
     }
     else // if (nmatrices == 4)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
         OK (gb_get_matrix (&B, &B_to_free, &(Matrix [3]), arena, err)) ;
@@ -209,6 +211,8 @@ void mexFunction
 
     if (C == NULL)
     { 
+        ASSERT (!inplace) ;
+
         // get the descriptor to determine if the input matrix is transposed
         uint64_t cnrows, cncols ;
         if (binop_bind1st)

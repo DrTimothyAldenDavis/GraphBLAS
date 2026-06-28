@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// gbmx_get_matrix (matrix,X) gets the contents of a GraphBLAS @GrB or @GrB
+// gbmx_get_matrix (matrix,X) gets the contents of a GraphBLAS @GrB or @GhB
 // matrix object, or the properties of a MATLAB matrix (type, dimensions, and
 // pointers to p,i,x, etc), and saves them in the gb_matrix struct.
 
@@ -93,7 +93,7 @@ void gbmx_get_matrix
         matrix->kind = KIND_BUILTIN ;
 
         if (matrix->nrows == 0 && matrix->ncols == 0)
-        {
+        { 
 
             //------------------------------------------------------------------
             // X is an empty 0-by-0 MATLAB matrix.  X->[pix] are NULL.

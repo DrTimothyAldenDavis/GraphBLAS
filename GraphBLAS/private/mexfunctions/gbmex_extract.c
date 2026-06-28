@@ -8,17 +8,20 @@
 //------------------------------------------------------------------------------
 
 // gbmex_extract is an interface to GrB_Matrix_extract and
-// GrB_Matrix_extract_[TYPE], computing the GraphBLAS expression:
+// GrB_Matrix_extract_[TYPE], for GrB.extract and GhB.extract.
 
-//      C<#M,replace> = accum (C, A (I,J)) or
-//      C<#M,replace> = accum (C, AT (I,J))
+// C = GrB.extract (A, I, J)                     C = A(I,J)
+// C = GrB.extract (Cin, A, I, J)                C = Cin ; C = A(I,J)
+// C = GrB.extract (Cin, accum, A, I, J)         C = Cin ; C += A(I,J)
+// C = GrB.extract (Cin, M, A, I, J)             C = Cin ; C<M> = A(I,J)
+// C = GrB.extract (Cin, M, accum, A, I, J)      C = Cin ; C<M> += A(I,J)
 
-// Usage:
+// Usage for @GhB only:
 
-//      C = gbmex_extract (ghb, Cin, M, accum, A, I, J, desc)
-
-// A is required.  See GrB.m for more details.
-// If accum or M is used, then Cin must appear.
+// GhB.extract (C, A, I, J)                      C = A(I,J)
+// GhB.extract (C, accum, A, I, J)               C += A(I,J)
+// GhB.extract (C, M, A, I, J)                   C<M> = A(I,J)
+// GhB.extract (C, M, accum, A, I, J)            C<M> += A(I,J)
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&M_to_free) ;  \
@@ -59,7 +62,7 @@ void mexFunction
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    bool inplace = false ; // ghb && (nargout == 0) ;   // FIXME
+    bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;
     if (!inplace)
     { 
@@ -110,16 +113,17 @@ void mexFunction
 
     if (nmatrices == 1)
     { 
+        CHECK_ERROR (inplace, "invalid in-place usage") ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
     }
     else if (nmatrices == 2)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
     }
     else // if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
     }

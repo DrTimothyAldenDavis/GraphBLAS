@@ -23,13 +23,6 @@
 // is first expanded to an empty matrix of size length(I)-by-length(J), and
 // G*B_Matrix_*assign is used (not GraphBLAS scalar assignment).
 
-// Usage:
-
-//      C = gbmex_assign    (ghb, Cin, M, accum, A, I, J, desc)
-//      C = gbmex_subassign (ghb, Cin, M, accum, A, I, J, desc)
-
-// Cin and A are required.  See GrB.m for more details.
-
 // This method is in the util folder, but it is an entire mexFunction, not a
 // utility.
 
@@ -72,7 +65,7 @@ void gbmx_assign_mexFunction    // gbmex_assign or gbmex_subassign mexFunctions
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    bool inplace = false ; // ghb && (nargout == 0) ;   // FIXME
+    bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;
     if (!inplace)
     { 
@@ -123,12 +116,12 @@ void gbmx_assign_mexFunction    // gbmex_assign or gbmex_subassign mexFunctions
 
     if (nmatrices == 2)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
     }
     else // if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
     }

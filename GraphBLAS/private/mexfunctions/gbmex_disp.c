@@ -54,7 +54,7 @@ void mexFunction
     OK (gb_get_matrix (&C, &C_to_free, &(Matrix [0]), arena, err)) ;
 
     //--------------------------------------------------------------------------
-    // print the GraphBLAS matrix
+    // print the matrix
     //--------------------------------------------------------------------------
 
     // print 1-based indices
@@ -64,21 +64,29 @@ void mexFunction
     OK (GrB_Global_set_INT32 (GrB_GLOBAL, true,
         GxB_INCLUDE_READONLY_STATISTICS)) ;
 
-    char *kind ;
-    switch (Matrix [0].kind)
+    char *name ;
+
+    if (Matrix [0].kind == KIND_GHB)
     { 
-        case KIND_GHB :     kind = "@GhB matrix" ; break ;
-        case KIND_GRB :     kind = "@GrB matrix" ; break ;
-        default : 
-        case KIND_BUILTIN : 
-            #ifdef OCTAVE
-            kind = "Octave matrix" ;
-            #else
-            kind = "MATLAB matrix" ;
-            #endif
+        // C is a @GhB handle matrix object
+        name = "@GhB matrix" ;
+    }
+    else if (Matrix [0].kind == KIND_GRB)
+    { 
+        // C is a @GrB value matrix object
+        name = "@GrB matrix" ;
+    }
+    else
+    { 
+        // C is a shallow GrB_Matrix that holds a builtin MATLAB/Octave matrix
+        #ifdef OCTAVE
+        name = "Octave matrix" ;
+        #else
+        name = "MATLAB matrix" ;
+        #endif
     }
 
-    OK (GxB_Matrix_fprint (C, kind, level, NULL)) ;
+    OK (GxB_Matrix_fprint (C, name, level, NULL)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

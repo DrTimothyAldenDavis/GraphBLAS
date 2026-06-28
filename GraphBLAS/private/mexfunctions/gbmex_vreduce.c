@@ -7,18 +7,25 @@
 
 //------------------------------------------------------------------------------
 
-// gbmex_vreduce is an interface to GrB_Matrix_reduce.
+// gbmex_vreduce is an interface to GrB_Matrix_reduce, for GrB.vreduce and
+// GhB.vreduce.
 
-// Usage:
+// Usage for @GrB and @GhB (omitting optional final desc argument):
 
-//  C = gbmex_vreduce (ghb, op, A)
-//  C = gbmex_vreduce (ghb, op, A, desc)
-//  C = gbmex_vreduce (ghb, Cin, M, op, A, desc)
-//  C = gbmex_vreduce (ghb, Cin, accum, op, A, desc)
-//  C = gbmex_vreduce (ghb, Cin, M, accum, op, A, desc)
+// C = GrB.vreduce (op, A)                        C = op (A)
+// C = GrB.vreduce (Cin, op, A)                   C = Cin ; C = op (A)
+// C = GrB.vreduce (Cin, accum, op, A)            C = Cin ; C += op (A)
+// C = GrB.vreduce (Cin, M, op, A)                C = Cin ; C<M> = op (A)
+// C = GrB.vreduce (Cin, M, accum, op, A)         C = Cin ; C<M> += op(A)
 
-// If Cin is not present then it is implicitly a matrix with no entries, of the
-// right size (which depends on A and the descriptor).
+// Usage for @GhB only:
+
+// GhB.vreduce (C, op, A)                         C = op (A)
+// GhB.vreduce (C, accum, op, A)                  C += op (A)
+// GhB.vreduce (C, M, op, A)                      C<M> = op (A)
+// GhB.vreduce (C, M, accum, op, A)               C<M> += op (A)
+
+// where op(A) refers to reducing A to a vector using the given op.
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&M_to_free) ;  \
@@ -56,7 +63,7 @@ void mexFunction
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    bool inplace = false ; // ghb && (nargout == 0) ;   // FIXME
+    bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;
     if (!inplace)
     { 
@@ -94,16 +101,17 @@ void mexFunction
 
     if (nmatrices == 1)
     { 
+        CHECK_ERROR (inplace, "invalid in-place usage") ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
     }
     else if (nmatrices == 2)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [1]), arena, err)) ;
     }
     else // if (nmatrices == 3)
     { 
-        OK (gb_get_deep   (&C, false,      &(Matrix [0]), arena, err)) ;
+        OK (gb_get_deep   (&C, inplace,    &(Matrix [0]), arena, err)) ;
         OK (gb_get_matrix (&M, &M_to_free, &(Matrix [1]), arena, err)) ;
         OK (gb_get_matrix (&A, &A_to_free, &(Matrix [2]), arena, err)) ;
     }
@@ -145,6 +153,8 @@ void mexFunction
 
     if (C == NULL)
     { 
+        ASSERT (!inplace) ;
+
         // get the descriptor contents to determine if A is transposed
         int in0 ;
         OK (GrB_Descriptor_get_INT32 (desc, &in0, GrB_INP0)) ;

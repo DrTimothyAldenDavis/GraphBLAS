@@ -34,7 +34,7 @@ GrB_Info GB_helper5                 // construct pattern of S
 
 GrB_Info GB_helper7                 // Kx = uint64 (0:mnz-1)
 (
-    uint64_t *restrict Kx,           // array of size mnz
+    uint64_t *restrict Kx,          // array of size mnz
     const uint64_t mnz
 ) ;
 
@@ -51,6 +51,8 @@ GrB_Info GB_helper10       // norm (x-y,p), or -1 on error
     int64_t p,                  // 0, 1, 2, INT64_MIN, or INT64_MAX
     uint64_t n
 ) ;
+
+double GB_helper11 (GrB_Matrix A) ; // for GrB.nzmax and GhB.nzmax
 
 #endif
 
