@@ -47,7 +47,7 @@ void mexFunction
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    if (ghb) pargout [0] = gbmx_export_struct (&C_opaque) ;
+    if (ghb) pargout [0] = gbmx_export_ghb_mxstruct (&C_opaque) ;
 
     struct gb_matrix_struct Matrix [1] ;
     gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
@@ -83,7 +83,7 @@ void mexFunction
     ////////////////////////////////////////////////////////////////////////////
     if (!ghb)
     { 
-        pargout [0] = gbmx_export_to_mxstruct (&C) ;
+        pargout [0] = gbmx_export_grb_mxstruct (&C) ;
     }
 
     gb_wrapup ( ) ;

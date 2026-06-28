@@ -46,10 +46,7 @@ void mexFunction
 
     CHECK_ERROR (!mxIsStruct (pargin [1]), USAGE " where S is a struct") ;
 
-    if (ghb)
-    { 
-        pargout [0] = gbmx_export_struct (&C_opaque) ;
-    }
+    if (ghb) pargout [0] = gbmx_export_ghb_mxstruct (&C_opaque) ;
 
     struct gb_matrix_struct Matrix [1] ;
     gb_matrix matrix = &(Matrix [0]) ;
@@ -78,7 +75,7 @@ void mexFunction
     ////////////////////////////////////////////////////////////////////////////
     if (!ghb)
     { 
-        pargout [0] = gbmx_export_to_mxstruct (&C) ;
+        pargout [0] = gbmx_export_grb_mxstruct (&C) ;
     }
 
     gb_wrapup ( ) ;

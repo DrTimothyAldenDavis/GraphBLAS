@@ -75,7 +75,7 @@ void mexFunction
             { 
                 // pargout [0] and Tiles_opaque are in column-major form
                 mxArray *mxCell_entry = 
-                    gbmx_export_struct (&(Tiles_opaque [i+j*m])) ;
+                    gbmx_export_ghb_mxstruct (&(Tiles_opaque [i+j*m])) ;
                 mxSetCell (pargout [0], i+j*m, mxCell_entry) ;
             }
         }
@@ -129,7 +129,7 @@ void mexFunction
                 // Tiles is in row-major form;
                 // pargout [0] is in column-major form
                 mxSetCell (pargout [0], i+j*m,  
-                    gbmx_export_to_mxstruct (&Tiles [i*n+j])) ;
+                    gbmx_export_grb_mxstruct (&Tiles [i*n+j])) ;
             }
         }
     }

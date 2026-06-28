@@ -859,9 +859,12 @@ void gb_free (void **p, int arena) ;
 
 void gbmx_abort ( void ) ;  // terminate immediately (debug assertions only)
 
-mxArray *gbmx_export_struct ( GrB_Matrix **C_opaque_handle ) ;
+mxArray *gbmx_export_ghb_mxstruct   // construct an mxArray struct for @GhB
+(
+    GrB_Matrix **C_opaque_handle
+) ;
 
-mxArray *gbmx_export_to_mxstruct    // return exported MATLAB struct G
+mxArray *gbmx_export_grb_mxstruct   // construct an mxArray struct for @GrB
 (
     GrB_Matrix *C_handle            // matrix to export; freed on output
 ) ;

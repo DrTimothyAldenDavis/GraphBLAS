@@ -2554,8 +2554,8 @@ void mexFunction
 
     if (ghb)
     { 
-        pargout [0] = gbmx_export_struct (&x_opaque) ;
-        pargout [1] = gbmx_export_struct (&p_opaque) ;
+        pargout [0] = gbmx_export_ghb_mxstruct (&x_opaque) ;
+        pargout [1] = gbmx_export_ghb_mxstruct (&p_opaque) ;
     }
 
     //--------------------------------------------------------------------------
@@ -3728,8 +3728,8 @@ void mexFunction
     ////////////////////////////////////////////////////////////////////////////
     if (!ghb)
     { 
-        pargout [0] = gbmx_export_to_mxstruct (&x) ;
-        pargout [1] = gbmx_export_to_mxstruct (&p) ;
+        pargout [0] = gbmx_export_grb_mxstruct (&x) ;
+        pargout [1] = gbmx_export_grb_mxstruct (&p) ;
     }
 
     gb_wrapup ( ) ;

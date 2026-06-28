@@ -67,7 +67,7 @@ void gbmx_ewise_mexFunction
     double *kind_output = NULL ;
     if (!inplace)
     { 
-        if (ghb) pargout [0] = gbmx_export_struct (&C_opaque) ;
+        if (ghb) pargout [0] = gbmx_export_ghb_mxstruct (&C_opaque) ;
         pargout [1] = mxCreateDoubleScalar (0) ;
         kind_output = (double *) mxGetData (pargout [1]) ;
     }
@@ -206,7 +206,7 @@ void gbmx_ewise_mexFunction
     ////////////////////////////////////////////////////////////////////////////
     if (!ghb)
     { 
-        pargout [0] = gbmx_export_to_mxstruct (&C) ;
+        pargout [0] = gbmx_export_grb_mxstruct (&C) ;
     }
 
     gb_wrapup ( ) ;

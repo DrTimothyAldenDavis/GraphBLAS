@@ -45,7 +45,7 @@ void mexFunction
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    if (ghb) pargout [0] = gbmx_export_struct (&V_opaque) ;
+    if (ghb) pargout [0] = gbmx_export_ghb_mxstruct (&V_opaque) ;
 
     //--------------------------------------------------------------------------
     // get the descriptor
@@ -117,7 +117,7 @@ void mexFunction
     ////////////////////////////////////////////////////////////////////////////
     if (!ghb)
     { 
-        pargout [0] = gbmx_export_to_mxstruct (&V) ;
+        pargout [0] = gbmx_export_grb_mxstruct (&V) ;
     }
 
     gb_wrapup ( ) ;

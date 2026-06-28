@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmx_export_to_mxstruct: export a GrB_Matrix to a MATLAB @GrB struct
+// gbmx_export_grb_mxstruct: export a GrB_Matrix to a MATLAB @GrB struct
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// The input GrB_Matrix C is exported to a GraphBLAS matrix struct G 
-// for a @GrB value matrix, and freed.
+// The input GrB_Matrix C is exported to a GraphBLAS matrix struct G for a @GrB
+// value matrix and then freed.
 
 #include "gb_interface.h"
 
@@ -41,7 +41,7 @@ static const char *Bitmap_MatrixFields [4] =
 
 //------------------------------------------------------------------------------
 
-mxArray *gbmx_export_to_mxstruct    // return exported MATLAB struct G
+mxArray *gbmx_export_grb_mxstruct   // construct an mxArray struct for @GrB
 (
     GrB_Matrix *C_handle            // matrix to export; freed on output
 )
