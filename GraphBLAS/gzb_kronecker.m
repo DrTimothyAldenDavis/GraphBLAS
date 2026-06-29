@@ -5,7 +5,7 @@ function C = gzb_kronecker (ghb, A, op, B)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-%   C = GhB (gbmex_kronecker (ghb, A, op, B)) ;    FIXME
+    C = GhB (gbmex_kronecker (ghb, A, op, B)) ;
 else
     C = GrB (gbmex_kronecker (ghb, A, op, B)) ;
 end

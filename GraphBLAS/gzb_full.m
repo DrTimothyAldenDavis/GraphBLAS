@@ -5,7 +5,18 @@ function C = gzb_full (ghb, arg1, arg2, arg3, arg4)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-    % FIXME
+    switch (nargin)
+        case 2
+            C = GhB (gbmex_full (ghb, arg1)) ;
+        case 3
+            C = GhB (gbmex_full (ghb, arg1, arg2)) ;
+        case 4
+            C = GhB (gbmex_full (ghb, arg1, arg2, arg3)) ;
+        case 5
+            C = GhB (gbmex_full (ghb, arg1, arg2, arg3, arg4)) ;
+        otherwise
+            error ('GrB:error', 'internal error 887') ;
+    end
 else
     switch (nargin)
         case 2

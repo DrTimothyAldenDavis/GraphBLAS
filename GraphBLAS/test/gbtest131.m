@@ -1,12 +1,15 @@
-function gbtest131
+function gbtest131 (ghb)
 %GBTEST131 misc error handling
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-rng ('default') ;
+if (nargin == 0)
+    ghb = 0 ;
+end
+gtb_name = gtb_prep (ghb) ;
 
-A = GrB (magic (4)) ;
+A = gtb (ghb, magic (4)) ;
 
 try
     d = diag (A, [1 2]) ;
@@ -20,7 +23,7 @@ assert (ok) ;
 assert (isequal (msg, 'k must be a scalar')) ; 
 
 try
-    C = GrB.apply2 (A, '*', [1 2]) ;
+    C = gtb_apply2 (ghb, A, '*', [1 2]) ;
     ok = false ;
     msg = '' ;
 catch expected_error
@@ -31,7 +34,7 @@ assert (ok) ;
 assert (isequal (msg, 'either A or B must be a non-empty scalar')) ; 
 
 try
-    C = GrB.apply2 (A, '*', sparse (0)) ;
+    C = gtb_apply2 (ghb, A, '*', sparse (0)) ;
     ok = false ;
     msg = '' ;
 catch expected_error
@@ -41,5 +44,5 @@ end
 assert (ok) ;
 assert (isequal (msg, 'either A or B must be a non-empty scalar')) ; 
 
-fprintf ('\ngbtest131: all tests passed\n') ;
+fprintf ('\ngbtest131 (%d): all tests passed\n', ghb) ;
 

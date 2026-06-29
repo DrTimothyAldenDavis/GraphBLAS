@@ -12,18 +12,18 @@
 
 // Usage for @GrB and @GhB (omitting optional final desc argument):
 
-// C = GrB.vreduce (op, A)                        C = op (A)
-// C = GrB.vreduce (Cin, op, A)                   C = Cin ; C = op (A)
-// C = GrB.vreduce (Cin, accum, op, A)            C = Cin ; C += op (A)
-// C = GrB.vreduce (Cin, M, op, A)                C = Cin ; C<M> = op (A)
-// C = GrB.vreduce (Cin, M, accum, op, A)         C = Cin ; C<M> += op(A)
+// C = GrB.vreduce (op, A)                  C = op (A)
+// C = GrB.vreduce (Cin, op, A)             C = Cin ; C = op (A)
+// C = GrB.vreduce (Cin, accum, op, A)      C = Cin ; C += op (A)
+// C = GrB.vreduce (Cin, M, op, A)          C = Cin ; C<M> = op (A)
+// C = GrB.vreduce (Cin, M, accum, op, A)   C = Cin ; C<M> += op(A)
 
 // Usage for @GhB only:
 
-// GhB.vreduce (C, op, A)                         C = op (A)
-// GhB.vreduce (C, accum, op, A)                  C += op (A)
-// GhB.vreduce (C, M, op, A)                      C<M> = op (A)
-// GhB.vreduce (C, M, accum, op, A)               C<M> += op (A)
+// GhB.vreduce (C, op, A)                   C = op (A)
+// GhB.vreduce (C, accum, op, A)            C += op (A)
+// GhB.vreduce (C, M, op, A)                C<M> = op (A)
+// GhB.vreduce (C, M, accum, op, A)         C<M> += op (A)
 
 // where op(A) refers to reducing A to a vector using the given op.
 
@@ -70,6 +70,10 @@ void mexFunction
         if (ghb) pargout [0] = gbmx_export_ghb_mxstruct (&C_opaque) ;
         pargout [1] = mxCreateDoubleScalar (0) ;
         kind_output = (double *) mxGetData (pargout [1]) ;
+    }
+    else
+    { 
+        /* for tracking test coverage */ ;
     }
 
     //--------------------------------------------------------------------------

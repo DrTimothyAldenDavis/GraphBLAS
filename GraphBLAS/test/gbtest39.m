@@ -1,8 +1,13 @@
-function gbtest39
+function gbtest39 (ghb)
 %GBTEST39 test amd, colamd, symamd, symrcm, dmperm, etree
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
+
+if (nargin == 0)
+    ghb = 0 ;
+end
+gtb_name = gtb_prep (ghb) ;
 
 for trial = 1:40
     fprintf ('.') ;
@@ -10,8 +15,8 @@ for trial = 1:40
     n = 20 ;
     A = sprand (n, n, 0.1) ;
     S = A + A' ;
-    G = GrB (A) ;
-    H = GrB (S) ;
+    G = gtb (ghb, A) ;
+    H = gtb (ghb, S) ;
 
     assert (isequal (amd (A),    amd (G))) ;
     assert (isequal (amd (S),    amd (H))) ;
@@ -61,4 +66,5 @@ for trial = 1:40
 
 end
 
-fprintf ('\ngbtest39: all tests passed\n') ;
+fprintf ('\ngbtest39 (%d): all tests passed\n', ghb) ;
+

@@ -5,7 +5,16 @@ function C = gzb_serialize (ghb, A, method, level)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-    % FIXME
+    switch (nargin)
+        case 2
+            C = GhB (gbmex_serialize (ghb, A)) ;
+        case 3
+            C = GhB (gbmex_serialize (ghb, A, method)) ;
+        case 4
+            C = GhB (gbmex_serialize (ghb, A, method, level)) ;
+        otherwise
+            error ('GrB:error', 'internal error 887') ;
+    end
 else
     switch (nargin)
         case 2

@@ -1,17 +1,21 @@
-function gbtest25
+function gbtest25 (ghb)
 %GBTEST25 test diag, tril, triu
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-rng ('default') ;
+if (nargin == 0)
+    ghb = 0 ;
+end
+gtb_name = gtb_prep (ghb) ;
+
 for trials = 1:10
     fprintf ('.') ;
 
     for m = 2:6
         for n = 2:6
             A = sprand (m, n, 0.5) ;
-            G = GrB (A) ;
+            G = gtb (ghb, A) ;
             for k = -m:n
                 B = diag (A, k) ;
                 C = diag (G, k) ;
@@ -31,7 +35,7 @@ for trials = 1:10
 
     for m = 1:6
         A = sprandn (m, 1, 0.5) ;
-        G = GrB (A) ;
+        G = gtb (ghb, A) ;
         for k = -6:6
             B = diag (A, k) ;
             C = diag (G, k) ;
@@ -59,7 +63,7 @@ end
 n = uint64 (2^60) ;
 A = magic (5) ;
 I = [1 2 3 4 5] ;
-H = GrB (n,n) ;
+H = gtb (ghb, n,n) ;
 H (I,I) = A ;
 d = diag (H) ;
 [~,~,x] = find (d) ;
@@ -79,12 +83,12 @@ for k = 1:length(I)
 end
 
 I = [1 2 3 n-1 n] ;
-H = GrB (n,n) ;
+H = gtb (ghb, n,n) ;
 H (I,I) = A ;
 d = diag (H, n-2) ;
 [~,~,x] = find (d) ;
 e = diag (A, 3) ;
 assert (isequal (e, x)) ;
 
-fprintf ('\ngbtest25: all tests passed\n') ;
+fprintf ('\ngbtest25 (%d): all tests passed\n', ghb) ;
 

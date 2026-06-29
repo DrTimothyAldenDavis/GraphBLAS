@@ -19,6 +19,7 @@
 
 // Usage for @GhB only:
 
+// GhB.trans (C)                        C = C'
 // GhB.trans (C, A)                     C = A'
 // GhB.trans (C, accum, A)              C += A'
 // GhB.trans (C, M, A)                  C<M> = A'
@@ -68,6 +69,10 @@ void mexFunction
         pargout [1] = mxCreateDoubleScalar (0) ;
         kind_output = (double *) mxGetData (pargout [1]) ;
     }
+    else
+    { 
+        /* for tracking test coverage */ ;
+    }
 
     //--------------------------------------------------------------------------
     // find the arguments
@@ -98,8 +103,17 @@ void mexFunction
 
     if (nmatrices == 1)
     { 
-        CHECK_ERROR (inplace, "invalid in-place usage") ;
-        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
+        if (inplace)
+        { 
+            // C = C', in place usage, C and A are aliased
+            OK (gb_get_deep (&C, inplace, &(Matrix [0]), arena, err)) ;
+            A = C ;
+        }
+        else
+        { 
+            // C = A'
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
+        }
     }
     else if (nmatrices == 2)
     { 

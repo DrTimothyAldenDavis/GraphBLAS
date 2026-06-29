@@ -61,7 +61,7 @@ void gbmx_assign_mexFunction    // gbmex_assign or gbmex_subassign mexFunctions
     GrB_Descriptor desc = NULL ;
     int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin >= 2+1 && nargin <= 7+1 && nargout <= 2, usage) ;
+    GBMX_USAGE (nargin >= 3 && nargin <= 8 && nargout <= 2, usage) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 
@@ -72,6 +72,17 @@ void gbmx_assign_mexFunction    // gbmex_assign or gbmex_subassign mexFunctions
         if (ghb) pargout [0] = gbmx_export_ghb_mxstruct (&C_opaque) ;
         pargout [1] = mxCreateDoubleScalar (0) ;
         kind_output = (double *) mxGetData (pargout [1]) ;
+    }
+    else
+    { 
+        if (do_subassign)
+        { 
+            /* for tracking test coverage */ ;
+        }
+        else
+        { 
+            /* for tracking test coverage */ ;
+        }
     }
 
     //--------------------------------------------------------------------------

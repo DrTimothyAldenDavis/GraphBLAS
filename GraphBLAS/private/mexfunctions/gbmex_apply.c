@@ -11,20 +11,20 @@
 
 // Usage for @GrB and @GhB (omitting optional final desc argument):
 
-// C = GrB.apply (unop, A)                        C = unop (A)
-// C = GrB.apply (Cin, unop, A)                   C = Cin ; C = unop (A)
-// C = GrB.apply (Cin, accum, unop, A)            C = Cin ; C += unop (A)
-// C = GrB.apply (Cin, M, unop, A)                C = Cin ; C<M> = unop (A)
-// C = GrB.apply (Cin, M, accum, unop, A)         C = Cin ; C<M> += unop(A)
+// C = GrB.apply (unop, A)                  % C = unop (A)
+// C = GrB.apply (Cin, unop, A)             % C = Cin ; C = unop (A)
+// C = GrB.apply (Cin, accum, unop, A)      % C = Cin ; C += unop (A)
+// C = GrB.apply (Cin, M, unop, A)          % C = Cin ; C<M> = unop (A)
+// C = GrB.apply (Cin, M, accum, unop, A)   % C = Cin ; C<M> += unop(A)
 
 // Usage for @GhB only:
 
-// GhB.apply (C, unop)                            C = unop (C)
-// GhB.apply (C, accum, unop)                     C += unop (C)
-// GhB.apply (C, unop, A)                         C = unop (A)
-// GhB.apply (C, accum, unop, A)                  C += unop (A)
-// GhB.apply (C, M, unop, A)                      C<M> = unop (A)
-// GhB.apply (C, M, accum, unop, A)               C<M> += unop (A)
+// GhB.apply (C, unop)                      % C = unop (C)
+// GhB.apply (C, accum, unop)               % C += unop (C)
+// GhB.apply (C, unop, A)                   % C = unop (A)
+// GhB.apply (C, accum, unop, A)            % C += unop (A)
+// GhB.apply (C, M, unop, A)                % C<M> = unop (A)
+// GhB.apply (C, M, accum, unop, A)         % C<M> += unop (A)
 
 #define FREE_WORK                   \
     GrB_Matrix_free (&M_to_free) ;  \
@@ -69,6 +69,10 @@ void mexFunction
         if (ghb) pargout [0] = gbmx_export_ghb_mxstruct (&C_opaque) ;
         pargout [1] = mxCreateDoubleScalar (0) ;
         kind_output = (double *) mxGetData (pargout [1]) ;
+    }
+    else
+    { 
+        /* for tracking test coverage */ ;
     }
 
     //--------------------------------------------------------------------------

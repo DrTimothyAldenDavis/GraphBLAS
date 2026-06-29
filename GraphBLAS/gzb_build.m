@@ -5,17 +5,16 @@ function C = gzb_build (ghb, I, J, X, m, n, arg7, arg8, arg9)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-%   FIXME
-%   switch (nargin)
-%       case 7
-%           C = GhB (gbmex_build (ghb, I, J, X, m, n, arg7)) ;
-%       case 8
-%           C = GhB (gbmex_build (ghb, I, J, X, m, n, arg7, arg8)) ;
-%       case 9
-%           C = GhB (gbmex_build (ghb, I, J, X, m, n, arg7, arg8, arg9)) ;
-%       otherwise
-%           error ('GrB:error', 'internal error 889') ;
-%   end
+    switch (nargin)
+        case 7
+            C = GhB (gbmex_build (ghb, I, J, X, m, n, arg7)) ;
+        case 8
+            C = GhB (gbmex_build (ghb, I, J, X, m, n, arg7, arg8)) ;
+        case 9
+            C = GhB (gbmex_build (ghb, I, J, X, m, n, arg7, arg8, arg9)) ;
+        otherwise
+            error ('GrB:error', 'internal error 889') ;
+    end
 else
     switch (nargin)
         case 7

@@ -1,10 +1,20 @@
-function gbtest125
-%GBTEST125 test GrB.monoids
+function gbtest125 (ghb)
+%GBTEST125 test [GrB,GhB].monoids
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-list = GrB.monoids
-GrB.monoids ;
-help GrB.monoids ;
-fprintf ('\ngbtest125: all tests passed\n') ;
+if (nargin == 0)
+    ghb = 0 ;
+end
+gtb_name = gtb_prep (ghb) ;
+
+list = gtb_monoids (ghb)
+gtb_monoids (ghb) ;
+if (ghb)
+    help GhB.monoids ;
+else
+    help GhB.monoids ;
+end
+
+fprintf ('\ngbtest125 (%d): all tests passed\n', ghb) ;

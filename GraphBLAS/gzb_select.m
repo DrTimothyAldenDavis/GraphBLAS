@@ -5,7 +5,14 @@ function C = gzb_select (ghb, arg1, arg2, arg3)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-    % FIXME
+    switch (nargin)
+        case 3
+            C = GhB (gbmex_select (ghb, arg1, arg2)) ;
+        case 4
+            C = GhB (gbmex_select (ghb, arg1, arg2, arg3)) ;
+        otherwise
+            error ('GrB:error', 'internal error 888') ;
+    end
 else
     switch (nargin)
         case 3

@@ -1,17 +1,22 @@
-function gbtest00 (doplots)
-%GBTEST00 test GrB.bfs and plot (graph (G))
+function gbtest00 (ghb, doplots)
+%GBTEST00 test [GrB,GhB].bfs and plot (graph (G))
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin < 1)
+    ghb = 0 ;
+end
+gtb_name = gtb_prep (ghb) ;
+
+if (nargin < 2)
     doplots = true ;
 end
 
-save_threads = GrB.threads ;
-save_chunk   = GrB.chunk ;
-GrB.threads (4) ;
-GrB.chunk (2) ;
+save_threads = gtb_threads (ghb) ;
+save_chunk   = gtb_chunk (ghb) ;
+gtb_threads (ghb, 4) ;
+gtb_chunk (ghb, 2) ;
 
 %%MatrixMarket matrix coordinate pattern general
 %%GraphBLAS GrB_BOOL
@@ -45,21 +50,21 @@ end
 for k1 = 1:2
     fmt = formats {k1} ;
 
-    A = GrB (A, fmt) ;
-    H = GrB (A, 'logical', fmt) ;
+    A = gtb (ghb, A, fmt) ;
+    H = gtb (ghb, A, 'logical', fmt) ;
     if (k1 == 1 && doplots)
         subplot (1,2,1) ;
         plot (digraph (A)) ;
     end
 
-    v1 = GrB.bfs (H, source) ;
-    [v, pi] = GrB.bfs (H, source) ;
+    v1 = gtb_bfs (ghb, H, source) ;
+    [v, pi] = gtb_bfs (ghb, H, source) ;
     assert (isequal (v, v1)) ;
 
     vok = [1 2 3 2 3 4 3 0] ;
     assert (isequal (full (double (v)), vok)) ;
 
-    % there are 2 valid trees, and GrB.bfs can return either one
+    % there are 2 valid trees, and [GrB,GhB].bfs can return either one
     piok1 = [1 1 4 1 2 3 2 0] ;
     piok2 = [1 1 4 1 2 5 2 0] ;
     ok1 = isequal (full (double (pi)), piok1) ;
@@ -79,7 +84,7 @@ for k1 = 1:2
     levels = full (double (v (v2))) ;
     assert (isequal (levels, sort (levels))) ;
 
-    [v, pi] = GrB.bfs (H, source, 'directed') ;
+    [v, pi] = gtb_bfs (ghb, H, source, 'directed') ;
     assert (isequal (full (double (v)), vok)) ;
 
     ok1 = isequal (full (double (pi)), piok1) ;
@@ -94,7 +99,7 @@ for k1 = 1:2
     end
     assert (ok1 || ok2) ;
 
-    [v, pi] = GrB.bfs (H, source, 'directed', 'check') ;
+    [v, pi] = gtb_bfs (ghb, H, source, 'directed', 'check') ;
     assert (isequal (full (double (v)), vok)) ;
 
     ok1 = isequal (full (double (pi)), piok1) ;
@@ -112,7 +117,7 @@ for k1 = 1:2
 end
 
 A = A+A' ;
-[v, pi] = GrB.bfs (A, 2, 'undirected') ;
+[v, pi] = gtb_bfs (ghb, A, 2, 'undirected') ;
 if (doplots)
     subplot (1,2,2) ;
     plot (graph (A))
@@ -134,9 +139,8 @@ piok2 = [2 2 7 7 2 5 2 0] ;
     end
     assert (ok1 || ok2) ;
 
-GrB.threads (save_threads) ;
-GrB.chunk (save_chunk) ;
+gtb_threads (ghb, save_threads) ;
+gtb_chunk (ghb, save_chunk) ;
 
-fprintf ('gbtest00: all tests passed\n') ;
-
+fprintf ('gbtest00 (%d): all tests passed\n', ghb) ;
 

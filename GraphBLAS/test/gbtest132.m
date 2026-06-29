@@ -1,29 +1,32 @@
-function gbtest132
+function gbtest132 (ghb)
 %GBTEST132 test loading of MAT files from prior versions of GraphBLAS
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-rng ('default') ;
+if (nargin == 0)
+    ghb = 0 ;
+end
+gtb_name = gtb_prep (ghb) ;
 
 [filepath, name, ext] = fileparts (mfilename ('fullpath')) ;
 
 % each prior version of GraphBLAS was used to create these matrices and files:
 load west0479_correct.mat
 A = Problem.A ;
-Sparse = GrB (A) ;
+Sparse = gtb (ghb, A) ;
 S = delsq (numgrid ('B', 100)) ;
 n = 2^50 ;
-Hyper = GrB (n,n) ;
+Hyper = gtb (ghb, n,n) ;
 m = size (S,1) ;
 Hyper (1:m,1:m) = S ;
-Bitmap = GrB (S (1:10, 1:10), 'bitmap') ;
-Full = GrB (magic (5)) ;
-Sparse_blob = GrB.serialize (Sparse) ;
-Hyper_blob  = GrB.serialize (Hyper) ;
-Bitmap_blob = GrB.serialize (Bitmap) ;
-Full_blob   = GrB.serialize (Full) ;
-v = GrB.ver ;
+Bitmap = gtb (ghb, S (1:10, 1:10), 'bitmap') ;
+Full = gtb (ghb, magic (5)) ;
+Sparse_blob = gtb_serialize (ghb, Sparse) ;
+Hyper_blob  = gtb_serialize (ghb, Hyper) ;
+Bitmap_blob = gtb_serialize (ghb, Bitmap) ;
+Full_blob   = gtb_serialize (ghb, Full) ;
+v = gtb_ver (ghb) ;
 
 f1 = [tempdir '/gbtest_v' v.Version '.mat'] ;
 save (f1, ...
@@ -39,15 +42,15 @@ assert (isequal (Sparse, this_version.Sparse)) ;
 assert (isequal (Bitmap, this_version.Bitmap)) ;
 assert (isequal (Hyper , this_version.Hyper)) ;
 assert (isequal (Full  , this_version.Full)) ;
-S2 = GrB.deserialize (this_version.Sparse_blob) ;
-B2 = GrB.deserialize (this_version.Bitmap_blob) ;
-H2 = GrB.deserialize (this_version.Hyper_blob) ;
-F2 = GrB.deserialize (this_version.Full_blob) ;
+S2 = gtb_deserialize (ghb, this_version.Sparse_blob) ;
+B2 = gtb_deserialize (ghb, this_version.Bitmap_blob) ;
+H2 = gtb_deserialize (ghb, this_version.Hyper_blob) ;
+F2 = gtb_deserialize (ghb, this_version.Full_blob) ;
 assert (isequal (Sparse, S2)) ;
 assert (isequal (Bitmap, B2)) ;
 assert (isequal (Hyper , H2)) ;
 assert (isequal (Full  , F2)) ;
-S3 = GrB.load (f2) ;
+S3 = gtb_load (ghb, f2) ;
 assert (isequal (Sparse, S3)) ;
 
 % test prior versions
@@ -74,33 +77,49 @@ for V = versions
 
     prior = load ([filepath '/gbtest132_matfiles/gbtest_v' v '.mat']) ;
     assert (isequal (Sparse, prior.Sparse)) ;
+    assert (isequal (class (prior.Sparse), 'GrB')) ;
+
     if (isfield (prior, 'Bitmap'))
         % v3.x.x and earlier do not have bitmap format
         assert (isequal (Bitmap, prior.Bitmap)) ;
+        assert (isequal (class (prior.Bitmap), 'GrB')) ;
     end
     assert (isequal (Hyper , prior.Hyper)) ;
+    assert (isequal (class (prior.Hyper), 'GrB')) ;
     assert (isequal (Full  , prior.Full)) ;
+    assert (isequal (class (prior.Full), 'GrB')) ;
 
     if (isfield (prior, 'Sparse_blob'))
         % for v5.2.0 and later; v5.1.10 and earlier do not have
         % serialize/deserialize
-        S2 = GrB.deserialize (prior.Sparse_blob) ;
-        B2 = GrB.deserialize (prior.Bitmap_blob) ;
-        H2 = GrB.deserialize (prior.Hyper_blob) ;
-        F2 = GrB.deserialize (prior.Full_blob) ;
+        S2 = gtb_deserialize (ghb, prior.Sparse_blob) ;
+        B2 = gtb_deserialize (ghb, prior.Bitmap_blob) ;
+        H2 = gtb_deserialize (ghb, prior.Hyper_blob) ;
+        F2 = gtb_deserialize (ghb, prior.Full_blob) ;
         assert (isequal (Sparse, S2)) ;
         assert (isequal (Bitmap, B2)) ;
         assert (isequal (Hyper , H2)) ;
         assert (isequal (Full  , F2)) ;
+        if (ghb == 0)
+            assert (isequal (class (S2), 'GrB')) ;
+            assert (isequal (class (B2), 'GrB')) ;
+            assert (isequal (class (H2), 'GrB')) ;
+            assert (isequal (class (F2), 'GrB')) ;
+        elseif (ghb == 1)
+            assert (isequal (class (S2), 'GhB')) ;
+            assert (isequal (class (B2), 'GhB')) ;
+            assert (isequal (class (H2), 'GhB')) ;
+            assert (isequal (class (F2), 'GhB')) ;
+        end
     end
 
     if (major > 4)
         % v4 and earlier do not have GrB.load and GrB.save
         f2 = [filepath '/gbtest132_matfiles/gbtest_v' v '_save.mat'] ;
-        S3 = GrB.load (f2) ;
+        S3 = gtb_load (ghb, f2) ;
         assert (isequal (Sparse, S3)) ;
     end
 end
 
-fprintf ('\ngbtest132: all tests passed\n') ;
+fprintf ('\ngbtest132 (%d): all tests passed\n', ghb) ;
 

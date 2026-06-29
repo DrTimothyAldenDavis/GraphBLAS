@@ -9,7 +9,7 @@ if (nargin < 5)
 end
 
 if (ghb)
-%   C = GhB (gbmex_eadd (ghb, arg1, arg2, arg3, desc)) ;    % FIXME
+    C = GhB (gbmex_eadd (ghb, arg1, arg2, arg3, desc)) ;
 else
     C = GrB (gbmex_eadd (ghb, arg1, arg2, arg3, desc)) ;
 end

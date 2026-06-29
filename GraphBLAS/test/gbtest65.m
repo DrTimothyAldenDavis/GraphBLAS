@@ -1,15 +1,18 @@
-function gbtest65
-%GBTEST65 test GrB.mis
+function gbtest65 (ghb)
+%GBTEST65 test [GrB,GhB].mis
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-rng ('default') ;
+if (nargin == 0)
+    ghb = 0 ;
+end
+gtb_name = gtb_prep (ghb) ;
 
 load west0479_correct.txt
 west0479 = spconvert (west0479_correct) ;
 
-A = GrB.offdiag (spones (west0479)) ;
+A = gtb_offdiag (ghb, spones (west0479)) ;
 A = A+A' ;
 
 maxisize = 0 ;
@@ -18,9 +21,9 @@ n = size (A, 1) ;
 for trial = 1:100
 
     if (mod (trial, 4) == 1)
-        iset  = GrB.mis (A, 'check') ;
+        iset  = gtb_mis (ghb, A, 'check') ;
     else
-        iset  = GrB.mis (A) ;
+        iset  = gtb_mis (ghb, A) ;
     end
 
     % assert that iset is an independent set
@@ -35,11 +38,11 @@ for trial = 1:100
 
     % assert that iset is maximal
     q = find (~iset) ;
-    d = GrB.entries (A (p, q), 'col', 'degree') ; %#ok<FNDSB>
+    d = gtb_entries (ghb, A (p, q), 'col', 'degree') ; %#ok<FNDSB>
     assert (all (d > 0)) ;
 end
 
 fprintf ('max independent set found: %d of %d nodes\n', maxisize, n) ;
 
-fprintf ('gbtest65: all tests passed\n') ;
+fprintf ('gbtest65 (%d): all tests passed\n', ghb) ;
 

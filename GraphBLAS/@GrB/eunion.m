@@ -31,20 +31,25 @@ function C = eunion (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-switch (nargin)
-    case 5
-        [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, arg5) ;
-    case 6
-        [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, arg5, arg6) ;
-    case 7
-        [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
-    case 8
-        [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, arg5, arg6, ...
-            arg7, arg8) ;
-    case 9
-        [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, arg5, arg6, ...
-            arg7, arg8, arg9) ;
-end
-
-C = gb_mexfunction_result (ghb, C_opaque, kind) ;
+    switch (nargin)
+        case 5
+            [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, ...
+                arg5) ;
+        case 6
+            [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, ...
+                arg5, arg6) ;
+        case 7
+            [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, ...
+                arg5, arg6, arg7) ;
+        case 8
+            [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, ...
+                arg5, arg6, arg7, arg8) ;
+        case 9
+            [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, ...
+                arg5, arg6, arg7, arg8, arg9) ;
+        otherwise
+            error ('GrB:error', ...
+                'usage: C = GrB.eunion (Cin, M, accum, op, A, a, B, b, desc)') ;
+    end
+    C = gb_mexfunction_result (ghb, C_opaque, kind) ;
 

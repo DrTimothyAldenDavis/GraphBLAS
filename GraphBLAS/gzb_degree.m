@@ -5,7 +5,7 @@ function d = gzb_degree (ghb, A, dim)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-%   d = GhB (gbmex_degree (ghb, A, dim)) ;    % FIXME
+    d = GhB (gbmex_degree (ghb, A, dim)) ;
 else
     d = GrB (gbmex_degree (ghb, A, dim)) ;
 end

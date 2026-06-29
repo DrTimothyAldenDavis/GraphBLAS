@@ -1,12 +1,15 @@
-function gbtest33
+function gbtest33 (ghb)
 %GBTEST33 test spones, numel, nzmax, size, length, is*, ...
-% isempty, issparse, ...  ismatrix, isvector, isscalar, isnumeric,
+% isempty, issparse, ismatrix, isvector, isscalar, isnumeric,
 % isfloat, isreal, isinteger, islogical, isa.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-rng ('default') ;
+if (nargin == 0)
+    ghb = 0 ;
+end
+gtb_name = gtb_prep (ghb) ;
 
 fprintf ('gbtest33:\n') ;
 
@@ -16,7 +19,7 @@ for k1 = 1:length(types)
     type = types {k1} ;
     fprintf ('%s ', type) ;
 
-    H = GrB (2^55, 2^55, type) ;
+    H = gtb (ghb, 2^55, 2^55, type) ;
     [m, n] = size (H) ;
     assert (m == 2^55) ;
     assert (n == 2^55) ;
@@ -35,9 +38,9 @@ for k1 = 1:length(types)
                 A (A < 50) = 0 ;
                 S = sparse (A) ;
 
-                G = GrB (S, type) ;
+                G = gtb (ghb, S, type) ;
                 G2 = spones (G, type2) ;
-                assert (isequal (GrB.type (G2), type2)) ;
+                assert (isequal (gtb_type (ghb, G2), type2)) ;
 
                 C = double (G2) ;
                 assert (isequal (sparse (C), spones (S))) ;
@@ -74,17 +77,28 @@ for k1 = 1:length(types)
                 assert (isinteger (G) == isint) ;
                 islog = isequal (type, 'logical') ;
                 assert (islogical (G) == islog) ;
-
-                assert (isa (G, 'GrB')) ;
+                assert (gbtest_isa (ghb, G))
                 assert (isa (G, 'numeric')) ;
                 assert (isa (G, 'float') == isfl) ;
                 assert (isa (G, 'integer') == isint) ;
                 assert (isa (G, 'logical') == islog) ;
-                assert (isa (G, type) == isequal (GrB.type (G), type)) ;
+                assert (isa (G, type) == isequal (gtb_type (ghb, G), type)) ;
+
+                if (ghb == 0)
+                    % a GrB object reports true for just "isa GrB"
+                    assert (isa (G, 'GrB')) ;
+                    assert (~isa (G, 'GhB')) ;
+                elseif (ghb == 1)
+                    % a GhB object reports true for both queries:
+                    assert (isa (G, 'GrB')) ;
+                    assert (isa (G, 'GhB')) ;
+                elseif (isa (G, 'GhB'))
+                    assert (isa (G, 'GrB')) ;
+                end
             end
         end
     end
 end
 
-fprintf ('\ngbtest33: all tests passed\n') ;
+fprintf ('\ngbtest33 (%d): all tests passed\n', ghb) ;
 

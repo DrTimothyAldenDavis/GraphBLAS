@@ -1,5 +1,5 @@
 function gbtest_perf2
-%GBTEST_PERF2 test A'*x performance
+%GBTEST_PERF2 test A'*x performance using GrB
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

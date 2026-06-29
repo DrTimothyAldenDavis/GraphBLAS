@@ -5,7 +5,7 @@ function C = gzb_logassign (ghb, Cin, M, A)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-%   C = GhB (gbmex_logassign (ghb, Cin, M, A)) ;    % FIXME
+    C = GhB (gbmex_logassign (ghb, Cin, M, A)) ;
 else
     C = GrB (gbmex_logassign (ghb, Cin, M, A)) ;
 end

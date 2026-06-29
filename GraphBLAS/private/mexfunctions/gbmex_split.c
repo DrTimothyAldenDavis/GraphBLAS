@@ -49,7 +49,7 @@ void mexFunction
     GrB_Matrix A = NULL, A_to_free = NULL ;
     int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin == 3+1 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 4 && nargout <= 1, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     arena = ghb ? GrB_DEFAULT : MXARENA ;
 

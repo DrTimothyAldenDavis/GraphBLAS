@@ -14,18 +14,18 @@
 
 // Usage for @GrB and @GhB (omitting desc argument):
 
-// C = GrB.apply2 (op, A, B)                    C = op(A,B)
-// C = GrB.apply2 (Cin, op, A, B)               C = Cin ; C = op(A,B)
-// C = GrB.apply2 (Cin, accum, op, A, B)        C = Cin ; C += op(A,B)
-// C = GrB.apply2 (Cin, M, op, A, B)            C = Cin ; C<M> = op(A,B)
-// C = GrB.apply2 (Cin, M, accum, op, A, B)     C = Cin ; C<M> += op(A,B)
+// C = GrB.apply2 (op, A, B)                    % C = op(A,B)
+// C = GrB.apply2 (Cin, op, A, B)               % C = Cin ; C = op(A,B)
+// C = GrB.apply2 (Cin, accum, op, A, B)        % C = Cin ; C += op(A,B)
+// C = GrB.apply2 (Cin, M, op, A, B)            % C = Cin ; C<M> = op(A,B)
+// C = GrB.apply2 (Cin, M, accum, op, A, B)     % C = Cin ; C<M> += op(A,B)
 
 // Usage for @GhB only:
 
-// GhB.apply2 (C, op, A, B)                     C = op(A,B)
-// GhB.apply2 (C, accum, op, A, B)              C += op(A,B)
-// GhB.apply2 (C, M, op, A, B)                  C<M> = op(A,B)
-// GhB.apply2 (C, M, accum, op, A, B)           C<M> += op(A,B)
+// GhB.apply2 (C, op, A, B)                     % C = op(A,B)
+// GhB.apply2 (C, accum, op, A, B)              % C += op(A,B)
+// GhB.apply2 (C, M, op, A, B)                  % C<M> = op(A,B)
+// GhB.apply2 (C, M, accum, op, A, B)           % C<M> += op(A,B)
 
 // Either A or B (or both) must be a non-empty scalar (1-by-1, with 1 entry).
 // If both A and B are non-empty scalars, then A is treated as the input
@@ -77,6 +77,10 @@ void mexFunction
         if (ghb) pargout [0] = gbmx_export_ghb_mxstruct (&C_opaque) ;
         pargout [1] = mxCreateDoubleScalar (0) ;
         kind_output = (double *) mxGetData (pargout [1]) ;
+    }
+    else
+    { 
+        /* for tracking test coverage */ ;
     }
 
     //--------------------------------------------------------------------------

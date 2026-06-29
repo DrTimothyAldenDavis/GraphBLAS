@@ -33,16 +33,19 @@ function C = reduce (arg1, arg2, arg3, arg4, arg5)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-switch (nargin)
-    case 2
-        [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2) ;
-    case 3
-        [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2, arg3) ;
-    case 4
-        [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2, arg3, arg4) ;
-    case 5
-        [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2, arg3, arg4, arg5) ;
-end
-
-C = gb_mexfunction_result (ghb, C_opaque, kind) ;
+    switch (nargin)
+        case 2
+            [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2) ;
+        case 3
+            [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2, arg3) ;
+        case 4
+            [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2, arg3, arg4) ;
+        case 5
+            [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2, arg3, arg4, ...
+                arg5) ;
+        otherwise
+            error ('GrB:error', ...
+                'usage: c = GrB.reduce (cin, accum, monoid, A, desc)') ;
+    end
+    C = gb_mexfunction_result (ghb, C_opaque, kind) ;
 

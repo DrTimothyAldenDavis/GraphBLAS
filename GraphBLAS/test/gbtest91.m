@@ -1,5 +1,5 @@
-function gbtest91
-%GBTEST91 test GrB.trans
+function gbtest91 (ghb)
+%GBTEST91 test [GrB,GhB].trans
 %
 % C = GrB.trans (A)
 % C = GrB.trans (A, desc)
@@ -10,12 +10,15 @@ function gbtest91
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-rng ('default')
+if (nargin == 0)
+    ghb = 0 ;
+end
+gtb_name = gtb_prep (ghb) ;
 
-C      = GrB.random (8, 9, 0.5) ;
-M      = GrB.random (8, 9, 0.5, 'range', logical ([false true])) ;
+C      = gtb_random (ghb, 8, 9, 0.5) ;
+M      = gtb_random (ghb, 8, 9, 0.5, 'range', logical ([false true])) ;
 accum  = '+' ;
-A      = GrB.random (9, 8, 0.5) ;
+A      = gtb_random (ghb, 9, 8, 0.5) ;
 desc   = struct ;
 
 c = double (C) ;
@@ -33,8 +36,8 @@ C2 = A.' ;
 c2 = a.' ;
 assert (isequal (c2, C2)) ;
 
-C1 = GrB.trans (A) ; assert (isequal (C1, C2)) ;
-C1 = GrB.trans (a) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, A) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, a) ; assert (isequal (C1, C2)) ;
 
 %----------------------------------------------------------------------
 % C = GrB.trans (A, desc)
@@ -47,8 +50,8 @@ C2 = A.' ;
 c2 = a.' ;
 assert (isequal (c2, C2)) ;
 
-C1 = GrB.trans (A, desc) ; assert (isequal (C1, C2)) ;
-C1 = GrB.trans (a, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, A, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, a, desc) ; assert (isequal (C1, C2)) ;
 
 %----------------------------------------------------------------------
 % C = GrB.trans (C, accum, A, desc)
@@ -61,13 +64,13 @@ C2 = C + A.' ;
 c2 = c + a.' ;
 assert (isequal (c2, C2)) ;
 
-C1 = GrB.trans (C, accum, A, desc) ; assert (isequal (C1, C2)) ;
-C1 = GrB.trans (C, A, accum, desc) ; assert (isequal (C1, C2)) ;
-C1 = GrB.trans (accum, C, A, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, C, accum, A, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, C, A, accum, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, accum, C, A, desc) ; assert (isequal (C1, C2)) ;
 
-C1 = GrB.trans (c, accum, a, desc) ; assert (isequal (C1, C2)) ;
-C1 = GrB.trans (c, a, accum, desc) ; assert (isequal (C1, C2)) ;
-C1 = GrB.trans (accum, c, a, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, c, accum, a, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, c, a, accum, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, accum, c, a, desc) ; assert (isequal (C1, C2)) ;
 
 %----------------------------------------------------------------------
 % C = GrB.trans (C, M, A, desc)
@@ -86,8 +89,8 @@ t = a.' ;
 c2 (m) = t (m) ;
 assert (isequal (c2, C2)) ;
 
-C1 = GrB.trans (C, M, A, desc) ; assert (isequal (C1, C2)) ;
-C1 = GrB.trans (c, m, a, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, C, M, A, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, c, m, a, desc) ; assert (isequal (C1, C2)) ;
 
 %----------------------------------------------------------------------
 % C = GrB.trans (C, M, accum, A, desc)
@@ -107,14 +110,15 @@ t = c + a.' ;
 c2 (m) = t (m) ;
 assert (isequal (c2, C2)) ;
 
-C1 = GrB.trans (C, M, accum, A, desc) ; assert (isequal (C1, C2)) ;
-C1 = GrB.trans (accum, C, M, A, desc) ; assert (isequal (C1, C2)) ;
-C1 = GrB.trans (C, accum, M, A, desc) ; assert (isequal (C1, C2)) ;
-C1 = GrB.trans (C, M, A, accum, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, C, M, accum, A, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, accum, C, M, A, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, C, accum, M, A, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, C, M, A, accum, desc) ; assert (isequal (C1, C2)) ;
 
-C1 = GrB.trans (c, m, accum, a, desc) ; assert (isequal (C1, C2)) ;
-C1 = GrB.trans (accum, c, m, a, desc) ; assert (isequal (C1, C2)) ;
-C1 = GrB.trans (c, accum, m, a, desc) ; assert (isequal (C1, C2)) ;
-C1 = GrB.trans (c, m, a, accum, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, c, m, accum, a, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, accum, c, m, a, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, c, accum, m, a, desc) ; assert (isequal (C1, C2)) ;
+C1 = gtb_trans (ghb, c, m, a, accum, desc) ; assert (isequal (C1, C2)) ;
 
-fprintf ('gbtest91: all tests passed\n') ;
+fprintf ('gbtest91 (%d): all tests passed\n', ghb) ;
+

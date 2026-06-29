@@ -29,7 +29,7 @@ mxArray *gbmx_get_ghb_handle    // the MATLAB @GhB opaque handle
 
     mxArray *G_opaque = NULL ;
 
-    if (G != NULL && mxIsClass (G, "GrB"))  // FIXME: GhB
+    if (G != NULL && mxIsClass (G, "GhB"))
     { 
         // G is a @GhB object; get its opaque content (which must be a struct).
         G = mxGetProperty (G, 0, "opaque") ;

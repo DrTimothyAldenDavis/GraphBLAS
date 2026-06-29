@@ -15,7 +15,7 @@ if (ghb)
     end
 end
 
-S = gbmex_split (0, A, m, n) ;
+S = gbmex_split (ghb, A, m, n) ;
 
 % convert each entry in S to a @GrB or @GhB object
 if (ghb)
@@ -29,7 +29,7 @@ if (ghb)
         % cause a leak.  However, this failure is very remote.  Each conversion
         % of GhB (S {k}) allocates a very small amount of memory and is
         % unlikely to fail.
-%       C {k} = GhB (S {k}) ;   FIXME
+        C {k} = GhB (S {k}) ;
     end
 else
     for k = 1:numel(S)

@@ -17,7 +17,7 @@
 // C = GrB.subassign (Cin, M, A, I, J)          C = Cin ; C(I,J)<M> = A
 // C = GrB.subassign (Cin, M, accum, A, I, J)   C = Cin ; C(I,J)<M> += A
 
-// Usage for @GhB only:
+// Usage for @GhB only (inplace):
 
 // GhB.subassign (C, A, I, J)                   C(I,J) = A
 // GhB.subassign (C, accum, A, I, J)            C(I,J) += A

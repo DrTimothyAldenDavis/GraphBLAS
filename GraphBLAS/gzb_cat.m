@@ -5,7 +5,7 @@ function C = gzb_cat (ghb, Tiles)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-%   C = GhB (gbmex_cat (ghb, Tiles)) ;    % FIXME
+    C = GhB (gbmex_cat (ghb, Tiles)) ;
 else
     C = GrB (gbmex_cat (ghb, Tiles)) ;
 end

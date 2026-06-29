@@ -1,0 +1,14 @@
+function C = acot (G)
+%ACOT inverse cotangent.
+% C = acot (G) is the inverse cotangent of each entry of G.  Since acot (0)
+% is nonzero, C is a full matrix.
+%
+% See also GrB/cot, GrB/coth, GrB/acoth.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
+ghb = 1 ;     % 0 for GrB, 1 for GhB
+
+C = gb_acot (ghb, G) ;
+

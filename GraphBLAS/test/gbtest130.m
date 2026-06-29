@@ -1,10 +1,14 @@
-function gbtest130
+function gbtest130 (ghb)
 %GBTEST130 test argmin and argmax
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-rng ('default') ;
+if (nargin == 0)
+    ghb = 0 ;
+end
+gtb_name = gtb_prep (ghb) ;
+
 types = gbtest_types ;
 for k = 1:length (types)
     type = types {k} ;
@@ -21,15 +25,16 @@ for k = 1:length (types)
             hi = 10 ;
         end
         for fmt = {'by row', 'by col'} ;
-            G = GrB.random (10, 10, 0.3, 'range', GrB ([lo hi], type)) ;
-            G = GrB (G, fmt {1}) ;
+            G = gtb_random (ghb, 10, 10, 0.3, 'range', ...
+                gtb (ghb, [lo hi], type)) ;
+            G = gtb (ghb, G, fmt {1}) ;
             for dim = 0:2
-                [x1, i1] = gbtest_argminmax (G, true, dim) ;
-                [x2, i2] = GrB.argmin (G, dim) ;
+                [x1, i1] = gbtest_argminmax (ghb, G, true, dim) ;
+                [x2, i2] = gtb_argmin (ghb, G, dim) ;
                 assert (isequal (x1, x2)) ;
                 assert (isequal (i1, i2)) ;
-                [x1, i1] = gbtest_argminmax (G, false, dim) ;
-                [x2, i2] = GrB.argmax (G, dim) ;
+                [x1, i1] = gbtest_argminmax (ghb, G, false, dim) ;
+                [x2, i2] = gtb_argmax (ghb, G, dim) ;
                 assert (isequal (x1, x2)) ;
                 assert (isequal (i1, i2)) ;
             end
@@ -37,5 +42,5 @@ for k = 1:length (types)
     end
 end
 
-fprintf ('\ngbtest130: all tests passed\n') ;
+fprintf ('\ngbtest130 (%d): all tests passed\n', ghb) ;
 

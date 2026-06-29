@@ -5,7 +5,7 @@ function C = gzb_eunion (ghb, arg1, arg2, arg3, arg4, arg5)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-%   C = GhB (gbmex_eunion (ghb, arg1, arg2, arg3, arg4, arg5)) ;    % FIXME
+    C = GhB (gbmex_eunion (ghb, arg1, arg2, arg3, arg4, arg5)) ;
 else
     C = GrB (gbmex_eunion (ghb, arg1, arg2, arg3, arg4, arg5)) ;
 end

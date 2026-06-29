@@ -1,24 +1,29 @@
-function gbtest129
-%GBTEST129 test GrB.jit
+function gbtest129 (ghb)
+%GBTEST129 test [GrB,GhB].jit
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-fprintf ('gbtest129: testing GrB.jit\n') ;
+if (nargin == 0)
+    ghb = 0 ;
+end
+gtb_name = gtb_prep (ghb) ;
 
-[status1, path1] = GrB.jit ;
+fprintf ('gbtest129: testing %s.jit\n', gtb_name) ;
+
+[status1, path1] = gtb_jit (ghb) ;
 fprintf ('JIT: %s at %s\n', status1, path1) ;
-GrB.jit ('off', '/tmp') ;
-[status2, path2] = GrB.jit ;
+gtb_jit (ghb, 'off', '/tmp') ;
+[status2, path2] = gtb_jit (ghb) ;
 assert (isequal (status2, 'off')) ;
 assert (isequal (path2, '/tmp')) ;
 
-[status3, path3] = GrB.jit (status1, path1) ;
+[status3, path3] = gtb_jit (ghb, status1, path1) ;
 assert (isequal (status1, status3)) ;
 assert (isequal (path1, path3)) ;
 
 try
-    GrB.jit (0,0)
+    gtb_jit (ghb, 0,0)
     ok = false ;
 catch me
     msg = me.message ;
@@ -28,7 +33,7 @@ assert (ok) ;
 assert (isequal (msg, 'status must be a string')) ;
 
 try
-    GrB.jit ('on',0)
+    gtb_jit (ghb, 'on',0)
     ok = false ;
 catch me
     msg = me.message ;
@@ -37,5 +42,5 @@ end
 assert (ok) ;
 assert (isequal (msg, 'path must be a string')) ;
 
-fprintf ('\ngbtest129: all tests passed\n') ;
+fprintf ('\ngbtest129 (%d): all tests passed\n', ghb) ;
 

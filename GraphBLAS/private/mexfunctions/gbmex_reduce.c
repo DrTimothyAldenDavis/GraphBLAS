@@ -65,6 +65,10 @@ void mexFunction
         pargout [1] = mxCreateDoubleScalar (0) ;
         kind_output = (double *) mxGetData (pargout [1]) ;
     }
+    else
+    { 
+        /* for tracking test coverage */ ;
+    }
 
     //--------------------------------------------------------------------------
     // find the arguments

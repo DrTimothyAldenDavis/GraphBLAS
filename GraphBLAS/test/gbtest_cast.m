@@ -16,7 +16,7 @@ function C = gbtest_cast (A, type)
 if (issparse (A))
     error ('A must be full') ;
 end
-if (isa (A, 'GrB'))
+if (isa (A, 'GrB') || isa (A, 'GhB'))
     error ('A must be a built-in matrix') ;
 end
 
@@ -32,4 +32,5 @@ end
 
 assert (~issparse (C)) ;
 assert (~isa (C, 'GrB')) ;
+assert (~isa (C, 'GhB')) ;
 

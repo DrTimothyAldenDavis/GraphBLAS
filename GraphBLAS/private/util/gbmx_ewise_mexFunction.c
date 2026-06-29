@@ -71,6 +71,17 @@ void gbmx_ewise_mexFunction
         pargout [1] = mxCreateDoubleScalar (0) ;
         kind_output = (double *) mxGetData (pargout [1]) ;
     }
+    else
+    { 
+        if (do_eadd)
+        { 
+            /* for tracking test coverage */ ;
+        }
+        else
+        { 
+            /* for tracking test coverage */ ;
+        }
+    }
 
     //--------------------------------------------------------------------------
     // find the arguments

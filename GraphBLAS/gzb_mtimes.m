@@ -5,7 +5,7 @@ function C = gzb_mtimes (ghb, A, B)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-%   C = GhB (gbmex_mtimes (ghb, A, B)) ;    FIXME
+    C = GhB (gbmex_mtimes (ghb, A, B)) ;
 else
     C = GrB (gbmex_mtimes (ghb, A, B)) ;
 end

@@ -480,29 +480,6 @@ classdef (HandleCompatible) GrB
 %       C = GrB.trans     (Cin, M, accum,     A,          desc)
 %       C = GrB.vreduce   (Cin, M, accum, op, A,          desc)
 %
-%   The @GhB matrix is a handle object, so C can also be modified in place.
-%   Using this in-place syntax:
-%
-% FIXME: modify C inplace for these 14
-%
-%       GhB.apply     (C, M, accum, op, A,          desc)
-%       GhB.apply2    (C, M, accum, op, A, B,       desc)
-%       GhB.assign    (C, M, accum,     A,    I, J, desc)
-%       GhB.eadd      (C, M, accum, op, A, B,       desc)
-%       GhB.eunion    (C, M, accum, op, A, a, B, b, desc)
-%       GhB.emult     (C, M, accum, op, A, B,       desc)
-%       GhB.extract   (C, M, accum,     A,    I, J, desc)
-%       GhB.kronecker (C, M, accum, op, A, B,       desc)
-%       GhB.mxm       (C, M, accum, op, A, B,       desc)
-%       GhB.reduce    (C,    accum, op, A,          desc)
-%       GhB.select    (C, M, accum, op, A, b,       desc)
-%       GhB.subassign (C, M, accum,     A,    I, J, desc)
-%       GhB.trans     (C, M, accum,     A,          desc)
-%       GhB.vreduce   (C, M, accum, op, A,          desc)
-%
-%   For the in-place syntax, no output parameter ("C = GhB.method (..)")
-%   can appear, and the matrix C must appear as a parameter (see below).
-%
 %   The parameters divide into 4 classes: matrices, strings, cells, and a
 %   single optional struct, which is the descriptor.  The order of
 %   parameters between the matrices, strings, and cell classes is
@@ -613,12 +590,12 @@ classdef (HandleCompatible) GrB
 %       c = GrB.reduce (A, 'max')                   c = max (A)
 %       c = GrB.reduce (c, 'max', A)                c = max (A)
 %
-% See also sparse.
+% See also GhB, sparse.
 %
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-properties % (SetAccess = private, GetAccess = private)
+properties
     % The G.opaque content of a @GrB object G is a MATLAB struct that
     % contains a single pointer to a GrB_Matrix, which is held in MATLAB
     % as a uint8 array of 8 bytes.  The opaque content is not accessible
@@ -667,16 +644,6 @@ methods
                 C.opaque = gbmex_new (ghb, arg1, arg2, arg3, arg4) ;
         end
     end
-
-    %---------------------------------------------------------------------
-    % GrB: GraphBLAS matrix destructor
-    %---------------------------------------------------------------------
-
-% FIXME: for GhB only:
-%   function delete (C)
-%   %DELETE delete a GraphBLAS matrix
-%   gbmex_delete (C) ;
-%   end
 
     %---------------------------------------------------------------------
     % implicitly-defined methods
@@ -852,12 +819,13 @@ methods
     C = bitand (A, B, assumedtype) ;
     C = bitcmp (A, assumedtype) ;
     C = bitget (A, B, assumedtype) ;
+    C = bitor (A, B, assumedtype) ;
     C = bitset (A, B, arg3, arg4) ;
     C = bitshift (A, B, arg3) ;
-    C = bitor (A, B, assumedtype) ;
     C = bitxor (A, B, assumedtype) ;
 %   C = cast (G, ...)       built-in works as-is
     C = cat (dim, varargin) ;
+    C = cbrt (G) ;
     C = ceil (G) ;
     C = complex (A, B) ;
     C = conj (G) ;
@@ -867,7 +835,6 @@ methods
     C = coth (G) ;
     C = csc (G) ;
     C = csch (G) ;
-    C = cbrt (G) ;
     C = diag (A, k) ;
     DiGraph = digraph (G, option) ;
     disp (A, level) ;
@@ -975,47 +942,14 @@ methods
     s = numel (G) ;
     e = nzmax (G) ;
     [m, n, t] = size (G, dim) ;
+    S = saveobj (G) ;
     S = struct (G) ;
     [p, varargout] = symamd (G, varargin) ;
     p = symrcm (G) ;
 
-    %---------------------------------------------------------------------
-    % saveobj: save a GraphBLAS matrix to a file
-    %---------------------------------------------------------------------
-
-    function S = saveobj (G)
-    %SAVEOBJ prepares a @GrB matrix for MATLAB/Octave to save to a file.
-    % It creates a struct S containing just S.blob from the serialization
-    % of the @GrB matrix G.  S is not an object.  S.blob is a dense
-    % builtin MATLAB/Octave array of type uint8.  It will be loaded back
-    % using loadobj, below.
-    ghb = 0 ;     % 0 for GrB, 1 for GhB
-    S.blob = gbmex_builtin (gzb_serialize (ghb, G)) ;
-    end
-
 end
 
 methods (Static)
-
-    %---------------------------------------------------------------------
-    % loadobj: load a GraphBLAS matrix from a file
-    %---------------------------------------------------------------------
-
-    function G = loadobj (S)
-    %LOADOBJ loads a @GrB matrix from a file.
-    % MATLAB/Octave first reads in the struct S that saveobj created, and
-    % then passes it to this method.
-        ghb = 0 ;     % 0 for GrB, 1 for GhB
-        if (isobject (S))
-            % S is a @GrB matrix from GraphBLAS 10.3.1 or earlier, which
-            % did not have saveobj and loadobj methods.
-            G = gzb_loadhistorical (ghb, S.opaque) ;
-        else
-            % S is a struct created by saveobj, above, with a single
-            % S.blob field containing the serialized matrix.
-            G = gzb_deserialize (ghb, S.blob) ;
-        end
-    end
 
     %---------------------------------------------------------------------
     % Static Methods:
@@ -1029,9 +963,9 @@ methods (Static)
 
     C = apply (Cin, M, accum, op, A, desc) ;
     C = apply2 (Cin, M, accum, op, A, B, desc) ;
+    [x,p] = argmax (A, dim) ;
     [x,p] = argmin (A, dim) ;
     [C,P] = argsort (A, dim, direction) ;
-    [x,p] = argmax (A, dim) ;
     C = assign (Cin, M, accum, A, I, J, desc) ;
     [v, parent] = bfs (A, s, varargin) ;
     C = build (I, J, X, m, n, dup, type, desc) ;
@@ -1043,10 +977,10 @@ methods (Static)
     C = empty (arg1, arg2) ;
     C = emult (Cin, M, accum, op, A, B, desc) ;
     x = entries (A, arg2, arg3) ;
+    C = eunion (Cin, M, accum, op, A, a, B, b, desc) ;
     C = expand (scalar, A, type) ;
     C = extract (Cin, M, accum, A, I, J, desc) ;
     [I, J, X] = extracttuples (A, desc) ;
-    C = eunion (Cin, M, accum, op, A, a, B, b, desc) ;
     C = eye (m, n, type) ;
     C = false (varargin) ;
     C = incidence (A, varargin) ;
@@ -1054,6 +988,7 @@ methods (Static)
     C = ktruss (A, k, check) ;
     L = laplacian (A, type, check) ;
     C = load (filename) ;
+    G = loadobj (S) ;
     iset = mis (A, check) ;
     C = mxm (Cin, M, accum, semiring, A, B, desc) ;
     result = nonz (A, varargin) ;
@@ -1063,14 +998,13 @@ methods (Static)
     C = prune (A, identity) ;
     C = random (varargin) ;
     C = reduce (cin, accum, monoid, A, desc) ;
-    filename_used = save (C, filename) ;
     C = select (Cin, M, accum, selectop, A, b, desc) ;
     blob = serialize (A, method, level) ;
     C = speye (m, n, type) ;
     C = subassign (Cin, M, accum, A, I, J, desc) ;
-    C = true (varargin) ;
     C = trans (Cin, M, accum, A, desc) ;
     s = tricount (A, check, d) ;
+    C = true (varargin) ;
     C = vreduce (Cin, M, accum, monoid, A, desc) ;
     C = zeros (varargin) ;
 
@@ -1100,6 +1034,7 @@ methods (Static)
     e = nvals (A) ;
     ctype = optype (a, b) ;
     print (A, level) ;
+    filename_used = save (C, filename) ;
     selectopinfo (op, type) ;
     list = selectops ;
     semiringinfo (s, type) ;

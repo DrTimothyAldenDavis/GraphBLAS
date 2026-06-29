@@ -5,7 +5,7 @@ function C = gzb_vdiag (ghb, A, k)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-%   C = GhB (gbmex_vdiag (ghb, A, k)) ;    FIXME
+    C = GhB (gbmex_vdiag (ghb, A, k)) ;
 else
     C = GrB (gbmex_vdiag (ghb, A, k)) ;
 end

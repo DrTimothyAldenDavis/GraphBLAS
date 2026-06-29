@@ -1,18 +1,18 @@
-function [x,p] = gbtest_argminmax (A, ismin, dim)
+function [x,p] = gbtest_argminmax (ghb, A, ismin, dim)
 %GBTEST_ARGMINMAX simple computation of argmin and argmax
 
 S = spones (A) ;
 [m n] = size (A) ;
-type = GrB.type (A) ;
+type = gtb_type (ghb, A) ;
 
 if (dim == 2)
 
-    [x,p] = gbtest_argminmax (A', ismin, 1) ;
+    [x,p] = gbtest_argminmax (ghb, A', ismin, 1) ;
 
 elseif (dim == 1)
 
-    x = GrB (n, 1, type) ;
-    p = GrB (n, 1, 'int64') ;
+    x = gtb (ghb, n, 1, type) ;
+    p = gtb (ghb, n, 1, 'int64') ;
     for j = 1:n
         first = true ;
         for i = 1:m
@@ -64,7 +64,7 @@ else % dim == 0
             end
         end
     end
-    p = GrB (p', 'int64') ;
+    p = gtb (ghb, p', 'int64') ;
 
 end
 

@@ -5,7 +5,7 @@ function C = gzb_trans (ghb, A)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-%   C = GhB (gbmex_trans (ghb, A)) ;    % FIXME
+    C = GhB (gbmex_trans (ghb, A)) ;
 else
     C = GrB (gbmex_trans (ghb, A)) ;
 end

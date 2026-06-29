@@ -17,14 +17,14 @@
 // C = GrB.assign (Cin, M, A, I, J)             C = Cin ; C<M>(I,J) = A
 // C = GrB.assign (Cin, M, accum, A, I, J)      C = Cin ; C<M>(I,J) += A
 
-// Usage for @GhB only:
+// Usage for @GhB only (inplace):
 
 // GhB.assign (C, A, I, J)                      C(I,J) = A
 // GhB.assign (C, accum, A, I, J)               C(I,J) += A
 // GhB.assign (C, M, A, I, J)                   C<M>(I,J) = A
 // GhB.assign (C, M, accum, A, I, J)            C<M>(I,J) += A
 
-// A can be a matrix or a scalar.
+// A can be a matrix or a scalar.  I and J are optional.
 
 #include "gb_interface.h"
 

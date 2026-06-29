@@ -1,13 +1,16 @@
-function gbtest55
+function gbtest55 (ghb)
 %GBTEST55 test disp
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-rng ('default') ;
+if (nargin == 0)
+    ghb = 0 ;
+end
+gtb_name = gtb_prep (ghb) ;
 
-fprintf ('GrB/display method with no semi-colon:\n') ;
-H = GrB (rand (6)) %#ok<*NOPRT>
+fprintf ('%s/display method with no semi-colon:\n', gtb_name) ;
+H = gtb (ghb, rand (6)) %#ok<*NOPRT>
 
 fprintf ('default:\n') ;
 disp (H) ;
@@ -15,5 +18,5 @@ for level = 0:5
     disp (H, level) ;
 end
 
-fprintf ('gbtest55: all tests passed\n') ;
+fprintf ('gbtest55 (%d): all tests passed\n', ghb) ;
 

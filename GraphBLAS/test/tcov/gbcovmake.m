@@ -6,27 +6,27 @@ function gbcovmake
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-fprintf ('Compiling @GrB interface for mexFunction statement coverage...\n') ;
+fprintf ('Compiling @GrB and @GhB for mexFunction statement coverage...\n') ;
 warning ('off', 'MATLAB:MKDIR:DirectoryExists') ;
-mkdir ('tmp/@GrB/') ;
-mkdir ('tmp/@GrB/private') ;
 mkdir ('tmp/cover') ;
 warning ('on', 'MATLAB:MKDIR:DirectoryExists') ;
 
 % copy all @GrB/*.m files into tmp/@GrB
+mkdir ('tmp/@GrB/') ;
 mfiles = dir ('../../@GrB/*.m') ;
 for k = 1:length (mfiles)
     copyfile ([(mfiles (k).folder) '/' (mfiles (k).name)], 'tmp/@GrB/') ;
 end
 
-% copy all @GrB/private/*.m files into tmp/@GrB/private
-mfiles = dir ('../../@GrB/private/*.m') ;
+% copy all @GhB/*.m files into tmp/@GhB
+mkdir ('tmp/@GhB/') ;
+mfiles = dir ('../../@GhB/*.m') ;
 for k = 1:length (mfiles)
-    copyfile ([(mfiles (k).folder) '/' (mfiles (k).name)], 'tmp/@GrB/private') ;
+    copyfile ([(mfiles (k).folder) '/' (mfiles (k).name)], 'tmp/@GhB/') ;
 end
 
-% copy all @GrB/../gb*.m files into tmp
-mfiles = dir ('../../@GrB/../g*.m') ;
+% copy all ../../gb*.m files into tmp
+mfiles = dir ('../../g*.m') ;
 for k = 1:length (mfiles)
     copyfile ([(mfiles (k).folder) '/' (mfiles (k).name)], 'tmp') ;
 end

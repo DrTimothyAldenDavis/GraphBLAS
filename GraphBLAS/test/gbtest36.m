@@ -1,10 +1,13 @@
-function gbtest36
+function gbtest36 (ghb)
 %GBTEST36 test abs, sign
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-rng ('default') ;
+if (nargin == 0)
+    ghb = 0 ;
+end
+gtb_name = gtb_prep (ghb) ;
 
 types = gbtest_types ;
 for k = 1:length (types)
@@ -16,7 +19,7 @@ for k = 1:length (types)
     if (type (1) == 'u')
         A = max (A, 0) ;
     end
-    G = GrB (A, type) ;
+    G = gtb (ghb, A, type) ;
     B = gbtest_cast (A, type) ;
     assert (gbtest_eq (B, G))
 
@@ -34,5 +37,5 @@ for k = 1:length (types)
 
 end
 
-fprintf ('gbtest36: all tests passed\n') ;
+fprintf ('gbtest36 (%d): all tests passed\n', ghb) ;
 

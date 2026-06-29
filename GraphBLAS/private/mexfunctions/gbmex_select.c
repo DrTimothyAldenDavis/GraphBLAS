@@ -26,6 +26,7 @@
 
 // Usage for @GhB only:
 
+// GhB.select (C, op)                           C = op(C)
 // GhB.select (C, op, A)                        C = op(A)
 // GhB.select (C, accum, op, A)                 C += op(A)
 // GhB.select (C, M, op, A)                     C<M> = op(A)
@@ -229,6 +230,10 @@ void mexFunction
         pargout [1] = mxCreateDoubleScalar (0) ;
         kind_output = (double *) mxGetData (pargout [1]) ;
     }
+    else
+    { 
+        /* for tracking test coverage */ ;
+    }
 
     //--------------------------------------------------------------------------
     // find the arguments
@@ -272,8 +277,17 @@ void mexFunction
     { 
         if (nmatrices == 1)
         { 
-            CHECK_ERROR (inplace, "invalid in-place usage") ;
-            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
+            if (inplace)
+            { 
+                // C = select (op, C), in place usage, C and A are aliased
+                OK (gb_get_deep (&C, inplace, &(Matrix [0]), arena, err)) ;
+                A = C ;
+            }
+            else
+            { 
+                // C = select (op, A)
+                OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
+            }
         }
         else if (nmatrices == 2)
         { 
@@ -299,9 +313,19 @@ void mexFunction
         }
         else if (nmatrices == 2)
         { 
-            CHECK_ERROR (inplace, "invalid in-place usage") ;
-            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
-            OK (gb_get_matrix (&b, &b_to_free, &(Matrix [1]), arena, err)) ;
+            if (inplace)
+            {
+                // C = select (op, C, b), in place usage, C and A are aliased
+                OK (gb_get_deep (&C, inplace, &(Matrix [0]), arena, err)) ;
+                A = C ;
+                OK (gb_get_matrix (&b, &b_to_free, &(Matrix [1]), arena, err)) ;
+            }
+            else
+            {
+                // C = select (op, A, b)
+                OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
+                OK (gb_get_matrix (&b, &b_to_free, &(Matrix [1]), arena, err)) ;
+            }
         }
         else if (nmatrices == 3)
         { 

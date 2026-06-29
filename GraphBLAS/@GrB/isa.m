@@ -22,20 +22,7 @@ function s = isa (G, type)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (isequal (type, 'GrB') || isequal (type, 'GhB') || isequal (type, 'numeric'))
-    % all GraphBLAS matrices are numeric, and have class name 'GrB' or 'GhB'
-    s = true ;
-elseif (isequal (type, 'float'))
-    % GraphBLAS double, single, and complex matrices are 'float'
-    s = isfloat (G) ;
-elseif (isequal (type, 'integer'))
-    % GraphBLAS int* and uint* matrices are 'integer'
-    s = isinteger (G) ;
-elseif (isequal (gbmex_type (G), type))
-    % specific cases, such as isa (G, 'double'), isa (G, 'int8'), etc
-    s = true ;
-else
-    % catch-all for cases not handled above
-    s = builtin ('isa', G, type) ;
-end
+ghb = 0 ;     % 0 for GrB, 1 for GhB
+
+s = gzb_isa (ghb, G, type) ;
 

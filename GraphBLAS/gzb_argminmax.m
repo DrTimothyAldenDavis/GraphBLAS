@@ -7,8 +7,8 @@ function [x,p] = gzb_argminmax (ghb, A, minmax, dim)
 [x, p] = gbmex_argminmax (ghb, A, minmax, dim) ;
 
 if (ghb)
-%   x = GhB (x) ;   FIXME
-%   p = GhB (p) ;   FIXME
+    x = GhB (x) ;
+    p = GhB (p) ;
 else
     x = GrB (x) ;
     p = GrB (p) ;

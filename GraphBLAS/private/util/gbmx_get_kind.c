@@ -25,9 +25,11 @@ kind_enum_t gbmx_get_kind
             // get the string from the built-in field
             char s [LEN+2] ;
             gbmx_mxstring_to_string (s, LEN, mxkind, "kind") ;
-            if (MATCH (s, "grb") || MATCH (s, "default"))
+            if (MATCH (s, "grb") || MATCH (s, "default") || MATCH (s, "ghb"))
             { 
-                kind = KIND_GRB ;           // @GrB matrix
+                // both gbdesc.kind == KIND_GHB and gbdesc.kind = KIND_GRB
+                // selects @GrB for a GrB.method, and @GhB for a GhB.method.
+                kind = KIND_GRB ;           // @GrB or @GhB matrix
             }
             else if (MATCH (s, "sparse"))
             { 
