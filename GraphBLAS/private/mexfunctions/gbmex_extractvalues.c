@@ -40,8 +40,8 @@ void mexFunction
     GrB_Vector X_vector = NULL ;
     GrB_Type xtype = NULL ;
     void *x = NULL ;
-    int xarena = GrB_DEFAULT ;
-    int arena = GrB_DEFAULT ;
+    int xarena = GrB_DEFAULT ;  // revised below
+    int arena = GrB_DEFAULT ;   // use default arena for temporary workspace
 
     GBMX_USAGE (nargin == 1 && nargout <= 1, USAGE) ;
 

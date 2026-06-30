@@ -30,8 +30,6 @@ ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 if (nargout == 0)
     switch (nargin)
-        case 2
-            gbmex_apply (ghb, arg1, arg2) ;
         case 3
             gbmex_apply (ghb, arg1, arg2, arg3) ;
         case 4

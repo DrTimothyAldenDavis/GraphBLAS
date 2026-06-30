@@ -4,7 +4,8 @@ function gbcov
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% compile the coverage-test version of the @GrB/@GhB mexFunctions
+tstart = tic ;
+
 global gbcov_global
 gbcov_global = [ ] ;
 
@@ -14,7 +15,9 @@ try
 catch
 end
 
+% compile the coverage-test version of the @GrB/@GhB mexFunctions
 gbcovmake
+
 addpath ('..') ;            % add the test folder to the path
 try
     rmpath ('../..') ;      % remove the regular @GrB, @GhB classes
@@ -53,4 +56,6 @@ try
     GrB.init ;
 catch
 end
+
+fprintf ('gbcov total time: %g sec\n', toc (tstart)) ;
 

@@ -38,11 +38,10 @@ void mexFunction
 
     GxB_Container Container = NULL ;
     GrB_Matrix *C_opaque = NULL, C = NULL, Y = NULL ;
-    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 2 && nargout == 1, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
-    arena = ghb ? GrB_DEFAULT : MXARENA ;
+    int arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     CHECK_ERROR (!mxIsStruct (pargin [1]), USAGE " where S is a struct") ;
 

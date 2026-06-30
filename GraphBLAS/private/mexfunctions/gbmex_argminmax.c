@@ -2546,11 +2546,10 @@ void mexFunction
     GrB_Scalar Theta = NULL ;
     GrB_UnaryOp Getv = NULL, Getk = NULL ;
     GrB_Scalar s = NULL ;
-    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 4 && nargout == 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
-    arena = ghb ? GrB_DEFAULT : MXARENA ;
+    int arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     if (ghb)
     { 

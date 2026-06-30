@@ -56,12 +56,11 @@ void mexFunction
     GrB_Matrix A = NULL, A_to_free = NULL ;
     GrB_Vector I = NULL, J = NULL, X = NULL, T = NULL ;
     void *x = NULL ;
-    int xarena = GrB_DEFAULT ;
-    int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin >= 1+1 && nargin <= 2+1 && nargout <= 3, USAGE) ;
+    GBMX_USAGE (nargin >= 2 && nargin <= 3 && nargout <= 3, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
-    arena = ghb ? GrB_DEFAULT : MXARENA ;
+    int arena = ghb ? GrB_DEFAULT : MXARENA ;
+    int xarena = GrB_DEFAULT ;      // revised below
 
     //--------------------------------------------------------------------------
     // find the arguments

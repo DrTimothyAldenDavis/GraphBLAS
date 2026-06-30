@@ -41,11 +41,10 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix *C_opaque = NULL, X = NULL, X_to_free = NULL, C = NULL ;
-    int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin == 2+1 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 3 && nargout <= 1, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
-    arena = ghb ? GrB_DEFAULT : MXARENA ;
+    int arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     if (ghb) pargout [0] = gbmx_export_ghb_mxstruct (&C_opaque) ;
 

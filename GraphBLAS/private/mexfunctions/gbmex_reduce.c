@@ -51,11 +51,10 @@ void mexFunction
     GrB_Type atype, ctype = NULL ;
     GrB_Matrix *C_opaque = NULL, C = NULL, A = NULL, A_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
-    int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin >= 2+1 && nargin <= 5+1 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 3 && nargin <= 6 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
-    arena = ghb ? GrB_DEFAULT : MXARENA ;
+    int arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;

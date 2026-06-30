@@ -18,7 +18,7 @@
 // C = GrB.vreduce (Cin, M, op, A)          C = Cin ; C<M> = op (A)
 // C = GrB.vreduce (Cin, M, accum, op, A)   C = Cin ; C<M> += op(A)
 
-// Usage for @GhB only:
+// Usage for @GhB only (inplace usage):
 
 // GhB.vreduce (C, op, A)                   C = op (A)
 // GhB.vreduce (C, accum, op, A)            C += op (A)
@@ -57,11 +57,10 @@ void mexFunction
     GrB_Matrix *C_opaque = NULL, C = NULL, M = NULL, A = NULL,
         M_to_free = NULL, A_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
-    int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin >= 2+1 && nargin <= 6+1 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 3 && nargin <= 7 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
-    arena = ghb ? GrB_DEFAULT : MXARENA ;
+    int arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;

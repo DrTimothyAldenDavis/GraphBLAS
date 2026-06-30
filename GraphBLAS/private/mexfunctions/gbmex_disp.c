@@ -31,11 +31,10 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = NULL, C_to_free = NULL ;
-    int arena = GrB_DEFAULT ;
 
     GBMX_USAGE (nargin == 3 && nargout == 0, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
-    arena = ghb ? GrB_DEFAULT : MXARENA ;
+    int arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     //--------------------------------------------------------------------------
     // get inputs

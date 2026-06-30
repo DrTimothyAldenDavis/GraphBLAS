@@ -84,6 +84,8 @@
 
 #include "gb_interface.h"
 
+// FIXME: add inplace
+
 #define USAGE "usage: C = gbmex_logassign (ghb, C, M, A)"
 #define ERR "A must be a vector of length nnz(M) for logical indexing, C(M)=A"
 
@@ -104,11 +106,10 @@ void mexFunction
         A = NULL, M_input = NULL, A_to_free = NULL, A_copy = NULL,
         A_copy2 = NULL, S = NULL ;
     uint64_t *Si = NULL, *Sj = NULL, *Mj = NULL ;
-    int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin == 3+1 && nargout <= 1, USAGE) ;
+    GBMX_USAGE (nargin == 4 && nargout <= 1, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
-    arena = ghb ? GrB_DEFAULT : MXARENA ;
+    int arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     if (ghb) pargout [0] = gbmx_export_ghb_mxstruct (&C_opaque) ;
 

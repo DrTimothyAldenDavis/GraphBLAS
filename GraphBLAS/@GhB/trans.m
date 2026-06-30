@@ -26,8 +26,6 @@ ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 if (nargout == 0)
     switch (nargin)
-        case 1
-            gbmex_trans (ghb, arg1) ;
         case 2
             gbmex_trans (ghb, arg1, arg2) ;
         case 3

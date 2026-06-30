@@ -78,11 +78,10 @@ void mexFunction
     GrB_BinaryOp dup = GxB_IGNORE_DUP ;
     GrB_Type type = NULL ;
     GrB_Scalar x = NULL ;
-    int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin >= 3+1 && nargin <= 8+1 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 4 && nargin <= 9 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
-    arena = ghb ? GrB_DEFAULT : MXARENA ;
+    int arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     double *kind_output = NULL ;
     if (ghb) pargout [0] = gbmx_export_ghb_mxstruct (&C_opaque) ;

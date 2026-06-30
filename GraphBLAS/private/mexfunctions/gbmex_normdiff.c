@@ -33,7 +33,7 @@ void mexFunction
 
     GrB_Matrix A = NULL, B = NULL, X = NULL, A_to_free = NULL,
         B_to_free = NULL ;
-    int arena = GrB_DEFAULT ;
+    int arena = GrB_DEFAULT ;   // use default arena for temporary workspace
 
     GBMX_USAGE (nargin == 3 && nargout <= 1, USAGE) ;
 

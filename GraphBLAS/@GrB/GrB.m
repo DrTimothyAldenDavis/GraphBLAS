@@ -551,8 +551,6 @@ classdef (HandleCompatible) GrB
 %   '+' and '+.*' must appear in that order, but the matrices and strings
 %   may be interleaved arbitrarily.  They all compute the same thing.
 %
-% FIXME: add in-place syntax
-%
 %       C = GrB.apply (C, M, '|', '~', A)           C<M> |= ~A
 %       C = GrB.apply ('~', A)                      C = ~A
 %

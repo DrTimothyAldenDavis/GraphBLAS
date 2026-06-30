@@ -1,5 +1,5 @@
 function gbtest
-%GBTEST test GraphBLAS interface
+%GBTEST test GraphBLAS MATLAB/Octave interface
 % First compile the GraphBLAS library by typing 'make' in the top-level
 % GraphBLAS folder, in your system shell.  That statement will use cmake to
 % compile GraphBLAS.  Use 'make JOBS=40' to compile in parallel (replace '40'
@@ -17,9 +17,12 @@ function gbtest
 %   cd @GrB/private
 %   gbmake ;            % compile the interface to GraphBLAS
 %   cd ../../test
+%   clear all
 %   gbtest              % run this test
 %
 % See also GrB.
+
+% FIXME test with Octave
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -705,6 +708,45 @@ gbtest132 (1)
 gbtest132 (2)
 assert (GrB.nmalloc == 0) ;
 
+gbtest133       % simple inplace tests of GhB.apply
+assert (GrB.nmalloc == 0) ;
+
+gbtest134       % test inplace usage for GhB.apply
+assert (GrB.nmalloc == 0) ;
+
+gbtest135       % test inplace usage for GhB.apply2
+assert (GrB.nmalloc == 0) ;
+
+gbtest136       % test inplace usage for GhB.assign
+assert (GrB.nmalloc == 0) ;
+
+gbtest137       % test inplace usage for GhB.subassign
+assert (GrB.nmalloc == 0) ;
+
+gbtest138       % test inplace usage for GhB.eunion
+assert (GrB.nmalloc == 0) ;
+
+gbtest139       % test inplace usage for GhB.emult
+assert (GrB.nmalloc == 0) ;
+
+gbtest140       % test inplace usage for GhB.eadd
+assert (GrB.nmalloc == 0) ;
+
+gbtest141       % test inplace usage for GhB.kronecker
+assert (GrB.nmalloc == 0) ;
+
+gbtest142       % test inplace usage for GhB.mxm
+assert (GrB.nmalloc == 0) ;
+
+gbtest143       % test inplace usage for GhB.reduce
+assert (GrB.nmalloc == 0) ;
+
+gbtest144       % test inplace usage for GhB.vreduce
+assert (GrB.nmalloc == 0) ;
+
+gbtest145       % test inplace usage for GhB.trans
+assert (GrB.nmalloc == 0) ;
+
 gbtest96        % test GrB.optype
 gbtest96 (1)
 gbtest96 (2)
@@ -726,8 +768,4 @@ GrB.clear
 assert (GrB.nmalloc == 0) ;
 
 fprintf ('\ngbtest: all tests passed\n') ;
-
-if (GrB.nmalloc > 0)
-    error ('memory leak! %d\n', GrB.nmalloc) ;
-end
 

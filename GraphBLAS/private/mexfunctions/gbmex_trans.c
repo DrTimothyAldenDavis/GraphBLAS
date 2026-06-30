@@ -17,9 +17,8 @@
 // C = GrB.trans (Cin, M, A)            C = Cin ; C<M> = A'
 // C = GrB.trans (Cin, M, accum, A)     C = Cin ; C<M> += A'
 
-// Usage for @GhB only:
+// Usage for @GhB only (inplace):
 
-// GhB.trans (C)                        C = C'
 // GhB.trans (C, A)                     C = A'
 // GhB.trans (C, accum, A)              C += A'
 // GhB.trans (C, M, A)                  C<M> = A'
@@ -55,11 +54,10 @@ void mexFunction
     GrB_Matrix *C_opaque = NULL, C = NULL, M = NULL, A,
         M_to_free = NULL, A_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
-    int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin >= 1+1 && nargin <= 5+1 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 2 && nargin <= 6 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
-    arena = ghb ? GrB_DEFAULT : MXARENA ;
+    int arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;
@@ -103,17 +101,9 @@ void mexFunction
 
     if (nmatrices == 1)
     { 
-        if (inplace)
-        { 
-            // C = C', in place usage, C and A are aliased
-            OK (gb_get_deep (&C, inplace, &(Matrix [0]), arena, err)) ;
-            A = C ;
-        }
-        else
-        { 
-            // C = A'
-            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
-        }
+        // C = A'
+        CHECK_ERROR (inplace, "invalid in-place usage") ;
+        OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
     }
     else if (nmatrices == 2)
     { 

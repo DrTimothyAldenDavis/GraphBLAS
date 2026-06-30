@@ -31,10 +31,9 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix A = NULL, A_to_free = NULL ;
-    int arena = GrB_DEFAULT ;
+    int arena = GrB_DEFAULT ;   // use default arena for temporary workspace
 
     GBMX_USAGE (nargin == 1 && nargout <= 1, USAGE) ;
-    // arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     //--------------------------------------------------------------------------
     // get the type of the input

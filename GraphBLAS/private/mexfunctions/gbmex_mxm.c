@@ -17,7 +17,7 @@
 // C = GrB.mxm (Cin, M, semiring, A, B)         C = Cin ; C<M> = A*B
 // C = GrB.mxm (Cin, M, accum, semiring, A, B)  C = Cin ; C<M> += A*B
 
-// Usage for @GhB only:
+// Usage for @GhB only (inplace):
 
 // GhB.mxm (C, semiring, A, B)                  C = A*B
 // GhB.mxm (C, accum, semiring, A, B)           C += A*B
@@ -57,11 +57,10 @@ void mexFunction
     GrB_Matrix *C_opaque = NULL, C = NULL, M = NULL, A = NULL, B = NULL,
         M_to_free = NULL, A_to_free = NULL, B_to_free = NULL ;
     GrB_Descriptor desc = NULL ;
-    int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin >= 3+1 && nargin <= 7+1 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 4 && nargin <= 8 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
-    arena = ghb ? GrB_DEFAULT : MXARENA ;
+    int arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;

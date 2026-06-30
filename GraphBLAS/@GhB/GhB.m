@@ -44,6 +44,35 @@ classdef (InferiorClasses = {?GrB}) GhB < handle & GrB
 % For the in-place syntax, no output parameter ("C = GhB.method (..)")
 % can appear, and the matrix C must appear as an input parameter.
 %
+% Example in-place usage:
+%
+%       GhB.apply (C, M, '|', '~', A)           C<M> |= ~A
+%
+%       GhB.assign (C, M, '+', A, I, J)         C(I,J)<M> += A
+%       GhB.assign (C, I, J, M, '+', A)         C(I,J)<M> += A
+%
+%       GhB.assign (C, A, I, J)                 C(I,J) = A
+%       GhB.assign (C, I, J, A)                 C(I,J) = A
+%       GhB.assign (C, A)                       C = A
+%       GhB.assign (C, M, A)                    C<M> = A
+%       GhB.assign (C, M, '+', A)               C<M> += A
+%       GhB.assign (C, '+', A, I)               C (I,:) += A
+%
+%       GhB.emult (C, M, '+', A, '*', B)        C<M> += A.*B
+%
+%       GhB.extract (C, M, '+', A, I, J)        C<M> += A(I,J)
+%       GhB.extract (C, M, A)                   C<M> = A
+%       GhB.extract (C, M, '+', A)              C<M> += A
+%       GhB.extract (C, '+', A, I)              C += A(I,:)
+%
+%       GhB.mxm (C, M, '+', '+.*', A, B)        C<M> += A*B
+%       GhB.mxm (C, M, '+', A, '+.*', B)        C<M> += A*B
+%
+%       GhB.mxm (C, M, A, '+.*', B)             C<M> = A*B
+%
+%       GhB.reduce (c, '+', 'max', A)           c += max (A)
+%       GhB.reduce (c, 'max', A)                c = max (A)
+%
 % See also GrB, sparse.
 %
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.

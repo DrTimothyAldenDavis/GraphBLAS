@@ -33,7 +33,7 @@ save (f1, ...
     'Sparse', 'Hyper', 'Bitmap', 'Full', ...
     'Sparse_blob', 'Hyper_blob', 'Bitmap_blob', 'Full_blob') ;
 f2 = [tempdir '/gbtest_v' v.Version '_save.mat'] ;
-GrB.save (Sparse, f2) ;
+gtb_save (ghb, Sparse, f2) ;
 
 % test the current version
 fprintf ('\nTesting current (v%s) mat files:\n', v.Version) ;

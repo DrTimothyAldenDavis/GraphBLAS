@@ -26,7 +26,6 @@
 
 // Usage for @GhB only:
 
-// GhB.select (C, op)                           C = op(C)
 // GhB.select (C, op, A)                        C = op(A)
 // GhB.select (C, accum, op, A)                 C += op(A)
 // GhB.select (C, M, op, A)                     C<M> = op(A)
@@ -216,11 +215,10 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
     GrB_Scalar Zero = NULL ;
     GrB_IndexUnaryOp nan_test = NULL ;
-    int arena = GrB_DEFAULT ;
 
-    GBMX_USAGE (nargin >= 2+1 && nargin <= 7+1 && nargout <= 2, USAGE) ;
+    GBMX_USAGE (nargin >= 3 && nargin <= 8 && nargout <= 2, USAGE) ;
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
-    arena = ghb ? GrB_DEFAULT : MXARENA ;
+    int arena = ghb ? GrB_DEFAULT : MXARENA ;
 
     bool inplace = ghb && (nargout == 0) ;
     double *kind_output = NULL ;
@@ -277,17 +275,9 @@ void mexFunction
     { 
         if (nmatrices == 1)
         { 
-            if (inplace)
-            { 
-                // C = select (op, C), in place usage, C and A are aliased
-                OK (gb_get_deep (&C, inplace, &(Matrix [0]), arena, err)) ;
-                A = C ;
-            }
-            else
-            { 
-                // C = select (op, A)
-                OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
-            }
+            // C = select (op, A)
+            CHECK_ERROR (inplace, "invalid in-place usage") ;
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
         }
         else if (nmatrices == 2)
         { 
@@ -313,19 +303,10 @@ void mexFunction
         }
         else if (nmatrices == 2)
         { 
-            if (inplace)
-            {
-                // C = select (op, C, b), in place usage, C and A are aliased
-                OK (gb_get_deep (&C, inplace, &(Matrix [0]), arena, err)) ;
-                A = C ;
-                OK (gb_get_matrix (&b, &b_to_free, &(Matrix [1]), arena, err)) ;
-            }
-            else
-            {
-                // C = select (op, A, b)
-                OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
-                OK (gb_get_matrix (&b, &b_to_free, &(Matrix [1]), arena, err)) ;
-            }
+            CHECK_ERROR (inplace, "invalid in-place usage") ;
+            // C = select (op, A, b)
+            OK (gb_get_matrix (&A, &A_to_free, &(Matrix [0]), arena, err)) ;
+            OK (gb_get_matrix (&b, &b_to_free, &(Matrix [1]), arena, err)) ;
         }
         else if (nmatrices == 3)
         { 
