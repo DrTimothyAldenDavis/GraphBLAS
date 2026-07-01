@@ -14,4 +14,3 @@ else
     C = GrB (gbmex_apply (ghb, arg1, arg2, desc)) ;
 end
 
-

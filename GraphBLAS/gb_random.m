@@ -158,7 +158,8 @@ L = gzb_select (ghb, 'tril', C, -1) ;
 if (symmetric)
 
     % C = tril (C) + L'
-    C = gzb_eadd (ghb, gzb_select (ghb, 'tril', C, 0), '+', gzb_trans (ghb, L)) ;
+    C = gzb_eadd (ghb, gzb_select (ghb, 'tril', C, 0), '+', ...
+        gzb_trans (ghb, L)) ;
 
 elseif (hermitian)
 

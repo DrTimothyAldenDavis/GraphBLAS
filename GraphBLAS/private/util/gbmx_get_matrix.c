@@ -53,7 +53,6 @@ void gbmx_get_matrix
         // X is a @GhB handle object
         //----------------------------------------------------------------------
 
-
         matrix->G = gbmx_get_ghb_matrix (X) ;
         CHECK_ERROR (matrix->G == NULL, "invalid @GhB matrix") ;
         matrix->will_wait = GB_will_wait (matrix->G) ;

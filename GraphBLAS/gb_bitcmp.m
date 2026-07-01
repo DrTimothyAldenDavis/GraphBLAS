@@ -38,4 +38,3 @@ if (~isequal (gbmex_type (C), ctype))
     C = gzb (ghb, C, ctype) ;
 end
 
-

@@ -11,4 +11,3 @@ C = gbmex_builtin (a) ;
 x = C (1) ;
 y = C (2) ;
 
-

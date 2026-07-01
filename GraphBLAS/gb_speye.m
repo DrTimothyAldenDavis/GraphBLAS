@@ -1,6 +1,6 @@
 function C = gb_speye (ghb, func, varargin)
 %GB_SPEYE Sparse identity matrix.  Not user-callable.
-% Implements C = GrB.eye (...) and GrB.speye (...).
+% Implements C = GrB.eye (...) and GhB.speye (...).
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

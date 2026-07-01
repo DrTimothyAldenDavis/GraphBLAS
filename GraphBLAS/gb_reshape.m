@@ -1,6 +1,9 @@
 function C = gb_reshape (ghb, G, varargin)
 % GB_RESHAPE implements reshape for GrB and GhB.  Not user-callable.
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
 % the third output of gb_parse_args is not actually a type, but 'by row', 'by
 % col', or 'double' if not present on input.
 [mnew, nnew, type] = gb_parse_args (ghb, 'reshape', varargin {:}) ;

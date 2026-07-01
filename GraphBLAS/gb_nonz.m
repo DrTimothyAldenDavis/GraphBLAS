@@ -1,5 +1,5 @@
 function result = gb_nonz (ghb, A, varargin)
-%GB_NONZ implements GrB.nonz and GrB.nonz.  Not user-callable.
+%GB_NONZ implements GrB.nonz and GhB.nonz.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -32,5 +32,4 @@ else
     % get the count/list of the entries of A
     result = gb_entries (ghb, A, varargin {1:nargs-2}) ;
 end
-
 

@@ -1,5 +1,5 @@
 function C = gb_subref (ghb, A, S)
-%GB_SUBREF implements C=A(I,J) or C=A(I) for GrB and GrB.  Not user-callable.
+%GB_SUBREF implements C=A(I,J) or C=A(I) for GrB and GhB.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

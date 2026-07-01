@@ -1,5 +1,8 @@
 function [x,p] = gbtest_argminmax (ghb, A, ismin, dim)
-%GBTEST_ARGMINMAX simple computation of argmin and argmax
+%GBTEST_ARGMINMAX simple computation of argmin and argmax.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 S = spones (A) ;
 [m n] = size (A) ;

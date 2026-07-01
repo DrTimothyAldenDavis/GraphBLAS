@@ -151,7 +151,6 @@ void gb_isnanfc32 (bool *z, const GxB_FC32_t *aij,
     (*z) = isnan (crealf (*aij)) || isnan (cimagf (*aij)) ;
 }
 
-
 #define ISNANFC32_DEFN                                              \
 "void gb_isnanfc32 (bool *z, const GxB_FC32_t *aij,             \n" \
 "                   int64_t i, int64_t j, const void *thunk)    \n" \

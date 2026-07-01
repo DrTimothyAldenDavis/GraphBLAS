@@ -31,4 +31,3 @@ end
 
 C = gzb (ghb, T) ;
 
-
