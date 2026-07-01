@@ -12,6 +12,7 @@
 // optype = gbmex_optype (atype, btype)
 
 #include "gb_interface.h"
+#include "gbmx_interface.h"
 
 #define USAGE "usage: c = GrB.optype (atype, btype)"
 

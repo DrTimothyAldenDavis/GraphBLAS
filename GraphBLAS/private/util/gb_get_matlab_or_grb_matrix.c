@@ -13,17 +13,15 @@
 // MXARENA. The header of A is placed in the arena determined by the input
 // parameter.
 
-#define GB_UTIL
-
+#undef  FREE_WORK
 #define FREE_WORK                       \
     GxB_Container_free (&Container) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                        \
     FREE_WORK                           \
     GrB_Matrix_free (&Y) ;              \
     GrB_Matrix_free (&A) ;
-
-#include "gb_interface.h"
 
 GrB_Info gb_get_matlab_or_grb_matrix   // shallow copy of MATLAB or @GrB matrix
 (
@@ -149,4 +147,9 @@ GrB_Info gb_get_matlab_or_grb_matrix   // shallow copy of MATLAB or @GrB matrix
     (*A_handle) = A ;
     return (GrB_SUCCESS) ;
 }
+
+#undef  FREE_WORK
+#define FREE_WORK
+#undef  FREE_ALL
+#define FREE_ALL
 

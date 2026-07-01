@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_interface.h"
-
 uint64_t gbmx_get_uint64_scalar // return uint64 value of a MATLAB scalar
 (
     const mxArray *mxscalar,    // MATLAB scalar to extract

@@ -7,11 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+#undef  FREE_ALL
 #define FREE_ALL \
     GrB_Descriptor_free (&desc) ;
-
-#define GB_UTIL
-#include "gb_interface.h"
 
 GrB_Info gb_get_descriptor
 (
@@ -50,4 +48,7 @@ GrB_Info gb_get_descriptor
     (*desc_handle) = desc ;
     return (GrB_SUCCESS) ;
 }
+
+#undef  FREE_ALL
+#define FREE_ALL
 

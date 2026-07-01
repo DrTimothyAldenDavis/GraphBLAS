@@ -26,17 +26,17 @@
 // GhB.ewise (C, M, op, A, B)               C<M> = op(A,B)
 // GhB.ewise (C, M, accum, op, A, B)        C<M> += op(A,B)
 
+#undef  FREE_WORK
 #define FREE_WORK                   \
     GrB_Matrix_free (&M_to_free) ;  \
     GrB_Matrix_free (&A_to_free) ;  \
     GrB_Matrix_free (&B_to_free) ;  \
     GrB_Descriptor_free (&desc) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     FREE_WORK ;                     \
     GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
 
 void gbmx_ewise_mexFunction
 (
@@ -221,4 +221,9 @@ void gbmx_ewise_mexFunction
 
     gb_wrapup ( ) ;
 }
+
+#undef  FREE_WORK
+#define FREE_WORK
+#undef  FREE_ALL
+#define FREE_ALL
 

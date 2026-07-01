@@ -15,6 +15,7 @@
 // nmalloc = gbmex_nmalloc ;
 
 #include "gb_interface.h"
+#include "gbmx_interface.h"
 
 void mexFunction
 (

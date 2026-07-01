@@ -17,8 +17,6 @@
 // because mxGetData works best for Octave, and it works fine for MATLAB
 // since GraphBLAS requires R2018a with the interleaved complex data type.
 
-#include "gb_interface.h"
-
 #define IF(error,message) \
     CHECK_ERROR (error, "invalid GraphBLAS struct (" message ")" ) ;
 
@@ -397,4 +395,6 @@ void gbmx_get_grb_matrix
     matrix->will_wait = false ;
     matrix->kind = KIND_GRB ;   // matrix holds a @GrB value matrix
 }
+
+#undef IF
 

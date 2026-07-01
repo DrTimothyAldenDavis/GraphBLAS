@@ -11,9 +11,11 @@
 
 // gbmex_disp (C, level)
 
-#define FREE_WORK GrB_Matrix_free (&C_to_free) ;
-
 #include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_ALL
+#define FREE_ALL GrB_Matrix_free (&C_to_free) ;
 
 #define USAGE "usage: gbmex_disp (ghb, C, level)"
 
@@ -91,7 +93,7 @@ void mexFunction
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    FREE_WORK ;
+    FREE_ALL ;
     gb_wrapup ( ) ;
 }
 

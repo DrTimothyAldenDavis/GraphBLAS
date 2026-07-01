@@ -15,6 +15,7 @@
 // is not a @GhB handle matrix from GraphBLAS v10.4.0 or later.
 
 #include "gb_interface.h"
+#include "gbmx_interface.h"
 
 #define USAGE "usage: gbmex_wait (G)"
 

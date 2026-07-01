@@ -67,6 +67,11 @@
 
 // C is always returned as a GrB matrix.
 
+#include "gb_interface.h"
+
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                       \
     gb_free ((void **) (&Si), arena) ;  \
     gb_free ((void **) (&Sj), arena) ;  \
@@ -78,11 +83,10 @@
     GrB_Matrix_free (&A_copy) ;         \
     GrB_Matrix_free (&A_copy2) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                        \
     FREE_WORK ;                         \
     GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
 
 // FIXME: add inplace
 

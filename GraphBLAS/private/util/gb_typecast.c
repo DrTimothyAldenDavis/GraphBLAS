@@ -7,10 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
+#undef  FREE_ALL
 #define FREE_ALL GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
 
 GrB_Info gb_typecast  // C = (type) A, where C is deep
 (
@@ -78,3 +76,6 @@ GrB_Info gb_typecast  // C = (type) A, where C is deep
     return (GrB_SUCCESS) ;
 }
  
+#undef  FREE_ALL
+#define FREE_ALL
+

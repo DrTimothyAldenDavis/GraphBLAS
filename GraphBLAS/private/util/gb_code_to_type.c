@@ -10,9 +10,6 @@
 // Returns NULL if the type is user-defined.  This method cannot fail, so it
 // does not need to return a GrB_Info value.
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 GrB_Type gb_code_to_type
 (
     GrB_Type_Code code

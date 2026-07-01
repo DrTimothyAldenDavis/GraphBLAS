@@ -11,8 +11,6 @@
 // This is called by GB_Global_abort, which uses the C abort() method by
 // default.
 
-#include "gb_interface.h"
-
 void gbmx_abort ( void )    // terminate immediately (debug assertions only)
 {
     mexErrMsgIdAndTxt ("GraphBLAS:abort", "GraphBLAS failed") ;

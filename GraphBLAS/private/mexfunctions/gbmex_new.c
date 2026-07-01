@@ -24,14 +24,17 @@
 // C = gbmex_new (ghb, m, n, type, format)
 // C = gbmex_new (ghb, m, n, format, type)
 
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                   \
     GrB_Matrix_free (&A_to_free) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     FREE_WORK ;                     \
     GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: C = GrB (m,n,type,format) or C = GrB (A,type,format)"
 

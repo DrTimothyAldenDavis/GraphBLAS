@@ -15,6 +15,10 @@
 
 // where C is a 2D cell array of matrices.
 
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                   \
     mxFree (Tiles) ;                \
     mxFree (Tiles_opaque) ;         \
@@ -22,10 +26,9 @@
     mxFree (Tile_ncols) ;           \
     GrB_Matrix_free (&A_to_free) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     FREE_WORK ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.split (A, m, n)"
 

@@ -11,15 +11,18 @@
 // 10.4.0 or later, from a struct created when a non-handle @GrB matrix was
 // saved to a *.mat file by GraphBLAS v10.3.1 or earlier.
 
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                   \
     GxB_Container_free (&Container) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     FREE_WORK ;                     \
     GrB_Matrix_free (&C) ;          \
     GrB_Matrix_free (&Y) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: C = gbmex_loadhistorical (ghb, S)"
 

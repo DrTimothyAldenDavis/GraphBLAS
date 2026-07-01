@@ -25,16 +25,14 @@
 // also be a @GrB object, not a MATLAB matrix).  In this case, C and Cin are
 // the same matrix.
 
-#define GB_UTIL
-
+#undef  FREE_WORK
 #define FREE_WORK                   \
     GrB_Matrix_free (&C_to_free) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     FREE_WORK ;                     \
     GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
 
 GrB_Info gb_get_deep        // get the input/output matrix C
 (
@@ -107,4 +105,9 @@ GrB_Info gb_get_deep        // get the input/output matrix C
     (*C_handle) = C ;
     return (GrB_SUCCESS) ;
 }
+
+#undef  FREE_WORK
+#define FREE_WORK
+#undef  FREE_ALL
+#define FREE_ALL
 

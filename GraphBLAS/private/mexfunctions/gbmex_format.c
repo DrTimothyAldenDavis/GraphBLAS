@@ -14,9 +14,11 @@
 // [f,sparsity,iso] = gbmex_format (A) ;  get the format, sparsity,
 //                              and iso status of a matrix (@GrB or built-in)
 
-#define FREE_WORK GrB_Matrix_free (&A_to_free) ;
-
 #include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_ALL
+#define FREE_ALL GrB_Matrix_free (&A_to_free) ;
 
 #define USAGE "usage: [f,s,iso] = GrB.format(A), " \
     "f = GrB.format (f), or f = GrB.format"
@@ -111,7 +113,7 @@ void mexFunction
             OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
             OK (GrB_Matrix_get_INT32 (A, &sparsity, GxB_SPARSITY_STATUS)) ;
             OK (GrB_Matrix_get_INT32 (A, &iso, GxB_ISO)) ;
-            FREE_WORK ;
+            FREE_ALL ;
         }
     }
 

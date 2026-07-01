@@ -23,6 +23,16 @@
 // GhB.extract (C, M, A, I, J)                   C<M> = A(I,J)
 // GhB.extract (C, M, accum, A, I, J)            C<M> += A(I,J)
 
+#include "gb_interface.h"
+#include "gb_cell_to_list.c"
+#include "gb_matrix_to_list.c"
+#include "gb_string_and_type_to_binop_or_idxunop.c"
+#include "gb_string_to_binop.c"
+#include "gb_string_to_binop_or_idxunop.c"
+
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                   \
     GrB_Matrix_free (&M_to_free) ;  \
     GrB_Matrix_free (&A_to_free) ;  \
@@ -30,11 +40,10 @@
     GrB_Vector_free (&J_to_free) ;  \
     GrB_Descriptor_free (&desc) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     FREE_WORK ;                     \
     GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.extract (Cin, M, accum, A, I, J, desc)"
 

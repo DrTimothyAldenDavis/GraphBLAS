@@ -79,8 +79,6 @@ void mexFunction
 }
 */
 
-#include "gb_interface.h"
-
 static const char *fields [1] = { "opaque" } ;
 
 mxArray *gbmx_export_ghb_mxstruct   // construct an mxArray struct for @GhB

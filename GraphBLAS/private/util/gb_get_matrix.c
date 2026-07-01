@@ -22,10 +22,8 @@
 // The A_to_free matrix must be freed by the caller (which does not free the
 // readonly MATLAB content).
 
-#define GB_UTIL
+#undef  FREE_ALL
 #define FREE_ALL GrB_Matrix_free (&A) ;
-
-#include "gb_interface.h"
 
 GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
                             // or the content of a MATLAB @GrB handle object
@@ -83,4 +81,7 @@ GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
 
     return (GrB_SUCCESS) ;
 }
+
+#undef  FREE_ALL
+#define FREE_ALL
 

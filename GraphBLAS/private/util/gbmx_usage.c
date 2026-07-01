@@ -12,39 +12,6 @@
 // Since GrB_init relies on the default allocates in arena 0 (malloc/free),
 // memory failures are properly handled.
 
-#include "gb_interface.h"
-
-//------------------------------------------------------------------------------
-// malloc/free for each arena
-//------------------------------------------------------------------------------
-
-typedef void * (*malloc_t) (size_t) ;
-typedef void   (*free_t) (void *) ;
-static malloc_t gb_malloc_func [4] = { malloc, NULL, mxMalloc, NULL } ;
-static free_t   gb_free_func   [4] = { free  , NULL, mxFree  , NULL } ;
-
-void *gb_malloc (size_t n, int arena)
-{ 
-    // allocate memory in the arena; at least 8 bytes
-    if (arena < 0 || arena >= 4 || gb_malloc_func [arena] == NULL)
-    {
-        return (NULL) ;
-    }
-    return (gb_malloc_func [arena] (MAX (n, sizeof (uint64_t)))) ;
-}
-
-void gb_free (void **p, int arena)
-{
-    if (p != NULL && *p != NULL && arena >= 0 && arena < 4
-        && gb_free_func [arena] != NULL)
-    { 
-        // free the pointer in the arena and set the pointer to NULL to indicate
-        // it has been freed.
-        gb_free_func [arena] (*p) ;
-        (*p) = NULL ;
-    }
-}
-
 //------------------------------------------------------------------------------
 // gbmx_usage
 //------------------------------------------------------------------------------
@@ -82,16 +49,7 @@ void gbmx_usage     // check usage and make sure GrB.init has been called
         // use mxMalloc/mxFree for the MATLAB arena
         OK (GxB_arena_init (MXARENA, mxMalloc, mxCalloc, mxRealloc, mxFree)) ;
 
-        OK (gb_defaults (err)) ;        // no memory allocated; "cannot" fail
-
-        // acquire malloc/free of each arena for gb_malloc and gb_free
-        for (int arena = 0 ; arena < 4 ; arena++)
-        {
-            OK (GrB_Global_get_VOID (GrB_GLOBAL, &(gb_malloc_func [arena]),
-                GxB_ARENA_MALLOC)) ;
-            OK (GrB_Global_get_VOID (GrB_GLOBAL, &(gb_free_func [arena]),
-                GxB_ARENA_FREE)) ;
-        }
+        OK (gbmx_defaults (err)) ;        // no memory allocated; "cannot" fail
     }
 
     //--------------------------------------------------------------------------

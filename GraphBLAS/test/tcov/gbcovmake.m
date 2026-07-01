@@ -25,7 +25,7 @@ for k = 1:length (mfiles)
     copyfile ([(mfiles (k).folder) '/' (mfiles (k).name)], 'tmp/@GhB/') ;
 end
 
-% copy all ../../gb*.m files into tmp
+% copy all ../../g*.m files into tmp
 mfiles = dir ('../../g*.m') ;
 for k = 1:length (mfiles)
     copyfile ([(mfiles (k).folder) '/' (mfiles (k).name)], 'tmp') ;
@@ -44,6 +44,7 @@ count = gbcov_edit (ufiles, count, 'tmp') ;
 
 % create the gbfinish.c file and place in tmp
 f = fopen ('tmp/gbcovfinish.c', 'w') ;
+fprintf (f, '#define NO_UTIL_SOURCE\n') ;
 fprintf (f, '#include "gb_interface.h"\n') ;
 fprintf (f, 'int64_t gbcov [GBCOV_MAX] ;\n') ;
 fprintf (f, 'int gbcov_max = %d ;\n', count) ;
@@ -109,10 +110,7 @@ cd tmp
 try
 
     % compile util files
-    cfiles1 = dir ('gb_*.c') ;
-    cfiles2 = dir ('gbmx_*.c') ;
-    cfiles3 = dir ('gbcov*.c') ;
-    cfiles = [ cfiles1 ; cfiles2 ; cfiles3 ] ;
+    cfiles = dir ('gbcov*.c') ;
 
     objlist = '' ;
     for k = 1:length (cfiles)

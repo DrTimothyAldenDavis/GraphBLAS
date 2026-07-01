@@ -23,15 +23,18 @@
 //  C = gbmex_full (ghb, A, type, id)
 //  C = gbmex_full (ghb, A, type, id, desc)
 
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                   \
     GrB_Matrix_free (&A_to_free) ;  \
     GrB_Matrix_free (&id_to_free) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     FREE_WORK ;                     \
     GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: C = gbmex_full (ghb, A, type, id, desc)"
 

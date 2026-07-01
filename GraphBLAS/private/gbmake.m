@@ -197,63 +197,13 @@ fprintf ('compiler incs:  %s\n', inc) ;
 fprintf ('linking flags:  %s\n', Lflags) ;
 fprintf ('library:        %s\n', libgraphblas) ;
 
-hfiles = [ dir('*.h') ; dir('util/*.h') ] ;
-
-cfiles = dir ('util/*.c') ;
-
-% Find the last modification time of any hfile.
-% These are #include'd into source files.
+% Find the last modification time of any util/*.c or *.h file.
+hfiles = [ dir('*.h') ; dir('util/*.c') ; dir('util/*.h') ; ] ;
 htime = 0 ;
 for k = 1:length (hfiles)
     t = datenum (hfiles (k).date) ; %#ok<*DATNM>
     htime = max (htime, t) ;
 end
-
-mx_special = { 'gbmex_mxm', 'gbmex_mtimes', 'gbmex_semiringinfo' } ;
-c_special = { 'gb_semiring', 'gb_string_to_semiring' } ;
-
-% compile any source files that need compiling
-any_c_compiled = 0 ;
-objlist = '' ;
-objlist_special = '' ;
-for k = 1:length (cfiles)
-
-    % get the full cfile filename and modification time
-    cfile = [(cfiles (k).folder) filesep (cfiles (k).name)] ;
-    tc = datenum (cfiles(k).date) ;
-
-    % get the object file name
-    cfilename = cfiles(k).name ;
-    cfilename = cfilename (1:end-2) ;
-    objfile = [ cfilename object_suffix ] ;
-
-    % get the object file modification time
-    if (~any (strcmp (cfilename, c_special)))
-        objlist = [ objlist ' ' objfile ] ;     %#ok
-    end
-    objlist_special = [ objlist_special ' ' objfile ] ;     %#ok
-    dobj = dir (objfile) ;
-    if (isempty (dobj))
-        % there is no object file; the cfile must be compiled
-        tobj = 0 ;
-    else
-        tobj = datenum (dobj.date) ;
-    end
-
-    % compile the cfile if it is newer than its object file, or any hfile
-    if (make_all || tc > tobj || htime > tobj)
-        % compile the cfile
-        % fprintf ('%s\n', cfile) ;
-        mexcmd = sprintf ('mex -c %s %s %s ''%s''', ...
-            silent, flags, inc, cfile) ;
-        % fprintf ('%s\n', mexcmd) ;
-        fprintf ('.') ;
-        eval (mexcmd) ;
-        any_c_compiled = 1 ;
-    end
-end
-
-% compile the mexFunctions
 
 if (have_octave)
     flags = [ flags ' -DOCTAVE=1 '] ;
@@ -263,6 +213,7 @@ if (have_octave)
     end
 end
 
+% compile the mexFunctions
 mexfunctions = dir ('mexfunctions/*.c') ;
 for k = 1:length (mexfunctions)
 
@@ -273,7 +224,6 @@ for k = 1:length (mexfunctions)
 
     % get the compiled mexFunction modification time
     mexfuncname = mexfunc (1:end-2) ;
-    % fprintf ('%s:\n', mexfuncname) ;
     mexfunction_compiled = [ '../' mexfuncname '.' mexext ] ;
     dobj = dir (mexfunction_compiled) ;
     if (isempty (dobj))
@@ -284,17 +234,10 @@ for k = 1:length (mexfunctions)
     end
 
     % compile if it is newer than its object file, or if any cfile was compiled
-    if (make_all || tc > tobj || any_c_compiled)
+    if (make_all || tc > tobj || htime > tobj) % || any_c_compiled)
         % compile the mexFunction
-        if (any (strcmp (mexfuncname, mx_special)))
-            mexcmd = sprintf ('mex -outdir .. %s %s %s %s ''%s'' %s %s', ...
-                Lflags, silent, flags, inc, mexfunction, objlist_special, ...
-                libgraphblas) ;
-        else
-            mexcmd = sprintf ('mex -outdir .. %s %s %s %s ''%s'' %s %s', ...
-                Lflags, silent, flags, inc, mexfunction, objlist, ...
-                libgraphblas) ;
-        end
+        mexcmd = sprintf ('mex -outdir .. %s %s %s %s ''%s'' %s', ...
+            Lflags, silent, flags, inc, mexfunction, libgraphblas) ;
         % fprintf ('%s\n', mexcmd) ;
         fprintf (':') ;
         eval (mexcmd) ;

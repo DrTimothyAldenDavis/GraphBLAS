@@ -17,6 +17,7 @@
 // specification of how handle objects are deleted).
 
 #include "gb_interface.h"
+#include "gbmx_interface.h"
 
 void mexFunction
 (

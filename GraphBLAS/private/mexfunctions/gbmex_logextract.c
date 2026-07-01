@@ -79,6 +79,11 @@
 
 // C is always returned as a GrB matrix.
 
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+#include "GB_transpose.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                       \
     gb_free ((void **) &Kx, arena) ;    \
     GrB_Matrix_free (&G) ;              \
@@ -89,13 +94,11 @@
     GrB_Matrix_free (&A_copy) ;         \
     GrB_Matrix_free (&A_to_free) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                        \
     FREE_WORK ;                         \
     GrB_Vector_free (&V) ;              \
     GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
-#include "GB_transpose.h"
 
 #define USAGE "usage: C = gbmex_logextract (ghb, A, M)"
 
@@ -229,11 +232,7 @@ void mexFunction
     size_t Kx_memsize = (MAX (mnz, 1) * sizeof (uint64_t)) ;
     uint64_t Kx_mem = GB_mem (arena, Kx_memsize) ;
     Kx = gb_malloc (Kx_memsize, arena) ;
-    if (Kx == NULL)
-    {
-        FREE_ALL ;
-        ERROR ("out of memory", GrB_OUT_OF_MEMORY) ;
-    }
+    if (Kx == NULL) ERROR ("out of memory", GrB_OUT_OF_MEMORY) ;
     OK (GB_helper7 (Kx, mnz)) ;
 
     // add a new K->x to K

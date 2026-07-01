@@ -13,6 +13,7 @@
 // burble = gbmex_burble (burble) ;
 
 #include "gb_interface.h"
+#include "gbmx_interface.h"
 
 #define USAGE "usage: burble = GrB.burble ; or GrB.burble (burble)"
 

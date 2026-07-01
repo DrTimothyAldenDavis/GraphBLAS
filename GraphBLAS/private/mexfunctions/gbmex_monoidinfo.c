@@ -14,6 +14,13 @@
 // ok = gbmex_monoidinfo (monoid)
 
 #include "gb_interface.h"
+#include "gb_string_and_type_to_binop_or_idxunop.c"
+#include "gb_string_to_binop.c"
+#include "gb_string_to_binop_or_idxunop.c"
+#include "gb_binop_to_monoid.c"
+#include "gb_string_to_monoid.c"
+
+#include "gbmx_interface.h"
 
 #define USAGE "usage: GrB.monoidinfo (monoid) or GrB.monoidinfo (monoid,type)"
 

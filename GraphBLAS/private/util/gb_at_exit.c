@@ -10,9 +10,6 @@
 // This method is called by MATLAB when the mexFunction that called GrB_init
 // (or GxB_init) is cleared.
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 void gb_at_exit ( void )
 {
     // Finalize GraphBLAS, clearing all JIT kernels and freeing the hash table.

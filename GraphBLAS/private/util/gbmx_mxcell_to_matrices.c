@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_interface.h"
-
 void gbmx_mxcell_to_matrices
 (
     // output

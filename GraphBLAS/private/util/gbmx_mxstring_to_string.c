@@ -10,8 +10,6 @@
 // The string is converted to lower case, so that all input strings to the
 // SuiteSparse:GraphBLAS interface are case-insensitive.
 
-#include "gb_interface.h"
-
 void gbmx_mxstring_to_string  // copy a built-in string into a C string
 (
     // output:

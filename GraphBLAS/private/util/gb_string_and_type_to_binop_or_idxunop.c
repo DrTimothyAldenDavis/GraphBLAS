@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 // op_name: a string defining the operator name:
 //  1st, 2nd, any, pair (same as oneb), min, max, +, -, rminus, *, /, \
 //  iseq, isne, isgt, islt, isge, isle,

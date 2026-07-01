@@ -11,14 +11,16 @@
 
 // [lo,hi] = gbmex_bandwidth (A, compute_lo, compute_hi)
 
-#define FREE_WORK                   \
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_ALL
+#define FREE_ALL                    \
     GrB_Matrix_free (&A_to_free) ;  \
     GrB_Matrix_free (&x) ;          \
     GrB_Matrix_free (&idiag) ;      \
     GrB_Matrix_free (&imin) ;       \
     GrB_Matrix_free (&imax) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: [lo,hi] = gbmex_bandwidth (A, compute_lo, compute_hi)"
 
@@ -188,7 +190,7 @@ void mexFunction
     // return result
     //--------------------------------------------------------------------------
 
-    FREE_WORK ;
+    FREE_ALL ;
     (*lo_output) = (int64_t) lo ;
     (*hi_output) = (int64_t) hi ;
     gb_wrapup ( ) ;

@@ -16,9 +16,6 @@
 // user-defined operator f(x,y) that returns true if x and y are equal, or if
 // both are NaN, and false otherwise.
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 GrB_Info gb_is_equal
 (
     // output:

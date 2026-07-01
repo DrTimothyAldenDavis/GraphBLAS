@@ -14,8 +14,6 @@
 // GraphBLAS v10.4.0 or later.  Since this method is used by gbmex_delete, it
 // cannot throw an error.
 
-#include "gb_interface.h"
-
 mxArray *gbmx_get_ghb_handle    // the MATLAB @GhB opaque handle
 (
     // input

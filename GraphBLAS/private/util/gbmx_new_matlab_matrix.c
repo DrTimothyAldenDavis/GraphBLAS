@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_interface.h"
-
 mxArray *gbmx_new_matlab_matrix // return new MATLAB full matrix
 (
     const uint64_t nrows,       // dimensions

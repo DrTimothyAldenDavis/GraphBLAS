@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 GrB_Info gb_string_to_binop // return binary operator from a string
 (
     // output

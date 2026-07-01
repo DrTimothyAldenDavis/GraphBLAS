@@ -17,8 +17,6 @@
 // This method allocates no memory, and thus mx* and GrB_* methods are
 // intermingled.
 
-#include "gb_interface.h"
-
 void gbmx_get_matrix
 (
     // output
@@ -47,22 +45,6 @@ void gbmx_get_matrix
     int nfields = (is_struct) ? mxGetNumberOfFields (X) : 0 ;
     bool is_grb = mxIsClass (X, "GrB") || (is_struct && nfields > 1) ;
     bool is_ghb = mxIsClass (X, "GhB") || (is_struct && nfields == 1) ;
-
-/*
-    printf ("gbmx_get_matrix:\n"
-            "   mxIsClass (X, 'GrB'): %d \n"
-            "   mxIsClass (X, 'GhB'): %d \n"
-            "   is_struct:            %d \n"
-            "   nfields:              %d\n"
-            "   is_grb                %d\n"
-            "   is_ghb                %d\n",
-            mxIsClass (X, "GrB"),
-            mxIsClass (X, "GhB"),
-            is_struct,
-            nfields,
-            is_grb,
-            is_ghb) ;
-*/
 
     if (is_ghb)
     { 

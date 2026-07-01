@@ -16,6 +16,7 @@
 // any memory.
 
 #include "gb_interface.h"
+#include "gbmx_interface.h"
 
 #define USAGE "usage: nthreads = GrB.threads ; or GrB.threads (nthreads)"
 

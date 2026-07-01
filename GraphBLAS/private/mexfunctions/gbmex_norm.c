@@ -7,9 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-#define FREE_WORK GrB_Matrix_free (&A_to_free) ;
-
 #include "gb_interface.h"
+#include "gb_norm.c"
+
+#include "gbmx_interface.h"
+
+#undef  FREE_ALL
+#define FREE_ALL GrB_Matrix_free (&A_to_free) ;
 
 #define USAGE "usage: s = gbmex_norm (A, kind)"
 
@@ -97,7 +101,7 @@ void mexFunction
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    FREE_WORK ;
+    FREE_ALL ;
     (*s_output) = s ;
     gb_wrapup ( ) ;
 }

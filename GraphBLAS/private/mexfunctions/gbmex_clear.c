@@ -12,6 +12,7 @@
 //      GrB.jit ('flush') ;
 
 #include "gb_interface.h"
+#include "gbmx_interface.h"
 
 void mexFunction
 (
@@ -40,7 +41,7 @@ void mexFunction
     // set global defaults
     //--------------------------------------------------------------------------
 
-    OK (gb_defaults (err)) ;
+    OK (gbmx_defaults (err)) ;
 
     //--------------------------------------------------------------------------
     // save test coverage

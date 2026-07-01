@@ -17,14 +17,17 @@
 // be dense (not sparse) with all entries present, and of type GrB_UINT8.
 // C is returned as a @GrB matrix.
 
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                       \
     GrB_Matrix_free (&Blob_to_free) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                        \
     FREE_WORK ;                         \
     GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.deserialize (blob)"
 

@@ -13,8 +13,6 @@
 // matrix arguments are either built-in sparse or full matrices, GraphBLAS
 // matrices.
 
-#include "gb_interface.h"
-
 void gbmx_get_mxargs
 (
     // input:

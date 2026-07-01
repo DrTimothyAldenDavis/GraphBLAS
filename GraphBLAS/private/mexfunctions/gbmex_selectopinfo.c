@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmex_selectopinfo : print a GraphBLAS GrB_IndexUnaryOp (for illustration only)
+// gbmex_selectopinfo : print a GraphBLAS GrB_IndexUnaryOp (for illustration)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -14,6 +14,9 @@
 // ok = gbmex_selectopinfo (idxunop)
 
 #include "gb_interface.h"
+#include "gb_string_to_idxunop.c"
+
+#include "gbmx_interface.h"
 
 #define USAGE "usage: GrB.selectopinfo (selectop) or GrB.selectopinfo (op,type)"
 

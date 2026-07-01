@@ -29,9 +29,6 @@
 // This method does not allocate any memory, so it is safe to use in either
 // the GrB* or mx* region of a mexFunction.
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 GrB_Info gb_get_sparsity    // determine the sparsity of C for C = method(A,B)
 (
     // input:

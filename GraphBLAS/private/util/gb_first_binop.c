@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 GrB_Info gb_first_binop     // construct GrB_FIRST_[type] operator
 (
     // output

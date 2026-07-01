@@ -11,10 +11,8 @@
 // if the pattern of A and B are identical, and if the result of C = op(A,B) is
 // true for all entries in C.
 
-#define FREE_WORK GrB_Matrix_free (&C) ;
-
-#define GB_UTIL
-#include "gb_interface.h"
+#undef  FREE_ALL
+#define FREE_ALL GrB_Matrix_free (&C) ;
 
 GrB_Info gb_is_all          // check two matrices for equality, given an op
 (
@@ -96,7 +94,7 @@ GrB_Info gb_is_all          // check two matrices for equality, given an op
     if (nvals != nvals1)
     { 
         // pattern of A and B are different
-        FREE_WORK ;
+        FREE_ALL ;
         (*result) = false ;
         return (GrB_SUCCESS) ;
     }
@@ -111,7 +109,10 @@ GrB_Info gb_is_all          // check two matrices for equality, given an op
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    FREE_WORK ;
+    FREE_ALL ;
     return (GrB_SUCCESS) ;
 }
+
+#undef  FREE_ALL
+#define FREE_ALL
 

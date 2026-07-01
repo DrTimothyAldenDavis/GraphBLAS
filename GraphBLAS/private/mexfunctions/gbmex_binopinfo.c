@@ -14,6 +14,11 @@
 // ok = gbmex_binopinfo (binop)
 
 #include "gb_interface.h"
+#include "gb_string_and_type_to_binop_or_idxunop.c"
+#include "gb_string_to_binop.c"
+#include "gb_string_to_binop_or_idxunop.c"
+
+#include "gbmx_interface.h"
 
 #define USAGE "usage: GrB.binopinfo (binop) or GrB.binopinfo (binop,type)"
 

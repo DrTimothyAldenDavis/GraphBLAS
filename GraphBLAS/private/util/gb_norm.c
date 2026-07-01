@@ -7,12 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-#define FREE_WORK           \
+#undef  FREE_ALL
+#define FREE_ALL            \
     GrB_Matrix_free (&X) ;  \
     GrB_Vector_free (&t) ;
-
-#define GB_UTIL
-#include "gb_interface.h"
 
 GrB_Info gb_norm            // compute norm (A,kind)
 (
@@ -230,7 +228,10 @@ GrB_Info gb_norm            // compute norm (A,kind)
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    FREE_WORK ;
+    FREE_ALL ;
     return (GrB_SUCCESS) ;
 }
+
+#undef  FREE_ALL
+#define FREE_ALL
 

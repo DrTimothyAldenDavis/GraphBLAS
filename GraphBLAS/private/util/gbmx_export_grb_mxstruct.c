@@ -10,8 +10,6 @@
 // The input GrB_Matrix C is exported to a GraphBLAS matrix struct G for a @GrB
 // value matrix and then freed.
 
-#include "gb_interface.h"
-
 // for hypersparse, sparse, or full matrices
 static const char *MatrixFields [9] =
 {

@@ -22,17 +22,16 @@
 // length 3, and the descriptor must use GxB_IS_STRIDE for the call to
 // GrB_assign, GxB_subassign, or GrB_extract.
 
+#undef  FREE_WORK
 #define FREE_WORK                       \
     GrB_Vector_free (&Start_to_free) ;  \
     GrB_Vector_free (&Fini_to_free) ;   \
     GrB_Vector_free (&Inc_to_free) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                        \
     FREE_WORK ;                         \
     GrB_Vector_free (&I_to_free) ;
-
-#define GB_UTIL
-#include "gb_interface.h"
 
 GrB_Info gb_cell_to_list
 (
@@ -196,4 +195,9 @@ GrB_Info gb_cell_to_list
     (*I_to_free_handle) = I_to_free ;
     return (GrB_SUCCESS) ;
 }
+
+#undef  FREE_WORK
+#define FREE_WORK
+#undef  FREE_ALL
+#define FREE_ALL
 

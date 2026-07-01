@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_interface.h"
-
 kind_enum_t gbmx_get_kind
 (
     const mxArray *mxdesc

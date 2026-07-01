@@ -15,6 +15,7 @@
 // methods allocate any memory.
 
 #include "gb_interface.h"
+#include "gbmx_interface.h"
 
 #define USAGE "usage: v = gbmex_version"
 

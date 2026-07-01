@@ -13,6 +13,7 @@
 // [status, path] = gbmex_jit (status, path)
 
 #include "gb_interface.h"
+#include "gbmx_interface.h"
 
 #define USAGE "usage: [status, path] = GrB.jit (status, path) ;"
 

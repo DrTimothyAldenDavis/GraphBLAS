@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_interface.h"
-
 GrB_Type gbmx_mxarray_type      // return the GrB_Type of a built-in matrix
 (
     const mxArray *X

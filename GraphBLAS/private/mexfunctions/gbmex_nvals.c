@@ -14,9 +14,11 @@
 
 // nvals = gbmex_nvals (A)
 
-#define FREE_WORK GrB_Matrix_free (&A_to_free) ;
-
 #include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_ALL
+#define FREE_ALL GrB_Matrix_free (&A_to_free) ;
 
 #define USAGE "usage: [nvals, nzmax] = gbmex_nvals (A)"
 
@@ -96,7 +98,7 @@ void mexFunction
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    FREE_WORK ;
+    FREE_ALL ;
     (*anvals_output) = anvals ;
     if (nargout > 1)
     { 

@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 GrB_Info gb_is_column_vector    // determine if A is a column vector
 (
     // output:

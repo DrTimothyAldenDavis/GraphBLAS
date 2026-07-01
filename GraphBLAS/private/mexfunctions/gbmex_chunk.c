@@ -16,6 +16,7 @@
 // any memory.
 
 #include "gb_interface.h"
+#include "gbmx_interface.h"
 
 #define USAGE "usage: c = GrB.chunk ; or GrB.chunk (c)"
 

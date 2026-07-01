@@ -13,11 +13,13 @@
 
 //  result = gbmex_isequal (A,B)
 
-#define FREE_WORK                   \
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_ALL
+#define FREE_ALL                    \
     GrB_Matrix_free (&A_to_free) ;  \
     GrB_Matrix_free (&B_to_free) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: s = GrB.isequal (A, B)"
 
@@ -70,7 +72,7 @@ void mexFunction
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    FREE_WORK ;
+    FREE_ALL ;
     (*s_output) = is_equal ;
     gb_wrapup ( ) ;
 }

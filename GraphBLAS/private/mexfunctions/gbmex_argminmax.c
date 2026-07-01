@@ -17,6 +17,10 @@
 // 2, x and p are vectors of the same size.  For dim = 0, x is a scalar and p
 // is 2-by-1, containing the row and column index of the argmin/max of A.
 
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                       \
     GrB_Type_free (&Tuple) ;            \
     GrB_Type_free (&Tuple3) ;           \
@@ -37,12 +41,11 @@
     GrB_Scalar_free (&Theta) ;          \
     GrB_Scalar_free (&s) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                        \
     FREE_WORK ;                         \
     GrB_Matrix_free (&x) ;              \
     GrB_Matrix_free (&p) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: [x,p] = gbmex_argminmax (ghb, A, minmax, dim)"
 

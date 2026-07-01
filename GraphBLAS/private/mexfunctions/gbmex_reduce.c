@@ -23,15 +23,24 @@
 
 // where op(A) refers to reducing A to a scalar using the given op.
 
+#include "gb_interface.h"
+#include "gb_string_and_type_to_binop_or_idxunop.c"
+#include "gb_string_to_binop.c"
+#include "gb_string_to_binop_or_idxunop.c"
+#include "gb_binop_to_monoid.c"
+#include "gb_string_to_monoid.c"
+
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                   \
     GrB_Matrix_free (&A_to_free) ;  \
     GrB_Descriptor_free (&desc) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     FREE_WORK ;                     \
     GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.reduce (cin, accum, op, A, desc)"
 

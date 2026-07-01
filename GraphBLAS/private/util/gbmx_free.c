@@ -12,8 +12,6 @@
 //  void *p = mxMalloc ( ... ) ;
 //  gbmx_free (&p) ;                // frees p and sets p to NULL
 
-#include "gb_interface.h"
-
 void gbmx_free                  // mxFree wrapper
 (
     void **p_handle             // handle to pointer to be freed

@@ -29,9 +29,11 @@
 
 // C = gbmex_builtin (A)
 
-#define FREE_WORK GrB_Matrix_free (&A_to_free) ;
-
 #include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_ALL
+#define FREE_ALL GrB_Matrix_free (&A_to_free) ;
 
 #define USAGE "usage: C = gbmex_builtin (A)"
 
@@ -147,7 +149,7 @@ void mexFunction
 
     void *Cx = mxGetData (pargout [0]) ;
     GB_memcpy (Cx, Ax, Matrix.nvals * Matrix.typesize, nthreads) ;
-    FREE_WORK ;
+    FREE_ALL ;
     gb_wrapup ( ) ;
 }
 

@@ -10,9 +10,8 @@
 // The return value A is set to either the input matrix A_input, or the A_copy
 // matrix.
 
-#define GB_UTIL
+#undef  FREE_ALL
 #define FREE_ALL GrB_Matrix_free (&A_copy) ;
-#include "gb_interface.h"
 
 GrB_Info gb_by_col
 (
@@ -52,4 +51,7 @@ GrB_Info gb_by_col
     (*A_copy_handle) = A_copy ;
     return (GrB_SUCCESS) ;
 }
+
+#undef  FREE_ALL
+#define FREE_ALL
 

@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 // The string has the form op_name.op_type.  For example '+.double' is
 // GrB_PLUS_MONOID_FP64.  The type is optional.  If not present, it defaults
 // to the default_type parameter.

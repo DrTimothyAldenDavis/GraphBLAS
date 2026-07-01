@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 //------------------------------------------------------------------------------
 // gb_subtract_base:  V = S, or V = S-1
 //------------------------------------------------------------------------------
@@ -207,4 +204,9 @@ GrB_Info gb_matrix_to_list
     (*V_to_free_handle) = V_to_free ;
     return (GrB_SUCCESS) ;
 }
+
+#undef  FREE_WORK
+#define FREE_WORK
+#undef  FREE_ALL
+#define FREE_ALL
 

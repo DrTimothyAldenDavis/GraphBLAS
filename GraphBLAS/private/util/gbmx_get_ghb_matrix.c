@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_interface.h"
-
 // Returns NULL if G is not a @GhB handle object from GraphBLAS 10.4.0 or
 // later, or its G.opaque content.
 

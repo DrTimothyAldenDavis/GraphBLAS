@@ -8,6 +8,13 @@
 //------------------------------------------------------------------------------
 
 #include "gb_interface.h"
+#include "gb_string_and_type_to_binop_or_idxunop.c"
+#include "gb_string_to_binop.c"
+#include "gb_string_to_binop_or_idxunop.c"
+
+#include "gbmx_interface.h"
+
+#include "gbmx_ewise_mexFunction.c"
 
 #define USAGE "usage: C = GrB.eadd (Cin, M, accum, binop, A, B, desc)"
 

@@ -46,6 +46,15 @@
 // The 'tril', 'triu', 'diag', 'offdiag', and 2-input operators all require
 // the b scalar.  The b scalar must not appear for the '*0' operators.
 
+#include "gb_interface.h"
+#include "gb_string_to_idxunop.c"
+#include "gb_string_and_type_to_binop_or_idxunop.c"
+#include "gb_string_to_binop.c"
+#include "gb_string_to_binop_or_idxunop.c"
+
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                       \
     GrB_Scalar_free (&Zero) ;           \
     GrB_Matrix_free (&M_to_free) ;      \
@@ -56,11 +65,10 @@
     GrB_IndexUnaryOp_free (&nan_test) ; \
     GrB_Descriptor_free (&desc) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                        \
     FREE_WORK ;                         \
     GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.select (Cin, M, accum, op, A, b, desc)"
 

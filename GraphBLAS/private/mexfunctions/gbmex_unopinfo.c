@@ -14,6 +14,10 @@
 // ok = gbmex_unopinfo (unop)
 
 #include "gb_interface.h"
+#include "gb_string_to_unop.c"
+#include "gb_string_and_type_to_unop.c"
+
+#include "gbmx_interface.h"
 
 #define USAGE "usage: GrB.unopinfo (unop) or GrB.unopinfo (unop,type)"
 

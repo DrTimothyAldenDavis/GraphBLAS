@@ -7,18 +7,16 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-
+#undef  FREE_WORK
 #define FREE_WORK               \
     GrB_Matrix_free (&id2) ;    \
     GrB_Matrix_free (&B) ;      \
     GrB_Matrix_free (&T) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                \
     FREE_WORK ;                 \
     GrB_Matrix_free (&C) ; 
-
-#include "gb_interface.h"
 
 GrB_Info gb_expand_to_full      // C = full (A), and typecast
 (
@@ -105,4 +103,9 @@ GrB_Info gb_expand_to_full      // C = full (A), and typecast
     (*C_handle) = C ;
     return (GrB_SUCCESS) ;
 }
+
+#undef  FREE_WORK
+#define FREE_WORK
+#undef  FREE_ALL
+#define FREE_ALL
 

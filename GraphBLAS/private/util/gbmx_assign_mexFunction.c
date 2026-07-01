@@ -26,6 +26,7 @@
 // This method is in the util folder, but it is an entire mexFunction, not a
 // utility.
 
+#undef  FREE_WORK
 #define FREE_WORK                   \
     GrB_Matrix_free (&M_to_free) ;  \
     GrB_Matrix_free (&A_to_free) ;  \
@@ -33,11 +34,10 @@
     GrB_Vector_free (&J_to_free) ;  \
     GrB_Descriptor_free (&desc) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     FREE_WORK ;                     \
     GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
 
 void gbmx_assign_mexFunction    // gbmex_assign or gbmex_subassign mexFunctions
 (
@@ -282,4 +282,9 @@ void gbmx_assign_mexFunction    // gbmex_assign or gbmex_subassign mexFunctions
 
     gb_wrapup ( ) ;
 }
+
+#undef  FREE_WORK
+#define FREE_WORK
+#undef  FREE_ALL
+#define FREE_ALL
 

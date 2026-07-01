@@ -38,6 +38,16 @@
 
 // The descriptor is optional; if present, it must be the last input parameter.
 
+#include "gb_interface.h"
+#include "gb_string_and_type_to_binop_or_idxunop.c"
+#include "gb_string_to_binop.c"
+#include "gb_string_to_binop_or_idxunop.c"
+
+#include "gb_matrix_to_list.c"
+
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                   \
     GrB_Vector_free (&I_to_free) ;  \
     GrB_Vector_free (&J_to_free) ;  \
@@ -47,11 +57,10 @@
     GrB_Vector_free (&X2) ;         \
     GrB_Scalar_free (&x) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     FREE_WORK ;                     \
     GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.build (I, J, X, m, n, dup, type, desc)"
 

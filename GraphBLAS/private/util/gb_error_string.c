@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 const char *gb_error_string // return an error message from a GrB_Info value
 (
     GrB_Info info

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_interface.h"
-
 bool gbmx_mxarray_is_scalar   // true if built-in array is a scalar
 (
     const mxArray *S

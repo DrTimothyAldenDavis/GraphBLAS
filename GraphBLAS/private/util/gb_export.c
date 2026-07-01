@@ -21,15 +21,14 @@
 // then directly copied into a MATLAB/Octave matrix in a subsequent call to the
 // gbmex_builtin mexFunction.
 
-#define GB_UTIL
-
+#undef  FREE_WORK
 #define FREE_WORK                   \
     GrB_Matrix_free (&T) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
+    FREE_WORK ;                     \
     GrB_Matrix_free (C_handle) ;
-
-#include "gb_interface.h"
 
 GrB_Info gb_export              // export a GrB_Matrix to MATLAB
 (
@@ -137,4 +136,9 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
     }
     return (GrB_SUCCESS) ;
 }
+
+#undef  FREE_WORK
+#define FREE_WORK
+#undef  FREE_ALL
+#define FREE_ALL
 

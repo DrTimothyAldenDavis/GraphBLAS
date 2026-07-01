@@ -11,9 +11,6 @@
 // GrB_Info.  The typename might be a format instead, so this is not yet a
 // final error.  That is determined by the caller.
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 GrB_Type gb_string_to_type      // return the GrB_Type from a string
 (
     const char *typename

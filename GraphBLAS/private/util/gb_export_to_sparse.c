@@ -16,17 +16,15 @@
 // No mx* methods are called, so that any memory allocation failures can be
 // properly handled.
 
-#define GB_UTIL
-
+#undef  FREE_WORK
 #define FREE_WORK                   \
     GrB_Scalar_free (&zero) ;       \
     GrB_Matrix_free (&T) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     FREE_WORK ;                     \
     GrB_Matrix_free (C_handle) ;
-
-#include "gb_interface.h"
 
 GrB_Info gb_export_to_sparse
 (
@@ -147,4 +145,9 @@ GrB_Info gb_export_to_sparse
     FREE_WORK ;
     return (GrB_SUCCESS) ;
 }
+
+#undef  FREE_WORK
+#define FREE_WORK
+#undef  FREE_ALL
+#define FREE_ALL
 

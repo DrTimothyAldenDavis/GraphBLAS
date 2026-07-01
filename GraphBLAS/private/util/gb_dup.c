@@ -12,12 +12,8 @@
 // Cin might be a shallow @GrB matrix constructed from a MATLAB/Octave sparse
 // matrix, which always uses 64-bit integers.
 
-#define GB_UTIL
-
-#define FREE_ALL                    \
-    GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
+#undef  FREE_ALL
+#define FREE_ALL GrB_Matrix_free (&C) ;
 
 GrB_Info gb_dup             // copy a matrix
 (
@@ -37,4 +33,7 @@ GrB_Info gb_dup             // copy a matrix
     (*C_handle) = C ;
     return (GrB_SUCCESS) ;
 }
+
+#undef  FREE_ALL
+#define FREE_ALL
 

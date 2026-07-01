@@ -7,16 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-
+#undef  FREE_WORK
 #define FREE_WORK           \
     GrB_Vector_free (&T) ;
 
+#undef  FREE_ALL
 #define FREE_ALL            \
     FREE_WORK ;             \
     GrB_Scalar_free (x) ;
-
-#include "gb_interface.h"
 
 GrB_Info gb_get_first_scalar
 (
@@ -49,4 +47,9 @@ GrB_Info gb_get_first_scalar
     FREE_WORK ;
     return (GrB_SUCCESS) ;
 }
+
+#undef  FREE_WORK
+#define FREE_WORK
+#undef  FREE_ALL
+#define FREE_ALL
 

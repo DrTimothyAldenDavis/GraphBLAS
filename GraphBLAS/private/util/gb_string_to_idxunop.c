@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 // GrB_IndexUnaryOp operators, with their equivalent aliases
 
 GrB_Info gb_string_to_idxunop

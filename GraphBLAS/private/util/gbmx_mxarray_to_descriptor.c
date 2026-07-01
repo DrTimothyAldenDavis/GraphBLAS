@@ -9,8 +9,6 @@
 
 // get a gb_descriptor from a built-in MATLAB struct.
 
-#include "gb_interface.h"
-
 static void get_desc
 (
     // output:

@@ -13,15 +13,18 @@
 //  gbmex_degree (ghb, A, 'row')     row degree
 //  gbmex_degree (ghb, A, 'col')     column degree
 
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                   \
     GrB_Matrix_free (&x) ;          \
     GrB_Matrix_free (&A_to_free) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     FREE_WORK ;                     \
     GrB_Matrix_free (&d) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: degree = gbmex_degree (ghb, A, dim)"
 

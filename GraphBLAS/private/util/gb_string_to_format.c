@@ -34,9 +34,6 @@
 
 // This method uses no mx* or GrB* methods, so it can return bool.
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 bool gb_string_to_format        // true if a valid format is found
 (
     // input

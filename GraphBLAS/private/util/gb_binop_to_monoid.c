@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 GrB_Info gb_binop_to_monoid         // return monoid from a binary op
 (
     // output

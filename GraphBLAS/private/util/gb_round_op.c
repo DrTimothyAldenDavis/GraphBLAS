@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 GrB_UnaryOp gb_round_op (GrB_Type type)
 { 
     if (type == GrB_FP32) return (GxB_ROUND_FP32) ;

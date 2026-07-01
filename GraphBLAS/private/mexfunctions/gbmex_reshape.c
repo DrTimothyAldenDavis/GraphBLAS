@@ -11,16 +11,19 @@
 
 // C = gbmex_reshape (ghb, A, nrows_new, ncols_new, by_col)
 
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                   \
     GrB_Matrix_free (&A_to_free) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     FREE_WORK ;                     \
     GrB_Matrix_free (&C) ;
 
 #define USAGE "usage: C = gbmex_reshape (ghb, A, nrows_new, ncols_new, by_col)"
-
-#include "gb_interface.h"
 
 void mexFunction
 (

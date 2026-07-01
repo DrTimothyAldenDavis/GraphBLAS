@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 bool gb_is_integer (const GrB_Type type)
 { 
     return ((type == GrB_INT8  ) ||

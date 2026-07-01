@@ -12,8 +12,6 @@
 // allocated array, List, of size len, containing a list of integers contained
 // in the mxArray mxList.
 
-#include "gb_interface.h"
-
 uint64_t *gbmx_get_integer_list
 (
     const mxArray *mxList,

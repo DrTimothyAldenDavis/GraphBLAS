@@ -14,12 +14,14 @@
 // X is returned as a MATLAB matrix of size nvals-by-1.
 // The input matrix A must have no pending work.
 
-#define FREE_WORK                   \
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_ALL
+#define FREE_ALL                    \
     gb_free (&x, xarena) ;          \
     GrB_Matrix_free (&A_to_free) ;  \
     GrB_Vector_free (&X_vector) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: X = GrB.extractvalues (A)"
 
@@ -116,7 +118,7 @@ void mexFunction
         OK (GrB_Global_set_INT32 (GrB_GLOBAL, burble, GxB_BURBLE)) ;
     }
 
-    FREE_WORK ;
+    FREE_ALL ;
     gb_wrapup ( ) ;
 }
 

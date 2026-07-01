@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_defaults: set global GraphBLAS defaults for MATLAB
+// gbmx_defaults: set global GraphBLAS defaults for MATLAB
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -10,13 +10,9 @@
 // GraphBLAS methods are called, but none of them allocate any memory, so this
 // will not fail.  Each call to GraphBLAS is checked just in case, however.
 
-#define GB_UTIL
-
-#include "gb_interface.h"
-
 typedef void (*function_pointer) (void) ;
 
-GrB_Info gb_defaults            // set global GraphBLAS defaults for MATLAB
+GrB_Info gbmx_defaults      // set global GraphBLAS defaults for MATLAB
 (
     char err [ERRLEN]
 )

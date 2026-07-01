@@ -27,6 +27,14 @@
 // A can be a matrix or a scalar.
 
 #include "gb_interface.h"
+#include "gb_cell_to_list.c"
+#include "gb_matrix_to_list.c"
+#include "gb_string_and_type_to_binop_or_idxunop.c"
+#include "gb_string_to_binop.c"
+#include "gb_string_to_binop_or_idxunop.c"
+
+#include "gbmx_interface.h"
+#include "gbmx_assign_mexFunction.c"
 
 #define USAGE "usage: C = GrB.subassign (Cin, M, accum, A, I, J, desc)"
 

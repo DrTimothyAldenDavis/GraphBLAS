@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 // A is dense if it is in the full format, or if all entries are present.
 
 GrB_Info gb_is_dense            // determine if A is dense

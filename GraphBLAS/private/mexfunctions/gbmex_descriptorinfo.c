@@ -12,9 +12,11 @@
 // gbmex_descriptorinfo
 // gbmex_descriptorinfo (desc)
 
-#define FREE_WORK GrB_Descriptor_free (&desc) ;
-
 #include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_ALL
+#define FREE_ALL GrB_Descriptor_free (&desc) ;
 
 #define USAGE "usage: GrB.descriptorinfo or GrB.descriptorinfo (desc)"
 
@@ -147,7 +149,7 @@ void mexFunction
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    FREE_WORK ;
+    FREE_ALL ;
     gb_wrapup ( ) ;
 }
 

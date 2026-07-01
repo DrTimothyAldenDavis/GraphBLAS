@@ -31,6 +31,14 @@
 // If both A and B are non-empty scalars, then A is treated as the input
 // 'matrix' and B is treated as the scalar.
 
+#include "gb_interface.h"
+#include "gb_string_and_type_to_binop_or_idxunop.c"
+#include "gb_string_to_binop.c"
+#include "gb_string_to_binop_or_idxunop.c"
+
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                   \
     GrB_Matrix_free (&M_to_free) ;  \
     GrB_Matrix_free (&A_to_free) ;  \
@@ -38,11 +46,10 @@
     GrB_Scalar_free (&Thunk) ;      \
     GrB_Descriptor_free (&desc) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     FREE_WORK ;                     \
     GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.apply2 (Cin, M, accum, op, A, B, desc)"
 

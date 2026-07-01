@@ -7,9 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
+#undef  FREE_ALL
 #define FREE_ALL GrB_Matrix_free (&C) ;
-#include "gb_interface.h"
 
 GrB_Info gb_new       // create and empty matrix C
 (
@@ -58,4 +57,7 @@ GrB_Info gb_new       // create and empty matrix C
     (*C_handle) = C ;
     return (GrB_SUCCESS) ;
 }
+
+#undef  FREE_ALL
+#define FREE_ALL
 

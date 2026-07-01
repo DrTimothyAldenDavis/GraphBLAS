@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 // op_name: a built-in string defining the operator name.
 
 // For all 13 types:

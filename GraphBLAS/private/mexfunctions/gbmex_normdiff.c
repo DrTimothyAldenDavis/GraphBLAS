@@ -9,12 +9,16 @@
 
 // This function accesses opaque content and GB_methods inside GraphBLAS.
 
-#define FREE_WORK                   \
+#include "gb_interface.h"
+#include "gb_norm.c"
+
+#include "gbmx_interface.h"
+
+#undef  FREE_ALL
+#define FREE_ALL                    \
     GrB_Matrix_free (&A_to_free) ;  \
     GrB_Matrix_free (&B_to_free) ;  \
     GrB_Matrix_free (&X) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: s = gbmex_normdiff (A, B, kind)"
 
@@ -137,8 +141,8 @@ void mexFunction
     // free workspace and return result
     //--------------------------------------------------------------------------
 
+    FREE_ALL ;
     (*s_output) = s ;
-    FREE_WORK ;
     gb_wrapup ( ) ;
 }
 

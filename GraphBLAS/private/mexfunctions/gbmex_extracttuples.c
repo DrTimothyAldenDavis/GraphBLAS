@@ -28,15 +28,17 @@
 // FUTURE: add an option to return I,J,X as GrB matrices instead
 // FUTURE: reduce # of copies made
 
-#define FREE_WORK                   \
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_ALL
+#define FREE_ALL                    \
     GrB_Vector_free (&I) ;          \
     GrB_Vector_free (&J) ;          \
     GrB_Vector_free (&X) ;          \
     GrB_Vector_free (&T) ;          \
     GrB_Matrix_free (&A_to_free) ;  \
     gb_free (&x, xarena) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: [I,J,X] = GrB.extracttuples (A, desc)"
 
@@ -276,7 +278,7 @@ void mexFunction
         OK (GrB_Global_set_INT32 (GrB_GLOBAL, burble, GxB_BURBLE)) ;
     }
 
-    FREE_WORK ;
+    FREE_ALL ;
     gb_wrapup ( ) ;
 }
 

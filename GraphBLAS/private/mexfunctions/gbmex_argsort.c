@@ -14,15 +14,18 @@
 // where dim = 1 to sort the columns of A, dim = 2 to the rows of A.
 // direction is 'ascend' or 'descend'.
 
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                       \
     GrB_Matrix_free (&A_to_free) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                        \
     FREE_WORK ;                         \
     GrB_Matrix_free (&C) ;              \
     GrB_Matrix_free (&P) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: [C,P] = gbmex_argsort (ghb, A, dim, direction)"
 

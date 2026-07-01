@@ -9,9 +9,6 @@
 
 // Only built-in GraphBLAS types and operators are supported.
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 GrB_Info gb_string_to_semiring          // return a GrB semiring from a string
 (
     // output:

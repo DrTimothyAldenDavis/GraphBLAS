@@ -14,6 +14,13 @@
 // ok = gbmex_semiringinfo (semiring_string)
 
 #include "gb_interface.h"
+#include "gb_semiring.c"
+#include "gb_string_to_semiring.c"
+#include "gb_string_and_type_to_binop_or_idxunop.c"
+#include "gb_string_to_binop.c"
+#include "gb_string_to_binop_or_idxunop.c"
+
+#include "gbmx_interface.h"
 
 #define USAGE "usage: GrB.semiringinfo (s) or GrB.semiringinfo (s,type)"
 

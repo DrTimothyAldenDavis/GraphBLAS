@@ -15,6 +15,10 @@
 
 // where Tiles is a 2D cell array of matrices.
 
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                                       \
     if (Tiles_to_free != NULL)                          \
     {                                                   \
@@ -28,11 +32,10 @@
     gbmx_free ((void **) &Tiles) ;                      \
     gbmx_free ((void **) &Tiles_to_free) ;
 
+#undef  FREE_ALL
 #define FREE_ALL            \
     FREE_WORK ;             \
     GrB_Matrix_free (&C) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.cat (Tiles, desc)"
 

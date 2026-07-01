@@ -15,16 +15,19 @@
 
 // The blob is returned as the opaque content of an n-by-1 uint8 @GrB matrix.
 
+#include "gb_interface.h"
+#include "gbmx_interface.h"
+
+#undef  FREE_WORK
 #define FREE_WORK                       \
     GrB_Matrix_free (&A_to_free) ;      \
     GrB_Descriptor_free (&desc) ;
 
+#undef  FREE_ALL
 #define FREE_ALL                        \
     FREE_WORK ;                         \
     gb_free ((void **) &blob, arena) ;  \
     GrB_Vector_free (&Blob) ;
-
-#include "gb_interface.h"
 
 #define USAGE "usage: blob = GrB.serialize (A, method, level)"
 

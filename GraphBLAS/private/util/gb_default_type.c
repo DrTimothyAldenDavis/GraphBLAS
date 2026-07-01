@@ -15,9 +15,6 @@
 
 // This method cannot fail, so it returns the type, not GrB_Info.
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 GrB_Type gb_default_type        // return the default type to use
 (
     const GrB_Type atype,       // type of the A matrix

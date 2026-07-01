@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_UTIL
-#include "gb_interface.h"
-
 // The string has the form op_name.op_type.  For example '+.double' is the
 // GrB_PLUS_FP64 operator.  The type is optional.  If not present in the
 // string, it is found by gb_default_type (atype, btype).
