@@ -13,7 +13,7 @@ dt = struct ('in0', 'transpose') ;
 ntrials = 1000 ;
 
 for n = [1 5 10 100 1000]
-    nfound = 0 ;
+%   nfound = 0 ;
     for trial = 1:ntrials
         x = gtb_random (ghb, n, 1, 0.1, 'range', uint32 ([1 255])) ;
         y = gtb_random (ghb, n, 1, 0.1, 'range', uint32 ([1 255])) ;
@@ -26,9 +26,9 @@ for n = [1 5 10 100 1000]
 
         c1_present = (gtb_entries (ghb, c1) == 1) ;
         c2_present = (c2 == 1) ;
-        if (c1_present)
-            nfound = nfound + 1 ;
-        end
+%       if (c1_present)
+%           nfound = nfound + 1 ;
+%       end
         assert (c1_present == c2_present) ;
         assert (c1_present == c2) ;
 
@@ -36,7 +36,7 @@ for n = [1 5 10 100 1000]
         assert (isequal (c2, c4)) ;
 
     end
-    fprintf ('n: %4d trials: %4d found: %4d\n', n, ntrials, nfound) ;
+%   fprintf ('n: %4d trials: %4d found: %4d\n', n, ntrials, nfound) ;
 end
 
 fprintf ('gbtest72 (%d): all tests passed\n', ghb) ;

@@ -113,7 +113,7 @@ C1 = gtb_eunion (ghb, C, A, alpha, B, beta, accum, op      ) ; assert (isequal (
 % C<M> = op (A,B)
 
 T = (A-B) ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = T (M) ;
 
 t = (a-b) ;
@@ -141,7 +141,7 @@ C1 = gtb_eunion (ghb, c, m, a, alpha, b, beta, op, desc) ; assert (isequal (C1, 
 % C<M> = accum (C, A*B) ;
 
 T = C + (A-B) ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = T (M) ;
 
 t = c + (a-b) ;

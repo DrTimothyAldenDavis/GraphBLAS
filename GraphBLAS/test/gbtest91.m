@@ -80,7 +80,7 @@ C1 = gtb_trans (ghb, accum, c, a, desc) ; assert (isequal (C1, C2)) ;
 
 % C<M> = A.'
 
-C2 = C ;
+C2 = gtb (ghb, C) ;
 T = A.' ;
 C2 (M) = T (M) ;
 
@@ -101,7 +101,7 @@ C1 = gtb_trans (ghb, c, m, a, desc) ; assert (isequal (C1, C2)) ;
 
 % C<M> += A.'
 
-C2 = C ;
+C2 = gtb (ghb, C) ;
 T = C + A.' ;
 C2 (M) = T (M) ;
 

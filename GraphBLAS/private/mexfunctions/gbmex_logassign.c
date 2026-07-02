@@ -18,6 +18,7 @@
 // Usage:
 
 //      C = gbmex_logassign (ghb, C, M, A)
+//      gbmex_logassign (1, C, M, A)
 
 //  This function is the C equivalent of the following m-function:
 
@@ -88,8 +89,6 @@
     FREE_WORK ;                         \
     GrB_Matrix_free (&C) ;
 
-// FIXME: add inplace
-
 #define USAGE "usage: C = gbmex_logassign (ghb, C, M, A)"
 #define ERR "A must be a vector of length nnz(M) for logical indexing, C(M)=A"
 
@@ -115,7 +114,15 @@ void mexFunction
     bool ghb = (bool) mxGetScalar (pargin [0]) ;
     int arena = ghb ? GrB_DEFAULT : MXARENA ;
 
-    if (ghb) pargout [0] = gbmx_export_ghb_mxstruct (&C_opaque) ;
+    bool inplace = ghb && (nargout == 0) ;
+    if (!inplace)
+    { 
+        if (ghb) pargout [0] = gbmx_export_ghb_mxstruct (&C_opaque) ;
+    }
+    else
+    { 
+        /* for tracking test coverage */ ;
+    }
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -132,7 +139,7 @@ void mexFunction
     // get a deep copy of C, of any sparsity structure
     //--------------------------------------------------------------------------
 
-    OK (gb_get_deep (&C, false, &(Matrix [0]), arena, err)) ;
+    OK (gb_get_deep (&C, inplace, &(Matrix [0]), arena, err)) ;
     uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, C)) ;
     OK (GrB_Matrix_ncols (&ncols, C)) ;
@@ -391,7 +398,10 @@ void mexFunction
 
     FREE_WORK ;
 
-    OK (gb_export (C_opaque, &C, KIND_GRB, ghb, err)) ;
+    if (!inplace)
+    { 
+        OK (gb_export (C_opaque, &C, KIND_GRB, ghb, err)) ;
+    }
     ////////////////////////////////////////////////////////////////////////////
     if (!ghb)
     { 

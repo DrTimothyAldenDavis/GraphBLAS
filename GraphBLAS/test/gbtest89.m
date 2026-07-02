@@ -121,7 +121,7 @@ C1 = gtb_extract (ghb, I, J, a, desc) ; assert (isequal (C1, C2)) ;
 % 0 indices:
 % 0 strings:
 
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = Aij (M) ;
 
 c2 = c ;
@@ -141,7 +141,7 @@ C1 = gtb_extract (ghb, C, M, Aij, desc) ; assert (isequal (C1, C2)) ;
 % C<M> = A (I,J)
 
 T = A (I,J) ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = T (M) ;
 
 t = a (i,j) ;
@@ -246,7 +246,7 @@ C1 = gtb_extract (ghb, I, J, accum, c, a, desc) ; assert (isequal (C1, C2)) ;
 % C<M> += A
 
 T = C + Aij ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = T (M) ;
 
 t = c + aij ;
@@ -275,7 +275,7 @@ C1 = gtb_extract (ghb, c, m, aij, accum, desc) ; assert (isequal (C1, C2)) ;
 % C<M> += A (I,J)
 
 T = C + A (i,j) ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = T (M) ;
 
 t = c + a (i,j) ;
@@ -377,7 +377,7 @@ V1 = gtb_extract (ghb, I, u, desc) ; assert (isequal (V1, V2)) ;
 % V<W> = U(I)
 
 T = U (i) ;
-V2 = V ;
+V2 = gtb (ghb, V) ;
 V2 (W) = T (W) ;
 
 t = u (i) ;
@@ -435,7 +435,7 @@ V1 = gtb_extract (ghb, v, accum, I, u, desc) ; assert (isequal (V1, V2)) ;
 % V<W> += U(I)
 
 T = V + U (i) ;
-V2 = V ;
+V2 = gtb (ghb, V) ;
 V2 (W) = T (W) ;
 
 t = v + u (i) ;

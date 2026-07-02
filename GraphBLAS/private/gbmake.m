@@ -29,6 +29,7 @@ if (have_octave)
         error ('GrB:mex', 'Octave 7 or later is required') ;
     end
     library_name = 'libgraphblas' ;
+    app_name = 'Octave' ;
 else
     if verLessThan ('matlab', '9.4')
         error ('GrB:mex', 'MATLAB 9.4 (R2018a) or later is required') ;
@@ -39,6 +40,7 @@ else
     % for simplicity, use libgraphblas_matlab.so for all MATLAB versions.
     need_rename = 1 ;
     library_name = 'libgraphblas_matlab' ;
+    app_name = 'MATLAB' ;
 end
 
 fprintf ('Note: the %s dynamic library must already be\n', library_name) ;
@@ -51,8 +53,9 @@ end
 make_all = (isequal (what, 'all')) ;
 
 % use -R2018a for the interleaved complex API
-% flags = '-O -R2018a -DGBNCPUFEAT' ;   % FIXME
-  flags = '-g -R2018a -DGBNCPUFEAT -DMALLOC_TRACKING' ;   % debug build
+  flags = '-O -R2018a -DGBNCPUFEAT' ;
+% the debug build is required to enable the GrB.nmalloc checks in gbtest.m:
+% flags = '-g -R2018a -DGBNCPUFEAT -DMALLOC_TRACKING' ;   % debug build
 
 if ispc
     % First do the following in GraphBLAS/build, in the Windows console:
@@ -171,7 +174,7 @@ try
 catch
 end
 if (have_sparse_single)
-    fprintf ('MATLAB/Octave has sparse single matrices.\n') ;
+    fprintf ('%s has sparse single matrices.\n', app_name) ;
 end
 
 % determine if the compiler supports C99 or MSVC complex types

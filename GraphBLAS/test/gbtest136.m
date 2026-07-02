@@ -125,7 +125,7 @@ V1 = GhB (V) ; GhB.assign (I, V1, Ui, desc) ; assert (isequal (V1, V2)) ;
 % with accum
 % S = S + Ui ;
 % with no accum:
-S = Ui ;
+S = GhB (Ui) ;
 Z = GhB (V) ;
 Z (i) = S ;
 % with mask:
@@ -245,7 +245,7 @@ S = GhB (Aij) ;
 Z = GhB (C) ;
 Z (i,j) = S ;
 % with mask:
-% C2 = C ;
+% C2 = GhB (C) ;
 % C2 (M) = Z (M) ;
 % with no mask:
 C2 = GhB (Z) ;
@@ -311,7 +311,7 @@ S = S + Aij ;
 Z = GhB (C) ;
 Z (i,j) = S ;
 % with mask:
-% C2 = C ;
+% C2 = GhB (C) ;
 % C2 (M) = Z (M) ;
 % with no mask:
 C2 = GhB (Z) ;

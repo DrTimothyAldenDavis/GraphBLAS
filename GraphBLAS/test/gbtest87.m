@@ -104,7 +104,7 @@ C1 = gtb_eadd (ghb, c, a, b, accum, op, desc) ; assert (isequal (C1, C2)) ;
 % C<M> = op (A,B)
 
 T = max (A,B) ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = T (M) ;
 
 t = max (a,b) ;
@@ -132,7 +132,7 @@ C1 = gtb_eadd (ghb, c, m, a, b, op, desc) ; assert (isequal (C1, C2)) ;
 % C<M> = accum (C, A*B) ;
 
 T = C + max (A,B) ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = T (M) ;
 
 t = c + max (a,b) ;

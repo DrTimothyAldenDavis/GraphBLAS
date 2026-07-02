@@ -79,7 +79,7 @@ GrB_Info gb_get_deep        // get the input/output matrix C
     {
 
         //----------------------------------------------------------------------
-        // usage: C = GrB.method (Cin, ...)
+        // usage: C = [GrB,GhB].method (Cin, ...)
         //----------------------------------------------------------------------
 
         if (matrix->will_wait)

@@ -104,7 +104,7 @@ C1 = gtb_kronecker (ghb, c, a, b, accum, op, desc) ; assert (isequal (C1, C2)) ;
 % C<M> = kron (A,B) ;
 
 T = kron (A,B) ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = T (M) ;
 
 t = kron (a,b) ;
@@ -132,7 +132,7 @@ C1 = gtb_kronecker (ghb, c, m, a, b, op, desc) ; assert (isequal (C1, C2)) ;
 % C<M> = accum (C, kron (A,B)) ;
 
 T = C + kron (A,B) ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = T (M) ;
 
 t = c + kron (a,b) ;

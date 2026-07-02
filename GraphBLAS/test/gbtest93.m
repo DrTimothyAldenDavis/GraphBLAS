@@ -153,7 +153,7 @@ C1 = gtb_select (ghb, accum, c, a, b, '>', desc) ; assert (isequal (C1, C2)) ;
 
 % C<M> = op (A)
 T = A .* (A > 0) ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = T (M) ;
 
 t = a .* (a > 0) ;
@@ -181,7 +181,7 @@ C1 = gtb_select (ghb, c, m, a, '>0', desc) ; assert (isequal (C1, C2)) ;
 % C<M> = op (A,b)
 
 T = A .* (A > 0.5) ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = T (M) ;
 
 t = a .* (a > 0.5) ;
@@ -211,7 +211,7 @@ C1 = gtb_select (ghb, c, m, a, b, '>', desc) ; assert (isequal (C1, C2)) ;
 % C<M> += op (A)
 
 T = C + A .* (A > 0) ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = T (M) ;
 
 t = c + a .* (a > 0) ;
@@ -251,7 +251,7 @@ C1 = gtb_select (ghb, accum, c, m, a, '>0', desc) ; assert (isequal (C1, C2)) ;
 % C<M> += op (A,b)
 
 T = C + A .* (A > 0.5) ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = T (M) ;
 
 t = c + a .* (a > 0.5) ;

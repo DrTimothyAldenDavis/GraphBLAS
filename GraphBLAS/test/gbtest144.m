@@ -93,7 +93,7 @@ C1 = GhB (C) ; GhB.vreduce (C1, M, A, monoid, desc) ; assert (isequal (C1, C2)) 
 % C<M> += monoid (A)
 
 T = C + sum (A,2) ;
-C2 = C ;
+C2 = GhB (C) ;
 C2 (M) = T (M) ;
 C3 = GhB.vreduce (C, M, accum, monoid, A, desc) ;
 assert (isequal (C2, C3)) ;

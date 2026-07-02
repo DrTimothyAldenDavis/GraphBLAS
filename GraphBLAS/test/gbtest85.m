@@ -60,7 +60,7 @@ ui  = double (Ui) ;
 % 1 matrix: A
 % 0 strings:
 
-C2 = A ;
+C2 = gtb (ghb, A) ;
 
 C1 = gtb_subassign (ghb, C, A) ; assert (isequal (C1, C2)) ;
 C1 = gtb_subassign (ghb, c, a) ; assert (isequal (C1, C2)) ;
@@ -75,7 +75,7 @@ C1 = gtb_subassign (ghb, c, a, desc) ; assert (isequal (C1, C2)) ;
 % 3 matrices: C, A
 % 0 strings:
 
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = A (M) ;
 
 c2 = c ;
@@ -111,7 +111,7 @@ C1 = gtb_subassign (ghb, accum, C, A, desc) ; assert (isequal (C1, C2)) ;
 % 1 string:   accum
 
 % C<M> += A
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = C2 (M) + A (M) ;
 
 c2 = c ;
@@ -138,7 +138,7 @@ C1 = gtb_subassign (ghb, accum, c, m, a, desc) ; assert (isequal (C1, C2)) ;
 
 % V(I) = U
 
-V2 = V ;
+V2 = gtb (ghb, V) ;
 V2 (i) = Ui ;
 
 v2 = v ;
@@ -172,7 +172,7 @@ T = Ui ;
 S (Wi) = T (Wi) ;
 % with no mask:
 % S = T ;
-V2 = V ;
+V2 = gtb (ghb, V) ;
 V2 (i) = S ;
 
 s = v (i) ;
@@ -210,8 +210,8 @@ T = S + Ui ;
 % with mask:
 % S (Wi) = T (Wi) ;
 % with no mask:
-S = T ;
-V2 = V ;
+S = gtb (ghb, T) ;
+V2 = gtb (ghb, V) ;
 V2 (i) = S ;
 
 V1 = gtb_subassign (ghb, V, accum, Ui, I, desc) ; assert (isequal (V1, V2)) ;
@@ -259,7 +259,7 @@ T = S + Ui ;
 S (Wi) = T (Wi) ;
 % with no mask:
 % S = T ;
-V2 = V ;
+V2 = gtb (ghb, V) ;
 V2 (i) = S ;
 
 s = v (i) ;
@@ -328,8 +328,8 @@ T = Aij ;
 % with mask:
 % S (Mij) = T (Mij) ;
 % with no mask:
-S = T ;
-C2 = C ;
+S = gtb (ghb, T) ;
+C2 = gtb (ghb, C) ;
 C2 (i,j) = S ;
 
 t = aij ;
@@ -370,7 +370,7 @@ T = Aij ;
 S (Mij) = T (Mij) ;
 % with no mask:
 % S = T ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (i,j) = S ;
 
 s = c (i,j) ;
@@ -421,7 +421,7 @@ T = S + Aij ;
 % S (Mij) = T (Mij) ;
 % with no mask:
 S = T ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (i,j) = S ;
 
 s = c (i,j) ;
@@ -506,7 +506,7 @@ T = S + Aij ;
 S (Mij) = T (Mij) ;
 % with no mask:
 % S = T ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (i,j) = S ;
 
 s = c (i,j) ;

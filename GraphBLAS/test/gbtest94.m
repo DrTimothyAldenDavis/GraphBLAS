@@ -101,7 +101,7 @@ C1 = gtb_vreduce (ghb, accum, monoid, c, a, desc) ; assert (isequal (C1, C2)) ;
 
 % C<M> = monoid (A)
 T = sum (A,2) ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = T (M) ;
 
 t = sum (a,2) ;
@@ -129,7 +129,7 @@ C1 = gtb_vreduce (ghb, c, m, a, monoid, desc) ; assert (isequal (C1, C2)) ;
 % C<M> += monoid (A)
 
 T = C + sum (A,2) ;
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = T (M) ;
 
 t = c + sum (a,2) ;

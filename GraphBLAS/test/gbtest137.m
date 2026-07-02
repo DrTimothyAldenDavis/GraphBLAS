@@ -82,7 +82,7 @@ C1 = GhB (C) ; GhB.subassign (accum, C1, A, desc) ; assert (isequal (C1, C2)) ;
 % 1 string:   accum
 
 % C<M> += A
-C2 = C ;
+C2 = GhB (C) ;
 C2 (M) = C2 (M) + A (M) ;
 C3 = GhB.subassign (C, M, accum, A, desc) ;
 assert (isequal (C2, C3)) ;
@@ -102,7 +102,7 @@ C1 = GhB (C) ; GhB.subassign (accum, C1, M, A, desc) ; assert (isequal (C1, C2))
 
 % V(I) = U
 
-V2 = V ;
+V2 = GhB (V) ;
 V2 (i) = Ui ;
 
 V3 = GhB.subassign (V, Ui, I, desc) ;
@@ -126,12 +126,12 @@ S = V (i) ;
 % with accum
 % T = S + Ui ;
 % with no accum:
-T = Ui ;
+T = GhB (Ui) ;
 % with mask:
 S (Wi) = T (Wi) ;
 % with no mask:
 % S = T ;
-V2 = V ;
+V2 = GhB (V) ;
 V2 (i) = S ;
 
 V3 = GhB.subassign (V, Wi, Ui, I, desc) ;
@@ -160,8 +160,8 @@ T = S + Ui ;
 % with mask:
 % S (Wi) = T (Wi) ;
 % with no mask:
-S = T ;
-V2 = V ;
+S = GhB (T) ;
+V2 = GhB (V) ;
 V2 (i) = S ;
 
 V3 = GhB.subassign (V, accum, Ui, I, desc) ;
@@ -199,7 +199,7 @@ T = S + Ui ;
 S (Wi) = T (Wi) ;
 % with no mask:
 % S = T ;
-V2 = V ;
+V2 = GhB (V) ;
 V2 (i) = S ;
 
 V3 = GhB.subassign (V, Wi, accum, Ui, I, desc) ;
@@ -239,12 +239,12 @@ V1 = GhB (V) ; GhB.subassign (I, accum, V1, Wi, Ui, desc) ; assert (isequal (V1,
 % with accum:
 % T = S + Aij ;
 % with no accum:
-T = Aij ;
+T = GhB (Aij) ;
 % with mask:
 % S (Mij) = T (Mij) ;
 % with no mask:
-S = T ;
-C2 = C ;
+S = GhB (T) ;
+C2 = GhB (C) ;
 C2 (i,j) = S ;
 
 C3 = GhB.subassign (C, Aij, I, J, desc) ;
@@ -270,12 +270,12 @@ S = C (i,j) ;
 % with accum:
 % T = S + Aij ;
 % with no accum:
-T = Aij ;
+T = GhB (Aij) ;
 % with mask:
 S (Mij) = T (Mij) ;
 % with no mask:
 % S = T ;
-C2 = C ;
+C2 = GhB (C) ;
 C2 (i,j) = S ;
 
 C3 = GhB.subassign (C, Mij, Aij, I, J, desc) ;
@@ -310,8 +310,8 @@ T = S + Aij ;
 % with mask:
 % S (Mij) = T (Mij) ;
 % with no mask:
-S = T ;
-C2 = C ;
+S = GhB (T) ;
+C2 = GhB (C) ;
 C2 (i,j) = S ;
 
 C3 = GhB.subassign (C, accum, Aij, I, J, desc) ;
@@ -364,7 +364,7 @@ T = S + Aij ;
 S (Mij) = T (Mij) ;
 % with no mask:
 % S = T ;
-C2 = C ;
+C2 = GhB (C) ;
 C2 (i,j) = S ;
 
 C3 = GhB.subassign (C, Mij, accum, Aij, I, J, desc) ;

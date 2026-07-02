@@ -59,7 +59,7 @@ ui  = double (Ui) ;
 % 1 matrix: A
 % 0 strings:
 
-C2 = A ;
+C2 = gtb (ghb, A) ;
 
 C1 = gtb_assign (ghb, C, A) ; assert (isequal (C1, C2)) ;
 C1 = gtb_assign (ghb, c, a) ; assert (isequal (C1, C2)) ;
@@ -74,7 +74,7 @@ C1 = gtb_assign (ghb, c, a, desc) ; assert (isequal (C1, C2)) ;
 % 3 matrices: C, A
 % 0 strings:
 
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = A (M) ;
 
 c2 = c ;
@@ -110,7 +110,7 @@ C1 = gtb_assign (ghb, accum, C, A, desc) ; assert (isequal (C1, C2)) ;
 % 1 string:   accum
 
 % C<M> += A
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = C2 (M) + A (M) ;
 
 c2 = c ;
@@ -137,7 +137,7 @@ C1 = gtb_assign (ghb, accum, c, m, a, desc) ; assert (isequal (C1, C2)) ;
 
 % V(I) = U
 
-V2 = V ;
+V2 = gtb (ghb, V) ;
 V2 (i) = Ui ;
 
 v2 = v ;
@@ -166,11 +166,11 @@ V1 = gtb_assign (ghb, I, v, ui, desc) ; assert (isequal (V1, V2)) ;
 % with accum
 % S = S + Ui ;
 % with no accum:
-S = Ui ;
-Z = V ;
+S = gtb (ghb, Ui) ;
+Z = gtb (ghb, V) ;
 Z (i) = S ;
 % with mask:
-V2 = V ;
+V2 = gtb (ghb, V) ;
 V2 (W) = Z (W) ;
 % with no mask:
 % V2 = Z ;
@@ -208,13 +208,13 @@ S = V (i) ;
 S = S + Ui ;
 % with no accum:
 % S = Ui ;
-Z = V ;
+Z = gtb (ghb, V) ;
 Z (i) = S ;
 % with mask:
 % V2 = V ;
 % V2 (W) = Z (W) ;
 % with no mask:
-V2 = Z ;
+V2 = gtb (ghb, Z) ;
 
 s = v (i) ;
 s = s + ui ;
@@ -264,10 +264,10 @@ S = V (i) ;
 S = S + Ui ;
 % with no accum:
 % S = Ui ;
-Z = V ;
+Z = gtb (ghb, V) ;
 Z (i) = S ;
 % with mask:
-V2 = V ;
+V2 = gtb (ghb, V) ;
 V2 (W) = Z (W) ;
 % with no mask:
 % V2 = Z ;
@@ -335,14 +335,14 @@ V1 = gtb_assign (ghb, I, accum, v, w, ui, desc) ; assert (isequal (V1, V2)) ;
 % with accum:
 % S = S + Aij ;
 % with no accum:
-S = Aij ;
-Z = C ;
+S = gtb (ghb, Aij) ;
+Z = gtb (ghb, C) ;
 Z (i,j) = S ;
 % with mask:
-% C2 = C ;
+% C2 = gtb (ghb, C) ;
 % C2 (M) = Z (M) ;
 % with no mask:
-C2 = Z ;
+C2 = gtb (ghb, Z) ;
 
 % s = c (i,j) ;
 s = aij ;
@@ -378,11 +378,11 @@ C1 = gtb_assign (ghb, I, c, aij, J, desc) ; assert (isequal (C1, C2)) ;
 % with accum:
 % S = S + Aij ;
 % with no accum:
-S = Aij ;
-Z = C ;
+S = gtb (ghb, Aij) ;
+Z = gtb (ghb, C) ;
 Z (i,j) = S ;
 % with mask:
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = Z (M) ;
 % with no mask:
 % C2 = Z ;
@@ -432,13 +432,13 @@ S = C (i,j) ;
 S = S + Aij ;
 % with no accum:
 % S = Aij ;
-Z = C ;
+Z = gtb (ghb, C) ;
 Z (i,j) = S ;
 % with mask:
-% C2 = C ;
+% C2 = gtb (ghb, C) ;
 % C2 (M) = Z (M) ;
 % with no mask:
-C2 = Z ;
+C2 = gtb (ghb, Z) ;
 
 s = c (i,j) ;
 s = s + aij ;
@@ -518,10 +518,10 @@ S = C (i,j) ;
 S = S + Aij ;
 % with no accum:
 % S = Aij ;
-Z = C ;
+Z = gtb (ghb, C) ;
 Z (i,j) = S ;
 % with mask:
-C2 = C ;
+C2 = gtb (ghb, C) ;
 C2 (M) = Z (M) ;
 % with no mask:
 % C2 = Z ;
