@@ -12,5 +12,10 @@ end
 
 E = gzb (ghb, m, n, type, fmt) ;
 S = gzb_full (ghb, scalar) ;
-C = gzb_subassign (ghb, E, S) ;
+
+if (ghb)
+    C = GhB (gbmex_subassign (1, E, S)) ;
+else
+    C = GrB (gbmex_subassign (0, E, S)) ;
+end
 

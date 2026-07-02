@@ -132,7 +132,11 @@ else
     % pattern of bit positions B0 to set to 0 in A.
     desc.mask = 'complement' ;
     E = gzb (ghb, m, n, atype) ;
-    B0 = gzb_subassign (ghb, E, V, B2, desc) ;
+    if (ghb)
+        B0 = GhB (gbmex_subassign (1, E, V, B2, desc)) ;
+    else
+        B0 = GrB (gbmex_subassign (0, E, V, B2, desc)) ;
+    end
 
     % Clear the bits in C, referenced by B0(i,j), where V(i,j) is zero.
     T = gzb_eadd (ghb, ['bitclr.', atype], S, B0) ;

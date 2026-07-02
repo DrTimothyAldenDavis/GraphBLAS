@@ -51,27 +51,3 @@ function [varargout] = jit (varargin)
 
 [varargout{1:nargout}] = gbmex_jit (varargin {:}) ;
 
-%{
-% FIXME delete this
-% function [status,path] = jit (status_arg,path_arg)
-if (nargin == 0)
-    if (nargout <= 1)
-        [status] = gbmex_jit ;
-    else
-        [status, path] = gbmex_jit ;
-    end
-elseif (nargin == 1)
-    if (nargout <= 1)
-        [status] = gbmex_jit (status_arg) ;
-    else
-        [status, path] = gbmex_jit (status_arg) ;
-    end
-else
-    if (nargout <= 1)
-        [status] = gbmex_jit (status_arg, path_arg) ;
-    else
-        [status, path] = gbmex_jit (status_arg, path_arg) ;
-    end
-end
-%}
-
