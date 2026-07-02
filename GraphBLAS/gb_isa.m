@@ -5,9 +5,12 @@ function s = gb_isa (ghb, G, type)
 % SPDX-License-Identifier: Apache-2.0
 
 if (isequal (type, 'GrB') || (ghb && isequal (type, 'GhB')))
-    % GraphBLAS matrics have a class name of 'GrB' or 'GhB'.
-    % For GrB matrices, isa (G, 'GrB') is true but isa (G, 'GhB') is false.
-    % For GhB matrices, both isa (G, 'GrB') and isa (G, 'GhB') are true.
+    % GraphBLAS matrices have a class name of 'GrB' or 'GhB',
+    % where GhB is a subclass of GrB.
+    % If G is a GrB matrix, isa (G, 'GrB') is true but isa (G, 'GhB') is false.
+    % If G is a GhB matrix, isa (G, 'GrB') and isa (G, 'GhB') are both true.
+    % From the MATLAB documentation, isa (A, classname) is true if A is
+    % instance of the classname OR a subclass of the classname.
     s = true ;
 elseif isequal (type, 'numeric')
     % all GraphBLAS matrices are numeric

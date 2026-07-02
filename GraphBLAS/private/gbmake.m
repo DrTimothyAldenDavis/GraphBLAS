@@ -6,7 +6,7 @@ function gbmake (what)
 %
 % gbmake compiles the @GrB interface for SuiteSparse:GraphBLAS.  The
 % GraphBLAS library must already be compiled and installed.
-% MATLAB 9.4 (R2018a) or Octave 7 later is required.
+% MATLAB 9.4 (R2018a) or Octave 11.1 later is required.
 %
 % For the Mac, the GraphBLAS library must be installed in /usr/local/lib/ as
 % libgraphblas_matlab.dylib (or just libgraphblas.dylib for Octave).  It cannot
@@ -25,7 +25,7 @@ have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 if (have_octave)
     % Octave can use the normal libgraphblas.so
     need_rename = 0 ;
-    if verLessThan ('octave', '7')
+    if verLessThan ('octave', '11.1')
         error ('GrB:mex', 'Octave 7 or later is required') ;
     end
     library_name = 'libgraphblas' ;
@@ -249,8 +249,13 @@ for k = 1:length (mexfunctions)
     % compile if it is newer than its object file, or any cfile is newer
     if (make_all || tc > tobj || htime > tobj)
         % compile the mexFunction
-        mexcmd = sprintf ('mex -outdir .. %s %s %s %s ''%s'' %s', ...
-            Lflags, silent, flags, inc, mexfunction, libgraphblas) ;
+        if (have_octave)
+            outfile = sprintf ('-o ../%s.mex', mexfuncname) ;
+        else
+            outfile = '-outdir ..' ;
+        end
+        mexcmd = sprintf ('mex %s %s %s %s %s ''%s'' %s', ...
+            outfile, Lflags, silent, flags, inc, mexfunction, libgraphblas) ;
         % fprintf ('%s\n', mexcmd) ;
         fprintf (':') ;
         eval (mexcmd) ;

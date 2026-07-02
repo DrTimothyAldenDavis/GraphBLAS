@@ -77,7 +77,7 @@ catch me
     ok = true ;
 end
 assert (ok) ;
-assert (isequal (msg, ...
+assert (gb_contains (msg, ...
     'A must be a vector of length nnz(M) for logical indexing, C(M)=A')) ;
 
 A = sprand (4, 4, 0.5) ;

@@ -105,6 +105,8 @@ methods
     % See also sparse.
         ghb = 1 ;     % 0 for GrB, 1 for GhB
         switch (nargin)
+            case 0
+                C.opaque = [ ] ;
             case 1
                 if (isstruct (arg1))
                     C.opaque = arg1 ;
