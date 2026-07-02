@@ -12,8 +12,6 @@ if (ghb)
             C = GhB (gbmex_subassign (ghb, arg1, arg2, arg3)) ;
         case 5
             C = GhB (gbmex_subassign (ghb, arg1, arg2, arg3, arg4)) ;
-        otherwise
-            error ('GrB:error', 'internal error 885') ;
     end
 else
     switch (nargin)
@@ -23,8 +21,6 @@ else
             C = GrB (gbmex_subassign (ghb, arg1, arg2, arg3)) ;
         case 5
             C = GrB (gbmex_subassign (ghb, arg1, arg2, arg3, arg4)) ;
-        otherwise
-            error ('GrB:error', 'internal error 885') ;
     end
 end
 

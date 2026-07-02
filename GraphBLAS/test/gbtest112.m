@@ -48,5 +48,10 @@ K = gtb_load (ghb) ;
 assert (isequal (H, K)) ;
 delete GrB_Matrix.mat
 
+f1 = [tempdir 'gbtest112_save.mat'] ;
+save (f1, 'K') ;
+K2 = gtb_load (ghb, f1) ;
+assert (isequal (K, K2.K)) ;
+
 fprintf ('\ngbtest112 (%d): all tests passed\n', ghb) ;
 

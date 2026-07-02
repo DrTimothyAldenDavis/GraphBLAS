@@ -53,7 +53,6 @@ make_all = (isequal (what, 'all')) ;
 % use -R2018a for the interleaved complex API
 % flags = '-O -R2018a -DGBNCPUFEAT' ;   % FIXME
   flags = '-g -R2018a -DGBNCPUFEAT -DMALLOC_TRACKING' ;   % debug build
-% flags = '-g -R2018a -DGBNCPUFEAT' ;
 
 if ispc
     % First do the following in GraphBLAS/build, in the Windows console:
@@ -164,6 +163,17 @@ end
 % silent = '-v' ;           % extremely verbose
 % silent = '' ;
 
+% determine if MATLAB/Octave support sparse single matrices
+have_sparse_single = false ;
+try
+    A = single (speye (3)) ;
+    have_sparse_single = issparse (A) && isequal (class (A), 'single') ;
+catch
+end
+if (have_sparse_single)
+    fprintf ('MATLAB/Octave has sparse single matrices.\n') ;
+end
+
 % determine if the compiler supports C99 or MSVC complex types
 try
     % try C99 complex types
@@ -233,8 +243,8 @@ for k = 1:length (mexfunctions)
         tobj = datenum (dobj.date) ;
     end
 
-    % compile if it is newer than its object file, or if any cfile was compiled
-    if (make_all || tc > tobj || htime > tobj) % || any_c_compiled)
+    % compile if it is newer than its object file, or any cfile is newer
+    if (make_all || tc > tobj || htime > tobj)
         % compile the mexFunction
         mexcmd = sprintf ('mex -outdir .. %s %s %s %s ''%s'' %s', ...
             Lflags, silent, flags, inc, mexfunction, libgraphblas) ;

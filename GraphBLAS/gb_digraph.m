@@ -28,6 +28,14 @@ else
     G = G_arg ;
 end
 
+% construct the graph
+switch (type)
+    case { 'single', 'logical' }
+        gtype = type ;
+    otherwise
+        gtype = 'double' ;
+end
+
 % construct the digraph
 switch (type)
 

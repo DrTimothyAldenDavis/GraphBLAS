@@ -14,7 +14,7 @@ gtb_binops (ghb) ;
 if (ghb)
     help GhB.binops ;
 else
-    help GhB.binops ;
+    help GrB.binops ;
 end
 
 fprintf ('\ngbtest124 (%d): all tests passed\n', ghb) ;

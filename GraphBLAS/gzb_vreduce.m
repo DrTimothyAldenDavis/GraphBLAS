@@ -14,8 +14,6 @@ if (ghb)
             C = GhB (gbmex_vreduce (ghb, arg1, arg2, arg3, arg4)) ;
         case 6
             C = GhB (gbmex_vreduce (ghb, arg1, arg2, arg3, arg4, arg5)) ;
-        otherwise
-            error ('GrB:error', 'internal error 886') ;
     end
 else
     switch (nargin)
@@ -27,8 +25,6 @@ else
             C = GrB (gbmex_vreduce (ghb, arg1, arg2, arg3, arg4)) ;
         case 6
             C = GrB (gbmex_vreduce (ghb, arg1, arg2, arg3, arg4, arg5)) ;
-        otherwise
-            error ('GrB:error', 'internal error 886') ;
     end
 end
 

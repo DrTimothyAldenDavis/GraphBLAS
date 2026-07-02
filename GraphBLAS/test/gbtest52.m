@@ -42,5 +42,15 @@ assert (isequal ('by row', gtb_format (ghb, H))) ;
 H = gtb (ghb, 5,5, 'by col')
 assert (isequal ('by col', gtb_format (ghb, H))) ;
 
+fprintf ('test GrB.format errors:\n') ;
+ok = true ;
+try
+    [f, gunk] = gtb_format (ghb) ;
+    ok = false ;
+catch expected_error
+    fprintf ('expected: %s\n', expected_error.message) ;
+end
+assert (ok) ;
+
 fprintf ('gbtest52 (%d): all tests passed\n', ghb) ;
 

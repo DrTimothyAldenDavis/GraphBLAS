@@ -1,5 +1,5 @@
 function [C, I, J] = compact (A, id, symmetric)
-%GRB.COMPACT remove empty rows and columns from a matrix.
+%GHB.COMPACT remove empty rows and columns from a matrix.
 % C = GrB.compact (A) returns rows and columns from A that have no entries.
 % It has no effect on a full matrix, except to convert it to a GraphBLAS
 % matrix, since all entries are present in a full matrix.

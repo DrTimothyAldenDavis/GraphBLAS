@@ -1,5 +1,5 @@
 function [x,p] = argmax (A, dim)
-%GRB.ARGMIN argmax of a built-in or GraphBLAS matrix
+%GHB.ARGMIN argmax of a built-in or GraphBLAS matrix
 %
 % [x,p] = argmax(A,1) computes the argmax of each column of A, similar to
 %       [x,p] = max(A), or max(A,[],1), with x and p being n-by-1 vectors

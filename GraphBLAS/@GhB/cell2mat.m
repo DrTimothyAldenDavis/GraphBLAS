@@ -1,5 +1,5 @@
 function C = cell2mat (A)
-%GRB.CELL2MAT Concatenate a cell array of matrices into a single matrix.
+%GHB.CELL2MAT Concatenate a cell array of matrices into a single matrix.
 % C = GrB.cell2mat (A) converts a 2D cell array of matrices into a single
 % @GrB matrix.  The input matrices in A may be @GrB/built-in matrices, in
 % any combination.  Let [m,n] = size(A) be the size of the cell array A.

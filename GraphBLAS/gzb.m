@@ -14,8 +14,6 @@ if (ghb)
             C = GhB (arg1, arg2, arg3) ;
         case 5
             C = GhB (arg1, arg2, arg3, arg4) ;
-        otherwise
-            error ('GrB:error', 'internal error 885') ;
     end
 else
     switch (nargin)
@@ -27,8 +25,6 @@ else
             C = GrB (arg1, arg2, arg3) ;
         case 5
             C = GrB (arg1, arg2, arg3, arg4) ;
-        otherwise
-            error ('GrB:error', 'internal error 885') ;
     end
 end
 

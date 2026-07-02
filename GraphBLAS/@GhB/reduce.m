@@ -1,5 +1,5 @@
 function C = reduce (arg1, arg2, arg3, arg4, arg5)
-%GRB.REDUCE reduce a matrix to a scalar.
+%GHB.REDUCE reduce a matrix to a scalar.
 %
 %   c = GrB.reduce (monoid, A)
 %   c = GrB.reduce (monoid, A, desc)

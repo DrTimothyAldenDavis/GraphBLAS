@@ -1,5 +1,5 @@
 function Y = dnn (W, bias, Y0)
-%GRB.DNN Sparse deep neural network in GraphBLAS.
+%GHB.DNN Sparse deep neural network in GraphBLAS.
 % Performs ReLU inference using input feature vector(s) Y0, DNN weights W,
 % and bias vectors.  The input features are in a matrix Y0 of size
 % nfeatures-by- nneurons.  The DNN weights W is a cell array with W{k}
@@ -38,7 +38,7 @@ function Y = dnn (W, bias, Y0)
 % SPDX-License-Identifier: Apache-2.0
 
 % FIXME: GhB will be different
-ghb = 1 ;     % 0 for GrB, 1 for GhB
+%% ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 [f,~] = GrB.format (Y0) ;
 desc.format = '' ;

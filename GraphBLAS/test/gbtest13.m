@@ -108,7 +108,9 @@ j1 = find (v) ;
 j2 = find (gtb (ghb, v)) ;
 assert (isequal (j1, j2)) ;
 
-G = gtb_prune (ghb, gtb (ghb, A, 'by row')) ;
+A2 = gtb (ghb, A, 'by row') ;
+G = gtb_prune (ghb, A2, 0) ;
+assert (isequal (gtb_format (ghb, G), 'by row')) ;
 [i1, j1, x1] = find (A, 4) ;
 [i2, j2, x2] = find (G, 4) ;
 assert (isequal (x1, x2)) ;

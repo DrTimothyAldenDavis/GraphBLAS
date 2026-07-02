@@ -1,5 +1,5 @@
 function C = apply2 (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-%GRB.APPLY2 apply a binary operator to a matrix, with scalar binding.
+%GHB.APPLY2 apply a binary operator to a matrix, with scalar binding.
 %
 %   C = GrB.apply2 (op, A, B)
 %   C = GrB.apply2 (op, A, B, desc)

@@ -1,5 +1,5 @@
 function C = zeros (varargin)
-%GRB.ZEROS a matrix with no entries.
+%GHB.ZEROS a matrix with no entries.
 %
 %   C = GrB.zeros (n) ;      n-by-n GrB double matrix with no entries.
 %   C = GrB.zeros (m,n) ;    m-by-n GrB double matrix with no entries.

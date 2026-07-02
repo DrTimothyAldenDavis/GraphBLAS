@@ -56,8 +56,7 @@ gbmex_wait (A) ;
 e = length (I) ;
 I = [I ; J] ;
 if (e > intmax ('uint32'))
-    % this line of code is not tested by gbtest since it requires
-    % a huge test problem:
+    % this case cannot be tested by gbtest; it requires a huge test problem:
     J = (uint64 (0) : uint64 (e-1))' ;
 else
     J = (uint32 (0) : uint32 (e-1))' ;

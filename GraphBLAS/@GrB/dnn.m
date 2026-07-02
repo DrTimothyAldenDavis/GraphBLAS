@@ -38,7 +38,7 @@ function Y = dnn (W, bias, Y0)
 % SPDX-License-Identifier: Apache-2.0
 
 % FIXME: GhB will be different
-ghb = 0 ;     % 0 for GrB, 1 for GhB
+%% ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 [f,~] = GrB.format (Y0) ;
 desc.format = '' ;

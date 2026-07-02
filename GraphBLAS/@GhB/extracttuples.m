@@ -1,5 +1,5 @@
 function [I,J,X] = extracttuples (A, desc)
-%GRB.EXTRACTTUPLES extract a list of entries from a matrix.
+%GHB.EXTRACTTUPLES extract a list of entries from a matrix.
 %
 %   [I,J,X] = GrB.extracttuples (A, desc)
 %

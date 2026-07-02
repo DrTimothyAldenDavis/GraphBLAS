@@ -1,5 +1,5 @@
 function C = assign (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-%GRB.ASSIGN: assign a submatrix into a matrix.
+%GHB.ASSIGN assign a submatrix into a matrix.
 %
 %   C = GrB.assign (Cin, M, accum, A, I, J, desc)
 %

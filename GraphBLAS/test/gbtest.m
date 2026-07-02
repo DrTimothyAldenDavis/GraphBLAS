@@ -1,4 +1,4 @@
-function gbtest
+function s = gbtest
 %GBTEST test GraphBLAS MATLAB/Octave interface
 % First compile the GraphBLAS library by typing 'make' in the top-level
 % GraphBLAS folder, in your system shell.  That statement will use cmake to
@@ -747,6 +747,33 @@ assert (GrB.nmalloc == 0) ;
 gbtest145       % test inplace usage for GhB.trans
 assert (GrB.nmalloc == 0) ;
 
+gbtest146       % test inplace usage for GhB.select
+assert (GrB.nmalloc == 0) ;
+
+gbtest147       % test inplace usage for GhB.extract
+assert (GrB.nmalloc == 0) ;
+
+gbtest148       % test log, log2, log10, sqrt: complex to real
+gbtest148 (1)
+gbtest148 (2)
+assert (GrB.nmalloc == 0) ;
+
+gbtest149       % test [GrB,GhB].expand
+gbtest149 (1)
+gbtest149 (2)
+assert (GrB.nmalloc == 0) ;
+
+gbtest150       % test [GrB,GhB].wait
+assert (GrB.nmalloc == 0) ;
+
+gbtest151       % test error handling
+assert (GrB.nmalloc == 0) ;
+
+gbtest152       % test nvals
+gbtest152 (1)
+gbtest152 (2)
+assert (GrB.nmalloc == 0) ;
+
 gbtest96        % test GrB.optype
 gbtest96 (1)
 gbtest96 (2)
@@ -768,4 +795,8 @@ GrB.clear
 assert (GrB.nmalloc == 0) ;
 
 fprintf ('\ngbtest: all tests passed\n') ;
+
+if (nargout > 0)
+    s = true ;
+end
 

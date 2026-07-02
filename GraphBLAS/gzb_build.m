@@ -12,8 +12,6 @@ if (ghb)
             C = GhB (gbmex_build (ghb, I, J, X, m, n, arg7, arg8)) ;
         case 9
             C = GhB (gbmex_build (ghb, I, J, X, m, n, arg7, arg8, arg9)) ;
-        otherwise
-            error ('GrB:error', 'internal error 889') ;
     end
 else
     switch (nargin)
@@ -23,8 +21,6 @@ else
             C = GrB (gbmex_build (ghb, I, J, X, m, n, arg7, arg8)) ;
         case 9
             C = GrB (gbmex_build (ghb, I, J, X, m, n, arg7, arg8, arg9)) ;
-        otherwise
-            error ('GrB:error', 'internal error 889') ;
     end
 end
 

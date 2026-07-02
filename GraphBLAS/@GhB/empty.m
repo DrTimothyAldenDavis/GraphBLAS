@@ -1,5 +1,5 @@
 function C = empty (varargin)
-%GRB.EMPTY construct an empty GraphBLAS sparse matrix.
+%GHB.EMPTY construct an empty GraphBLAS sparse matrix.
 % C = GrB.empty is a 0-by-0 empty matrix.
 % C = GrB.empty (m) is an m-by-0 empty matrix.
 % C = GrB.empty ([m n]) or GrB.empty (m,n) is an m-by-n empty matrix,

@@ -1,5 +1,5 @@
 function C = subassign (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-%GRB.SUBASSIGN: assign a submatrix into a matrix.
+%GHB.SUBASSIGN assign a submatrix into a matrix.
 %
 %   C = GrB.subassign (Cin, M, accum, A, I, J, desc)
 %

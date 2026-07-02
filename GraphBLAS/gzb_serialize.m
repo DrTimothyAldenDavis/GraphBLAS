@@ -12,8 +12,6 @@ if (ghb)
             C = GhB (gbmex_serialize (ghb, A, method)) ;
         case 4
             C = GhB (gbmex_serialize (ghb, A, method, level)) ;
-        otherwise
-            error ('GrB:error', 'internal error 887') ;
     end
 else
     switch (nargin)
@@ -23,8 +21,6 @@ else
             C = GrB (gbmex_serialize (ghb, A, method)) ;
         case 4
             C = GrB (gbmex_serialize (ghb, A, method, level)) ;
-        otherwise
-            error ('GrB:error', 'internal error 887') ;
     end
 end
 

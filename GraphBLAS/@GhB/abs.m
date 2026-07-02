@@ -3,7 +3,7 @@ function C = abs (G)
 % C = abs (G) is the absolute value of each entry of G.  C is always real,
 % even if C is complex.
 %
-% See also GrB/sign.
+% See also GhB/sign.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

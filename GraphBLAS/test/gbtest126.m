@@ -14,7 +14,7 @@ gtb_selectops (ghb) ;
 if (ghb)
     help GhB.selectops ;
 else
-    help GhB.selectops ;
+    help GrB.selectops ;
 end
 
 fprintf ('\ngbtest126 (%d): all tests passed\n', ghb) ;

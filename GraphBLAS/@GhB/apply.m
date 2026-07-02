@@ -1,5 +1,5 @@
 function C = apply (arg1, arg2, arg3, arg4, arg5, arg6)
-%GRB.APPLY apply a unary operator to a matrix.
+%GHB.APPLY apply a unary operator to a matrix.
 %
 %   C = GrB.apply (op, A)
 %   C = GrB.apply (op, A, desc)

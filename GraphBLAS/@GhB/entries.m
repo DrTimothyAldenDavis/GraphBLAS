@@ -1,5 +1,5 @@
 function result = entries (A, varargin)
-%GRB.ENTRIES count or query the entries of a matrix.
+%GHB.ENTRIES count or query the entries of a matrix.
 % An entry A(i,j) in a GraphBLAS matrix is one that is present in the
 % data structure.  Unlike a built-in sparse matrix, a GraphBLAS matrix can
 % contain explicit zero entries.  All entries in a built-in sparse matrix

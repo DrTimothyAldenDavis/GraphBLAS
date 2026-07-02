@@ -1,5 +1,5 @@
 function [v, parent] = bfs (A, s, varargin)
-%GRB.BFS breadth-first search of a graph, using its adjacency matrix.
+%GHB.BFS breadth-first search of a graph, using its adjacency matrix.
 % v = GrB.bfs (A, s) performs the breadth-first search of the directed
 % graph represented by the square adjacency matrix A.  The breadth-first
 % search starts at node s.  The output v is a sparse vector of size n-by-1,
@@ -62,7 +62,7 @@ function [v, parent] = bfs (A, s, varargin)
 % SPDX-License-Identifier: Apache-2.0
 
 % FIXME: GhB will be different
-ghb = 1 ;     % 0 for GrB, 1 for GhB
+%% ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 %-------------------------------------------------------------------------
 % initializations

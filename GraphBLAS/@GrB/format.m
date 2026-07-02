@@ -120,12 +120,15 @@ function [f,s,iso] = format (arg)
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 0)
-    f = gb_format ;
+    % f = GrB.format ; get the global format
+    f = gbmex_format ;
 else
+    % f = GrB.format (A) ; get the format of A (built-in or GraphBLAS)
+    % f = GrB.format (f) ; set the global format for all matrices.
     if (nargout <= 1)
-        f = gb_format (arg) ;
+        f = gbmex_format (arg) ;
     else
-        [f, s, iso] = gb_format (arg) ;
+        [f,s,iso] = gbmex_format (arg) ;
     end
 end
 

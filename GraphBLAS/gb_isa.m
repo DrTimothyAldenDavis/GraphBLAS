@@ -1,5 +1,5 @@
-function s = gzb_isa (ghb, G, type)
-%GZB_ISA wrapper for GrB/isa and GhB/isa.  Not user-callable.
+function s = gb_isa (ghb, G, type)
+%GB_ISA implements GrB/isa and GhB/isa.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

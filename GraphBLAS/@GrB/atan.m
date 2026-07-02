@@ -9,5 +9,5 @@ function C = atan (G)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-C = gb_atan (ghb, G)
+C = gb_atan (ghb, G) ;
 

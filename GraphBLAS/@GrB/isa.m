@@ -24,5 +24,5 @@ function s = isa (G, type)
 
 ghb = 0 ;     % 0 for GrB, 1 for GhB
 
-s = gzb_isa (ghb, G, type) ;
+s = gb_isa (ghb, G, type) ;
 

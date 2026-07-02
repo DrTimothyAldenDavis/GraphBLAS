@@ -1,5 +1,5 @@
 function C = ones (varargin)
-%GRB.ONES a matrix with all ones.
+%GHB.ONES a matrix with all ones.
 %
 %   C = GrB.ones (n) ;      n-by-n GrB double matrix of all ones.
 %   C = GrB.ones (m,n) ;    m-by-n GrB double matrix of all ones.

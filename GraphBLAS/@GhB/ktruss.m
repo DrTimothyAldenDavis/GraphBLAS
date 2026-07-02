@@ -1,5 +1,5 @@
 function C = ktruss (A, k, check)
-%GRB.KTRUSS find the k-truss of a matrix.
+%GHB.KTRUSS find the k-truss of a matrix.
 % C = GrB.ktruss (A, k) finds the k-truss of a matrix A.  spones (A) must
 % be symmetric with no diagonal entries.  Only the pattern of A is
 % considered.  The ktruss C is a graph consisting of a subset of the edges
@@ -39,7 +39,7 @@ function C = ktruss (A, k, check)
 % SPDX-License-Identifier: Apache-2.0
 
 % FIXME: GhB will be different
-ghb = 1 ;     % 0 for GrB, 1 for GhB
+%% ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 % check inputs
 if (nargin < 2)

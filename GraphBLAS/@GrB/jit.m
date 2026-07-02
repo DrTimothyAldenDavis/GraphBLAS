@@ -1,4 +1,4 @@
-function [status,path] = jit (status_arg,path_arg)
+function [varargout] = jit (varargin)
 %JIT controls the GraphBLAS JIT
 %
 %   status = GrB.jit ;      % get the current status of the JIT
@@ -23,11 +23,12 @@ function [status,path] = jit (status_arg,path_arg)
 %
 % The 2nd input/output parameter is a string that defines the JIT cache
 % path.  If you run multiple instances of MATLAB at the same time, each
-% must use a different cache folder.  The default cache on Linux/Mac is
-% ~/.SuiteSparse/GrB10.1.1 (for GraphBLAS v10.1.1 for example).  On
-% Windows, it is located inside your AppData\Local folder.  If you change
-% to another location, adding the GraphBLAS version is recommended; see
-% the last example below.
+% must use a different cache folder, but parallel threads within the same
+% instance of MATLAB share the same jit folder.  The default cache on
+% Linux/Mac is ~/.SuiteSparse/GrB10.4.0 (for GraphBLAS v10.4.0 for
+% example).  On Windows, it is located inside your AppData\Local folder.
+% If you change to another location, adding the GraphBLAS version is
+% recommended; see the last example below.
 %
 % Refer to the GraphBLAS User Guide for details (GxB_JIT_C_CONTROL
 % and GxB_JIT_CACHE_PATH).
@@ -48,6 +49,11 @@ function [status,path] = jit (status_arg,path_arg)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+[varargout{1:nargout}] = gbmex_jit (varargin {:}) ;
+
+%{
+% FIXME delete this
+% function [status,path] = jit (status_arg,path_arg)
 if (nargin == 0)
     if (nargout <= 1)
         [status] = gbmex_jit ;
@@ -67,4 +73,5 @@ else
         [status, path] = gbmex_jit (status_arg, path_arg) ;
     end
 end
+%}
 

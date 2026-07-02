@@ -15,7 +15,7 @@ gtb_unops (ghb) ;
 if (ghb)
     help GhB.unops ;
 else
-    help GhB.unops ;
+    help GrB.unops ;
 end
 
 fprintf ('\ngbtest128 (%d): all tests passed\n', ghb) ;

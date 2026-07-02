@@ -1,5 +1,5 @@
 function C = load (filename)
-%GRB.LOAD Load a single GraphBLAS matrix from a file.
+%GHB.LOAD Load a single GraphBLAS matrix from a file.
 % C = GrB.load (filename) loads a single @GrB or @GhB matrix from a file.
 % If the filename is not present, it defaults to 'GrB_Matrix.mat'.
 %

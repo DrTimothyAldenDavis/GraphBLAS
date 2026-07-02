@@ -1,5 +1,5 @@
 function C = kronecker (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-%GRB.KRONECKER sparse Kronecker product.
+%GHB.KRONECKER sparse Kronecker product.
 %
 %   C = GrB.kronecker (op, A, B, desc)
 %   C = GrB.kronecker (Cin, accum, op, A, B, desc)
@@ -51,7 +51,7 @@ else
                 arg5, arg6, arg7) ;
         otherwise
             error ('GrB:error', ...
-                'usage: C = GrB.kronecker (Cin, M, accum, op, A, B, desc)') ;
+                'usage: C = GhB.kronecker (Cin, M, accum, op, A, B, desc)') ;
     end
     C = gb_mexfunction_result (ghb, C_opaque, kind) ;
 end

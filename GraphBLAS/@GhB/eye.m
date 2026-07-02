@@ -1,5 +1,5 @@
 function C = eye (varargin)
-%GRB.EYE sparse identity matrix.
+%GHB.EYE sparse identity matrix.
 % C = GrB.eye (n) creates a sparse n-by-n identity matrix of type 'double'.
 % C = GrB.eye (m,n) or GrB.eye ([m n]) is an m-by-n identity matrix.
 %

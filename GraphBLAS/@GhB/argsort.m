@@ -1,5 +1,5 @@
 function [C,P] = argsort (A, arg1, arg2)
-% GRB.ARGSORT sort the rows or columns of a matrix 
+%GHB.ARGSORT sort the rows or columns of a matrix 
 %
 % [C,P] = argsort (A)
 % [C,P] = argsort (A, 'ascend')

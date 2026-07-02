@@ -14,7 +14,7 @@ gtb_monoids (ghb) ;
 if (ghb)
     help GhB.monoids ;
 else
-    help GhB.monoids ;
+    help GrB.monoids ;
 end
 
 fprintf ('\ngbtest125 (%d): all tests passed\n', ghb) ;

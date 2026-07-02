@@ -1,5 +1,5 @@
 function C = eadd (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-%GRB.EADD sparse matrix addition.
+%GHB.EADD sparse matrix addition.
 %
 %   C = GrB.eadd (op, A, B)
 %   C = GrB.eadd (op, A, B, desc)

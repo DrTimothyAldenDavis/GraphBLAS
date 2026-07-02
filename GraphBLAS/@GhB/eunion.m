@@ -1,5 +1,5 @@
 function C = eunion (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
-%GRB.EUNION sparse matrix union.
+%GHB.EUNION sparse matrix union.
 %
 %   C = GrB.eunion (op, A, a, B, b)
 %   C = GrB.eunion (op, A, a, B, b, desc)
@@ -44,7 +44,7 @@ if (nargout == 0)
                 arg8, arg9) ;
         otherwise
             error ('GrB:error', ...
-                'usage: C = GrB.eunion (Cin, M, accum, op, A, a, B, b, desc)') ;
+                'usage: C = GhB.eunion (Cin, M, accum, op, A, a, B, b, desc)') ;
     end
 else
     switch (nargin)
@@ -65,7 +65,7 @@ else
                 arg5, arg6, arg7, arg8, arg9) ;
         otherwise
             error ('GrB:error', ...
-                'usage: C = GrB.eunion (Cin, M, accum, op, A, a, B, b, desc)') ;
+                'usage: C = GhB.eunion (Cin, M, accum, op, A, a, B, b, desc)') ;
     end
     C = gb_mexfunction_result (ghb, C_opaque, kind) ;
 end

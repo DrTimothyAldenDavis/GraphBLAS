@@ -20,6 +20,8 @@ for trials = 1:10
                 B = diag (A, k) ;
                 C = diag (G, k) ;
                 assert (gbtest_eq (B, C)) ;
+                C = diag (G, gtb (ghb, k)) ;
+                assert (gbtest_eq (B, C)) ;
                 B = tril (A, k) ;
                 C = tril (A, k) ;
                 assert (gbtest_eq (B, C)) ;

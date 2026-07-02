@@ -29,25 +29,18 @@ if (omitself)
     % ignore diagonal entries of G
     if (isequal (side, 'upper'))
         G = gzb_select (ghb, 'triu', G_arg, 1) ;
-    elseif (isequal (side, 'lower'))
-        G = gzb_select (ghb, 'tril', G_arg, -1) ;
     else
-        % use G_arg as-is
-        G = G_arg ;
+        G = gzb_select (ghb, 'tril', G_arg, -1) ;
     end
 else
     % include diagonal entries of G
     if (isequal (side, 'upper'))
         G = gzb_select (ghb, 'triu', G_arg, 0) ;
-    elseif (isequal (side, 'lower'))
-        G = gzb_select (ghb, 'tril', G_arg, 0) ;
     else
-        % use G_arg as-is
-        G = G_arg ;
+        G = gzb_select (ghb, 'tril', G_arg, 0) ;
     end
 end
 
-% construct the graph
 switch (type)
 
     case { 'single' }
@@ -68,5 +61,6 @@ switch (type)
 
         % typecast to double
         Graph = graph (gbmex_builtin (gzb_cast (ghb, G, 'double')), side) ;
+
 end
 

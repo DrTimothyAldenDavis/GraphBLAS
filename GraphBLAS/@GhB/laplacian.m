@@ -1,5 +1,5 @@
 function L = laplacian (A, type, check)
-%GRB.LAPLACIAN Laplacian matrix
+%GHB.LAPLACIAN Laplacian matrix
 % L = laplacian (A) is the graph Laplacian of the matrix A.  spones(A)
 % must be symmetric.  The diagonal of A is ignored. The diagonal of L is
 % the degree of the nodes.  That is, L(j,j) = sum (spones (A (:,j))),

@@ -1,5 +1,5 @@
 function C = mxm (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-%GRB.MXM sparse matrix-matrix multiplication.
+%GHB.MXM sparse matrix-matrix multiplication.
 %
 % GrB.mxm computes C<M> = accum (C, A*B) using a given semiring.
 %

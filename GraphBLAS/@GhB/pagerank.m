@@ -1,5 +1,5 @@
 function [r, stats] = pagerank (A, opts)
-%GRB.PAGERANK PageRank of a graph.
+%GHB.PAGERANK PageRank of a graph.
 % r = GrB.pagerank (A) computes the PageRank of a graph with adjacency
 % matrix A.  r = GrB.pagerank (A, options) allows for non-default options
 % to be selected.  For compatibility with the built-in methods, defaults
@@ -26,7 +26,7 @@ function [r, stats] = pagerank (A, opts)
 % SPDX-License-Identifier: Apache-2.0
 
 % FIXME: GhB will be different
-ghb = 1 ;     % 0 for GrB, 1 for GhB
+%% ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 %-------------------------------------------------------------------------
 % initializations

@@ -82,7 +82,10 @@ for k = 1:length (types)
         D1 = graph (double (A)) ;
     end
 
+    % type
     D2 = graph (G) ;
+    % D1.Edges
+    % D2.Edges
     assert (isequal (D1, D2)) ;
 end
 

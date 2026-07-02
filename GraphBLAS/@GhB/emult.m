@@ -1,5 +1,5 @@
 function C = emult (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-%GRB.EMULT sparse element-wise 'multiplication'.
+%GHB.EMULT sparse element-wise 'multiplication'.
 %
 %   C = GrB.emult (op, A, B, desc)
 %   C = GrB.emult (Cin, accum, op, A, B, desc)
@@ -29,8 +29,6 @@ ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 if (nargout == 0)
     switch (nargin)
-        case 3
-            gbmex_emult (ghb, arg1, arg2, arg3) ;
         case 4
             gbmex_emult (ghb, arg1, arg2, arg3, arg4) ;
         case 5

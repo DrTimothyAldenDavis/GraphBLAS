@@ -1,5 +1,5 @@
 function C = vreduce (arg1, arg2, arg3, arg4, arg5, arg6)
-%GRB.VREDUCE reduce a matrix to a vector.
+%GHB.VREDUCE reduce a matrix to a vector.
 %
 %   C = GrB.vreduce (monoid, A)
 %   C = GrB.vreduce (monoid, A, desc)

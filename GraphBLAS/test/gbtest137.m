@@ -55,6 +55,7 @@ C3 = GhB.subassign (C, M, A, desc) ;
 assert (isequal (C2, C3)) ;
 
 C1 = GhB (C) ; GhB.subassign (C1, M, A, desc) ; assert (isequal (C1, C2)) ;
+C1 = GhB (C) ; GhB.subassign (C1, M, A      ) ; assert (isequal (C1, C2)) ;
 
 %----------------------------------------------------------------------
 % GhB.subassign (C, accum, A) ;

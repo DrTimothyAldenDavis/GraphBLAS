@@ -17,7 +17,7 @@ function s = tricount (A, arg2, arg3)
 % SPDX-License-Identifier: Apache-2.0
 
 % FIXME: GhB will be different
-ghb = 0 ;     % 0 for GrB, 1 for GhB
+%% ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 [m, n] = size (A) ;
 if (m ~= n)
@@ -51,7 +51,7 @@ if (check && ~issymmetric (spones (A)))
     error ('GrB:error', 'pattern of A must be symmetric') ;
 end
 
-if (isequal (class (d), 'GrB'))
+if (isobject (d))
     d = double (d) ;
 end
 

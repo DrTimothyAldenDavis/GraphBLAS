@@ -1,5 +1,5 @@
 function C = trans (arg1, arg2, arg3, arg4, arg5)
-%GRB.TRANS transpose a sparse matrix.
+%GHB.TRANS transpose a sparse matrix.
 %
 %   C = GrB.trans (A)
 %   C = GrB.trans (A, desc)

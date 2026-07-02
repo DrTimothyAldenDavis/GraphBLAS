@@ -18,6 +18,10 @@ gtb_jit (ghb, 'off', '/tmp') ;
 assert (isequal (status2, 'off')) ;
 assert (isequal (path2, '/tmp')) ;
 
+[status3, path3] = gtb_jit (ghb, status1) ;
+assert (isequal (status1, status3)) ;
+assert (isequal (path2, path3)) ;
+
 [status3, path3] = gtb_jit (ghb, status1, path1) ;
 assert (isequal (status1, status3)) ;
 assert (isequal (path1, path3)) ;

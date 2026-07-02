@@ -26,6 +26,11 @@ assert (isequal (I, J)) ;
 C2 = A (I, I) ;
 assert (isequal (C, C2)) ;
 
+[C, I, J] = gtb_compact (ghb, A, 0, 'symmetric') ;
+assert (isequal (I, J)) ;
+C2 = A (I, I) ;
+assert (isequal (C, C2)) ;
+
 [C, I, J] = gtb_compact (ghb, A, [ ]) ;
 assert (~isequal (I, J)) ;
 C2 = A (I, J) ;
@@ -45,7 +50,7 @@ try
     [C, I, J] = gtb_compact (ghb, A, [ ], 'symmetric') ;
     ok = 0 ;
 catch expected_error
-    expected_error
+    fprintf ('expected: %s\n', expected_error.message) ;
     ok = 1 ;
 end
 assert (ok) ;

@@ -14,7 +14,7 @@ gtb_semirings (ghb) ;
 if (ghb)
     help GhB.semirings ;
 else
-    help GhB.semirings ;
+    help GrB.semirings ;
 end
 
 fprintf ('\ngbtest127 (%d): all tests passed\n', ghb) ;

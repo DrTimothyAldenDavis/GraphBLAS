@@ -14,7 +14,7 @@ if (isobject (S))
     % did not have saveobj and loadobj methods.
     G = gzb_loadhistorical (ghb, S.opaque) ;
 else
-    % S is a struct created by saveobj, above, with a single
+    % S is a struct created by saveobj with a single
     % S.blob field containing the serialized matrix.
     G = gzb_deserialize (ghb, S.blob) ;
 end

@@ -1,5 +1,5 @@
 function C = prune (G, id)
-%GRB.PRUNE remove explicit values from a matrix.
+%GHB.PRUNE remove explicit values from a matrix.
 % C = GrB.prune (G) removes any explicit zeros from G.
 % C = GrB.prune (G, id) removes entries equal to the given scalar id.
 %

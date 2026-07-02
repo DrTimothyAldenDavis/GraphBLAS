@@ -29,6 +29,14 @@ for trial = 1:10
             assert (gbtest_eq (floor (A), floor (G))) ;
             assert (gbtest_eq (round (A), round (G))) ;
             assert (gbtest_eq (fix   (A), fix   (G))) ;
+
+            A = int32 (full (A - 50 * sprandn (m, n, 0.5))) ;
+            G = gtb (ghb, A) ;
+            assert (gbtest_eq (sign  (A), sign  (G))) ;
+            assert (gbtest_eq (ceil  (A), ceil  (G))) ;
+            assert (gbtest_eq (floor (A), floor (G))) ;
+            assert (gbtest_eq (round (A), round (G))) ;
+            assert (gbtest_eq (fix   (A), fix   (G))) ;
         end
     end
 end

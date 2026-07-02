@@ -1,5 +1,5 @@
 function C = random (varargin)
-%GRB.RANDOM random sparse matrix.
+%GHB.RANDOM random sparse matrix.
 % C = GrB.random (A) has the same pattern as A, but with uniformly
 %   distributed random entries.
 %

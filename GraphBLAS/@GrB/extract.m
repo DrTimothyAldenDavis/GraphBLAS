@@ -1,5 +1,5 @@
 function C = extract (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-%EXTRACT extract sparse submatrix.
+%GRB.EXTRACT extract sparse submatrix.
 %
 %   C = GrB.extract (Cin, M, accum, A, I, J, desc)
 %

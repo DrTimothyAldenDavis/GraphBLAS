@@ -1,5 +1,5 @@
 function C = build (I,J,X,varargin)
-%GRB.BUILD construct a sparse matrix from a list of entries.
+%GHB.BUILD construct a sparse matrix from a list of entries.
 %
 %   C = GrB.build (I, J, X, m, n, dup, type, desc)
 %

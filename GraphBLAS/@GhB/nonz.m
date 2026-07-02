@@ -1,5 +1,5 @@
 function result = nonz (A, varargin)
-%GRB.NONZ count or query the nonzeros of a matrix.
+%GHB.NONZ count or query the nonzeros of a matrix.
 % A GraphBLAS matrix can include explicit entries that have the value
 % zero.  These entries never appear in a built-in sparse matrix.  This
 % function counts or queries the nonzeros of matrix, checking their value

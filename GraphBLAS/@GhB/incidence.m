@@ -1,5 +1,5 @@
 function C = incidence (A, varargin)
-%GRB.INCIDENCE graph incidence matrix.
+%GHB.INCIDENCE graph incidence matrix.
 % C = GrB.incidence (A) is the graph incidence matrix of the square
 % matrix A.  C is GraphBLAS matrix of size n-by-e, if A is n-by-n with e
 % entries (not including diagonal entries).  The jth column of C has 2

@@ -96,6 +96,13 @@ C1 = gtb_eunion (ghb, c, a, alpha, accum, op, b, beta, desc) ; assert (isequal (
 C1 = gtb_eunion (ghb, c, a, alpha, accum, b, beta, op, desc) ; assert (isequal (C1, C2)) ;
 C1 = gtb_eunion (ghb, c, a, alpha, b, beta, accum, op, desc) ; assert (isequal (C1, C2)) ;
 
+C1 = gtb_eunion (ghb, C, accum, op, A, alpha, B, beta      ) ; assert (isequal (C1, C2)) ;
+C1 = gtb_eunion (ghb, C, accum, A, alpha, op, B, beta      ) ; assert (isequal (C1, C2)) ;
+C1 = gtb_eunion (ghb, C, accum, A, alpha, B, beta, op      ) ; assert (isequal (C1, C2)) ;
+C1 = gtb_eunion (ghb, C, A, alpha, accum, op, B, beta      ) ; assert (isequal (C1, C2)) ;
+C1 = gtb_eunion (ghb, C, A, alpha, accum, B, beta, op      ) ; assert (isequal (C1, C2)) ;
+C1 = gtb_eunion (ghb, C, A, alpha, B, beta, accum, op      ) ; assert (isequal (C1, C2)) ;
+
 %----------------------------------------------------------------------
 % C = GrB.eunion (C, M, op, A, alpha, B, beta, desc)
 %----------------------------------------------------------------------

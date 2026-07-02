@@ -1,5 +1,5 @@
 function C = true (varargin)
-%GRB.TRUE a logical matrix with all true values.
+%GHB.TRUE a logical matrix with all true values.
 %
 %   C = GrB.true (n) ;      n-by-n GrB logical matrix of all true entries.
 %   C = GrB.true (m,n) ;    m-by-n GrB logical matrix of all true entries.

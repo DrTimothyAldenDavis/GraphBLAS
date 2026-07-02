@@ -1,5 +1,5 @@
 function [x,p] = argmin (A, dim)
-%GRB.ARGMIN argmin of a built-in or GraphBLAS matrix
+%GHB.ARGMIN argmin of a built-in or GraphBLAS matrix
 %
 % [x,p] = argmin(A,1) computes the argmin of each column of A, similar to
 %       [x,p] = min(A), or min(A,[],1), with x and p being n-by-1 vectors

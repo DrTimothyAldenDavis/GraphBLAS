@@ -1,5 +1,5 @@
 function C = false (varargin)
-%GRB.FALSE a logical matrix with no entries.
+%GHB.FALSE a logical matrix with no entries.
 %
 %   C = GrB.false (n) ;      n-by-n GrB logical matrix with no entries.
 %   C = GrB.false (m,n) ;    m-by-n GrB logical matrix with no entries.

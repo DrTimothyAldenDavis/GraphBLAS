@@ -11,5 +11,5 @@ function C = asech (G)
 
 ghb = 1 ;     % 0 for GrB, 1 for GhB
 
-C = gb_asech (ghb, G)
+C = gb_asech (ghb, G) ;
 

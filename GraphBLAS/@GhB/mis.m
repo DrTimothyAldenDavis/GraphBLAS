@@ -1,5 +1,5 @@
 function iset = mis (A_arg, check)
-%GRB.MIS variant of Luby's maximal independent set algorithm.
+%GHB.MIS variant of Luby's maximal independent set algorithm.
 %
 %   iset = GrB.mis (A) ;
 %
@@ -26,7 +26,7 @@ function iset = mis (A_arg, check)
 % SPDX-License-Identifier: Apache-2.0
 
 % FIXME: GhB will be different
-ghb = 1 ;     % 0 for GrB, 1 for GhB
+%% ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 [m, n] = size (A_arg) ;
 if (m ~= n)

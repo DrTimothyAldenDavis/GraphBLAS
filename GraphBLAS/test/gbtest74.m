@@ -41,8 +41,6 @@ for k = 1:8
 
         C1 = bitset (A, B) ;
         C2 = bitset (A2, B2) ;
-        C1
-        C2
         assert (isequal (C1, C2)) ;
 
         C1 = bitget (A, B) ;
@@ -96,7 +94,11 @@ for k = 1:8
         B2 = gtb (ghb, B) ;
 
         C1 = bitget (A, B, type) ;
-        C2 = bitget (A2, B2, type) ;
+        C2 = bitget (uint64 (A2), B2, type) ;
+        assert (isequal (C1, double (C2))) ;
+
+        C1 = bitget (A, B, type) ;
+        C2 = bitget (A2, uint64 (B2), type) ;
         assert (isequal (C1, C2)) ;
 
         C1 = bitset (A, B, type) ;
