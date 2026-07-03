@@ -23,12 +23,11 @@ try
     S = gtb_build (ghb, H,H,H) ;
     ok = false ;
 catch expected_error
-    expected_error
-    assert (gb_contains (expected_error.message, ...
-        'gbmex_build: input matrix dimensions are too large')) ;
+    msg = expected_error.message ;
     ok = true ;
 end
 assert (ok) ;
+assert (gb_contains (msg, 'input matrix dimensions are too large')) ;
 
 fprintf ('\ngbtest123 (%d): all tests passed\n', ghb) ;
 
