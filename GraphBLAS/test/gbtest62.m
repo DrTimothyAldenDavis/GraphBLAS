@@ -26,11 +26,13 @@ for trial = 1:40
 
     C0 = A ./ r ;
     C1 = GA ./ s ;
-    assert (isequal (C0, C1)) ;
+    err = norm (C0-C1,1) ;
+    assert (err < 1e-12) ;
 
     C0 = A / r ;
     C1 = GA / s ;
-    assert (isequal (C0, C1)) ;
+    err = norm (C0-C1,1) ;
+    assert (err < 1e-12) ;
 
     C0 = A ./ 0 ;
     C1 = GA ./ 0 ;

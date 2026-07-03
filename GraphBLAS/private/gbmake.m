@@ -109,7 +109,8 @@ if (have_octave)
         flags = [flags ' -std=c11 -fPIC -Wno-pragmas' ] ;
         rpath = ' ' ;
     else
-        flags = [flags ' -std=c11 -fopenmp -fPIC -Wno-pragmas' ] ;
+%       flags = [flags ' -std=c11 -fopenmp -fPIC -Wno-pragmas' ] ;
+        flags = [flags ' -std=c11 -fPIC -Wno-pragmas' ] ;
         rpath = sprintf (' ''-Wl,-rpath=%s'' ', library_path) ;
     end
     flags = [flags rpath] ;
@@ -120,8 +121,10 @@ else
         ldflags = '-fPIC' ;
         rpath = '-rpath ' ;
     elseif (isunix)
-        cflags = '-fopenmp' ;
-        ldflags = '-fopenmp -fPIC' ;
+        cflags = '' ;
+        ldflags = '-fPIC' ;
+%       cflags = '-fopenmp' ;
+%       ldflags = '-fopenmp -fPIC' ;
         rpath = '-rpath=' ;
     end
     if (ismac || isunix)
@@ -178,30 +181,32 @@ if (have_sparse_single)
 end
 
 % determine if the compiler supports C99 or MSVC complex types
-try
-    % try C99 complex types
-    fprintf ('try C99 complex:\n') ;
-    cflag = ' -DGxB_HAVE_COMPLEX_C99=1' ;
-    mexcmd = sprintf ('mex %s %s %s complex/check_mex_complex.c', ...
-        silent, flags, cflag) ;
-    % fprintf ('mexcmd: %s\n', mexcmd) ;
-    eval (mexcmd) ;
-catch me
-    % try MSVC complex types
-    fprintf ('try MSVC complex:\n') ;
+cflag = ' -DGxB_HAVE_COMPLEX_C99=1' ;
+if (ispc)
     try
-        cflag = ' -DGxB_HAVE_COMPLEX_MSVC=1' ;
+        % try C99 complex types
+        fprintf ('try C99 complex:\n') ;
         mexcmd = sprintf ('mex %s %s %s complex/check_mex_complex.c', ...
             silent, flags, cflag) ;
         % fprintf ('mexcmd: %s\n', mexcmd) ;
         eval (mexcmd) ;
     catch me
-        me
-        error ('C99 or MSVC complex support required') ;
+        % try MSVC complex types
+        fprintf ('try MSVC complex:\n') ;
+        try
+            cflag = ' -DGxB_HAVE_COMPLEX_MSVC=1' ;
+            mexcmd = sprintf ('mex %s %s %s complex/check_mex_complex.c', ...
+                silent, flags, cflag) ;
+            % fprintf ('mexcmd: %s\n', mexcmd) ;
+            eval (mexcmd) ;
+        catch me
+            me
+            error ('C99 or MSVC complex support required') ;
+        end
     end
+    flags = [flags cflag] ;
+    check_mex_complex
 end
-flags = [flags cflag] ;
-check_mex_complex
 
 Lflags = sprintf ('-L''%s''', library_path) ;
 

@@ -79,23 +79,25 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // get the JIT control, if requested
+    // get the JIT control
     //--------------------------------------------------------------------------
+
+    int c ;
+    OK (GrB_Global_get_INT32 (GrB_GLOBAL, &c, GxB_JIT_C_CONTROL)) ;
+    char *current_status = NULL ;
+    switch (c)
+    {
+        case GxB_JIT_OFF  : current_status = "off"      ; break ;
+        case GxB_JIT_PAUSE: current_status = "pause"    ; break ;
+        case GxB_JIT_RUN  : current_status = "run"      ; break ;
+        case GxB_JIT_LOAD : current_status = "load"     ; break ;
+        case GxB_JIT_ON   : current_status = "on"       ; break ;
+        default           : current_status = "unknown"  ; break ;
+    }
 
     if (nargout > 0)
     { 
-        int c ;
-        OK (GrB_Global_get_INT32 (GrB_GLOBAL, &c, GxB_JIT_C_CONTROL)) ;
-        switch (c)
-        {
-            case GxB_JIT_OFF  : pargout [0] = mxCreateString ("off"  ) ; break ;
-            case GxB_JIT_PAUSE: pargout [0] = mxCreateString ("pause") ; break ;
-            case GxB_JIT_RUN  : pargout [0] = mxCreateString ("run"  ) ; break ;
-            case GxB_JIT_LOAD : pargout [0] = mxCreateString ("load" ) ; break ;
-            case GxB_JIT_ON   : pargout [0] = mxCreateString ("on"   ) ; break ;
-            default           : pargout [0] = mxCreateString ("unknown") ;
-                                break ;
-        }
+        pargout [0] = mxCreateString (current_status) ;
     }
 
     //--------------------------------------------------------------------------
@@ -120,21 +122,35 @@ void mexFunction
     // get the JIT cache path, if requested
     //--------------------------------------------------------------------------
 
-    if (nargout > 1)
+    char *path = NULL ;
+    if (nargout > 1 || (nargin == 0 && nargout == 0))
     { 
         size_t pathlen = 0 ;
         OK (GrB_Global_get_SIZE (GrB_GLOBAL, &pathlen, GxB_JIT_CACHE_PATH)) ;
-        char *path = mxMalloc (pathlen + 2) ;
+        path = mxMalloc (pathlen + 2) ;
         path [0] = '\0' ;
         OK (GrB_Global_get_String (GrB_GLOBAL, path, GxB_JIT_CACHE_PATH)) ;
+    }
+
+    if (nargout > 1)
+    {  
         pargout [1] = mxCreateString (path) ;
-        gbmx_free ((void **) &path) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // report the status, if requested
+    //--------------------------------------------------------------------------
+
+    if (nargin == 0 && nargout == 0)
+    { 
+        printf ("GraphBLAS jit status: %s\npath: %s\n", current_status, path) ;
     }
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
+    gbmx_free ((void **) &path) ;
     gb_wrapup ( ) ;
 }
 

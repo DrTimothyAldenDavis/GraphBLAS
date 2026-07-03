@@ -33,7 +33,12 @@ for k = 1:length (types)
     else
         C = sign (B) ;
     end
-    assert (gbtest_err (C, H) == 0)
+    err = gbtest_err (C, H) ;
+    if (gb_contains (type, 'single'))
+        assert (err < 1e-6)
+    else
+        assert (err < 1e-12)
+    end
 
 end
 

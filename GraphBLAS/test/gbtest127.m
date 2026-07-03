@@ -11,7 +11,8 @@ gtb_name = gtb_prep (ghb) ;
 
 list = gtb_semirings (ghb)
 gtb_semirings (ghb) ;
-if (ghb)
+have_octave = gb_octave ;
+if (ghb && ~have_octave)
     help GhB.semirings ;
 else
     help GrB.semirings ;

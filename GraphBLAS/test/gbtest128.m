@@ -11,8 +11,8 @@ gtb_name = gtb_prep (ghb) ;
 
 list = gtb_unops (ghb)
 gtb_unops (ghb) ;
-
-if (ghb)
+have_octave = gb_octave ;
+if (ghb && ~have_octave)
     help GhB.unops ;
 else
     help GrB.unops ;

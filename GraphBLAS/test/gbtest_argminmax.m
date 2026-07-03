@@ -7,6 +7,7 @@ function [x,p] = gbtest_argminmax (ghb, A, ismin, dim)
 S = spones (A) ;
 [m n] = size (A) ;
 type = gtb_type (ghb, A) ;
+p = [ ] ;
 
 if (dim == 2)
 
@@ -19,19 +20,19 @@ elseif (dim == 1)
     for j = 1:n
         first = true ;
         for i = 1:m
-            if (S (i,j) == 1)
+            if (logical (S (i,j) == 1))
                 if (first)
                     x (j) = A (i,j) ;
                     p (j) = i ;
                     first = false ;
                 else
                     if (ismin)
-                        if (A (i,j) < x (j))
+                        if (logical (A (i,j) < x (j)))
                             x (j) = A (i,j) ;
                             p (j) = i ;
                         end
                     else
-                        if (A (i,j) > x (j))
+                        if (logical ((A (i,j) > x (j)))
                             x (j) = A (i,j) ;
                             p (j) = i ;
                         end
@@ -43,22 +44,24 @@ elseif (dim == 1)
 
 else % dim == 0
 
+    x = gtb (ghb, n, 1, type) ;
+    p = gtb (ghb, n, 1, 'int64') ;
     first = true ;
     for i = 1:m
         for j = 1:m
-            if (S (i,j) == 1)
+            if (logical (S (i,j) == 1))
                 if (first)
                     x = A (i,j) ;
                     p = [i j] ;
                     first = false ;
                 else
                     if (ismin)
-                        if (A (i,j) < x)
+                        if (logical (A (i,j) < x))
                             x = A (i,j) ;
                             p = [i j] ;
                         end
                     else
-                        if (A (i,j) > x)
+                        if (logical (A (i,j) > x))
                             x = A (i,j) ;
                             p = [i j] ;
                         end

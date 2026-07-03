@@ -11,7 +11,8 @@ gtb_name = gtb_prep (ghb) ;
 
 list = gtb_binops (ghb) ;
 gtb_binops (ghb) ;
-if (ghb)
+have_octave = gb_octave ;
+if (ghb && ~have_octave)
     help GhB.binops ;
 else
     help GrB.binops ;
