@@ -20,7 +20,7 @@ gtb_name = gtb_prep (ghb) ;
 load west0479_correct.mat
 A = Problem.A ;
 Sparse = gtb (ghb, A) ;
-S = delsq (numgrid ('B', 100)) ;
+S = delsq (numgrid ('B', 100)) ;    % does not appear in octave
 n = 2^50 ;
 Hyper = gtb (ghb, n,n) ;
 m = size (S,1) ;

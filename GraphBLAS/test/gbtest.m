@@ -40,7 +40,6 @@ rng ('default') ;
 
 have_octave = gb_octave ;
 
-if (0) % FIXME
 gbtest0         % test GrB.clear
 gbtest0 (1)
 gbtest0 (2)
@@ -608,6 +607,7 @@ gbtest111 (2)
 assert (GrB.nmalloc == 0) ;
 
 if (~have_octave)
+    % octave cannot save/load an object
     gbtest112       % test load and save
     gbtest112 (1)
     gbtest112 (2)
@@ -698,7 +698,6 @@ gbtest129       % test jit
 gbtest129 (1)
 gbtest129 (2)
 assert (GrB.nmalloc == 0) ;
-end % FIXME
 
 gbtest130       % test argmin and argmax
 gbtest130 (1)
@@ -710,10 +709,13 @@ gbtest131 (1)
 gbtest131 (2)
 assert (GrB.nmalloc == 0) ;
 
-gbtest132       % test load/save from prior versions of GraphBLAS
-gbtest132 (1)
-gbtest132 (2)
-assert (GrB.nmalloc == 0) ;
+if (~have_octave)
+    % octave cannot save/load an object
+    gbtest132       % test load/save from prior versions of GraphBLAS
+    gbtest132 (1)
+    gbtest132 (2)
+    assert (GrB.nmalloc == 0) ;
+end
 
 gbtest133       % simple inplace tests of GhB.apply
 assert (GrB.nmalloc == 0) ;

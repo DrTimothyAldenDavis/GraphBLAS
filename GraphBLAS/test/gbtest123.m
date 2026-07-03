@@ -25,13 +25,8 @@ try
 catch expected_error
     expected_error
     have_octave = gb_octave ;
-    if (have_octave)
-        assert (isequal (expected_error.message, ...
-            'gbmex_build: input matrix dimensions are too large')) ;
-    else
-        assert (isequal (expected_error.message, ...
-            'input matrix dimensions are too large')) ;
-    end
+    assert (gb_contains (expected_error.message, ...
+        'gbmex_build: input matrix dimensions are too large')) ;
     ok = true ;
 end
 assert (ok) ;

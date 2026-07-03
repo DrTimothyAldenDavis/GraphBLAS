@@ -20,7 +20,7 @@ catch expected_error
     msg = expected_error.message ;
 end
 assert (ok) ;
-assert (isequal (msg, 'k must be a scalar')) ; 
+assert (gb_contains (msg, 'k must be a scalar')) ;
 
 try
     C = gtb_apply2 (ghb, A, '*', [1 2]) ;
@@ -31,7 +31,7 @@ catch expected_error
     msg = expected_error.message ;
 end
 assert (ok) ;
-assert (isequal (msg, 'either A or B must be a non-empty scalar')) ; 
+assert (gb_contains (msg, 'either A or B must be a non-empty scalar')) ;
 
 try
     C = gtb_apply2 (ghb, A, '*', sparse (0)) ;
@@ -42,7 +42,7 @@ catch expected_error
     msg = expected_error.message ;
 end
 assert (ok) ;
-assert (isequal (msg, 'either A or B must be a non-empty scalar')) ; 
+assert (gb_contains (msg, 'either A or B must be a non-empty scalar')) ;
 
 fprintf ('\ngbtest131 (%d): all tests passed\n', ghb) ;
 
