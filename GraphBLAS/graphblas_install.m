@@ -34,8 +34,8 @@ have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 if (have_octave)
     % Octave can use the normal libgraphblas.so
     need_rename = false ;
-    if verLessThan ('octave', '7')
-        error ('GrB:mex', 'Octave 7 or later is required') ;
+    if verLessThan ('octave', '10.0')
+        error ('GrB:mex', 'Octave 10.0 or later is required') ;
     end
 else
     if verLessThan ('matlab', '9.4')
