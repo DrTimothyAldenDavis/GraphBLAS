@@ -28,7 +28,7 @@ function C = bitset (A, B, arg3, arg4)
 %
 % Example:
 %
-%   A = GrB (magic (4), 'uint8')
+%   A = GhB (magic (4), 'uint8')
 %   B = reshape ([1:8 1:8], 4, 4)
 %   C = bitset (A, B)
 %   fprintf ('\nA: ') ; fprintf ('%3x ', A) ; fprintf ('\n') ;
@@ -37,8 +37,8 @@ function C = bitset (A, B, arg3, arg4)
 %   C2 = bitset (uint8 (A), B)
 %   isequal (C2, C)
 %
-% See also GrB/bitor, GrB/bitand, GrB/bitxor, GrB/bitcmp, GrB/bitshift,
-% GrB/bitset, GrB/bitclr.
+% See also GhB/bitor, GhB/bitand, GhB/bitxor, GhB/bitcmp, GhB/bitshift,
+% GhB/bitset, GhB/bitclr.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

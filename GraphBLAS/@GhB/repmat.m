@@ -4,7 +4,7 @@ function C = repmat (G, m, n)
 % C = repmat (G, [m n]) % same as C = repmat (A, m, n)
 % C = repmat (G, n)     % constructs an n-by-n tiling of the matrix G
 %
-% See also GrB/kron, GrB.kronecker.
+% See also GhB/kron, GhB.kronecker.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

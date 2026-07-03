@@ -4,7 +4,7 @@ function disp (A, level)
 % much is printed; 0: none, 1: terse, 2: a few entries, 3: all, 4: a few
 % entries with high precision, 5: all with high precision.  The default is
 % 2 if level is not present.  To use this function on a built-in matrix,
-% use disp (A, GrB (level)) or GrB.print (A,level).  This is useful since
+% use disp (A, GhB (level)) or GhB.print (A,level).  This is useful since
 % disp(A) will always display all entries of A, which can be too verbose
 % if nnz (A) is huge.
 %
@@ -12,8 +12,8 @@ function disp (A, level)
 %
 %   A = sprand (50, 50, 0.1) ;
 %   % just print a few entries
-%   disp (A, GrB (2))
-%   G = GrB (A)
+%   disp (A, GhB (2))
+%   G = GhB (A)
 %   % print all entries
 %   A
 %   disp (G, 3)
@@ -22,7 +22,7 @@ function disp (A, level)
 %   A
 %   disp (G, 5)
 %
-% See also GrB/display, GrB.print.
+% See also GhB/display, GhB.print.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

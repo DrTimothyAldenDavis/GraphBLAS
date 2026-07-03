@@ -18,7 +18,7 @@ function C = sum (G, option)
 % GraphBLAS sum (G,...) uses only a type of 'native', and a nanflag of
 % 'includenan'.  See 'help sum' for more details.
 %
-% See also GrB/any, GrB/prod, GrB/max, GrB/min.
+% See also GhB/any, GhB/prod, GhB/max, GhB/min.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

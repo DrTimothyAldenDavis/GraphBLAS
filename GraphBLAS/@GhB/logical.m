@@ -5,11 +5,11 @@ function C = logical (G)
 % sparse otherwise.
 %
 % To typecast the matrix G to a GraphBLAS logical matrix instead,
-% use C = GrB (G, 'logical').
+% use C = GhB (G, 'logical').
 %
-% See also cast, GrB, GrB/double, GrB/complex, GrB/single, GrB/int8,
-% GrB/int16, GrB/int32, GrB/int64, GrB/uint8, GrB/uint16, GrB/uint32,
-% GrB/uint64.
+% See also cast, GhB, GhB/double, GhB/complex, GhB/single, GhB/int8,
+% GhB/int16, GhB/int32, GhB/int64, GhB/uint8, GhB/uint16, GhB/uint32,
+% GhB/uint64.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

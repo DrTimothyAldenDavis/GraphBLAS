@@ -3,7 +3,7 @@ function C = ge (A, B)
 % C = (A >= B) compares A and B element-by-element.  One or
 % both may be scalars.  Otherwise, A and B must have the same size.
 %
-% See also GrB/lt, GrB/le, GrB/gt, GrB/ne, GrB/eq.
+% See also GhB/lt, GhB/le, GhB/gt, GhB/ne, GhB/eq.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

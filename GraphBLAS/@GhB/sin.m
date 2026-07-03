@@ -2,7 +2,7 @@ function C = sin (G)
 %SIN sine.
 % C = sin (G) is the sine of each entry of G.
 %
-% See also GrB/asin, GrB/sinh, GrB/asinh.
+% See also GhB/asin, GhB/sinh, GhB/asinh.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

@@ -15,14 +15,14 @@ function L = laplacian (A, type, check)
 %
 % spones(A) must be symmetric on input, but this condition is not checked
 % by default.  If it is not symmetric, the results are undefined.  To
-% check this condition, use GrB.laplacian (A, 'double', 'check') ;
+% check this condition, use GhB.laplacian (A, 'double', 'check') ;
 %
 % L is returned as symmetric GraphBLAS matrix.
 %
 % Example:
 %
 %   A = bucky ;
-%   L = GrB.laplacian (A)
+%   L = GhB.laplacian (A)
 %
 % See also graph/laplacian.
 

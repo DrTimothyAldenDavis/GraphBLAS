@@ -5,7 +5,7 @@ function C = round (G)
 % Note: the additional parameters of the built-in round function,
 % round(x,n) and round (x,n,type), are not supported.
 %
-% See also GrB/ceil, GrB/floor, GrB/fix.
+% See also GhB/ceil, GhB/floor, GhB/fix.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

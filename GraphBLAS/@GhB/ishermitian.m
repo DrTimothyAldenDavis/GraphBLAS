@@ -4,7 +4,7 @@ function s = ishermitian (G, option)
 % ishermitian (G, 'skew') is true if G equals -G' and false otherwise.
 % ishermitian (G, 'nonskew') is the same as ishermitian (G).
 %
-% See also GrB/issymmetric.
+% See also GhB/issymmetric.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

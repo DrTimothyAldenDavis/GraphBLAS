@@ -1,7 +1,8 @@
 function G = loadobj (S)
 %LOADOBJ loads a @GrB matrix from a file.
-% MATLAB/Octave first reads in the struct S that saveobj created, and
-% then passes it to this method.
+% MATLAB first reads in the struct S that saveobj created, and then passes it
+% to this method.  Octave does not use this method since it cannot save/load
+% objects to/from a file.
 %
 % See also GrB/saveobj, GrB.load.
 

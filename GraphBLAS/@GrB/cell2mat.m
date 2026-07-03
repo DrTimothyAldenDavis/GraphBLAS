@@ -1,9 +1,8 @@
 function C = cell2mat (A)
 %GRB.CELL2MAT Concatenate a cell array of matrices into a single matrix.
-% C = GrB.cell2mat (A) converts a 2D cell array of matrices into a single
-% @GrB matrix.  The input matrices in A may be @GrB/built-in matrices, in
-% any combination.  Let [m,n] = size(A) be the size of the cell array A.
-% Then C is computed as:
+% C = GrB.cell2mat (A) converts a 2D cell array of matrices into a single @GrB
+% matrix.  Let [m,n] = size(A) be the size of the cell array A.  Then C is
+% computed as:
 %
 %  C = [ A{0,0}   A{0,1}   A{0,2}   ... A{0,n-1}
 %        A{1,0}   A{1,1}   A{1,2}   ... A{1,n-1}

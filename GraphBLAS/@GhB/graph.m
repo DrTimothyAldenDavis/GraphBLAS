@@ -17,11 +17,11 @@ function Graph = graph (G, varargin)
 %
 % Example:
 %
-%   G = GrB (bucky) ;
+%   G = GhB (bucky) ;
 %   Graph = graph (G)
 %   plot (Graph)
 %
-% See also graph, digraph, GrB/digraph.
+% See also graph, digraph, GhB/digraph.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

@@ -14,13 +14,13 @@ function C = bitand (A, B, assumedtype)
 %
 % The input matrices must be real, and may be GraphBLAS/built-in matrices,
 % in any combination.  C is returned as a GraphBLAS matrix.  The type of C
-% is given by GrB.optype (A,B), after any conversion to assumedtype, if
+% is given by GhB.optype (A,B), after any conversion to assumedtype, if
 % needed.
 %
 % Example:
 %
-%   A = GrB (magic (4), 'uint8')
-%   B = GrB (13 * eye (4), 'uint8') ;
+%   A = GhB (magic (4), 'uint8')
+%   B = GhB (13 * eye (4), 'uint8') ;
 %   B (3,4) = 107
 %   C = bitand (A, B)
 %   fprintf ('\nA: ') ; fprintf ('%3x ', A) ; fprintf ('\n') ;
@@ -29,8 +29,8 @@ function C = bitand (A, B, assumedtype)
 %   C2 = bitand (uint8 (A), uint8 (B))
 %   isequal (C2, C)
 %
-% See also GrB/bitor, GrB/bitxor, GrB/bitcmp, GrB/bitshift, GrB/bitget,
-% GrB/bitset, GrB/bitclr.
+% See also GhB/bitor, GhB/bitxor, GhB/bitcmp, GhB/bitshift, GhB/bitget,
+% GhB/bitset, GhB/bitclr.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

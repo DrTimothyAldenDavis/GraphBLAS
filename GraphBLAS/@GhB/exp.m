@@ -3,7 +3,7 @@ function C = exp (G)
 % C = exp (G) is e^x for each entry x of the matrix G.
 % Since e^0 is nonzero, C is a full matrix.
 %
-% See also GrB/exp, GrB/expm1, GrB/pow2, GrB/log, GrB/log10, GrB/log2.
+% See also GhB/exp, GhB/expm1, GhB/pow2, GhB/log, GhB/log10, GhB/log2.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

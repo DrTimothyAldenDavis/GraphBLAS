@@ -14,8 +14,8 @@ function C = bitor (A, B, assumedtype)
 %
 % Example:
 %
-%   A = GrB (magic (4), 'uint8')
-%   B = GrB (13 * eye (4), 'uint8') ;
+%   A = GhB (magic (4), 'uint8')
+%   B = GhB (13 * eye (4), 'uint8') ;
 %   B (3,4) = 107
 %   C = bitor (A, B)
 %   fprintf ('\nA: ') ; fprintf ('%3x ', A) ; fprintf ('\n') ;
@@ -24,8 +24,8 @@ function C = bitor (A, B, assumedtype)
 %   C2 = bitor (uint8 (A), uint8 (B))
 %   isequal (C2, C)
 %
-% See also GrB/bitand, GrB/bitxor, GrB/bitcmp, GrB/bitshift, GrB/bitget,
-% GrB/bitset, GrB/bitclr.
+% See also GhB/bitand, GhB/bitxor, GhB/bitcmp, GhB/bitshift, GhB/bitget,
+% GhB/bitset, GhB/bitclr.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

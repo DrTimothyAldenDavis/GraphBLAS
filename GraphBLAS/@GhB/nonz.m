@@ -6,51 +6,51 @@ function result = nonz (A, varargin)
 % and treating explicit zeros the same as entries that do not appear in
 % the pattern of A.
 %
-% e = GrB.nonz (A)         number of nonzeros
-% e = GrB.nonz (A, 'all')  number of nonzeros
-% e = GrB.nonz (A, 'row')  number of rows with at least one nonzero
-% e = GrB.nonz (A, 'col')  number of columns with at least one nonzero
+% e = GhB.nonz (A)         number of nonzeros
+% e = GhB.nonz (A, 'all')  number of nonzeros
+% e = GhB.nonz (A, 'row')  number of rows with at least one nonzero
+% e = GhB.nonz (A, 'col')  number of columns with at least one nonzero
 %
-% X = GrB.nonz (A, 'list')         list of values of unique nonzeros
-% X = GrB.nonz (A, 'all', 'list')  list of values of unique nonzeros
-% I = GrB.nonz (A, 'row', 'list')  list of rows with at least one nonzero
-% J = GrB.nonz (A, 'col', 'list')  list of cols with at least one nonzero
+% X = GhB.nonz (A, 'list')         list of values of unique nonzeros
+% X = GhB.nonz (A, 'all', 'list')  list of values of unique nonzeros
+% I = GhB.nonz (A, 'row', 'list')  list of rows with at least one nonzero
+% J = GhB.nonz (A, 'col', 'list')  list of cols with at least one nonzero
 %
-% d = GrB.nonz (A, 'row', 'degree')
+% d = GhB.nonz (A, 'row', 'degree')
 %   If A is m-by-n, then d is a sparse column vector of size m, with d(i)
 %   equal to the number of nonzeros in A(i,:).  If A(i,:) has no
 %   nonzeros, then d(i) is an implicit zero, not present in the pattern
-%   of d, so I = find (d) is the same I = GrB.nonz (A, 'row', 'list').
+%   of d, so I = find (d) is the same I = GhB.nonz (A, 'row', 'list').
 %
-% d = GrB.nonz (A, 'col', 'degree')
+% d = GhB.nonz (A, 'col', 'degree')
 %   If A is m-by-n, d is a sparse column vector of size n, with d(j)
 %   equal to the number of nonzeros in A(:,j).  If A(:,j) has no
 %   nonzeros, then d(j) is an implicit zero, not present in the pattern
-%   of d, so I = find (d) is the same I = GrB.nonz (A, 'col', 'list').
+%   of d, so I = find (d) is the same I = GhB.nonz (A, 'col', 'list').
 %
 % With an optional scalar argument as the last argument, the value of the
-% 'zero' can be specified; d = GrB.nonz (A, ..., id).  For example, to
-% count all entries in A not equal to one, use GrB.nonz (A, 1).
+% 'zero' can be specified; d = GhB.nonz (A, ..., id).  For example, to
+% count all entries in A not equal to one, use GhB.nonz (A, 1).
 %
 % The result is a built-in scalar or vector, except for the 'degree'
-% usage, in which case the result is a GrB vector d.
+% usage, in which case the result is a GhB vector d.
 %
 % Example:
 %
 %   A = magic (5) ;
 %   A (A < 10) = 0              % built-in full matrix with explicit zeros
 %   nnz (A)
-%   GrB.nonz (A)                % same as nnz (A)
-%   G = GrB (A)                 % contains explicit zeros
-%   GrB.nonz (G)                % same as nnz (A)
+%   GhB.nonz (A)                % same as nnz (A)
+%   G = GhB (A)                 % contains explicit zeros
+%   GhB.nonz (G)                % same as nnz (A)
 %   G (A > 18) = sparse (0)     % entries A>18 deleted, explicit zeros
-%   GrB.nonz (G)
-%   GrB.nonz (G, 'list')
+%   GhB.nonz (G)
+%   GhB.nonz (G, 'list')
 %   S = double (G)              % built-in sparse matrix; no explicit zeros
-%   GrB.nonz (S)
-%   GrB.nonz (S, 'list')
+%   GhB.nonz (S)
+%   GhB.nonz (S, 'list')
 %
-% See also GrB.entries, GrB/nnz, GrB/nonzeros, GrB.prune.
+% See also GhB.entries, GhB/nnz, GhB/nonzeros, GhB.prune.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

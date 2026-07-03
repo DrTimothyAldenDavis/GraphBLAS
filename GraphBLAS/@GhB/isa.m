@@ -1,14 +1,15 @@
 function s = isa (G, type)
 %ISA Determine if a GraphBLAS matrix is of specific type.
-% For any GraphBLAS matrix G, isa (G, 'GrB') and isa (G, 'numeric') are
+% For any GraphBLAS GhB matrix G, isa (G, 'GhB') and isa (G, 'numeric') are
 % always true, even if G is logical, since many semirings are defined for
-% that type.
+% that type.  Since GhB is a subclass of GrB, isa (G, 'GrB') is also true for
+% a GrB matrix G.
 %
-% isa (G, 'float') is the same as isfloat (G), and is true if the GrB
+% isa (G, 'float') is the same as isfloat (G), and is true if the GhB
 % matrix G has type 'double', 'single', 'single complex', or 'double
 % complex'.
 %
-% isa (G, 'integer') is the same as isinteger (G), and is true if the GrB
+% isa (G, 'integer') is the same as isinteger (G), and is true if the GhB
 % matrix G has type 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16',
 % 'uint32', or 'uint64'.
 %
@@ -16,10 +17,8 @@ function s = isa (G, type)
 %
 % Otherwise, all other cases are handled with builtin ('isa',G,type).
 %
-% See also class, GrB.type, GrB/isnumeric, GrB/islogical, GrB/isfloat,
-% GrB/isinteger, isobject, GrB/issparse, GrB/isreal.
-
-% FIXME revise comments above
+% See also class, GhB.type, GhB/isnumeric, GhB/islogical, GhB/isfloat,
+% GhB/isinteger, isobject, GhB/issparse, GhB/isreal.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

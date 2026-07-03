@@ -1,12 +1,12 @@
 function C = reduce (arg1, arg2, arg3, arg4, arg5)
 %GRB.REDUCE reduce a matrix to a scalar.
 %
-%   c = GrB.reduce (monoid, A)
-%   c = GrB.reduce (monoid, A, desc)
-%   c = GrB.reduce (cin, accum, monoid, A)
-%   c = GrB.reduce (cin, accum, monoid, A, desc)
+% syntax for a new matrix C:                    computation:
+% c = GrB.reduce (op, A, desc)                  % c = op(A)
+% c = GrB.reduce (cin, op, A, desc)             % c = cin ; c = op(A)
+% c = GrB.reduce (cin, accum, op, A, desc)      % c = cin ; c += op(A)
 %
-% GrB.reduce reduces a matrix to a scalar, using the given monoid:
+% GrB.reduce reduces a matrix to a scalar, using the given op as a monoid:
 %
 %   Monoids for real non-logical types: '+', '*', 'max', 'min', 'any'
 %   For logical: '|', '&', 'xor', 'eq', 'any'
@@ -15,12 +15,12 @@ function C = reduce (arg1, arg2, arg3, arg4, arg5)
 %
 % See 'help GrB.monoidinfo' for more details on the available monoids.
 %
-% The monoid and A arguments are required.  All others are optional.  The
-% op is applied to all entries of the matrix A to reduce them to a single
-% scalar result.
+% The op and A arguments are required.  All others are optional.  The op is
+% applied to all entries of the matrix A to reduce them to a single scalar
+% result.
 %
-% accum: an optional binary operator.
-%       See 'help GrB.binopinfo' for available binary operators.
+% accum: a binary operator to accumulate the results; in the computations
+% listed above it is shown as "+=" but any binary operator may be used.
 %
 % cin: an optional input scalar into which the result can be accumulated
 % with c = accum (cin, result).

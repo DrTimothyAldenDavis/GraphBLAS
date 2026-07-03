@@ -1,7 +1,7 @@
 function blob = serialize (G, method, level)
 %GRB.SERIALIZE convert a matrix to a serialized blob.
 % blob = GrB.serialize (G) returns a uint8 array containing the contents
-% of the matrix G, which may be a MATLAB or @GrB matrix.  The array may
+% of the matrix G, which may be a MATLAB, @GhB, or @GrB matrix.  The array may
 % be saved to a binary file and used to construct a GrB_Matrix outside
 % of this MATLAB/Octave interface to GraphBLAS.  It may also be used to
 % reconstruct a @GrB matrix with G = GrB.deserialize (blob).

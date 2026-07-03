@@ -4,7 +4,7 @@ function C = gammaln (G)
 % entry of G.  Since gammaln (0) = inf, the result is a full matrix.
 % G must be real.
 %
-% See also GrB/gammaln.
+% See also GhB/gammaln.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

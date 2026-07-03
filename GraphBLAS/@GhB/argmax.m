@@ -17,7 +17,7 @@ function [x,p] = argmax (A, dim)
 % Unlike the built-in max, entries not present in A are not assumed to have
 % the value zero.  Instead, they are ignored.  If column A(:,j) has no
 % entries, x(j) and p(j) are not present in the sparsity pattern of x and
-% p, respectively.  GrB.argmax always returns x and p as @GrB column
+% p, respectively.  GhB.argmax always returns x and p as @GhB column
 % vectors, while the built-in max returns x and p as either row or column
 % or vectors, depending on dim.  NaNs are ignored.  If x(j) is NaN, p(j) is
 % empty.
@@ -26,29 +26,29 @@ function [x,p] = argmax (A, dim)
 %
 %   % these produce the same results since no row/column of A is empty
 %   A = [ 1 4 9 ; 2 -2 2 ; 3 -10 0 ; 5 4 3 ]
-%   [x,p] = GrB.argmax (A,2)
+%   [x,p] = GhB.argmax (A,2)
 %   [x,p] = max (A, [ ], 2)
-%   [x,p] = GrB.argmax (A,1)
+%   [x,p] = GhB.argmax (A,1)
 %   [x,p] = max (A, [ ], 1)
 %
-%   % max and GrB.argmax differ since A has an empty row and column
+%   % max and GhB.argmax differ since A has an empty row and column
 %   A (:,1) = 0 ;
 %   A (2,:) = 0 ;
 %   A = sparse (A)
-%   [x,p] = GrB.argmax (A,2)
+%   [x,p] = GhB.argmax (A,2)
 %   [x,p] = max (A, [ ], 2)
-%   [x,p] = GrB.argmax (A,1)
+%   [x,p] = GhB.argmax (A,1)
 %   [x,p] = max (A, [ ], 1)
 %
 %   % the global max of A
 %   x = max (A, [ ], 'all')
-%   [x,p] = GrB.argmax (A)
+%   [x,p] = GhB.argmax (A)
 %
 % Complex matrices are not supported.  If A(i,j) is NaN, then x(i) is NaN
 % for argmax(A,2) and p(i) is not present, and x(j) is NaN for argmax(A,1)
 % and p(j) is not present.
 %
-% See also min, max, GrB/min, GrB/max, GrB.argmin, GrB.argsort.
+% See also min, max, GhB/min, GhB/max, GhB.argmin, GhB.argsort.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

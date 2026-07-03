@@ -7,7 +7,7 @@ function C = all (G, option)
 % C = all (G, 1) is a row vector with C(j) = all (G (:,j))
 % C = all (G, 2) is a column vector with C(i) = all (G (i,:))
 %
-% See also GrB/any, GrB/nnz, GrB/prod, GrB.entries.
+% See also GhB/any, GhB/nnz, GhB/prod, GhB.entries.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

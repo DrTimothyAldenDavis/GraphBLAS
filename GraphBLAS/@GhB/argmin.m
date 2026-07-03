@@ -17,7 +17,7 @@ function [x,p] = argmin (A, dim)
 % Unlike the built-in min, entries not present in A are not assumed to have
 % the value zero.  Instead, they are ignored.  If column A(:,j) has no
 % entries, x(j) and p(j) are not present in the sparsity pattern of x and
-% p, respectively.  GrB.argmin always returns x and p as @GrB column
+% p, respectively.  GhB.argmin always returns x and p as @GhB column
 % vectors, while the built-in min returns x and p as either row or column
 % or vectors, depending on dim.  NaNs are ignored.  If x(j) is NaN, p(j) is
 % empty.
@@ -26,29 +26,29 @@ function [x,p] = argmin (A, dim)
 %
 %   % these produce the same results since no row/column of A is empty
 %   A = [ 1 4 9 ; 2 -2 2 ; 3 -10 0 ; 5 4 3 ]
-%   [x,p] = GrB.argmin (A,2)
+%   [x,p] = GhB.argmin (A,2)
 %   [x,p] = min (A, [ ], 2)
-%   [x,p] = GrB.argmin (A,1)
+%   [x,p] = GhB.argmin (A,1)
 %   [x,p] = min (A, [ ], 1)
 %
-%   % min and GrB.argmin differ since A has an empty row and column
+%   % min and GhB.argmin differ since A has an empty row and column
 %   A (:,1) = 0 ;
 %   A (2,:) = 0 ;
 %   A = sparse (A)
-%   [x,p] = GrB.argmin (A,2)
+%   [x,p] = GhB.argmin (A,2)
 %   [x,p] = min (A, [ ], 2)
-%   [x,p] = GrB.argmin (A,1)
+%   [x,p] = GhB.argmin (A,1)
 %   [x,p] = min (A, [ ], 1)
 %
 %   % the global min of A
 %   x = min (A, [ ], 'all')
-%   [x,p] = GrB.argmin (A)
+%   [x,p] = GhB.argmin (A)
 %
 % Complex matrices are not supported.  If A(i,j) is NaN, then x(i) is NaN
 % for argmin(A,2) and p(i) is not present, and x(j) is NaN for argmin(A,1)
 % and p(j) is not present.
 %
-% See also min, max, GrB/min, GrB/max, GrB.argmax, GrB.argsort.
+% See also min, max, GhB/min, GhB/max, GhB.argmax, GhB.argsort.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

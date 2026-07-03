@@ -1,5 +1,6 @@
 function S = saveobj (G)
-%SAVEOBJ prepares a @GhB matrix for MATLAB/Octave to save to a file.
+%SAVEOBJ prepares a @GhB matrix for MATLAB to save to a file.
+% Octave does not use this method since it cannot save objects to a file.
 %
 % See also GhB/loadobj, GhB.save.
 
@@ -7,5 +8,6 @@ function S = saveobj (G)
 % SPDX-License-Identifier: Apache-2.0
 
 ghb = 1 ;     % 0 for GrB, 1 for GhB
+
 S.blob = gbmex_builtin (gzb_serialize (ghb, G)) ;
 

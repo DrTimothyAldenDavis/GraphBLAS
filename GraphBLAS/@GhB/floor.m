@@ -3,7 +3,7 @@ function C = floor (G)
 % C = floor (G) rounds the entries in the matrix G to the nearest integers
 % towards -infinity.
 %
-% See also GrB/ceil, GrB/round, GrB/fix.
+% See also GhB/ceil, GhB/round, GhB/fix.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

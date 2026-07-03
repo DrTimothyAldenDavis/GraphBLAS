@@ -8,8 +8,8 @@ function C = spfun (fun, G)
 % the type appended, as ('sqrt.double', 'sqrt.double complex', etc).
 % The latter produces a complex result.  sqrt.double (x) returns NaN if
 % x is negative.  By default, the function type is determined from the
-% type of the input matrix G.  GrB/spfun does not attempt to select the
-% operator based on the values, in contract with GrB/sqrt, for example.
+% type of the input matrix G.  GhB/spfun does not attempt to select the
+% operator based on the values, in contract with GhB/sqrt, for example.
 % For a list of types, see 'help GrB.type'.
 %
 % If the string fun is not a GraphBLAS operator, or if fun is a built-in
@@ -17,26 +17,26 @@ function C = spfun (fun, G)
 %
 % The function is not applied to entries not present in G.  Since a
 % GraphBLAS matrix can include explicit zeros, the function fun is
-% applied to them as well.  Use GrB.prune to remove them, if necessary.
+% applied to them as well.  Use GhB.prune to remove them, if necessary.
 %
 % Example:
 %
 %   A = sprand (4, 4, 0.5)
-%   G = GrB (A) ;
+%   G = GhB (A) ;
 %   Z = spfun ('exp', A)
 %   Y = spfun ('exp', G)
 %   C = exp (G)
 %
 %   % sqrt.double (-1) is nan:
-%   z = spfun ('sqrt', GrB (-1))
+%   z = spfun ('sqrt', GhB (-1))
 %   % but sqrt.complex (-1) is 1i:
-%   z = spfun ('sqrt', GrB (-1, 'complex'))
-%   z = spfun ('sqrt.complex', GrB (-1))
-%   % the overloaded GrB/sqrt function checks its inputs:
-%   z = sqrt (GrB (2))
-%   z = sqrt (GrB (-1))
+%   z = spfun ('sqrt', GhB (-1, 'complex'))
+%   z = spfun ('sqrt.complex', GhB (-1))
+%   % the overloaded GhB/sqrt function checks its inputs:
+%   z = sqrt (GhB (2))
+%   z = sqrt (GhB (-1))
 %
-% See also GrB.apply, GrB.unopinfo.
+% See also GhB.apply, GhB.unopinfo.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

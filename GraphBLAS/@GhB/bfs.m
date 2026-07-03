@@ -1,6 +1,6 @@
 function [v, parent] = bfs (A, s, varargin)
 %GHB.BFS breadth-first search of a graph, using its adjacency matrix.
-% v = GrB.bfs (A, s) performs the breadth-first search of the directed
+% v = GhB.bfs (A, s) performs the breadth-first search of the directed
 % graph represented by the square adjacency matrix A.  The breadth-first
 % search starts at node s.  The output v is a sparse vector of size n-by-1,
 % with the level of each node, where v(s)=1, and v(i)=k if the path with
@@ -8,7 +8,7 @@ function [v, parent] = bfs (A, s, varargin)
 % from s, then v(i) is implicitly zero and does not appear in the pattern
 % of v.
 %
-% [v, parent] = GrB.bfs (A, s) also computes the parent vector,
+% [v, parent] = GhB.bfs (A, s) also computes the parent vector,
 % representing the breadth-first search tree.  parent(s)=s denotes the root
 % of the tree, and parent(c)=p if node p is the parent of c in the tree.
 % The parent vector is sparse, and parent (i) is not present if i is not
@@ -27,7 +27,7 @@ function [v, parent] = bfs (A, s, varargin)
 %       ensure that it is symmetric.  The default is not to check.
 %
 % For best performance, if A represents a directed graph, it should be a
-% GraphBLAS matrix stored by row on input.  That is, GrB.format (A) should
+% GraphBLAS matrix stored by row on input.  That is, GhB.format (A) should
 % report 'by row'.  (If A represents a directed graph but is stored 'by
 % col' on input, it is first converted to 'by row', which is costly).  If A
 % is an undirected graph, then it can be stored in either format ('by row'
@@ -40,7 +40,7 @@ function [v, parent] = bfs (A, s, varargin)
 %
 %   A = bucky ;
 %   s = 1 ;
-%   [v pi] = GrB.bfs (A, s)
+%   [v pi] = GhB.bfs (A, s)
 %   figure (1) ;
 %   subplot (1,2,1) ; plot (graph (A)) ;
 %   pi2 = full (double (pi)) ;
@@ -173,11 +173,11 @@ else
     end
     % remove zeros from parent
     parent = GrB.prune (parent) ;
+    parent = GhB (parent) ; % FIXME
 
 end
 
 % remove zeros from v
 v = GrB.prune (v) ;
-
 v = GhB (v) ;   % FIXME
 

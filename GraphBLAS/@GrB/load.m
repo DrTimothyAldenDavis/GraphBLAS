@@ -3,8 +3,8 @@ function C = load (filename)
 % C = GrB.load (filename) loads a single @GrB or @GhB matrix from a file.
 % If the filename is not present, it defaults to 'GrB_Matrix.mat'.
 %
-% GrB.load can load in *.mat files created by GrB.save from this or earlier
-% versions of GraphBLAS.
+% GrB.load can load in *.mat files created by GhB.save or GrB.save from this or
+% earlier versions of GraphBLAS.
 %
 % NOTE: As of GraphBLAS v10.4.0, this method is no longer needed in MATLAB;
 % just MATLAB load/save methods instead.  Octave cannot load/save the @GrB

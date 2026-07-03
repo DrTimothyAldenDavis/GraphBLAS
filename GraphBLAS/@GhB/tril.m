@@ -5,7 +5,7 @@ function L = tril (G, k)
 % L = tril (G,k) returns the entries on and below the kth diagonal of G,
 % where k=0 is the main diagonal.
 %
-% See also GrB/triu.
+% See also GhB/triu.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

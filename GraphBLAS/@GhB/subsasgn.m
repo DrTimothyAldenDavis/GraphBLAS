@@ -17,23 +17,23 @@ function C = subsasgn (C, S, A)
 % of length nnz (M), or a scalar.
 %
 % C (M) = A (M), where the logical matrix M is used on both the sides of
-% the assignment, is the same as C = GrB.subassign (C, M, A).  If C and A
+% the assignment, is the same as C = GhB.subassign (C, M, A).  If C and A
 % (or M) are GraphBLAS matrices, C (M) = A (M) uses GraphBLAS via operator
 % overloading.  The statement C (M) = A (M) takes about twice the time as
-% C = GrB.subassign (C, M, A), so the latter is preferred for best
+% C = GhB.subassign (C, M, A), so the latter is preferred for best
 % performance.  However, both methods in GraphBLAS are many thousands of
 % times faster than C (M) = A (M) using purely built-in sparse matrices C,
 % M, and A, when the matrices are large.
 %
 % If I or J are very large colon notation expressions, then C(I,J) = A is
 % not possible, because I and J are created as explicit lists first,
-% before passing them to GraphBLAS.  See GrB.subassign instead.  See also
-% the example with 'help GrB.extract'.
+% before passing them to GraphBLAS.  See GhB.subassign instead.  See also
+% the example with 'help GhB.extract'.
 %
 % Just as the built-in C(I,J) = A, the GraphBLAS assignment can change the
 % size of C if the indices I and J extend past the current dimesions of C.
 %
-% See also GrB/subsref, GrB/subsindex, GrB.assign, GrB.subassign.
+% See also GhB/subsref, GhB/subsindex, GhB.assign, GhB.subassign.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

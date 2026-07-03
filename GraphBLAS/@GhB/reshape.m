@@ -8,7 +8,7 @@ function C = reshape (G, varargin)
 % of columnwise:  C = reshape (G, m, n, 'by row') or C = 
 % reshape (G, [m n], 'by row').  The default is 'by column'.
 %
-% See also GrB/numel, squeeze.
+% See also GhB/numel, squeeze.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

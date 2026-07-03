@@ -5,14 +5,14 @@ function C = sprandn (arg1, arg2, arg3)
 %
 % C = sprandn (m,n,d) is a random m-by-n matrix with about m*n*d normally
 %   distributed values.  If d == inf, C is a full matrix. To use this
-%   function instead of the built-in sprandn, use C = sprandn (m,n,GrB(d)),
-%   for example, or C = GrB.random (m,n,d,'normal').
+%   function instead of the built-in sprandn, use C = sprandn (m,n,GhB(d)),
+%   for example, or C = GhB.random (m,n,d,'normal').
 %
-% For additional options, see GrB.random.
+% For additional options, see GhB.random.
 % The rc parameter for C = sprandn (m,n,d,rc) is not supported.
 % C is returned as a double GraphBLAS matrix.
 %
-% See also GrB/sprandn, GrB/sprandsym, GrB.random.
+% See also GhB/sprandn, GhB/sprandsym, GhB.random.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

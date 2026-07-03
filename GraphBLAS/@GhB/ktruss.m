@@ -1,6 +1,6 @@
 function C = ktruss (A, k, check)
 %GHB.KTRUSS find the k-truss of a matrix.
-% C = GrB.ktruss (A, k) finds the k-truss of a matrix A.  spones (A) must
+% C = GhB.ktruss (A, k) finds the k-truss of a matrix A.  spones (A) must
 % be symmetric with no diagonal entries.  Only the pattern of A is
 % considered.  The ktruss C is a graph consisting of a subset of the edges
 % of A.  Each edge in C is part of at least k-2 triangles in A, where a
@@ -15,7 +15,7 @@ function C = ktruss (A, k, check)
 % construct another k2-truss with k2 > k1.
 %
 % To check the input A to make sure it has a symmetric pattern and has a
-% zero-free diagonal, use C = GrB.ktruss (A, k, 'check').  This check is
+% zero-free diagonal, use C = GhB.ktruss (A, k, 'check').  This check is
 % optional since it adds extra time.  Results are undefined if 'check' is
 % not specified and A has an unsymmetric pattern or entries on the
 % diagonal.
@@ -25,15 +25,15 @@ function C = ktruss (A, k, check)
 % Example:
 %
 %   load west0479 ;
-%   A = GrB.offdiag (west0479) ;
+%   A = GhB.offdiag (west0479) ;
 %   A = A+A' ;
-%   C3 = GrB.ktruss (A, 3) ;
+%   C3 = GhB.ktruss (A, 3) ;
 %   ntriangles = sum (C3, 'all') / 6
-%   C4a = GrB.ktruss (A, 4) ;
-%   C4b = GrB.ktruss (C3, 4) ;          % this is faster
+%   C4a = GhB.ktruss (A, 4) ;
+%   C4b = GhB.ktruss (C3, 4) ;          % this is faster
 %   isequal (C4a, C4b)
 %
-% See also GrB.tricount.
+% See also GhB.tricount.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -90,3 +90,4 @@ while (1)
     lastnz = nz ;
 end
 
+C = GhB (C) ; % FIXME

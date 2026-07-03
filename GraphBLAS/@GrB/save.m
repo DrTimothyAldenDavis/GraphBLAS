@@ -20,8 +20,6 @@ function filename_used = save (GrB_Matrix_from_GrB_save, filename)
 %
 % See also load, save, GrB.load, GrB.serialize, GrB.deserialize.
 
-% FIXME: same for @GrB and @GhB; revise comments above
-
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 

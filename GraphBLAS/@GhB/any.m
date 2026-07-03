@@ -7,7 +7,7 @@ function C = any (G, option)
 % C = any (G, 1) is a row vector with C(j) = any (G (:,j))
 % C = any (G, 2) is a column vector with C(i) = any (G (i,:))
 %
-% See also GrB/all, GrB/sum, GrB/nnz, GrB.entries, GrB.nonz.
+% See also GhB/all, GhB/sum, GhB/nnz, GhB.entries, GhB.nonz.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

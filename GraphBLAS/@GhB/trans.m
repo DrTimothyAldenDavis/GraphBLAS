@@ -1,23 +1,33 @@
 function C = trans (arg1, arg2, arg3, arg4, arg5)
 %GHB.TRANS transpose a sparse matrix.
 %
-%   C = GrB.trans (A)
-%   C = GrB.trans (A, desc)
-%   C = GrB.trans (Cin, accum, A, desc)
-%   C = GrB.trans (Cin, M, A, desc)
-%   C = GrB.trans (Cin, M, accum, A, desc)
+% syntax for a new matrix C:                    computation:
+% C = GhB.trans (A, desc)                       % C = A'
+% C = GhB.trans (Cin, accum, A, desc)           % C = Cin + A'
+% C = GhB.trans (Cin, M, A, desc)               % C = Cin ; C<M> = A'
+% C = GhB.trans (Cin, M, accum, A, desc)        % C = Cin ; C<M> += A'
 %
-% The descriptor is optional.  If desc.in0 is 'transpose', then C<M>=A or
-% C<M>=accum(C,A) is computed, since the default behavior is to transpose
-% the input matrix.
+% in-place syntax:
+% GhB.trans (C, A, desc)                        % C = A'
+% GhB.trans (C, accum, A, desc)                 % C += A'
+% GhB.trans (C, M, A, desc)                     % C<M> = A'
+% GhB.trans (C, M, accum, A, desc)              % C<M> += A'
 %
-% For complex matrices, GrB.trans computes the array transpose, not the
+% GhB.trans computes T=A'.
+% T is then accumulated into C via C<#M,replace> = accum (C,T).
+%
+% For complex matrices, GhB.trans computes the array transpose, not the
 % matrix (complex conjugate) transpose.
 %
-% accum: an optional binary operator.
-%       See 'help GrB.binopinfo' for available binary operators.
+% accum: a binary operator to accumulate the results; in the computations
+% listed above it is shown as "+=" but any binary operator may be used.
+% For the in-place syntax, the @GhB matrix C is modified in-place.
 %
-% See also GrB/transpose, GrB/ctranspose, GrB/conj, GrB.binopinfo.
+% Cin, the mask matrix M, the accum operator, and desc are optional.  If either
+% accum or M is present, then C or Cin is a required input.  If desc.in0 is
+% 'transpose' then A is transposed before applying the operator.
+%
+% See also GhB/transpose, GhB/ctranspose, GhB/conj, GrB.binopinfo.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

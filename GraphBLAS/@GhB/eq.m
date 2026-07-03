@@ -6,7 +6,7 @@ function C = eq (A, B)
 % The input matrices may be either GraphBLAS and/or built-in matrices, in
 % any combination.  C is returned as a GraphBLAS matrix.
 %
-% See also GrB/lt, GrB/le, GrB/gt, GrB/ge, GrB/ne.
+% See also GhB/lt, GhB/le, GhB/gt, GhB/ge, GhB/ne.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

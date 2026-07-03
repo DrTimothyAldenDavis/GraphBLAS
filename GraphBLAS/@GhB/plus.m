@@ -5,7 +5,7 @@ function C = plus (A, B)
 % scalar, the scalar is expanded into a full matrix the size of the other
 % matrix, and the result is a full matrix.
 %
-% See also GrB.eadd, GrB/minus, GrB/uminus.
+% See also GhB.eadd, GhB/minus, GhB/uminus.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

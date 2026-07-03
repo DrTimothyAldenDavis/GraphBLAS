@@ -9,12 +9,12 @@
 
 // Usage:
 
-// C = gbmex_build (ghb, I, J, X)
-// C = gbmex_build (ghb, I, J, X, desc)
-// C = gbmex_build (ghb, I, J, X, m, desc)
-// C = gbmex_build (ghb, I, J, X, m, n, desc)
-// C = gbmex_build (ghb, I, J, X, m, n, dup, desc) ;
-// C = gbmex_build (ghb, I, J, X, m, n, dup, type, desc) ;
+// C = GrB.build (I, J, X)
+// C = GrB.build (I, J, X, desc)
+// C = GrB.build (I, J, X, m, desc)
+// C = GrB.build (I, J, X, m, n, desc)
+// C = GrB.build (I, J, X, m, n, dup, desc) ;
+// C = GrB.build (I, J, X, m, n, dup, type, desc) ;
 
 // X and either I or J may be a scalars, in which case they are effectively
 // expanded so that they all have the same length.  X is only implicitly

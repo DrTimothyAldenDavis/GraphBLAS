@@ -1,13 +1,13 @@
 function [I,J,X] = extracttuples (A, desc)
 %GHB.EXTRACTTUPLES extract a list of entries from a matrix.
 %
-%   [I,J,X] = GrB.extracttuples (A, desc)
+%   [I,J,X] = GhB.extracttuples (A, desc)
 %
-% GrB.extracttuples extracts all entries from either a built-in or
+% GhB.extracttuples extracts all entries from either a built-in or
 % GraphBLAS matrix.  If A is a built-in sparse or full matrix,
-% [I,J,X] = GrB.extracttuples (A) is identical to [I,J,X] = find (A).
+% [I,J,X] = GhB.extracttuples (A) is identical to [I,J,X] = find (A).
 %
-% For a GraphBLAS matrix G, GrB.extracttuples (G) returns any explicit
+% For a GraphBLAS matrix G, GhB.extracttuples (G) returns any explicit
 % zero entries in G, while find (G) excludes them.
 %
 % The descriptor is optional.  desc.base is a string, either 'default',
@@ -30,7 +30,7 @@ function [I,J,X] = extracttuples (A, desc)
 % The overloaded [I,J,X] = find (A) method for a GraphBLAS matrix A uses
 % desc.base of 'default', and always removes explicit zeros.
 %
-% See also GrB/find, GrB/build.
+% See also GhB/find, GhB/build.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

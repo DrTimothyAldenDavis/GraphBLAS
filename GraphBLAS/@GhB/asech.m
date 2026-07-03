@@ -4,7 +4,7 @@ function C = asech (G)
 % asech (0) is nonzero, the result is a full matrix.  C is complex if G is
 % complex, or if any real entries are outside of the range [0,1].
 %
-% See also GrB/sec, GrB/asec, GrB/sech.
+% See also GhB/sec, GhB/asec, GhB/sech.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

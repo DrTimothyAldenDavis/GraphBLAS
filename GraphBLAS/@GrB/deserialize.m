@@ -1,8 +1,7 @@
 function C = deserialize (blob)
 %GRB.DESERIALIZE convert a serialized blob into a matrix.
-% C = GrB.deserialize (blob) returns a @GrB matrix constructed from the
-% uint8 array blob constructed by GrB.serialize.  The input blob may be
-% dense uint8 MATLAB/Octave or @GrB matrix.
+% C = GrB.deserialize (blob) returns a @GrB matrix constructed from the uint8
+% array blob constructed by GhB.serialize or GrB.serialize.
 %
 % C = GrB.deserialize (blob) or GrB.deserialize (blob, 'fast') assume the
 % blob comes from a trusted source.  C = GrB.deserialize (blob, 'secure')

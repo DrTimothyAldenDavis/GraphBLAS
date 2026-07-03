@@ -12,7 +12,7 @@ function DiGraph = digraph (G, option)
 %
 % Example:
 %
-%   G = GrB (sprand (8, 8, 0.2))
+%   G = GhB (sprand (8, 8, 0.2))
 %   DiGraph = digraph (G)
 %   h = plot (DiGraph) ;
 %   h.NodeFontSize = 20 ;
@@ -22,7 +22,7 @@ function DiGraph = digraph (G, option)
 %   t = title ('random directed graph with 8 nodes') ;
 %   t.FontSize = 20 ;
 %
-% See also graph, digraph, GrB/graph.
+% See also graph, digraph, GhB/graph.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

@@ -11,25 +11,25 @@ function C = diag (A, k)
 %
 % The GraphBLAS diag function always constructs a GraphBLAS sparse matrix,
 % unlike the built-in diag, which always constructs a full matrix.  To use
-% this overloaded function for a non-@GrB sparse matrix A, use
-% C = diag (A, GrB (k)) ;
+% this overloaded function for a non-@GhB sparse matrix A, use
+% C = diag (A, GhB (k)) ;
 %
 % Examples:
 %
-%   C1 = diag (GrB (1:10, 'uint8'), 2)
+%   C1 = diag (GhB (1:10, 'uint8'), 2)
 %   C2 = sparse (diag (1:10, 2))
 %   nothing = double (C1-C2)
 %
 %   A = magic (8)
-%   full (double ([diag(A,1) diag(GrB(A),1)]))
+%   full (double ([diag(A,1) diag(GhB(A),1)]))
 %
 %   m = 5 ;
 %   f = ones (2*m,1) ;
 %   A = diag(-m:m) + diag(f,1) + diag(f,-1)
-%   G = diag(GrB(-m:m)) + diag(GrB(f),1) + diag(GrB(f),-1)
+%   G = diag(GhB(-m:m)) + diag(GhB(f),1) + diag(GhB(f),-1)
 %   nothing = double (A-G)
 %
-% See also GrB/diag, spdiags, GrB/tril, GrB/triu, GrB.select.
+% See also GhB/diag, spdiags, GhB/tril, GhB/triu, GhB.select.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

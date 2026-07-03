@@ -8,14 +8,14 @@ function [C,P] = argsort (A, arg1, arg2)
 % [C,P] = argsort (A, dim, 'ascend')
 % [C,P] = argsort (A, dim, 'descend')
 %
-% GrB.argsort sorts the rows or columns of A.  By default, the columns of A
+% GhB.argsort sorts the rows or columns of A.  By default, the columns of A
 % are sorted (dim == 1); with dim = 2, the rows of A are sorted.  The
 % default is to sort in ascending order.
 %
 % Example:
 %
 %   A = sprand (20,10,0.5) ;
-%   [C,P] = GrB.argsort (A) ;
+%   [C,P] = GhB.argsort (A) ;
 %   A (:,1)
 %   C (:,1)
 %   P (:,1)
@@ -29,9 +29,9 @@ function [C,P] = argsort (A, arg1, arg2)
 % only reflects the entries in A, not the implicit zeros.  The MATLAB
 % [C,P] = sort (A) always returns P as full since it permutes the implicit
 % zeros of A as well.  Complex matrices are not supported.  C and P are
-% always returned as @GrB objects.
+% always returned as @GhB objects.
 %
-% See also sort, GrB.argmin, GrB.argmax.
+% See also sort, GhB.argmin, GhB.argmax.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

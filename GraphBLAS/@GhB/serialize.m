@@ -1,12 +1,12 @@
 function blob = serialize (G, method, level)
 %GHB.SERIALIZE convert a matrix to a serialized blob.
-% blob = GrB.serialize (G) returns a uint8 array containing the contents
-% of the matrix G, which may be a MATLAB or @GrB matrix.  The array may
-% be saved to a binary file and used to construct a GrB_Matrix outside
+% blob = GhB.serialize (G) returns a uint8 array containing the contents
+% of the matrix G, which may be a MATLAB, @GhB, or @GrB matrix.  The array may
+% be saved to a binary file and used to construct a GhB_Matrix outside
 % of this MATLAB/Octave interface to GraphBLAS.  It may also be used to
-% reconstruct a @GrB matrix with G = GrB.deserialize (blob).
+% reconstruct a @GhB matrix with G = GhB.deserialize (blob).
 %
-% blob = GrB.serialize (G,method,level) specifies the compression method,
+% blob = GhB.serialize (G,method,level) specifies the compression method,
 % as a string.  The 3rd parameter is optional; it is an integer that
 % specifices the compression level, with a higher level resulting in a
 % more compact blob at the cost of higher run time.  Levels outside
@@ -27,17 +27,17 @@ function blob = serialize (G, method, level)
 %           levels of LZ4HC only slightly improve compression quality.
 %
 % Example:
-%   G = GrB (magic (5))
-%   blob = GrB.serialize (G) ;      % compressed via ZSTD, level 1
+%   G = GhB (magic (5))
+%   blob = GhB.serialize (G) ;      % compressed via ZSTD, level 1
 %   f = fopen ('G.bin', 'wb') ;
 %   fwrite (f, blob) ;
 %   fclose (f)
 %   clear all
 %   f = fopen ('G.bin', 'r') ;
 %   blob = fread (f, '*uint8') ;
-%   G = GrB.deserialize (blob)
+%   G = GhB.deserialize (blob)
 %
-% See also GrB.deserialize, GrB.load, GrB.save, GrB/struct.
+% See also GhB.deserialize, GhB.load, GhB.save, GhB/struct.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

@@ -5,7 +5,7 @@ function C = rdivide (A, B)
 % pattern of A, except if B is zero and A is double, single, or complex.
 % In that case, since 0/0 is NaN, C is a full matrix.
 %
-% See also GrB/ldivide, GrB.emult, GrB.eadd.
+% See also GhB/ldivide, GhB.emult, GhB.eadd.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

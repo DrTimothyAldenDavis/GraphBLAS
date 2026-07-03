@@ -4,7 +4,7 @@ function count = fprintf (varargin)
 % function; this overloaded method simply typecasts any GraphBLAS matrices
 % to built-in matrices first, and then calls the builtin fprintf.
 %
-% See also fprintf, sprintf, GrB/sprintf.
+% See also fprintf, sprintf, GhB/sprintf.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

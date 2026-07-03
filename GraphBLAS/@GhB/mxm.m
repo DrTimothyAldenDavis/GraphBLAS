@@ -1,34 +1,23 @@
 function C = mxm (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %GHB.MXM sparse matrix-matrix multiplication.
 %
-% GrB.mxm computes C<M> = accum (C, A*B) using a given semiring.
+% syntax for a new matrix C:                        computation:
+% C = GhB.mxm (semiring, A, B, desc)                % C = A*B
+% C = GhB.mxm (Cin, accum, semiring, A, B, desc)    % C = Cin + A*B
+% C = GhB.mxm (Cin, M, semiring, A, B, desc)        % C = Cin ; C<M> = A*B
+% C = GhB.mxm (Cin, M, accum, semiring, A, B, desc) % C = Cin ; C<M> += A*B
 %
-% Usage:
+% in-place syntax:
+% GhB.mxm (C, semiring, A, B, desc)                 % C = A*B
+% GhB.mxm (C, accum, semiring, A, B, desc)          % C += A*B
+% GhB.mxm (C, M, semiring, A, B, desc)              % C<M> = A*B
+% GhB.mxm (C, M, accum, semiring, A, B, desc)       % C<M> += A*B
 %
-%   C = GrB.mxm (semiring, A, B)
-%   C = GrB.mxm (semiring, A, B, desc)
+% GrB.mxm computes T = A*B using a given semiring, where C(i,j) =
+% sum (A(i,:).*B(:,j).'), except that "sum" can be any monoid, and "*" can be
+% any binary operator.
 %
-%   C = GrB.mxm (Cin, accum, semiring, A, B)
-%   C = GrB.mxm (Cin, accum, semiring, A, B, desc)
-%
-%   C = GrB.mxm (Cin, M, semiring, A, B)
-%   C = GrB.mxm (Cin, M, semiring, A, B, desc)
-%
-%   C = GrB.mxm (Cin, M, accum, semiring, A, B)
-%   C = GrB.mxm (Cin, M, accum, semiring, A, B, desc)
-%
-% Cin is an optional input matrix.  If Cin is not present or is an empty
-% matrix (Cin = [ ]) then it is implicitly a matrix with no entries, of the
-% right size (which depends on A, B, and the descriptor).  Its type is the
-% output type of the accum binary operator, if it is present; otherwise, its
-% type is the type of the additive monoid of the semiring.
-%
-% M is the optional mask matrix.  If not present, or if empty, then no mask
-% is used.  If present, M must have the same size as C.
-%
-% If accum is not present, then the operation becomes C<...> = A*B.
-% Otherwise, accum (C,A*B) is computed.  The accum operator acts like a
-% sparse matrix addition (see GrB.eadd).
+% T is then accumulated into C via C<#M,replace> = accum (C,T).
 %
 % The semiring is a required string defining the semiring to use, in the
 % form 'add.mult.type', where '.type' is optional.  For example,
@@ -38,10 +27,15 @@ function C = mxm (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % GraphBLAS has many more semirings.  See 'help GrB.semiringinfo' for more
 % details.
 %
-% A and B are the input matrices.  A is transposed on input if desc.in0
-% is 'transpose', and/or desc.in1 = 'transpose' transposes B.
+% accum: a binary operator to accumulate the results; in the computations
+% listed above it is shown as "+=" but any binary operator may be used.
+% For the in-place syntax, the @GhB matrix C is modified in-place.
 %
-% desc is optional.  See 'help GrB.descriptorinfo' for more details.
+% Cin, the mask matrix M, the accum operator, and desc are optional.  If either
+% accum or M is present, then C or Cin is a required input.  If desc.in0 is
+% 'transpose' then A is transposed before applying the operator.  If desc.in1
+% is 'transpose', then the input matrix B is transposed before applying the
+% operator.
 %
 % Examples:
 %
@@ -55,7 +49,7 @@ function C = mxm (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %   C3 = E ; AB = A*B ; C3 (M) = C3 (M) + AB (M) ;
 %   norm (C2-C3,1)
 %
-% See also GrB.descriptorinfo, GrB.add, GrB/mtimes, GrB.semiringinfo,
+% See also GrB.descriptorinfo, GhB.eadd, GhB/mtimes, GrB.semiringinfo,
 % GrB.moniodinfo, GrB.binopinfo.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.

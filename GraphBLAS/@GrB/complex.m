@@ -4,9 +4,8 @@ function C = complex (A, B)
 % double complex matrix.  C is full if all entries in G are present,
 % or sparse otherwse.
 %
-% With two inputs, C = complex (A,B) returns a matrix C = A + 1i*B,
-% where A or B are real matrices (@GrB/built-in in any
-% combination).  If A or B are nonzero scalars and the other input is a
+% With two inputs, C = complex (A,B) returns a matrix C = A + 1i*B, where A or
+% B are real matrices.  If A or B are nonzero scalars and the other input is a
 % matrix, or if both A and B are scalars, C is full.
 %
 % To typecast the matrix G to a GraphBLAS double complex matrix

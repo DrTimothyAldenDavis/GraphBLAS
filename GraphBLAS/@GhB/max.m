@@ -11,12 +11,12 @@ function C = max (A, B, option)
 % C = max (A, [ ], 2) is a column vector with C(i) = max (A (i,:))
 %
 % The 2nd output of [C,I] = max (...) in the built-in max
-% is not supported; see GrB.argmax instead.  The max (..., nanflag)
+% is not supported; see GhB.argmax instead.  The max (..., nanflag)
 % not yet supported; only the 'omitnan' behavior is supported.
 %
 % Complex matrices are not supported.
 %
-% See also GrB/min, GrB.argmax.
+% See also GhB/min, GhB.argmax.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

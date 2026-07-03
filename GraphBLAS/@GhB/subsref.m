@@ -9,7 +9,7 @@ function C = subsref (A, S)
 % built-in-style logical indexing.  A or M may be built-in sparse or full
 % matrices, or GraphBLAS matrices, in any combination.  M must be either a
 % built-in logical matrix (sparse or full), or a GraphBLAS logical matrix;
-% that is, GrB.type (M) must be 'logical'.
+% that is, GhB.type (M) must be 'logical'.
 %
 % GraphBLAS can construct huge sparse matrices, but they cannot always be
 % indexed with A(lo:hi,lo:hi), because of a limitation of the built-in
@@ -20,7 +20,7 @@ function C = subsref (A, S)
 % Example:
 %
 %   n = 1e14 ;
-%   H = GrB (n, n)               % a huge empty matrix
+%   H = GhB (n, n)               % a huge empty matrix
 %   I = [1 1e9 1e12 1e14] ;
 %   M = magic (4)
 %   H (I,I) = M
@@ -28,8 +28,8 @@ function C = subsref (A, S)
 %   C = H (J, J)                % this is very fast
 %   E = H (1:1e13, 1:1e13)      % but this is not possible
 %
-% See also GrB/subsasgn, GrB/subsindex, GrB.subassign, GrB.assign,
-% GrB.extract.
+% See also GhB/subsasgn, GhB/subsindex, GhB.subassign, GhB.assign,
+% GhB.extract.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

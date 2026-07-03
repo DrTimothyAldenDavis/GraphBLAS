@@ -1,13 +1,12 @@
 function Y = dnn (W, bias, Y0)
 %GRB.DNN Sparse deep neural network in GraphBLAS.
-% Performs ReLU inference using input feature vector(s) Y0, DNN weights W,
-% and bias vectors.  The input features are in a matrix Y0 of size
-% nfeatures-by- nneurons.  The DNN weights W is a cell array with W{k}
-% being the kth layer of the DNN, so that the number of layers is nlayers =
-% length (W).  W{k} is a matrix of size nneurons-by-nneurons.  The bias
-% variable is a cell array of length nlayers.  Each bias{k} is a diagonal
-% matrix of size nneurons-by-nneurons, which gives the bias values of each
-% neuron in the kth layer.
+% Performs ReLU inference using input feature vector(s) Y0, DNN weights W, and
+% bias vectors.  The input features are in a matrix Y0 of size nfeatures-
+% by-nneurons.  The DNN weights W is a cell array with W{k} being the kth layer
+% of the DNN, so that the number of layers is nlayers = length (W).  W{k} is a
+% matrix of size nneurons-by-nneurons.  The bias variable is a cell array of
+% length nlayers.  Each bias{k} is a diagonal matrix of size nneurons-
+% by-nneurons, which gives the bias values of each neuron in the kth layer.
 %
 % Usage:
 %
@@ -37,8 +36,7 @@ function Y = dnn (W, bias, Y0)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% FIXME: GhB will be different
-%% ghb = 0 ;     % 0 for GrB, 1 for GhB
+% ghb = 0 ;     % 0 for GrB, 1 for GhB
 
 [f,~] = GrB.format (Y0) ;
 desc.format = '' ;

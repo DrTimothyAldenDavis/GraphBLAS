@@ -1,19 +1,34 @@
 function C = kronecker (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %GHB.KRONECKER sparse Kronecker product.
 %
-%   C = GrB.kronecker (op, A, B, desc)
-%   C = GrB.kronecker (Cin, accum, op, A, B, desc)
-%   C = GrB.kronecker (Cin, M, op, A, B, desc)
-%   C = GrB.kronecker (Cin, M, accum, op, A, B, desc)
+% syntax for a new matrix C:                        computation:
+% C = GhB.kronecker (op, A, B, desc)                % C = op(A,B)
+% C = GhB.kronecker (Cin, accum, op, A, B, desc)    % C = Cin + op(A,B)
+% C = GhB.kronecker (Cin, M, op, A, B, desc)        % C = Cin ; C<M> = op(A,B)
+% C = GhB.kronecker (Cin, M, accum, op, A, B, desc) % C = Cin ; C<M> += op(A,B)
 %
-% GrB.kronecker computes the Kronecker product, T=kron(A,B), using the
-% given binary operator op, in place of the conventional '*' operator for
-% the built-in kron.  See also C = kron (A,B), which uses the
-% default semiring operators if A and/or B are GrB matrices.
+% in-place syntax:
+% GhB.kronecker (C, op, A, B, desc)                 % C = op(A,B)
+% GhB.kronecker (C, accum, op, A, B, desc)          % C += op(A,B)
+% GhB.kronecker (C, M, op, A, B, desc)              % C<M> = op(A,B)
+% GhB.kronecker (C, M, accum, op, A, B, desc)       % C<M> += op(A,B)
+%
+% GhB.kronecker computes the Kronecker product T=kron(A,B), using any binary
+% op (shown as op(A,B) in the computations listed above).
 %
 % T is then accumulated into C via C<#M,replace> = accum (C,T).
 %
-% See also kron, GrB/kron, GrB.binopinfo.
+% accum: a binary operator to accumulate the results; in the computations
+% listed above it is shown as "+=" but any binary operator may be used.
+% For the in-place syntax, the @GhB matrix C is modified in-place.
+%
+% Cin, the mask matrix M, the accum operator, and desc are optional.  If either
+% accum or M is present, then C or Cin is a required input.  If desc.in0 is
+% 'transpose' then A is transposed before applying the operator.  If desc.in1
+% is 'transpose', then the input matrix B is transposed before applying the
+% operator.
+%
+% See also kron, GhB/kron, GrB.binopinfo.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

@@ -9,7 +9,7 @@ function [F, E] = log2 (G)
 % zero.  F and E are both sparse, with the same pattern as G.  If G is
 % complex, [F,E] = log2 (real (G)).
 %
-% See also GrB/pow2, GrB/log, GrB/log1p, GrB/log10, GrB/exp.
+% See also GhB/pow2, GhB/log, GhB/log1p, GhB/log10, GhB/exp.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

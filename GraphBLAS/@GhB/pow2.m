@@ -6,7 +6,7 @@ function C = pow2 (A, B)
 % C = pow2 (F,E) is C = F .* (2 .^ fix (E)).  C is sparse, with
 % the same pattern as F+E.  Any imaginary parts of F and E are ignored.
 %
-% See also GrB/log2, GrB/power, GrB/exp.
+% See also GhB/log2, GhB/power, GhB/exp.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

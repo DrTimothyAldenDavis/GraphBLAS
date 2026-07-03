@@ -9,20 +9,20 @@ function C = full (A, type, identity)
 % If not present, the type defaults to the same type as A, and the
 % identity defaults to zero.  A may be any matrix (GraphBLAS or built-in)
 % To use this method for a built-in matrix A, use a GraphBLAS identity
-% value such as GrB(0), or use C = full (GrB (A)).  Note that issparse (C)
+% value such as GhB(0), or use C = full (GhB (A)).  Note that issparse (C)
 % is true, since issparse (A) is true for any GraphBLAS matrix A.
 %
 % Examples:
 %
-%   G = GrB (sprand (5, 5, 0.5))        % GraphBLAS sparse matrix
+%   G = GhB (sprand (5, 5, 0.5))        % GraphBLAS sparse matrix
 %   C = full (G)                        % add explicit zeros
 %   C = full (G, 'double', inf)         % add explicit inf's
 %
 %   A = speye (2)
-%   C = full (GrB (A), 'double', 0)      % full GrB matrix C, from A
-%   C = full (GrB (A))                   % same matrix C
+%   C = full (GhB (A), 'double', 0)      % full GhB matrix C, from A
+%   C = full (GhB (A))                   % same matrix C
 %
-% See also GrB/issparse, sparse, cast, GrB.type, GrB, GrB.isfull.
+% See also GhB/issparse, sparse, cast, GhB.type, GhB, GhB.isfull.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

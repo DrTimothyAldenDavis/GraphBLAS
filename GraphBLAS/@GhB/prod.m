@@ -20,7 +20,7 @@ function C = prod (G, option)
 % GraphBLAS prod (G,...) uses only a type of 'native', and a nanflag of
 % 'includenan'.  See 'help prod' for more details.
 %
-% See also GrB/all, GrB/max, GrB/min, GrB/sum.
+% See also GhB/all, GhB/max, GhB/min, GhB/sum.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

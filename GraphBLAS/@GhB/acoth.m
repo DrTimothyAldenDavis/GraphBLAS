@@ -4,7 +4,7 @@ function C = acoth (G)
 % Since acoth (0) is nonozero, C is a full matrix.  C is complex if G is
 % complex, or if any (abs (G) < 1).
 %
-% See also GrB/cot, GrB/acot, GrB/coth.
+% See also GhB/cot, GhB/acot, GhB/coth.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

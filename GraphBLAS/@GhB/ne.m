@@ -3,7 +3,7 @@ function C = ne (A, B)
 % C = (A ~= B) compares A and B element-by-element.  One or
 % both may be scalars.  Otherwise, A and B must have the same size.
 %
-% See also GrB/lt, GrB/le, GrB/gt, GrB/ge, GrB/eq.
+% See also GhB/lt, GhB/le, GhB/gt, GhB/ge, GhB/eq.
 
 % The pattern of C depends on the type of inputs:
 % A scalar, B scalar:  C is scalar.

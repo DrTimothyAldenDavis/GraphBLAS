@@ -1,35 +1,33 @@
 function C = build (I,J,X,varargin)
 %GRB.BUILD construct a sparse matrix from a list of entries.
 %
-%   C = GrB.build (I, J, X, m, n, dup, type, desc)
+% C = GrB.build (I, J, X, m, n, dup, type, desc)
 %
-% GrB.build constructs an m-by-n GraphBLAS sparse matrix C from a list of
-% entries, analogous to A = sparse (I, J, X, m, n) to construct a sparse
-% matrix A.
+% GrB.build constructs an m-by-n sparse matrix C from a list of entries,
+% analogous to A = sparse (I, J, X, m, n) to construct a sparse matrix A.
 %
-% If not present or empty, m defaults to the largest row index in the list
-% I, and n defaults to the largest column index in the list J.  dup
-% defaults to '+' for non-logical types, and 'or' for logical, which gives
-% the same behavior as the built-in sparse function: duplicate entries are
-% added together.
+% If not present or empty, m defaults to the largest row index in the list I,
+% and n defaults to the largest column index in the list J.  dup defaults to
+% '+' for non-logical types, and 'or' for logical, which gives the same
+% behavior as the built-in sparse function: duplicate entries are added
+% together.  desc is an optional descriptor struct.
 %
-% dup is a string that defines a binary function; see 'help GrB.binopinfo'
-% for a list of available binary operators.  The dup operator need not be
-% associative.  If two entries in [I,J,X] have the same row and column
-% index, the dup operator is applied to assemble them into a single entry.
-% Suppose (i,j,x1), (i,j,x2), and (i,j,x3) appear in that order in [I,J,X],
-% in any location (the arrays [I J] need not be sorted, and so these
-% entries need not be adjacent).  That is, i = I(k1) = I(k2) = I(k3) and j
-% = J(k1) = J(k2) = J(k3) for some k1 < k2 < k3.  Then C(i,j) is computed
-% as follows, in order:
+% dup is a string that defines a binary function; see 'help GrB.binopinfo' for
+% a list of available binary operators.  The dup operator need not be
+% associative.  If two entries in [I,J,X] have the same row and column index,
+% the dup operator is applied to assemble them into a single entry.  Suppose
+% (i,j,x1), (i,j,x2), and (i,j,x3) appear in that order in [I,J,X], in any
+% location (the arrays [I J] need not be sorted, and so these entries need not
+% be adjacent).  That is, i = I(k1) = I(k2) = I(k3) and j = J(k1) = J(k2) =
+% J(k3) for some k1 < k2 < k3.  Then C(i,j) is computed as follows, in order:
 %
 %   x = X (k1) ;
 %   x = dup (x, X (k2)) ;
 %   x = dup (x, X (k3)) ;
 %   C (i,j) = x ;
 %
-% For example, if the dup operator is '1st', then C(i,j)=X(k1) is set, and
-% the subsequent entries are ignored.  If dup is '2nd' or 'ignore' then
+% For example, if the dup operator is '1st', then C(i,j)=X(k1) is set, and the
+% subsequent entries are ignored.  If dup is '2nd' or 'ignore' then
 % C(i,j)=X(k3), and the preceding entries are ignored.  If dup is the empty
 % string ('') then duplicates result in an error.
 %

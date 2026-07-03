@@ -1,16 +1,22 @@
 function C = eadd (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-%GHB.EADD sparse matrix addition.
+%GHB.EADD sparse matrix 'addition'.
 %
-%   C = GrB.eadd (op, A, B)
-%   C = GrB.eadd (op, A, B, desc)
-%   C = GrB.eadd (Cin, accum, op, A, B, desc)
-%   C = GrB.eadd (Cin, M, op, A, B, desc)
-%   C = GrB.eadd (Cin, M, accum, op, A, B, desc)
+% syntax for a new matrix C:                    computation:
+% C = GhB.eadd (op, A, B, desc)                 % C = op(A,B)
+% C = GhB.eadd (Cin, accum, op, A, B, desc)     % C = Cin + op(A,B)
+% C = GhB.eadd (Cin, M, op, A, B, desc)         % C = Cin ; C<M> = op(A,B)
+% C = GhB.eadd (Cin, M, accum, op, A, B, desc)  % C = Cin ; C<M> += op(A,B)
 %
-% GrB.eadd computes the element-wise 'addition' T=A+B.  The result T has
-% the pattern of the union of A and B. The operator is used where A(i,j)
-% and B(i,j) are present.  Otherwise the entries in A and B are copied
-% directly into T:
+% in-place syntax:
+% GhB.eadd (C, op, A, B, desc)                  % C = op(A,B)
+% GhB.eadd (C, accum, op, A, B, desc)           % C += op(A,B)
+% GhB.eadd (C, M, op, A, B, desc)               % C<M> = op(A,B)
+% GhB.eadd (C, M, accum, op, A, B, desc)        % C<M> += op(A,B)
+%
+% GhB.eadd computes the element-wise 'addition' T=A+B, using any binary op
+% (shown as op(A,B) in the computations listed above).  The result T has the
+% pattern of the union of A and B. The operator is used where A(i,j) and B(i,j)
+% are present.  Otherwise the entries in A and B are copied directly into T:
 %
 %   if (A(i,j) and B(i,j) is present)
 %       T(i,j) = op (A(i,j), B(i,j))
@@ -21,11 +27,17 @@ function C = eadd (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %
 % T is then accumulated into C via C<#M,replace> = accum (C,T).
 %
-% Cin, M, accum, and the descriptor desc are the same as all other
-% GrB.methods; see GrB.mxm and GrB.descriptorinfo for more details.  For
-% the binary operator, see GrB.binopinfo.
+% accum: a binary operator to accumulate the results; in the computations
+% listed above it is shown as "+=" but any binary operator may be used.
+% For the in-place syntax, the @GhB matrix C is modified in-place.
 %
-% See also GrB.emult, GrB.binopinfo.
+% Cin, the mask matrix M, the accum operator, and desc are optional.  If either
+% accum or M is present, then C or Cin is a required input.  If desc.in0 is
+% 'transpose' then A is transposed before applying the operator.  If desc.in1
+% is 'transpose', then the input matrix B is transposed before applying the
+% operator.
+%
+% See also GhB.emult, GrB.binopinfo.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

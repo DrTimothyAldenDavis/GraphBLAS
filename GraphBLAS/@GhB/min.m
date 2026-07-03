@@ -11,12 +11,12 @@ function C = min (A, B, option)
 % C = min (A, [ ], 2) is a column vector with C(i) = min (A (i,:))
 %
 % The 2nd output of [C,I] = min (...) in the built-in min
-% is not supported; see GrB.argmin instead.  The min (..., nanflag)
+% is not supported; see GhB.argmin instead.  The min (..., nanflag)
 % option is not yet supported; only the 'omitnan' behavior is supported.
 %
 % Complex matrices are not supported.
 %
-% See also GrB/max, GrB.argmin.
+% See also GhB/max, GhB.argmin.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

@@ -1,10 +1,10 @@
 function iset = mis (A_arg, check)
 %GHB.MIS variant of Luby's maximal independent set algorithm.
 %
-%   iset = GrB.mis (A) ;
+%   iset = GhB.mis (A) ;
 %
 % Given an n-by-n symmetric adjacency matrix A of an undirected graph,
-% GrB.mis (A) finds a maximal set of independent nodes and returns it as a
+% GhB.mis (A) finds a maximal set of independent nodes and returns it as a
 % logical vector, iset, where iset(i) of true implies node i is a member of
 % the set.
 %
@@ -13,14 +13,14 @@ function iset = mis (A_arg, check)
 % are undefined if they do not hold.  In particular, diagonal entries will
 % cause the method to stall.  To check these conditions, use:
 %
-%   iset = GrB.mis (A, 'check') ;
+%   iset = GhB.mis (A, 'check') ;
 %
 % Reference: M Luby. 1985. A simple parallel algorithm for the maximal
 % independent set problem. In Proceedings of the seventeenth annual ACM
 % symposium on Theory of computing (STOC '85). ACM, New York, NY, USA,
 % 1-10.  DOI: https://doi.org/10.1145/22145.22146
 %
-% See also GrB.offdiag.
+% See also GhB.offdiag.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -133,3 +133,4 @@ end
 % drop explicit false values
 iset = GrB.prune (iset) ;
 
+iset = GhB (iset) ; % FIXME

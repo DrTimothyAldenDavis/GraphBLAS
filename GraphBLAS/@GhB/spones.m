@@ -1,7 +1,7 @@
 function C = spones (G, type)
 %SPONES return pattern of a sparse matrix.
 % C = spones (G) returns a matrix C with the same pattern as G, but with
-% all entries set to 1.  The behavior of spones (G) for a GrB matrix
+% all entries set to 1.  The behavior of spones (G) for a GhB matrix
 % differs from spones (A) for a built-in matrix A.  An explicit entry
 % G(i,j) that has a value of zero is converted to the explicit entry
 % C(i,j)=1.  Explicit zero entries never appear in a built-in sparse
@@ -15,7 +15,7 @@ function C = spones (G, type)
 % 'single', 'int8', ...).  For example, use C = spones (G, 'logical') to
 % return the pattern of G as a sparse logical matrix.
 %
-% See also GrB/spfun, GrB.apply.
+% See also GhB/spfun, GhB.apply.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

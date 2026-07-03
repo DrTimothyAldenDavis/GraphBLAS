@@ -46,5 +46,8 @@ end
 assert (ok) ;
 assert (gb_contains (msg, 'path must be a string')) ;
 
+fprintf ('\njit status and path:\n') ;
+gtb_jit (ghb) ;
+
 fprintf ('\ngbtest129 (%d): all tests passed\n', ghb) ;
 

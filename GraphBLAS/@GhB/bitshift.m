@@ -14,13 +14,13 @@ function C = bitshift (A, B, assumedtype)
 % Example:
 %
 %   A = uint8 (magic (4))
-%   G = GrB (magic (4), 'uint8') ;
+%   G = GhB (magic (4), 'uint8') ;
 %   C1 = bitshift (A, -2) ;
 %   C2 = bitshift (G, -2)
 %   isequal (C2, C)
 %
-% See also GrB/bitor, GrB/bitand, GrB/bitxor, GrB/bitcmp, GrB/bitget,
-% GrB/bitset, GrB/bitclr.
+% See also GhB/bitor, GhB/bitand, GhB/bitxor, GhB/bitcmp, GhB/bitget,
+% GhB/bitset, GhB/bitclr.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

@@ -1,7 +1,6 @@
 function C = speye (varargin)
 %GRB.SPEYE sparse identity matrix.
-% C = GrB.speye (...) is identical to GrB.eye; see 'help GrB.eye' for
-% details.
+% C = GrB.speye (...) is identical to GrB.eye; see 'help GrB.eye' for details.
 %
 % See also GrB.eye.
 

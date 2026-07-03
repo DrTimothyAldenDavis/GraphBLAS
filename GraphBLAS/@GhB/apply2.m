@@ -1,28 +1,36 @@
 function C = apply2 (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %GHB.APPLY2 apply a binary operator to a matrix, with scalar binding.
 %
-%   C = GrB.apply2 (op, A, B)
-%   C = GrB.apply2 (op, A, B, desc)
-%   C = GrB.apply2 (Cin, accum, op, A, B, desc)
-%   C = GrB.apply2 (Cin, M, op, A, B, desc)
-%   C = GrB.apply2 (Cin, M, accum, op, A, B, desc)
+% syntax for a new matrix C:                        computation:
+% C = GhB.apply2 (op, A, B, desc)                   % C = op(A,B)
+% C = GhB.apply2 (Cin, accum, op, A, B, desc)       % C = Cin ; C += op(A,B)
+% C = GhB.apply2 (Cin, M, op, A, B, desc)           % C = Cin ; C<M> = op(A,B)
+% C = GhB.apply2 (Cin, M, accum, op, A, B, desc)    % C = Cin ; C<M> += op(A,B)
 %
-% GrB.apply2 applies a binary operator op(A,B) to a matrix, with one of the
+% in-place syntax:
+% GhB.apply2 (C, op, A, B)                          % C = op(A,B)
+% GhB.apply2 (C, accum, op, A, B)                   % C += op(A,B)
+% GhB.apply2 (C, M, op, A, B)                       % C<M> = op(A,B)
+% GhB.apply2 (C, M, accum, op, A, B)                % C<M> += op(A,B)
+%
+% GhB.apply2 applies a binary operator op(A,B) to a matrix, with one of the
 % inputs being the matrix and the other input is bound to a scalar.  See
-% 'help GrB.binopinfo'.
+% 'help GrB.binopinfo' for details.
 %
 % The op, A, and B arguments are required.  One of A or B must be a scalar
 % with a single entry.
 %
-% accum: a binary operator to accumulate the results.
+% accum: a binary operator to accumulate the results; in the computations
+% listed above it is shown as "+=" but any binary operator may be used.
+% For the in-place syntax, the @GhB matrix C is modified in-place.
 %
 % Cin, the mask matrix M, the accum operator, and desc are optional.  If
-% either accum or M is present, then Cin is a required input.  If B is the
-% scalar and desc.in0 is 'transpose' then A is transposed before applying
-% the operator.  If A is the scalar and desc.in1 is 'transpose.', then the
-% input matrix B is transposed before applying the operator.
+% either accum or M is present, then C or Cin is a required input.  If B is
+% the scalar and desc.in0 is 'transpose' then A is transposed before
+% applying the operator.  If A is the scalar and desc.in1 is 'transpose',
+% then the input matrix B is transposed before applying the operator.
 %
-% See also GrB/apply, GrB/spfun, GrB.binopinfo.
+% See also GhB/apply, GhB/spfun, GhB.binopinfo.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

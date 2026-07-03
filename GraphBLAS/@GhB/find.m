@@ -7,7 +7,7 @@ function [I, varargout] = find (G, varargin)
 % supported.
 %
 % A GraphBLAS matrix G may contain explicit zero entries, and by default
-% these are excluded from the result.  Use GrB.extracttuples (G) to return
+% these are excluded from the result.  Use GhB.extracttuples (G) to return
 % these explicit zero entries.
 %
 % For a column vector, I = find (G) returns I as a list of the row indices
@@ -25,7 +25,7 @@ function [I, varargout] = find (G, varargin)
 % The indices I and J are returned as int32 or int64 column vectors,
 % depending on the dimenions of the matrix G.
 %
-% See also sparse, GrB.build, GrB.extracttuples.
+% See also sparse, GhB.build, GhB.extracttuples.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

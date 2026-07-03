@@ -23,8 +23,8 @@ function C = bitget (A, B, assumedtype)
 %
 % Example:
 %
-%   A = GrB (magic (4)'*137, 'uint16')
-%   B = GrB (magic (4))
+%   A = GhB (magic (4)'*137, 'uint16')
+%   B = GhB (magic (4))
 %   C = bitget (A, B)
 %   fprintf ('\nA: ') ; fprintf ('%3x ', A) ; fprintf ('\n') ;
 %   fprintf ('\nB: ') ; fprintf ('%3x ', B) ; fprintf ('\n') ;
@@ -32,8 +32,8 @@ function C = bitget (A, B, assumedtype)
 %   C2 = bitget (uint16 (A), uint16 (B))
 %   isequal (C2, C)
 %
-% See also GrB/bitor, GrB/bitand, GrB/bitxor, GrB/bitcmp, GrB/bitshift,
-% GrB/bitset, GrB/bitclr.
+% See also GhB/bitor, GhB/bitand, GhB/bitxor, GhB/bitcmp, GhB/bitshift,
+% GhB/bitset, GhB/bitclr.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

@@ -6,7 +6,7 @@ function C = hypot (A, B)
 % full matrix the size of the other matrix, and the result is a full
 % matrix.
 %
-% See also GrB/abs, GrB/norm, GrB/sqrt, GrB/plus, GrB.eadd.
+% See also GhB/abs, GhB/norm, GhB/sqrt, GhB/plus, GhB.eadd.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

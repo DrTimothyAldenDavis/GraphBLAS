@@ -3,7 +3,7 @@ function C = lt (A, B)
 % C = (A < B) compares A and B element-by-element.  One or
 % both may be scalars.  Otherwise, A and B must have the same size.
 %
-% See also GrB/le, GrB/gt, GrB/ge, GrB/ne, GrB/eq.
+% See also GhB/le, GhB/gt, GhB/ge, GhB/ne, GhB/eq.
 
 % The pattern of C depends on the type of inputs:
 % A scalar, B scalar:  C is scalar.

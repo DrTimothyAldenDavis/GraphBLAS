@@ -3,7 +3,7 @@ function C = mtimes (A, B)
 % C=A*B multiples two matrices using the standard '+.*' semiring.  If
 % either A or B are scalars, C=A*B is the same as C=A.*B.
 %
-% See also GrB.mxm, GrB.emult, GrB/times.
+% See also GhB.mxm, GhB.emult, GhB/times.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

@@ -3,7 +3,7 @@ function C = sech (G)
 % C = sech (G) is the hyperbolic secant of each entry of G.
 % Since sech(0) is nonzero, C is a full matrix.
 %
-% See also GrB/sec, GrB/asec, GrB/asech.
+% See also GhB/sec, GhB/asec, GhB/asech.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
