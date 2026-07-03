@@ -26,7 +26,7 @@ if (have_octave)
     % Octave can use the normal libgraphblas.so
     need_rename = 0 ;
     if verLessThan ('octave', '11.1')
-        error ('GrB:mex', 'Octave 7 or later is required') ;
+        error ('GrB:mex', 'Octave FIXME or later is required') ;
     end
     library_name = 'libgraphblas' ;
     app_name = 'Octave' ;

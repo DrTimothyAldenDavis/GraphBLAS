@@ -1,4 +1,4 @@
-function C = acsch (ghb, G)
+function C = gb_acsch (ghb, G)
 %GB_ACSCH implements GrB/acsch and GhB/acsch.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
