@@ -66,5 +66,8 @@ A = gtb (ghb, m, n, 'by row', 'double') ;
 X = sparse (m, n) ;
 assert (isequal (A, X)) ;
 
+% GrB or GhB with no inputs:
+gtb (ghb) ;
+
 fprintf ('gbtest1 (%d): all tests passed\n', ghb) ;
 

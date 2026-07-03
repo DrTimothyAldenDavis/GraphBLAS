@@ -168,7 +168,7 @@ GrB_Info gb_matrix_to_list
         //----------------------------------------------------------------------
 
         // C = S (:)
-        if (((double) nrows) * ((double) ncols) > INT64_MAX / 8)
+        if (((double) nrows) * ((double) ncols) > (double) (INT64_MAX / 8))
         { 
             ERROR ("input matrix dimensions are too large",
                 GrB_DIMENSION_MISMATCH) ;
