@@ -32,7 +32,7 @@ elseif (dim == 1)
                             p (j) = i ;
                         end
                     else
-                        if (logical ((A (i,j) > x (j)))
+                        if (logical (A (i,j) > x (j)))
                             x (j) = A (i,j) ;
                             p (j) = i ;
                         end

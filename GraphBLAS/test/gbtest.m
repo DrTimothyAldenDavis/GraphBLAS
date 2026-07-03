@@ -693,12 +693,12 @@ gbtest128       % test unops
 gbtest128 (1)
 gbtest128 (2)
 assert (GrB.nmalloc == 0) ;
-end % FIXME
 
 gbtest129       % test jit
 gbtest129 (1)
 gbtest129 (2)
 assert (GrB.nmalloc == 0) ;
+end % FIXME
 
 gbtest130       % test argmin and argmax
 gbtest130 (1)
