@@ -20,6 +20,7 @@ elseif (dim == 1)
     for j = 1:n
         first = true ;
         for i = 1:m
+            % octave requires the explicit cast to logical for an "if(...)"
             if (logical (S (i,j) == 1))
                 if (first)
                     x (j) = A (i,j) ;
