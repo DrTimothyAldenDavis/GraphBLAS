@@ -127,7 +127,7 @@ try
     clear mex
     fprintf ('\n================================\n%s\n', cmd1) ;
 
-    [status, result] = system (cmd1, '-echo') ;
+    [status, result] = system (cmd1) ;
     if (have_octave)
         disp (result)
     end
@@ -143,7 +143,7 @@ try
         fprintf ('When using octave, intermediate progress is not displayed.\n') ;
         fprintf ('Be assured that the GraphBLAS library is now being compiled ...\n') ;
     end
-    [status, result] = system (cmd2, '-echo') ;
+    [status, result] = system (cmd2) ;
     if (have_octave)
         % display all progress, all at once
         disp (result)
