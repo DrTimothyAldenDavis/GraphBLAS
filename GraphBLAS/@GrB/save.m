@@ -1,5 +1,5 @@
 function filename_used = save (GrB_Matrix_from_GrB_save, filename)
-%SAVE Save a single GraphBLAS matrix to a file.
+%GRB.SAVE Save a single GraphBLAS matrix to a file.
 % GrB.save (C) saves a single @GrB or built-in matrix C to a file, with a
 % filename of 'C.mat' that matches the matrix name.  If C is an
 % expression, the filename 'GrB_Matrix.mat' is used.  A second parameter
@@ -7,8 +7,9 @@ function filename_used = save (GrB_Matrix_from_GrB_save, filename)
 % 'myfile.mat').  If A is not already a @GrB matrix, it is converted to
 % one with GrB(A).
 %
-% NOTE: As of GraphBLAS v10.4.0, this method is no longer needed; just use
-% the MATLAB/Octave load/save methods instead.
+% NOTE: As of GraphBLAS v10.4.0, this method is no longer needed in MATLAB;
+% just MATLAB load/save methods instead.  Octave cannot load/save the @GrB
+% and @GhB objects, so this method is useful for Octave.
 %
 % Example:
 %
@@ -36,6 +37,8 @@ if (nargin < 2)
 end
 
 % use the overloaded @GrB/saveobj or @GhB/saveobj methods
+% FIXME: Octave load/save does not work with classdef objects;
+% use the serialized blob instead.
 save (filename, 'GrB_Matrix_from_GrB_save') ;
 
 % return the chosen filename

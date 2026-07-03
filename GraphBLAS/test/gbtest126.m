@@ -11,7 +11,8 @@ gtb_name = gtb_prep (ghb) ;
 
 list = gtb_selectops (ghb)
 gtb_selectops (ghb) ;
-if (ghb)
+have_octave = gb_octave ;
+if (ghb && ~have_octave)
     help GhB.selectops ;
 else
     help GrB.selectops ;

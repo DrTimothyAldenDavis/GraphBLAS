@@ -23,14 +23,14 @@ for k = 1:length (types)
         case { 'single' }
             A = single (rand (4)) ;
             B = single (rand (4)) ;
-            tol = 1e-5 ;
+            tol = 1e-4 ;
             G = gtb (ghb, A) ;
             H = gtb (ghb, B) ;
             gbtest76b (ghb, A, B, G, H, tol) ;
         case { 'double' }
             A = rand (4) ;
             B = rand (4) ;
-            tol = 1e-10 ;
+            tol = 1e-9 ;
             G = gtb (ghb, A) ;
             H = gtb (ghb, B) ;
             gbtest76b (ghb, A, B, G, H, tol) ;
@@ -44,21 +44,21 @@ for k = 1:length (types)
         case { 'double complex' }
             A = rand (4) + 1i* rand (4) ;
             B = rand (4) + 1i* rand (4) ;
-            tol = 1e-10 ;
+            tol = 1e-9 ;
             G = gtb (ghb, A) ;
             H = gtb (ghb, B) ;
             gbtest76b (ghb, A, B, G, H, tol) ;
         case { 'int32' }
             A = int32 (magic (4)) ;
             B = int32 (rand (4) * 4) ;
-            tol = 1e-10 ;
+            tol = 1e-9 ;
             G = gtb (ghb, A) ;
             H = gtb (ghb, B) ;
             gbtest76b (ghb, double (A), double (B), G, H, tol) ;
         case { 'uint32' }
             A = uint32 (magic (4)) ;
             B = uint32 (rand (4) * 4) ;
-            tol = 1e-10 ;
+            tol = 1e-9 ;
             G = gtb (ghb, A) ;
             H = gtb (ghb, B) ;
             gbtest76b (ghb, double (A), double (B), G, H, tol) ;

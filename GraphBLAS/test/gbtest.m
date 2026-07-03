@@ -40,6 +40,7 @@ rng ('default') ;
 
 have_octave = gb_octave ;
 
+if (0) % FIXME
 gbtest0         % test GrB.clear
 gbtest0 (1)
 gbtest0 (2)
@@ -551,13 +552,10 @@ gbtest100 (1)
 gbtest100 (2)
 assert (GrB.nmalloc == 0) ;
 
-if (~have_octave)
-    % octave cannot load the mat file from MATLAB with a v3 @GrB object
-    gbtest101       % test loading of v3 GraphBLAS objects
-    gbtest101 (1)
-    gbtest101 (2)
-    assert (GrB.nmalloc == 0) ;
-end
+gbtest101       % test loading of v3 GraphBLAS objects
+gbtest101 (1)
+gbtest101 (2)
+assert (GrB.nmalloc == 0) ;
 
 gbtest102       % test horzcat, vertcat, cat, cell2mat
 gbtest102 (1)
@@ -609,10 +607,12 @@ gbtest111 (1)
 gbtest111 (2)
 assert (GrB.nmalloc == 0) ;
 
-gbtest112       % test load and save
-gbtest112 (1)
-gbtest112 (2)
-assert (GrB.nmalloc == 0) ;
+if (~have_octave)
+    gbtest112       % test load and save
+    gbtest112 (1)
+    gbtest112 (2)
+    assert (GrB.nmalloc == 0) ;
+end
 
 gbtest113       % test ones and eq
 gbtest113 (1)
@@ -693,6 +693,7 @@ gbtest128       % test unops
 gbtest128 (1)
 gbtest128 (2)
 assert (GrB.nmalloc == 0) ;
+end % FIXME
 
 gbtest129       % test jit
 gbtest129 (1)

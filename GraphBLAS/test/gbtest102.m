@@ -82,7 +82,7 @@ for n = 100:100:1000
             ok = true ;
         end
         assert (ok) ;
-        assert (isequal (msg, 'unsupported type')) ;
+        assert (gb_contains (msg, 'unsupported type')) ;
 
         try
             % 2nd and 3rd arguments must be built-in integer arrays
@@ -94,7 +94,7 @@ for n = 100:100:1000
             ok = true ;
         end
         assert (ok) ;
-        assert (isequal (msg, 'unsupported type')) ;
+        assert (gb_contains (msg, 'unsupported type')) ;
 
         % test cell2mat
         S1 = cell (2,2) ;

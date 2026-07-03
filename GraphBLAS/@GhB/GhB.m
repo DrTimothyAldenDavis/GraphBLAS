@@ -18,10 +18,11 @@ classdef (InferiorClasses = {?GrB}) GhB < handle & GrB
 % All @GrB methods are also available as @GhB methods; see "help GrB"
 % for details, and just replace "GrB" with "GhB".
 %
-% @GrB and @GhB matrices can be mixed.  If any matrix in a computation
-% is a @GhB matrix, the result is a @GhB matrix, but @GhB matrices are
-% only created via the GhB(...) constructor.  Thus, if only GrB.* methods
-% are used, all matrices will be @GrB.
+% @GrB and @GhB matrices can be mixed.  In MATLAB, if any matrix in a
+% computation is a @GhB matrix, the result is a @GhB matrix.  Octave 11.1
+% is different; C=A+B creates C as @GrB if A is @GrB and B is @GhB.  @GhB
+% matrices are only created via the GhB(...) constructor.  Thus, if only
+% GrB.* methods are used, all matrices will be @GrB.
 %
 % The @GhB matrix is a handle object, so C can also be modified in place.
 % Using this in-place syntax, which cannot be done with @GrB:

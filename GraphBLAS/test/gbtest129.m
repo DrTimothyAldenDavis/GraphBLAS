@@ -34,7 +34,7 @@ catch me
     ok = true ;
 end
 assert (ok) ;
-assert (isequal (msg, 'status must be a string')) ;
+assert (gb_contains (msg, 'status must be a string')) ;
 
 try
     gtb_jit (ghb, 'on',0)
@@ -44,7 +44,7 @@ catch me
     ok = true ;
 end
 assert (ok) ;
-assert (isequal (msg, 'path must be a string')) ;
+assert (gb_contains (msg, 'path must be a string')) ;
 
 fprintf ('\ngbtest129 (%d): all tests passed\n', ghb) ;
 

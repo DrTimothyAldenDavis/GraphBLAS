@@ -6,8 +6,9 @@ function C = load (filename)
 % GrB.load can load in *.mat files created by GrB.save from this or earlier
 % versions of GraphBLAS.
 %
-% NOTE: As of GraphBLAS v10.4.0, this method is no longer needed; just use
-% the MATLAB/Octave load/save methods instead.
+% NOTE: As of GraphBLAS v10.4.0, this method is no longer needed in MATLAB;
+% just MATLAB load/save methods instead.  Octave cannot load/save the @GrB
+% and @GhB objects, so this method is useful for Octave.
 %
 % Examples:
 %
