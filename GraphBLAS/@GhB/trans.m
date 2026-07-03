@@ -14,7 +14,8 @@ function C = trans (arg1, arg2, arg3, arg4, arg5)
 % GhB.trans (C, M, accum, A, desc)              % C<M> += A'
 %
 % GhB.trans computes T=A'.
-% T is then accumulated into C via C<#M,replace> = accum (C,T).
+% T is then accumulated into C via C<M> = accum (C,T), where the accum step
+% is computed using GhB.eadd and M can be modified by the descriptor desc.
 %
 % For complex matrices, GhB.trans computes the array transpose, not the
 % matrix (complex conjugate) transpose.

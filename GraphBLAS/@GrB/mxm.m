@@ -11,7 +11,8 @@ function C = mxm (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % sum (A(i,:).*B(:,j).'), except that "sum" can be any monoid, and "*" can be
 % any binary operator.
 %
-% T is then accumulated into C via C<#M,replace> = accum (C,T).
+% T is then accumulated into C via C<M> = accum (C,T), where the accum step
+% is computed using GrB.eadd and M can be modified by the descriptor desc.
 %
 % The semiring is a required string defining the semiring to use, in the
 % form 'add.mult.type', where '.type' is optional.  For example,

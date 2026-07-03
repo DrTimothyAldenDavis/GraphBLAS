@@ -8,7 +8,8 @@ function C = trans (arg1, arg2, arg3, arg4, arg5)
 % C = GrB.trans (Cin, M, accum, A, desc)        % C = Cin ; C<M> += A'
 %
 % GrB.trans computes T=A'.
-% T is then accumulated into C via C<#M,replace> = accum (C,T).
+% T is then accumulated into C via C<M> = accum (C,T), where the accum step
+% is computed using GrB.eadd and M can be modified by the descriptor desc.
 %
 % For complex matrices, GrB.trans computes the array transpose, not the
 % matrix (complex conjugate) transpose.
