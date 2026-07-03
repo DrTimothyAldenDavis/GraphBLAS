@@ -89,8 +89,9 @@ have_octave = gb_octave ;
 X = complex (A)
 G = gtb (ghb, X)
 if (have_octave)
-    % the octave7 full(...) function converts its result to real if the
-    % imaginary part is zero, but MATLAB and GraphBLAS return as complex.
+    % the builtin octave F=full(A) function converts F to real if the imaginary
+    % part of A is zero, but MATLAB and GraphBLAS return F as complex with zero
+    % imaginary part.
     assert (gbtest_eq (X, G)) ;
 else
     assert (gbtest_eq (X, full (complex (G))))
