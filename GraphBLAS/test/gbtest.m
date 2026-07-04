@@ -549,10 +549,13 @@ gbtest100 (1)
 gbtest100 (2)
 assert (GrB.nmalloc == 0) ;
 
-gbtest101       % test loading of v3 GraphBLAS objects
-gbtest101 (1)
-gbtest101 (2)
-assert (GrB.nmalloc == 0) ;
+if (~have_octave)
+    % this test fails in Octave 10.2 but works in Octave 11.1.
+    gbtest101       % test loading of v3 GraphBLAS objects
+    gbtest101 (1)
+    gbtest101 (2)
+    assert (GrB.nmalloc == 0) ;
+end
 
 gbtest102       % test horzcat, vertcat, cat, cell2mat
 gbtest102 (1)
