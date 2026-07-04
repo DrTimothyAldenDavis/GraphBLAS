@@ -29,7 +29,7 @@ if (~isempty (slash))
     end
 end
 
-have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
+have_octave = gb_octave ;
 
 if (have_octave)
     % Octave can use the normal libgraphblas.so

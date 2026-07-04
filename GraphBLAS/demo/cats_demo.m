@@ -21,7 +21,7 @@ for scale = 1:6
 
     % or create it with GrB.random: same pattern, but different
     % values because of how duplicates are handled
-    if (demo_octave)
+    if (gb_octave)
         A2 = GrB (A1) ;
     else
         rng ('default') ;

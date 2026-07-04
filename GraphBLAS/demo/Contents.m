@@ -11,7 +11,6 @@
 %   bfs_builtin     - breadth-first-search using purely built-in methods
 %   cats_demo       - cats_demo.m
 %   demo_nproc      - determine the default # of cores, or set the # of cores to use
-%   demo_octave     - return true if Octave is in use, false for MATLAB
 %   demo_whoami     - return 'Octave' or 'MATLAB'
 %   tmask           - performance tests for logical indexing
 %
