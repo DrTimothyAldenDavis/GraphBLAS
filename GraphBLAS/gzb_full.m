@@ -23,24 +23,24 @@ end
 if (ghb)
     switch (nargin)
         case 2
-            C = GhB (gbmex_full (ghb, arg1)) ;
+            C = GhB (gbmex_full (1, arg1)) ;
         case 3
-            C = GhB (gbmex_full (ghb, arg1, arg2)) ;
+            C = GhB (gbmex_full (1, arg1, arg2)) ;
         case 4
-            C = GhB (gbmex_full (ghb, arg1, arg2, arg3)) ;
+            C = GhB (gbmex_full (1, arg1, arg2, arg3)) ;
         case 5
-            C = GhB (gbmex_full (ghb, arg1, arg2, arg3, arg4)) ;
+            C = GhB (gbmex_full (1, arg1, arg2, arg3, arg4)) ;
     end
 else
     switch (nargin)
         case 2
-            C = GrB (gbmex_full (ghb, arg1)) ;
+            C = GrB (gbmex_full (0, arg1)) ;
         case 3
-            C = GrB (gbmex_full (ghb, arg1, arg2)) ;
+            C = GrB (gbmex_full (0, arg1, arg2)) ;
         case 4
-            C = GrB (gbmex_full (ghb, arg1, arg2, arg3)) ;
+            C = GrB (gbmex_full (0, arg1, arg2, arg3)) ;
         case 5
-            C = GrB (gbmex_full (ghb, arg1, arg2, arg3, arg4)) ;
+            C = GrB (gbmex_full (0, arg1, arg2, arg3, arg4)) ;
     end
 end
 

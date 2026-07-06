@@ -11,20 +11,20 @@ end
 if (ghb)
     switch (nargin)
         case 2
-            C = GhB (gbmex_serialize (ghb, A)) ;
+            C = GhB (gbmex_serialize (1, A)) ;
         case 3
-            C = GhB (gbmex_serialize (ghb, A, method)) ;
+            C = GhB (gbmex_serialize (1, A, method)) ;
         case 4
-            C = GhB (gbmex_serialize (ghb, A, method, level)) ;
+            C = GhB (gbmex_serialize (1, A, method, level)) ;
     end
 else
     switch (nargin)
         case 2
-            C = GrB (gbmex_serialize (ghb, A)) ;
+            C = GrB (gbmex_serialize (0, A)) ;
         case 3
-            C = GrB (gbmex_serialize (ghb, A, method)) ;
+            C = GrB (gbmex_serialize (0, A, method)) ;
         case 4
-            C = GrB (gbmex_serialize (ghb, A, method, level)) ;
+            C = GrB (gbmex_serialize (0, A, method, level)) ;
     end
 end
 

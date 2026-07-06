@@ -1,4 +1,4 @@
-function C = gb_double (ghb, G)
+function C = gb_double (G)
 %GB_DOUBLE implements GrB/double and GhB/double.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -14,5 +14,5 @@ else
     type = 'double' ;
 end
 
-C = gb_builtin (gzb_cast (ghb, G, type)) ;   % FIXME why ghb?
+C = gb_builtin (gzb_cast (G, type)) ;
 

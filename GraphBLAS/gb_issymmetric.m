@@ -1,4 +1,4 @@
-function s = gb_issymmetric (ghb, G_arg, option, herm)
+function s = gb_issymmetric (G_arg, option, herm)
 %GB_ISSYMMETRIC check if symmetric or Hermitian.  Not user-callable.
 % Implements issymmetric (G,option) and ishermitian (G,option).
 
@@ -24,7 +24,7 @@ if (m ~= n)
 else
 
     if (isequal (type, 'logical'))
-        G = gzb (ghb, G_arg, 'double') ;
+        G = gzb (1, G_arg, 'double') ;
     else
         G = G_arg ;
     end
@@ -32,10 +32,10 @@ else
     if (herm && gb_contains (type, 'complex'))
         % T = G', complex conjugate transpose
         desc.in0 = 'transpose' ;
-        T = gzb_apply (ghb, 'conj', G, desc) ;
+        T = gzb_apply (1, 'conj', G, desc) ;
     else
         % T = G.', array transpose
-        T = gzb_trans (ghb, G) ;
+        T = gzb_trans (1, G) ;
     end
 
     switch (option)
@@ -43,7 +43,7 @@ else
         case { 'skew' }
 
             % G is skew symmetric/Hermitian if G+T is zero
-            s = (gzb_norm (gb_eadd (ghb, G, '+', T), 1) == 0) ;
+            s = (gzb_norm (gb_eadd (1, G, '+', T), 1) == 0) ;
 
         case { 'nonskew' }
 
@@ -58,8 +58,8 @@ else
 
     if (s)
         % also check the pattern; G might have explicit zeros
-        S = gb_spones (ghb, G, 'logical') ;
-        T = gzb_trans (ghb, S) ;
+        S = gb_spones (1, G, 'logical') ;
+        T = gzb_trans (1, S) ;
         s = gb_isequal (S, T) ;
     end
 end

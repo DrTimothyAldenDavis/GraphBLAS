@@ -5,8 +5,8 @@ function C = gzb_reshape (ghb, A, mnew, nnew, by_col)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-    C = GhB (gbmex_reshape (ghb, A, mnew, nnew, by_col)) ;
+    C = GhB (gbmex_reshape (1, A, mnew, nnew, by_col)) ;
 else
-    C = GrB (gbmex_reshape (ghb, A, mnew, nnew, by_col)) ;
+    C = GrB (gbmex_reshape (0, A, mnew, nnew, by_col)) ;
 end
 

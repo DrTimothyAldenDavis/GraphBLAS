@@ -80,12 +80,12 @@ switch (type)
 
         % The digraph(...) function allows for logical
         % adjacency matrices (no edge weights are created).
-        Graph = graph (gb_builtin (gzb_cast (1, G2, 'logical')), side) ;
+        Graph = graph (gb_builtin (gzb_cast (G2, 'logical')), side) ;
 
     otherwise
 
         % typecast to double
-        Graph = graph (gb_builtin (gzb_cast (1, G2, 'double')), side) ;
+        Graph = graph (gb_builtin (gzb_cast (G2, 'double')), side) ;
 
 end
 

@@ -6,6 +6,7 @@ function C = gb_minall (ghb, op, A)
 % SPDX-License-Identifier: Apache-2.0
 
 C = gzb_reduce (ghb, op, A) ;
+
 if (~gb_isfull (A) && gb_scalar (C) >= 0)
     % A is not full, and the min of the entries present is >= 0,
     % so C is an empty scalar (an implicit zero)

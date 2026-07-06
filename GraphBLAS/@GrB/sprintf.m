@@ -9,5 +9,5 @@ function s = sprintf (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-s = gb_printf_helper (0, 'sprintf', varargin {:}) ;
+s = gb_printf_helper ('sprintf', varargin {:}) ;
 

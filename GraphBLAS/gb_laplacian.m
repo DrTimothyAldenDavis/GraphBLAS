@@ -24,12 +24,12 @@ end
 % S = spones (A)
 fmt = gbmex_format (A) ;
 desc.format = fmt ;
-S = gzb_apply (ghb, ['1.' type], A, desc) ;
+S = gzb_apply (1, ['1.' type], A, desc) ;
 
 % check the input matrix, if requested
 if (nargin > 3 && isequal (check, 'check'))
     % make sure spones (S) is symmetric
-    if (~gb_issymmetric (ghb, S, 'nonskew', false))
+    if (~gb_issymmetric (S, 'nonskew', false))
         error ('GrB:error', 'spones(A) must be symmetric') ;
     end
 end
@@ -40,13 +40,13 @@ if (isequal (fmt, 'by row'))
 else
     dim = 'col' ;
 end
-D = gzb_mdiag (ghb, gzb_degree (ghb, S, 'dim'), 0) ;
+D = gzb_mdiag (1, gzb_degree (1, S, 'dim'), 0) ;
 if (~isequal (type, gb_type (D)))
     % gzb_degree returns its result as int64; typecast to desired type
-    D = gzb (ghb, D, type) ;
+    D = gzb (1, D, type) ;
 end
 
 % construct the Laplacian
 % L = D-S
-L = gzb_eadd (ghb, D, '+', gzb_apply (ghb, '-', S)) ;
+L = gzb_eadd (ghb, D, '+', gzb_apply (1, '-', S)) ;
 

@@ -198,7 +198,6 @@ methods
     C = cat (dim, varargin) ;
     C = cbrt (G) ;
     C = ceil (G) ;
-    C = complex (A, B) ;
     C = conj (G) ;
     C = cos (G) ;
     C = cosh (G) ;
@@ -209,7 +208,6 @@ methods
     C = diag (A, k) ;
     disp (A, level) ;
     display (G) ;
-    C = double (G) ;
     C = eps (G) ;
     C = erf (G) ;
     C = erfc (G) ;
@@ -219,27 +217,19 @@ methods
     C = fix (G) ;
     C = flip (G, dim) ;
     C = floor (G) ;
-    c = fprintf (varargin) ;
     C = full (A, type, identity) ;
     C = gamma (G) ;
     C = gammaln (G) ;
     C = hypot (A, B) ;
     C = imag (G) ;
-    C = int8 (G) ;
-    C = int16 (G) ;
-    C = int32 (G) ;
-    C = int64 (G) ;
     C = isfinite (G) ;
-    s = ishermitian (G, option) ;
     C = isinf (G) ;
     C = isnan (G) ;
-    s = issymmetric (G, option) ;
     C = kron (A, B) ;
     C = log (G) ;
     C = log10 (G) ;
     C = log1p (G) ;
     [F, E] = log2 (G) ;
-    C = logical (G) ;
     C = mat2cell (A, m, n) ;
     C = max (A, B, option) ;
     C = min (A, B, option) ;
@@ -254,7 +244,6 @@ methods
     C = sech (G) ;
     C = sign (G) ;
     C = sin (G) ;
-    C = single (G) ;
     C = sinh (G) ;
     S = saveobj (G) ;
     C = sparse (G) ;
@@ -263,17 +252,12 @@ methods
     C = sprand (arg1, arg2, arg3) ;
     C = sprandn (arg1, arg2, arg3) ;
     C = sprandsym (arg1, arg2) ;
-    c = sprintf (varargin) ;
     C = sqrt (G) ;
     C = sum (G, option) ;
     C = tan (G) ;
     C = tanh (G) ;
     L = tril (G, k) ;
     U = triu (G, k) ;
-    C = uint8 (G) ;
-    C = uint16 (G) ;
-    C = uint32 (G) ;
-    C = uint64 (G) ;
     C = xor (A, B) ;
 
 end

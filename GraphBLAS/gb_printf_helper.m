@@ -1,4 +1,4 @@
-function result = gb_printf_helper (ghb, printf_function, varargin)
+function result = gb_printf_helper (printf_function, varargin)
 %GB_PRINTF_HELPER wrapper for fprintf and sprintf.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -15,7 +15,7 @@ for k = 1:len
             arg = struct (arg) ;
         end
         type = gbmex_type (arg) ;
-        args {k} = gb_builtin (gzb_full (ghb, arg, type, 0, desc)) ;
+        args {k} = gb_builtin (gzb_full (1, arg, type, 0, desc)) ;
     else
         args {k} = arg ;
     end

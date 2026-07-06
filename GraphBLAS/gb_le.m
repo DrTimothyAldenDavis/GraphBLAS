@@ -21,22 +21,22 @@ ctype = gbmex_optype (atype, btype) ;
 if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars.  C is full.
-        a = gzb_full (ghb, A, ctype) ;
-        b = gzb_full (ghb, B, ctype) ;
+        a = gzb_full (1, A, ctype) ;
+        b = gzb_full (1, B, ctype) ;
         C = gzb_emult (ghb, a, '<=', b) ;
     else
         % A is a scalar, B is a matrix
         if (gb_scalar (A) <= 0)
             % since a <= 0, entries not present in B result in a true
             % value, so the result is full.  Expand A to a full matrix.
-            a = gb_scalar_to_full (ghb, bm, bn, ctype, gb_fmt (B), A) ;
-            b = gzb_full (ghb, B, ctype) ;
+            a = gb_scalar_to_full (1, bm, bn, ctype, gb_fmt (B), A) ;
+            b = gzb_full (1, B, ctype) ;
             C = gzb_emult (ghb, a, '<=', b) ;
         else
             % since a > 0, entries not present in B result in a false
             % value, so the result is a sparse subset of B.  select all
             % entries in B >= a, then convert to true.
-            C = gzb_apply (ghb, '1.logical', gzb_select (ghb, B, '>=', A)) ;
+            C = gzb_apply (ghb, '1.logical', gzb_select (1, B, '>=', A)) ;
         end
     end
 else
@@ -45,19 +45,19 @@ else
         if (gb_scalar (B) >= 0)
             % since b >= 0, entries not present in A result in a true
             % value, so the result is full.  Expand B to a full matrix.
-            b = gb_scalar_to_full (ghb, am, an, ctype, gb_fmt (A), B) ;
-            a = gzb_full (ghb, A, ctype) ;
+            b = gb_scalar_to_full (1, am, an, ctype, gb_fmt (A), B) ;
+            a = gzb_full (1, A, ctype) ;
             C = gzb_emult (ghb, a, '<=', b) ;
         else
             % since b < 0, entries not present in A result in a false
             % value, so the result is a sparse subset of A.  select all
             % entries in A <= b, then convert to true.
-            C = gzb_apply (ghb, '1.logical', gzb_select (ghb, A, '<=', B)) ;
+            C = gzb_apply (ghb, '1.logical', gzb_select (1, A, '<=', B)) ;
         end
     else
         % both A and B are matrices.  C is full.
-        a = gzb_full (ghb, A, ctype) ;
-        b = gzb_full (ghb, B, ctype) ;
+        a = gzb_full (1, A, ctype) ;
+        b = gzb_full (1, B, ctype) ;
         C = gzb_emult (ghb, a, '<=', b) ;
     end
 end

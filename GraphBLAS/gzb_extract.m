@@ -5,8 +5,8 @@ function C = gzb_extract (ghb, A, I, J)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-    C = GhB (gbmex_extract (ghb, A, I, J)) ;
+    C = GhB (gbmex_extract (1, A, I, J)) ;
 else
-    C = GrB (gbmex_extract (ghb, A, I, J)) ;
+    C = GrB (gbmex_extract (0, A, I, J)) ;
 end
 

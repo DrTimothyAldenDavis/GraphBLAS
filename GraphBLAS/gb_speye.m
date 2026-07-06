@@ -8,7 +8,6 @@ function C = gb_speye (ghb, func, varargin)
 % get the size and type
 [m, n, type] = gb_parse_args (func, varargin {:}) ;
 
-% FIXME: put this in a gb_identity (m, n, type) function:
 % construct the m-by-n identity matrix of the given type
 m = max (m, 0) ;
 n = max (n, 0) ;

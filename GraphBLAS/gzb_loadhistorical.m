@@ -5,8 +5,8 @@ function C = gzb_loadhistorical (ghb, S)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-    C = GhB (gbmex_loadhistorical (ghb, S)) ;
+    C = GhB (gbmex_loadhistorical (1, S)) ;
 else
-    C = GrB (gbmex_loadhistorical (ghb, S)) ;
+    C = GrB (gbmex_loadhistorical (0, S)) ;
 end
 

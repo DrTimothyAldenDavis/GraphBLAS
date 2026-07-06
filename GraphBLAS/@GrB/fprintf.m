@@ -9,7 +9,7 @@ function count = fprintf (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-c = gb_printf_helper (0, 'fprintf', varargin {:}) ;
+c = gb_printf_helper ('fprintf', varargin {:}) ;
 if (nargout > 0)
     count = c ;
 end

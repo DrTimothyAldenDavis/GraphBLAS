@@ -92,21 +92,21 @@ if (V_is_scalar)
         % A is a scalar
         if (b_is_scalar)
             % both A and B are scalars
-            T = gzb_eunion (ghb, A, op, B) ;
+            C = gzb_eunion (ghb, A, op, B) ;
         else
             % A is a scalar, B is a matrix
             a = gzb_full (1, A) ;
-            T = gzb_apply2 (ghb, op, a, B) ;
+            C = gzb_apply2 (ghb, op, a, B) ;
         end
     else
         % A is a matrix
         if (b_is_scalar)
             % A is a matrix, B is scalar
             b = gzb_full (1, B) ;
-            T = gzb_apply2 (ghb, op, A, b) ;
+            C = gzb_apply2 (ghb, op, A, b) ;
         else
             % both A and B are matrices
-            T = gzb_eunion (ghb, A, op, B) ;
+            C = gzb_eunion (ghb, A, op, B) ;
         end
     end
 
@@ -147,14 +147,12 @@ else
     B0 = GhB (gbmex_subassign (1, E, V, B2, desc)) ;
 
     % Clear the bits in C, referenced by B0(i,j), where V(i,j) is zero.
-    T = gzb_eadd (ghb, ['bitclr.', atype], S, B0) ;
+    C = gzb_eadd (ghb, ['bitclr.', atype], S, B0) ;
 
 end
 
 % return result
-if (isequal (gb_type (T), ctype))
-    C = T ;
-else
-    C = gzb (ghb, T, ctype) ;
+if (~isequal (gb_type (C), ctype))
+    C = gzb (ghb, C, ctype) ;
 end
 

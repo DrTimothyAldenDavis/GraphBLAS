@@ -15,7 +15,7 @@ if (nargin == 2)
     if (~gb_isfloat (atype))
         atype = 'double' ;
     end
-    C = gzb_apply (ghb, 'pow2', gzb_full (ghb, A, atype)) ;
+    C = gzb_apply (ghb, 'pow2', gzb_full (1, A, atype)) ;
 else
     % C = A.*(2.^B)
     if (gb_is_grb (B))

@@ -31,7 +31,7 @@ end
 gbmex_wait (G) ;
 
 if (nargout == 3)
-    [I, J, X] = gbmex_extracttuples (ghb, G) ;
+    [I, J, X] = gbmex_extracttuples (ghb, G) ;  % FIXME remove ghb
     if (m == 1)
         I = I' ;
         J = J' ;

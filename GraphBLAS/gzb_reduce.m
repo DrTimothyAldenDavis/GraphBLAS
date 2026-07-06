@@ -9,8 +9,8 @@ if (gb_is_grb (A))
 end
 
 if (ghb)
-    C = GhB (gbmex_reduce (ghb, op, A)) ;
+    C = GhB (gbmex_reduce (1, op, A)) ;
 else
-    C = GrB (gbmex_reduce (ghb, op, A)) ;
+    C = GrB (gbmex_reduce (0, op, A)) ;
 end
 

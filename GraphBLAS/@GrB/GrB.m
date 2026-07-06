@@ -826,11 +826,9 @@ methods
     C = bitset (A, B, arg3, arg4) ;
     C = bitshift (A, B, arg3) ;
     C = bitxor (A, B, assumedtype) ;
-%   C = cast (G, ...)       built-in works as-is
     C = cat (dim, varargin) ;
     C = cbrt (G) ;
     C = ceil (G) ;
-    C = complex (A, B) ;
     C = conj (G) ;
     C = cos (G) ;
     C = cosh (G) ;
@@ -841,7 +839,6 @@ methods
     C = diag (A, k) ;
     disp (A, level) ;
     display (G) ;
-    C = double (G) ;
     C = eps (G) ;
     C = erf (G) ;
     C = erfc (G) ;
@@ -851,29 +848,19 @@ methods
     C = fix (G) ;
     C = flip (G, dim) ;
     C = floor (G) ;
-    c = fprintf (varargin) ;
     C = full (A, type, identity) ;
     C = gamma (G) ;
     C = gammaln (G) ;
     C = hypot (A, B) ;
     C = imag (G) ;
-    C = int8 (G) ;
-    C = int16 (G) ;
-    C = int32 (G) ;
-    C = int64 (G) ;
-%   s = iscolumn (G)        built-in works as-is
     C = isfinite (G) ;
-    s = ishermitian (G, option) ;
     C = isinf (G) ;
     C = isnan (G) ;
-%   s = isrow (G)           built-in works as-is
-    s = issymmetric (G, option) ;
     C = kron (A, B) ;
     C = log (G) ;
     C = log10 (G) ;
     C = log1p (G) ;
     [F, E] = log2 (G) ;
-    C = logical (G) ;
     C = mat2cell (A, m, n) ;
     C = max (A, B, option) ;
     C = min (A, B, option) ;
@@ -888,7 +875,6 @@ methods
     C = sech (G) ;
     C = sign (G) ;
     C = sin (G) ;
-    C = single (G) ;
     C = sinh (G) ;
     C = sparse (G) ;
     C = spfun (fun, G) ;
@@ -896,18 +882,18 @@ methods
     C = sprand (arg1, arg2, arg3) ;
     C = sprandn (arg1, arg2, arg3) ;
     C = sprandsym (arg1, arg2) ;
-    c = sprintf (varargin) ;
     C = sqrt (G) ;
     C = sum (G, option) ;
     C = tan (G) ;
     C = tanh (G) ;
     L = tril (G, k) ;
     U = triu (G, k) ;
-    C = uint8 (G) ;
-    C = uint16 (G) ;
-    C = uint32 (G) ;
-    C = uint64 (G) ;
     C = xor (A, B) ;
+
+%   built-in methods work as-is:
+%   C = cast (G, ...)
+%   s = iscolumn (G)
+%   s = isrow (G)
 
     %---------------------------------------------------------------------
     % overloaded GrB.methods and GhB.methods that are identical
@@ -917,17 +903,25 @@ methods
     assert (G) ;            % test assertion 
     [lo, hi] = bandwidth (G, uplo) ;
     [p, varargout] = colamd (G, varargin) ;
+    C = complex (A, B) ;
     DiGraph = digraph (G, option) ;
     [p, varargout] = dmperm (G) ;
+    C = double (G) ;
     [V, varargout] = eig (G, varargin) ;
     [parent, varargout] = etree (G, varargin) ;
+    c = fprintf (varargin) ;
     Graph = graph (G, varargin) ;
+    C = int8 (G) ;
+    C = int16 (G) ;
+    C = int32 (G) ;
+    C = int64 (G) ;
     s = isa (G, type) ;
     s = isbanded (G, lo, hi) ;
     s = isdiag (G) ;
     s = isempty (G) ;
     s = isequal (A, B) ;
     s = isfloat (G) ;
+    s = ishermitian (G, option) ;
     s = isinteger (G) ;
     s = islogical (G) ;
     s = ismatrix (G) ;
@@ -935,20 +929,28 @@ methods
     s = isreal (G) ;
     s = isscalar (G) ;
     s = issparse (G) ;
+    s = issymmetric (G, option) ;
     s = istril (G) ;
     s = istriu (G) ;
     s = isvector (G) ;
     n = length (G) ;
+    C = logical (G) ;
     e = nnz (G) ;
     X = nonzeros (G) ;
     s = norm (G, kind) ;
     s = numel (G) ;
     e = nzmax (G) ;
+    C = single (G) ;
     [m, n, t] = size (G, dim) ;
     S = saveobj (G) ;
+    c = sprintf (varargin) ;
     S = struct (G) ;
     [p, varargout] = symamd (G, varargin) ;
     p = symrcm (G) ;
+    C = uint8 (G) ;
+    C = uint16 (G) ;
+    C = uint32 (G) ;
+    C = uint64 (G) ;
 
 end
 

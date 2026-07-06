@@ -1,4 +1,4 @@
-function C = gzb_cast (ghb, X, type)
+function C = gzb_cast (X, type)
 %GZB_CAST: wrapper for gbmex_cast mexFunction.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -8,9 +8,5 @@ if (gb_is_grb (X))
     X = struct (X) ;
 end
 
-if (ghb)
-    C = GhB (gbmex_cast (1, X, type)) ;
-else
-    C = GrB (gbmex_cast (0, X, type)) ;
-end
+C = GhB (gbmex_cast (X, type)) ;
 

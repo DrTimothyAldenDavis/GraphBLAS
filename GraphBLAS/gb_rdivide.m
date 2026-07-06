@@ -27,12 +27,12 @@ end
 if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars
-        b = gzb_full (ghb, B) ;
+        b = gzb_full (1, B) ;
         C = gzb_emult (ghb, A, '/', b) ;
     else
         % A is a scalar, B is a matrix.
         % Expand B to full with type of C
-        b = gzb_full (ghb, B, ctype) ;
+        b = gzb_full (1, B, ctype) ;
         C = gzb_apply2 (ghb, A, '/', b) ;
     end
 else
@@ -42,7 +42,7 @@ else
             % 0/0 is Nan, and thus must be computed computed if A is
             % floating-point.  The result is a full matrix.
             % expand B into a full matrix and cast to the type of A
-            b = gb_scalar_to_full (ghb, am, an, atype, gb_fmt (A), B) ;
+            b = gb_scalar_to_full (1, am, an, atype, gb_fmt (A), B) ;
             C = gzb_emult (ghb, A, '/', b) ;
         else
             % The scalar B is nonzero so just compute A/B in the pattern
@@ -51,8 +51,8 @@ else
         end
     else
         % both A and B are matrices.  The result is a full matrix.
-        a = gzb_full (ghb, A, ctype) ;
-        b = gzb_full (ghb, B, ctype) ;
+        a = gzb_full (1, A, ctype) ;
+        b = gzb_full (1, B, ctype) ;
         C = gzb_emult (ghb, a, '/', b) ;
     end
 end

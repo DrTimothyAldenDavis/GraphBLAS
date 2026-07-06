@@ -23,7 +23,7 @@
 
 // The input matrix must have no pending work.
 
-// I, J, and X are returned as MATLAB matrices.
+// I, J, and X are returned as built-in MATLAB/Octave matrices.
 
 // FUTURE: add an option to return I,J,X as GrB matrices instead
 // FUTURE: reduce # of copies made

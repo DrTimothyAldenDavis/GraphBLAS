@@ -32,15 +32,15 @@ if (a_is_scalar)
             else
                 % since a < 0, entries not present in B result in a true
                 % value, so the result is full.  Expand A to full.
-                a = gb_scalar_to_full (ghb, bm, bn, ctype, bfmt, A) ;
-                b = gzb_full (ghb, B, ctype) ;
+                a = gb_scalar_to_full (1, bm, bn, ctype, bfmt, A) ;
+                b = gzb_full (1, B, ctype) ;
                 C = gzb_emult (ghb, a, '<', b) ;
             end
         else
             % since a >= 0, entries not present in B result in a false
             % value, so the result is a sparse subset of B.  select all
             % entries in B > a, then convert to true.
-            C = gzb_apply (ghb, '1.logical', gzb_select (ghb, B, '>', A)) ;
+            C = gzb_apply (ghb, '1.logical', gzb_select (1, B, '>', A)) ;
         end
     end
 else
@@ -53,14 +53,14 @@ else
         elseif (b > 0)
             % since b > 0, entries not present in A result in a true
             % value, so the result is full.  Expand B to a full matrix.
-            a = gzb_full (ghb, A, ctype) ;
-            b = gb_scalar_to_full (ghb, am, an, ctype, gb_fmt (A), B) ;
+            a = gzb_full (1, A, ctype) ;
+            b = gb_scalar_to_full (1, am, an, ctype, gb_fmt (A), B) ;
             C = gzb_emult (ghb, a, '<', b) ;
         else
             % since b <= 0, entries not present in A result in a false
             % value, so the result is a sparse subset of A.  Select all
             % entries in A < b, then convert to true.
-            C = gzb_apply (ghb, '1.logical', gzb_select (ghb, A, '<', B)) ;
+            C = gzb_apply (ghb, '1.logical', gzb_select (1, A, '<', B)) ;
         end
     else
         % both A and B are matrices.  C is the set union of A and B.

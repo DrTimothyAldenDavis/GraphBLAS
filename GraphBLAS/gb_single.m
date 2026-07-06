@@ -1,4 +1,4 @@
-function C = gb_single (ghb, G)
+function C = gb_single (G)
 %GB_SINGLE implements GrB/single and GhB/single.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -18,5 +18,5 @@ else
 end
 
 % export C as a full matrix
-C = gb_builtin (gzb_full (ghb, G, ctype, z, desc)) ;
+C = gb_builtin (gzb_full (1, G, ctype, z, desc)) ;
 

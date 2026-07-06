@@ -13,8 +13,8 @@ if (gb_is_grb (B))
 end
 
 if (ghb)
-    C = GhB (gbmex_kronecker (ghb, A, op, B)) ;
+    C = GhB (gbmex_kronecker (1, A, op, B)) ;
 else
-    C = GrB (gbmex_kronecker (ghb, A, op, B)) ;
+    C = GrB (gbmex_kronecker (0, A, op, B)) ;
 end
 

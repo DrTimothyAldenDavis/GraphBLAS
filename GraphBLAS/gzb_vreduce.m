@@ -21,24 +21,24 @@ end
 if (ghb)
     switch (nargin)
         case 3
-            C = GhB (gbmex_vreduce (ghb, arg1, arg2)) ;
+            C = GhB (gbmex_vreduce (1, arg1, arg2)) ;
         case 4
-            C = GhB (gbmex_vreduce (ghb, arg1, arg2, arg3)) ;
+            C = GhB (gbmex_vreduce (1, arg1, arg2, arg3)) ;
         case 5
-            C = GhB (gbmex_vreduce (ghb, arg1, arg2, arg3, arg4)) ;
+            C = GhB (gbmex_vreduce (1, arg1, arg2, arg3, arg4)) ;
         case 6
-            C = GhB (gbmex_vreduce (ghb, arg1, arg2, arg3, arg4, desc)) ;
+            C = GhB (gbmex_vreduce (1, arg1, arg2, arg3, arg4, desc)) ;
     end
 else
     switch (nargin)
         case 3
-            C = GrB (gbmex_vreduce (ghb, arg1, arg2)) ;
+            C = GrB (gbmex_vreduce (0, arg1, arg2)) ;
         case 4
-            C = GrB (gbmex_vreduce (ghb, arg1, arg2, arg3)) ;
+            C = GrB (gbmex_vreduce (0, arg1, arg2, arg3)) ;
         case 5
-            C = GrB (gbmex_vreduce (ghb, arg1, arg2, arg3, arg4)) ;
+            C = GrB (gbmex_vreduce (0, arg1, arg2, arg3, arg4)) ;
         case 6
-            C = GrB (gbmex_vreduce (ghb, arg1, arg2, arg3, arg4, desc)) ;
+            C = GrB (gbmex_vreduce (0, arg1, arg2, arg3, arg4, desc)) ;
     end
 end
 

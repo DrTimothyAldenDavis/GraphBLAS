@@ -19,11 +19,11 @@ if (a_is_scalar)
         % A is a scalar, B is a matrix
         if (gb_scalar (A) > 0)
             % since A > 0, the result is full
-            a = gb_scalar_to_full (ghb, bm, bn, ctype, gb_fmt (B), A) ;
+            a = gb_scalar_to_full (1, bm, bn, ctype, gb_fmt (B), A) ;
             C = gzb_eadd (ghb, a, op, B) ;
         else
             % since A <= 0, the result is sparse.
-            a = gzb_full (ghb, A) ;
+            a = gzb_full (1, A) ;
             C = gzb_apply2 (ghb, a, op, B) ;
         end
     end
@@ -32,11 +32,11 @@ else
         % A is a matrix, B is a scalar
         if (gb_scalar (B) > 0)
             % since B > 0, the result is full
-            b = gb_scalar_to_full (ghb, am, an, ctype, gb_fmt (A), B) ;
+            b = gb_scalar_to_full (1, am, an, ctype, gb_fmt (A), B) ;
             C = gzb_eadd (ghb, A, op, b) ;
         else
             % since B <= 0, the result is sparse.
-            b = gzb_full (ghb, B) ;
+            b = gzb_full (1, B) ;
             C = gzb_apply2 (ghb, A, op, b) ;
         end
     else

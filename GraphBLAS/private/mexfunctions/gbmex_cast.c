@@ -8,13 +8,15 @@
 //------------------------------------------------------------------------------
 
 // The input may be either a GraphBLAS matrix struct or a standard built-in
-// MATLAB sparse or full matrix.  The output is a @GrB matrix but with a data
+// MATLAB sparse or full matrix.  The output is a @GhB matrix but with a data
 // structure that matches a standard built-in MATLAB/Octave sparse or full
-// matrix: full if all entries are present, and sparse otherwise.
+// matrix: full if all entries are present, and sparse otherwise.  The
+// matrix is then typically passed to the gbmex_builtin mexFunction to
+// construct a built-in MATLAB/Octave matrix.
 
 // Usage:
 
-// C = gbmex_cast (ghb, X, type)
+// C = gbmex_cast (X, type)
 
 #include "gb_interface.h"
 #include "gbmx_interface.h"
@@ -28,7 +30,7 @@
     FREE_WORK ;                     \
     GrB_Matrix_free (&C) ;
 
-#define USAGE "usage: C = gbmex_cast (ghb, X, type)"
+#define USAGE "usage: C = gbmex_cast (X, type)"
 
 void mexFunction
 (
@@ -45,17 +47,16 @@ void mexFunction
 
     GrB_Matrix *C_opaque = NULL, X = NULL, X_to_free = NULL, C = NULL ;
 
-    GBMX_USAGE (nargin == 3 && nargout <= 1, USAGE) ;
-    bool ghb = (bool) mxGetScalar (pargin [0]) ;
-    int arena = ghb ? GrB_DEFAULT : MXARENA ;
+    GBMX_USAGE (nargin == 2 && nargout <= 1, USAGE) ;
+    int arena = GrB_DEFAULT ;   // output is always @GhB
 
-    if (ghb) pargout [0] = gbmx_export_ghb_mxstruct (&C_opaque) ;
+    pargout [0] = gbmx_export_ghb_mxstruct (&C_opaque) ;
 
     struct gb_matrix_struct Matrix [1] ;
-    gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
 
     char type_string [LEN+2] ;
-    gbmx_mxstring_to_string (type_string, LEN, pargin [2], "type") ;
+    gbmx_mxstring_to_string (type_string, LEN, pargin [1], "type") ;
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -80,14 +81,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_WORK ;
-
-    OK (gb_export (C_opaque, &C, KIND_BUILTIN, ghb, err)) ;
-    ////////////////////////////////////////////////////////////////////////////
-    if (!ghb)
-    { 
-        pargout [0] = gbmx_export_grb_mxstruct (&C) ;
-    }
-
+    OK (gb_export (C_opaque, &C, KIND_BUILTIN, true, err)) ;
     gb_wrapup ( ) ;
 }
 

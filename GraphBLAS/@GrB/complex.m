@@ -27,8 +27,8 @@ function C = complex (A, B)
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 1)
-    C = gb_complex (0, A) ;
+    C = gb_complex (A) ;
 else
-    C = gb_complex (0, A, B) ;
+    C = gb_complex (A, B) ;
 end
 

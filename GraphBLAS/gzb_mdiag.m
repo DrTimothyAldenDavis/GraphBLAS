@@ -9,8 +9,8 @@ if (gb_is_grb (A))
 end
 
 if (ghb)
-    C = GhB (gbmex_mdiag (ghb, A, k)) ;
+    C = GhB (gbmex_mdiag (1, A, k)) ;
 else
-    C = GrB (gbmex_mdiag (ghb, A, k)) ;
+    C = GrB (gbmex_mdiag (0, A, k)) ;
 end
 

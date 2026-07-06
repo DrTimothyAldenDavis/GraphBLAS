@@ -20,7 +20,7 @@ if (~isempty (name))
     fprintf ('\n%s =\n', name) ;
 end
 
-gbmex_disp (ghb, A, k) ;
+gbmex_disp (ghb, A, k) ;    % FIXME is ghb really needed here?
 
 if (k > 1)
     fprintf ('\n') ;

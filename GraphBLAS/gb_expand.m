@@ -23,8 +23,7 @@ if (nargin < 4)
 end
 
 % typecast the scalar to the desired type, and make sure it's full
-s = gzb (ghb, scalar, type) ;
-t = gzb_full (ghb, s) ;
+t = gzb_full (1, gzb (1, scalar, type)) ;
 
 % expand the scalar into the pattern of S
 C = gzb_apply2 (ghb, ['2nd.' type], S, t) ;

@@ -17,18 +17,18 @@ end
 switch (gbmex_type (G))
 
     case { 'single' }
-        T = eps (gb_single (1, gb_full (1, G))) ;
+        T = eps (gb_single (gb_full (1, G))) ;
 
     case { 'double' }
-        T = eps (gb_double (1, gb_full (1, G))) ;
+        T = eps (gb_double (gb_full (1, G))) ;
 
     case { 'single complex' }
-        T = max (eps (gb_single (1, gb_real (1, G))), ...
-                 eps (gb_single (1, gb_imag (1, G)))) ;
+        T = max (eps (gb_single (gb_real (1, G))), ...
+                 eps (gb_single (gb_imag (1, G)))) ;
 
     case { 'double complex' }
-        T = max (eps (gb_double (1, gb_real (1, G))), ...
-                 eps (gb_double (1, gb_imag (1, G)))) ;
+        T = max (eps (gb_double (gb_real (1, G))), ...
+                 eps (gb_double (gb_imag (1, G)))) ;
 
     otherwise
         error ('GrB:error', 'input must be floating-point') ;

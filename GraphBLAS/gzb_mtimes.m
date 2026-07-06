@@ -13,8 +13,8 @@ if (gb_is_grb (B))
 end
 
 if (ghb)
-    C = GhB (gbmex_mtimes (ghb, A, B)) ;
+    C = GhB (gbmex_mtimes (1, A, B)) ;
 else
-    C = GrB (gbmex_mtimes (ghb, A, B)) ;
+    C = GrB (gbmex_mtimes (0, A, B)) ;
 end
 

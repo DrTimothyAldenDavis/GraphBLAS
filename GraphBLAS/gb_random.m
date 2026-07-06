@@ -35,12 +35,12 @@ for k = 1:nargin-1
                     error ('GrB:error', 'range can contain at most 2 entries') ;
                 end
                 if (gb_contains (type, 'complex'))
-                    r = real (gb_double (1, r)) ;
+                    r = real (gb_double (r)) ;
                     rtype = 'double' ;
                 else
                     rtype = type ;
                 end
-                range = gzb_full (ghb, r, rtype, 0, struct ('kind', 'full')) ;
+                range = gzb_full (1, r, rtype, 0, struct ('kind', 'full')) ;
             case { 'unsymmetric', 'symmetric', 'hermitian' }
                 sym_option = arg ;
             otherwise
@@ -69,7 +69,7 @@ if (firstchar == 2)
         error ('GrB:error', 'input matrix must be square') ;
     end
     gbmex_wait (A) ;
-    [I, J] = gbmex_extracttuples (ghb, A, desc) ;
+    [I, J] = gbmex_extracttuples (1, A, desc) ;
     e = length (I) ;
 
 elseif (firstchar == (4 - (symmetric || hermitian)))
@@ -157,30 +157,31 @@ end
 
 C = gzb_build (ghb, I, J, X, m, n, '2nd', desc) ;
 
-% L = tril (C, -1)
-L = gzb_select (ghb, 'tril', C, -1) ;
+if (symmetric || hermitian)
 
-% make it symmetric or hermitian, if requested
-if (symmetric)
+    % L = tril (C, -1) ; L = LT'
+    L = gzb_select (1, 'tril', C, -1) ;
+    LT = gzb_trans (1, L) ;
 
-    % C = tril (C) + L'
-    C = gzb_eadd (ghb, gzb_select (ghb, 'tril', C, 0), '+', ...
-        gzb_trans (ghb, L)) ;
+    % make it symmetric or hermitian, if requested
+    if (symmetric)
 
-elseif (hermitian)
+        % C = tril (C) + L'
+        C = gzb_eadd (ghb, gzb_select (1, 'tril', C, 0), '+', LT) ;
 
-    % C = L + L' + real (diag (C))
-    LT = gzb_trans (ghb, L) ;
-    if (gb_contains (gb_type (LT), 'complex'))
-        LT = gzb_apply (ghb, 'conj', LT) ;
-    end
-    D = gzb_select (ghb, 'diag', C, 0) ;
-    if (gb_contains (gb_type (D), 'complex'))
-        LT = gzb_eadd (ghb, LT, '+', gzb_apply (ghb, 'creal', D)) ;
     else
-        LT = gzb_eadd (ghb, LT, '+', D) ;
-    end
-    C = gzb_eadd (ghb, L, '+', LT) ;
 
+        % C = L + L' + real (diag (C))
+        if (gb_contains (gb_type (LT), 'complex'))
+            LT = gzb_apply (1, 'conj', LT) ;
+        end
+        D = gzb_select (1, 'diag', C, 0) ;
+        if (gb_contains (gb_type (D), 'complex'))
+            D = gzb_apply (1, 'creal', D) ;
+        end
+        LT = gzb_eadd (1, LT, '+', D) ;
+        C = gzb_eadd (ghb, L, '+', LT) ;
+
+    end
 end
 

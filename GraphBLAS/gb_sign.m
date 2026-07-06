@@ -13,7 +13,7 @@ type = gbmex_type (G) ;
 if (isequal (type, 'logical'))
     C = gb_dup (ghb, G) ;
 elseif (~gb_isfloat (type))
-    T = gzb_apply (ghb, 'signum.single', G) ;
+    T = gzb_apply (1, 'signum.single', G) ;
     C = gzb (ghb, T, type) ;
 else
     C = gzb_apply (ghb, 'signum', G) ;
