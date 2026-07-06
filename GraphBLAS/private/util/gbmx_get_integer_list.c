@@ -22,15 +22,10 @@ uint64_t *gbmx_get_integer_list
     (*len) = (uint64_t) n ;
     mxClassID class = mxGetClassID (mxList) ;
     uint64_t *List = mxMalloc (n * sizeof (uint64_t)) ;
-    if (class == mxINT64_CLASS)
+    if (class == mxINT64_CLASS || class == mxUINT64_CLASS)
     { 
         int64_t *p = (int64_t *) mxGetData (mxList) ;
         memcpy (List, p, n * sizeof (int64_t)) ;
-    }
-    else if (class == mxUINT64_CLASS)
-    { 
-        uint64_t *p = (uint64_t *) mxGetData (mxList) ;
-        memcpy (List, p, n * sizeof (uint64_t)) ;
     }
     else if (class == mxDOUBLE_CLASS)
     {

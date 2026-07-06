@@ -17,5 +17,17 @@ assert (isequal (C1, C2)) ;
 C3 = mat2cell (S, gtb (ghb, [2 3])) ;
 assert (isequal (C1, C3)) ;
 
+ok = true ;
+try
+    dist = int32 ([2 3]) ;
+    A = gzb_split (1, A, dist, dist) ;
+    ok = false ;
+catch me
+    msg = me.message ;
+    ok = true ;
+end
+assert (ok) ;
+assert (gb_contains (msg, 'unsupported type')) ;
+
 fprintf ('\ngbtest108 (%d): all tests passed\n', ghb) ;
 
