@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// The input may be either a GraphBLAS @GrB matrix or a standard built-in
-// matrix.  Note that the [m n] output can be int64 to accomodate huge
-// hypersparse matrices.  Also returns the type of the matrix.
+// The input may be either a GraphBLAS @GrB or @GhB matrix or a standard
+// built-in matrix.  Note that the [m n] output can be int64 to accomodate huge
+// hypersparse matrices.  Optionally returns the type of the matrix.
 
 // Usage:
 
@@ -39,7 +39,7 @@ void mexFunction
     GrB_Matrix A = NULL, A_to_free = NULL ;
     int arena = GrB_DEFAULT ;   // use default arena for temporary workspace
 
-    GBMX_USAGE (nargin == 1 && nargout <= 4, USAGE) ;
+    GBMX_USAGE (nargin == 1 && nargout <= 3, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get inputs

@@ -9,8 +9,8 @@ if (gb_is_grb (A))
 end
 
 % pre-allocate C to prevent memory failures after S is constructed
-mlen = length (m) ;
-nlen = length (n) ;
+mlen = gb_length (m) ;
+nlen = gb_length (n) ;
 C = cell (mlen, nlen) ;
 if (ghb)
     empty = zeros (1, 8, 'uint8') ;

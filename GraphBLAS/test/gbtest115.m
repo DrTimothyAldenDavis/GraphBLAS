@@ -28,6 +28,10 @@ for k = 1:length(types)
         blob = gtb_serialize (ghb, A, method) ;
         B = gtb_deserialize (ghb, blob) ;
         assert (isequal (A, B)) ;
+        B = gtb_deserialize (ghb, GrB (blob)) ;
+        assert (isequal (A, B)) ;
+        B = gtb_deserialize (ghb, GhB (blob)) ;
+        assert (isequal (A, B)) ;
 
         if (k2 == 3)
             % levels 0:9 for lz4hc

@@ -22,11 +22,7 @@ for k = 1:nargs
             if (nargs ~= k+1)
                 error ('GrB:error', 'usage: GrB.%s (m, n, ''like'', G)', func) ;
             end
-            A = varargin {k+1} ;
-            if (gb_is_grb (A))
-                A = struct (A) ;
-            end
-            type = gbmex_type (A) ;
+            type = gb_type (varargin {k+1}) ;
         else
             if (nargs ~= k)
                 error ('GrB:error', 'usage: GrB.%s (m, n, type)', func) ;

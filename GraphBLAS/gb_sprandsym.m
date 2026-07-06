@@ -6,7 +6,7 @@ function C = gb_sprandsym (ghb, varargin)
 
 narginchk (2, 3) ;
 
-for k = 1:nargin-1
+for k = 1:numel (varargin)
     if (gb_is_grb (varargin {k}))
         varargin {k} = struct (varargin {k}) ;
     end

@@ -5,10 +5,6 @@ function C = gb_minbycol (ghb, op, A)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (gb_is_grb (A))
-    A = struct (A) ;
-end
-
 % C = min (A, [ ], 1) reduces each col to a scalar; C is 1-by-n
 desc.in0 = 'transpose' ;
 C = gzb_vreduce (1, A, op, desc) ;

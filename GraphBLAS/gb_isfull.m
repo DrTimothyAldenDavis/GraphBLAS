@@ -7,10 +7,6 @@ function s = gb_isfull (A)
 % note that gbmex_nvals requires a wait, but this is required to determine
 % if all entries are present anyway.
 
-if (gb_is_grb (A))
-    A = struct (A) ;
-end
-
-[m, n] = gbmex_size (A) ;
+[m, n] = gb_size (A) ;
 s = (m*n == gzb_nvals (A)) ;
 

@@ -1,4 +1,4 @@
-function gbtest119 (ghb)
+function gbtest119 (ghb, ghb2)
 %GBTEST119 test [GrB,GhB].eunion
 %
 % C = GrB.eunion (op, A, alpha, B, beta)
@@ -13,13 +13,16 @@ function gbtest119 (ghb)
 if (nargin == 0)
     ghb = 0 ;
 end
+if (nargin < 2)
+    ghb2 = ghb ;
+end
 gtb_name = gtb_prep (ghb) ;
 
-C     = gtb_random (ghb, 9, 9, 0.5) ;
-M     = gtb_random (ghb, 9, 9, 0.5, 'range', logical ([false true])) ;
+C     = gtb_random (ghb2, 9, 9, 0.5) ;
+M     = gtb_random (ghb2, 9, 9, 0.5, 'range', logical ([false true])) ;
 accum = '+' ;
-A     = gtb_random (ghb, 9, 9, 0.5) ;
-B     = gtb_random (ghb, 9, 9, 0.5) ;
+A     = gtb_random (ghb2, 9, 9, 0.5) ;
+B     = gtb_random (ghb2, 9, 9, 0.5) ;
 desc  = struct ;
 
 op = '-' ;
@@ -181,8 +184,8 @@ C1 = gtb_eunion (ghb, accum, c, m, op, a, alpha, b, beta, desc) ; assert (isequa
 C1 = gtb_eunion (ghb, accum, c, m, a, alpha, op, b, beta, desc) ; assert (isequal (C1, C2)) ;
 C1 = gtb_eunion (ghb, accum, c, m, a, alpha, b, beta, op, desc) ; assert (isequal (C1, C2)) ;
 
-beta = gtb (ghb, beta) ;
-alpha = gtb (ghb, alpha) ;
+beta = gtb (ghb2, beta) ;
+alpha = gtb (ghb2, alpha) ;
 C1 = gtb_eunion (ghb, accum, c, m, a, alpha, op, b, beta, desc) ; assert (isequal (C1, C2)) ;
 
 fprintf ('gbtest119 (%d): all tests passed\n', ghb) ;

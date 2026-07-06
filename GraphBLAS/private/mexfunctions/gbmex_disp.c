@@ -17,7 +17,7 @@
 #undef  FREE_ALL
 #define FREE_ALL GrB_Matrix_free (&C_to_free) ;
 
-#define USAGE "usage: gbmex_disp (ghb, C, level)"
+#define USAGE "usage: gbmex_disp (C, level)"
 
 void mexFunction
 (
@@ -34,17 +34,16 @@ void mexFunction
 
     GrB_Matrix C = NULL, C_to_free = NULL ;
 
-    GBMX_USAGE (nargin == 3 && nargout == 0, USAGE) ;
-    bool ghb = (bool) mxGetScalar (pargin [0]) ;
-    int arena = ghb ? GrB_DEFAULT : MXARENA ;
+    GBMX_USAGE (nargin == 2 && nargout == 0, USAGE) ;
+    int arena = GrB_DEFAULT ;   // use default arena for temporary workspace
 
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
     struct gb_matrix_struct Matrix [1] ;
-    gbmx_get_matrix (&(Matrix [0]), pargin [1]) ;
-    int level = (int) mxGetScalar (pargin [2]) ;
+    gbmx_get_matrix (&(Matrix [0]), pargin [0]) ;
+    int level = (int) mxGetScalar (pargin [1]) ;
 
     ////////////////////////////////////////////////////////////////////////////
 

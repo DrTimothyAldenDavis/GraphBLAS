@@ -5,10 +5,6 @@ function C = gb_maxbyrow (ghb, op, A)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (gb_is_grb (A))
-    A = struct (A) ;
-end
-
 % C = max (A, [ ], 2) reduces each row to a scalar; C is m-by-1
 C = gzb_vreduce (ghb, A, op) ;
 

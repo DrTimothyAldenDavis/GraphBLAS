@@ -43,6 +43,12 @@ for k = 1:length (types)
     A
     assert (isequal (A, Z)) ;
 
+    B = gb_dup (ghb, GrB (Z)) ;
+    assert (isequal (B, Z)) ;
+
+    B = gb_dup (ghb, GhB (Z)) ;
+    assert (isequal (B, Z)) ;
+
     fprintf ('\n---- A = %s (%d, %d, ''%s'') :\n', gtb_name, m, n, type) ;
     A = gtb (ghb, m, n, type)
     Z = logical (A)

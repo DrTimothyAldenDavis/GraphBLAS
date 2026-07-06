@@ -23,11 +23,13 @@ for trials = 1:10
                 C = diag (G, gtb (ghb, k)) ;
                 assert (gbtest_eq (B, C)) ;
                 B = tril (A, k) ;
-                C = tril (A, k) ;
+                C = tril (G, k) ;
                 assert (gbtest_eq (B, C)) ;
                 B = triu (A, k) ;
-                C = triu (A, k) ;
+                C = triu (G, k) ;
+                C2 = gzb_select (ghb, 'triu', G, GrB (k)) ;
                 assert (gbtest_eq (B, C)) ;
+                assert (gbtest_eq (B, C2)) ;
             end
             B = diag (A) ;
             C = diag (G) ;

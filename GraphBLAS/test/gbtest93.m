@@ -1,4 +1,4 @@
-function gbtest93 (ghb)
+function gbtest93 (ghb, ghb2)
 %GBTEST93 test [GrB,GhB].select
 %
 % C = GrB.select (op, A)
@@ -23,13 +23,16 @@ function gbtest93 (ghb)
 if (nargin == 0)
     ghb = 0 ;
 end
+if (nargin < 2)
+    ghb2 = ghb ;
+end
 gtb_name = gtb_prep (ghb) ;
 
-C     = gtb_random (ghb, 9, 9, 0.5, 'range', [-1 1]) ;
-M     = gtb_random (ghb, 9, 9, 0.5, 'range', logical ([false true])) ;
+C     = gtb_random (ghb2, 9, 9, 0.5, 'range', [-1 1]) ;
+M     = gtb_random (ghb2, 9, 9, 0.5, 'range', logical ([false true])) ;
 accum = '+' ;
-A     = gtb_random (ghb, 9, 9, 0.5, 'range', [-1 1]) ;
-B     = gtb (ghb, 0.5) ;
+A     = gtb_random (ghb2, 9, 9, 0.5, 'range', [-1 1]) ;
+B     = gtb (ghb2, 0.5) ;
 desc  = struct ;
 
 c = double (C) ;

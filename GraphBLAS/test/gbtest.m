@@ -488,11 +488,13 @@ assert (GrB.nmalloc == 0) ;
 gbtest87        % test GrB.eadd
 gbtest87 (1)
 gbtest87 (2)
+gbtest87 (1, 0)
 assert (GrB.nmalloc == 0) ;
 
 gbtest88        % test GrB.emult
 gbtest88 (1)
 gbtest88 (2)
+gbtest88 (1, 0)
 assert (GrB.nmalloc == 0) ;
 
 gbtest89        % test GrB.extract
@@ -516,11 +518,13 @@ assert (GrB.nmalloc == 0) ;
 gbtest92        % test GrB.kronecker
 gbtest92 (1)
 gbtest92 (2)
+gbtest92 (1, 0)
 assert (GrB.nmalloc == 0) ;
 
 gbtest93        % test GrB.select
 gbtest93 (1)
 gbtest93 (2)
+gbtest93 (1, 0)
 assert (GrB.nmalloc == 0) ;
 
 gbtest94        % test GrB.vreduce
@@ -536,7 +540,7 @@ assert (GrB.nmalloc == 0) ;
 gbtest97        % test GrB.apply2
 gbtest97 (1)
 gbtest97 (2)
-gbtest97 (1,0)
+gbtest97 (1, 0)
 assert (GrB.nmalloc == 0) ;
 
 gbtest98        % test row/col degree for hypersparse matrices
@@ -653,6 +657,7 @@ assert (GrB.nmalloc == 0) ;
 gbtest119       % test GrB.eunion
 gbtest119 (1)
 gbtest119 (2)
+gbtest119 (1, 0)
 assert (GrB.nmalloc == 0) ;
 
 gbtest120       % test subsref

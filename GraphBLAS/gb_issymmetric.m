@@ -11,10 +11,6 @@ if (gb_is_grb (G_arg))
     G_arg = struct (G_arg) ;
 end
 
-if (~(ischar (option) || isstring (option)))
-    error ('GrB:error', '2nd input must be a string') ;
-end
-
 [m, n, type] = gbmex_size (G_arg) ;
 
 if (m ~= n)

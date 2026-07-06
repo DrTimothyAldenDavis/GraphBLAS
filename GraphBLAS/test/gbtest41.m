@@ -20,7 +20,9 @@ for trial = 1:40
 
         G2 = gtb_ones (ghb, 3, 4, 'like', G) ;
         G3 = gtb (ghb, ones (3, 4), type) ;
+        G4 = gb_scalar_to_full (ghb, 3, 4, type, 'by col', GrB (1)) ;
         assert (gbtest_eq (G2, G3)) ;
+        assert (gbtest_eq (G2, G4)) ;
 
         G1 = gtb_zeros (ghb, [3, 4], 'like', G) ;
         G2 = gtb_zeros (ghb, 3, 4, 'like', G) ;

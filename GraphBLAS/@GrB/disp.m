@@ -28,8 +28,8 @@ function disp (A, level)
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin < 2)
-    gb_display (0, '', A) ;
+    gb_display ('', A) ;
 else
-    gb_display (0, '', A, level) ;
+    gb_display ('', A, level) ;
 end
 

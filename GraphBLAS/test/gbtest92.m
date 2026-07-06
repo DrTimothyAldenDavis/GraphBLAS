@@ -1,4 +1,4 @@
-function gbtest92 (ghb)
+function gbtest92 (ghb, ghb2)
 %GBTEST92 test [GrB,GhB].kronecker
 %
 % C = GrB.kronecker (op, A, B)
@@ -13,13 +13,16 @@ function gbtest92 (ghb)
 if (nargin == 0)
     ghb = 0 ;
 end
+if (nargin < 2)
+    ghb2 = ghb ;
+end
 gtb_name = gtb_prep (ghb) ;
 
-C     = gtb_random (ghb, 4*7, 3*9, 0.5) ;
-M     = gtb_random (ghb, 4*7, 3*9, 0.5, 'range', logical ([false true])) ;
+C     = gtb_random (ghb2, 4*7, 3*9, 0.5) ;
+M     = gtb_random (ghb2, 4*7, 3*9, 0.5, 'range', logical ([false true])) ;
 accum = '+' ;
-A     = gtb_random (ghb, 4, 3, 0.5) ;
-B     = gtb_random (ghb, 7, 9, 0.5) ;
+A     = gtb_random (ghb2, 4, 3, 0.5) ;
+B     = gtb_random (ghb2, 7, 9, 0.5) ;
 desc  = struct ;
 
 op = '*' ;

@@ -44,5 +44,16 @@ end
 assert (ok) ;
 assert (gb_contains (msg, 'either A or B must be a non-empty scalar')) ;
 
+try
+    result = isa (GrB (pi), pi) ;
+    ok = false ;
+    msg = '' ;
+catch expected_error
+    ok = true ;
+    msg = expected_error.message ;
+end
+assert (ok) ;
+assert (gb_contains (msg, 'type must be a string')) ;
+
 fprintf ('\ngbtest131 (%d): all tests passed\n', ghb) ;
 

@@ -728,8 +728,6 @@ methods
     C = csc (G) ;
     C = csch (G) ;
     C = diag (A, k) ;
-    disp (A, level) ;
-    display (G) ;
     C = eps (G) ;
     C = erf (G) ;
     C = erfc (G) ;
@@ -796,6 +794,8 @@ methods
     [p, varargout] = colamd (G, varargin) ;
     C = complex (A, B) ;
     DiGraph = digraph (G, option) ;
+    disp (A, level) ;
+    display (G) ;
     [p, varargout] = dmperm (G) ;
     C = double (G) ;
     [V, varargout] = eig (G, varargin) ;

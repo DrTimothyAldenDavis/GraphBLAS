@@ -1,4 +1,4 @@
-function gb_display (ghb, name, A, level)
+function gb_display (name, A, level)
 %GB_DISPLAY display the contents of a matrix.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -8,7 +8,7 @@ if (gb_is_grb (A))
     A = struct (A) ;
 end
 
-if (nargin < 4)
+if (nargin < 3)
     k = 2 ;
 else
     k = gb_get_scalar (level) ;
@@ -20,7 +20,7 @@ if (~isempty (name))
     fprintf ('\n%s =\n', name) ;
 end
 
-gbmex_disp (ghb, A, k) ;    % FIXME is ghb really needed here?
+gbmex_disp (A, k) ;
 
 if (k > 1)
     fprintf ('\n') ;

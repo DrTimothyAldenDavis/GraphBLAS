@@ -23,10 +23,14 @@ for m1 = -1:5
         C2 = gtb_empty (ghb, [m1, n1]) ;
         C3 = gtb (ghb, m, n) ;
         C0 = sparse (m, n) ;
+        C4 = gzb (0, m, n, 'double', 'by col') ;
+        C5 = gzb (1, m, n, 'double', 'by col') ;
 
         assert (isequal (C0, C1)) ;
         assert (isequal (C0, C2)) ;
         assert (isequal (C0, C3)) ;
+        assert (isequal (C0, C4)) ;
+        assert (isequal (C0, C5)) ;
     end
 end
 

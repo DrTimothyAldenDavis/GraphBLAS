@@ -15,7 +15,7 @@ if (isobject (k))
     k = gb_get_scalar (k) ;
 end
 
-[am, an, ~] = gbmex_size (A) ;
+[am, an] = gbmex_size (A) ;
 
 if (am == 1)
 

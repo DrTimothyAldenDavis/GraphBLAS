@@ -206,8 +206,6 @@ methods
     C = csc (G) ;
     C = csch (G) ;
     C = diag (A, k) ;
-    disp (A, level) ;
-    display (G) ;
     C = eps (G) ;
     C = erf (G) ;
     C = erfc (G) ;

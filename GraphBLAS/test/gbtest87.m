@@ -1,4 +1,4 @@
-function gbtest87 (ghb)
+function gbtest87 (ghb, ghb2)
 %GBTEST87 test [GrB,GhB].eadd
 %
 % C = GrB.eadd (op, A, B)
@@ -13,13 +13,16 @@ function gbtest87 (ghb)
 if (nargin == 0)
     ghb = 0 ;
 end
+if (nargin < 2)
+    ghb2 = ghb ;
+end
 gtb_name = gtb_prep (ghb) ;
 
-C     = gtb_random (ghb, 9, 9, 0.5) ;
-M     = gtb_random (ghb, 9, 9, 0.5, 'range', logical ([false true])) ;
+C     = gtb_random (ghb2, 9, 9, 0.5) ;
+M     = gtb_random (ghb2, 9, 9, 0.5, 'range', logical ([false true])) ;
 accum = '+' ;
-A     = gtb_random (ghb, 9, 9, 0.5) ;
-B     = gtb_random (ghb, 9, 9, 0.5) ;
+A     = gtb_random (ghb2, 9, 9, 0.5) ;
+B     = gtb_random (ghb2, 9, 9, 0.5) ;
 desc  = struct ;
 
 op = 'max' ;

@@ -14,11 +14,11 @@ switch (nargin)
 
     case { 1 }
 
-        if (length (arg1) == 1)
+        if (gb_length (arg1) == 1)
             % C = ones (n)
             m = gb_get_scalar (arg1) ;
             n = m ;
-        elseif (length (arg1) == 2)
+        elseif (gb_length (arg1) == 2)
             % C = ones ([m n])
             [m, n] = gb_get_2scalars (arg1) ;
         else

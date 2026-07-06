@@ -4,7 +4,8 @@ function C = gzb_cat (ghb, Tiles)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-for k = 1:length (Tiles)
+n = numel (Tiles) ;
+for k = 1:n
     if (gb_is_grb (Tiles {k}))
         Tiles {k} = struct (Tiles {k}) ;
     end
