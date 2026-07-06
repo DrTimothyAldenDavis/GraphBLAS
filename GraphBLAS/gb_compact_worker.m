@@ -5,8 +5,8 @@ function [C, I, J] = gb_compact_worker (ghb, A, symmetric)
 % SPDX-License-Identifier: Apache-2.0
 
 % get the list of non-empty rows and columns
-I = gb_entries (ghb, A, 'row', 'list') ;
-J = gb_entries (ghb, A, 'col', 'list') ;
+I = gb_entries (1, A, 'row', 'list') ;
+J = gb_entries (1, A, 'col', 'list') ;
 
 if (symmetric)
     I = union (I, J) ;

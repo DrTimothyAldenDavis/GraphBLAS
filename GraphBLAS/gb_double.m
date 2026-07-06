@@ -4,11 +4,15 @@ function C = gb_double (ghb, G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (G))
+    G = struct (G) ;
+end
+
 if (gb_contains (gbmex_type (G), 'complex'))
     type = 'double complex' ;
 else
     type = 'double' ;
 end
 
-C = gbmex_builtin (gzb_cast (ghb, G, type)) ;
+C = gbmex_builtin (gzb_cast (ghb, G, type)) ;   % FIXME why ghb?
 

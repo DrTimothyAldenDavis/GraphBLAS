@@ -1,4 +1,4 @@
-function [x, y] = gb_get_2scalars (ghb, A)
+function [x, y] = gb_get_2scalars (A)
 %GB_GET_PAIR get a two scalars from a parameter of length 2.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -6,7 +6,7 @@ function [x, y] = gb_get_2scalars (ghb, A)
 
 type = gbmex_type (A) ;
 desc.kind = 'full' ;
-a = gzb_full (ghb, A, type, 0, desc) ;
+a = gzb_full (1, A, type, 0, desc) ;
 C = gbmex_builtin (a) ;
 x = C (1) ;
 y = C (2) ;

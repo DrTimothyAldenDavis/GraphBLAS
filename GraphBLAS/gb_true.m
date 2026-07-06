@@ -10,6 +10,6 @@ for k = 1:nargin-1
     end
 end
 
-[m, n, ~] = gb_parse_args (ghb, 'true', varargin {:}) ;
+[m, n, ~] = gb_parse_args ('true', varargin {:}) ;
 C = gb_scalar_to_full (ghb, m, n, 'logical', gbmex_format, true) ;
 

@@ -10,6 +10,6 @@ for k = 1:nargin-1
     end
 end
 
-[m, n, type] = gb_parse_args (ghb, 'ones', varargin {:}) ;
+[m, n, type] = gb_parse_args ('ones', varargin {:}) ;
 C = gb_scalar_to_full (ghb, m, n, type, gbmex_format, 1) ;
 

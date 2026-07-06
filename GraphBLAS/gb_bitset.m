@@ -57,7 +57,7 @@ ctype = atype ;
 % determine the type of A
 cast_A = isequal (atype, 'double') || isequal (atype, 'single') ;
 if (cast_A)
-    A = gzb (ghb, A_arg, assumedtype) ;
+    A = gzb (1, A_arg, assumedtype) ;
     atype = assumedtype ;
 else
     % use the input A_arg as-is
@@ -67,7 +67,7 @@ end
 % ensure B has the same type as A
 cast_B = ~isequal (btype, atype) ;
 if (cast_B)
-    B = gzb (ghb, B_arg, atype) ;
+    B = gzb (1, B_arg, atype) ;
 else
     % use the input B_arg as-is
     B = B_arg ;
@@ -95,14 +95,14 @@ if (V_is_scalar)
             T = gzb_eunion (ghb, op, A, 0, B, 0) ;
         else
             % A is a scalar, B is a matrix
-            a = gzb_full (ghb, A) ;
+            a = gzb_full (1, A) ;
             T = gzb_apply2 (ghb, op, a, B) ;
         end
     else
         % A is a matrix
         if (b_is_scalar)
             % A is a matrix, B is scalar
-            b = gzb_full (ghb, B) ;
+            b = gzb_full (1, B) ;
             T = gzb_apply2 (ghb, op, A, b) ;
         else
             % both A and B are matrices
@@ -123,32 +123,28 @@ else
 
     if (a_is_scalar)
         % expand A to a full matrix the same size as V.
-        A2 = gb_scalar_to_full (ghb, m, n, atype, gb_fmt (V), A) ;
+        A2 = gb_scalar_to_full (1, m, n, atype, gb_fmt (V), A) ;
     else
         A2 = A ;
     end
     if (b_is_scalar)
         % expand B to a full matrix the same size as V.
-        B2 = gb_scalar_to_full (ghb, m, n, atype, gb_fmt (V), B) ;
+        B2 = gb_scalar_to_full (1, m, n, atype, gb_fmt (V), B) ;
     else
         B2 = B ;
     end
 
     % Set all bits referenced by B(i,j) to 1, even those that need to be
     % set to 0, without considering V(i,j).
-    S = gzb_eunion (ghb, ['bitset.', atype], A2, 0, B2, 0) ;
+    S = gzb_eunion (1, ['bitset.', atype], A2, 0, B2, 0) ;
 
     % The pattern of S is now the set intersection of A and B, but
     % bits referenced by B(i,j) have been set to 1, not 0.  Construct B0
     % as the bits in B(i,j) that must be set to 0; B0<~V>=B defines the
     % pattern of bit positions B0 to set to 0 in A.
     desc.mask = 'complement' ;
-    E = gzb (ghb, m, n, atype) ;
-    if (ghb)
-        B0 = GhB (gbmex_subassign (1, E, V, B2, desc)) ;
-    else
-        B0 = GrB (gbmex_subassign (0, E, V, B2, desc)) ;
-    end
+    E = gzb (1, m, n, atype) ;
+    B0 = GhB (gbmex_subassign (1, E, V, B2, desc)) ;
 
     % Clear the bits in C, referenced by B0(i,j), where V(i,j) is zero.
     T = gzb_eadd (ghb, ['bitclr.', atype], S, B0) ;
@@ -156,7 +152,7 @@ else
 end
 
 % return result
-if (isequal (gbmex_type (T), ctype))
+if (isequal (gb_type (T), ctype))
     C = T ;
 else
     C = gzb (ghb, T, ctype) ;

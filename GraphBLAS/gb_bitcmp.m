@@ -31,12 +31,12 @@ ctype = atype ;
 
 if (isequal (atype, 'double') || isequal (atype, 'single'))
     % cast A to the assumedtype
-    C = gzb_full (ghb, gzb (ghb, A, assumedtype)) ;
+    T = gzb_full (1, gzb (1, A, assumedtype)) ;
 else
-    C = gzb_full (ghb, A) ;
+    T = gzb_full (1, A) ;
 end
 
-C = gzb_apply (ghb, 'bitcmp', C) ;
+C = gzb_apply (ghb, 'bitcmp', T) ;
 
 if (~isequal (gbmex_type (C), ctype))
     C = gzb (ghb, C, ctype) ;

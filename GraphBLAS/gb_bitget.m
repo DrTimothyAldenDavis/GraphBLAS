@@ -38,15 +38,16 @@ ctype = atype ;
 if (isequal (atype, 'double') || isequal (atype, 'single'))
     atype = assumedtype ;
     op = ['bitget.' atype] ;
+    A2 = gzb (1, A, atype) ;
     if (~isequal (btype, atype))
-        C = gb_emult (ghb, gzb (ghb, A, atype), op, gzb (ghb, B, atype)) ;
+        C = gb_emult (ghb, A2, op, gzb (1, B, atype)) ;
     else
-        C = gb_emult (ghb, gzb (ghb, A, atype), op, B) ;
+        C = gb_emult (ghb, A2, op, B) ;
     end
 else
     op = ['bitget.' atype] ;
     if (~isequal (btype, atype))
-        C = gb_emult (ghb, A, op, gzb (ghb, B, atype)) ;
+        C = gb_emult (ghb, A, op, gzb (1, B, atype)) ;
     else
         C = gb_emult (ghb, A, op, B) ;
     end

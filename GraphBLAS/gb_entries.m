@@ -56,7 +56,7 @@ else
             % I = GrB.entries (A, 'row', 'list')
             % J = GrB.entries (A, 'col', 'list')
             desc.base = 'one-based int' ;
-            S = gzb_select (ghb, result, 'nonzero') ;
+            S = gzb_select (1, result, 'nonzero') ;
             gbmex_wait (S) ;
             result = gbmex_extracttuples (ghb, S, desc) ;
         % case 'degree'

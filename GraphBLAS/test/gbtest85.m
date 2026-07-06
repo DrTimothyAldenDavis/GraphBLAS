@@ -420,7 +420,7 @@ T = S + Aij ;
 % with mask:
 % S (Mij) = T (Mij) ;
 % with no mask:
-S = T ;
+S = gtb (ghb, T) ;
 C2 = gtb (ghb, C) ;
 C2 (i,j) = S ;
 

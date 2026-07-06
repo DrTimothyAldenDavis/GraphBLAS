@@ -877,8 +877,6 @@ methods
     C = mat2cell (A, m, n) ;
     C = max (A, B, option) ;
     C = min (A, B, option) ;
-    e = nnz (G) ;
-    X = nonzeros (G) ;
     C = num2cell (A, dim) ;
     C = pow2 (A, B) ;
     C = prod (G, option) ;
@@ -941,6 +939,8 @@ methods
     s = istriu (G) ;
     s = isvector (G) ;
     n = length (G) ;
+    e = nnz (G) ;
+    X = nonzeros (G) ;
     s = norm (G, kind) ;
     s = numel (G) ;
     e = nzmax (G) ;

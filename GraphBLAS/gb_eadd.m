@@ -34,10 +34,10 @@ if (a_is_scalar)
     else
         % A is a scalar, B is a matrix.  Result is full, unless A == 0.
         if (gb_scalar (A) == 0)
-            C = gzb (ghb, B) ;
+            C = gb_dup (ghb, B) ;
         else
             % expand A to a full matrix
-            a = gb_scalar_to_full (ghb, bm, bn, type, gb_fmt (B), A) ;
+            a = gb_scalar_to_full (1, bm, bn, type, gb_fmt (B), A) ;
             C = gzb_eadd (ghb, a, op, B) ;
         end
     end
@@ -45,10 +45,10 @@ else
     if (b_is_scalar)
         % A is a matrix, B is a scalar.  Result is full, unless B == 0.
         if (gb_scalar (B) == 0)
-            C = gzb (ghb, A) ;
+            C = gb_dup (ghb, A) ;
         else
             % expand B to a full matrix
-            b = gb_scalar_to_full (ghb, am, an, type, gb_fmt (A), B) ;
+            b = gb_scalar_to_full (1, am, an, type, gb_fmt (A), B) ;
             C = gzb_eadd (ghb, A, op, b) ;
         end
     else

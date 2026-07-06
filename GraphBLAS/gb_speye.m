@@ -6,7 +6,7 @@ function C = gb_speye (ghb, func, varargin)
 % SPDX-License-Identifier: Apache-2.0
 
 % get the size and type
-[m, n, type] = gb_parse_args (ghb, func, varargin {:}) ;
+[m, n, type] = gb_parse_args (func, varargin {:}) ;
 
 % FIXME: put this in a gb_identity (m, n, type) function:
 % construct the m-by-n identity matrix of the given type

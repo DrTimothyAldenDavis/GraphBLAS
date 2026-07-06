@@ -103,7 +103,7 @@ for m = [1 5 10 ]
                     case 5
                         B = complex (rand (m,n), rand (m,n)) ;
                     case 6
-                        B = A ;
+                        B = gtb (ghb, A) ;
                 end
 
                 % test all but the last one, 'cmplex', which requires

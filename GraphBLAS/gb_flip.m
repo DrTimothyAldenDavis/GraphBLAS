@@ -34,6 +34,6 @@ elseif (dim == 2 && n ~= 1)
 else
     % nothing to do
     % C = A
-    C = gzb (ghb, A) ;
+    C = gb_dup (ghb, A) ;
 end
 

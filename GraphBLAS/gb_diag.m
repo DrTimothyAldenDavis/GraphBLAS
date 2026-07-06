@@ -20,7 +20,7 @@ end
 if (am == 1)
 
     % C = diag (v,k) where A is a row vector and C is a matrix
-    C = gzb_mdiag (ghb, gzb_trans (ghb, A), k) ;
+    C = gzb_mdiag (ghb, gzb_trans (1, A), k) ;
 
 elseif (an == 1)
 

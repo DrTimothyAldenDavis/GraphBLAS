@@ -24,13 +24,13 @@ if (gb_isfloat (atype))
     if (gb_isfloat (btype))
         C = gb_atan2b (ghb, A, B) ;
     else
-        C = gb_atan2b (ghb, A, gzb (ghb, B, 'double')) ;
+        C = gb_atan2b (ghb, A, gzb (1, B, 'double')) ;
     end
 else
     if (gb_isfloat (btype))
-        C = gb_atan2b (ghb, gzb (ghb, A, 'double'), B) ;
+        C = gb_atan2b (ghb, gzb (1, A, 'double'), B) ;
     else
-        C = gb_atan2b (ghb, gzb (ghb, A, 'double'), gzb (ghb, B, 'double')) ;
+        C = gb_atan2b (ghb, gzb (1, A, 'double'), gzb (1, B, 'double')) ;
     end
 end
 

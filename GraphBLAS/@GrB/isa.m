@@ -21,10 +21,5 @@ function s = isa (G, type)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (~(ischar (type) || isstring (type)))
-    error ('GrB:error', 'type must be a string') ;
-end
-
-gtype = gbmex_type (struct (G)) ;
-s = gb_isa (0, G, gtype, type) ;
+s = gb_isa (0, G, gb_type (G), type) ;
 

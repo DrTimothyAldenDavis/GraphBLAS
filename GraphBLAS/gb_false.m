@@ -10,6 +10,6 @@ for k = 1:nargin-1
     end
 end
 
-[m, n, ~] = gb_parse_args (ghb, 'false', varargin {:}) ;
+[m, n, ~] = gb_parse_args ('false', varargin {:}) ;
 C = gzb (ghb, m, n, 'logical') ;
 

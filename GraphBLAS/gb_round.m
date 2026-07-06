@@ -13,6 +13,6 @@ end
 if (gb_isfloat (gbmex_type (G)))
     C = gzb_apply (ghb, 'round', G) ;
 else
-    C = gzb (ghb, G) ;
+    C = gb_dup (ghb, G) ;
 end
 

@@ -82,7 +82,7 @@ else
             C = gb_scalar_to_full (ghb, am, an, ctype, gb_fmt (A), 1) ;
         elseif (b == 1)
             % special case: C = A.^1 = A
-            C = gzb (ghb, A) ;
+            C = gb_dup (ghb, A) ;
         elseif (b <= 0)
             % 0.^b where b < 0 is Inf, so C is full
             a = gzb_full (1, A, ctype) ;

@@ -9,27 +9,31 @@ function C = gb_eps (ghb, G)
 % FUTURE: there should be a sparse version of 'eps'.
 % C is full because eps (0) is 2^(-1024).
 
+if (gb_is_grb (G))
+    G = struct (G) ;
+end
+
 % convert to a built-in full matrix and use the built-in eps
 switch (gbmex_type (G))
 
     case { 'single' }
-        T = eps (gb_single (ghb, gb_full (ghb, G))) ;
+        T = eps (gb_single (1, gb_full (1, G))) ;
 
     case { 'double' }
-        T = eps (gb_double (ghb, gb_full (ghb, G))) ;
+        T = eps (gb_double (1, gb_full (1, G))) ;
 
     case { 'single complex' }
-        T = max (eps (gb_single (ghb, gb_real (ghb, G))), ...
-                 eps (gb_single (ghb, gb_imag (ghb, G)))) ;
+        T = max (eps (gb_single (1, gb_real (1, G))), ...
+                 eps (gb_single (1, gb_imag (1, G)))) ;
 
     case { 'double complex' }
-        T = max (eps (gb_double (ghb, gb_real (ghb, G))), ...
-                 eps (gb_double (ghb, gb_imag (ghb, G)))) ;
+        T = max (eps (gb_double (1, gb_real (1, G))), ...
+                 eps (gb_double (1, gb_imag (1, G)))) ;
 
     otherwise
         error ('GrB:error', 'input must be floating-point') ;
 
 end
 
-C = gzb (ghb, T) ;
+C = gb_dup (ghb, T) ;
 

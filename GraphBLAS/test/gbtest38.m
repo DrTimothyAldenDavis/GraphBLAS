@@ -42,7 +42,7 @@ for trial = 1:40
     assert (gbtest_eq (conj (A), conj (G))) ;
     assert (gbtest_eq (conj (B), conj (H))) ;
 
-    C = A ;
+    C = gtb (ghb, A) ;
     C (1,1) = inf ;
     C (2,2) = nan ;
     G = gtb (ghb, C) ;

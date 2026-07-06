@@ -1,4 +1,4 @@
-function [m, n, type] = gb_parse_args (ghb, func, varargin)
+function [m, n, type] = gb_parse_args (func, varargin)
 %GB_PARSE_ARGS parse arguments for various functions.  Not user-callable.
 % For true, false, ones, zeros, eye, and speye.  For example:
 %
@@ -22,7 +22,11 @@ for k = 1:nargs
             if (nargs ~= k+1)
                 error ('GrB:error', 'usage: GrB.%s (m, n, ''like'', G)', func) ;
             end
-            type = gbmex_type (varargin {k+1}) ;
+            A = varargin {k+1} ;
+            if (gb_is_grb (A))
+                A = struct (A) ;
+            end
+            type = gbmex_type (A) ;
         else
             if (nargs ~= k)
                 error ('GrB:error', 'usage: GrB.%s (m, n, type)', func) ;
@@ -35,5 +39,5 @@ for k = 1:nargs
 end
 
 % parse the dimensions
-[m, n] = gb_parse_dimensions (ghb, varargin {1:nargs}) ;
+[m, n] = gb_parse_dimensions (varargin {1:nargs}) ;
 

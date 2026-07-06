@@ -21,13 +21,13 @@ if (gb_isscalar (A))
         C = gzb_emult (ghb, 'atan2', A, B) ;
     else
         % A is a scalar, B is a matrix
-        a = gzb_full (ghb, A) ;
+        a = gzb_full (1, A) ;
         C = gzb_apply2 (ghb, 'atan2', a, B) ;
     end
 else
     if (gb_isscalar (B))
         % A is a matrix, B is a scalar
-        b = gzb_full (ghb, B) ;
+        b = gzb_full (1, B) ;
         C = gzb_apply2 (ghb, 'atan2', A, b) ;
     else
         % both A and B are matrices.  C is the set union of A and B.

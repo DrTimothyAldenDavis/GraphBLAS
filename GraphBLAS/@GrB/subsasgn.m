@@ -61,7 +61,7 @@ if (ndims == 1)
     if (gb_is_grb (S1))
         S1 = struct (S1) ;
     end
-    if (isequal (gbmex_type (S1), 'logical'))
+    if (isequal (gb_type (S1), 'logical'))
         % C (M) = A for logical assignment (where M is S1)
         [am, an] = gbmex_size (A) ;
         if (am == 1 && an == 1)
@@ -84,7 +84,7 @@ if (ndims == 1)
                 if (am == 1 && an == 1)
                     % C (:) = scalar, the same as C (:,:) = scalar.
                     % C becomes an iso full matrix
-                    Cin = GrB (cm, cn, gbmex_type (C)) ;
+                    Cin = GrB (cm, cn, gb_type (C)) ;
                     C = GrB (gbmex_subassign (0, Cin, { }, { }, A)) ;
                 else
                     % C (:) = A for a matrix C and vector A

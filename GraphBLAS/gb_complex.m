@@ -37,8 +37,8 @@ else
     if (a_is_scalar)
         if (b_is_scalar)
             % both A and B are scalars.  C is also a scalar.
-            a = gzb_full (ghb, A, 'double') ;
-            b = gzb_full (ghb, B, 'double') ;
+            a = gzb_full (1, A, 'double') ;
+            b = gzb_full (1, B, 'double') ;
             desc.kind = 'full' ;
             C = gzb_emult (ghb, 'cmplx.double', a, b, desc) ;
         else
@@ -51,8 +51,8 @@ else
                 % expand A and B to full double matrices; C is full
                 bfmt = gb_fmt (B) ;
                 desc.kind = 'full' ;
-                a = gb_scalar_to_full (ghb, bm, bn, 'double', bfmt, A) ;
-                b = gzb_full (ghb, B, 'double') ;
+                a = gb_scalar_to_full (1, bm, bn, 'double', bfmt, A) ;
+                b = gzb_full (1, B, 'double') ;
                 C = gzb_emult (ghb, 'cmplx.double', a, b, desc) ;
             end
         end
@@ -66,14 +66,14 @@ else
                 % expand A and B to full double matrices; C is full
                 afmt = gb_fmt (A) ;
                 desc.kind = 'full' ;
-                a = gzb_full (ghb, A, 'double') ;
-                b = gb_scalar_to_full (ghb, am, an, 'double', afmt, B) ;
+                a = gzb_full (1, A, 'double') ;
+                b = gb_scalar_to_full (1, am, an, 'double', afmt, B) ;
                 C = gzb_emult (ghb, 'cmplx.double', a, b, desc) ;
             end
         else
             % both A and B are matrices.  C is sparse or full.
             desc.kind = 'builtin' ;
-            b = gzb_apply2 (ghb, B, '*', 1i) ;
+            b = gzb_apply2 (1, B, '*', 1i) ;
             C = gzb_eadd (ghb, A, '+', b, desc) ;
         end
     end

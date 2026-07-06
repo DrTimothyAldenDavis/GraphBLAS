@@ -4,6 +4,10 @@ function s = gb_isa (ghb, G, gtype, type)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (~(ischar (type) || isstring (type)))
+    error ('GrB:error', 'type must be a string') ;
+end
+
 if (isequal (type, 'GrB') || (ghb && isequal (type, 'GhB')))
     % GraphBLAS matrices have a class name of 'GrB' or 'GhB',
     % where GhB is a subclass of GrB.

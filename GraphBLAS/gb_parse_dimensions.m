@@ -1,4 +1,4 @@
-function [m, n] = gb_parse_dimensions (ghb, arg1, arg2)
+function [m, n] = gb_parse_dimensions (arg1, arg2)
 %GB_GET_DIMENSIONS parse arguments for dimensions.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -6,13 +6,13 @@ function [m, n] = gb_parse_dimensions (ghb, arg1, arg2)
 
 switch (nargin)
 
-    case { 1 }
+    case { 0 }
 
         % C = GrB.eye
         m = 1 ;
         n = 1 ;
 
-    case { 2 }
+    case { 1 }
 
         if (length (arg1) == 1)
             % C = ones (n)
@@ -20,7 +20,7 @@ switch (nargin)
             n = m ;
         elseif (length (arg1) == 2)
             % C = ones ([m n])
-            [m, n] = gb_get_2scalars (ghb, arg1) ;
+            [m, n] = gb_get_2scalars (arg1) ;
         else
             error ('GrB:error', 'invalid dimensions') ;
         end

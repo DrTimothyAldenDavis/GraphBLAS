@@ -13,7 +13,7 @@ end
 switch (sparsity)
     case { 'hypersparse', 'sparse' }
         % nothing to do; G is already sparse or hypersparse
-        C = gzb (ghb, G) ;
+        C = gb_dup (ghb, G) ;
     case { 'bitmap', 'full' }
         % convert G to sparse or hypersparse
         C = gzb (ghb, G, 'sparse/hypersparse') ;

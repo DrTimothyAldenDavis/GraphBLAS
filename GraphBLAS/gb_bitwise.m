@@ -35,7 +35,7 @@ end
 ctype = atype ;
 
 if (isequal (atype, 'double') || isequal (atype, 'single'))
-    A = gzb (ghb, A_arg, assumedtype) ;
+    A = gzb (1, A_arg, assumedtype) ;
     atype = assumedtype ;
 else
     A = A_arg ;
@@ -46,12 +46,12 @@ if (isequal (op, 'bitshift'))
     if (~isequal (btype, 'int8'))
         % convert B to int8, and ensure all values are in range -64:64
         % ensure all entries in B are <= 64
-        B = gzb_apply2 (ghb, ['min.' btype], B_arg, 64) ;
+        B = gzb_apply2 (1, ['min.' btype], B_arg, 64) ;
         if (gb_issigned (btype))
             % ensure all entries in B are >= -64
-            B = gzb_apply2 (ghb, ['max.' btype], B, -64) ;
+            B = gzb_apply2 (1, ['max.' btype], B, -64) ;
         end
-        B = gzb (ghb, B, 'int8') ;
+        B = gzb (1, B, 'int8') ;
     else
         B = B_arg ;
     end
@@ -61,21 +61,21 @@ if (isequal (op, 'bitshift'))
 
     if (a_is_scalar && ~b_is_scalar)
         % A is a scalar, B is a matrix
-        C = gzb_apply2 (ghb, ['bitshift.' atype], gzb_full (ghb, A), B) ;
+        C = gzb_apply2 (ghb, ['bitshift.' atype], gzb_full (1, A), B) ;
     elseif (~a_is_scalar && b_is_scalar)
         % A is a matrix, B is a scalar
-        C = gzb_apply2 (ghb, ['bitshift.' atype], A, gzb_full (ghb, B)) ;
+        C = gzb_apply2 (ghb, ['bitshift.' atype], A, gzb_full (1, B)) ;
     else
         % both A and B are matrices, or both are scalars
         % expand B by padding it with zeros from the pattern of A
-        b = gzb_eadd (ghb, '1st.int8', B, gb_expand (ghb, 0, A, 'int8')) ;
+        b = gzb_eadd (1, '1st.int8', B, gb_expand (1, 0, A, 'int8')) ;
         C = gzb_emult (ghb, ['bitshift.' atype], A, b) ;
     end
 
 else
 
     if (isequal (btype, 'double') || isequal (btype, 'single'))
-        B = gzb (ghb, B_arg, assumedtype) ;
+        B = gzb (1, B_arg, assumedtype) ;
         btype = assumedtype ;
     else
         B = B_arg ;

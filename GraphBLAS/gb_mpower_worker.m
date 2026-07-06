@@ -5,7 +5,7 @@ function C = gb_mpower_worker (ghb, A, b)
 % SPDX-License-Identifier: Apache-2.0
 
 if (b == 1)
-    C = gzb (ghb, A) ;
+    C = gb_dup (ghb, A) ;
 else
     C = gb_mpower_worker (ghb, A, floor (b/2)) ;
     C = gzb_mtimes (ghb, C, C) ;

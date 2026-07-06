@@ -239,8 +239,6 @@ methods
     C = mat2cell (A, m, n) ;
     C = max (A, B, option) ;
     C = min (A, B, option) ;
-    e = nnz (G) ;
-    X = nonzeros (G) ;
     C = num2cell (A, dim) ;
     C = pow2 (A, B) ;
     C = prod (G, option) ;

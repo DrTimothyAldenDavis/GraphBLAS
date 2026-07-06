@@ -4,10 +4,14 @@ function C = gb_sign (ghb, G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (G))
+    G = struct (G) ;
+end
+
 type = gbmex_type (G) ;
 
 if (isequal (type, 'logical'))
-    C = gzb (ghb, G) ;
+    C = gb_dup (ghb, G) ;
 elseif (~gb_isfloat (type))
     T = gzb_apply (ghb, 'signum.single', G) ;
     C = gzb (ghb, T, type) ;

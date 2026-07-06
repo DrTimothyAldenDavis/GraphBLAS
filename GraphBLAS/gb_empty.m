@@ -8,7 +8,7 @@ if (nargin == 1)
     m = 0 ;
     n = 0 ;
 else
-    [m, n] = gb_parse_dimensions (ghb, varargin {:}) ;
+    [m, n] = gb_parse_dimensions (varargin {:}) ;
     m = max (m, 0) ;
     n = max (n, 0) ;
     if (~ ((m == 0) || (n == 0)))

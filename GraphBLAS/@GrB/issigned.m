@@ -15,10 +15,7 @@ function s = issigned (arg)
 if (ischar (arg))
     type = arg ;
 else
-    if (gb_is_grb (arg))
-        arg = struct (arg) ;
-    end
-    type = gbmex_type (arg) ;
+    type = gb_type (arg) ;
 end
 
 s = gb_issigned (type) ;

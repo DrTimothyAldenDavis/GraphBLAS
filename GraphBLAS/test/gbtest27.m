@@ -20,7 +20,7 @@ for k1 = 1:length (types)
     A = 100 * sprand (3, 3, 0.5) ;
     H = full (A, 'double', gtb (ghb, 0)) ;
     assert (norm (H-A,1) == 0)
-    B = A ;
+    B = gtb (ghb, A) ;
     B (A == 0) = 1 ; %#ok<*SPRIX>
     H = full (A, 'double', gtb (ghb, 1)) ;
     assert (norm (H-B,1) == 0)

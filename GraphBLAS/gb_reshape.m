@@ -10,7 +10,7 @@ end
 
 % the third output of gb_parse_args is not actually a type, but 'by row', 'by
 % col', or 'double' if not present on input.
-[mnew, nnew, type] = gb_parse_args (ghb, 'reshape', varargin {:}) ;
+[mnew, nnew, type] = gb_parse_args ('reshape', varargin {:}) ;
 mnew = int64 (mnew) ;
 nnew = int64 (nnew) ;
 
