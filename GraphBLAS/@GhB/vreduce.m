@@ -43,40 +43,62 @@ function C = vreduce (arg1, arg2, arg3, arg4, arg5, arg6)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
+if (nargout == 0)
+    narginchk (3, 6) ;
+else
+    narginchk (2, 6) ;
+end
+
+if (gb_is_grb (arg1))
+    arg1 = struct (arg1) ;
+end
+
+if (gb_is_grb (arg2))
+    arg2 = struct (arg2) ;
+end
+
+if (nargin >= 4 && gb_is_grb (arg3))
+    arg3 = struct (arg3) ;
+end
+
+if (nargin >= 4 && gb_is_grb (arg4))
+    arg4 = struct (arg4) ;
+end
+
+if (nargin >= 5 && gb_is_grb (arg5))
+    arg5 = struct (arg5) ;
+end
+
+if (nargin >= 6 && gb_is_grb (arg6))
+    arg6 = struct (arg6) ;
+end
 
 if (nargout == 0)
     switch (nargin)
         case 3
-            gbmex_vreduce (ghb, arg1, arg2, arg3) ;
+            gbmex_vreduce (1, arg1, arg2, arg3) ;
         case 4
-            gbmex_vreduce (ghb, arg1, arg2, arg3, arg4) ;
+            gbmex_vreduce (1, arg1, arg2, arg3, arg4) ;
         case 5
-            gbmex_vreduce (ghb, arg1, arg2, arg3, arg4, arg5) ;
+            gbmex_vreduce (1, arg1, arg2, arg3, arg4, arg5) ;
         case 6
-            gbmex_vreduce (ghb, arg1, arg2, arg3, arg4, arg5, arg6) ;
-        otherwise
-            error ('GrB:error', ...
-                'usage: C = GhB.vreduce (Cin, M, accum, monoid, A, desc)') ;
+            gbmex_vreduce (1, arg1, arg2, arg3, arg4, arg5, arg6) ;
     end
 else
     switch (nargin)
         case 2
-            [C_opaque, kind] = gbmex_vreduce (ghb, arg1, arg2) ;
+            [C_opaque, kind] = gbmex_vreduce (1, arg1, arg2) ;
         case 3
-            [C_opaque, kind] = gbmex_vreduce (ghb, arg1, arg2, arg3) ;
+            [C_opaque, kind] = gbmex_vreduce (1, arg1, arg2, arg3) ;
         case 4
-            [C_opaque, kind] = gbmex_vreduce (ghb, arg1, arg2, arg3, arg4) ;
+            [C_opaque, kind] = gbmex_vreduce (1, arg1, arg2, arg3, arg4) ;
         case 5
-            [C_opaque, kind] = gbmex_vreduce (ghb, arg1, arg2, arg3, arg4, ...
+            [C_opaque, kind] = gbmex_vreduce (1, arg1, arg2, arg3, arg4, ...
                 arg5) ;
         case 6
-            [C_opaque, kind] = gbmex_vreduce (ghb, arg1, arg2, arg3, arg4, ...
+            [C_opaque, kind] = gbmex_vreduce (1, arg1, arg2, arg3, arg4, ...
                 arg5, arg6) ;
-        otherwise
-            error ('GrB:error', ...
-                'usage: C = GhB.vreduce (Cin, M, accum, monoid, A, desc)') ;
     end
-    C = gb_mexfunction_result (ghb, C_opaque, kind) ;
+    C = gb_mexfunction_result (1, C_opaque, kind) ;
 end
 

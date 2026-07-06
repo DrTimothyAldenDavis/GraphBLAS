@@ -4,6 +4,14 @@ function C = gb_lt (ghb, A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
+if (gb_is_grb (B))
+    B = struct (B) ;
+end
+
 [am, an, atype] = gbmex_size (A) ;
 [bm, bn, btype] = gbmex_size (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
@@ -16,7 +24,7 @@ if (a_is_scalar)
         C = gzb_eunion (ghb, A, 0, '<', B, 0) ;
     else
         % A is a scalar, B is a matrix
-        if (gb_scalar (ghb, A) < 0)
+        if (gb_scalar (A) < 0)
             bfmt = gb_fmt (B) ;
             if (~gb_issigned (btype))
                 % a < 0, and B has an unsigned type.  C is all true.
@@ -38,7 +46,7 @@ if (a_is_scalar)
 else
     if (b_is_scalar)
         % A is a matrix, B is a scalar
-        b = gb_scalar (ghb, B) ;
+        b = gb_scalar (B) ;
         if (b < 0 && ~gb_issigned (atype))
             % b is negative, and A has an unsigned type.  C is all false.
             C = gzb (ghb, am, an, 'logical') ;

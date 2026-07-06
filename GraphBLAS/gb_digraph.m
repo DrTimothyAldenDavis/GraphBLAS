@@ -1,8 +1,12 @@
 function DiGraph = gb_digraph (ghb, G_arg, option)
-%GB_DIGRAPH implements DiGraph for GrB and GhB.  Not user-callable.
+%GB_DIGRAPH implements digraph for GrB and GhB.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
+
+if (gb_is_grb (G_arg))
+    G_arg = struct (G_arg) ;
+end
 
 [m, n, type] = gbmex_size (G_arg) ;
 if (m ~= n)

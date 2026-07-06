@@ -13,6 +13,14 @@ function C = gb_eadd (ghb, A, op, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
+if (gb_is_grb (B))
+    B = struct (B) ;
+end
+
 [am, an, atype] = gbmex_size (A) ;
 [bm, bn, btype] = gbmex_size (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
@@ -25,7 +33,7 @@ if (a_is_scalar)
         C = gzb_eadd (ghb, A, op, B) ;
     else
         % A is a scalar, B is a matrix.  Result is full, unless A == 0.
-        if (gb_scalar (ghb, A) == 0)
+        if (gb_scalar (A) == 0)
             C = gzb (ghb, B) ;
         else
             % expand A to a full matrix
@@ -36,7 +44,7 @@ if (a_is_scalar)
 else
     if (b_is_scalar)
         % A is a matrix, B is a scalar.  Result is full, unless B == 0.
-        if (gb_scalar (ghb, B) == 0)
+        if (gb_scalar (B) == 0)
             C = gzb (ghb, A) ;
         else
             % expand B to a full matrix

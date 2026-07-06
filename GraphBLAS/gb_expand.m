@@ -6,6 +6,14 @@ function C = gb_expand (ghb, scalar, S, type)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (S))
+    S = struct (S) ;
+end
+
+if (gb_is_grb (scalar))
+    scalar = struct (scalar) ;
+end
+
 if (~gb_isscalar (scalar))
     error ('GrB:error', 'first input must be a scalar') ;
 end

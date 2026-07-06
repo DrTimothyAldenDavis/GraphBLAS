@@ -1,4 +1,4 @@
-function C = sprandsym (arg1, arg2)
+function C = sprandsym (varargin)
 %SPRANDSYM random symmetric matrix.
 % C = sprandsym (A) is a symmetric random matrix.  Its lower triangle and
 %   diagonal have the same pattern as tril (A).  The values of C have a
@@ -26,15 +26,5 @@ function C = sprandsym (arg1, arg2)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
-if (nargin == 1)
-    % C = sprandsym (G)
-    C = gb_random (ghb, arg1, 'symmetric', 'normal') ;
-else
-    % C = sprandsym (n, d)
-    n = gb_get_scalar (ghb, arg1) ;
-    d = gb_get_scalar (ghb, arg2) ;
-    C = gb_random (ghb, n, d, 'symmetric', 'normal') ;
-end
+C = gb_sprandsym (1, varargin {:}) ;
 

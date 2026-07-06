@@ -4,11 +4,15 @@ function C = gb_diag (ghb, A, k)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
 if (nargin < 3)
     k = 0 ;
 end
 if (isobject (k))
-    k = gb_get_scalar (ghb, k) ;
+    k = gb_get_scalar (k) ;
 end
 
 [am, an, ~] = gbmex_size (A) ;

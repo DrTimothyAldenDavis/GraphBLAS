@@ -4,6 +4,10 @@ function C = gzb_serialize (ghb, A, method, level)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
 if (ghb)
     switch (nargin)
         case 2

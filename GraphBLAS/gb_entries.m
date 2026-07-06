@@ -5,6 +5,10 @@ function result = gb_entries (ghb, A, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
 % get the string arguments
 dim = 'all' ;           % 'all', 'row', or 'col'
 kind = 'count' ;        % 'count', 'list', or 'degree'
@@ -26,7 +30,7 @@ if (isequal (dim, 'all'))
         case 'count'
             % number of entries in A
             % e = GrB.entries (A)
-            result = gbmex_nvals (A) ;
+            result = gzb_nvals (A) ;
         case 'list'
             % list of values of unique entries
             % X = GrB.entries (A, 'list')
@@ -46,7 +50,7 @@ else
             % number of non-empty rows/cols
             % e = GrB.entries (A, 'row')
             % e = GrB.entries (A, 'col')
-            result = gbmex_nvals (gzb_select (ghb, result, 'nonzero')) ;
+            result = gzb_nvals (gzb_select (ghb, result, 'nonzero')) ;
         case 'list'
             % list of non-empty rows/cols
             % I = GrB.entries (A, 'row', 'list')
@@ -54,7 +58,7 @@ else
             desc.base = 'one-based int' ;
             S = gzb_select (ghb, result, 'nonzero') ;
             gbmex_wait (S) ;
-            result = gbmex_extracttuples (ghb, S, desc);
+            result = gbmex_extracttuples (ghb, S, desc) ;
         % case 'degree'
             % degree of all rows/cols
             % d = GrB.entries (A, 'row', 'degree')

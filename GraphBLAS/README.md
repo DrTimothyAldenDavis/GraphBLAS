@@ -107,6 +107,20 @@ MATLAB/Octave on Linux, Mac, or Windows.
         cd /home/me/GraphBLAS/GraphBLAS/private
         gbmake
 
+    When using Octave, you must ensure that GraphBLAS, its mexFunctions, and
+    Octave are compiled with the same compiler.  Do not try to mix gcc, clang,
+    and the Intel icx compilers, since they all require different OpenMP
+    libraries.  To ensure the gbmake script in Octave uses the right compiler,
+    start octave with the following (assume Octave was compiled with gcc):
+
+        CC=gcc CXX=g++ octave
+
+    or, in your Octave startup.m script, add these commands to run after
+    octave starts:
+
+        setenv ('CC', 'gcc') ;
+        setenv ('CXX', 'g++') ;
+
 --------------------------------------------------------------------------------
 # For Windows
 --------------------------------------------------------------------------------

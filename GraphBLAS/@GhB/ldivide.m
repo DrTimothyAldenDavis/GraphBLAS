@@ -7,7 +7,5 @@ function C = ldivide (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
-C = gb_rdivide (ghb, B, A) ;
+C = gb_rdivide (1, B, A) ;
 

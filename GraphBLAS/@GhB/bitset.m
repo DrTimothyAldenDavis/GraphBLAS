@@ -43,14 +43,12 @@ function C = bitset (A, B, arg3, arg4)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
 switch (nargin)
     case 2
-        C = gb_bitset (ghb, A, B) ;
+        C = gb_bitset (1, A, B) ;
     case 3
-        C = gb_bitset (ghb, A, B, arg3) ;
+        C = gb_bitset (1, A, B, arg3) ;
     case 4
-        C = gb_bitset (ghb, A, B, arg3, arg4) ;
+        C = gb_bitset (1, A, B, arg3, arg4) ;
 end
 

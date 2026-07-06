@@ -29,14 +29,12 @@ function L = laplacian (A, type, check)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
 switch (nargin)
     case 1
-        L = gb_laplacian (ghb, A) ;
+        L = gb_laplacian (0, A) ;
     case 2
-        L = gb_laplacian (ghb, A, type) ;
+        L = gb_laplacian (0, A, type) ;
     case 3
-        L = gb_laplacian (ghb, A, type, check) ;
+        L = gb_laplacian (0, A, type, check) ;
 end
 

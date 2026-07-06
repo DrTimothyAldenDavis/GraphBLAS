@@ -9,11 +9,9 @@ function s = issymmetric (G, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
 if (nargin < 2)
     option = 'nonskew' ;
 end
 
-s = gb_issymmetric (ghb, G, option, false) ;
+s = gb_issymmetric (0, G, option, false) ;
 

@@ -4,6 +4,14 @@ function C = gb_bitwise (ghb, op, A_arg, B_arg, assumedtype)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A_arg))
+    A_arg = struct (A_arg) ;
+end
+
+if (gb_is_grb (B_arg))
+    B_arg = struct (B_arg) ;
+end
+
 if (nargin < 5)
     assumedtype = 'uint64' ;
 end

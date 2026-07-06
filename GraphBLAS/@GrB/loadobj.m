@@ -9,14 +9,16 @@ function G = loadobj (S)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
 if (isobject (S))
     % S is a @GrB matrix from GraphBLAS 10.3.1 or earlier, which
     % did not have saveobj and loadobj methods.
-    G = gzb_loadhistorical (ghb, S.opaque) ;
+    if (gb_is_grb (S))
+        S = struct (S) ;
+    end
+    G = gzb_loadhistorical (0, S) ;
 else
-    % S is a struct created by saveobj with a single
+    % S is a struct created by GrB/saveobj with a single
     % S.blob field containing the serialized matrix.
-    G = gzb_deserialize (ghb, S.blob) ;
+    G = gzb_deserialize (0, S.blob) ;
 end
 

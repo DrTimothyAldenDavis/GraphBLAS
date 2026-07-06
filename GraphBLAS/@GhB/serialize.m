@@ -42,19 +42,17 @@ function blob = serialize (G, method, level)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
 % serialize the matrix into a uint8 blob
 switch (nargin)
     case 1
         % use the default compression method and default level
-        b = gzb_serialize (ghb, G) ;
+        b = gzb_serialize (1, G) ;
     case 2
         % use the given compression method and default level
-        b = gzb_serialize (ghb, G, method) ;
+        b = gzb_serialize (1, G, method) ;
     case 3
         % use the given compression method and given level
-        b = gzb_serialize (ghb, G, method, level) ;
+        b = gzb_serialize (1, G, method, level) ;
 end
 
 blob = gbmex_builtin (b) ;

@@ -4,6 +4,10 @@ function C = gb_flip (ghb, A, dim)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
 [m, n] = gbmex_size (A) ;
 
 if (nargin == 2)
@@ -13,7 +17,7 @@ if (nargin == 2)
         dim = 1 ;
     end
 else
-    dim = gb_get_scalar (ghb, dim) ;
+    dim = gb_get_scalar (dim) ;
 end
 
 dim = floor (double (dim)) ;

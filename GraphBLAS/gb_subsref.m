@@ -6,6 +6,10 @@ function C = gb_subsref (ghb, A, S)
 
 % FUTURE: add all forms of linear indexing.
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
 [m, n] = gbmex_size (A) ;
 
 if (length (S) > 1)
@@ -22,6 +26,9 @@ if (ndims == 1)
 
     % C = A(M) if M is logical, or C=A(I) otherwise
     S1 = S.subs {1} ;
+    if (gb_is_grb (S1))
+        S1 = struct (S1) ;
+    end
     if (isequal (gbmex_type (S1), 'logical'))
         % C = A (M) for logical indexing
         C = gzb_logextract (ghb, A, S1) ;
@@ -56,7 +63,9 @@ if (ndims == 1)
 elseif (ndims == 2)
 
     % C = A (I,J)
-    C = gzb_extract (ghb, A, gb_index (S.subs {1}), gb_index (S.subs {2})) ;
+    I = gb_index (S.subs {1}) ;
+    J = gb_index (S.subs {2}) ;
+    C = gzb_extract (ghb, A, I, J) ;
 
 else
 

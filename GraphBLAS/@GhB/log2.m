@@ -14,11 +14,9 @@ function [F, E] = log2 (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
 if (nargout == 1)
-    F = gb_log2 (ghb, G) ;
+    F = gb_log2 (1, G) ;
 else
-    [F, E] = gb_log2 (ghb, G) ;
+    [F, E] = gb_log2 (1, G) ;
 end
 

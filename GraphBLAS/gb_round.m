@@ -6,6 +6,10 @@ function C = gb_round (ghb, G)
 
 % FUTURE: round (x,n) and round (x,n,type)
 
+if (gb_is_grb (G))
+    G = struct (G) ;
+end
+
 if (gb_isfloat (gbmex_type (G)))
     C = gzb_apply (ghb, 'round', G) ;
 else

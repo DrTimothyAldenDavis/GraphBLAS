@@ -4,6 +4,14 @@ function C = gzb_mtimes (ghb, A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
+if (gb_is_grb (B))
+    B = struct (B) ;
+end
+
 if (ghb)
     C = GhB (gbmex_mtimes (ghb, A, B)) ;
 else

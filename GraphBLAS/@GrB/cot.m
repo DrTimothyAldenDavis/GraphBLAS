@@ -8,7 +8,5 @@ function C = cot (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-C = gb_cot (ghb, G) ;
+C = gb_cot (0, struct (G)) ;
 

@@ -112,11 +112,18 @@ bool gbmx_mxarray_to_descriptor // true if descriptor present in pargin [...]
     memset (gbdesc, 0, sizeof (struct gb_descriptor_struct)) ;
     gbdesc->fmt = GxB_NO_FORMAT ;
 
-    if (mxdesc == NULL || !mxIsStruct (mxdesc) || 
-        mxGetField (mxdesc, 0, "opaque"))
+    if (mxdesc == NULL || !mxIsStruct (mxdesc)
+        || (mxGetField (mxdesc, 0, "GraphBLASv10") != NULL)
+        || (mxGetField (mxdesc, 0, "GraphBLASv7_3") != NULL)
+        || (mxGetField (mxdesc, 0, "GraphBLASv5_1") != NULL)
+        || (mxGetField (mxdesc, 0, "GraphBLASv5") != NULL)
+        || (mxGetField (mxdesc, 0, "GraphBLASv4") != NULL)
+        || (mxGetField (mxdesc, 0, "GraphBLAS") != NULL))
     { 
-        // no MATLAB descriptor struct is present in pargin [nargin-1]
-        return (false) ;
+        // If present, the descriptor is a struct whose first field is not
+        // "desc.GraphBLAS*" (a GrB matrix).  If not present, the GraphBLAS
+        // descriptor is NULL.
+        return (NULL) ;
     }
 
     gbdesc->is_present = true ;

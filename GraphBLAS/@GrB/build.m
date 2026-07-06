@@ -67,9 +67,5 @@ function C = build (I,J,X,varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-[C_opaque, kind] = gbmex_build (ghb, I, J, X, varargin {:}) ;
-
-C = gb_mexfunction_result (ghb, C_opaque, kind) ;
+C = gb_build (0, I, J, X, varargin {:}) ;
 

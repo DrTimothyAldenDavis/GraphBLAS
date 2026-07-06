@@ -8,7 +8,5 @@ function C = asin (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-C = gb_trig (ghb, 'asin', G) ;
+C = gb_trig (0, 'asin', struct (G)) ;
 

@@ -4,6 +4,10 @@ function Graph = gb_graph (ghb, G_arg, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (G_arg))
+    G_arg = struct (G_arg) ;
+end
+
 [m, n, type] = gbmex_size (G_arg) ;
 if (m ~= n)
     error ('GrB:error', 'G must be square') ;

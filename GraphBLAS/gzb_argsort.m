@@ -4,6 +4,10 @@ function [C,P] = gzb_argsort (ghb, A, dim, direction)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
 if (ghb)
     if (nargout == 1)
         C = GhB (gbmex_argsort (ghb, A, dim, direction)) ;

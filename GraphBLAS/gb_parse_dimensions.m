@@ -16,7 +16,7 @@ switch (nargin)
 
         if (length (arg1) == 1)
             % C = ones (n)
-            m = gb_get_scalar (ghb, arg1) ;
+            m = gb_get_scalar (arg1) ;
             n = m ;
         elseif (length (arg1) == 2)
             % C = ones ([m n])
@@ -28,8 +28,8 @@ switch (nargin)
     otherwise
 
         % C = ones (m, n)
-        m = gb_get_scalar (ghb, arg1) ;
-        n = gb_get_scalar (ghb, arg2) ;
+        m = gb_get_scalar (arg1) ;
+        n = gb_get_scalar (arg2) ;
 
 end
 

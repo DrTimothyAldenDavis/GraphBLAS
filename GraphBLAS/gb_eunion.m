@@ -12,6 +12,14 @@ function C = gb_eunion (ghb, A, op, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
+if (gb_is_grb (B))
+    B = struct (B) ;
+end
+
 [am, an, atype] = gbmex_size (A) ;
 [bm, bn, btype] = gbmex_size (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;

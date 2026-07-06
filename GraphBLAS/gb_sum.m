@@ -1,10 +1,23 @@
-function C = gb_sum (ghb, op, G, option)
+function C = gb_sum (ghb, op, type, G, option)
 %GB_SUM C = sum (G) or C = any (G).  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (nargin < 4)
+if (gb_is_grb (G))
+    G = struct (G) ;
+end
+
+if (isempty (type))
+    type = gbmex_type (G) ;
+end
+
+if (isequal (op, '+') && isequal (type, 'logical'))
+    % revise the op for the +.logical case
+    op = '+.int64' ;
+end
+
+if (nargin < 5)
     % C = sum (G)
     if (gb_isvector (G))
         option = 'all' ;

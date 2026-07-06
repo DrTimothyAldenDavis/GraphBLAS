@@ -9,11 +9,9 @@ function C = repmat (G, m, n)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
 if (nargin < 3)
-    C = gb_repmat (ghb, G, m) ;
+    C = gb_repmat (0, G, m) ;
 else
-    C = gb_repmat (ghb, G, m, n) ;
+    C = gb_repmat (0, G, m, n) ;
 end
 

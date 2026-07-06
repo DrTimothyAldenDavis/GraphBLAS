@@ -11,6 +11,9 @@ function s = isfull (A)
 
 if (isobject (A))
     % GraphBLAS matrix
+    if (gb_is_grb (A))
+        A = struct (A) ;
+    end
     s = gb_isfull (A) ;
 elseif (issparse (A))
     % built-in sparse matrix

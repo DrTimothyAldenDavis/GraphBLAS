@@ -27,14 +27,12 @@ function C = full (A, type, identity)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
 switch (nargin)
     case 1
-        C = gb_full (ghb, A) ;
+        C = gb_full (1, A) ;
     case 2
-        C = gb_full (ghb, A, type) ;
+        C = gb_full (1, A, type) ;
     case 3
-        C = gb_full (ghb, A, type, identity) ;
+        C = gb_full (1, A, type, identity) ;
 end
 

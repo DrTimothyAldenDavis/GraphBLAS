@@ -1,4 +1,4 @@
-function C = mat2cell (A, m, n)
+function C = mat2cell (A, varargin)
 %MAT2CELL Break matrix up into a cell array of matrices.
 %
 % C = mat2cell (A,m,n) breaks up the 2D @GrB matrix A into a cell array of
@@ -26,19 +26,5 @@ function C = mat2cell (A, m, n)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-if (isobject (A))
-    if (nargin < 3)
-        [~, n] = gbmex_size (A) ;
-    end
-else
-    m = double (m) ;
-    if (nargin < 3)
-        n = size (A, 2) ;
-    end
-end
-
-% C is returned as a cell array of @GrB or @GhB objects
-C = gzb_split (ghb, A, m, n) ;
+C = gb_mat2cell (0, A, varargin {:}) ;
 

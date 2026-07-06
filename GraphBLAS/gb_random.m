@@ -58,6 +58,9 @@ if (firstchar == 2)
 
     % C = GrB.random (A, ...) ;
     A = varargin {1} ;
+    if (gb_is_grb (A))
+        A = struct (A) ;
+    end
     [m, n] = gbmex_size (A) ;
     if ((symmetric || hermitian) && (m ~= n))
         error ('GrB:error', 'input matrix must be square') ;
@@ -71,13 +74,13 @@ elseif (firstchar == (4 - (symmetric || hermitian)))
     % C = GrB.random (m, n, d, ...)
     % C = GrB.random (n, d, ... 'symmetric')
     % C = GrB.random (n, d, ... 'hermitian')
-    m = gb_get_scalar (ghb, varargin {1}) ;
+    m = gb_get_scalar (varargin {1}) ;
     if (symmetric || hermitian)
         n = m ;
-        d = gb_get_scalar (ghb, varargin {2}) ;
+        d = gb_get_scalar (varargin {2}) ;
     else
-        n = gb_get_scalar (ghb, varargin {2}) ;
-        d = gb_get_scalar (ghb, varargin {3}) ;
+        n = gb_get_scalar (varargin {2}) ;
+        d = gb_get_scalar (varargin {3}) ;
     end
     if (isinf (d))
         % construct a full random matrix

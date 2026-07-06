@@ -26,7 +26,6 @@ function [r, stats] = pagerank (A, opts)
 % SPDX-License-Identifier: Apache-2.0
 
 % FIXME: GhB will be different
-%% ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 %-------------------------------------------------------------------------
 % initializations

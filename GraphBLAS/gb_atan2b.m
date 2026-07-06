@@ -5,7 +5,15 @@ function C = gb_atan2b (ghb, A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% atan2b(A,B) gives the set union of the pattern of A and B
+% atan2b(A,B) gives the set union of the pattern of A and B.
+
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
+if (gb_is_grb (B))
+    B = struct (B) ;
+end
 
 if (gb_isscalar (A))
     if (gb_isscalar (B))

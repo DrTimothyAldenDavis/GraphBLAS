@@ -4,6 +4,14 @@ function C = gb_max (ghb, A, B, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
+if (nargin >= 3 && gb_is_grb (B))
+    B = struct (B) ;
+end
+
 type = gbmex_type (A) ;
 if (gb_contains (type, 'complex'))
     error ('GrB:error', 'complex matrices not yet supported') ;

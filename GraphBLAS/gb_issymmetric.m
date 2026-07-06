@@ -7,6 +7,14 @@ function s = gb_issymmetric (ghb, G_arg, option, herm)
 
 % FUTURE: this can be much faster; see spsym in CHOLMOD.
 
+if (gb_is_grb (G_arg))
+    G_arg = struct (G_arg) ;
+end
+
+if (~(ischar (option) || isstring (option)))
+    error ('GrB:error', '2nd input must be a string') ;
+end
+
 [m, n, type] = gbmex_size (G_arg) ;
 
 if (m ~= n)
@@ -35,12 +43,12 @@ else
         case { 'skew' }
 
             % G is skew symmetric/Hermitian if G+T is zero
-            s = (gbmex_norm (gb_eadd (ghb, G, '+', T), 1) == 0) ;
+            s = (gzb_norm (gb_eadd (ghb, G, '+', T), 1) == 0) ;
 
         case { 'nonskew' }
 
             % G is symmetric/Hermitian if G-T is zero
-            s = (gbmex_normdiff (G, T, 1) == 0) ;
+            s = (gzb_normdiff (G, T, 1) == 0) ;
 
         otherwise
 

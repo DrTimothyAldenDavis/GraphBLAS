@@ -26,7 +26,5 @@ function Graph = graph (G, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
-Graph = gb_graph (ghb, G, varargin {:}) ;
+Graph = gb_graph (1, G, varargin {:}) ;
 

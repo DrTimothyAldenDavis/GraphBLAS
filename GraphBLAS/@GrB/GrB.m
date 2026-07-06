@@ -626,22 +626,25 @@ methods
     % C = GrB (m,n,format,type) ; ditto
     %
     % See also sparse.
-        ghb = 0 ;     % 0 for GrB, 1 for GhB
+        already_struct = (nargin >= 1 && isstruct (arg1)) ;
+        if (nargin >= 1 && gb_is_grb (arg1))
+            arg1 = arg1.opaque ;
+        end
         switch (nargin)
             case 0
                 C.opaque = [ ] ;
             case 1
-                if (isstruct (arg1))
+                if (already_struct)
                     C.opaque = arg1 ;
                 else
-                    C.opaque = gbmex_new (ghb, arg1) ;
+                    C.opaque = gbmex_new (0, arg1) ;
                 end
             case 2
-                C.opaque = gbmex_new (ghb, arg1, arg2) ;
+                C.opaque = gbmex_new (0, arg1, arg2) ;
             case 3
-                C.opaque = gbmex_new (ghb, arg1, arg2, arg3) ;
+                C.opaque = gbmex_new (0, arg1, arg2, arg3) ;
             case 4
-                C.opaque = gbmex_new (ghb, arg1, arg2, arg3, arg4) ;
+                C.opaque = gbmex_new (0, arg1, arg2, arg3, arg4) ;
         end
     end
 
@@ -773,7 +776,6 @@ methods
     C = plus (A, B) ;           % C = A + B
     C = power (A, B) ;          % C = A .^ B
     C = rdivide (A, B) ;        % C = A ./ B
-    I = subsindex (A) ;         % for C = X (A), using A as index I
     C = subsasgn (C, S, A) ;    % C (I,J) = A or C (M) = A
     C = subsref (A, S) ;        % C = A (I,J) or C = A (M)
     C = times (A, B) ;          % C = A .* B
@@ -782,7 +784,8 @@ methods
     C = uplus (G) ;             % C = +A
     C = vertcat (varargin) ;    % C = [A ; B]
 
-    % GrB/end and GhB/end are identical:
+    % these are identical for GrB and GhB:
+    I = subsindex (A) ;         % for C = X (A), using A as index I
     i = end (A, k, ndims) ;     % for A (1:end,1:end)
 
     %---------------------------------------------------------------------

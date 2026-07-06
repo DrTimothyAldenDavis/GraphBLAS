@@ -11,5 +11,12 @@ if (ndims (A) > 2) %#ok<ISMAT>
     error ('GrB:error', 'only 2D cell arrays are supported') ;
 end
 
+% get the input matrices
+for k = 1:numel (A)
+    if (gb_is_grb (A {k}))
+        A {k} = struct (A {k}) ;
+    end
+end
+
 C = gzb_cat (ghb, A) ;
 

@@ -40,6 +40,14 @@ function C = subsasgn (C, S, A)
 
 % FUTURE: add all forms of linear indexing.
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
+if (gb_is_grb (C))
+    C = struct (C) ;
+end
+
 if (~isequal (S.type, '()'))
     error ('GrB:error', 'index type %s not supported', S.type) ;
 end
@@ -50,6 +58,9 @@ if (ndims == 1)
 
     % C (M) = A if M is logical, or C (I) = A otherwise
     S1 = S.subs {1} ;
+    if (gb_is_grb (S1))
+        S1 = struct (S1) ;
+    end
     if (isequal (gbmex_type (S1), 'logical'))
         % C (M) = A for logical assignment (where M is S1)
         [am, an] = gbmex_size (A) ;

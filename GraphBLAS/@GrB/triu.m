@@ -10,11 +10,9 @@ function U = triu (G, k)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
 if (nargin < 2)
-    U = gb_tri (ghb, 'triu', G, 0) ;
+    U = gb_tri (0, 'triu', G, 0) ;
 else
-    U = gb_tri (ghb, 'triu', G, k) ;
+    U = gb_tri (0, 'triu', G, k) ;
 end
 

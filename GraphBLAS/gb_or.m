@@ -4,6 +4,14 @@ function C = gb_or (ghb, A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
+if (gb_is_grb (B))
+    B = struct (B) ;
+end
+
 [am, an, ~] = gbmex_size (A) ;
 [bm, bn, ~] = gbmex_size (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
@@ -15,7 +23,7 @@ if (a_is_scalar)
         C = gzb_emult (ghb, A, '|.logical', B) ;
     else
         % A is a scalar, B is a matrix
-        if (gb_scalar (ghb, A) == 0)
+        if (gb_scalar (A) == 0)
             % A is false, so C is B typecasted to logical
             C = gzb (ghb, B, 'logical') ;
         else
@@ -26,7 +34,7 @@ if (a_is_scalar)
 else
     if (b_is_scalar)
         % A is a matrix, B is a scalar
-        if (gb_scalar (ghb, B) == 0)
+        if (gb_scalar (B) == 0)
             % B is false, so C is A typecasted to logical
             C = gzb (ghb, A, 'logical') ;
         else

@@ -4,6 +4,10 @@ function C = gb_incidence (ghb, A_arg, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A_arg))
+    A_arg = struct (A_arg) ;
+end
+
 [m, n] = gbmex_size (A_arg) ;
 if (m ~= n)
     error ('GrB:error', 'A must be square') ;

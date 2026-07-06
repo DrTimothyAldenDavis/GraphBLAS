@@ -4,13 +4,17 @@ function [I,J,X] = gb_find (ghb, G_arg, k, search)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (G_arg))
+    G_arg = struct (G_arg) ;
+end
+
 % prune explicit zeros
 gbmex_wait (G_arg) ;
 desc.format = gbmex_format (G_arg) ;
 G = gzb_select (ghb, G_arg, 'nonzero', desc) ;
 
 if (nargin > 2)
-    k = ceil (double (gb_get_scalar (ghb, k))) ;
+    k = ceil (double (gb_get_scalar (k))) ;
     if (k < 1)
         error ('GrB:error', 'k must be positive') ;
     end

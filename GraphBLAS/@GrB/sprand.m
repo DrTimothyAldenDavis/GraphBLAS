@@ -1,4 +1,4 @@
-function C = sprand (arg1, arg2, arg3)
+function C = sprand (varargin)
 %SPRAND sparse uniformly distributed random matrix.
 % C = sprand (A) is a matrix with the same pattern as A, but with
 %   uniformly distributed random entries.  This usage is identical to
@@ -19,19 +19,5 @@ function C = sprand (arg1, arg2, arg3)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-if (nargin == 1)
-    % C = sprand (G)
-    C = gb_random (ghb, arg1) ;
-elseif (nargin == 3)
-    % C = sprand (m, n, d)
-    m = gb_get_scalar (ghb, arg1) ;
-    n = gb_get_scalar (ghb, arg2) ;
-    d = gb_get_scalar (ghb, arg3) ;
-    C = gb_random (ghb, m, n, d) ;
-else
-    % the 'rc' input option is not supported
-    error ('GrB:error', 'usage: sprand(A) or sprand(m,n,d)') ;
-end
+C = gb_sprand (0, 'uniform', varargin {:}) ;
 

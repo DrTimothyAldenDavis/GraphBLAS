@@ -20,13 +20,12 @@ end
 if (nargin == 1)
     [V, varargout{1:nargout-1}] = builtin ('eig', A) ;
 else
-    args = varargin ;
-    for k = 1:length (args)
-        argk = args {k} ;
+    for k = 1:length (varargin)
+        argk = varargin {k} ;
         if (isobject (argk))
-            args {k} = full (double (argk)) ;
+            varargin {k} = full (double (argk)) ;
         end
     end
-    [V, varargout{1:nargout-1}] = builtin ('eig', A, args {:}) ;
+    [V, varargout{1:nargout-1}] = builtin ('eig', A, varargin {:}) ;
 end
 

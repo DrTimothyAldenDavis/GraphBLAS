@@ -4,6 +4,18 @@ function C = gb_bitset (ghb, A_arg, B_arg, arg3, arg4)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A_arg))
+    A_arg = struct (A_arg) ;
+end
+
+if (gb_is_grb (B_arg))
+    B_arg = struct (B_arg) ;
+end
+
+if (nargin >= 4 && gb_is_grb (arg3))
+    arg3 = struct (arg3) ;
+end
+
 [am, an, atype] = gbmex_size (A_arg) ;
 [bm, bn, btype] = gbmex_size (B_arg) ;
 
@@ -68,7 +80,7 @@ V_is_scalar = (m == 1) && (n == 1) ;
 if (V_is_scalar)
 
     % V is a scalar:  all bits in A indexed by B are either cleared or set.
-    if (gb_scalar (ghb, V) == 0)
+    if (gb_scalar (V) == 0)
         % any bit reference by B(i,j) is set to 0 in A
         op = ['bitclr.' atype] ;
     else

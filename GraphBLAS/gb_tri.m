@@ -4,6 +4,6 @@ function C = gb_tri (ghb, op, G, k)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-k = gb_get_scalar (ghb, k) ;
+k = gb_get_scalar (k) ;
 C = gzb_select (ghb, op, G, k) ;
 

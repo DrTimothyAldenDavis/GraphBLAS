@@ -1,4 +1,4 @@
-function s = normdiff (A,B,kind)
+function s = normdiff (A, B, kind)
 %GRB.NORMDIFF norm (A-B,kind)
 % If A-B is a matrix:
 %
@@ -25,5 +25,5 @@ if (nargin < 3)
     kind = 2 ;
 end
 
-s = gbmex_normdiff (A, B, kind) ;
+s = gzb_normdiff (A, B, kind) ;
 

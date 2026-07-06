@@ -4,6 +4,22 @@ function C = gzb_select (ghb, arg1, arg2, arg3, arg4)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (arg1))
+    arg1 = struct (arg1) ;
+end
+
+if (gb_is_grb (arg2))
+    arg2 = struct (arg2) ;
+end
+
+if (nargin >= 4 && gb_is_grb (arg3))
+    arg3 = struct (arg3) ;
+end
+
+if (nargin >= 5 && gb_is_grb (arg4))
+    arg4 = struct (arg4) ;
+end
+
 if (ghb)
     switch (nargin)
         case 3

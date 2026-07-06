@@ -25,11 +25,9 @@ function C = bitshift (A, B, assumedtype)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
 if (nargin == 2)
-    C = gb_bitwise (ghb, 'bitshift', A, B) ;
+    C = gb_bitwise (0, 'bitshift', A, B) ;
 else
-    C = gb_bitwise (ghb, 'bitshift', A, B, assumedtype) ;
+    C = gb_bitwise (0, 'bitshift', A, B, assumedtype) ;
 end
 

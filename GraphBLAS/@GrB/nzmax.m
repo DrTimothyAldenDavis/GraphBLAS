@@ -10,5 +10,5 @@ function e = nzmax (G)
 % including zombies.  bitmap matrices return the same result as full matrices.
 % Also includes the size of the G->Pending->[i,j,x] arrays for pending tuples.
 
-[~, e] = gbmex_nvals (G) ;
+[~, e] = gzb_nvals (G) ;
 

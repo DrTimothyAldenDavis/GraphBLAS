@@ -13,8 +13,5 @@ function C = int8 (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-desc.kind = 'full' ;
-C = gbmex_builtin (gzb_full (ghb, G, 'int8', int8 (0), desc)) ;
+C = gb_cast_full (0, struct (G), 'int8', int8 (0)) ;
 

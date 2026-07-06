@@ -4,6 +4,10 @@ function C = gb_pow2 (ghb, A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
 atype = gbmex_type (A) ;
 
 if (nargin == 2)
@@ -14,6 +18,9 @@ if (nargin == 2)
     C = gzb_apply (ghb, 'pow2', gzb_full (ghb, A, atype)) ;
 else
     % C = A.*(2.^B)
+    if (gb_is_grb (B))
+        B = struct (B) ;
+    end
     type = gbmex_optype (atype, gbmex_type (B)) ;
     if (gb_contains (type, 'single'))
         type = 'single' ;

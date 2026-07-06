@@ -21,14 +21,12 @@ function C = min (A, B, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
 switch (nargin)
     case 1
-        C = gb_min (ghb, A) ;
+        C = gb_min (0, A) ;
     case 2
-        C = gb_min (ghb, A, B) ;
+        C = gb_min (0, A, B) ;
     case 3
-        C = gb_min (ghb, A, B, option) ;
+        C = gb_min (0, A, B, option) ;
 end
 

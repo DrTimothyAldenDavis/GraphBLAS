@@ -21,14 +21,12 @@ function C = max (A, B, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
 switch (nargin)
     case 1
-        C = gb_max (ghb, A) ;
+        C = gb_max (1, A) ;
     case 2
-        C = gb_max (ghb, A, B) ;
+        C = gb_max (1, A, B) ;
     case 3
-        C = gb_max (ghb, A, B, option) ;
+        C = gb_max (1, A, B, option) ;
 end
 

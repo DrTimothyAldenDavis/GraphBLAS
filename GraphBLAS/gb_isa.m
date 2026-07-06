@@ -1,4 +1,4 @@
-function s = gb_isa (ghb, G, type)
+function s = gb_isa (ghb, G, gtype, type)
 %GB_ISA implements GrB/isa and GhB/isa.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -17,11 +17,11 @@ elseif isequal (type, 'numeric')
     s = true ;
 elseif (isequal (type, 'float'))
     % GraphBLAS double, single, and complex matrices are 'float'
-    s = isfloat (G) ;
+    s = gb_isfloat (gtype) ;
 elseif (isequal (type, 'integer'))
     % GraphBLAS int* and uint* matrices are 'integer'
-    s = isinteger (G) ;
-elseif (isequal (gbmex_type (G), type))
+    s = gb_contains (gtype, 'int') ;
+elseif (isequal (gtype, type))
     % specific cases, such as isa (G, 'double'), isa (G, 'int8'), etc
     s = true ;
 else

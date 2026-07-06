@@ -59,3 +59,10 @@ else
 
 end
 
+% replace all GrB matrices with their struct
+for k = 1:length (I)
+    if (gb_is_grb (I {k}))
+        I {k} = struct (I {k}) ;
+    end
+end
+

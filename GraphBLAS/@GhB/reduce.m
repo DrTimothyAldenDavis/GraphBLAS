@@ -36,35 +36,52 @@ function C = reduce (arg1, arg2, arg3, arg4, arg5)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
+if (nargout == 0)
+    narginchk (3, 5) ;
+else
+    narginchk (2, 5) ;
+end
+
+if (gb_is_grb (arg1))
+    arg1 = struct (arg1) ;
+end
+
+if (gb_is_grb (arg2))
+    arg2 = struct (arg2) ;
+end
+
+if (nargin >= 3 && gb_is_grb (arg3))
+    arg3 = struct (arg3) ;
+end
+
+if (nargin >= 4 && gb_is_grb (arg4))
+    arg4 = struct (arg4) ;
+end
+
+if (nargin >= 5 && gb_is_grb (arg5))
+    arg5 = struct (arg5) ;
+end
 
 if (nargout == 0)
     switch (nargin)
         case 3
-            gbmex_reduce (ghb, arg1, arg2, arg3) ;
+            gbmex_reduce (1, arg1, arg2, arg3) ;
         case 4
-            gbmex_reduce (ghb, arg1, arg2, arg3, arg4) ;
+            gbmex_reduce (1, arg1, arg2, arg3, arg4) ;
         case 5
-            gbmex_reduce (ghb, arg1, arg2, arg3, arg4, arg5) ;
-        otherwise
-            error ('GrB:error', ...
-                'usage: GhB.reduce (c, accum, monoid, A, desc)') ;
+            gbmex_reduce (1, arg1, arg2, arg3, arg4, arg5) ;
     end
 else
     switch (nargin)
         case 2
-            [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2) ;
+            [C_opaque, kind] = gbmex_reduce (1, arg1, arg2) ;
         case 3
-            [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2, arg3) ;
+            [C_opaque, kind] = gbmex_reduce (1, arg1, arg2, arg3) ;
         case 4
-            [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2, arg3, arg4) ;
+            [C_opaque, kind] = gbmex_reduce (1, arg1, arg2, arg3, arg4) ;
         case 5
-            [C_opaque, kind] = gbmex_reduce (ghb, arg1, arg2, arg3, arg4, ...
-                arg5) ;
-        otherwise
-            error ('GrB:error', ...
-                'usage: c = GhB.reduce (cin, accum, monoid, A, desc)') ;
+            [C_opaque, kind] = gbmex_reduce (1, arg1, arg2, arg3, arg4, arg5) ;
     end
-    C = gb_mexfunction_result (ghb, C_opaque, kind) ;
+    C = gb_mexfunction_result (1, C_opaque, kind) ;
 end
 

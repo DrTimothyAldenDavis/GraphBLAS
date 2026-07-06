@@ -27,25 +27,50 @@ function C = kronecker (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
+narginchk (3, 7) ;
+
+if (gb_is_grb (arg1))
+    arg1 = struct (arg1) ;
+end
+
+if (gb_is_grb (arg2))
+    arg2 = struct (arg2) ;
+end
+
+if (gb_is_grb (arg3))
+    arg3 = struct (arg3) ;
+end
+
+if (nargin >= 4 && gb_is_grb (arg4))
+    arg4 = struct (arg4) ;
+end
+
+if (nargin >= 5 && gb_is_grb (arg5))
+    arg5 = struct (arg5) ;
+end
+
+if (nargin >= 6 && gb_is_grb (arg6))
+    arg6 = struct (arg6) ;
+end
+
+if (nargin >= 7 && gb_is_grb (arg7))
+    arg7 = struct (arg7) ;
+end
 
     switch (nargin)
         case 3
-            [C_opaque, kind] = gbmex_kronecker (ghb, arg1, arg2, arg3) ;
+            [C_opaque, kind] = gbmex_kronecker (0, arg1, arg2, arg3) ;
         case 4
-            [C_opaque, kind] = gbmex_kronecker (ghb, arg1, arg2, arg3, arg4) ;
+            [C_opaque, kind] = gbmex_kronecker (0, arg1, arg2, arg3, arg4) ;
         case 5
-            [C_opaque, kind] = gbmex_kronecker (ghb, arg1, arg2, arg3, arg4, ...
+            [C_opaque, kind] = gbmex_kronecker (0, arg1, arg2, arg3, arg4, ...
                 arg5) ;
         case 6
-            [C_opaque, kind] = gbmex_kronecker (ghb, arg1, arg2, arg3, arg4, ...
+            [C_opaque, kind] = gbmex_kronecker (0, arg1, arg2, arg3, arg4, ...
                 arg5, arg6) ;
         case 7
-            [C_opaque, kind] = gbmex_kronecker (ghb, arg1, arg2, arg3, arg4, ...
+            [C_opaque, kind] = gbmex_kronecker (0, arg1, arg2, arg3, arg4, ...
                 arg5, arg6, arg7) ;
-        otherwise
-            error ('GrB:error', ...
-                'usage: C = GrB.kronecker (Cin, M, accum, op, A, B, desc)') ;
     end
-    C = gb_mexfunction_result (ghb, C_opaque, kind) ;
+    C = gb_mexfunction_result (0, C_opaque, kind) ;
 

@@ -10,6 +10,14 @@ function C = gb_eq (ghb, A, B)
 % B scalar, A matrix:  C is full if B==0, otherwise C is a subset of A.
 % A matrix, B matrix:  C is full.
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
+if (gb_is_grb (B))
+    B = struct (B) ;
+end
+
 [am, an, atype] = gbmex_size (A) ;
 [bm, bn, btype] = gbmex_size (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
@@ -24,7 +32,7 @@ if (a_is_scalar)
         C = gzb_emult (ghb, a, '==', b) ;
     else
         % A is a scalar, B is a matrix
-        if (gb_scalar (ghb, A) == 0)
+        if (gb_scalar (A) == 0)
             % since a == 0, entries not present in B result in a true
             % value, so the result is full.  Expand A to a full matrix.
             a = gb_scalar_to_full (ghb, bm, bn, ctype, gb_fmt (B), A) ;
@@ -40,7 +48,7 @@ if (a_is_scalar)
 else
     if (b_is_scalar)
         % A is a matrix, B is a scalar
-        if (gb_scalar (ghb, B) == 0)
+        if (gb_scalar (B) == 0)
             % since b == 0, entries not present in A result in a true
             % value, so the result is full.  Expand B to a full matrix.
             a = gzb_full (ghb, A, ctype) ;

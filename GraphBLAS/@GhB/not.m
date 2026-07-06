@@ -9,7 +9,5 @@ function C = not (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
-C = gzb_apply (ghb, '~', gzb_full (ghb, G, 'logical')) ;
+C = gzb_apply (1, '~', gzb_full (1, G, 'logical')) ;
 

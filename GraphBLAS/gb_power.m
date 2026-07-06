@@ -5,6 +5,14 @@ function C = gb_power (ghb, A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
+if (gb_is_grb (B))
+    B = struct (B) ;
+end
+
 [am, an, atype] = gbmex_size (A) ;
 [bm, bn, btype] = gbmex_size (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
@@ -18,10 +26,10 @@ if (a_is_real && b_is_real)
     if (gb_contains (btype, 'int') || isequal (btype, 'logical'))
         % B is logical or integer, so C is real
         c_is_real = true ;
-    elseif (gbmex_isequal (B, gzb_apply (ghb, 'round', B)))
+    elseif (gbmex_isequal (B, gzb_apply (1, 'round', B)))
         % B is floating point, but all values are equal to integers
         c_is_real = true ;
-    elseif (gb_scalar (ghb, gzb_reduce (ghb, 'min', A)) >= 0)
+    elseif (gb_scalar (gzb_reduce (1, 'min', A)) >= 0)
         % All entries in A are non-negative, so C is real
         c_is_real = true ;
     else
@@ -46,7 +54,7 @@ else
 end
 
 % B is always full
-B2 = gzb_full (ghb, B, ctype) ;
+B2 = gzb_full (1, B, ctype) ;
 
 % determine the operator
 op = ['pow.' ctype] ;
@@ -57,7 +65,7 @@ if (a_is_scalar)
     % A is a scalar: C is a full matrix
     %----------------------------------------------------------------------
 
-    a = gzb_full (ghb, A, ctype) ;
+    a = gzb_full (1, A, ctype) ;
     C = gzb_apply2 (ghb, op, a, B2) ;
 
 else
@@ -68,7 +76,7 @@ else
 
     if (b_is_scalar)
         % A is a matrix, B2 is a scalar
-        b = gb_scalar (ghb, B2) ;
+        b = gb_scalar (B2) ;
         if (b == 0)
             % special case:  C = A.^0 = ones (am, an, ctype)
             C = gb_scalar_to_full (ghb, am, an, ctype, gb_fmt (A), 1) ;
@@ -77,7 +85,7 @@ else
             C = gzb (ghb, A) ;
         elseif (b <= 0)
             % 0.^b where b < 0 is Inf, so C is full
-            a = gzb_full (ghb, A, ctype) ;
+            a = gzb_full (1, A, ctype) ;
             C = gzb_apply2 (ghb, op, a, B2) ;
         else
             % The scalar b is > 0, and thus 0.^b is zero, so C is sparse.
@@ -85,14 +93,14 @@ else
         end
     else
         % both A and B2 are matrices.  0.^0 is 1, so C is full.
-        a = gzb_full (ghb, A, ctype) ;
+        a = gzb_full (1, A, ctype) ;
         C = gzb_emult (ghb, op, a, B2) ;
     end
 
 end
 
 % convert C to real if imaginary part is zero
-if (~c_is_real && gb_make_real (ghb, C))
+if (~c_is_real && gb_make_real (C))
     C = gzb_apply (ghb, 'creal', C) ;
 end
 

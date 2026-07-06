@@ -4,6 +4,10 @@ function C = gb_complex (ghb, A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
 if (nargin == 2)
 
     % with a single input, A must be a GraphBLAS matrix (otherwise,
@@ -16,6 +20,10 @@ else
     % with two inputs, A and B are real matrices (@GrB or built-in)
     % but at least one must be GrB or otherwise this overloaded method
     % would not be called).  The output is a double complex matrix.
+
+    if (gb_is_grb (B))
+        B = struct (B) ;
+    end
 
     [am, an, atype] = gbmex_size (A) ;
     [bm, bn, btype] = gbmex_size (B) ;
@@ -35,7 +43,7 @@ else
             C = gzb_emult (ghb, 'cmplx.double', a, b, desc) ;
         else
             % A is a scalar, B is a matrix.  C is full, unless A == 0.
-            if (gb_scalar (ghb, A) == 0)
+            if (gb_scalar (A) == 0)
                 % C = 1i*B, so A = zero, C is sparse or full.
                 desc.kind = 'builtin' ;
                 C = gzb_apply2 (ghb, 'cmplx.double', 0, B, desc) ;
@@ -51,7 +59,7 @@ else
     else
         if (b_is_scalar)
             % A is a matrix, B is a scalar.  C is full, unless B == 0.
-            if (gb_scalar (ghb, B) == 0)
+            if (gb_scalar (B) == 0)
                 % C = complex (A); C is sparse or full
                 C = gzb_cast (ghb, A, 'double.complex') ;
             else

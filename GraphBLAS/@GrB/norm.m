@@ -27,11 +27,11 @@ function s = norm (G, kind)
 
 if (nargin == 2)
     if (~ischar (kind))
-        kind = gb_get_scalar (0, kind) ;
+        kind = gb_get_scalar (kind) ;
     end
 else
     kind = 2 ;
 end
 
-s = gbmex_norm (G, kind) ;
+s = gzb_norm (G, kind) ;
 

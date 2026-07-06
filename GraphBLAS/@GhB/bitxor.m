@@ -30,11 +30,9 @@ function C = bitxor (A, B, assumedtype)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
 if (nargin == 2)
-    C = gb_bitwise (ghb, 'bitxor', A, B) ;
+    C = gb_bitwise (1, 'bitxor', A, B) ;
 else
-    C = gb_bitwise (ghb, 'bitxor', A, B, assumedtype) ;
+    C = gb_bitwise (1, 'bitxor', A, B, assumedtype) ;
 end
 

@@ -43,44 +43,77 @@ function C = eunion (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
+if (nargout == 0)
+    narginchk (6, 9) ;
+else
+    narginchk (5, 9) ;
+end
+
+if (gb_is_grb (arg1))
+    arg1 = struct (arg1) ;
+end
+
+if (gb_is_grb (arg2))
+    arg2 = struct (arg2) ;
+end
+
+if (gb_is_grb (arg3))
+    arg3 = struct (arg3) ;
+end
+
+if (gb_is_grb (arg4))
+    arg4 = struct (arg4) ;
+end
+
+if (gb_is_grb (arg5))
+    arg5 = struct (arg5) ;
+end
+
+if (nargin >= 6 && gb_is_grb (arg6))
+    arg6 = struct (arg6) ;
+end
+
+if (nargin >= 7 && gb_is_grb (arg7))
+    arg7 = struct (arg7) ;
+end
+
+if (nargin >= 8 && gb_is_grb (arg8))
+    arg8 = struct (arg8) ;
+end
+
+if (nargin >= 9 && gb_is_grb (arg9))
+    arg9 = struct (arg9) ;
+end
 
 if (nargout == 0)
     switch (nargin)
         case 6
-            gbmex_eunion (ghb, arg1, arg2, arg3, arg4, arg5, arg6) ;
+            gbmex_eunion (1, arg1, arg2, arg3, arg4, arg5, arg6) ;
         case 7
-            gbmex_eunion (ghb, arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
+            gbmex_eunion (1, arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
         case 8
-            gbmex_eunion (ghb, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) ;
+            gbmex_eunion (1, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) ;
         case 9
-            gbmex_eunion (ghb, arg1, arg2, arg3, arg4, arg5, arg6, arg7, ...
+            gbmex_eunion (1, arg1, arg2, arg3, arg4, arg5, arg6, arg7, ...
                 arg8, arg9) ;
-        otherwise
-            error ('GrB:error', ...
-                'usage: C = GhB.eunion (Cin, M, accum, op, A, a, B, b, desc)') ;
     end
 else
     switch (nargin)
         case 5
-            [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, ...
-                arg5) ;
+            [C_opaque, kind] = gbmex_eunion (1, arg1, arg2, arg3, arg4, arg5) ;
         case 6
-            [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, ...
+            [C_opaque, kind] = gbmex_eunion (1, arg1, arg2, arg3, arg4, ...
                 arg5, arg6) ;
         case 7
-            [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, ...
+            [C_opaque, kind] = gbmex_eunion (1, arg1, arg2, arg3, arg4, ...
                 arg5, arg6, arg7) ;
         case 8
-            [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, ...
+            [C_opaque, kind] = gbmex_eunion (1, arg1, arg2, arg3, arg4, ...
                 arg5, arg6, arg7, arg8) ;
         case 9
-            [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, ...
+            [C_opaque, kind] = gbmex_eunion (1, arg1, arg2, arg3, arg4, ...
                 arg5, arg6, arg7, arg8, arg9) ;
-        otherwise
-            error ('GrB:error', ...
-                'usage: C = GhB.eunion (Cin, M, accum, op, A, a, B, b, desc)') ;
     end
-    C = gb_mexfunction_result (ghb, C_opaque, kind) ;
+    C = gb_mexfunction_result (1, C_opaque, kind) ;
 end
 

@@ -8,7 +8,5 @@ function C = ge (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-C = gb_le (ghb, B, A) ;
+C = gb_le (0, B, A) ;
 

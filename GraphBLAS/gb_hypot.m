@@ -4,6 +4,14 @@ function C = gb_hypot (ghb, A_arg, B_arg)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A_arg))
+    A_arg = struct (A_arg) ;
+end
+
+if (gb_is_grb (B_arg))
+    B_arg = struct (B_arg) ;
+end
+
 atype = gbmex_type (A_arg) ;
 btype = gbmex_type (B_arg) ;
 

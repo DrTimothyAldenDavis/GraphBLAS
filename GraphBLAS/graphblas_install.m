@@ -29,6 +29,7 @@ if (~isempty (slash))
     end
 end
 
+addpath (here) ;
 have_octave = gb_octave ;
 
 if (have_octave)
@@ -127,9 +128,11 @@ try
     clear mex
     fprintf ('\n================================\n%s\n', cmd1) ;
 
-    [status, result] = system (cmd1) ;
     if (have_octave)
+        [status, result] = system (cmd1) ;
         disp (result)
+    else
+        status = system (cmd1, '-echo') ;
     end
     if (status ~= 0)
         cd (here) ;
@@ -142,11 +145,10 @@ try
     if (have_octave)
         fprintf ('When using octave, intermediate progress is not displayed.\n') ;
         fprintf ('Be assured that the GraphBLAS library is now being compiled ...\n') ;
-    end
-    [status, result] = system (cmd2) ;
-    if (have_octave)
-        % display all progress, all at once
-        disp (result)
+        [status, result] = system (cmd2) ;
+        disp (result) ;
+    else
+        status = system (cmd2, '-echo') ;
     end
     cd (here) ;
     if (status ~= 0)

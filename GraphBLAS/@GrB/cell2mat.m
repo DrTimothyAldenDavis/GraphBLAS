@@ -53,7 +53,5 @@ function C = cell2mat (A)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-C = gb_cell2mat (ghb, A) ;
+C = gb_cell2mat (0, A) ;
 

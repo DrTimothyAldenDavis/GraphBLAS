@@ -104,7 +104,6 @@ methods
     % C = GhB (m,n,format,type) ; ditto
     %
     % See also sparse.
-        ghb = 1 ;     % 0 for GrB, 1 for GhB
         switch (nargin)
             case 0
                 C.opaque = [ ] ;
@@ -112,14 +111,14 @@ methods
                 if (isstruct (arg1))
                     C.opaque = arg1 ;
                 else
-                    C.opaque = gbmex_new (ghb, arg1) ;
+                    C.opaque = gbmex_new (1, arg1) ;
                 end
             case 2
-                C.opaque = gbmex_new (ghb, arg1, arg2) ;
+                C.opaque = gbmex_new (1, arg1, arg2) ;
             case 3
-                C.opaque = gbmex_new (ghb, arg1, arg2, arg3) ;
+                C.opaque = gbmex_new (1, arg1, arg2, arg3) ;
             case 4
-                C.opaque = gbmex_new (ghb, arg1, arg2, arg3, arg4) ;
+                C.opaque = gbmex_new (1, arg1, arg2, arg3, arg4) ;
         end
     end
 
@@ -156,7 +155,6 @@ methods
     C = plus (A, B) ;           % C = A + B
     C = power (A, B) ;          % C = A .^ B
     C = rdivide (A, B) ;        % C = A ./ B
-    I = subsindex (A) ;         % for C = X (A), using A as index I
     C = subsasgn (C, S, A) ;    % C (I,J) = A or C (M) = A
     C = subsref (A, S) ;        % C = A (I,J) or C = A (M)
     C = times (A, B) ;          % C = A .* B

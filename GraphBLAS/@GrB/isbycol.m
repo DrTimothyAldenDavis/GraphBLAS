@@ -10,6 +10,9 @@ function s = isbycol (A)
 % SPDX-License-Identifier: Apache-2.0
 
 if (isobject (A))
+    if (gb_is_grb (A))
+        A = struct (A) ;
+    end
     s = isequal (gbmex_format (A), 'by col')  ;
 else
     s = true ;

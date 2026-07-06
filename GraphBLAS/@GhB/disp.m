@@ -27,14 +27,9 @@ function disp (A, level)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
-% the builtin disp method does not print the name of the matrix,
-% while the builtin display method does.
-
 if (nargin < 2)
-    gb_display (ghb, '', A) ;
+    gb_display (1, '', A) ;
 else
-    gb_display (ghb, '', A, level) ;
+    gb_display (1, '', A, level) ;
 end
 

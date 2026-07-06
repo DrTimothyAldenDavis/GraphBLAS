@@ -125,6 +125,9 @@ if (nargin == 0)
 else
     % f = GrB.format (A) ; get the format of A (built-in or GraphBLAS)
     % f = GrB.format (f) ; set the global format for all matrices.
+    if (gb_is_grb (arg))
+        arg = struct (arg) ;
+    end
     if (nargout <= 1)
         f = gbmex_format (arg) ;
     else

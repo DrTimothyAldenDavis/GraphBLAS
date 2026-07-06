@@ -1,4 +1,4 @@
-function C = sprandn (arg1, arg2, arg3)
+function C = sprandn (varargin)
 %SPRANDN sparse normally distributed random matrix.
 % C = sprandn (A) is a matrix with the same pattern as A,
 %   but with normally distributed random entries.
@@ -17,19 +17,5 @@ function C = sprandn (arg1, arg2, arg3)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-if (nargin == 1)
-    % C = sprandn (G)
-    C = gb_random (ghb, arg1, 'normal') ;
-elseif (nargin == 3)
-    % C = sprandn (m, n, d)
-    m = gb_get_scalar (ghb, arg1) ;
-    n = gb_get_scalar (ghb, arg2) ;
-    d = gb_get_scalar (ghb, arg3) ;
-    C = gb_random (ghb, m, n, d, 'normal') ;
-else
-    % the 'rc' input option is not supported
-    error ('GrB:error', 'usage: sprandn(A) or sprandn(m,n,d)') ;
-end
+C = gb_sprand (0, 'normal', varargin {:}) ;
 

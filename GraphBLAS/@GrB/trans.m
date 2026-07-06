@@ -26,22 +26,39 @@ function C = trans (arg1, arg2, arg3, arg4, arg5)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
+narginchk (1, 5) ;
+
+if (gb_is_grb (arg1))
+    arg1 = struct (arg1) ;
+end
+
+if (nargin >= 2 && gb_is_grb (arg2))
+    arg2 = struct (arg2) ;
+end
+
+if (nargin >= 3 && gb_is_grb (arg3))
+    arg3 = struct (arg3) ;
+end
+
+if (nargin >= 4 && gb_is_grb (arg4))
+    arg4 = struct (arg4) ;
+end
+
+if (nargin >= 5 && gb_is_grb (arg5))
+    arg5 = struct (arg5) ;
+end
 
     switch (nargin)
         case 1
-            [C_opaque, kind] = gbmex_trans (ghb, arg1) ;
+            [C_opaque, kind] = gbmex_trans (0, arg1) ;
         case 2
-            [C_opaque, kind] = gbmex_trans (ghb, arg1, arg2) ;
+            [C_opaque, kind] = gbmex_trans (0, arg1, arg2) ;
         case 3
-            [C_opaque, kind] = gbmex_trans (ghb, arg1, arg2, arg3) ;
+            [C_opaque, kind] = gbmex_trans (0, arg1, arg2, arg3) ;
         case 4
-            [C_opaque, kind] = gbmex_trans (ghb, arg1, arg2, arg3, arg4) ;
+            [C_opaque, kind] = gbmex_trans (0, arg1, arg2, arg3, arg4) ;
         case 5
-            [C_opaque, kind] = gbmex_trans (ghb, arg1, arg2, arg3, arg4, arg5) ;
-        otherwise
-            error ('GrB:error', ...
-                'usage: C = GrB.trans (Cin, M, accum, A, desc)') ;
+            [C_opaque, kind] = gbmex_trans (0, arg1, arg2, arg3, arg4, arg5) ;
     end
-    C = gb_mexfunction_result (ghb, C_opaque, kind) ;
+    C = gb_mexfunction_result (0, C_opaque, kind) ;
 

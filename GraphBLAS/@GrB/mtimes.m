@@ -8,7 +8,5 @@ function C = mtimes (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-C = gzb_mtimes (ghb, A, B) ;
+C = gzb_mtimes (0, A, B) ;
 

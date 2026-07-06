@@ -8,10 +8,18 @@ function C = gb_emult (ghb, A, op, B)
 %
 % The input matrices may be either GraphBLAS structs and/or built-in
 % matrices, in any combination.  C is returned as a GraphBLAS @GrB or @GhB
-% matrix..
+% matrix.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
+
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
+if (gb_is_grb (B))
+    B = struct (B) ;
+end
 
 if (gb_isscalar (A))
     if (gb_isscalar (B))
@@ -19,12 +27,12 @@ if (gb_isscalar (A))
         C = gzb_emult (ghb, A, op, B) ;
     else
         % A is a scalar, B is a matrix
-        C = gzb_apply2 (ghb, gzb_full (ghb, A), op, B) ;
+        C = gzb_apply2 (ghb, gzb_full (1, A), op, B) ;
     end
 else
     if (gb_isscalar (B))
         % A is a matrix, B is a scalar
-        C = gzb_apply2 (ghb, A, op, gzb_full (ghb, B)) ;
+        C = gzb_apply2 (ghb, A, op, gzb_full (1, B)) ;
     else
         % both A and B are matrices
         C = gzb_emult (ghb, A, op, B) ;

@@ -72,6 +72,10 @@ X2
 S = struct (G)
 assert (isstruct (S)) ;
 assert (isfield (S, 'opaque') || isfield (S, 'GraphBLASv10')) ;
+
+% test [GrB,GhB]/struct:
+S = struct (G2)
+assert (isstruct (S)) ;
 if (isfield (S, 'opaque'))
     assert (isequal (size (S.opaque), [1 8])) ;
     assert (isequal (class (S.opaque), 'uint8')) ;

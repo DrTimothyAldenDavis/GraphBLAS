@@ -18,6 +18,9 @@ else
 
     % split into scalars, rows, or columns
     if (isobject (A))
+        if (gb_is_grb (A))
+            A = struct (A) ;
+        end
         [m, n] = gbmex_size (A) ;
     else
         [m, n] = size (A) ;

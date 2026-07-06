@@ -8,7 +8,5 @@ function C = log1p (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-C = gb_trig (ghb, 'log1p', G) ;
+C = gb_trig (0, 'log1p', struct (G)) ;
 

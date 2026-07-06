@@ -4,6 +4,14 @@ function C = gb_mpower (ghb, A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
+if (gb_is_grb (B))
+    B = struct (B) ;
+end
+
 [am, an, atype] = gbmex_size (A) ;
 [bm, bn] = gbmex_size (B) ;
 a_is_scalar = (am == 1) && (an == 1) ;
@@ -19,7 +27,7 @@ else
         error ('GrB:error', ...
             'For C=A^B, B must be a non-negative integer scalar') ;
     end
-    b = gb_scalar (ghb, B) ;
+    b = gb_scalar (B) ;
     if (~(isreal (b) && isfinite (b) && round (b) == b && b >= 0))
         error ('GrB:error', ...
             'For C=A^B, B must be a non-negative integer scalar') ;

@@ -27,11 +27,9 @@ function DiGraph = digraph (G, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
 if (nargin == 1)
-    DiGraph = gb_digraph (ghb, G) ;
+    DiGraph = gb_digraph (1, G) ;
 else
-    DiGraph = gb_digraph (ghb, G, option) ;
+    DiGraph = gb_digraph (1, G, option) ;
 end
 

@@ -4,6 +4,14 @@ function C = gb_bitget (ghb, A, B, assumedtype)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (A))
+    A = struct (A) ;
+end
+
+if (gb_is_grb (B))
+    B = struct (B) ;
+end
+
 if (nargin < 4)
     assumedtype = 'uint64' ;
 end

@@ -23,17 +23,9 @@ function C = sum (G, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-if (isequal (gbmex_type (G), 'logical'))
-    op = '+.int64' ;
-else
-    op = '+' ;
-end
-
 if (nargin == 1)
-    C = gb_sum (ghb, op, G) ;
+    C = gb_sum (0, '+', [ ], G) ;
 else
-    C = gb_sum (ghb, op, G, option) ;
+    C = gb_sum (0, '+', [ ], G, option) ;
 end
 

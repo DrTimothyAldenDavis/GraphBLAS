@@ -73,28 +73,11 @@ for n = 100:100:1000
         S1 = mat2cell (C1, uint64 ([n n]), [n n]) ;
         assert (isequal (S1, S2)) ;
 
-        try
-            S1 = mat2cell (C1, single ([n n]), [n n]) ;
-            msg = [ ] ;
-            ok = false ;
-        catch me
-            msg = me.message ;
-            ok = true ;
-        end
-        assert (ok) ;
-        assert (gb_contains (msg, 'unsupported type')) ;
+        S1 = mat2cell (C1, single ([n n]), [n n]) ;
+        assert (isequal (S1, S2)) ;
 
-        try
-            % 2nd and 3rd arguments must be built-in integer arrays
-            S1 = mat2cell (C1, gtb (ghb, [n n]), [n n]) ;
-            msg = [ ] ;
-            ok = false ;
-        catch me
-            msg = me.message ;
-            ok = true ;
-        end
-        assert (ok) ;
-        assert (gb_contains (msg, 'unsupported type')) ;
+        S1 = mat2cell (C1, gtb (ghb, [n n]), [n n]) ;
+        assert (isequal (S1, S2)) ;
 
         % test cell2mat
         S1 = cell (2,2) ;

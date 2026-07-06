@@ -30,7 +30,5 @@ function [I, varargout] = find (G, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
-[I, varargout{1:nargout-1}] = gb_find (ghb, G, varargin {:}) ;
+[I, varargout{1:nargout-1}] = gb_find (1, G, varargin {:}) ;
 

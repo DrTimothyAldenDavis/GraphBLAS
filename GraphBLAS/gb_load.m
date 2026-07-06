@@ -14,7 +14,7 @@ elseif (isfield (S, 'GrB_Matrix_from_GrB_save'))
     % and it already contains a properly loaded @GrB matrix.
     C = S.GrB_Matrix_from_GrB_save ;
 else
-    % S has already been properly loaded by GrB/loadobj
+    % S has already been properly loaded by GrB/loadobj or GhB/loadobj
     C = S ;
 end
 

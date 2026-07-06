@@ -1,4 +1,4 @@
-function I = gb_subsindex (ghb, G_arg) ;
+function I = gb_subsindex (G_arg) ;
 %GB_SUBSINDEX subscript index for GrB and GhB.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -7,10 +7,14 @@ function I = gb_subsindex (ghb, G_arg) ;
 % On input, G must contain integers in the range 1 to prod (size (A))-1.
 % The dimensions of A are not provided to subsindex.
 
+if (gb_is_grb (G_arg))
+    G_arg = struct (G_arg) ;
+end
+
 % As an extension to the expression A(G), prune zeros and negative
 % values first.  The expression A(G) becomes A (G (find (G > 0))).
 gbmex_wait (G_arg) ;
-G = gzb_select (ghb, '>0', G_arg) ;
+G = gzb_select (1, '>0', G_arg) ;
 gbmex_wait (G) ;
 
 [m, n, type] = gbmex_size (G) ;

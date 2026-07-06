@@ -26,11 +26,9 @@ function C = complex (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
 if (nargin == 1)
-    C = gb_complex (ghb, A) ;
+    C = gb_complex (1, A) ;
 else
-    C = gb_complex (ghb, A, B) ;
+    C = gb_complex (1, A, B) ;
 end
 

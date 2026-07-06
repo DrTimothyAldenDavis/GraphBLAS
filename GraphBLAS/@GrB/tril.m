@@ -10,11 +10,9 @@ function L = tril (G, k)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
 if (nargin < 2)
-    L = gb_tri (ghb, 'tril', G, 0) ;
+    L = gb_tri (0, 'tril', G, 0) ;
 else
-    L = gb_tri (ghb, 'tril', G, k) ;
+    L = gb_tri (0, 'tril', G, k) ;
 end
 

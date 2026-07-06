@@ -8,11 +8,11 @@ function C = prune (G, id)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
+% FIXME: add inplace semantics?  Test the performance
 
 if (nargin == 1)
-    C = gb_prune (ghb, G) ;
+    C = gb_prune (1, G) ;
 else
-    C = gb_prune (ghb, G, id) ;
+    C = gb_prune (1, G, id) ;
 end
 

@@ -53,11 +53,9 @@ function [x,p] = argmin (A, dim)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
 if (nargin < 2)
     dim = 0 ;
 end
 
-[x, p] = gzb_argminmax (ghb, A, 0, dim) ;
+[x, p] = gzb_argminmax (0, A, 0, dim) ;
 

@@ -12,7 +12,5 @@ function C = false (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
-C = gb_false (ghb, varargin {:}) ;
+C = gb_false (1, varargin {:}) ;
 

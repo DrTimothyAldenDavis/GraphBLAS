@@ -6,20 +6,23 @@ function gbmake (what)
 %
 % gbmake compiles the @GrB interface for SuiteSparse:GraphBLAS.  The
 % GraphBLAS library must already be compiled and installed.
-% MATLAB 9.4 (R2018a) or Octave 11.1 later is required.
+% MATLAB 9.4 (R2018a) or Octave 10.0 later is required.
+%
+% You must run this command while in the GraphBLAS/GraphBLAS/private folder.
 %
 % For the Mac, the GraphBLAS library must be installed in /usr/local/lib/ as
 % libgraphblas_matlab.dylib (or just libgraphblas.dylib for Octave).  It cannot
 % be used where it is created in ../build, because of the default Mac security
 % settings.  For Unix/Linux, the library is ../build/libgraphblas_matlab.so if
-% found (or libgraphblas.so for Octave), or in /usr/local/lib if not found
-% there.
+% found (or ../../build/libgraphblas.so for Octave), or in /usr/local/lib if
+% not found there.
 %
 % See also mex, version, GrB.clear.
 %
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+addpath ('..') ;
 have_octave = gb_octave ;
 
 if (have_octave)
@@ -56,6 +59,7 @@ make_all = (isequal (what, 'all')) ;
   flags = '-O -R2018a -DGBNCPUFEAT' ;
 % the debug build is required to enable the GrB.nmalloc checks in gbtest.m:
 % flags = '-g -R2018a -DGBNCPUFEAT -DMALLOC_TRACKING' ;   % debug build
+  flags = '-O -R2018a -DGBNCPUFEAT -DMALLOC_TRACKING' ;   % tracking build
 
 if ispc
     % First do the following in GraphBLAS/build, in the Windows console:

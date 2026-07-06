@@ -1,6 +1,5 @@
 function [have_octave, octave_version] = gb_octave
-%GB_OCTAVE determine if Octave is in use, and what version
-% [have_octave, octave_version] = gb_octave
+%GB_OCTAVE determine if Octave is in use, and what version.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

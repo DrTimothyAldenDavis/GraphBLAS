@@ -52,12 +52,18 @@ function type = optype (a, b)
 if (ischar (a))
     atype = a ;
 else
+    if (gb_is_grb (a))
+        a = struct (a) ;
+    end
     atype = gbmex_type (a) ;
 end
 
 if (ischar (b))
     btype = b ;
 else
+    if (gb_is_grb (b))
+        b = struct (b) ;
+    end
     btype = gbmex_type (b) ;
 end
 

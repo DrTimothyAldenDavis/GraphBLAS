@@ -6,7 +6,7 @@ function C = gb_log (ghb, G)
 
 C = gb_trig (ghb, 'log', gzb_full (ghb, G)) ;
 
-if (gb_make_real (ghb, C))
+if (gb_make_real (C))
     C = gzb_apply (ghb, 'creal', C) ;
 end
 

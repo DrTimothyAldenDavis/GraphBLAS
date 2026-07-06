@@ -26,11 +26,9 @@ function C = bitcmp (A, assumedtype)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
 if (nargin == 1)
-    C = gb_bitcmp (ghb, A) ;
+    C = gb_bitcmp (1, A) ;
 else
-    C = gb_bitcmp (ghb, A, assumedtype) ;
+    C = gb_bitcmp (1, A, assumedtype) ;
 end
 

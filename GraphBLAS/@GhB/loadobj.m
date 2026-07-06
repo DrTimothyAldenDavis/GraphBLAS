@@ -9,11 +9,10 @@ function G = loadobj (S)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
+% S cannot be a historical @GhB object, since the @GhB object was introduced in
+% GraphBLAS v10.4.0, the same time loadobj and saveobj were added.  Thus, S
+% must be a struct created by GhB/saveobj with a single S.blob field containing
+% the serialized matrix.  
 
-% S is a struct created by saveobj with a single S.blob field containing the
-% serialized matrix.  It cannot be a historical @GhB object, since the @GhB
-% object was introduced in GraphBLAS v10.4.0, the same time loadobj and saveobj
-% were added.
-G = gzb_deserialize (ghb, S.blob) ;
+G = gzb_deserialize (1, S.blob) ;
 

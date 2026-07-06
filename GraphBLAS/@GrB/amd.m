@@ -1,4 +1,4 @@
-function p = amd (G, varargin)
+function p = amd (G, opts)
 %AMD approximate minimum degree ordering.
 % See 'help amd' for details.
 %
@@ -7,5 +7,9 @@ function p = amd (G, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-p = builtin ('amd', logical (G), varargin {:}) ;
+if (nargin == 1)
+    p = amd (logical (G)) ;
+else
+    p = amd (logical (G), double (opts)) ;
+end
 

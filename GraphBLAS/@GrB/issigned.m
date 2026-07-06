@@ -14,10 +14,10 @@ function s = issigned (arg)
 
 if (ischar (arg))
     type = arg ;
-elseif (isobject (arg))
-    arg = arg.opaque ;
-    type = gbmex_type (arg) ;
 else
+    if (gb_is_grb (arg))
+        arg = struct (arg) ;
+    end
     type = gbmex_type (arg) ;
 end
 

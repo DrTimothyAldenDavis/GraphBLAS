@@ -41,6 +41,8 @@ void gbmx_get_grb_matrix
     if (mxIsClass (X, "GrB"))
     { 
         // X is a @GrB object; get its opaque content (which must be a struct).
+        // FIXME: this is insanely slow!  It creates a copy of the entire
+        // opaque struct!
         X = mxGetProperty (X, 0, "opaque") ;
     }
 

@@ -62,7 +62,6 @@ function [v, parent] = bfs (A, s, varargin)
 % SPDX-License-Identifier: Apache-2.0
 
 % FIXME: GhB will be different
-%% ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 %-------------------------------------------------------------------------
 % initializations

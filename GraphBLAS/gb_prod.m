@@ -5,9 +5,22 @@ function C = gb_prod (ghb, op, type, G, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (G))
+    G = struct (G) ;
+end
+
+if (isempty (type))
+    type = gbmex_type (G) ;
+end
+
+if (isequal (op, '*') && isequal (type, 'logical'))
+    % revise the op for the *.logical case
+    op = '&.logical' ;
+end
+
 [m, n] = gbmex_size (G) ;
 
-if (nargin == 4)
+if (nargin < 5)
     % C = prod (G)
     if (m == 1 || n == 1)
         option = 'all' ;

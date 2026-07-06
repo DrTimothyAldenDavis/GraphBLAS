@@ -17,7 +17,6 @@ function s = tricount (A, arg2, arg3)
 % SPDX-License-Identifier: Apache-2.0
 
 % FIXME: GhB will be different
-%% ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 [m, n] = size (A) ;
 if (m ~= n)

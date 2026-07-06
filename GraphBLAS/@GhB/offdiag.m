@@ -7,7 +7,5 @@ function C = offdiag (A)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
-C = gzb_select (ghb, 'offdiag', A, 0) ;
+C = gzb_select (1, 'offdiag', A, 0) ;
 

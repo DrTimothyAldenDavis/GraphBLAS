@@ -42,27 +42,59 @@ function C = eunion (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
+narginchk (5, 9) ;
+
+if (gb_is_grb (arg1))
+    arg1 = struct (arg1) ;
+end
+
+if (gb_is_grb (arg2))
+    arg2 = struct (arg2) ;
+end
+
+if (gb_is_grb (arg3))
+    arg3 = struct (arg3) ;
+end
+
+if (gb_is_grb (arg4))
+    arg4 = struct (arg4) ;
+end
+
+if (gb_is_grb (arg5))
+    arg5 = struct (arg5) ;
+end
+
+if (nargin >= 6 && gb_is_grb (arg6))
+    arg6 = struct (arg6) ;
+end
+
+if (nargin >= 7 && gb_is_grb (arg7))
+    arg7 = struct (arg7) ;
+end
+
+if (nargin >= 8 && gb_is_grb (arg8))
+    arg8 = struct (arg8) ;
+end
+
+if (nargin >= 9 && gb_is_grb (arg9))
+    arg9 = struct (arg9) ;
+end
 
     switch (nargin)
         case 5
-            [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, ...
-                arg5) ;
+            [C_opaque, kind] = gbmex_eunion (0, arg1, arg2, arg3, arg4, arg5) ;
         case 6
-            [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, ...
+            [C_opaque, kind] = gbmex_eunion (0, arg1, arg2, arg3, arg4, ...
                 arg5, arg6) ;
         case 7
-            [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, ...
+            [C_opaque, kind] = gbmex_eunion (0, arg1, arg2, arg3, arg4, ...
                 arg5, arg6, arg7) ;
         case 8
-            [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, ...
+            [C_opaque, kind] = gbmex_eunion (0, arg1, arg2, arg3, arg4, ...
                 arg5, arg6, arg7, arg8) ;
         case 9
-            [C_opaque, kind] = gbmex_eunion (ghb, arg1, arg2, arg3, arg4, ...
+            [C_opaque, kind] = gbmex_eunion (0, arg1, arg2, arg3, arg4, ...
                 arg5, arg6, arg7, arg8, arg9) ;
-        otherwise
-            error ('GrB:error', ...
-                'usage: C = GrB.eunion (Cin, M, accum, op, A, a, B, b, desc)') ;
     end
-    C = gb_mexfunction_result (ghb, C_opaque, kind) ;
+    C = gb_mexfunction_result (0, C_opaque, kind) ;
 

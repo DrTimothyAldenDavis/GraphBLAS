@@ -11,7 +11,8 @@ function e = nvals (G)
 % SPDX-License-Identifier: Apache-2.0
 
 if (isobject (G))
-    e = gbmex_nvals (G) ;
+    e = gzb_nvals (G) ;
+
 else
     % for a MATLAB/Octave matrix: nvals is the same as nnz
     e = nnz (G) ;

@@ -25,18 +25,9 @@ function C = prod (G, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 1 ;     % 0 for GrB, 1 for GhB
-
-type = gbmex_type (G) ;
-if (isequal (type, 'logical'))
-    op = '&.logical' ;
-else
-    op = '*' ;
-end
-
 if (nargin == 1)
-    C = gb_prod (ghb, op, type, G) ;
+    C = gb_prod (1, '*', [ ], G) ;
 else
-    C = gb_prod (ghb, op, type, G, option) ;
+    C = gb_prod (1, '*', [ ], G, option) ;
 end
 

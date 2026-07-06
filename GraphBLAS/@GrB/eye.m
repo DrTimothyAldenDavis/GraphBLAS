@@ -13,7 +13,5 @@ function C = eye (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
-C = gb_speye (ghb, 'eye', varargin {:}) ;
+C = gb_speye (0, 'eye', varargin {:}) ;
 

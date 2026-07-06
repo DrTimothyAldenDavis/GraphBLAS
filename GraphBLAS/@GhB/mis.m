@@ -26,7 +26,6 @@ function iset = mis (A_arg, check)
 % SPDX-License-Identifier: Apache-2.0
 
 % FIXME: GhB will be different
-%% ghb = 1 ;     % 0 for GrB, 1 for GhB
 
 [m, n] = size (A_arg) ;
 if (m ~= n)

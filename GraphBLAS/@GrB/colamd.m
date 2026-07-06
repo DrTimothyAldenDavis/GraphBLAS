@@ -1,4 +1,4 @@
-function [p, varargout] = colamd (G, varargin)
+function [p, varargout] = colamd (G, opts)
 %COLAMD column approximate minimum degree ordering.
 % See 'help colamd' for details.
 %
@@ -7,5 +7,9 @@ function [p, varargout] = colamd (G, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[p, varargout{1:nargout-1}] = colamd (double (G), varargin {:}) ;
+if (nargin == 1)
+    [p, varargout{1:nargout-1}] = colamd (logical (G)) ;
+else
+    [p, varargout{1:nargout-1}] = colamd (logical (G), double (opts)) ;
+end
 

@@ -28,11 +28,9 @@ function print (A, level)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-ghb = 0 ;     % 0 for GrB, 1 for GhB
-
 if (nargin < 2)
-    gb_display (ghb, '', A) ;
+    gb_display (0, '', A) ;
 else
-    gb_display (ghb, '', A, level) ;
+    gb_display (0, '', A, level) ;
 end
 

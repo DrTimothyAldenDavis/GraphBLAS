@@ -9,7 +9,7 @@ if (isequal (option, 'all'))
     % C = min (A, [ ] 'all'), reducing all entries to a scalar
     C = gb_minall (ghb, op, A) ;
 else
-    opt = gb_get_scalar (ghb, option) ;
+    opt = gb_get_scalar (option) ;
     if (opt == 1)
         % C = min (A, [ ], 1) reduces each column to a scalar,
         % giving a 1-by-n row vector.

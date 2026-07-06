@@ -1,0 +1,9 @@
+function C = gb_cast_full (ghb, G, type, zero)
+%GB_CAST_FULL cast to a full matrix.  Not user-callable.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
+desc.kind = 'full' ;
+C = gbmex_builtin (gzb_full (ghb, G, type, zero, desc)) ;
+
