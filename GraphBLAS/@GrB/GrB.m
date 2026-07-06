@@ -839,7 +839,6 @@ methods
     C = csc (G) ;
     C = csch (G) ;
     C = diag (A, k) ;
-    DiGraph = digraph (G, option) ;
     disp (A, level) ;
     display (G) ;
     C = double (G) ;
@@ -856,7 +855,6 @@ methods
     C = full (A, type, identity) ;
     C = gamma (G) ;
     C = gammaln (G) ;
-    Graph = graph (G, varargin) ;
     C = hypot (A, B) ;
     C = imag (G) ;
     C = int8 (G) ;
@@ -921,9 +919,11 @@ methods
     assert (G) ;            % test assertion 
     [lo, hi] = bandwidth (G, uplo) ;
     [p, varargout] = colamd (G, varargin) ;
+    DiGraph = digraph (G, option) ;
     [p, varargout] = dmperm (G) ;
     [V, varargout] = eig (G, varargin) ;
     [parent, varargout] = etree (G, varargin) ;
+    Graph = graph (G, varargin) ;
     s = isa (G, type) ;
     s = isbanded (G, lo, hi) ;
     s = isdiag (G) ;

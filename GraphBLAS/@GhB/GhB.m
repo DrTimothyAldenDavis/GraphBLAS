@@ -203,7 +203,6 @@ methods
     C = csc (G) ;
     C = csch (G) ;
     C = diag (A, k) ;
-    DiGraph = digraph (G, option) ;
     disp (A, level) ;
     display (G) ;
     C = double (G) ;
@@ -220,7 +219,6 @@ methods
     C = full (A, type, identity) ;
     C = gamma (G) ;
     C = gammaln (G) ;
-    Graph = graph (G, varargin) ;
     C = hypot (A, B) ;
     C = imag (G) ;
     C = int8 (G) ;
