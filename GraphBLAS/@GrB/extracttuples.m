@@ -48,10 +48,10 @@ gbmex_wait (A) ;
 
 switch (nargout)
     case 1
-        I = gbmex_extracttuples (0, A, desc) ;
+        I = gbmex_extracttuples (1, A, desc) ;
     case 2
-        [I, J] = gbmex_extracttuples (0, A, desc) ;
+        [I, J] = gbmex_extracttuples (1, A, desc) ;
     case 3
-        [I, J, X] = gbmex_extracttuples (0, A, desc) ;
+        [I, J, X] = gbmex_extracttuples (1, A, desc) ;
 end
 

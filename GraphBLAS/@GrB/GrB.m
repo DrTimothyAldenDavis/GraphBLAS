@@ -844,7 +844,6 @@ methods
     C = erfc (G) ;
     C = exp (G) ;
     C = expm1 (G) ;
-    [I,J,X] = find (G, k, search) ;
     C = fix (G) ;
     C = flip (G, dim) ;
     C = floor (G) ;
@@ -909,6 +908,7 @@ methods
     C = double (G) ;
     [V, varargout] = eig (G, varargin) ;
     [parent, varargout] = etree (G, varargin) ;
+    [I,J,X] = find (G, k, search) ;
     c = fprintf (varargin) ;
     Graph = graph (G, varargin) ;
     C = int8 (G) ;
@@ -985,7 +985,6 @@ methods (Static)
     C = eunion (Cin, M, accum, op, A, a, B, b, desc) ;
     C = expand (scalar, A, type) ;
     C = extract (Cin, M, accum, A, I, J, desc) ;
-    [I, J, X] = extracttuples (A, desc) ;
     C = eye (m, n, type) ;
     C = false (varargin) ;
     C = incidence (A, varargin) ;
@@ -1024,6 +1023,7 @@ methods (Static)
     c = chunk (c) ;
     clear ;
     descriptorinfo (d) ;
+    [I, J, X] = extracttuples (A, desc) ;
     finalize ;
     [f, s, iso] = format (arg) ;
     init ;

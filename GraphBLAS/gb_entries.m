@@ -58,7 +58,8 @@ else
             desc.base = 'one-based int' ;
             S = gzb_select (1, result, 'nonzero') ;
             gbmex_wait (S) ;
-            result = gbmex_extracttuples (ghb, S, desc) ;
+            % return result as a builtin MATLAB/Octave vector
+            result = gbmex_extracttuples (1, S, desc) ;
         % case 'degree'
             % degree of all rows/cols
             % d = GrB.entries (A, 'row', 'degree')
