@@ -8,6 +8,8 @@ if (nargin == 0)
     ghb = 0 ;
 end
 gtb_name = gtb_prep (ghb) ;
+opts.aggressive = 0 ;
+knobs = [10 10 3] ;
 
 for trial = 1:40
     fprintf ('.') ;
@@ -18,8 +20,11 @@ for trial = 1:40
     G = gtb (ghb, A) ;
     H = gtb (ghb, S) ;
 
-    assert (isequal (amd (A),    amd (G))) ;
-    assert (isequal (amd (S),    amd (H))) ;
+    assert (isequal (amd (A), amd (G))) ;
+    assert (isequal (amd (S), amd (H))) ;
+
+    assert (isequal (amd (A, opts), amd (G, opts))) ;
+    assert (isequal (amd (S, opts), amd (H, opts))) ;
 
     assert (isequal (colamd (A), colamd (G))) ;
     assert (isequal (colamd (S), colamd (H))) ;
@@ -65,6 +70,9 @@ for trial = 1:40
     assert (isequal (rr1, rr2)) ;
 
 end
+
+assert (isequal (colamd (A, knobs), colamd (G, knobs))) ;
+assert (isequal (colamd (S, knobs), colamd (H, knobs))) ;
 
 fprintf ('\ngbtest39 (%d): all tests passed\n', ghb) ;
 

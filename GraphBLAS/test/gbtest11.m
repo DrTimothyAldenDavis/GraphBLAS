@@ -112,8 +112,10 @@ assert (gbtest_eq (X, Y)) ;
 assert (gbtest_eq (X, W)) ;
 
 assert (gtb_isfull (ghb, Z)) ;
+assert (gb_isfull (GrB (Z))) ;
 assert (gtb_isfull (ghb, double (Z))) ;
 assert (~gtb_isfull (ghb, speye (3))) ;
+assert (~gb_isfull (GrB (speye (3)))) ;
 assert (~gtb_isfull (ghb, gtb (ghb, speye (3)))) ;
 
 fprintf ('gbtest11 (%d): all tests passed\n', ghb) ;

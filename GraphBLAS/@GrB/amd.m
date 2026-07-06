@@ -10,6 +10,6 @@ function p = amd (G, opts)
 if (nargin == 1)
     p = amd (logical (G)) ;
 else
-    p = amd (logical (G), double (opts)) ;
+    p = amd (logical (G), opts) ;
 end
 

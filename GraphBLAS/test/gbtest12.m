@@ -21,7 +21,23 @@ G = gtb_eadd (ghb, '+', A, B) ;
 err = norm (C-G, 1) ;
 assert (logical (err < 1e-12))
 
+G = gzb_eadd (ghb, '+', GrB (A), GrB (B)) ;
+err = norm (C-G, 1) ;
+assert (logical (err < 1e-12))
+
+G = gzb_eadd (ghb, GrB (A), '+', GrB (B)) ;
+err = norm (C-G, 1) ;
+assert (logical (err < 1e-12))
+
 H = gtb_emult (ghb, '*', A, B) ;
+err = norm (D-H, 1) ;
+assert (logical (err < 1e-12))
+
+H = gzb_emult (ghb, '*', GrB (A), GrB (B)) ;
+err = norm (D-H, 1) ;
+assert (logical (err < 1e-12))
+
+H = gzb_emult (ghb, GrB (A), '*', GrB (B)) ;
 err = norm (D-H, 1) ;
 assert (logical (err < 1e-12))
 

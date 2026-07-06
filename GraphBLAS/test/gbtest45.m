@@ -10,6 +10,7 @@ end
 gtb_name = gtb_prep (ghb) ;
 
 d.kind = 'sparse' ;
+desc = struct ;
 
 for trial = 1:40
 
@@ -44,6 +45,18 @@ for trial = 1:40
     t = sum (A, 2) ;
     y = cin ;
     y (m) = t (m) ;
+    assert (isequal (x, y)) ;
+
+    % test internal wrapper
+    x = gzb_vreduce (ghb, GrB (cin), GrB (m), GrB (A), '+', desc) ;
+    assert (isequal (x, y)) ;
+
+    x = gtb_vreduce (ghb, A, '+') ;
+    y = sum (A, 2) ;
+    assert (isequal (x, y)) ;
+    x = gzb_vreduce (ghb, G, '+') ;
+    assert (isequal (x, y)) ;
+    x = gzb_vreduce (ghb, G, '+', desc) ;
     assert (isequal (x, y)) ;
 
 end

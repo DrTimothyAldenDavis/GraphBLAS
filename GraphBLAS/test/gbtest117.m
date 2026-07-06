@@ -22,6 +22,14 @@ for k = -6:6
     C2 = GrB.build (i, j, x, m, n) ;
     assert (isequal (C1, C2))
 
+    % test internal method for tril
+    C3 = gzb_apply2 (ghb, GrB (A), 'tril', k) ;
+    assert (isequal (C1, C3))
+    C3 = gzb_apply2 (ghb, 'tril', GrB (A), k) ;
+    assert (isequal (C1, C3))
+    C3 = gzb_apply2 (ghb, 'tril', GrB (A), GrB (k)) ;
+    assert (isequal (C1, C3))
+
     %   triu            j >= (i + thunk)
     C1 = GrB.apply2 ('triu', A, k) ;
     x = (j >= (i + k)) ;
@@ -89,6 +97,7 @@ C1 = GrB.apply2 ('diagindex', 0, 3) ;
 assert (C1 == -3) ;
 C1 = GrB.apply2 ('diagindex', 1, 0) ;
 assert (C1 == 0) ;
+
 
 fprintf ('gbtest117 (%d): all tests passed\n', ghb) ;
 
