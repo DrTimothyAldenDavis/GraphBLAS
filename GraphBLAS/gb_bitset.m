@@ -92,7 +92,7 @@ if (V_is_scalar)
         % A is a scalar
         if (b_is_scalar)
             % both A and B are scalars
-            T = gzb_eunion (ghb, op, A, 0, B, 0) ;
+            T = gzb_eunion (ghb, A, op, B) ;
         else
             % A is a scalar, B is a matrix
             a = gzb_full (1, A) ;
@@ -106,7 +106,7 @@ if (V_is_scalar)
             T = gzb_apply2 (ghb, op, A, b) ;
         else
             % both A and B are matrices
-            T = gzb_eunion (ghb, op, A, 0, B, 0) ;
+            T = gzb_eunion (ghb, A, op, B) ;
         end
     end
 
@@ -136,7 +136,7 @@ else
 
     % Set all bits referenced by B(i,j) to 1, even those that need to be
     % set to 0, without considering V(i,j).
-    S = gzb_eunion (1, ['bitset.', atype], A2, 0, B2, 0) ;
+    S = gzb_eunion (1, A2, ['bitset.', atype], B2) ;
 
     % The pattern of S is now the set intersection of A and B, but
     % bits referenced by B(i,j) have been set to 1, not 0.  Construct B0

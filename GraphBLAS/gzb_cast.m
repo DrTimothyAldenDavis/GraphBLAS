@@ -9,8 +9,8 @@ if (gb_is_grb (X))
 end
 
 if (ghb)
-    C = GhB (gbmex_cast (ghb, X, type)) ;
+    C = GhB (gbmex_cast (1, X, type)) ;
 else
-    C = GrB (gbmex_cast (ghb, X, type)) ;
+    C = GrB (gbmex_cast (0, X, type)) ;
 end
 

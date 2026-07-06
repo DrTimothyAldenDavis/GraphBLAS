@@ -42,7 +42,7 @@ if (ndims == 1)
             else
                 C = gzb_extract (ghb, A, { }, I) ;
             end
-            [cm, ~] = gbmex_size (C) ;
+            [cm, ~] = gb_size (C) ;
             if (whole && cm == 1)
                 C = gzb_trans (ghb, C) ;
             end

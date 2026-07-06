@@ -19,20 +19,20 @@ end
 if (ghb)
     switch (nargin)
         case 7
-            C = GhB (gbmex_build (ghb, I, J, X, m, n, arg7)) ;
+            C = GhB (gbmex_build (1, I, J, X, m, n, arg7)) ;
         case 8
-            C = GhB (gbmex_build (ghb, I, J, X, m, n, arg7, arg8)) ;
+            C = GhB (gbmex_build (1, I, J, X, m, n, arg7, arg8)) ;
         case 9
-            C = GhB (gbmex_build (ghb, I, J, X, m, n, arg7, arg8, arg9)) ;
+            C = GhB (gbmex_build (1, I, J, X, m, n, arg7, arg8, arg9)) ;
     end
 else
     switch (nargin)
         case 7
-            C = GrB (gbmex_build (ghb, I, J, X, m, n, arg7)) ;
+            C = GrB (gbmex_build (0, I, J, X, m, n, arg7)) ;
         case 8
-            C = GrB (gbmex_build (ghb, I, J, X, m, n, arg7, arg8)) ;
+            C = GrB (gbmex_build (0, I, J, X, m, n, arg7, arg8)) ;
         case 9
-            C = GrB (gbmex_build (ghb, I, J, X, m, n, arg7, arg8, arg9)) ;
+            C = GrB (gbmex_build (0, I, J, X, m, n, arg7, arg8, arg9)) ;
     end
 end
 

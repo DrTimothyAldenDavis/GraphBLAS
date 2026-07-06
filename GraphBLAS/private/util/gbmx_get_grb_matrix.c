@@ -39,11 +39,34 @@ void gbmx_get_grb_matrix
     CHECK_ERROR (X == NULL, "matrix is missing; internal error 899") ;
 
     if (mxIsClass (X, "GrB"))
-    { 
+    {
         // X is a @GrB object; get its opaque content (which must be a struct).
-        // FIXME: this is insanely slow!  It creates a copy of the entire
-        // opaque struct!
+        // mxGetProperty works here, but is insanely slow; it creates a copy of
+        // the entire opaque @GrB struct.  The MATLAB/Octave interface does not
+        // rely on this in the tests, but it might occur in other uses.  The
+        // user application might pass in a scalar to a @GrB method that is
+        // itself a @GrB object, which works fine, and is reasonably fast since
+        // a scalar is small.  This call to mxGetProperty is left here to
+        // handle that case.
+        //
+        // In the *.m files in the MATLAB/Octave interface, this case is
+        // avoided with statements such as these:
+        //
+        //      if (gb_is_grb (A))
+        //          A = struct (A) ;
+        //      end
+        //
+        // The above m-file code does not make a full copy of the A matrix.  It
+        // just makes a shallow copy, so it is very fast.
+        //
+        // See also gbmx_get_ghb_handle, which also calls mxGetProperty.  That
+        // usage is very fast since the entire GhB opaque struct contains a
+        // single uint8 array of size 8, and making a copy of that is fast.
         X = mxGetProperty (X, 0, "opaque") ;
+        #ifdef GBCOV
+        // make sure it doesn't occur in the coverage tests
+        mexErrMsgTxt ("gotcha! (@GrB passed to a mexFunction as an object)") ;
+        #endif
     }
 
     CHECK_ERROR (!mxIsStruct (X), "input matrix is mangled") ;

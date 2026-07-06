@@ -4,6 +4,8 @@ function [I,J,X] = gb_find (ghb, G_arg, k, search)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% FIXME: ghb not needed
+
 if (gb_is_grb (G_arg))
     G_arg = struct (G_arg) ;
 end
@@ -11,7 +13,7 @@ end
 % prune explicit zeros
 gbmex_wait (G_arg) ;
 desc.format = gbmex_format (G_arg) ;
-G = gzb_select (ghb, G_arg, 'nonzero', desc) ;
+G = gzb_select (1, G_arg, 'nonzero', desc) ;
 
 if (nargin > 2)
     k = ceil (double (gb_get_scalar (k))) ;
@@ -21,7 +23,7 @@ if (nargin > 2)
     if (~isequal (gbmex_format (G), 'by col'))
         % find (G, k) assumes the matrix is stored by column, so reformat G
         % if it is stored by row.
-        G = gzb (ghb, G, 'by col') ;
+        G = gzb (1, G, 'by col') ;
     end
 end
 

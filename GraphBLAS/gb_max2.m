@@ -14,7 +14,7 @@ ctype = gbmex_optype (atype, btype) ;
 if (a_is_scalar)
     if (b_is_scalar)
         % both A and B are scalars.  Result is also a scalar.
-        C = gzb_eunion (ghb, op, A, 0, B, 0) ;
+        C = gzb_eunion (ghb, A, op, B) ;
     else
         % A is a scalar, B is a matrix
         if (gb_scalar (A) > 0)
@@ -41,7 +41,7 @@ else
         end
     else
         % both A and B are matrices.  Result is sparse.
-        C = gzb_eunion (ghb, op, A, 0, B, 0) ;
+        C = gzb_eunion (ghb, A, op, B) ;
     end
 end
 

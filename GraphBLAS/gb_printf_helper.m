@@ -15,7 +15,7 @@ for k = 1:len
             arg = struct (arg) ;
         end
         type = gbmex_type (arg) ;
-        args {k} = gbmex_builtin (gzb_full (ghb, arg, type, 0, desc)) ;
+        args {k} = gb_builtin (gzb_full (ghb, arg, type, 0, desc)) ;
     else
         args {k} = arg ;
     end

@@ -69,21 +69,17 @@ inc = sprintf ('-I%s/../../rename ', here) ;
 libraries = '-L../../build -L. -L/usr/local/lib -lgraphblas_matlab' ;
 
 % revise compiler flags for MATLAB
+cflags = '' ;
+ldflags = '-fPIC' ;
 if (ismac)
-    cflags = '' ;
-    ldflags = '-fPIC' ;
     rpath = '-rpath ' ;
 elseif (isunix)
-    cflags = '-fopenmp' ;
-    ldflags = '-fopenmp -fPIC' ;
     rpath = '-rpath=' ;
 end
-if (ismac || isunix)
-    rpath = sprintf (' -Wl,%s''''%s'''' ', rpath, library_path) ;
-    flags = [ flags ' CFLAGS=''$CFLAGS ' cflags ' -Wno-pragmas'' '] ;
-    flags = [ flags ' CXXFLAGS=''$CXXFLAGS ' cflags ' -Wno-pragmas'' '] ;
-    flags = [ flags ' LDFLAGS=''$LDFLAGS ' ldflags rpath ' '' '] ;
-end
+rpath = sprintf (' -Wl,%s''''%s'''' ', rpath, library_path) ;
+flags = [ flags ' CFLAGS=''$CFLAGS ' cflags ' -Wno-pragmas'' '] ;
+flags = [ flags ' CXXFLAGS=''$CXXFLAGS ' cflags ' -Wno-pragmas'' '] ;
+flags = [ flags ' LDFLAGS=''$LDFLAGS ' ldflags rpath ' '' '] ;
 
 inc = [inc '-I. '] ;
     inc = [inc '-I../../../.. ' ] ;

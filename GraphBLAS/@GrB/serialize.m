@@ -55,5 +55,5 @@ switch (nargin)
         b = gzb_serialize (0, G, method, level) ;
 end
 
-blob = gbmex_builtin (b) ;
+blob = gb_builtin (b) ;
 

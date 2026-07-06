@@ -10,17 +10,17 @@ end
 
 if (ghb)
     if (nargout == 1)
-        C = GhB (gbmex_argsort (ghb, A, dim, direction)) ;
+        C = GhB (gbmex_argsort (1, A, dim, direction)) ;
     else
-        [C_opaque, P_opaque] = gbmex_argsort (ghb, A, dim, direction) ;
+        [C_opaque, P_opaque] = gbmex_argsort (1, A, dim, direction) ;
         C = GhB (C_opaque) ;
         P = GhB (P_opaque) ;
     end
 else
     if (nargout == 1)
-        C = GrB (gbmex_argsort (ghb, A, dim, direction)) ;
+        C = GrB (gbmex_argsort (0, A, dim, direction)) ;
     else
-        [C_opaque, P_opaque] = gbmex_argsort (ghb, A, dim, direction) ;
+        [C_opaque, P_opaque] = gbmex_argsort (0, A, dim, direction) ;
         C = GrB (C_opaque) ;
         P = GrB (P_opaque) ;
     end

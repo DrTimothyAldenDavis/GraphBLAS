@@ -5,8 +5,8 @@ function C = gzb_deserialize (ghb, blob)
 % SPDX-License-Identifier: Apache-2.0
 
 if (ghb)
-    C = GhB (gbmex_deserialize (ghb, blob)) ;
+    C = GhB (gbmex_deserialize (1, blob)) ;
 else
-    C = GrB (gbmex_deserialize (ghb, blob)) ;
+    C = GrB (gbmex_deserialize (0, blob)) ;
 end
 

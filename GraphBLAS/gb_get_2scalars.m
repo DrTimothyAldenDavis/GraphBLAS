@@ -4,10 +4,9 @@ function [x, y] = gb_get_2scalars (A)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-type = gbmex_type (A) ;
+type = gb_type (A) ;
 desc.kind = 'full' ;
-a = gzb_full (1, A, type, 0, desc) ;
-C = gbmex_builtin (a) ;
+C = gb_builtin (gzb_full (1, A, type, 0, desc)) ;
 x = C (1) ;
 y = C (2) ;
 

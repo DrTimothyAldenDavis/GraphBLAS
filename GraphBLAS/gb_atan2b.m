@@ -31,7 +31,7 @@ else
         C = gzb_apply2 (ghb, 'atan2', A, b) ;
     else
         % both A and B are matrices.  C is the set union of A and B.
-        C = gzb_eunion (ghb, 'atan2', A, 0, B, 0) ;
+        C = gzb_eunion (ghb, A, 'atan2', B) ;
     end
 end
 

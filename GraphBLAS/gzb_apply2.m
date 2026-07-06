@@ -21,8 +21,8 @@ if (nargin < 5)
 end
 
 if (ghb)
-    C = GhB (gbmex_apply2 (ghb, arg1, arg2, arg3, desc)) ;
+    C = GhB (gbmex_apply2 (1, arg1, arg2, arg3, desc)) ;
 else
-    C = GrB (gbmex_apply2 (ghb, arg1, arg2, arg3, desc)) ;
+    C = GrB (gbmex_apply2 (0, arg1, arg2, arg3, desc)) ;
 end
 

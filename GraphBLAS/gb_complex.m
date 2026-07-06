@@ -4,6 +4,8 @@ function C = gb_complex (ghb, A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% FIXME: no ghb input needed
+
 if (gb_is_grb (A))
     A = struct (A) ;
 end
@@ -81,5 +83,5 @@ else
 end
 
 % return C as a builtin MATLAB/Octave matrix
-C = gbmex_builtin (C) ;
+C = gb_builtin (C) ;
 

@@ -104,11 +104,15 @@ methods
     % C = GhB (m,n,format,type) ; ditto
     %
     % See also sparse.
+        already_struct = (nargin >= 1 && isstruct (arg1)) ;
+        if (nargin >= 1 && gb_is_grb (arg1))
+            arg1 = struct (arg1) ;
+        end
         switch (nargin)
             case 0
                 C.opaque = [ ] ;
             case 1
-                if (isstruct (arg1))
+                if (already_struct)
                     C.opaque = arg1 ;
                 else
                     C.opaque = gbmex_new (1, arg1) ;

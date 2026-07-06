@@ -9,5 +9,5 @@ if (gb_is_grb (G))
 end
 
 desc.kind = 'full' ;
-C = gbmex_builtin (gzb_full (ghb, G, type, zero, desc)) ;
+C = gb_builtin (gzb_full (ghb, G, type, zero, desc)) ;
 

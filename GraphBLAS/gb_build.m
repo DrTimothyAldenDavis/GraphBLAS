@@ -1,5 +1,5 @@
 function C = gb_build (ghb, I, J, X, varargin) ;
-%GB_BUILD implements GrB.build and GhB.build
+%GB_BUILD implements GrB.build and GhB.build.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

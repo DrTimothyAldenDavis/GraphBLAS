@@ -27,12 +27,15 @@ for k = 1:nargin-1
                 dist = arg ;
             case { 'range' }
                 r = varargin {k+1} ;
+                if (gb_is_grb (r))
+                    r = struct (r) ;
+                end
                 [rm, rn, type] = gbmex_size (r) ;
                 if (rm*rn > 2)
                     error ('GrB:error', 'range can contain at most 2 entries') ;
                 end
                 if (gb_contains (type, 'complex'))
-                    r = real (double (r)) ;
+                    r = real (gb_double (1, r)) ;
                     rtype = 'double' ;
                 else
                     rtype = type ;
@@ -168,11 +171,11 @@ elseif (hermitian)
 
     % C = L + L' + real (diag (C))
     LT = gzb_trans (ghb, L) ;
-    if (gb_contains (gbmex_type (LT), 'complex'))
+    if (gb_contains (gb_type (LT), 'complex'))
         LT = gzb_apply (ghb, 'conj', LT) ;
     end
     D = gzb_select (ghb, 'diag', C, 0) ;
-    if (gb_contains (gbmex_type (D), 'complex'))
+    if (gb_contains (gb_type (D), 'complex'))
         LT = gzb_eadd (ghb, LT, '+', gzb_apply (ghb, 'creal', D)) ;
     else
         LT = gzb_eadd (ghb, LT, '+', D) ;

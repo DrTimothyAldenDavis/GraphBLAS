@@ -14,5 +14,5 @@ else
     type = 'double' ;
 end
 
-C = gbmex_builtin (gzb_cast (ghb, G, type)) ;   % FIXME why ghb?
+C = gb_builtin (gzb_cast (ghb, G, type)) ;   % FIXME why ghb?
 

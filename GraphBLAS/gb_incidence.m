@@ -37,26 +37,26 @@ switch (kind)
 
         % create the incidence matrix of a directed graph, using all of A;
         % except that diagonal entries are ignored.
-        A = gzb_select (ghb, 'offdiag', A_arg, 0) ;
+        A = gzb_select (1, 'offdiag', A_arg, 0) ;
 
     case { 'upper' }
 
         % create the incidence matrix of an undirected graph, using only
         % entries in the strictly upper triangular part of A.
-        A = gzb_select (ghb, 'triu', A_arg, 1) ;
+        A = gzb_select (1, 'triu', A_arg, 1) ;
 
     otherwise   % 'undirected', 'symmetric', or 'lower'
 
         % create the incidence matrix of an undirected graph, using only
         % entries in the strictly lower triangular part of A.
-        A = gzb_select (ghb, 'tril', A_arg, -1) ;
+        A = gzb_select (1, 'tril', A_arg, -1) ;
 
 end
 
 % build the incidence matrix
 desc.base = 'zero-based' ;
 gbmex_wait (A) ;
-[I, J] = gbmex_extracttuples (ghb, A, desc) ;
+[I, J] = gbmex_extracttuples (1, A, desc) ;
 e = length (I) ;
 I = [I ; J] ;
 if (e > intmax ('uint32'))

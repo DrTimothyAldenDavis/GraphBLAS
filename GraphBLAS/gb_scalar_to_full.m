@@ -4,14 +4,18 @@ function C = gb_scalar_to_full (ghb, m, n, type, fmt, scalar)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+if (gb_is_grb (scalar))
+    scalar = struct (scalar) ;
+end
+
 if (~isempty (strfind (fmt, 'by row'))) %#ok<STREMP>
     fmt = 'by row' ;
 else
     fmt = 'by col' ;
 end
 
-E = gzb (ghb, m, n, type, fmt) ;
-S = gzb_full (ghb, scalar) ;
+E = gzb (1, m, n, type, fmt) ;
+S = gzb_full (1, scalar) ;
 
 if (ghb)
     C = GhB (gbmex_subassign (1, E, S)) ;

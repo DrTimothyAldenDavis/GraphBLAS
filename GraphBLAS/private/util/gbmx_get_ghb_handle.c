@@ -30,6 +30,7 @@ mxArray *gbmx_get_ghb_handle    // the MATLAB @GhB opaque handle
     if (G != NULL && mxIsClass (G, "GhB"))
     { 
         // G is a @GhB object; get its opaque content (which must be a struct).
+        // This is very fast since the opaque property is only 8 bytes in size.
         G = mxGetProperty (G, 0, "opaque") ;
     }
 

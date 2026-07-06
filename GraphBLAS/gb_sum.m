@@ -38,14 +38,13 @@ switch (option)
         % C = sum (G, 1) reduces each column to a scalar,
         % giving a 1-by-n row vector.
         desc.in0 = 'transpose' ;
-        T = gzb_vreduce (ghb, op, G, desc) ;
-        C = gzb_trans (ghb, T) ;
+        C = gzb_trans (ghb, gzb_vreduce (1, G, op, desc)) ;
 
     case { 2 }
 
         % C = sum (G, 2) reduces each row to a scalar,
         % giving an m-by-1 column vector.
-        C = gzb_vreduce (ghb, op, G) ;
+        C = gzb_vreduce (ghb, G, op) ;
 
     otherwise
 

@@ -60,7 +60,7 @@ else
         % also check the pattern; G might have explicit zeros
         S = gb_spones (ghb, G, 'logical') ;
         T = gzb_trans (ghb, S) ;
-        s = gbmex_isequal (S, T) ;
+        s = gb_isequal (S, T) ;
     end
 end
 

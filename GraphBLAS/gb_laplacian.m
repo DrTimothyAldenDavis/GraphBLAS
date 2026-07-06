@@ -35,14 +35,13 @@ if (nargin > 3 && isequal (check, 'check'))
 end
 
 % D = diagonal matrix with d(i,i) = row/column degree of node i
-assert (isequal (fmt, gbmex_format (S))) ;
 if (isequal (fmt, 'by row'))
     dim = 'row' ;
 else
     dim = 'col' ;
 end
 D = gzb_mdiag (ghb, gzb_degree (ghb, S, 'dim'), 0) ;
-if (~isequal (type, gbmex_type (D)))
+if (~isequal (type, gb_type (D)))
     % gzb_degree returns its result as int64; typecast to desired type
     D = gzb (ghb, D, type) ;
 end

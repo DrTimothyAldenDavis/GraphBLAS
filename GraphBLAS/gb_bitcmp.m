@@ -38,7 +38,7 @@ end
 
 C = gzb_apply (ghb, 'bitcmp', T) ;
 
-if (~isequal (gbmex_type (C), ctype))
+if (~isequal (gb_type (C), ctype))
     C = gzb (ghb, C, ctype) ;
 end
 

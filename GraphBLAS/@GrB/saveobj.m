@@ -7,5 +7,5 @@ function S = saveobj (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-S.blob = gbmex_builtin (gzb_serialize (0, G)) ;
+S.blob = gb_builtin (gzb_serialize (0, G)) ;
 

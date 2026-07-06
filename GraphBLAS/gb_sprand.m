@@ -1,5 +1,5 @@
 function C = gb_sprand (ghb, dist, varargin)
-%GB_SPRAND implementes GrB/sprand and GhB/sprand.
+%GB_SPRAND implementes GrB/sprand and GhB/sprand.  Not user-callable.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
