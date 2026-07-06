@@ -76,9 +76,7 @@ if (nargin >= 8 && gb_is_grb (arg8))
     arg8 = struct (arg8) ;
 end
 
-if (nargin >= 9 && gb_is_grb (arg9))
-    arg9 = struct (arg9) ;
-end
+% arg9: if present, it must be the descriptor
 
     switch (nargin)
         case 5

@@ -239,12 +239,12 @@ methods
     C = repmat (G, m, n) ;
     C = reshape (G, m, n, by_col) ;
     C = round (G) ;
+    S = saveobj (G) ;
     C = sec (G) ;
     C = sech (G) ;
     C = sign (G) ;
     C = sin (G) ;
     C = sinh (G) ;
-    S = saveobj (G) ;
     C = sparse (G) ;
     C = spfun (fun, G) ;
     C = spones (G, type) ;

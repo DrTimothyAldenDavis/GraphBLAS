@@ -49,9 +49,7 @@ if (nargin >= 4 && gb_is_grb (arg4))
     arg4 = struct (arg4) ;
 end
 
-if (nargin >= 5 && gb_is_grb (arg5))
-    arg5 = struct (arg5) ;
-end
+% arg5: if present, it must be the descriptor
 
     switch (nargin)
         case 2

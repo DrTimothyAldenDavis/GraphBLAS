@@ -86,9 +86,7 @@ if (nargin >= 6 && gb_is_grb (arg6))
     arg6 = struct (arg6) ;
 end
 
-if (nargin >= 7 && gb_is_grb (arg7))
-    arg7 = struct (arg7) ;
-end
+% arg7: if present, it must be the descriptor
 
 if (nargout == 0)
     switch (nargin)

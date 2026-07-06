@@ -19,9 +19,15 @@ A = double (G) ;
 d2 = sum (spones (A))' ;
 assert (isequal (d, d2)) ;
 
+d3 = double (gzb_degree (ghb, G, 'row')) ;
+assert (isequal (d, d3)) ;
+
 G = gtb (ghb, G, 'by row') ;
 d = double (gtb_entries (ghb, G, 'col', 'degree')) ;
 assert (isequal (d, d2)) ;
+
+d3 = double (gzb_degree (ghb, G, 'col')) ;
+assert (isequal (d, d3)) ;
 
 G = G + gtb_eye (ghb, n) ;
 A = double (G) ;

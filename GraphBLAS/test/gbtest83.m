@@ -1,4 +1,4 @@
-function gbtest83 (ghb)
+function gbtest83 (ghb, ghb2)
 %GBTEST83 test [GrB,GhB].apply
 %
 % C = GrB.apply (op, A)
@@ -12,13 +12,16 @@ function gbtest83 (ghb)
 if (nargin == 0)
     ghb = 0 ;
 end
+if (nargin < 2)
+    ghb2 = ghb ;
+end
 gtb_name = gtb_prep (ghb) ;
 
-C     = gtb_random (ghb, 9, 9, 0.5) ;
-M     = gtb_random (ghb, 9, 9, 0.5, 'range', logical ([false true])) ;
+C     = gtb_random (ghb2, 9, 9, 0.5) ;
+M     = gtb_random (ghb2, 9, 9, 0.5, 'range', logical ([false true])) ;
 accum = '+' ;
 op    = 'sqrt' ;
-A     = gtb_random (ghb, 9, 9, 0.5) ;
+A     = gtb_random (ghb2, 9, 9, 0.5) ;
 desc  = struct ;
 
 c = double (C) ;

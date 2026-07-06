@@ -11,6 +11,7 @@ if (nargin == 0)
     ghb = 0 ;
 end
 gtb_name = gtb_prep (ghb) ;
+desc = struct ;
 
 types = gbtest_types ;
 
@@ -20,6 +21,17 @@ for k1 = 1:length (types)
     A = 100 * sprand (3, 3, 0.5) ;
     H = full (A, 'double', gtb (ghb, 0)) ;
     assert (norm (H-A,1) == 0)
+    H = full (GrB (A), 'double', GrB (0)) ;
+    assert (norm (H-A,1) == 0)
+    H = full (GrB (A), 'double', GrB (0)) ;
+    assert (norm (H-A,1) == 0)
+    H = full (GrB (A), 'double') ;
+    assert (norm (H-A,1) == 0)
+    H = gzb_full (0, GrB (A), 'double', GrB (0), desc) ;
+    assert (norm (H-A,1) == 0)
+    H = gzb_full (0, GrB (A), 'double') ;
+    assert (norm (H-A,1) == 0)
+
     B = gtb (ghb, A) ;
     B (A == 0) = 1 ; %#ok<*SPRIX>
     H = full (A, 'double', gtb (ghb, 1)) ;

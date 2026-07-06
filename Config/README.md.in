@@ -55,6 +55,11 @@ To compile and run the demos:
 
     make demos
 
+As GraphBLAS runs, it compiles JIT kernels and places them in ~/.SuiteSparse
+(on Linux/Mac).  It uses the same compiler as used to compile GraphBLAS itself.
+If you change compilers, be sure to delete the ~/.SuiteSparse folder when doing
+a clean install.
+
 See the GraphBLAS/ subfolder for the Octave/MATLAB interface, which contains a
 README.md file with further details.
 

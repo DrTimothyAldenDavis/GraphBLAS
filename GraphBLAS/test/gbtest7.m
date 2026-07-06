@@ -20,6 +20,9 @@ G = gtb_build (ghb, i, j, x, m, n) ;
 S = sparse   (i, j, x, m, n) ;
 assert (gbtest_eq (S, G)) ;
 
+G = gtb_build (ghb, GrB (i), GrB (j), GrB (x), m, n) ;
+assert (gbtest_eq (S, G)) ;
+
 G = gtb_build (ghb, i, j, x, m, n, '') ;
 assert (gbtest_eq (S, G)) ;
 

@@ -13,7 +13,8 @@
 
 // C = gbmex_cat (ghb, Tiles, desc)
 
-// where Tiles is a 2D cell array of matrices.
+// where Tiles is a 2D cell array of matrices.  The m-file interface to
+// this method does not use the desc input parameter.
 
 #include "gb_interface.h"
 #include "gbmx_interface.h"

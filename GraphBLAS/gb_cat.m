@@ -4,14 +4,6 @@ function C = gb_cat (ghb, dim, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% get the input matrices
-nmatrices = length (varargin) ;
-for k = 1:nmatrices
-    if (gb_is_grb (varargin {k}))
-        varargin {k} = struct (varargin {k}) ;
-    end
-end
-
 % concatenate the matrices
 if (dim == 1)
     % same as vertcat

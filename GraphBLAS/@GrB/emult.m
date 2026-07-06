@@ -58,9 +58,7 @@ if (nargin >= 6 && gb_is_grb (arg6))
     arg6 = struct (arg6) ;
 end
 
-if (nargin >= 7 && gb_is_grb (arg7))
-    arg7 = struct (arg7) ;
-end
+% arg7: if present, it must be the descriptor
 
     switch (nargin)
         case 3
@@ -70,7 +68,8 @@ end
         case 5
             [C_opaque, kind] = gbmex_emult (0, arg1, arg2, arg3, arg4, arg5) ;
         case 6
-            [C_opaque, kind] = gbmex_emult (0, arg1, arg2, arg3, arg4, arg5, arg6) ;
+            [C_opaque, kind] = gbmex_emult (0, arg1, arg2, arg3, arg4, arg5, ...
+                arg6) ;
         case 7
             [C_opaque, kind] = gbmex_emult (0, arg1, arg2, arg3, arg4, arg5, ...
                 arg6, arg7) ;

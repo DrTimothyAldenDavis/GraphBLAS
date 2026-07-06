@@ -45,6 +45,10 @@ G = gtb_eunion (ghb, '-', A, 0, B, 0) ;
 err = norm (F-G, 1) ;
 assert (logical (err < 1e-12))
 
+G = gzb_eunion (ghb, GrB (A), '-', GrB (B)) ;
+err = norm (F-G, 1) ;
+assert (logical (err < 1e-12))
+
 d.kind = 'sparse' ;
 d.in0 = 'transpose' ;
 

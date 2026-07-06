@@ -22,7 +22,7 @@
 // #include <rmm/mr/device/polymorphic_allocator.hpp>
 // #include <rmm/mr/device/thread_safe_resource_adaptor.hpp>
 // #include <rmm/mr/device/managed_memory_resource.hpp>
-#include <rmm/mr/pool_memory_resource.hpp>
+#include <rmm/mr/device/pool_memory_resource.hpp>
 // #include <pool_memory_resource.hpp>
 // #include <rmm/mr/device/limiting_resource_adaptor.hpp>
 // #include <rmm/cuda_stream_view.hpp>

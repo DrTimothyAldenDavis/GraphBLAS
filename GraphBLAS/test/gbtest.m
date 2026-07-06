@@ -467,6 +467,7 @@ assert (GrB.nmalloc == 0) ;
 gbtest83        % test GrB.apply
 gbtest83 (1)
 gbtest83 (2)
+gbtest83 (1, 0)
 assert (GrB.nmalloc == 0) ;
 
 gbtest84        % test GrB.assign
@@ -497,16 +498,19 @@ assert (GrB.nmalloc == 0) ;
 gbtest89        % test GrB.extract
 gbtest89 (1)
 gbtest89 (2)
+gbtest89 (1, 0)
 assert (GrB.nmalloc == 0) ;
 
 gbtest90        % test GrB.reduce
 gbtest90 (1)
 gbtest90 (2)
+gbtest90 (1, 0)
 assert (GrB.nmalloc == 0) ;
 
 gbtest91        % test GrB.trans
 gbtest91 (1)
 gbtest91 (2)
+gbtest91 (1, 0)
 assert (GrB.nmalloc == 0) ;
 
 gbtest92        % test GrB.kronecker
@@ -532,6 +536,7 @@ assert (GrB.nmalloc == 0) ;
 gbtest97        % test GrB.apply2
 gbtest97 (1)
 gbtest97 (2)
+gbtest97 (1,0)
 assert (GrB.nmalloc == 0) ;
 
 gbtest98        % test row/col degree for hypersparse matrices

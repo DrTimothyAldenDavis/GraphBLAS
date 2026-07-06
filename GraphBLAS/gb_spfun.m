@@ -21,7 +21,7 @@ end
 [m, n] = gbmex_size (G) ;
 desc.base = 'zero-based' ;
 gbmex_wait (G) ;
-[i, j, x] = gbmex_extracttuples (1, G, desc) ;
-x = feval (fun, x) ;
-C = gzb_build (ghb, i, j, x, m, n, '1st', desc) ;
+[I, J, X] = gbmex_extracttuples (1, G, desc) ;
+X = feval (fun, X) ;
+C = gzb_build (ghb, I, J, X, m, n, '1st', desc) ;
 

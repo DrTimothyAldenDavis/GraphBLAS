@@ -1,4 +1,4 @@
-function gbtest90 (ghb)
+function gbtest90 (ghb, ghb2)
 %GBTEST90 test [GrB,GhB].reduce
 %
 % c = GrB.reduce (monoid, A)
@@ -12,12 +12,15 @@ function gbtest90 (ghb)
 if (nargin == 0)
     ghb = 0 ;
 end
+if (nargin < 2)
+    ghb2 = ghb ;
+end
 gtb_name = gtb_prep (ghb) ;
 
-C      = gtb (ghb, pi) ;
+C      = gtb (ghb2, pi) ;
 accum  = '*' ;
 monoid = '+' ;
-A      = gtb_random (ghb, 9, 9, 0.5) ;
+A      = gtb_random (ghb2, 9, 9, 0.5) ;
 desc   = struct ;
 
 c = double (C) ;

@@ -1,4 +1,4 @@
-function gbtest89 (ghb)
+function gbtest89 (ghb, ghb2)
 %GBTEST89 test [GrB,GhB].extract
 %
 % C = GrB.extract (A, desc)
@@ -21,21 +21,24 @@ function gbtest89 (ghb)
 if (nargin == 0)
     ghb = 0 ;
 end
+if (nargin < 2)
+    ghb2 = ghb ;
+end
 gtb_name = gtb_prep (ghb) ;
 
-C     = gtb_random (ghb, 4, 3, 0.5) ;
-M     = gtb_random (ghb, 4, 3, 0.5, 'range', logical ([false true])) ;
+C     = gtb_random (ghb2, 4, 3, 0.5) ;
+M     = gtb_random (ghb2, 4, 3, 0.5, 'range', logical ([false true])) ;
 accum = '+' ;
-A     = gtb_random (ghb, 9, 9, 0.5) ;
+A     = gtb_random (ghb2, 9, 9, 0.5) ;
 I     = { [1 4 2 5] } ;
 J     = { [3 2 7 ] } ;
 desc  = struct ;
 
-Aij   = gtb_random (ghb, 4, 3, 0.5) ;
+Aij   = gtb_random (ghb2, 4, 3, 0.5) ;
 
-V     = gtb_random (ghb, 4, 1, 0.7) ;
-W     = gtb_random (ghb, 4, 1, 0.7, 'range', logical ([false true])) ;
-U     = gtb_random (ghb, 9, 1, 0.7) ;
+V     = gtb_random (ghb2, 4, 1, 0.7) ;
+W     = gtb_random (ghb2, 4, 1, 0.7, 'range', logical ([false true])) ;
+U     = gtb_random (ghb2, 9, 1, 0.7) ;
 
 c = double (C) ;
 a = double (A) ;

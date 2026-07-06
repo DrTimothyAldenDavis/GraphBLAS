@@ -99,26 +99,29 @@ if ( GRAPHBLAS_HAS_CUDA )
     include ( FetchContent )
     FetchContent_Declare ( rmm
         GIT_REPOSITORY "https://github.com/rapidsai/rmm"
-        # GIT_TAG branch-21.10
+          GIT_TAG branch-21.10
         # GIT_TAG v26.06.00
-          GIT_TAG release/26.06
+        # GIT_TAG release/26.06
         OVERRIDE_FIND_PACKAGE )
     FetchContent_MakeAvailable ( rmm )
 
     find_package ( rmm REQUIRED )
 
-    set ( RMM_SOURCE_DIR "${PROJECT_BINARY_DIR}/_deps/rmm-src/cpp" )
+    # set ( RMM_SOURCE_DIR "${PROJECT_BINARY_DIR}/_deps/rmm-src/cpp" )
 
     message ( STATUS "RMM bin: " ${RMM_BINARY_DIR} )
     message ( STATUS "RMM src: " ${RMM_SOURCE_DIR} )
     message ( STATUS "spdlog bin: " ${spdlog_BINARY_DIR} )
     message ( STATUS "spdlog src: " ${spdlog_SOURCE_DIR} )
 
+    # find_package ( thrust REQUIRED )
+
   set ( RMM_WRAP_INCLUDES ${PROJECT_BINARY_DIR}
       ${RMM_SOURCE_DIR}/include
       ${spdlog_SOURCE_DIR}/include
       ${CUDAToolkit_INCLUDE_DIRS}
-      ${CUDAToolkit_INCLUDE_DIRS}/cccl )
+      ${CUDAToolkit_INCLUDE_DIRS}/cccl
+      "${PROJECT_BINARY_DIR}/_deps/thrust-src" )
 
 else ( )
 
