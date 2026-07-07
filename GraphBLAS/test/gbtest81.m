@@ -158,7 +158,9 @@ for m = [1 5 10 ]
                 % test complex(A,B)
                 C1 = gtb_emult (ghb, 'cmplx', real (A), real (B)) ;
                 C2 = complex (real (A), real (B)) ;
-                assert (isequal (C1, C2)) 
+                % octave can return C2 as real, not complex,
+                % so just asset this instead:
+                assert (norm (abs (C1-C2), 1) == 0)
 
             end
         end

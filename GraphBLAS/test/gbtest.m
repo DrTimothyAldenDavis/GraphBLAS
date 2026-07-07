@@ -1,26 +1,21 @@
 function s = gbtest
 %GBTEST test GraphBLAS MATLAB/Octave interface
-% First compile the GraphBLAS library by typing 'make' in the top-level
-% GraphBLAS folder, in your system shell.  That statement will use cmake to
-% compile GraphBLAS.  Use 'make JOBS=40' to compile in parallel (replace '40'
-% with the number of cores in your system).  Next, do the following:
+% First compile the GraphBLAS library by following the instructions in the
+% README.m. file in the top-level GraphBLAS folder.  Then run this test while
+% in the GraphBLAS/GraphBLAS/test folder that contains this gbtest.m file.
 %
-% This test has been ported to Octave 7, as of SuiteSparse:GraphBLAS v5.1.  A
+% This test has been ported to Octave 10.2 and 11.1, as of GraphBLAS v10.4.  A
 % few features differ between Octave and MATLAB, so those tests are skipped for
 % Octave.  Octave passes all of the essential tests below.
 %
-% Example:
+% Example (if GraphBLAS is in your /home/me folder):
 %
-%   cd GraphBLAS/GraphBLAS
-%   addpath (pwd) ;
-%   savepath ;          % if this fails, edit your startup.m file
-%   cd @GrB/private
-%   gbmake ;            % compile the interface to GraphBLAS
-%   cd ../../test
-%   clear all
-%   gbtest              % run this test
+%   cd /home/me/GraphBLAS/GraphBLAS
+%   graphblas_install
+%   cd test
+%   gbtest
 %
-% See also GrB.
+% See also GrB, GhB.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
