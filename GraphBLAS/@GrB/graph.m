@@ -7,8 +7,8 @@ function Graph = graph (G, varargin)
 % the Graph is constructed with weights of type double.
 %
 % Graph = graph (G, ..., 'upper') uses triu (G) to construct the Graph.
-% Graph = graph (G, ..., 'lower') uses tril (G) to construct the Graph.
-% The default is 'lower'.
+% Graph = graph (G, ..., 'lower') uses tril (G) to construct the Graph.  The
+% default is 'lower'.
 %
 % Graph = graph (G, ..., 'omitselfloops') ignores the diagonal of G, and the
 % resulting Graph has no self-edges.  The default is that self-edges are

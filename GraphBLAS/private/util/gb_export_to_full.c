@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // The input GrB Matrix C is being exported to a G.opaque handle, to become a
-// @GrB object.  This method modifies its format to be directly compatible with
+// GrB object.  This method modifies its format to be directly compatible with
 // a MATLAB full matrix.  After the caller mexFunction finishes, another
 // mexFunction will copy G into a proper MATLAB full matrix, if desired.
 

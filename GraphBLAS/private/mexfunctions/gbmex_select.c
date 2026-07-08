@@ -10,7 +10,7 @@
 // gbmex_select is an interface to GrB_Matrix_select, for GrB.select
 // and GhB.select.
 
-// Usage for @GrB and @GhB (omitting desc argument):
+// Usage for GrB and GhB (omitting desc argument):
 
 // C = GrB.select (op, A)                       C = op(A)
 // C = GrB.select (Cin, op, A)                  C = Cin ; C = op(A)
@@ -24,7 +24,7 @@
 // C = GrB.select (Cin, M, op, A, b)            C = Cin ; C<M> = op(A,b)
 // C = GrB.select (Cin, M, accum, op, A, b)     C = Cin ; C<M> += op(A,b)
 
-// Usage for @GhB only:
+// Usage for GhB only:
 
 // GhB.select (C, op, A)                        C = op(A)
 // GhB.select (C, accum, op, A)                 C += op(A)

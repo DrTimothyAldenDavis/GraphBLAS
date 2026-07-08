@@ -1,4 +1,4 @@
-% benchmark @GrB vs built-in methods
+% benchmark GrB vs built-in methods
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

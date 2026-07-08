@@ -1,7 +1,7 @@
 function C = mtimes (A, B)
 %MTIMES sparse matrix-matrix multiplication over the standard semiring.
-% C=A*B multiples two matrices using the standard '+.*' semiring.  If
-% either A or B are scalars, C=A*B is the same as C=A.*B.
+% C=A*B multiples two matrices using the standard '+.*' semiring.  If either A
+% or B are scalars, C=A*B is the same as C=A.*B.
 %
 % See also GhB.mxm, GhB.emult, GhB/times.
 

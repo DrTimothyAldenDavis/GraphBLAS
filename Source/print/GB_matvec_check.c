@@ -373,12 +373,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (A_header_arena < 0 || A_header_arena >= GB_NARENAS ||
         A_data_arena < 0 || A_data_arena >= GB_NARENAS)
     {
-        printf ("\n%p:  invalid arenas: (%d,%d)\n", A,  // FIXME
-            A_header_arena, A_data_arena) ;
-//      GBPR0 ("  invalid arenas: (%d,%d)\n", A_header_arena, A_data_arena) ;
+        GBPR0 ("  invalid arenas: (%d,%d)\n", A_header_arena, A_data_arena) ;
         return (GrB_INVALID_OBJECT) ;
     }
-
 
     //--------------------------------------------------------------------------
     // check the type

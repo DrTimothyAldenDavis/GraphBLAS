@@ -12,7 +12,7 @@
 // fmt = gbmex_format ;         get the global default format (row/col)
 // fmt = gbmex_format (fmt) ;   set the global default format
 // [f,sparsity,iso] = gbmex_format (A) ;  get the format, sparsity,
-//                              and iso status of a matrix (@GrB or built-in)
+//                          and iso status of a matrix (GrB, GhB or built-in)
 
 #include "gb_interface.h"
 #include "gbmx_interface.h"

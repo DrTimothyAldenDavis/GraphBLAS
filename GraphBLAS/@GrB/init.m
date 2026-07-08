@@ -3,8 +3,8 @@ function init
 %
 %   GrB.init
 %
-% GrB.init initializes all SuiteSparse:GraphBLAS settings to their
-% defaults.  Its use is optional.
+% GrB.init initializes all SuiteSparse:GraphBLAS settings to their defaults.
+% Its use is optional.
 %
 % See also GrB.clear, GrB.finalize, startup.
 

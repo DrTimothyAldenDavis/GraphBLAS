@@ -10,7 +10,7 @@
 // gbmex_kronecker is an interface to GrB_kronecker, for GrB.kronecker and
 // GhB.kronecker.
 
-// Usage for @GrB and @GhB (omitting desc argument):
+// Usage for GrB and GhB (omitting desc argument):
 
 // C = GrB.kronecker (op, A, B)                 C = op(A,B)
 // C = GrB.kronecker (Cin, op, A, B)            C = Cin ; C = op(A,B)
@@ -18,7 +18,7 @@
 // C = GrB.kronecker (Cin, M, op, A, B)         C = Cin ; C<M> = op(A,B)
 // C = GrB.kronecker (Cin, M, accum, op, A, B)  C = Cin ; C<M> += op(A,B)
 
-// Usage for @GhB only:
+// Usage for GhB only:
 
 // GhB.kronecker (C, op, A, B)                  C = op(A,B)
 // GhB.kronecker (C, accum, op, A, B)           C += op(A,B)

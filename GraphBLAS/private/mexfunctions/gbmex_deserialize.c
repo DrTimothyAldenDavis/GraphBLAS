@@ -13,9 +13,9 @@
 
 // C = gbmex_deserialize (blob)
 
-// The blob can be either a MATLAB or a @GrB matrix.  In either case, it must
+// The blob can be either a MATLAB or a GrB matrix.  In either case, it must
 // be dense (not sparse) with all entries present, and of type GrB_UINT8.
-// C is returned as a @GrB matrix.
+// C is returned as a GrB matrix.
 
 #include "gb_interface.h"
 #include "gbmx_interface.h"

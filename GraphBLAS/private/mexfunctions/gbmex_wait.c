@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmex_wait: finish work in a @GhB handle matrix
+// gbmex_wait: finish work in a GhB handle matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -11,8 +11,8 @@
 
 // gbmex_wait (G)
 
-// finishes all pending work in a @GhB matrix.  Does nothing if the input
-// is not a @GhB handle matrix from GraphBLAS v10.4.0 or later.
+// finishes all pending work in a GhB matrix.  Does nothing if the input is not
+// a GhB handle matrix from GraphBLAS v10.4.0 or later.
 
 #include "gb_interface.h"
 #include "gbmx_interface.h"

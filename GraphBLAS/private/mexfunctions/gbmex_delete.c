@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmex_delete: deletes a @GhB handle matrix
+// gbmex_delete: deletes a GhB handle matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -11,8 +11,8 @@
 
 // gbmex_delete (G)
 
-// Deletes the @GhB matrix G.  Does nothing if the input is not a @GhB handle
-// object from GraphBLAS v10.4.0 or later.  Since this is called by the @GhB
+// Deletes the GhB matrix G.  Does nothing if the input is not a GhB handle
+// object from GraphBLAS v10.4.0 or later.  Since this is called by the GhB
 // delete method, this method must not throw an error (per the MATLAB
 // specification of how handle objects are deleted).
 
@@ -29,7 +29,7 @@ void mexFunction
 {
 
     //--------------------------------------------------------------------------
-    // get the @GhB matrix handle to the GrB_Matrix, and free the matrix
+    // get the GhB matrix handle to the GrB_Matrix, and free the matrix
     //--------------------------------------------------------------------------
 
     if (nargin == 1)

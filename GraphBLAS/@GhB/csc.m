@@ -1,7 +1,7 @@
 function C = csc (G)
 %CSC cosecant.
-% C = csc (G) is the cosecant of each entry of G.  Since csc (0) is
-% nonzero, C is a full matrix.
+% C = csc (G) is the cosecant of each entry of G.  Since csc (0) is nonzero, C
+% is a full matrix.
 %
 % See also GhB/acsc, GhB/csch, GhB/acsch.
 

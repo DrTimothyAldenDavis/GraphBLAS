@@ -1,49 +1,49 @@
 classdef (InferiorClasses = {?GrB}) GhB < handle & GrB
 %GhB GraphBLAS sparse matrices for Octave/MATLAB.
 %
-% GraphBLAS is a library for creating graph algorithms based on sparse
-% linear algebraic operations over semirings.  Visit http://graphblas.org
-% for more details and resources.  See also the SuiteSparse:GraphBLAS User
-% Guide in this package.
+% GraphBLAS is a library for creating graph algorithms based on sparse linear
+% algebraic operations over semirings.  Visit http://graphblas.org for more
+% details and resources.  See also the SuiteSparse:GraphBLAS User Guide in this
+% package.
 %
-% The @GhB matrix is the handle variant of the @GrB value matrix object.
-% It is nearly identical to the @GrB matrix, with additional syntax for
-% modifying a @GhB matrix in-place. 
+% The GhB matrix is the handle variant of the GrB value matrix object.  It is
+% nearly identical to the GrB matrix, with additional syntax for modifying a
+% GhB matrix in-place. 
 %
-% A GrB_Matrix can contain pending work after it is computed, but this
-% work must be finished when using a @GrB matrix.  The @GhB handle matrix
-% object allows the work to remain unfinished, to be done later.  This
-% feature results in faster computations than when using @GrB matrices.
+% A GrB_Matrix can contain pending work after it is computed, but this work
+% must be finished when using a GrB matrix.  The GhB handle matrix object
+% allows the work to remain unfinished, to be done later.  This feature results
+% in faster computations than when using GrB matrices.
 %
-% All @GrB methods are also available as @GhB methods; see "help GrB"
-% for details, and just replace "GrB" with "GhB".
+% All GrB methods are also available as GhB methods; see "help GrB" for
+% details, and just replace "GrB" with "GhB".
 %
-% @GrB and @GhB matrices can be mixed.  In MATLAB, if any matrix in a
-% computation is a @GhB matrix, the result is a @GhB matrix.  Octave 11.1
-% is different; C=A+B creates C as @GrB if A is @GrB and B is @GhB.  @GhB
-% matrices are only created via the GhB(...) constructor.  Thus, if only
-% GrB.* methods are used, all matrices will be @GrB.
+% GrB and GhB matrices can be mixed.  In MATLAB, if any matrix in a computation
+% is a GhB matrix, the result is a GhB matrix.  Octave 11.1 is different; C=A+B
+% creates C as GrB if A is GrB and B is GhB.  GhB matrices are only created via
+% the GhB(...) constructor.  Thus, if only GrB.* methods are used, all matrices
+% will be GrB.
 %
-% The @GhB matrix is a handle object, so C can also be modified in place.
-% Using this in-place syntax, which cannot be done with @GrB:
+% The GhB matrix is a handle object, so C can also be modified in place.  Using
+% this in-place syntax, which cannot be done with GrB:
 %
-%   GhB.apply     (C, M, accum, op, A,          desc)
-%   GhB.apply2    (C, M, accum, op, A, B,       desc)
-%   GhB.assign    (C, M, accum,     A,    I, J, desc)
-%   GhB.eadd      (C, M, accum, op, A, B,       desc)
-%   GhB.eunion    (C, M, accum, op, A, a, B, b, desc)
-%   GhB.emult     (C, M, accum, op, A, B,       desc)
-%   GhB.extract   (C, M, accum,     A,    I, J, desc)
-%   GhB.kronecker (C, M, accum, op, A, B,       desc)
-%   GhB.mxm       (C, M, accum, op, A, B,       desc)
-%   GhB.reduce    (C,    accum, op, A,          desc)
-%   GhB.select    (C, M, accum, op, A, b,       desc)
-%   GhB.subassign (C, M, accum,     A,    I, J, desc)
-%   GhB.trans     (C, M, accum,     A,          desc)
-%   GhB.vreduce   (C, M, accum, op, A,          desc)
+%       GhB.apply     (C, M, accum, op, A,          desc)
+%       GhB.apply2    (C, M, accum, op, A, B,       desc)
+%       GhB.assign    (C, M, accum,     A,    I, J, desc)
+%       GhB.eadd      (C, M, accum, op, A, B,       desc)
+%       GhB.eunion    (C, M, accum, op, A, a, B, b, desc)
+%       GhB.emult     (C, M, accum, op, A, B,       desc)
+%       GhB.extract   (C, M, accum,     A,    I, J, desc)
+%       GhB.kronecker (C, M, accum, op, A, B,       desc)
+%       GhB.mxm       (C, M, accum, op, A, B,       desc)
+%       GhB.reduce    (C,    accum, op, A,          desc)
+%       GhB.select    (C, M, accum, op, A, b,       desc)
+%       GhB.subassign (C, M, accum,     A,    I, J, desc)
+%       GhB.trans     (C, M, accum,     A,          desc)
+%       GhB.vreduce   (C, M, accum, op, A,          desc)
 %
-% For the in-place syntax, no output parameter ("C = GhB.method (..)")
-% can appear, and the matrix C must appear as an input parameter.
+% For the in-place syntax, no output parameter ("C = GhB.method (..)") can
+% appear, and the matrix C must appear as an input parameter.
 %
 % Example in-place usage:
 %
@@ -86,7 +86,7 @@ methods
     %---------------------------------------------------------------------
 
     function C = GhB (arg1, arg2, arg3, arg4)
-    %GHB GraphBLAS constructor: create a GraphBLAS matrix.
+    %GHB GraphBLAS constructor: create a GraphBLAS GhB handle matrix.
     %
     % C = GhB (A) ;          GhB copy of a matrix A, same type and format
     %
@@ -127,11 +127,11 @@ methods
     end
 
     %---------------------------------------------------------------------
-    % GraphBLAS @GhB destructor
+    % GraphBLAS GhB destructor
     %---------------------------------------------------------------------
 
     function delete (C)
-    %DELETE delete a @GhB matrix
+    %DELETE delete a GhB matrix
     gbmex_delete (C) ;
     end
 

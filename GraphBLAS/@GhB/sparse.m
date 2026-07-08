@@ -1,8 +1,8 @@
 function C = sparse (G)
 %SPARSE make a copy of a GraphBLAS sparse matrix.
-% If G is already sparse, C = sparse (G) simply makes a copy of G.
-% If G is full or bitmap, C = sparse (G) returns C as sparse or hypersparse.
-% Explicit zeros are not removed.  To remove them use C = GhB.prune(G).
+% If G is already sparse, C = sparse (G) simply makes a copy of G.  If G is
+% full or bitmap, C = sparse (G) returns C as sparse or hypersparse.  Explicit
+% zeros are not removed.  To remove them use C = GhB.prune(G).
 %
 % See also GhB/issparse, GhB/full, GhB.type, GhB/prune, GhB.
 

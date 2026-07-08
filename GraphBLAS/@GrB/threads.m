@@ -5,16 +5,16 @@ function nthreads = threads (nthreads)
 %   GrB.threads (nthreads) ;      % set the maximum # of threads
 %
 % GrB.threads gets and/or sets the maximum number of threads to use in
-% GraphBLAS.  By default, if GraphBLAS has been compiled with OpenMP, it
-% uses the number of threads returned by omp_get_max_threads.  Otherwise,
-% it can only use a single thread.
+% GraphBLAS.  By default, if GraphBLAS has been compiled with OpenMP, it uses
+% the number of threads returned by omp_get_max_threads.  Otherwise, it can
+% only use a single thread.
 %
 % Changing the number of threads with GrB.threads(nthreads) causes all
-% subsequent GraphBLAS operations to use at most the given number of
-% threads.  GraphBLAS may use fewer threads, if the problem is small (see
-% GrB.chunk).  The setting is kept for the remainder of the current
-% session, or until 'clear all' or GrB.clear is used, at which point the
-% setting reverts to the default number of threads.
+% subsequent GraphBLAS operations to use at most the given number of threads.
+% GraphBLAS may use fewer threads, if the problem is small (see GrB.chunk).
+% The setting is kept for the remainder of the current session, or until 'clear
+% all' or GrB.clear is used, at which point the setting reverts to the default
+% number of threads.
 %
 % Example:
 %

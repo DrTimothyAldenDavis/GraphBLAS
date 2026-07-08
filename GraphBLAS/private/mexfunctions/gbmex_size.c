@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmex_size: dimension and type of a GraphBLAS or built-in matrix
+// gbmex_size: dimension, type, and bytes of a GraphBLAS or built-in matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -7,21 +7,22 @@
 
 //------------------------------------------------------------------------------
 
-// The input may be either a GraphBLAS @GrB or @GhB matrix or a standard
-// built-in matrix.  Note that the [m n] output can be int64 to accomodate huge
+// The input may be either a GraphBLAS GrB or GhB matrix or a standard built-in
+// matrix.  Note that the [m n] output can be int64 to accomodate huge
 // hypersparse matrices.  Optionally returns the type of the matrix.
 
 // Usage:
 
-// [m, n, type] = gbmex_size (A)
+// [m, n, type, bytes] = gbmex_size (A)
 
 #include "gb_interface.h"
 #include "gbmx_interface.h"
+#include "GB_opaque.h"
 
 #undef  FREE_ALL
 #define FREE_ALL GrB_Matrix_free (&A_to_free) ;
 
-#define USAGE "usage: [m n type] = gbmex_size (A)"
+#define USAGE "usage: [m n type bytes] = gbmex_size (A)"
 
 void mexFunction
 (
@@ -39,7 +40,7 @@ void mexFunction
     GrB_Matrix A = NULL, A_to_free = NULL ;
     int arena = GrB_DEFAULT ;   // use default arena for temporary workspace
 
-    GBMX_USAGE (nargin == 1 && nargout <= 3, USAGE) ;
+    GBMX_USAGE (nargin == 1 && nargout <= 4, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -63,6 +64,9 @@ void mexFunction
     GrB_Type type ;
     OK (GxB_Matrix_type (&type, A)) ;
 
+    size_t bytes ;
+    OK (GxB_Matrix_memoryUsage (&bytes, A)) ;
+
     // The input matrix is freed, so that mx* methods can allocate memory
     // below.  This eliminates any potential memory leaks if A is a handle GrB
     // matrix using malloc/free.
@@ -70,6 +74,15 @@ void mexFunction
     FREE_ALL ;
 
     ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // return the # of bytes used
+    //--------------------------------------------------------------------------
+
+    if (nargout > 3)
+    { 
+        pargout [3] = mxCreateDoubleScalar ((double) bytes) ;
+    }
 
     //--------------------------------------------------------------------------
     // return the type

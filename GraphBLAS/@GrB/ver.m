@@ -1,7 +1,7 @@
 function v = ver
 %GRB.VER Version information for GraphBLAS
-% v = GrB.ver returns a struct with the SuiteSparse:GraphBLAS version.
-% With no outputs, the version information is displayed.
+% v = GrB.ver returns a struct with the SuiteSparse:GraphBLAS version.  With no
+% outputs, the version information is displayed.
 %
 % See also ver, version, GrB.version.
 

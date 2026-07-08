@@ -21,14 +21,14 @@ end
 
 S = gbmex_split (ghb, A, m, n) ;
 
-% convert each entry in S to a @GrB or @GhB object
+% convert each entry in S to a GrB or GhB object
 if (ghb)
     for k = 1:numel(S)
         % NOTE: this method has a near zero chance of causing a memory leak
         % here.  If one of the conversions C {k} = GhB (S {k}) fails, this
-        % method returns immediately.  MATLAB will know how to delete all @GhB
+        % method returns immediately.  MATLAB will know how to delete all GhB
         % objects in C by calling gbmex_delete.  It will not know how to
-        % properly delete all of the @GhB handle structs in S that remain.
+        % properly delete all of the GhB handle structs in S that remain.
         % These point to GraphBLAS matrices in malloc/free space, so this will
         % cause a leak.  However, this failure is very remote.  Each conversion
         % of GhB (S {k}) allocates a very small amount of memory and is

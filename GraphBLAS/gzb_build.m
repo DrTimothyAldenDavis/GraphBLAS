@@ -4,8 +4,8 @@ function C = gzb_build (ghb, I, J, X, m, n, arg7, arg8, arg9)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% The caller constructs I, J, and X as built-in matrices, so there is
-% no need to check for any @GrB input matrices to convert to their structs.
+% The caller constructs I, J, and X as built-in matrices, so there is no need
+% to check for any GrB input matrices to convert to their structs.
 
 if (ghb)
     switch (nargin)

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmx_export_ghb_mxstruct: construct pargout [arg] for a @GhB matrix handle
+// gbmx_export_ghb_mxstruct: construct pargout [arg] for a GhB matrix handle
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -7,10 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// Creates an output @GhB argument for a mexFunction.  This is done at the
+// Creates an output GhB argument for a mexFunction.  This is done at the
 // start of a mexFunction that needs to return a G.opaque handle, so that if it
 // fails, no memory is leaked by subsequent calls to GraphBLAS in the
-// mexFunction.  It is not needed for the @GrB value matrix object.
+// mexFunction.  It is not needed for the GrB value matrix object.
 
 /* usage:
 
@@ -70,7 +70,7 @@ void mexFunction
     // Only a few mex* and mx* methods can be safely used after the second
     // "////...///" line.  All malloc'd space has been freed, except for the
     // output matrix C.  If the mexFunction fails here, C is not yet a fully-
-    // formed @GhB object, since pargout [0] contains just the C.opaque
+    // formed GhB object, since pargout [0] contains just the C.opaque
     // content.  If an mx* or mex* method fails here, the destructor for C in
     // GhB.m will not be called.
 
@@ -81,7 +81,7 @@ void mexFunction
 
 static const char *fields [1] = { "opaque" } ;
 
-mxArray *gbmx_export_ghb_mxstruct   // construct an mxArray struct for @GhB
+mxArray *gbmx_export_ghb_mxstruct   // construct an mxArray struct for GhB
 (
     GrB_Matrix **C_opaque_handle
 )

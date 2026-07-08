@@ -26,8 +26,8 @@ kind_enum_t gbmx_get_kind
             if (MATCH (s, "grb") || MATCH (s, "default") || MATCH (s, "ghb"))
             { 
                 // both gbdesc.kind == KIND_GHB and gbdesc.kind = KIND_GRB
-                // selects @GrB for a GrB.method, and @GhB for a GhB.method.
-                kind = KIND_GRB ;           // @GrB or @GhB matrix
+                // selects GrB for a GrB.method, and GhB for a GhB.method.
+                kind = KIND_GRB ;           // GrB or GhB matrix
             }
             else if (MATCH (s, "sparse"))
             { 

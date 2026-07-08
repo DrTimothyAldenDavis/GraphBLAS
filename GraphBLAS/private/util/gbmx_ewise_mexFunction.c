@@ -11,7 +11,7 @@
 // for GrB.eadd, GrB.emult, GhB.eadd, and GhB.emult.  Below "ewise" is
 // either eadd or emult.
 
-// Usage for @GrB and @GhB (omitting desc argument):
+// Usage for GrB and GhB (omitting desc argument):
 
 // C = GrB.ewise (op, A, B)                 C = op(A,B)
 // C = GrB.ewise (Cin, op, A, B)            C = op(A,B)
@@ -19,7 +19,7 @@
 // C = GrB.ewise (Cin, M, op, A, B)         C = Cin ; C<M> = op(A,B)
 // C = GrB.ewise (Cin, M, accum, op, A, B)  C = Cin ; C<M> += op(A,B)
 
-// Usage for @GhB only:
+// Usage for GhB only:
 
 // GhB.ewise (C, op, A, B)                  C = op(A,B)
 // GhB.ewise (C, accum, op, A, B)           C += op(A,B)

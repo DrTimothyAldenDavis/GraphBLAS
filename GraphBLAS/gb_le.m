@@ -1,5 +1,11 @@
 function C = gb_le (ghb, A, B)
 %GB_LE implements "<=" and ">=" for GrB and GhB.  Not user-callable.
+%
+% The pattern of C depends on the type of inputs:
+% A scalar, B scalar:  C is scalar.
+% A scalar, B matrix:  C is full if A<=0, otherwise C is a subset of B.
+% B scalar, A matrix:  C is full if B>=0, otherwise C is a subset of A.
+% A matrix, B matrix:  C is full.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

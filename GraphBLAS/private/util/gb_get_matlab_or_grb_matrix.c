@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_get_matlab_or_grb_matrix: get a MATLAB matrix or @GrB value matrix
+// gb_get_matlab_or_grb_matrix: get a MATLAB matrix or GrB value matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 // The A->[phybix] content is tagged GxB_IS_READONLY, so the arena doesn't
 // matter.  However, all of the content is mxMalloc'd for both the MATLAB
-// matrix and @GrB value matrix objects, so the data is tagged with the
+// matrix and GrB value matrix objects, so the data is tagged with the
 // MXARENA. The header of A is placed in the arena determined by the input
 // parameter.
 
@@ -23,12 +23,12 @@
     GrB_Matrix_free (&Y) ;              \
     GrB_Matrix_free (&A) ;
 
-GrB_Info gb_get_matlab_or_grb_matrix   // shallow copy of MATLAB or @GrB matrix
+GrB_Info gb_get_matlab_or_grb_matrix   // shallow copy of MATLAB or GrB matrix
 (
     // output
     GrB_Matrix *A_handle,   // content of A is tagged GxB_IS_READONLY
     // input
-    gb_matrix matrix,       // contents of a MATLAB or @GrB matrix
+    gb_matrix matrix,       // contents of a MATLAB or GrB matrix
     const int arena,
     char err [ERRLEN]
 )

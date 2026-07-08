@@ -21,11 +21,12 @@ function C = vreduce (arg1, arg2, arg3, arg4, arg5, arg6)
 %
 % See 'help GrB.monoidinfo' for more details on the available monoids.
 %
-% By default, each row of A is reduced to a scalar.  If Cin is not present,
-% C (i) = reduce (A (i,:)).  In this case, Cin and C are column vectors of
-% size m-by-1, where A is m-by-n.  If desc.in0 is 'transpose', then A.' is
-% reduced to a column vector; C (j) = reduce (A (:,j)).  In this case, Cin
-% and C are column vectors of size n-by-1, if A is m-by-n.
+% By default, each row of A is reduced to a scalar.  If Cin is not present, C
+% (i) = reduce (A (i,:)).  In this case, Cin and C are column vectors of size
+% m-by-1, where A is m-by-n.  If desc.in0 is 'transpose', then A.' is reduced
+% to a column vector; C (j) = reduce (A (:,j)).  In this case, Cin and C are
+% column vectors of size n-by-1, if A is m-by-n.  See 'help GrB.descriptorinfo'
+% for more details.
 %
 % The op and A arguments are required.  All others are optional.  The op is
 % applied to all entries in each or or column of the matrix A to reduce them to
@@ -33,9 +34,9 @@ function C = vreduce (arg1, arg2, arg3, arg4, arg5, arg6)
 %
 % accum: a binary operator to accumulate the results; in the computations
 % listed above it is shown as "+=" but any binary operator may be used.
-% For the in-place syntax, the @GhB scalar c is modified in-place.
+% For the in-place syntax, the GhB scalar c is modified in-place.
 %
-% Cin: an optional input vector into which the result can be accumulated.
+% Cin or C: an optional input vector into which the result can be accumulated.
 %
 % See also GhB.vreduce, GhB/sum, GhB/prod, GhB/max, GhB/min, GrB.monoidinfo,
 % GrB.binopinfo.

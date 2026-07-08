@@ -1,8 +1,8 @@
 function s = isa (G, type)
 %ISA Determine if a GraphBLAS matrix is of specific type.
-% For any GraphBLAS matrix G, isa (G, 'GrB') and isa (G, 'numeric') are
-% always true, even if G is logical, since many semirings are defined for
-% that type.
+% For any GraphBLAS matrix G, isa (G, 'GrB') and isa (G, 'numeric') are always
+% true, even if G is logical, since many semirings are defined for that type.
+% isa (G, 'GhB') is false for a GrB matrix.
 %
 % isa (G, 'float') is the same as isfloat (G), and is true if the matrix G has
 % type 'double', 'single', 'single complex', or 'double complex'.

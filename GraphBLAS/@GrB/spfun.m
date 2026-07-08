@@ -2,22 +2,21 @@ function C = spfun (fun, G)
 %SPFUN apply function to the entries of a matrix.
 % C = spfun (fun, G) evaluates the function fun on the entries of G.
 %
-% If fun is a string, it can be any GraphBLAS unary operator (type
-% 'help GrB.unopinfo' for a list).  The string can take the form of
-% just the name of the operator ('sqrt', for example), or it can have
-% the type appended, as ('sqrt.double', 'sqrt.double complex', etc).
-% The latter produces a complex result.  sqrt.double (x) returns NaN if
-% x is negative.  By default, the function type is determined from the
-% type of the input matrix G.  GrB/spfun does not attempt to select the
-% operator based on the values, in contract with GrB/sqrt, for example.
-% For a list of types, see 'help GrB.type'.
+% If fun is a string, it can be any GraphBLAS unary operator (type 'help
+% GrB.unopinfo' for a list).  The string can take the form of just the name of
+% the operator ('sqrt', for example), or it can have the type appended, as
+% ('sqrt.double', 'sqrt.double complex', etc).  The latter produces a complex
+% result.  sqrt.double (x) returns NaN if x is negative.  By default, the
+% function type is determined from the type of the input matrix G.  GrB/spfun
+% does not attempt to select the operator based on the values, in contract with
+% GrB/sqrt, for example.  For a list of types, see 'help GrB.type'.
 %
 % If the string fun is not a GraphBLAS operator, or if fun is a built-in
 % function handle, then feval(fun,x) is used instead.
 %
-% The function is not applied to entries not present in G.  Since a
-% GraphBLAS matrix can include explicit zeros, the function fun is
-% applied to them as well.  Use GrB.prune to remove them, if necessary.
+% The function is not applied to entries not present in G.  Since a GraphBLAS
+% matrix can include explicit zeros, the function fun is applied to them as
+% well.  Use GrB.prune to remove them, if necessary.
 %
 % Example:
 %

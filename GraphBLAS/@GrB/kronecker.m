@@ -7,11 +7,11 @@ function C = kronecker (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % C = GrB.kronecker (Cin, M, op, A, B, desc)        % C = Cin ; C<M> = op(A,B)
 % C = GrB.kronecker (Cin, M, accum, op, A, B, desc) % C = Cin ; C<M> += op(A,B)
 %
-% GrB.kronecker computes the Kronecker product T=kron(A,B), using any binary
-% op (shown as op(A,B) in the computations listed above).
+% GrB.kronecker computes the Kronecker product T=kron(A,B), using any binary op
+% (shown as op(A,B) in the computations listed above).
 %
-% T is then accumulated into C via C<M> = accum (C,T), where the accum step
-% is computed using GrB.eadd and M can be modified by the descriptor desc.
+% T is then accumulated into C via C<M> = accum (C,T), where the accum step is
+% computed using GrB.eadd and M can be modified by the descriptor desc.
 %
 % accum: a binary operator to accumulate the results; in the computations
 % listed above it is shown as "+=" but any binary operator may be used.
@@ -20,7 +20,7 @@ function C = kronecker (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % accum or M is present, then C or Cin is a required input.  If desc.in0 is
 % 'transpose' then A is transposed before applying the operator.  If desc.in1
 % is 'transpose', then the input matrix B is transposed before applying the
-% operator.
+% operator. See 'help GrB.descriptorinfo' for more details.
 %
 % See also kron, GrB/kron, GrB.binopinfo.
 

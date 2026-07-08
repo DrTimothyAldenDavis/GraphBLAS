@@ -1,10 +1,10 @@
 function gbmake (what)
-%GBMAKE compile @GrB interface for SuiteSparse:GraphBLAS
+%GBMAKE compile GrB/GhB interface for SuiteSparse:GraphBLAS
 %
 % Usage:
 %   gbmake
 %
-% gbmake compiles the @GrB interface for SuiteSparse:GraphBLAS.  The
+% gbmake compiles the GrB interface for SuiteSparse:GraphBLAS.  The
 % GraphBLAS library must already be compiled and installed.
 % MATLAB 9.4 (R2018a) or Octave 10.0 later is required.
 %
@@ -157,6 +157,7 @@ inc = '-Iutil -I../../Include -I../../Source ' ;
     inc = [inc '-I../../Source/transpose ' ] ;
     inc = [inc '-I../../Source/helper ' ] ;
     inc = [inc '-I../../Source/builtin ' ] ;
+    inc = [inc '-I../../Source/builtin/include ' ] ;
     inc = [inc '-I../../Source/hyper ' ] ;
 
 if (need_rename)
@@ -280,7 +281,7 @@ end
 
 fprintf ('\n') ;
 
-fprintf ('Compilation of the @GrB interface to GraphBLAS is complete.\n') ;
+fprintf ('Compilation of the GrB/GhB interface to GraphBLAS is complete.\n') ;
 fprintf ('Add the following commands to your startup.m file:\n\n') ;
 here1 = cd ('..') ;
 here2 = pwd ;

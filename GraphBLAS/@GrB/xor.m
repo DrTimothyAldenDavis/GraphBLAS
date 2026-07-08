@@ -1,7 +1,7 @@
 function C = xor (A, B)
 %XOR logical exclusive OR.
-% C = xor (A,B) is the element-by-element logical OR of A and B.  One or
-% both may be scalars.  Otherwise, A and B must have the same size.
+% C = xor (A,B) is the element-by-element logical OR of A and B.  One or both
+% may be scalars.  Otherwise, A and B must have the same size.
 %
 % See also GrB/and, GrB/or, GrB/not.
 

@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // The input GrB_Matrix C is being exported to a G.opaque handle, to become a
-// @GrB object.  This method modifies its format and integer sizes to be
+// GrB object.  This method modifies its format and integer sizes to be
 // directly compatible with a MATLAB sparse matrix.  After the caller
 // mexFunction finishes, another mexFunction (gbmex_builtin) will copy G into a
 // proper MATLAB sparse matrix.

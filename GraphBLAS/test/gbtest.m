@@ -25,7 +25,7 @@ demo_folder = fullfile (fileparts (mfilename ('fullpath')), '../demo') ;
 addpath (demo_folder) ;
 rng ('default') ;
 
-% GrB.nmalloc is always zero unless gbmake compiles the @GrB/@GhB interface
+% GrB.nmalloc is always zero unless gbmake compiles the GrB/GhB interface
 % with -DMALLOC_TRACKING enabled; in that case, it records the # of malloc'd
 % spaces that have yet to be freed.  See gbmake.m for details.  The gbcov.m
 % script always compiles the interface with tracking enabled, for test coverage
@@ -796,6 +796,8 @@ gbtest96        % test GrB.optype
 gbtest96 (1)
 gbtest96 (2)
 assert (GrB.nmalloc == 0) ;
+
+gbtest154       % test GrB.bytes
 
 if (~have_octave)
     % the Graph and DiGraph methods do not appear in octave

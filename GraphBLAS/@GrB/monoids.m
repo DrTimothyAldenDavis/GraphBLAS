@@ -1,7 +1,7 @@
 function result = monoids
 %GRB.MONOIDS list all monoids
-% Redundant monoids are not listed.  For example '+.logical'
-% exists, but it is identical to '|.logical'.
+% Redundant monoids are not listed.  For example '+.logical' exists, but it is
+% identical to '|.logical'.
 %
 % Example:
 %   GrB.monoids ;           % prints a list, with descriptions

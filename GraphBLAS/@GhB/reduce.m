@@ -25,7 +25,7 @@ function C = reduce (arg1, arg2, arg3, arg4, arg5)
 %
 % accum: a binary operator to accumulate the results; in the computations
 % listed above it is shown as "+=" but any binary operator may be used.
-% For the in-place syntax, the @GhB scalar c is modified in-place.
+% For the in-place syntax, the GhB scalar c is modified in-place.
 %
 % cin: an optional input scalar into which the result can be accumulated
 % with c = accum (cin, result).

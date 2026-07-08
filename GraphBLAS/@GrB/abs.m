@@ -1,7 +1,6 @@
 function C = abs (G)
 %ABS absolute value.
-% C = abs (G) is the absolute value of each entry of G.  C is always real,
-% even if C is complex.
+% C = abs (G) is the absolute value of each entry of G.
 %
 % See also GrB/sign.
 

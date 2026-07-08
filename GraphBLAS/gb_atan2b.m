@@ -7,8 +7,8 @@ function C = gb_atan2b (ghb, A, B)
 
 % atan2b(A,B) gives the set union of the pattern of A and B.
 
-% The caller (gb_atan2) has either already converted any @GrB matrices into
-% their structs, or passes new @GhB matrices.
+% The caller (gb_atan2) has either already converted any GrB matrices into
+% their structs, or passes new GhB matrices.
 
 if (gb_isscalar (A))
     if (gb_isscalar (B))

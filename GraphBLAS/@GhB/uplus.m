@@ -1,7 +1,7 @@
 function C = uplus (G)
 %UPLUS C = +G.
-% C = +G is the unary plus operator.  It does nothing to a GraphBLAS
-% matrix, so C is just equal to G.
+% C = +G is the unary plus operator.  It does nothing to a GraphBLAS matrix, so
+% C is just equal to G.
 %
 % See also GhB/uminus.
 

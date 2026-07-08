@@ -13,7 +13,8 @@
 
 // blob = gbmex_serialize (ghb, A, method, level)
 
-// The blob is returned as the opaque content of an n-by-1 uint8 @GrB matrix.
+// The blob is returned as the opaque content of an n-by-1 uint8 GrB or GhB
+// matrix.
 
 #include "gb_interface.h"
 #include "gbmx_interface.h"

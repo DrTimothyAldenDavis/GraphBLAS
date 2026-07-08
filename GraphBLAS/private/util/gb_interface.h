@@ -244,8 +244,8 @@ struct gb_descriptor_struct
 typedef struct gb_descriptor_struct *gb_descriptor ;
 
 // gb_matrix_struct: a plain struct that can be statically allocated, which
-// holds either a GraphBLAS @GrB matrix or the contents of a MATLAB sparse or
-// full matrix.
+// holds either a GraphBLAS GrB or GhB matrix or the contents of a MATLAB
+// sparse or full matrix.
 
 struct gb_matrix_struct
 {
@@ -264,17 +264,17 @@ struct gb_matrix_struct
 
     // Only one of the two sections are present.  This struct is memset to all
     // zero, and then only one of the two sections are filled.  If the matrix
-    // is a @GhB GraphBLAS matrix, then G is non-NULL.  Otherwise, the matrix
-    // is a built-in MATLAB sparse or full matrix, or a @GrB value matrix.
+    // is a GhB GraphBLAS matrix, then G is non-NULL.  Otherwise, the matrix
+    // is a built-in MATLAB sparse or full matrix, or a GrB value matrix.
 
         //----------------------------------------------------------------------
-        // (1) @GhB handle matrix; NULL if MATLAB or @GrB matrix
+        // (1) GhB handle matrix; NULL if MATLAB or GrB matrix
         //----------------------------------------------------------------------
 
         GrB_Matrix G ;
 
         //----------------------------------------------------------------------
-        // (2) @GrB value matrix or MATLAB matrix: populated if G is non-NULL
+        // (2) GrB value matrix or MATLAB matrix: populated if G is non-NULL
         //----------------------------------------------------------------------
 
         // If the input is a 0-by-0 MATLAB matrix, the [p,i,x] content below is
@@ -302,11 +302,11 @@ struct gb_matrix_struct
         bool is_empty ;     // true for an empty MATLAB matrix
 
     //--------------------------------------------------------------------------
-    // bool content for a @GhB matrix; not needed for other 
+    // bool content for a GhB matrix; not needed for other 
     //--------------------------------------------------------------------------
 
     bool will_wait ;    // true if G has any pending work; always false for a
-                        // MATLAB matrix or @GrB matrix
+                        // MATLAB matrix or GrB matrix
 
     kind_enum_t kind ;  // for display only
 } ;
@@ -428,7 +428,7 @@ GrB_Info gb_expand_to_full      // C = full (A), and typecast
 GrB_Info gb_export              // export a GrB_Matrix to MATLAB
 (
     // output:
-    GrB_Matrix *C_opaque,       // matrix for export as @GhB;
+    GrB_Matrix *C_opaque,       // matrix for export as GhB;
                                 // NULL if in-place
     // input/output:
     GrB_Matrix *C_handle,       // GrB_Matrix to export
@@ -475,7 +475,7 @@ GrB_Info gb_get_deep        // get the input/output matrix C
     GrB_Matrix *C_handle,   // matrix C: deep copy if in-place
     // input:
     bool inplace,           // if true, C is modified in-place (C is Cin)
-    gb_matrix matrix,       // input MATLAB or @GrB matrix
+    gb_matrix matrix,       // input MATLAB, GrB, or GhB matrix
     const int arena,
     char err [ERRLEN]
 ) ;
@@ -523,7 +523,7 @@ GrB_Info gb_get_format      // get the format (by row or by col)
     char err [ERRLEN]
 ) ;
 
-GrB_Info gb_get_matlab_or_grb_matrix   // shallow copy of MATLAB or @GrB matrix
+GrB_Info gb_get_matlab_or_grb_matrix   // shallow copy of MATLAB or GrB matrix
 (
     // output
     GrB_Matrix *A_handle,   // content of A is tagged GxB_IS_READONLY
@@ -533,14 +533,13 @@ GrB_Info gb_get_matlab_or_grb_matrix   // shallow copy of MATLAB or @GrB matrix
     char err [ERRLEN]
 ) ;
 
-GrB_Info gb_get_matrix      // shallow copy of MATLAB sparse matrix,
-                            // or the content of a MATLAB @GrB handle object
+GrB_Info gb_get_matrix
 (
     // output
     GrB_Matrix *A_handle,   // output matrix
     GrB_Matrix *A_to_free,  // must be freed by the caller if not NULL
     // input
-    gb_matrix X,            // input MATLAB or @GrB matrix
+    gb_matrix X,            // input MATLAB, GrB, or GhB matrix
     const int arena,
     char err [ERRLEN]
 ) ;
@@ -809,7 +808,7 @@ void gb_free (void **p, int arena) ;
 // remove access to GraphBLAS polymorphic methods
 //------------------------------------------------------------------------------
 
-// The @GrB MATLAB interface does not use these macros since they require a
+// The GrB MATLAB interface does not use these macros since they require a
 // C11 compiler, and thus they cannot be used for MATLAB on Windows.
 
 #undef GrB_Monoid_new

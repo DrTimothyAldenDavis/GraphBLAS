@@ -1,8 +1,8 @@
 function C = not (G)
 %~ logical negation.
-% C = ~G computes the logical negation of G.  The result C is full.
-% To negate just the entries in the pattern of G, use
-% C = GhB.apply ('~.logical', G), which has the same pattern as G.
+% C = ~G computes the logical negation of G.  The result C is full.  To negate
+% just the entries in the pattern of G, use C = GhB.apply ('~.logical', G),
+% which has the same pattern as G.
 %
 % See also GhB.apply.
 

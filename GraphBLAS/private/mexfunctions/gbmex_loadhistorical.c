@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmex_loadhistorical: create a shallow @GrB or @GhB matrix for loadobj
+// gbmex_loadhistorical: create a shallow GrB or GhB matrix for loadobj
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// C = gbmex_loadhistorical (S) creates a new @GrB or @GhB matrix for GraphBLAS
-// 10.4.0 or later, from a struct created when a non-handle @GrB matrix was
+// C = gbmex_loadhistorical (S) creates a new GrB or GhB matrix for GraphBLAS
+// 10.4.0 or later, from a struct created when a non-handle GrB matrix was
 // saved to a *.mat file by GraphBLAS v10.3.1 or earlier.
 
 #include "gb_interface.h"
@@ -54,7 +54,7 @@ void mexFunction
     gb_matrix matrix = &(Matrix [0]) ;
 
     //--------------------------------------------------------------------------
-    // get the content of the @GrB matrix from the struct
+    // get the content of the GrB matrix from the struct
     //--------------------------------------------------------------------------
 
     gbmx_get_grb_matrix (matrix, pargin [1]) ;

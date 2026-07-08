@@ -8,9 +8,9 @@ function [C,P] = argsort (A, arg1, arg2)
 % [C,P] = argsort (A, dim, 'ascend')
 % [C,P] = argsort (A, dim, 'descend')
 %
-% GrB.argsort sorts the rows or columns of A.  By default, the columns of A
-% are sorted (dim == 1); with dim = 2, the rows of A are sorted.  The
-% default is to sort in ascending order.
+% GrB.argsort sorts the rows or columns of A.  By default, the columns of A are
+% sorted (dim == 1); with dim = 2, the rows of A are sorted.  The default is to
+% sort in ascending order.
 %
 % Example:
 %
@@ -25,11 +25,11 @@ function [C,P] = argsort (A, arg1, arg2)
 %   I (:,1)
 %
 % This methods differs from the MATLAB sort function.  Implicit zeros are
-% ignored and always placed last in the output.  P is returned sparse, and
-% only reflects the entries in A, not the implicit zeros.  The MATLAB
-% [C,P] = sort (A) always returns P as full since it permutes the implicit
-% zeros of A as well.  Complex matrices are not supported.  C and P are
-% always returned as @GrB objects.
+% ignored and always placed last in the output.  P is returned sparse, and only
+% reflects the entries in A, not the implicit zeros.  The MATLAB [C,P] =
+% sort (A) always returns P as full since it permutes the implicit zeros of A
+% as well.  Complex matrices are not supported.  C and P are always returned as
+% GrB objects.
 %
 % See also sort, GrB.argmin, GrB.argmax.
 

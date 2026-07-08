@@ -4,7 +4,7 @@ function C = int8 (G)
 % The result C is full since sparse int8 matrices are not built-in.
 %
 % To typecast the matrix G to a GraphBLAS sparse int8 matrix instead, use
-% C = GrB (G, 'int8').
+% C = GrB (G, 'int8'); use C = GhB (G, 'int8') for a GhB matrix.
 %
 % See also GrB, GrB/double, GrB/complex, GrB/single, GrB/logical,
 % GrB/int16, GrB/int32, GrB/int64, GrB/uint8, GrB/uint16, GrB/uint32,

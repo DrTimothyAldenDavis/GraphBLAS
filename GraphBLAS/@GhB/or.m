@@ -1,7 +1,7 @@
 function C = or (A, B)
 %| logical OR.
-% C = (A | B) is the element-by-element logical OR of A and B.  One or
-% both may be scalars.  Otherwise, A and B must have the same size.
+% C = (A | B) is the element-by-element logical OR of A and B.  One or both may
+% be scalars.  Otherwise, A and B must have the same size.
 %
 % See also GhB/and, GhB/xor, GhB/not.
 

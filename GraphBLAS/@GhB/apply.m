@@ -21,12 +21,13 @@ function C = apply (arg1, arg2, arg3, arg4, arg5, arg6)
 %
 % accum: a binary operator to accumulate the results; in the computations
 % listed above it is shown as "+=" but any binary operator may be used.
-% For the in-place syntax, the @GhB matrix C is modified in-place.
+% For the in-place syntax, the GhB matrix C is modified in-place.
 %
-% Cin, the mask matrix M, the accum operator, and desc are optional.  If
-% either accum or M is present, then C or Cin is a required input. If
-% desc.in0 is 'transpose' then A is transposed before applying the
-% operator, as C<M> = accum (C, f(A')) where f(...) is the unary operator.
+% Cin, the mask matrix M, the accum operator, and desc are optional.  If either
+% accum or M is present, then C or Cin is a required input. If desc.in0 is
+% 'transpose' then A is transposed before applying the operator, as C<M> =
+% accum (C, f(A')) where f(...) is the unary operator.  See 'help
+% GrB.descriptorinfo' for more details.
 %
 % Example:
 %

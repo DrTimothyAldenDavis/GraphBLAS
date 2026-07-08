@@ -17,7 +17,7 @@ if (nargin == 1)
 
 else
 
-    % with two inputs, A and B are real matrices (@GrB or built-in)
+    % with two inputs, A and B are real matrices (GrB, GhB, or built-in)
     % but at least one must be GrB or otherwise this overloaded method
     % would not be called).  The output is a double complex matrix.
 

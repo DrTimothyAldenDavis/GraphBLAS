@@ -3,7 +3,7 @@
 SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 
-The @GrB and @GhB classes provide an easy-to-use interface to SuiteSparse:
+The GrB and GhB classes provide an easy-to-use interface to SuiteSparse:
 GraphBLAS.  This README.md file explains how to install it for use in
 MATLAB/Octave on Linux, Mac, or Windows.
 

@@ -7,12 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-// Returns a deep copy GrB_Matrix C for a @GrB or MATLAB input matrix, with no
+// Returns a deep copy GrB_Matrix C for a GrB or MATLAB input matrix, with no
 // pending work.  Used for methods such as
 //
 //      C = GrB.apply (Cin, ... )
 //
-// where Cin is either a MATLAB matrix, or a @GrB object that must not be
+// where Cin is either a MATLAB matrix, or a GrB object that must not be
 // modified (except any pending work is finished in Cin).  The caller does not
 // need Cin, just its deep copy C, which the caller will then modify and
 // return as pargout [0].  Thus Cin is not returned to the caller.
@@ -22,7 +22,7 @@
 //      GrB.apply (C, ... )
 //
 // with nargout = 0, since in this case, C is modified in place (and it must
-// also be a @GrB object, not a MATLAB matrix).  In this case, C and Cin are
+// also be a GrB object, not a MATLAB matrix).  In this case, C and Cin are
 // the same matrix.
 
 #undef  FREE_WORK
@@ -40,7 +40,7 @@ GrB_Info gb_get_deep        // get the input/output matrix C
     GrB_Matrix *C_handle,   // matrix C: deep copy if in-place
     // input:
     bool inplace,           // if true, C is modified in-place (C is Cin)
-    gb_matrix matrix,       // input MATLAB or @GrB matrix
+    gb_matrix matrix,       // input MATLAB, GrB, or GhB matrix
     const int arena,
     char err [ERRLEN]
 )
@@ -64,10 +64,10 @@ GrB_Info gb_get_deep        // get the input/output matrix C
         // usage: GhB.method (C, ...)
         //----------------------------------------------------------------------
 
-        // ensure C is a @GhB handle matrix argument
+        // ensure C is a GhB handle matrix argument
         if (matrix->G == NULL)
         {
-            ERROR ("For in-place syntax, C must be a @GhB handle matrix",
+            ERROR ("For in-place syntax, C must be a GhB handle matrix",
                 GrB_INVALID_VALUE) ;
         }
 

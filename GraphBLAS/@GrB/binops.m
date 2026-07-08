@@ -1,7 +1,7 @@
 function result = binops
 %GRB.BINOPS list all binary ops
-% Redundant binary ops are not listed.  For example '+.logical'
-% exists, but it is identical to '|.logical'.
+% Redundant binary ops are not listed.  For example '+.logical' exists, but it
+% is identical to '|.logical'.
 %
 % Example:
 %   GrB.binops ;            % prints a list, with descriptions

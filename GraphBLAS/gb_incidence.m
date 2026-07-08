@@ -14,6 +14,7 @@ if (m ~= n)
 end
 
 % get the string options
+test_coverage = false ;
 kind = 'directed' ;
 type = 'double' ;
 for k = 1:nargin-2
@@ -26,6 +27,9 @@ for k = 1:nargin-2
             type = arg ;
         case { 'uint8', 'uint16', 'uint32', 'uint64', 'logical' }
             error ('GrB:error', 'type must be signed') ;
+        case { 'test_coverage' }
+            % for internal use only, for testing
+            test_coverage = true ;
         otherwise
             error ('GrB:error', 'unknown option') ;
     end
@@ -59,8 +63,7 @@ gbmex_wait (A) ;
 [I, J] = gbmex_extracttuples (1, A, desc) ;
 e = length (I) ;
 I = [I ; J] ;
-if (e > intmax ('uint32'))
-    % this case cannot be tested by gbtest; it requires a huge test problem:
+if (e > intmax ('uint32') || test_coverage)
     J = (uint64 (0) : uint64 (e-1))' ;
 else
     J = (uint32 (0) : uint32 (e-1))' ;

@@ -48,12 +48,12 @@ GrB_Info gbmx_defaults           // set global GraphBLAS defaults for MATLAB
     char err [ERRLEN]
 ) ;
 
-mxArray *gbmx_export_ghb_mxstruct   // construct an mxArray struct for @GhB
+mxArray *gbmx_export_ghb_mxstruct   // construct an mxArray struct for GhB
 (
     GrB_Matrix **C_opaque_handle
 ) ;
 
-mxArray *gbmx_export_grb_mxstruct   // construct an mxArray struct for @GrB
+mxArray *gbmx_export_grb_mxstruct   // construct an mxArray struct for GrB
 (
     GrB_Matrix *C_handle            // matrix to export; freed on output
 ) ;
@@ -65,19 +65,19 @@ void gbmx_free                  // mxFree wrapper
 
 int gbmx_flush ( void ) ;       // flush mexPrintf output to Command Window
 
-GrB_Matrix gbmx_get_ghb_matrix  // the content of a MATLAB @GhB handle object
+GrB_Matrix gbmx_get_ghb_matrix  // the content of a MATLAB GhB handle object
 (
     // input
-    const mxArray *G            // must be a @GhB object
+    const mxArray *G            // must be a GhB object
 ) ;
 
-mxArray *gbmx_get_ghb_handle    // the MATLAB @GhB opaque handle
+mxArray *gbmx_get_ghb_handle    // the MATLAB GhB opaque handle
 (
     // input
-    const mxArray *G            // must be a @GhB object
+    const mxArray *G            // must be a GhB object
 ) ;
 
-void gbmx_get_grb_matrix        // get content of a @GrB matrix
+void gbmx_get_grb_matrix        // get content of a GrB matrix
 (
     // output
     gb_matrix matrix,
@@ -108,7 +108,7 @@ void gbmx_get_matrix
     gb_matrix matrix,       // either a GraphBLAS or MATLAB matrix, statically
                             // allocated (but undefined) on input
     // input
-    const mxArray *X        // @GrB object or MATLAB matrix
+    const mxArray *X        // GrB, GhB, or MATLAB matrix
 ) ;
 
 void gbmx_get_mxargs

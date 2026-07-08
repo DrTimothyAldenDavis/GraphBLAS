@@ -43,6 +43,11 @@ for trial = 1:2
     E1 = sortrows (E1')' ;
     assert (isequal (E0, E1)) ;
 
+    E1 = gtb_incidence (ghb, G, 'test_coverage') ;
+    E1 = double (E1) ;
+    E1 = sortrows (E1')' ;
+    assert (isequal (E0, E1)) ;
+
     E1 = gtb_incidence (ghb, G, 'int8') ;
     assert (isequal (gtb_type (ghb, E1), 'int8')) ;
     E1 = double (E1) ;

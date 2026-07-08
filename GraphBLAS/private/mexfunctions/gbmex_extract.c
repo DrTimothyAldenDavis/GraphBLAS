@@ -16,7 +16,7 @@
 // C = GrB.extract (Cin, M, A, I, J)             C = Cin ; C<M> = A(I,J)
 // C = GrB.extract (Cin, M, accum, A, I, J)      C = Cin ; C<M> += A(I,J)
 
-// Usage for @GhB only:
+// Usage for GhB only:
 
 // GhB.extract (C, A, I, J)                      C = A(I,J)
 // GhB.extract (C, accum, A, I, J)               C += A(I,J)

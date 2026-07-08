@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmx_get_grb_matrix: get content for a shallow @GrB matrix
+// gbmx_get_grb_matrix: get content for a shallow GrB matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -25,12 +25,12 @@ void gbmx_get_grb_matrix
     // output
     gb_matrix matrix,
     // input
-    const mxArray *X        // a struct containing a @GrB value matrix
+    const mxArray *X        // a struct containing a GrB value matrix
 )
 {
 
     //--------------------------------------------------------------------------
-    // get the content of the @GrB matrix from the struct
+    // get the content of the GrB matrix from the struct
     //--------------------------------------------------------------------------
 
     char err [ERRLEN] ;
@@ -40,12 +40,12 @@ void gbmx_get_grb_matrix
 
     if (mxIsClass (X, "GrB"))
     {
-        // X is a @GrB object; get its opaque content (which must be a struct).
+        // X is a GrB object; get its opaque content (which must be a struct).
         // mxGetProperty works here, but is insanely slow; it creates a copy of
-        // the entire opaque @GrB struct.  The MATLAB/Octave interface does not
+        // the entire opaque GrB struct.  The MATLAB/Octave interface does not
         // rely on this in the tests, but it might occur in other uses.  The
-        // user application might pass in a scalar to a @GrB method that is
-        // itself a @GrB object, which works fine, and is reasonably fast since
+        // user application might pass in a scalar to a GrB method that is
+        // itself a GrB object, which works fine, and is reasonably fast since
         // a scalar is small.  This call to mxGetProperty is left here to
         // handle that case.
         //
@@ -65,7 +65,7 @@ void gbmx_get_grb_matrix
         X = mxGetProperty (X, 0, "opaque") ;
         #ifdef GBCOV
         // make sure it doesn't occur in the coverage tests
-        mexErrMsgTxt ("gotcha! (@GrB passed to a mexFunction as an object)") ;
+        mexErrMsgTxt ("gotcha! (GrB passed to a mexFunction as an object)") ;
         #endif
     }
 
@@ -418,7 +418,7 @@ void gbmx_get_grb_matrix
 
     matrix->is_empty = false ;
     matrix->will_wait = false ;
-    matrix->kind = KIND_GRB ;   // matrix holds a @GrB value matrix
+    matrix->kind = KIND_GRB ;   // matrix holds a GrB value matrix
 }
 
 #undef IF

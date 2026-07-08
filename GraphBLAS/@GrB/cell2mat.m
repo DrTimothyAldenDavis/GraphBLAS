@@ -1,6 +1,6 @@
 function C = cell2mat (A)
 %GRB.CELL2MAT Concatenate a cell array of matrices into a single matrix.
-% C = GrB.cell2mat (A) converts a 2D cell array of matrices into a single @GrB
+% C = GrB.cell2mat (A) converts a 2D cell array of matrices into a single GrB
 % matrix.  Let [m,n] = size(A) be the size of the cell array A.  Then C is
 % computed as:
 %
@@ -9,21 +9,21 @@ function C = cell2mat (A)
 %        ...
 %        A{m-1,0} A{m-1,1} A{m-1,2} ... A{m-1,n-1} ]
 %
-% If the matrices in A have different types, the type is determined
-% according to the rules in GrB.optype.
+% If the matrices in A have different types, the type is determined according
+% to the rules in GrB.optype.
 %
-% Note: The methods in the "cat" family include horzcat, vertcat, cat,
-% cell2mat (this method), mat2cell, and num2cell.  All of them appear in
-% @GrB, and all but this one are overloaded methods.  GrB.cell2mat is a
-% static method, since its input is a cell array, not a @GrB object, and
-% thus its use cannot trigger the call to an overloaded method.
-% GrB.cell2mat method can operate on any mix of @GrB/built-in matrices,
-% with any mix of data types.  The output is always a @GrB matrix.
+% Note: The methods in the "cat" family include horzcat, vertcat, cat, cell2mat
+% (this method), mat2cell, and num2cell.  All of them appear in GrB, and all
+% but this one are overloaded methods.  GrB.cell2mat is a static method, since
+% its input is a cell array, not a GrB object, and thus its use cannot trigger
+% the call to an overloaded method.  GrB.cell2mat method can operate on any mix
+% of GrB/GhB/built-in matrices, with any mix of data types.  The output is
+% always a GrB matrix.
 %
-% This method predates MATLAB R2025a.  MATLAB R2025a and later now allow
-% mixing of data types, but the rules for the type of C differ from
-% GrB.cell2mat.  @GrB selects the largest type of its inputs, while the
-% MATLAB cell2mat selects the smallest.
+% This method predates MATLAB R2025a.  MATLAB R2025a and later now allow mixing
+% of data types, but the rules for the type of C differ from GrB.cell2mat.  GrB
+% selects the largest type of its inputs, while the MATLAB cell2mat selects the
+% smallest.
 %
 % Example:
 %

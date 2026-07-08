@@ -7,8 +7,8 @@ function C = ones (varargin)
 %   C = GhB.ones (..., type) ;      matrix of all ones of given type.
 %   C = GhB.ones (..., 'like', G) ; matrix of all ones, same type as G.
 %
-% The memory required to store C is O(1) not O(m*n), so both m and
-% n can be as large as 2^60.
+% The memory required to store C is O(1) not O(m*n), so both m and n can be as
+% large as 2^60.
 %
 % See also GhB.zeros, GhB.false, GhB.true, GhB.eye, GhB.speye.
 

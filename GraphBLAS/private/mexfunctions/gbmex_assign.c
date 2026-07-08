@@ -10,14 +10,14 @@
 // gbmex_assign is an interface to GrB_Matrix_assign and
 // GrB_Matrix_assign_[TYPE], for implementing GrB.assign and GhB.assign.
 
-// Usage for @GrB and @GhB (omitting desc argument):
+// Usage for GrB and GhB (omitting desc argument):
 
 // C = GrB.assign (Cin, A, I, J)                C = Cin ; C(I,J) = A
 // C = GrB.assign (Cin, accum, A, I, J)         C = Cin ; C(I,J) += A
 // C = GrB.assign (Cin, M, A, I, J)             C = Cin ; C<M>(I,J) = A
 // C = GrB.assign (Cin, M, accum, A, I, J)      C = Cin ; C<M>(I,J) += A
 
-// Usage for @GhB only (inplace):
+// Usage for GhB only (inplace):
 
 // GhB.assign (C, A, I, J)                      C(I,J) = A
 // GhB.assign (C, accum, A, I, J)               C(I,J) += A

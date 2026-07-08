@@ -1,7 +1,7 @@
 function result = selectops
 %SELECTOPS list all select ops
-% Redundant select ops are not listed.  For example 'tril.double'
-% exists, but it is identical to just 'tril'.
+% Redundant select ops are not listed.  For example 'tril.double' exists, but
+% it is identical to just 'tril'.
 %
 % Example:
 %   GrB.selectops ;         % prints a list, with descriptions

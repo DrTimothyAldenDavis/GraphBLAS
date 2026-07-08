@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// gbmx_get_matrix (matrix,X) gets the contents of a GraphBLAS @GrB or @GhB
+// gbmx_get_matrix (matrix,X) gets the contents of a GraphBLAS GrB or GhB
 // matrix object, or the properties of a MATLAB matrix (type, dimensions, and
 // pointers to p,i,x, etc), and saves them in the gb_matrix struct.
 
@@ -23,7 +23,7 @@ void gbmx_get_matrix
     gb_matrix matrix,       // either a GraphBLAS or MATLAB matrix, statically
                             // allocated (but undefined) on input
     // input
-    const mxArray *X        // @GrB or @GhB object or MATLAB matrix
+    const mxArray *X        // GrB or GhB object or MATLAB matrix
 )
 {
 
@@ -50,11 +50,11 @@ void gbmx_get_matrix
     { 
 
         //----------------------------------------------------------------------
-        // X is a @GhB handle object
+        // X is a GhB handle object
         //----------------------------------------------------------------------
 
         matrix->G = gbmx_get_ghb_matrix (X) ;
-        CHECK_ERROR (matrix->G == NULL, "invalid @GhB matrix") ;
+        CHECK_ERROR (matrix->G == NULL, "invalid GhB matrix") ;
         matrix->will_wait = GB_will_wait (matrix->G) ;
         matrix->nvals = GB_nnz (matrix->G) ; // valid if no pending work
         OK (GrB_Matrix_nrows (&matrix->nrows, matrix->G)) ;
@@ -68,7 +68,7 @@ void gbmx_get_matrix
     { 
 
         //----------------------------------------------------------------------
-        // X is a @GrB value object
+        // X is a GrB value object
         //----------------------------------------------------------------------
 
         gbmx_get_grb_matrix (matrix, X) ;

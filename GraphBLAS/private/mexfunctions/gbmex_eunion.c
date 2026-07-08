@@ -10,7 +10,7 @@
 // gbmex_eunion is an interface to GxB_Matrix_eWiseUnion, for GrB.eunion
 // and GhB.eunion.
 
-// Usage for @GrB and @GhB (omitting desc argument):
+// Usage for GrB and GhB (omitting desc argument):
 
 // C = GrB.eunion (op, A, alpha, B, beta)                 C = op(A,alpha,B,beta)
 // C = GrB.eunion (Cin, op, A, alpha, B, beta)            C = Cin ; C = op(...)
@@ -18,7 +18,7 @@
 // C = GrB.eunion (Cin, M, op, A, alpha, B, beta)         C = Cin ; C<M> =op(..)
 // C = GrB.eunion (Cin, M, accum, op, A, alpha, B, beta)  C = Cin ; C<M>+=op(..)
 
-// Usage for @GhB only:
+// Usage for GhB only:
 
 // GhB.eunion (C, op, A, alpha, B, beta)                  C = op(A,alpha,B,beta)
 // GhB.eunion (C, accum, op, A, alpha, B, beta)           C += op(...)

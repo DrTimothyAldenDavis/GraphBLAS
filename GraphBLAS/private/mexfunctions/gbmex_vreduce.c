@@ -10,7 +10,7 @@
 // gbmex_vreduce is an interface to GrB_Matrix_reduce, for GrB.vreduce and
 // GhB.vreduce.
 
-// Usage for @GrB and @GhB (omitting optional final desc argument):
+// Usage for GrB and GhB (omitting optional final desc argument):
 
 // C = GrB.vreduce (op, A)                  C = op (A)
 // C = GrB.vreduce (Cin, op, A)             C = Cin ; C = op (A)
@@ -18,7 +18,7 @@
 // C = GrB.vreduce (Cin, M, op, A)          C = Cin ; C<M> = op (A)
 // C = GrB.vreduce (Cin, M, accum, op, A)   C = Cin ; C<M> += op(A)
 
-// Usage for @GhB only (inplace usage):
+// Usage for GhB only (inplace usage):
 
 // GhB.vreduce (C, op, A)                   C = op (A)
 // GhB.vreduce (C, accum, op, A)            C += op (A)

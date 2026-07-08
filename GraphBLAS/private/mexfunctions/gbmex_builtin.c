@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmex_builtin: convert a @GrB matrix to a MATLAB/Octave matrix
+// gbmex_builtin: convert a GrB matrix to a MATLAB/Octave matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// The input is a @GrB matrix A, but in a limited range of formats and sparsity
+// The input is a GrB matrix A, but in a limited range of formats and sparsity
 // structures, to be compatible with MATLAB/Octave built-in sparse/full
 // matrices.  The format is by-column only.  It is sparse or full, never
 // bitmap or hypersparse.  It has no pending work.  The integers for a sparse
@@ -17,11 +17,11 @@
 // This method does not malloc/free any content of a GraphBLAS matrix, so it
 // is safe to use mxMalloc and mxCreate* throughout the mexFunction.  If the
 // method fails, MATLAB will automatically destroy the output matrix C, and
-// will leave the input @GrB matrix A unchanged.
+// will leave the input GrB matrix A unchanged.
 
 // This strategy allows C to be safely created with no memory leaks.  The only
 // downside is that this approach requires a copy to be made.  This method is
-// used after another mexFunction has created a @GrB matrix with KIND_SPARSE,
+// used after another mexFunction has created a GrB matrix with KIND_SPARSE,
 // KIND_FULL, or KIND_BUILTIN (either sparse or full), in prepartion for this
 // mexFunction, which creates the final MATLAB/Octave sparse/full matrix.
 

@@ -9,7 +9,7 @@
 
 // This method is almost the same as GrB_Matrix_dup, except that it allows
 // the output matrix C to have different integer sizes than Cin.  The matrix
-// Cin might be a shallow @GrB matrix constructed from a MATLAB/Octave sparse
+// Cin might be a shallow GrB matrix constructed from a MATLAB/Octave sparse
 // matrix, which always uses 64-bit integers.
 
 #undef  FREE_ALL

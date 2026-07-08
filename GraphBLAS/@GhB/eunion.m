@@ -2,10 +2,10 @@ function C = eunion (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
 %GHB.EUNION sparse matrix union.
 %
 % syntax for a new matrix C:                        computation:
-% C = GhB.eunion (op, A,a,B,b, desc)                % C = op(A,a,B,b)
-% C = GhB.eunion (Cin, accum, op, A,a,B,b, desc)    % C = Cin + op(A,a,B,b)
-% C = GhB.eunion (Cin, M, op, A,a,B,b, desc)        % C = Cin ; C<M> = op(A,a,B,b)
-% C = GhB.eunion (Cin, M, accum, op, A,a,B,b, desc) % C = Cin ; C<M> += op(A,a,B,b)
+% C = GhB.eunion (op, A,a,B,b, desc)              % C = op(A,a,B,b)
+% C = GhB.eunion (Cin, accum, op, A,a,B,b, desc)  % C = Cin + op(A,a,B,b)
+% C = GhB.eunion (Cin, M, op, A,a,B,b, desc)      % C = Cin ; C<M> = op(A,a,B,b)
+% C = GhB.eunion (Cin, M, accum, op,A,a,B,b,desc) % C = Cin ; C<M>+= op(A,a,B,b)
 %
 % in-place syntax:
 % GhB.eunion (C, op, A,a,B,b, desc)                 % C = op(A,a,B,b)
@@ -30,7 +30,7 @@ function C = eunion (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
 %
 % accum: a binary operator to accumulate the results; in the computations
 % listed above it is shown as "+=" but any binary operator may be used.
-% For the in-place syntax, the @GhB matrix C is modified in-place.
+% For the in-place syntax, the GhB matrix C is modified in-place.
 %
 % Cin, the mask matrix M, the accum operator, and desc are optional.  If either
 % accum or M is present, then C or Cin is a required input.  If desc.in0 is

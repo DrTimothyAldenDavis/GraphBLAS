@@ -9,7 +9,7 @@
 
 // gbmex_trans is an interface to GrB_transpose, for GrB.trans and GhB.trans.
 
-// Usage for @GrB and @GhB (omitting desc argument):
+// Usage for GrB and GhB (omitting desc argument):
 
 // C = GrB.trans (A)                    C = A'
 // C = GrB.trans (Cin, A)               C = Cin ; C = A'
@@ -17,7 +17,7 @@
 // C = GrB.trans (Cin, M, A)            C = Cin ; C<M> = A'
 // C = GrB.trans (Cin, M, accum, A)     C = Cin ; C<M> += A'
 
-// Usage for @GhB only (inplace):
+// Usage for GhB only (inplace):
 
 // GhB.trans (C, A)                     C = A'
 // GhB.trans (C, accum, A)              C += A'

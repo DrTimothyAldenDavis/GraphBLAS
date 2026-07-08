@@ -12,11 +12,10 @@ function C = assign (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % GhB.assign (C, accum, A, I, J, desc)              % C(I,J) += A
 % GhB.assign (C, M, A, I, J, desc)                  % C<M>(I,J) = A
 % GhB.assign (C, M, accum, A, I, J, desc)           % C<M>(I,J) += A
-
 %
-% Cin and A are required parameters.  All others are optional.  The arguments
-% are parsed according to their type.  Arguments with different types can
-% appear in any order:
+% Cin (or C) and A are required parameters.  All others are optional.  The
+% arguments are parsed according to their type.  Arguments with different types
+% can appear in any order:
 %
 %   Cin, M, A:  2 or 3 GraphBLAS/built-in sparse/full matrices.
 %               The first three matrix inputs are Cin, M, and A.
@@ -36,11 +35,10 @@ function C = assign (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %
 %   1:  { I }   1D list of row indices, like C(I,J).
 %
-%   2:  { start,fini }  start and fini are scalars (either double,
-%               int64, or uint64).  This defines I = start:fini.
+%   2:  { start,fini }  start and fini are scalars, defining I = start:fini.
 %
-%   3:  { start,inc,fini } start, inc, and fini are scalars (double,
-%               int64, or uint64).
+%   3:  { start,inc,fini } start, inc, and fini are scalars,
+%               defining I = start:inc:fini.
 %
 % The J argument is identical, except that it is a list of column indices of C.
 % If only one cell array is provided, J = {  } is implied, refering to all n
@@ -70,11 +68,11 @@ function C = assign (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % M: an optional mask matrix, the same size as C.
 %
 % C or Cin: a required input matrix, containing the initial content of the
-% matrix C.  For the in-place syntax, the @GhB matrix C is modified in-place.
+% matrix C.  For the in-place syntax, the GhB matrix C is modified in-place.
 %
 % Except for C for the inplace syntax, all input matrices may be either
 % GraphBLAS/built-in matrices, in any combination.  C is returned as a
-% GraphBLAS @GhB matrix.
+% GraphBLAS GhB matrix.
 %
 % Example:
 %

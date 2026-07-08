@@ -10,13 +10,13 @@
 // gbmex_reduce is an interface to GrB_Matrix_reduce_Monoid_Scalar,
 // for GrB.reduce and GhB.reduce.
 
-// Usage for @GrB and @GhB (omitting optional final desc argument):
+// Usage for GrB and GhB (omitting optional final desc argument):
 
 // c = GrB.reduce (op, A)                   c = op (A)
 // c = GrB.reduce (cin, op, A)              c = cin ; c = op (A)
 // c = GrB.reduce (cin, accum, op, A)       c = cin ; c += op (A)
 
-// Usage for @GhB only:
+// Usage for GhB only:
 
 // GhB.reduce (c, op, A)                    c = op (A)
 // GhB.reduce (c, accum, op, A)             c += op (A)

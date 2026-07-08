@@ -12,7 +12,7 @@
 // One of the inputs A or B are non-empty scalars.  This method implements
 // GrB.apply2 and GhB.apply2.
 
-// Usage for @GrB and @GhB (omitting desc argument):
+// Usage for GrB and GhB (omitting desc argument):
 
 // C = GrB.apply2 (op, A, B)                    % C = op(A,B)
 // C = GrB.apply2 (Cin, op, A, B)               % C = Cin ; C = op(A,B)
@@ -20,7 +20,7 @@
 // C = GrB.apply2 (Cin, M, op, A, B)            % C = Cin ; C<M> = op(A,B)
 // C = GrB.apply2 (Cin, M, accum, op, A, B)     % C = Cin ; C<M> += op(A,B)
 
-// Usage for @GhB only:
+// Usage for GhB only:
 
 // GhB.apply2 (C, op, A, B)                     % C = op(A,B)
 // GhB.apply2 (C, accum, op, A, B)              % C += op(A,B)

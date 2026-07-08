@@ -1,29 +1,28 @@
 classdef (HandleCompatible) GrB
 %GrB GraphBLAS sparse matrices for Octave/MATLAB.
 %
-% GraphBLAS is a library for creating graph algorithms based on sparse
-% linear algebraic operations over semirings.  Visit http://graphblas.org
-% for more details and resources.  See also the SuiteSparse:GraphBLAS User
-% Guide in this package.
+% GraphBLAS is a library for creating graph algorithms based on sparse linear
+% algebraic operations over semirings.  Visit http://graphblas.org for more
+% details and resources.  See also the SuiteSparse:GraphBLAS User Guide in this
+% package.
 %
-% The GrB class represents a GraphBLAS sparse matrix.  The GrB method
-% creates a GraphBLAS sparse matrix from a built-in matrix.  Other methods
-% also generate GrB matrices.  For example:
+% The GrB class represents a GraphBLAS sparse matrix.  The GrB method creates a
+% GraphBLAS sparse matrix from a built-in matrix.  Other methods also generate
+% GrB matrices.  For example:
 %
 %   G = GrB.subassign (C, M, A) ;
 %
-% constructs a GraphBLAS matrix G, which is the result of C<M>=A in
-% GraphBLAS notation (like C(M)=A(M) in MATLAB notation).  The matrices
-% used in any GrB.method may be built-in matrices (sparse or full) or
-% GraphBLAS matrices (hyper, sparse, bitmap, or full, by row or column), in
-% any combination.
+% constructs a GraphBLAS matrix G, which is the result of C<M>=A in GraphBLAS
+% notation (like C(M)=A(M) in MATLAB notation).  The matrices used in any
+% GrB.method may be built-in matrices (sparse or full) or GraphBLAS matrices
+% (hyper, sparse, bitmap, or full, by row or column), in any combination.
 %
 % --------------------
 % The GrB constructor:
 % --------------------
 %
-%   The GrB constructor creates a GraphBLAS matrix.  The input A may be
-%   any built-in or GraphBLAS matrix:
+%   The GrB constructor creates a GraphBLAS matrix.  The input A may be any
+%   built-in or GraphBLAS matrix:
 %
 %   C = GrB (A) ;            GraphBLAS copy of a matrix A, same type
 %   C = GrB (m, n) ;         m-by-n GraphBLAS double matrix, no entries
@@ -37,30 +36,29 @@ classdef (HandleCompatible) GrB
 %
 %   The m and n parameters above are built-in scalars.  The type and format
 %   parameters are strings.  The default format is 'by col', to match the
-%   format used in built-in (see also GrB.format), but many graph
-%   algorithms are faster if the format is 'by row'.  The format can also
-%   specify the data structure to use ('hypersparse', 'sparse', 'bitmap',
-%   and/or 'full').  These can be combined, as in 'sparse by row', or
-%   'sparse/hypersparse by col'.  In the latter example, the matrix is held
-%   by column, and GraphBLAS can choose to hold it in either sparse or
-%   hypersparse format.
+%   format used in built-in (see also GrB.format), but many graph algorithms
+%   are faster if the format is 'by row'.  The format can also specify the data
+%   structure to use ('hypersparse', 'sparse', 'bitmap', and/or 'full').  These
+%   can be combined, as in 'sparse by row', or 'sparse/hypersparse by col'.  In
+%   the latter example, the matrix is held by column, and GraphBLAS can choose
+%   to hold it in either sparse or hypersparse format.
 %
 %   The usage C = GrB (m, n, type) is analgous to A = sparse (m, n), which
-%   creates an empty built-in sparse matrix A.  The type parameter is a
-%   string, which defaults to 'double' if not present.
+%   creates an empty built-in sparse matrix A.  The type parameter is a string,
+%   which defaults to 'double' if not present.
 %
 %   For the usage C = GrB (A, type), A is either a built-in sparse or full
-%   matrix, or a GraphBLAS @GrB matrix object.  C is created as a GraphBLAS
-%   @GrB matrix object that contains a copy of A, typecasted to the given
-%   type if the type string does not match the type of A.  If the type
-%   string is not present it defaults to 'double'.
+%   matrix, or a GraphBLAS GrB matrix object.  C is created as a GraphBLAS GrB
+%   matrix object that contains a copy of A, typecasted to the given type if
+%   the type string does not match the type of A.  If the type string is not
+%   present it defaults to 'double'.
 %
 % --------------------
 % Matrix types:
 % --------------------
 %
-%   Most of the valid type strings correspond to built-in class of the
-%   same name (see 'help class'):
+%   Most of the valid type strings correspond to built-in class of the same
+%   name (see 'help class'):
 %
 %       'logical'           8-bit boolean
 %       'int8'              8-bit signed integer
@@ -76,51 +74,49 @@ classdef (HandleCompatible) GrB
 %       'single complex'    single complex
 %       'double complex'    double complex (also just 'complex')
 %
-%   In built-in matrices, complex is an attribute, not a class.  In GrB
-%   matrices, 'double complex' and 'single complex' are treated as their
-%   own data types.
+%   In built-in matrices, complex is an attribute, not a class.  In GrB and GhB
+%   matrices, 'double complex' and 'single complex' are treated as their own
+%   data types.
 %
-% ---------------
-% Matrix formats:
-% ---------------
+% -----------------------------------
+% Matrix formats: by row or by column
+% -----------------------------------
 %
-%   The format of a GraphBLAS matrix can have a large impact on
-%   performance.  GraphBLAS matrices can be stored by column or by row.
-%   The corresponding format string is 'by col' or 'by row', respectively.
-%   Since the only format for built-in sparse and full matrices is 'by
-%   col', that is the default format for GraphBLAS matrices via this
-%   interface to GraphBLAS.  However, the default for the C API is 'by
-%   row' since graph algorithms tend to be faster with that format.
+%   The format of a GraphBLAS matrix can have a large impact on performance.
+%   GraphBLAS matrices can be stored by column or by row.  The corresponding
+%   format string is 'by col' or 'by row', respectively.  Since the only format
+%   for built-in sparse and full matrices is 'by col', that is the default
+%   format for GraphBLAS matrices via this interface to GraphBLAS.  However,
+%   the default for the C API is 'by row' since graph algorithms tend to be
+%   faster with that format.
 %
 %   Column vectors are always stored 'by col', and row vectors are always
-%   stored 'by row'.  The format for new matrices propagates from the
-%   format of their inputs.  For example with C=A*B, C takes on the same
-%   format as A, unless A is a vector, in which case C takes on the format
-%   of B.  If both A and B are vectors, then the format of C is determined
-%   by the descriptor (if present), or by the default format (see
-%   GrB.format).
+%   stored 'by row'.  The format for new matrices propagates from the format of
+%   their inputs.  For example with C=A*B, C takes on the same format as A,
+%   unless A is a vector, in which case C takes on the format of B.  If both A
+%   and B are vectors, then the format of C is determined by the descriptor (if
+%   present), or by the default format (see GrB.format).
 %
-%   When a GraphBLAS matrix is converted into a built-in sparse or full
-%   matrix, it is always returned as 'by col'.
+%   When a GraphBLAS matrix is converted into a built-in sparse or full matrix,
+%   it is always returned as 'by col'.
 %
 %   The format can also specify the data structure to use.  By default
-%   GraphBLAS selects automatically between hypersparse, sparse, bitmap,
-%   and full formats.  See 'help GrB.format' for details.
+%   GraphBLAS selects automatically between hypersparse, sparse, bitmap, and
+%   full formats.  See 'help GrB.format' for details.
 %
 %--------------------
 % Integer operations:
 %--------------------
 %
 %   Operations on integer values differ from built-in operations, where
-%   uint8(255)+1 is 255, since the arithmetic saturates.  This is not
-%   possible in matrix operations such as C=A*B, since saturation of
-%   integer arithmetic would render most of the monoids useless.
-%   GraphBLAS instead computes a result modulo the word size, so that
-%   GrB(uint8(255))+1 is zero.  However, new unary and binary operators
-%   could be added so that element-wise operations saturate.  The C
-%   interface allows for arbitrary creation of user-defined operators, so
-%   this could be added in the future.  See 'help GrB/MATLAB_vs_GrB' for
-%   more details.
+%   uint8(255)+1 is 255, since the arithmetic saturates.  This is not possible
+%   in matrix operations such as C=A*B, since saturation of integer arithmetic
+%   would render most of the monoids useless.  GraphBLAS instead computes a
+%   result modulo the word size, so that GrB(uint8(255))+1 is zero.  However,
+%   new unary and binary operators could be added so that element-wise
+%   operations saturate.  The C interface allows for arbitrary creation of
+%   user-defined operators, so this could be added in the future.  See 'help
+%   GrB/MATLAB_vs_GrB' for more details.
 %
 %-------------------------------------------------------------------------
 % Methods for the GrB class:
@@ -327,13 +323,13 @@ classdef (HandleCompatible) GrB
 % Static Methods:
 %-------------------------------------------------------------------------
 %
-%   The Static Methods for the GrB class can be used on input matrices of
-%   any kind: GraphBLAS sparse matrices, built-in sparse matrices, or
-%   built-in full matrices, in any combination.  The output matrix C is a
-%   GraphBLAS matrix, by default, but can be optionally returned as a
-%   built-in sparse or full matrix.  The static methods divide into three
-%   categories: those that perform basic functions, graph algorithms, and
-%   the 12 foundational GraphBLAS operations.
+%   The Static Methods for the GrB class can be used on input matrices of any
+%   kind: GraphBLAS sparse matrices, built-in sparse matrices, or built-in full
+%   matrices, in any combination.  The output matrix C is a GraphBLAS matrix,
+%   by default, but can be optionally returned as a built-in sparse or full
+%   matrix.  The static methods divide into three categories: those that
+%   perform basic functions, graph algorithms, and the 12 foundational
+%   GraphBLAS operations.
 %
 %---------------------------
 % GraphBLAS basic functions:
@@ -370,6 +366,7 @@ classdef (HandleCompatible) GrB
 %   operations:
 %   C = GrB.build (I,J,X,m,n,dup,type,desc) build a GrB matrix from
 %                                list of entries (like C=sparse(I,J,X...))
+%   s = GrB.bytes (A)            memory usage of a matrix
 %   [C,I,J] = GrB.compact (A,id,s) remove empty rows and columns
 %   c = GrB.entries (A,...)      count or query entries in a matrix
 %   C = GrB.expand (scalar, A)   expand a scalar (C = scalar*spones(A))
@@ -411,12 +408,13 @@ classdef (HandleCompatible) GrB
 % Foundational GraphBLAS operations:
 %-----------------------------------
 %
-%   GraphBLAS has 14 foundational operations, listed below.  All have
-%   similar parameters.  The full set of input parameters is listed in the
-%   order in which they appear in the GraphBLAS C API, except that for the
-%   @GrB interface, Cin and C can be different matrices.  In the @GrB
-%   interface, many of the parameters become optional, and they can appear
-%   in different order.
+%   GraphBLAS has 14 foundational operations, listed below.  All have similar
+%   parameters.  The full set of input parameters is listed in the order in
+%   which they appear in the GraphBLAS C API, except that for the GrB
+%   interface, Cin and C can be different matrices.  In the GrB interface, many
+%   of the parameters become optional, and they can appear in different order.
+%   GhB adds in-place semantics where C is an input/output matrix; see
+%   'help GhB' for details.
 %
 %       GrB.apply       apply a unary operator
 %       GrB.apply2      apply a binary operator
@@ -438,28 +436,28 @@ classdef (HandleCompatible) GrB
 %
 %       C<#M,replace> = accum (C, operation (A or A', B or B'))
 %
-%   C is both an input and output matrix.  In this interface to GraphBLAS,
-%   it can be split into Cin (the value of C on input) and C (the value of
-%   on output) using the functional syntax, or it can be a single
-%   input/output matrix as the first parameter using the in-place syntax
-%   for the @GhB object.
+%   C is both an input and output matrix.  In the GrB interface to GraphBLAS,
+%   it can be split into Cin (the value of C on input) and C (the value of on
+%   output) using the functional syntax, or it can be a single input/output
+%   matrix as the first parameter using the in-place syntax for the GhB object.
 %
 %   M is the optional mask matrix, and #M is either M or ~M depending on
-%   whether or not the mask is complemented via the desc.mask option.  The
-%   replace option is determined by desc.out; if present, C is cleared
-%   after it is used in the accum operation but before the final
-%   assignment.  A and/or B may optionally be transposed via the descriptor
-%   fields desc.in0 and desc.in1, respectively.  To select the format of C,
-%   use desc.format.  See GrB.descriptorinfo for more details.
+%   whether or not the mask is complemented via the desc.mask option.
+%
+%   The replace option is determined by desc.out; if present, C is cleared
+%   after it is used in the accum operation but before the final assignment.  A
+%   and/or B may optionally be transposed via the descriptor fields desc.in0
+%   and desc.in1, respectively.  To select the format of C, use desc.format.
+%   See GrB.descriptorinfo for more details.
 %
 %   accum is optional; if not is not present, then the operation becomes
 %   C<...> = operation(A,B).  Otherwise, C = C + operation(A,B) is computed
 %   where '+' is the accum operator.  The accum acts like a sparse matrix
-%   addition (see GrB.eadd), in terms of the structure of the result C, but
-%   any binary operator can be used.
+%   addition (see GrB.eadd or GhB.eadd), in terms of the structure of the
+%   result C, but any binary operator can be used.
 %
-%   The mask M acts like MATLAB logical indexing.  If M(i,j)=1 then C(i,j)
-%   can be modified; if zero, it cannot be modified by the operation.
+%   The mask M acts like MATLAB logical indexing.  If M(i,j)=1 then C(i,j) can
+%   be modified; if zero, it cannot be modified by the operation.
 %
 %   The full list of parameters is shown below, with different C and Cin
 %   matrices using the functional syntax:
@@ -480,19 +478,18 @@ classdef (HandleCompatible) GrB
 %       C = GrB.vreduce   (Cin, M, accum, op, A,          desc)
 %
 %   The parameters divide into 4 classes: matrices, strings, cells, and a
-%   single optional struct, which is the descriptor.  The order of
-%   parameters between the matrices, strings, and cell classes is
-%   arbitrary.  The order of parameters within a class is important; for
-%   example, if a method takes 4 matrix inputs, then they must appear in
-%   the order Cin (or C), M, A, and then B.  However, if a single string
-%   appears as a parameter, it can appear anywhere within the list of 4
-%   matrices.
+%   single optional struct, which is the descriptor.  The order of parameters
+%   between the matrices, strings, and cell classes is arbitrary.  The order of
+%   parameters within a class is important; for example, if a method takes 4
+%   matrix inputs, then they must appear in the order Cin (or C), M, A, and
+%   then B.  However, if a single string appears as a parameter, it can appear
+%   anywhere within the list of 4 matrices.
 %
 %   (1) Cin (or C), M, A, B are matrices, and a and b are scalars:
 %
-%       If the method takes up to 4 matrices (mxm, kronecker, select (with
-%       an operator requiring a b parameter), eadd, emult, apply2), then
-%       they appear in this order:
+%       If the method takes up to 4 matrices (mxm, kronecker, select (with an
+%       operator requiring a b parameter), eadd, emult, apply2), then they
+%       appear in this order:
 %
 %           with 2 matrix inputs: A, B (functional syntax only)
 %           with 3 matrix inputs: Cin (or C), A, B
@@ -516,20 +513,19 @@ classdef (HandleCompatible) GrB
 %   (2) accum and op are strings.  The accum string is always optional.
 %       If the method has an op parameter, then it is a required input.
 %
-%       If the method has both parameters, and just one string appears,
-%       it is the op, which is a semiring for mxm, a unary operator for
-%       apply, a select operator for the select method, and a binary
-%       operator for all other methods.  If 2 strings appear, the first
-%       one is the accum the second is the op.  If the accum appears then
-%       Cin (or C) must also appear as a matrix input.
+%       If the method has both parameters, and just one string appears, it is
+%       the op, which is a semiring for mxm, a unary operator for apply, a
+%       select operator for the select method, and a binary operator for all
+%       other methods.  If 2 strings appear, the first one is the accum the
+%       second is the op.  If the accum appears then Cin (or C) must also
+%       appear as a matrix input.
 %
-%       If the method has no op (assign, subassign, extract, trans), but
-%       just an accum parameter, then 0 or 1 strings may appear in the
-%       parameter list.  If a string appears, it is the accum.
+%       If the method has no op (assign, subassign, extract, trans), but just
+%       an accum parameter, then 0 or 1 strings may appear in the parameter
+%       list.  If a string appears, it is the accum.
 %
 %   (3) I and J are cell arrays.  For details, see the assign, subassign,
-%       and extract methods; a short summary appears below.  Both are
-%       optional:
+%       and extract methods; a short summary appears below.  Both are optional:
 %
 %           with no cell inputs: default for I and J
 %           with 1  cell inputs: I, default for J
@@ -545,10 +541,10 @@ classdef (HandleCompatible) GrB
 %       last, after all other parameters.
 %
 %   Example valid uses are shown below, along with their equivalent in
-%   GraphBLAS notation.  For the first three mxm examples, the four
-%   matrices C, M, A, and B must appear in that order, and the two strings
-%   '+' and '+.*' must appear in that order, but the matrices and strings
-%   may be interleaved arbitrarily.  They all compute the same thing.
+%   GraphBLAS notation.  For the first three mxm examples, the four matrices C,
+%   M, A, and B must appear in that order, and the two strings '+' and '+.*'
+%   must appear in that order, but the matrices and strings may be interleaved
+%   arbitrarily.  They all compute the same thing.
 %
 %       C = GrB.apply (C, M, '|', '~', A)           C<M> |= ~A
 %       C = GrB.apply ('~', A)                      C = ~A
@@ -603,7 +599,7 @@ methods
     %---------------------------------------------------------------------
 
     function C = GrB (arg1, arg2, arg3, arg4)
-    %GRB GraphBLAS constructor: create a GraphBLAS matrix.
+    %GRB GraphBLAS constructor: create a GraphBLAS GrB value matrix.
     %
     % C = GrB (A) ;          GrB copy of a matrix A, same type and format
     %
@@ -851,11 +847,10 @@ methods (Static)
     % Static Methods:
     %---------------------------------------------------------------------
 
-    % All of these are used as GrB.method (...), with the "GrB." prefix.
-    % The input matrices (A, B, C, M, ...) are of any kind (GraphBLAS,
-    % built-in sparse, or built-in full).  The output matrix C is a @GrB
-    % matrix by default.  It is a builtin MATLAB/Octave matrix if
-    % desc.kind = 'builtin'.
+    % All of these are used as GrB.method (...), with the "GrB." prefix.  The
+    % input matrices (A, B, C, M, ...) are of any kind (GraphBLAS, built-in
+    % sparse, or built-in full).  The output matrix C is a GrB matrix by
+    % default.  It is a builtin MATLAB/Octave matrix if desc.kind = 'builtin'.
 
     C = apply (Cin, M, accum, op, A, desc) ;
     C = apply2 (Cin, M, accum, op, A, B, desc) ;
@@ -865,6 +860,7 @@ methods (Static)
     C = assign (Cin, M, accum, A, I, J, desc) ;
     [v, parent] = bfs (A, s, varargin) ;
     C = build (I, J, X, m, n, dup, type, desc) ;
+    mem = bytes (A)
     C = cell2mat (A) ;
     [C, I, J] = compact (A, id, symmetric) ;
     C = deserialize (blob) ;
@@ -941,7 +937,7 @@ methods (Static)
     list = unops ;
     v = version ;
     v = ver ;
-    wait (C) ; % for @GhB; does nothing for @GrB matrices
+    wait (C) ; % for GhB; does nothing for GrB matrices
 
 end
 end

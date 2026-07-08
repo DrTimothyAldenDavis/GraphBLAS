@@ -16,15 +16,18 @@ function C = apply (arg1, arg2, arg3, arg4, arg5, arg6)
 % accum: a binary operator to accumulate the results; in the computations
 % listed above it is shown as "+=" but any binary operator may be used.
 %
-% Cin, the mask matrix M, the accum operator, and desc are optional.  If
-% either accum or M is present, then C or Cin is a required input. If
-% desc.in0 is 'transpose' then A is transposed before applying the
-% operator, as C<M> = accum (C, f(A')) where f(...) is the unary operator.
+% Cin, the mask matrix M, the accum operator, and desc are optional.  If either
+% accum or M is present, then C or Cin is a required input. If desc.in0 is
+% 'transpose' then A is transposed before applying the operator, as C<M> =
+% accum (C, f(A')) where f(...) is the unary operator.  See 'help
+% GrB.descriptorinfo' for more details.
+%
+% See also GrB/apply, GrB/spfun, GrB.binopinfo.
 %
 % Example:
 %
 %   A = GrB.random (4, 4, 0.5)
-%   C = GrB.apply ('sqrt', C) ;         % C = sqrt (A)
+%   C = GrB.apply ('sqrt', A) ;         % C = sqrt (A)
 %   C
 %
 % See also GrB/apply2, GrB/spfun, GrB.unopinfo, GrB.binopinfo.

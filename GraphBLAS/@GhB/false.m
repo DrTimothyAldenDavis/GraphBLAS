@@ -4,8 +4,6 @@ function C = false (varargin)
 %   C = GhB.false (n) ;      n-by-n GhB logical matrix with no entries.
 %   C = GhB.false (m,n) ;    m-by-n GhB logical matrix with no entries.
 %   C = GhB.false ([m,n]) ;  m-by-n GhB logical matrix with no entries.
-%   C = GhB.false (..., type) ;      empty logical matrix of given type.
-%   C = GhB.false (..., 'like', G) ; empty logical matrix, same type as G.
 %
 % See also GhB.ones, GhB.true, GhB.zeros, GhB.eye, GhB.speye.
 

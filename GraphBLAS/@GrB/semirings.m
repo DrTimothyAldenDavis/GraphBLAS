@@ -1,7 +1,7 @@
 function result = semirings
 %GRB.SEMIRINGS list all semirings
-% Redundant semirings are not listed.  For example '+.*.logical'
-% exists, but it is identical to '|.&.logical'.
+% Redundant semirings are not listed.  For example '+.*.logical' exists, but it
+% is identical to '|.&.logical'.
 %
 % Example:
 %   GrB.semirings ;         % prints a list, with descriptions

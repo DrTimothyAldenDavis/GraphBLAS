@@ -9,7 +9,7 @@
 
 // gbmex_mxm is an interface to GrB_mxm, for GrB.mxm and GhB.mxm.
 
-// Usage for @GrB and @GhB (omitting desc argument):
+// Usage for GrB and GhB (omitting desc argument):
 
 // C = GrB.mxm (semiring, A, B)                 C = A*B
 // C = GrB.mxm (Cin, semiring, A, B)            C = Cin ; C = A*B
@@ -17,7 +17,7 @@
 // C = GrB.mxm (Cin, M, semiring, A, B)         C = Cin ; C<M> = A*B
 // C = GrB.mxm (Cin, M, accum, semiring, A, B)  C = Cin ; C<M> += A*B
 
-// Usage for @GhB only (inplace):
+// Usage for GhB only (inplace):
 
 // GhB.mxm (C, semiring, A, B)                  C = A*B
 // GhB.mxm (C, accum, semiring, A, B)           C += A*B

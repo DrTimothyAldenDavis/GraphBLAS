@@ -1,12 +1,12 @@
 function C = deserialize (blob)
 %GRB.DESERIALIZE convert a serialized blob into a matrix.
-% C = GrB.deserialize (blob) returns a @GrB matrix constructed from the uint8
+% C = GrB.deserialize (blob) returns a GrB matrix constructed from the uint8
 % array blob constructed by GhB.serialize or GrB.serialize.
 %
-% C = GrB.deserialize (blob) or GrB.deserialize (blob, 'fast') assume the
-% blob comes from a trusted source.  C = GrB.deserialize (blob, 'secure')
-% does a secure (but slow) deserialization, checking the blob to ensure it
-% is valid, when the blob might not be trusted.
+% C = GrB.deserialize (blob) or GrB.deserialize (blob, 'fast') assume the blob
+% comes from a trusted source.  C = GrB.deserialize (blob, 'secure') does a
+% secure (but slow) deserialization, checking the blob to ensure it is valid,
+% when the blob might not be trusted.
 %
 % Example:
 %

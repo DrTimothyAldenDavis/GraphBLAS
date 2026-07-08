@@ -35,11 +35,10 @@ function C = extract (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %
 %   1:  { I }   1D list of row indices, like A(I,J).
 %
-%   2:  { start,fini }  start and fini are scalars (either double,
-%               int64, or uint64).  This defines I = start:fini.
+%   2:  { start,fini }  start and fini are scalars, defining I = start:fini.
 %
-%   3:  { start,inc,fini } start, inc, and fini are scalars (double,
-%               int64, or uint64).
+%   3:  { start,inc,fini } start, inc, and fini are scalars,
+%               defining I = start:inc:fini.
 %
 % The J argument is identical, except that it is a list of column indices of A.
 % If only one cell array is provided, J = {  } is implied, refering to all n
@@ -63,12 +62,12 @@ function C = extract (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % M: an optional mask matrix, the same size as C.
 %
 % C or Cin: an optional input matrix, containing the initial content of the
-% matrix C.  For the in-place syntax, the @GhB matrix C is modified in-place.
+% matrix C.  For the in-place syntax, the GhB matrix C is modified in-place.
 % If present, the C or Cin argument has size length(I)-by-length(J).
 %
 % Except for C for the inplace syntax, all input matrices may be either
-% GraphBLAS/built-in matrices, in any combination.  C is returned as a
-% GraphBLAS @GhB matrix.
+% GraphBLAS or built-in matrices, in any combination.  C is returned as a
+% GraphBLAS GhB matrix.
 %
 % Example:
 %

@@ -2,12 +2,12 @@ function print (A, level)
 %PRINT display the contents of a matrix.
 % GrB.print (A, level) displays the matrix A.  The 2nd argument controls how
 % much is printed; 0: none, 1: terse, 2: a few entries, 3: all, 4: a few
-% entries with high precision, 5: all with high precision.  The default is
-% 2 if level is not present.
+% entries with high precision, 5: all with high precision.  The default is 2 if
+% level is not present.
 %
 % This method is identical to the overloaded disp method, but appears as a
-% static method (GrB.print or GhB.print) which allows it to be used on
-% built-in matrices.
+% static method (GrB.print or GhB.print) which allows it to be used on built-in
+% matrices.
 %
 % Example:
 %

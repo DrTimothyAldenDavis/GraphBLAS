@@ -68,13 +68,13 @@ void mexFunction
 
     if (Matrix [0].kind == KIND_GHB)
     { 
-        // C is a @GhB handle matrix object
-        name = "@GhB matrix" ;
+        // C is a GhB handle matrix object
+        name = "GhB matrix" ;
     }
     else if (Matrix [0].kind == KIND_GRB)
     { 
-        // C is a @GrB value matrix object
-        name = "@GrB matrix" ;
+        // C is a GrB value matrix object
+        name = "GrB matrix" ;
     }
     else
     { 

@@ -13,20 +13,21 @@ function C = trans (arg1, arg2, arg3, arg4, arg5)
 % GhB.trans (C, M, A, desc)                     % C<M> = A'
 % GhB.trans (C, M, accum, A, desc)              % C<M> += A'
 %
-% GhB.trans computes T=A'.
-% T is then accumulated into C via C<M> = accum (C,T), where the accum step
-% is computed using GhB.eadd and M can be modified by the descriptor desc.
+% GhB.trans computes T=A'.  T is then accumulated into C via
+% C<M> = accum (C,T), where the accum step is computed using GhB.eadd and M can
+% be modified by the descriptor desc.
 %
-% For complex matrices, GhB.trans computes the array transpose, not the
-% matrix (complex conjugate) transpose.
+% For complex matrices, GhB.trans computes the array transpose, not the matrix
+% (complex conjugate) transpose.
 %
 % accum: a binary operator to accumulate the results; in the computations
 % listed above it is shown as "+=" but any binary operator may be used.
-% For the in-place syntax, the @GhB matrix C is modified in-place.
+% For the in-place syntax, the GhB matrix C is modified in-place.
 %
 % Cin, the mask matrix M, the accum operator, and desc are optional.  If either
 % accum or M is present, then C or Cin is a required input.  If desc.in0 is
-% 'transpose' then A is transposed before applying the operator.
+% 'transpose' then A is transposed before applying the operator.  See 'help
+% GrB.descriptorinfo' for more details.
 %
 % See also GhB/transpose, GhB/ctranspose, GhB/conj, GrB.binopinfo.
 

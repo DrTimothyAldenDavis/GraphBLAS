@@ -1,6 +1,6 @@
 function I = subsindex (G_arg)
 %SUBSINDEX subscript index from a GraphBLAS matrix.
-% I = subsindex (G) is an overloaded method used when the GraphBLAS
+% I = subsindex (G) is an overloaded method used when the GraphBLAS GrB or GhB
 % matrix G is used to index into a non-GraphBLAS matrix A, for A(G).
 %
 % See also GrB/subsref, GrB/subsasgn.

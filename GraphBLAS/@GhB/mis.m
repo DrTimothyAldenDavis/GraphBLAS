@@ -3,22 +3,21 @@ function iset = mis (A_arg, check)
 %
 %   iset = GhB.mis (A) ;
 %
-% Given an n-by-n symmetric adjacency matrix A of an undirected graph,
-% GhB.mis (A) finds a maximal set of independent nodes and returns it as a
-% logical vector, iset, where iset(i) of true implies node i is a member of
-% the set.
+% Given an n-by-n symmetric adjacency matrix A of an undirected graph, GhB.mis
+% (A) finds a maximal set of independent nodes and returns it as a logical
+% vector, iset, where iset(i) of true implies node i is a member of the set.
 %
-% The matrix A must not have any diagonal entries (self edges), and it must
-% be symmetric.  These conditions are not checked by default, and results
-% are undefined if they do not hold.  In particular, diagonal entries will
-% cause the method to stall.  To check these conditions, use:
+% The matrix A must not have any diagonal entries (self edges), and it must be
+% symmetric.  These conditions are not checked by default, and results are
+% undefined if they do not hold.  In particular, diagonal entries will cause
+% the method to stall.  To check these conditions, use:
 %
 %   iset = GhB.mis (A, 'check') ;
 %
 % Reference: M Luby. 1985. A simple parallel algorithm for the maximal
 % independent set problem. In Proceedings of the seventeenth annual ACM
-% symposium on Theory of computing (STOC '85). ACM, New York, NY, USA,
-% 1-10.  DOI: https://doi.org/10.1145/22145.22146
+% symposium on Theory of computing (STOC '85). ACM, New York, NY, USA, 1-10.
+% DOI: https://doi.org/10.1145/22145.22146
 %
 % See also GhB.offdiag.
 

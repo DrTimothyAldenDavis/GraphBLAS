@@ -83,7 +83,7 @@ void mexFunction
         gbmx_free ((void **) &compiler) ;
 
         // license:
-        printf ("@GrB License: Apache-2.0\n\n") ;
+        printf ("GraphBLAS License: Apache-2.0\n\n") ;
 
         // spec:
         OK (GrB_Global_get_SIZE (GrB_GLOBAL, &len, GxB_API_ABOUT)) ;

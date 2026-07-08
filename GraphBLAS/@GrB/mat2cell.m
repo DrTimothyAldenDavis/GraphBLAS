@@ -1,10 +1,10 @@
 function C = mat2cell (A, varargin)
 %MAT2CELL Break matrix up into a cell array of matrices.
 %
-% C = mat2cell (A,m,n) breaks up the 2D @GrB matrix A into a cell array of
-% submatrices, where C{i,j} has size m(i)-by-n(j), and where sum(m) must
-% equal the number of rows of A, and sum(n) must equal the number of columns
-% of A.  The size of C is length(m)-by-length(n).
+% C = mat2cell (A,m,n) breaks up the 2D GrB matrix A into a cell array of
+% submatrices, where C{i,j} has size m(i)-by-n(j), and where sum(m) must equal
+% the number of rows of A, and sum(n) must equal the number of columns of A.
+% The size of C is length(m)-by-length(n).
 %
 % Example:
 %   A = GrB ([1 2 3 4; 5 6 7 8; 9 10 11 12]) ;
@@ -17,9 +17,8 @@ function C = mat2cell (A, varargin)
 %   C{2,1} = A (2:3,1) ;    % of size 2-by-1
 %   C{2,2} = A (2:3,2:3) ;  % of size 2-by-3
 %
-% If the 3rd argument n is not present, it defaults to size(A,2), so that
-% C is a length(m)-by-1 cell array of matrices, and C{i} has size
-% m(i)-by-size(A,2).
+% If the 3rd argument n is not present, it defaults to size(A,2), so that C is
+% a length(m)-by-1 cell array of matrices, and C{i} has size m(i)-by-size(A,2).
 %
 % See also GrB/horzcat, GrB/vertcat, GrB/cat, GrB.cell2mat, GrB/num2cell.
 

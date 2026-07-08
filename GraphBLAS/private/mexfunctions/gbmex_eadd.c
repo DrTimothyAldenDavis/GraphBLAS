@@ -18,7 +18,7 @@
 
 #define USAGE "usage: C = GrB.eadd (Cin, M, accum, binop, A, B, desc)"
 
-// Usage for @GrB and @GhB (omitting desc argument):
+// Usage for GrB and GhB (omitting desc argument):
 
 // C = GrB.eadd (op, A, B)                 C = op(A,B)
 // C = GrB.eadd (Cin, op, A, B)            C = op(A,B)
@@ -26,7 +26,7 @@
 // C = GrB.eadd (Cin, M, op, A, B)         C = Cin ; C<M> = op(A,B)
 // C = GrB.eadd (Cin, M, accum, op, A, B)  C = Cin ; C<M> += op(A,B)
 
-// Usage for @GhB only (inplace):
+// Usage for GhB only (inplace):
 
 // GhB.eadd (C, op, A, B)                  C = op(A,B)
 // GhB.eadd (C, accum, op, A, B)           C += op(A,B)

@@ -1,7 +1,7 @@
 function C = mpower (A, B)
 %A^B matrix power.
-% C = A^B computes the matrix power of A raised to the B. A must be a
-% square matrix.  B must an integer >= 0.
+% C = A^B computes the matrix power of A raised to the B. A must be a square
+% matrix.  B must an integer >= 0.
 %
 % See also GrB/power.
 

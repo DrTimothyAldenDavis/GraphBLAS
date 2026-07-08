@@ -1,15 +1,12 @@
 function result = entries (A, varargin)
 %GRB.ENTRIES count or query the entries of a matrix.
-% An entry A(i,j) in a GraphBLAS matrix is one that is present in the
-% data structure.  Unlike a built-in sparse matrix, a GraphBLAS matrix can
-% contain explicit zero entries.  All entries in a built-in sparse matrix
-% are nonzero.  A built-in full matrix has all of its entries present,
-% regardless of their value.  The GrB.entries function looks only at the
-% pattern of A, not its values.  To exclude explicit entries with a value
-% of zero (or any specified additive identity value) use GrB.nonz
-% instead.
-%
-% Let [m n] = size (A)
+% An entry A(i,j) in a GraphBLAS matrix is one that is present in the data
+% structure.  Unlike a built-in sparse matrix, a GraphBLAS matrix can contain
+% explicit zero entries.  All entries in a built-in sparse matrix are nonzero.
+% A built-in full matrix has all of its entries present, regardless of their
+% value.  The GrB.entries function looks only at the pattern of A, not its
+% values.  To exclude explicit entries with a value of zero (or any specified
+% additive identity value) use GrB.nonz instead.
 %
 % e = GrB.entries (A)         number of entries
 % e = GrB.entries (A, 'all')  number of entries
@@ -22,19 +19,19 @@ function result = entries (A, varargin)
 % J = GrB.entries (A, 'col', 'list')  list of cols with at least one entry
 %
 % d = GrB.entries (A, 'row', 'degree')
-%   If A is m-by-n, then d is a sparse column vector of size m, with d(i)
-%   equal to the number of entries in A(i,:).  If A(i,:) has no entries,
-%   then d(i) is an implicit zero, not present in the pattern of d, so
-%   that I = find (d) is the same I = GrB.entries (A, 'row', 'list').
+%   If A is m-by-n, then d is a sparse column vector of size m, with d(i) equal
+%   to the number of entries in A(i,:).  If A(i,:) has no entries, then d(i) is
+%   an implicit zero, not present in the pattern of d, so that I = find (d) is
+%   the same I = GrB.entries (A, 'row', 'list').
 %
 % d = GrB.entries (A, 'col', 'degree')
-%   If A is m-by-n, d is a sparse column vector of size n, with d(j)
-%   equal to the number of entries in A(:,j).  If A(:,j) has no entries,
-%   then d(j) is an implicit zero, not present in the pattern of d, so
-%   that I = find (d) is the same I = GrB.entries (A, 'col', 'list').
+%   If A is m-by-n, d is a sparse column vector of size n, with d(j) equal to
+%   the number of entries in A(:,j).  If A(:,j) has no entries, then d(j) is an
+%   implicit zero, not present in the pattern of d, so that I = find (d) is the
+%   same I = GrB.entries (A, 'col', 'list').
 %
-% The result is a built-in scalar or vector, except for the 'degree'
-% usage, in which case the result is a GrB vector d.
+% The result is a built-in scalar or vector, except for the 'degree' usage, in
+% which case the result is a GrB vector d.
 %
 % Example:
 %
@@ -55,6 +52,5 @@ function result = entries (A, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% get the count/list of the entries of A
 result = gb_entries (0, A, varargin {:}) ;
 

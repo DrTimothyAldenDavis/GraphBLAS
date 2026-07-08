@@ -5,8 +5,8 @@ function C = eye (varargin)
 %
 % C = GrB.eye (m,n,type) or GrB.eye ([m n],type) creates a sparse m-by-n
 % identity matrix C of the given GraphBLAS type, either 'double', 'single',
-% 'logical', 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16',
-% 'uint32', 'uint64', 'single complex', or 'double complex'.
+% 'logical', 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32',
+% 'uint64', 'single complex', or 'double complex'.
 %
 % See also GrB/spones, spdiags, GrB.speye, GrB.
 

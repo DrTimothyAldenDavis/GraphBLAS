@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_export: export a GrB_Matrix as a GraphBLAS @GrB handle or @GrB matrix
+// gb_export: export a GrB_Matrix as a GraphBLAS GrB handle or GrB matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -7,18 +7,18 @@
 
 //------------------------------------------------------------------------------
 
-// gb_export prepares C for export as a @GrB or @GhB matrix object for MATLAB,
+// gb_export prepares C for export as a GrB or GhB matrix object for MATLAB,
 // with 4 possible kinds:
 //
-// KIND_GRB or KIND_GHB     C will remain a @GrB or @GhB matrix object
+// KIND_GRB or KIND_GHB     C will remain a GrB or GhB matrix object
 // KIND_SPARSE     C will become a built-in MATLAB/Octave sparse matrix
 // KIND_FULL       C will become a built-in MATLAB/Octave full matrix
 // KIND_BUILTIN    C will become a built-in MATLAB/Octave sparse or full matrix
 //
-// If kind is KIND_GRB or KIND_GHB, the matrix will remain a @GrB or @GhB
-// matrix object.  Otherwise, it is exported as a GrB_Matrix (handle or struct)
-// with properties that match a sparse or full MATLAB/Octave matrix.  It is
-// then directly copied into a MATLAB/Octave matrix in a subsequent call to the
+// If kind is KIND_GRB or KIND_GHB, the matrix will remain a GrB or GhB matrix
+// object.  Otherwise, it is exported as a GrB_Matrix (handle or struct) with
+// properties that match a sparse or full MATLAB/Octave matrix.  It is then
+// directly copied into a MATLAB/Octave matrix in a subsequent call to the
 // gbmex_builtin mexFunction.
 
 #undef  FREE_WORK
@@ -33,7 +33,7 @@
 GrB_Info gb_export              // export a GrB_Matrix to MATLAB
 (
     // output:
-    GrB_Matrix *C_opaque,       // matrix for export as @GhB
+    GrB_Matrix *C_opaque,       // matrix for export as GhB
     // input/output:
     GrB_Matrix *C_handle,       // GrB_Matrix to export
     // input:
@@ -70,7 +70,7 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
     }
 
     //--------------------------------------------------------------------------
-    // for @GrB value matrices, ensure C has no pending work
+    // for GrB value matrices, ensure C has no pending work
     //--------------------------------------------------------------------------
 
     if (!ghb)
@@ -130,7 +130,7 @@ GrB_Info gb_export              // export a GrB_Matrix to MATLAB
 
     if (C_opaque != NULL)
     {
-        // export the @GhB handle to the output
+        // export the GhB handle to the output
         (*C_opaque) = C ;
         (*C_handle) = NULL ;
     }

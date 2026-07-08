@@ -11,16 +11,15 @@ function C = mxm (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % sum (A(i,:).*B(:,j).'), except that "sum" can be any monoid, and "*" can be
 % any binary operator.
 %
-% T is then accumulated into C via C<M> = accum (C,T), where the accum step
-% is computed using GrB.eadd and M can be modified by the descriptor desc.
+% T is then accumulated into C via C<M> = accum (C,T), where the accum step is
+% computed using GrB.eadd and M can be modified by the descriptor desc.
 %
-% The semiring is a required string defining the semiring to use, in the
-% form 'add.mult.type', where '.type' is optional.  For example,
-% '+.*.double' is the conventional semiring for numerical linear algebra,
-% used in the built-in C=A*B when A and B are double.  If A or B are
-% double complex, then C=A*B uses the '+.*.double complex' semiring.
-% GraphBLAS has many more semirings.  See 'help GrB.semiringinfo' for more
-% details.
+% The semiring is a required string defining the semiring to use, in the form
+% 'add.mult.type', where '.type' is optional.  For example, '+.*.double' is the
+% conventional semiring for numerical linear algebra, used in the built-in
+% C=A*B when A and B are double.  If A or B are double complex, then C=A*B uses
+% the '+.*.double complex' semiring.  GraphBLAS has many more semirings.  See
+% 'help GrB.semiringinfo' for more details.
 %
 % accum: a binary operator to accumulate the results; in the computations
 % listed above it is shown as "+=" but any binary operator may be used.
@@ -29,7 +28,7 @@ function C = mxm (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % accum or M is present, then C or Cin is a required input.  If desc.in0 is
 % 'transpose' then A is transposed before applying the operator.  If desc.in1
 % is 'transpose', then the input matrix B is transposed before applying the
-% operator.
+% operator.  See 'help GrB.descriptorinfo' for more details.
 %
 % Examples:
 %

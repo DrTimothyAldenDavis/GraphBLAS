@@ -5,11 +5,11 @@ function C = bitcmp (A, assumedtype)
 % implicit entries not in the pattern of C, use C = GrB.apply ('bitcmp', A)
 % instead.
 %
-% With a second parameter, C = bitcmp (A,assumedtype) provides a data type
-% to convert A to if it is a floating-point type.  If A already has an
-% integer type, then it is not modified.  Otherwise, A is converted to
-% assumedtype, which can be 'int8', 'int16', 'int32', 'int64', 'uint8',
-% 'uint16', 'uint32' or 'uint64'.  The default is 'uint64'.
+% With a second parameter, C = bitcmp (A,assumedtype) provides a data type to
+% convert A to if it is a floating-point type.  If A already has an integer
+% type, then it is not modified.  Otherwise, A is converted to assumedtype,
+% which can be 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32'
+% or 'uint64'.  The default is 'uint64'.
 %
 % Example:
 %

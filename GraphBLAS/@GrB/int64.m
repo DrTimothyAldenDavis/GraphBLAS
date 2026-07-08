@@ -4,7 +4,7 @@ function C = int64 (G)
 % result C is full since sparse int64 matrices are not built-in.
 %
 % To typecast the matrix G to a GraphBLAS sparse int64 matrix instead,
-% use C = GrB (G, 'int64').
+% C = GrB (G, 'int64'); use C = GhB (G, 'int64') for a GhB matrix.
 %
 % See also GrB, GrB/double, GrB/complex, GrB/single, GrB/logical, GrB/int8,
 % GrB/int16, GrB/int32, GrB/uint8, GrB/uint16, GrB/uint32, GrB/uint64.

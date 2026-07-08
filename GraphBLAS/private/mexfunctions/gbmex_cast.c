@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // The input may be either a GraphBLAS matrix struct or a standard built-in
-// MATLAB sparse or full matrix.  The output is a @GhB matrix but with a data
+// MATLAB sparse or full matrix.  The output is a GhB matrix but with a data
 // structure that matches a standard built-in MATLAB/Octave sparse or full
 // matrix: full if all entries are present, and sparse otherwise.  The
 // matrix is then typically passed to the gbmex_builtin mexFunction to
@@ -48,7 +48,7 @@ void mexFunction
     GrB_Matrix *C_opaque = NULL, X = NULL, X_to_free = NULL, C = NULL ;
 
     GBMX_USAGE (nargin == 2 && nargout <= 1, USAGE) ;
-    int arena = GrB_DEFAULT ;   // output is always @GhB
+    int arena = GrB_DEFAULT ;   // output is always GhB
 
     pargout [0] = gbmx_export_ghb_mxstruct (&C_opaque) ;
 

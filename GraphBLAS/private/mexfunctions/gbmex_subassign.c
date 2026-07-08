@@ -10,14 +10,14 @@
 // gbmex_subassign is an interface to GxB_Matrix_subassign and
 // GxB_Matrix_subassign_[TYPE], for GrB.subassign and GhB.subassign.
 
-// Usage for @GrB and @GhB (omitting desc argument):
+// Usage for GrB and GhB (omitting desc argument):
 
 // C = GrB.subassign (Cin, A, I, J)             C = Cin ; C(I,J) = A
 // C = GrB.subassign (Cin, accum, A, I, J)      C = Cin ; C(I,J) += A
 // C = GrB.subassign (Cin, M, A, I, J)          C = Cin ; C(I,J)<M> = A
 // C = GrB.subassign (Cin, M, accum, A, I, J)   C = Cin ; C(I,J)<M> += A
 
-// Usage for @GhB only (inplace):
+// Usage for GhB only (inplace):
 
 // GhB.subassign (C, A, I, J)                   C(I,J) = A
 // GhB.subassign (C, accum, A, I, J)            C(I,J) += A

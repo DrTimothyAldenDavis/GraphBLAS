@@ -1,7 +1,6 @@
 function C = erf (G)
 %ERF error function.
-% C = erf (G) computes the error function of each entry of G.
-% G must be real.
+% C = erf (G) computes the error function of each entry of G.  G must be real.
 %
 % See also GrB/erfc, erfcx, erfinv, erfcinv.
 

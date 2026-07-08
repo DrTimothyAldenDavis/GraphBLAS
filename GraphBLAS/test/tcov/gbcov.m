@@ -15,20 +15,20 @@ try
 catch
 end
 
-% compile the coverage-test version of the @GrB/@GhB mexFunctions
+% compile the coverage-test version of the GrB/GhB mexFunctions
 gbcovmake
 
 addpath ('..') ;            % add the test folder to the path
 try
-    rmpath ('../..') ;      % remove the regular @GrB, @GhB classes
+    rmpath ('../..') ;      % remove the regular GrB, GhB classes
 catch me
 end
 
-rmpath ('tmp') ;            % remove the modified @GrB, @GhB classes
+rmpath ('tmp') ;            % remove the modified GrB, GhB classes
 which ('GrB')
 which ('GhB')
 
-addpath ('tmp') ;           % add back the modified @GrB, @GhB classes
+addpath ('tmp') ;           % add back the modified GrB, GhB classes
 which_GrB = which ('GrB') ;
 which_GhB = which ('GhB') ;
 
@@ -41,15 +41,15 @@ try
 catch
 end
 
-addpath ('../..') ;         % add back the regular @GrB class
-rmpath ('tmp') ;            % remove the modified @GrB class
+addpath ('../..') ;         % add back the regular GrB class
+rmpath ('tmp') ;            % remove the modified GrB class
 
 % report the coverage
-fprintf ('Revised @GrB tested: %s\n', which_GrB) ;
-fprintf ('Revised @GhB tested: %s\n', which_GhB) ;
+fprintf ('Revised GrB tested: %s\n', which_GrB) ;
+fprintf ('Revised GhB tested: %s\n', which_GhB) ;
 gbcovshow ;
-fprintf ('Now with usual @GrB: %s\n', which ('GrB')) ;
-fprintf ('Now with usual @GhB: %s\n', which ('GhB')) ;
+fprintf ('Now with usual GrB: %s\n', which ('GrB')) ;
+fprintf ('Now with usual GhB: %s\n', which ('GhB')) ;
 
 try
     % reload the default GrB library

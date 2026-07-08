@@ -1,7 +1,7 @@
 function C = isfinite (G)
 %ISFINITE true for finite elements.
-% C = isfinite (G) is a logical matrix where C(i,j) = true
-% if G(i,j) is finite.  C is a full matrix.
+% C = isfinite (G) is a logical matrix where C(i,j) = true if G(i,j) is finite.
+% C is a full matrix.
 %
 % See also GrB/isnan, GrB/isinf.
 

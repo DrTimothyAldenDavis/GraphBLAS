@@ -2,18 +2,16 @@ function C = prod (G, option)
 %PROD product of elements.
 % C = prod (G), where G is an m-by-n matrix, is a 1-by-n row vector C where
 % C(j) is the product of all entries in G(:,j).  If G is a row or column
-% vector, then prod (G) is a scalar product of all the entries in the
-% vector.
+% vector, then prod (G) is a scalar product of all the entries in the vector.
 %
-% C = prod (G,'all') takes the product of all elements of G to a single
-% scalar.
+% C = prod (G,'all') takes the product of all elements of G to a single scalar.
 %
 % C = prod (G,1) is the default when G is a matrix, which is to take the
-% product of each column, giving a 1-by-n row vector.  If G is already a
-% row vector, then C = G.
+% product of each column, giving a 1-by-n row vector.  If G is already a row
+% vector, then C = G.
 %
-% C = prod (G,2) takes the product of each row, resulting in an m-by-1
-% column vector C where C(i) is the product of all entries in G(i,:).
+% C = prod (G,2) takes the product of each row, resulting in an m-by-1 column
+% vector C where C(i) is the product of all entries in G(i,:).
 %
 % The built-in prod (A, ... type, nanflag) allows for different kinds of
 % products to be computed, and the NaN behavior can be specified.  The

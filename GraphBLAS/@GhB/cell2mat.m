@@ -1,6 +1,6 @@
 function C = cell2mat (A)
 %GHB.CELL2MAT Concatenate a cell array of matrices into a single matrix.
-% C = GhB.cell2mat (A) converts a 2D cell array of matrices into a single @GhB
+% C = GhB.cell2mat (A) converts a 2D cell array of matrices into a single GhB
 % matrix.  Let [m,n] = size(A) be the size of the cell array A.  Then C is
 % computed as:
 %
@@ -12,18 +12,18 @@ function C = cell2mat (A)
 % If the matrices in A have different types, the type is determined
 % according to the rules in GhB.optype.
 %
-% Note: The methods in the "cat" family include horzcat, vertcat, cat,
-% cell2mat (this method), mat2cell, and num2cell.  All of them appear in
-% @GhB, and all but this one are overloaded methods.  GhB.cell2mat is a
-% static method, since its input is a cell array, not a @GhB object, and
-% thus its use cannot trigger the call to an overloaded method.
-% GhB.cell2mat method can operate on any mix of @GhB/built-in matrices,
-% with any mix of data types.  The output is always a @GhB matrix.
+% Note: The methods in the "cat" family include horzcat, vertcat, cat, cell2mat
+% (this method), mat2cell, and num2cell.  All of them appear in GhB, and all
+% but this one are overloaded methods.  GhB.cell2mat is a static method, since
+% its input is a cell array, not a GhB object, and thus its use cannot trigger
+% the call to an overloaded method.  GhB.cell2mat method can operate on any mix
+% of GrB/GhB/built-in matrices, with any mix of data types.  The output is
+% always a GhB matrix.
 %
-% This method predates MATLAB R2025a.  MATLAB R2025a and later now allow
-% mixing of data types, but the rules for the type of C differ from
-% GhB.cell2mat.  @GhB selects the largest type of its inputs, while the
-% MATLAB cell2mat selects the smallest.
+% This method predates MATLAB R2025a.  MATLAB R2025a and later now allow mixing
+% of data types, but the rules for the type of C differ from GhB.cell2mat.  GhB
+% selects the largest type of its inputs, while the MATLAB cell2mat selects the
+% smallest.
 %
 % Example:
 %

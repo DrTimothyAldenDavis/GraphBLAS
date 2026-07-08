@@ -12,7 +12,6 @@ function C = emult (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % GhB.emult (C, accum, op, A, B, desc)          % C += op(A,B)
 % GhB.emult (C, M, op, A, B, desc)              % C<M> = op(A,B)
 % GhB.emult (C, M, accum, op, A, B, desc)       % C<M> += op(A,B)
-
 %
 % GhB.emult computes the element-wise 'multiplication' T=A.*B, using any binary
 % op (shown as op(A,B) in the computations listed above).  The result T has the
@@ -22,18 +21,18 @@ function C = emult (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %   if (A(i,j) and B(i,j) is present)
 %       T(i,j) = op (A(i,j), B(i,j))
 %
-% T is then accumulated into C via C<M> = accum (C,T), where the accum step
-% is computed using GhB.eadd and M can be modified by the descriptor desc.
+% T is then accumulated into C via C<M> = accum (C,T), where the accum step is
+% computed using GhB.eadd and M can be modified by the descriptor desc.
 %
 % accum: a binary operator to accumulate the results; in the computations
 % listed above it is shown as "+=" but any binary operator may be used.
-% For the in-place syntax, the @GhB matrix C is modified in-place.
+% For the in-place syntax, the GhB matrix C is modified in-place.
 %
 % Cin, the mask matrix M, the accum operator, and desc are optional.  If either
 % accum or M is present, then C or Cin is a required input.  If desc.in0 is
 % 'transpose' then A is transposed before applying the operator.  If desc.in1
 % is 'transpose', then the input matrix B is transposed before applying the
-% operator.
+% operator.  See 'help GrB.descriptorinfo' for more details.
 %
 % See also GhB.eadd, GrB.binopinfo.
 

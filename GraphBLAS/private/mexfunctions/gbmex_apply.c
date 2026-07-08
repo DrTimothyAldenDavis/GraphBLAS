@@ -9,7 +9,7 @@
 
 // gbmex_apply is an interface to GrB_Matrix_apply, for GrB.apply and GhB.apply.
 
-// Usage for @GrB and @GhB (omitting optional final desc argument):
+// Usage for GrB and GhB (omitting optional final desc argument):
 
 // C = GrB.apply (unop, A)                  % C = unop (A)
 // C = GrB.apply (Cin, unop, A)             % C = Cin ; C = unop (A)
@@ -17,7 +17,7 @@
 // C = GrB.apply (Cin, M, unop, A)          % C = Cin ; C<M> = unop (A)
 // C = GrB.apply (Cin, M, accum, unop, A)   % C = Cin ; C<M> += unop(A)
 
-// Usage for @GhB only:
+// Usage for GhB only:
 
 // GhB.apply (C, unop)                      % C = unop (C)
 // GhB.apply (C, accum, unop)               % C += unop (C)

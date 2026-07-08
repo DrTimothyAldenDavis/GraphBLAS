@@ -1,17 +1,17 @@
 function C = eunion (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
 %GRB.EUNION sparse matrix union.
 %
-% syntax for a new matrix C:                        computation:
-% C = GrB.eunion (op, A,a,B,b, desc)                % C = op(A,a,B,b)
-% C = GrB.eunion (Cin, accum, op, A,a,B,b, desc)    % C = Cin + op(A,a,B,b)
-% C = GrB.eunion (Cin, M, op, A,a,B,b, desc)        % C = Cin ; C<M> = op(A,a,B,b)
-% C = GrB.eunion (Cin, M, accum, op, A,a,B,b, desc) % C = Cin ; C<M> += op(A,a,B,b)
+% syntax for a new matrix C:                      computation:
+% C = GrB.eunion (op, A,a,B,b, desc)              % C = op(A,a,B,b)
+% C = GrB.eunion (Cin, accum, op, A,a,B,b, desc)  % C = Cin + op(A,a,B,b)
+% C = GrB.eunion (Cin, M, op, A,a,B,b, desc)      % C = Cin ; C<M> = op(A,a,B,b)
+% C = GrB.eunion (Cin, M, accum, op,A,a,B,b,desc) % C = Cin ; C<M>+= op(A,a,B,b)
 %
 % in-place syntax:
-% GrB.eunion (C, op, A,a,B,b, desc)                 % C = op(A,a,B,b)
-% GrB.eunion (C, accum, op, A,a,B,b, desc)          % C += op(A,a,B,b)
-% GrB.eunion (C, M, op, A,a,B,b, desc)              % C<M> = op(A,a,B,b)
-% GrB.eunion (C, M, accum, op, A,a,B,b, desc)       % C<M> += op(A,a,B,b)
+% GrB.eunion (C, op, A,a,B,b, desc)               % C = op(A,a,B,b)
+% GrB.eunion (C, accum, op, A,a,B,b, desc)        % C += op(A,a,B,b)
+% GrB.eunion (C, M, op, A,a,B,b, desc)            % C<M> = op(A,a,B,b)
+% GrB.eunion (C, M, accum, op, A,a,B,b, desc)     % C<M> += op(A,a,B,b)
 %
 % GrB.eunion computes the element-wise 'addition' T=A+B, using any binary op
 % (shown as op(A,a,B,b) in the computations listed above).  The result T has

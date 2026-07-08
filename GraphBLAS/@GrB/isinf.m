@@ -1,7 +1,7 @@
 function C = isinf (G)
 %ISINF true for infinite elements.
-% C = isinf (G) returns a logical matrix C where C(i,j) = true
-% if G(i,j) is infinite.
+% C = isinf (G) returns a logical matrix C where C(i,j) = true if G(i,j) is
+% infinite.
 %
 % See also GrB/isnan, GrB/isfinite.
 

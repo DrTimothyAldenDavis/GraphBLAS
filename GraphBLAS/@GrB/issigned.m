@@ -1,8 +1,8 @@
 function s = issigned (arg)
 %GRB.ISSIGNED Determine if a type is signed or unsigned.
 % s = GrB.issigned (type) returns true if type is the string 'double',
-% 'single', 'single complex', 'double complex', 'int8', 'int16', 'int32',
-% or 'int64'.
+% 'single', 'single complex', 'double complex', 'int8', 'int16', 'int32', or
+% 'int64'.
 %
 % s = GrB.issigned (A), where A is a matrix, is the same as
 % s = GrB.issigned (GrB.type (A)).

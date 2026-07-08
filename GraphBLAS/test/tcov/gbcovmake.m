@@ -6,7 +6,7 @@ function gbcovmake
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-fprintf ('Compiling @GrB and @GhB for mexFunction statement coverage...\n') ;
+fprintf ('Compiling GrB and GhB for mexFunction statement coverage...\n') ;
 warning ('off', 'MATLAB:MKDIR:DirectoryExists') ;
 mkdir ('tmp/cover') ;
 warning ('on', 'MATLAB:MKDIR:DirectoryExists') ;
@@ -93,6 +93,7 @@ inc = [inc '-I. '] ;
     inc = [inc '-I../../../../Source/transpose ' ] ;
     inc = [inc '-I../../../../Source/helper ' ] ;
     inc = [inc '-I../../../../Source/builtin ' ] ;
+    inc = [inc '-I../../../../Source/builtin/include ' ] ;
     inc = [inc '-I../../../../Source/hyper ' ] ;
 
 Lflags = sprintf ('-L''%s''', library_path) ;

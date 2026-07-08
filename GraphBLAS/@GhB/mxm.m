@@ -13,40 +13,39 @@ function C = mxm (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % GhB.mxm (C, M, semiring, A, B, desc)              % C<M> = A*B
 % GhB.mxm (C, M, accum, semiring, A, B, desc)       % C<M> += A*B
 %
-% GrB.mxm computes T = A*B using a given semiring, where C(i,j) =
+% GhB.mxm computes T = A*B using a given semiring, where C(i,j) =
 % sum (A(i,:).*B(:,j).'), except that "sum" can be any monoid, and "*" can be
 % any binary operator.
 %
-% T is then accumulated into C via C<M> = accum (C,T), where the accum step
-% is computed using GhB.eadd and M can be modified by the descriptor desc.
+% T is then accumulated into C via C<M> = accum (C,T), where the accum step is
+% computed using GhB.eadd and M can be modified by the descriptor desc.
 %
-% The semiring is a required string defining the semiring to use, in the
-% form 'add.mult.type', where '.type' is optional.  For example,
-% '+.*.double' is the conventional semiring for numerical linear algebra,
-% used in the built-in C=A*B when A and B are double.  If A or B are
-% double complex, then C=A*B uses the '+.*.double complex' semiring.
-% GraphBLAS has many more semirings.  See 'help GrB.semiringinfo' for more
-% details.
+% The semiring is a required string defining the semiring to use, in the form
+% 'add.mult.type', where '.type' is optional.  For example, '+.*.double' is the
+% conventional semiring for numerical linear algebra, used in the built-in
+% C=A*B when A and B are double.  If A or B are double complex, then C=A*B uses
+% the '+.*.double complex' semiring.  GraphBLAS has many more semirings.  See
+% 'help GrB.semiringinfo' for more details.
 %
 % accum: a binary operator to accumulate the results; in the computations
-% listed above it is shown as "+=" but any binary operator may be used.
-% For the in-place syntax, the @GhB matrix C is modified in-place.
+% listed above it is shown as "+=" but any binary operator may be used.  For
+% the in-place syntax, the GhB matrix C is modified in-place.
 %
 % Cin, the mask matrix M, the accum operator, and desc are optional.  If either
 % accum or M is present, then C or Cin is a required input.  If desc.in0 is
 % 'transpose' then A is transposed before applying the operator.  If desc.in1
 % is 'transpose', then the input matrix B is transposed before applying the
-% operator.
+% operator.  See 'help GrB.descriptorinfo' for more details.
 %
 % Examples:
 %
 %   A = sprand (4,5,0.5) ;
 %   B = sprand (5,3,0.5) ;
-%   C = GrB.mxm ('+.*', A, B) ;
+%   C = GhB.mxm ('+.*', A, B) ;
 %   norm (C-A*B,1)
 %   E = sprand (4,3,0.7) ;
 %   M = logical (sprand (4,3,0.5)) ;
-%   C2 = GrB.mxm (E, M, '+', '+.*', A, B) ;
+%   C2 = GhB.mxm (E, M, '+', '+.*', A, B) ;
 %   C3 = E ; AB = A*B ; C3 (M) = C3 (M) + AB (M) ;
 %   norm (C2-C3,1)
 %

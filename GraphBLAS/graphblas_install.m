@@ -182,7 +182,7 @@ try
     gbmake
 catch me
     me
-    fprintf ('Building GraphBLAS @GrB interface failed\n') ;
+    fprintf ('Building GraphBLAS GrB/GhB interface failed\n') ;
 end
 
 cd (here) ;

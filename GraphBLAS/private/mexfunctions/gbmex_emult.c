@@ -18,7 +18,7 @@
 
 #define USAGE "usage: C = GrB.emult (Cin, M, accum, binop, A, B, desc)"
 
-// Usage for @GrB and @GhB (omitting desc argument):
+// Usage for GrB and GhB (omitting desc argument):
 
 // C = GrB.emult (op, A, B)                 C = op(A,B)
 // C = GrB.emult (Cin, op, A, B)            C = op(A,B)
@@ -26,7 +26,7 @@
 // C = GrB.emult (Cin, M, op, A, B)         C = Cin ; C<M> = op(A,B)
 // C = GrB.emult (Cin, M, accum, op, A, B)  C = Cin ; C<M> += op(A,B)
 
-// Usage for @GhB only (inplace):
+// Usage for GhB only (inplace):
 
 // GhB.emult (C, op, A, B)                  C = op(A,B)
 // GhB.emult (C, accum, op, A, B)           C += op(A,B)

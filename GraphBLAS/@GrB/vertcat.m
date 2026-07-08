@@ -1,9 +1,8 @@
 function C = vertcat (varargin)
 %VERTCAT vertical concatenation.
-% [A ; B] is the vertical concatenation of A and B.
-% Multiple matrices may be concatenated, as [A ; B ; C ; ...].
-% If the matrices have different types, the type is determined
-% according to the rules in GrB.optype.
+% [A ; B] is the vertical concatenation of A and B.  Multiple matrices may be
+% concatenated, as [A ; B ; C ; ...].  If the matrices have different types,
+% the type is determined according to the rules in GrB.optype.
 %
 % See also GrB/horzcat, GrB/cat, GrB.cell2mat, GrB/mat2cell, GrB/num2cell.
 

@@ -11,6 +11,6 @@ else
     n = int64 (varargin {2}) ;
 end
 
-% C is returned as a cell array of @GrB or @GhB objects
+% C is returned as a cell array of GrB or GhB objects
 C = gzb_split (ghb, A, m, n) ;
 

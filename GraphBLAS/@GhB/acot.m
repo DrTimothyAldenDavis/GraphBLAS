@@ -1,7 +1,7 @@
 function C = acot (G)
 %ACOT inverse cotangent.
-% C = acot (G) is the inverse cotangent of each entry of G.  Since acot (0)
-% is nonzero, C is a full matrix.
+% C = acot (G) is the inverse cotangent of each entry of G.  Since acot (0) is
+% nonzero, C is a full matrix.
 %
 % See also GhB/cot, GhB/coth, GhB/acoth.
 

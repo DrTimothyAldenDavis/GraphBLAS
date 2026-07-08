@@ -12,13 +12,13 @@ function Y = dnn (W, bias, Y0)
 %
 %   Y = GrB.dnn (W, bias, Y0) ;
 %
-% The matrices can be stored by row or by column, but GrB.format ('by row')
-% is somewhat faster.  For the 2019 GraphChallenge, all matrices can be
-% 'single', and the same results are obtained.
+% The matrices can be stored by row or by column, but GrB.format ('by row') is
+% somewhat faster.  For the 2019 GraphChallenge, all matrices can be 'single',
+% and the same results are obtained.
 %
-% In the original reference implementation, the bias{k} is a row vector of
-% size 1-by-nneurons.  The reference inputs can be converted to GraphBLAS
-% matrices with the following code:
+% In the original reference implementation, the bias{k} is a row vector of size
+% 1-by-nneurons.  The reference inputs can be converted to GraphBLAS matrices
+% with the following code:
 %
 %   d = struct ('format', 'by row') ;
 %   n = size (Y0, 2) ;

@@ -45,19 +45,20 @@ function C = select (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %   '<'             C = A (A <  b)
 %   '<='            C = A (A <= b)
 %
-% Many of the operations have equivalent synonyms, as listed above.
-% Note that C = GrB.select ('diag',A,b) does not return a vector,
-% but a diagonal matrix, instead.
+% Many of the operations have equivalent synonyms, as listed above.  Note that
+% C = GrB.select ('diag',A,b) does not return a vector, but a diagonal matrix,
+% instead.
 %
 % accum: a binary operator to accumulate the results; in the computations
 % listed above it is shown as "+=" but any binary operator may be used.
 %
 % Cin, the mask matrix M, the accum operator, and desc are optional.  If either
 % accum or M is present, then Cin is a required input.  If desc.in0 is
-% 'transpose' then A is transposed before applying the operator.
+% 'transpose' then A is transposed before applying the operator.  See 'help
+% GrB.descriptorinfo' for more details.
 %
-% The selectop is a required string defining the select operator to use.
-% All operators operate on all types (the select operators do not do any
+% The selectop is a required string defining the select operator to use.  All
+% operators operate on all types (the select operators do not do any
 % typecasting of its inputs).
 %
 % See also GrB/tril, GrB/triu, GrB/diag, GrB.selectopinfo, GrB.binopinfo.

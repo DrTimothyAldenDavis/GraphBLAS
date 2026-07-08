@@ -1,10 +1,10 @@
 function C = pow2 (A, B)
 %POW2 base-2 power and scale floating-point number.
-% C = pow2 (A) is C(i,j) = 2.^A(i,j) for each entry in A.
-% Since 2^0 is nonzero, C is a full matrix.
+% C = pow2 (A) is C(i,j) = 2.^A(i,j) for each entry in A.  Since 2^0 is
+% nonzero, C is a full matrix.
 %
-% C = pow2 (F,E) is C = F .* (2 .^ fix (E)).  C is sparse, with
-% the same pattern as F+E.  Any imaginary parts of F and E are ignored.
+% C = pow2 (F,E) is C = F .* (2 .^ fix (E)).  C is sparse, with the same
+% pattern as F+E.  Any imaginary parts of F and E are ignored.
 %
 % See also GhB/log2, GhB/power, GhB/exp.
 
