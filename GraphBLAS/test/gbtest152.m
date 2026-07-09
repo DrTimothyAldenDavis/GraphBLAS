@@ -10,7 +10,7 @@ if (nargin == 0)
 end
 gtb_name = gtb_prep (ghb) ;
 
-load west0479_correct.mat
+load ./matrix/west0479_correct.mat
 A = Problem.A ;
 G = gtb (ghb, A) ;
  

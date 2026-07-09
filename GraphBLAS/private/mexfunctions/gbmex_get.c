@@ -146,17 +146,17 @@ void mexFunction
     else if (MATCH (state, "offset"))
     { 
         // get the integer sizes for offsets
-        OK (GrB_Matrix_get_INT32 (C, &value, GxB_OFFSET_INTEGER_HINT)) ;
+        OK (GrB_Matrix_get_INT32 (C, &value, GxB_OFFSET_INTEGER_BITS)) ;
     }
     else if (MATCH (state, "column") || MATCH (state, "col"))
     { 
         // get the integer sizes for column indices
-        OK (GrB_Matrix_get_INT32 (C, &value, GxB_COLINDEX_INTEGER_HINT)) ;
+        OK (GrB_Matrix_get_INT32 (C, &value, GxB_COLINDEX_INTEGER_BITS)) ;
     }
     else if (MATCH (state, "row"))
     { 
         // get the integer sizes for row indices
-        OK (GrB_Matrix_get_INT32 (C, &value, GxB_ROWINDEX_INTEGER_HINT)) ;
+        OK (GrB_Matrix_get_INT32 (C, &value, GxB_ROWINDEX_INTEGER_BITS)) ;
     }
     else
     { 
@@ -165,6 +165,12 @@ void mexFunction
     }
 
     ////////////////////////////////////////////////////////////////////////////
+
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
+
+    FREE_ALL ;
 
     if (value_is_string)
     { 

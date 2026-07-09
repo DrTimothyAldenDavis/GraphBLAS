@@ -27,7 +27,7 @@ for trial = 1:2
         2 7 ] ;
         W = sparse (ij (:,1), ij (:,2), ones (12,1), 8, 8) ;
     else
-        load west0479_correct.txt
+        load ./matrix/west0479_correct.txt
         W = spconvert (west0479_correct) ;
     end
 

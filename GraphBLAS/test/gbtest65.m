@@ -9,7 +9,7 @@ if (nargin == 0)
 end
 gtb_name = gtb_prep (ghb) ;
 
-load west0479_correct.txt
+load ./matrix/west0479_correct.txt
 west0479 = spconvert (west0479_correct) ;
 
 A = gtb_offdiag (ghb, spones (west0479)) ;

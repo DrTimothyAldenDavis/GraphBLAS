@@ -1,5 +1,5 @@
 function [out1, out2] = bfs (A, varargin)
-%GHB.BFS breadth-first search of a graph, using its adjacency matrix.
+%GHB.BFS breadth-first search of a graph.
 %
 % Usage, where opts are a list of optional strings:
 %
@@ -15,10 +15,10 @@ function [out1, out2] = bfs (A, varargin)
 % pattern of v.
 %
 % A is the adjacency matrix of the graph where A(i,j) is the edge (i,j).  AT is
-% its transpose, AT=A'.  Only the pattern of A and AT are needed so AT can be a
-% sparse logical matrix.  degree = GhB.entries (A, 'row', 'degree'), where
-% degree (i) = the # of entries in A (i,:).  AT must have the same row/col
-% format as A.
+% its transpose, AT=A'.  Only the pattern of A and AT are used so both A and AT
+% can be sparse logical matrices.  degree = GhB.entries (A, 'row', 'degree'),
+% where degree (i) = the # of entries in A (i,:).  AT must have the same
+% row/col format as A.
 %
 % The GhB.bfs(A,s) usage is included for backward compatibility with prior
 % versions of GraphBLAS, but should not be used.  It is much slower than the
@@ -41,6 +41,16 @@ function [out1, out2] = bfs (A, varargin)
 %
 %   'directed' or 'unsymmetric':  A is assumed to be unsymmetric, and presents
 %       a directed graph.  This is the default.
+%
+%   'parent', 'anyparent', 'minparent', 'maxparent': defines what kind of
+%       parent vector to compute.  If a node can has more than one valid
+%       parent, then 'minparent' selects the node with the smallest index, and
+%       'maxparent' selects the largest.  'parent' is the same as 'anyparent';
+%       if a node has multiple valid parents, its parent is selected non-
+%       deterministically (it can vary if you run this method twice, and it
+%       does not depend on the rng state).  This method is the fastest, and is
+%       guaranteed to return a valid parent tree.  However, if you want
+%       repeatable results, use 'minparent' or 'maxparent' instead.
 %
 %   'check': extensive and costly error checks are performed on the inputs.  If
 %       AT is not A' or spones(A'), or if the degree vector is wrong, and these
@@ -164,11 +174,13 @@ for k = first_string:nargin-1
                 kind = 'directed' ;
             case { 'parent', 'anyparent' }
                 % use the 'any' monoid which is fast but non-deterministic
+error ('gotcha4!') ;
                 compute_parent = true ;
             case { 'minparent' }
                 monoid = 'min' ;
                 compute_parent = true ;
             case { 'maxparent' }
+error ('gotcha5!') ;
                 monoid = 'max' ;
                 compute_parent = true ;
             case { 'check' }
@@ -181,10 +193,10 @@ end
 
 compute_level = (nargout == 1 && ~compute_parent) || (nargout == 2) ;
 
-% extensive checks of inputs, if requested
+% optional extensive checks of inputs, if requested
 if (check)
-    if (~isequal (A, AT'))
-        error ('GrB:error', 'A must equal AT''') ;
+    if (~isequal (logical (spones (A)), logical (spones (AT)')))
+        error ('GrB:error', 'spones(A) must equal spones(AT)''') ;
     end
     if (isequal (kind, 'undirected') && ~issymmetric (A))
         error ('GrB:error', 'A must be symmetric') ;
@@ -269,10 +281,12 @@ for level = 2:n
         switch_to_pull = false ;
         if (unexplored < n)
             % very little of the graph is left; disable the pull
+error ('gotcha9!') ;
             push_pull = false ;
         elseif (any_pull)
             % at least one pull has been done already; no longer keeping track
             % of the # unexplored nodes
+error ('gotcha10!') ;
             switch_to_pull = (growing && nq > (n/beta1)) ;
         else
             % count the # of outgoing edges from the current frontier, q.
@@ -294,6 +308,7 @@ for level = 2:n
         shrinking = (nq < last_nq) ;
         if (shrinking && (nq <= (n / beta2)))
             % switch from pull to push
+error ('gotcha11!') ;
             do_push = true ;
         end
     end
@@ -309,9 +324,17 @@ for level = 2:n
 
     [~,sparsity,~] = GhB.format (q) ;
     if (do_push && (~isequal (sparsity, 'sparse')))
-        q = GhB (q, 'sparse') ;
+error ('gotcha12!') ;
+        % q = GhB (q, 'sparse') ;
+        GhB.set (q, 'format', 'sparse') ;
+        [~,sparsity,~] = GhB.format (q) ;
+        assert (isequal (sparsity, 'sparse'))
     elseif (~do_push && (~isequal (sparsity, 'bitmap')))
-        q = GhB (q, 'bitmap') ;
+error ('gotcha13!') ;
+        % q = GhB (q, 'bitmap') ;
+        GhB.set (q, 'format', 'bitmap') ;
+        [~,sparsity,~] = GhB.format (q) ;
+        assert (isequal (sparsity, 'bitmap'))
     end
 
     %---------------------------------------------------------------------------
@@ -353,7 +376,10 @@ for level = 2:n
     % quit if all nodes have been reached
     %---------------------------------------------------------------------------
 
-    if (done), break, end
+    if (done)
+error ('gotcha14!') ;
+        break ;
+    end
 
 end
 

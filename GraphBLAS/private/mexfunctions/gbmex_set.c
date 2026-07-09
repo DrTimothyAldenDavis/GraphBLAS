@@ -93,28 +93,30 @@ void mexFunction
         CHECK_ERROR (!value_ok, "invalid iso value") ;
         OK (GrB_Matrix_set_INT32 (C, int_value, GxB_ISO)) ;
     }
-    else if (MATCH (state, "offset"))
+    else 
     { 
-        // set the integer sizes for offsets
+        // set an integer state: offset, row, or column
         CHECK_ERROR (!is_32_or_64, "invalid value (must be 32 or 64)") ;
-        OK (GrB_Matrix_set_INT32 (C, int_value, GxB_OFFSET_INTEGER_HINT)) ;
-    }
-    else if (MATCH (state, "column") || MATCH (state, "col"))
-    { 
-        // set the integer sizes for column indices
-        CHECK_ERROR (!is_32_or_64, "invalid value (must be 32 or 64)") ;
-        OK (GrB_Matrix_set_INT32 (C, int_value, GxB_COLINDEX_INTEGER_HINT)) ;
-    }
-    else if (MATCH (state, "row"))
-    { 
-        // set the integer sizes for row indices
-        CHECK_ERROR (!is_32_or_64, "invalid value (must be 32 or 64") ;
-        OK (GrB_Matrix_set_INT32 (C, int_value, GxB_ROWINDEX_INTEGER_HINT)) ;
-    }
-    else
-    { 
-        ERROR ("invalid state (must be 'format', 'iso', 'offset', "
-            "'row', or 'col')", GrB_INVALID_VALUE) ;
+        if (MATCH (state, "offset"))
+        { 
+            // set the integer sizes for offsets
+            OK (GrB_Matrix_set_INT32 (C, int_value, GxB_OFFSET_INTEGER_HINT)) ;
+        }
+        else if (MATCH (state, "column") || MATCH (state, "col"))
+        { 
+            // set the integer sizes for column indices
+            OK (GrB_Matrix_set_INT32 (C, int_value, GxB_COLINDEX_INTEGER_HINT)) ;
+        }
+        else if (MATCH (state, "row"))
+        { 
+            // set the integer sizes for row indices
+            OK (GrB_Matrix_set_INT32 (C, int_value, GxB_ROWINDEX_INTEGER_HINT)) ;
+        }
+        else
+        { 
+            ERROR ("invalid state (must be 'format', 'iso', 'offset', "
+                "'row', or 'col')", GrB_INVALID_VALUE) ;
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////

@@ -83,14 +83,14 @@ end
 
 % H was constructed in GraphBLAS v10.3.1 as:
 % n = 2^60 ; H = GrB (n,n) ;
-% load west0479_correct ;
+% load ./matrix/west0479_correct ;
 % H (1:479,1:479) = GrB (Problem.A) ;
 % k = 2000 ; H (1:k,1:k) = speye (k)
 clear H H2 H3
 load ([filepath '/gbtest101_matfiles/gbtestv10_3_1.mat']) ; %#ok<LOAD>
 
 % Now construct H again
-load west0479_correct ;
+load ./matrix/west0479_correct ;
 A = gtb (ghb, Problem.A) ;
 n = 2^60 ;
 H2 = gtb (ghb, n,n) ;
@@ -102,7 +102,7 @@ assert (isequal (H, H2)) ;
 assert (isequal (s, 'hypersparse')) ;
 
 % G was constructed in GraphBLAS v10.3.1 as:
-% load west0479_correct ;
+% load ./matrix/west0479_correct ;
 % G = GrB (Problem.A, 'bitmap') ;
 clear G G2
 load ([filepath '/gbtest101_matfiles/gbtestv10_3_1b.mat']) ; %#ok<LOAD>
