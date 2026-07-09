@@ -118,9 +118,9 @@ classdef (HandleCompatible) GrB
 %   user-defined operators, so this could be added in the future.  See 'help
 %   GrB/MATLAB_vs_GrB' for more details.
 %
-%-------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 % Methods for the GrB class:
-%-------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 %
 %   C = GrB (...)           construct a GraphBLAS matrix
 %
@@ -319,16 +319,16 @@ classdef (HandleCompatible) GrB
 %
 %   C = xor (A, B)          exclusive or
 %
-%-------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 % Static Methods:
-%-------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 %
 %   The Static Methods for the GrB class can be used on input matrices of any
 %   kind: GraphBLAS sparse matrices, built-in sparse matrices, or built-in full
 %   matrices, in any combination.  The output matrix C is a GraphBLAS matrix,
 %   by default, but can be optionally returned as a built-in sparse or full
 %   matrix.  The static methods divide into three categories: those that
-%   perform basic functions, graph algorithms, and the 12 foundational
+%   perform basic functions, graph algorithms, and the 14 foundational
 %   GraphBLAS operations.
 %
 %---------------------------
@@ -413,8 +413,8 @@ classdef (HandleCompatible) GrB
 %   which they appear in the GraphBLAS C API, except that for the GrB
 %   interface, Cin and C can be different matrices.  In the GrB interface, many
 %   of the parameters become optional, and they can appear in different order.
-%   GhB adds in-place semantics where C is an input/output matrix; see
-%   'help GhB' for details.
+%   GhB adds in-place semantics where C is an input/output matrix; see 'help
+%   GhB' for details.
 %
 %       GrB.apply       apply a unary operator
 %       GrB.apply2      apply a binary operator
@@ -594,9 +594,9 @@ end
 
 methods
 
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
     % GrB: GraphBLAS matrix constructor
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
 
     function C = GrB (arg1, arg2, arg3, arg4)
     %GRB GraphBLAS constructor: create a GraphBLAS GrB value matrix.
@@ -639,9 +639,9 @@ methods
         end
     end
 
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
     % operator overloading
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
 
     C = and (A, B) ;            % C = (A & B)
     C = ctranspose (A) ;        % C = A'
@@ -675,19 +675,18 @@ methods
     I = subsindex (A) ;         % for C = X (A), using A as index I
     i = end (A, k, ndims) ;     % for A (1:end,1:end)
 
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
     % Methods that overload built-in functions:
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
 
-    %   In the list below, G is always a GraphBLAS matrix.  The inputs A
-    %   and B can be a mix of GraphBLAS and/or built-in matrices, but at
-    %   least one will be a GraphBLAS matrix because these are all methods
-    %   that are overloaded from the built-in versions.  If all inputs are
-    %   built-in matrices, these methods are not used.  The output matrix
-    %   (C, L, or U) is always a GraphBLAS matrix.  Lower case variables
-    %   i, e, s, and n are scalars.  Outputs p, parent, I, J, and X are
-    %   built-in vectors.  Graph is a built-in undirected graph.  DiGraph
-    %   is a built-in directed digraph.
+    % In the list below, G is always a GraphBLAS matrix.  The inputs A and B
+    % can be a mix of GraphBLAS and/or built-in matrices, but at least one will
+    % be a GraphBLAS matrix because these are all methods that are overloaded
+    % from the built-in versions.  If all inputs are built-in matrices, these
+    % methods are not used.  The output matrix (C, F, or E) is always a
+    % GraphBLAS matrix.  Lower case variables i, e, s, and n are scalars.
+    % Outputs p, parent, I, J, and X are built-in vectors.  Graph is a built-in
+    % undirected graph.  DiGraph is a built-in directed digraph.
 
     C = abs (G) ;
     C = acos (G) ;
@@ -764,15 +763,15 @@ methods
     C = sparse (G) ;
     C = spfun (fun, G) ;
     C = spones (G, type) ;
-    C = sprand (arg1, arg2, arg3) ;
-    C = sprandn (arg1, arg2, arg3) ;
-    C = sprandsym (arg1, arg2) ;
+    C = sprand (varargin) ;
+    C = sprandn (varargin) ;
+    C = sprandsym (varargin) ;
     C = sqrt (G) ;
     C = sum (G, option) ;
     C = tan (G) ;
     C = tanh (G) ;
-    L = tril (G, k) ;
-    U = triu (G, k) ;
+    C = tril (G, k) ;
+    C = triu (G, k) ;
     C = xor (A, B) ;
 
 %   built-in methods work as-is:
@@ -780,12 +779,12 @@ methods
 %   s = iscolumn (G)
 %   s = isrow (G)
 
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
     % overloaded GrB.methods and GhB.methods that are identical
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
 
     p = amd (G, varargin) ;
-    assert (G) ;            % test assertion 
+    assert (G) ;
     [lo, hi] = bandwidth (G, uplo) ;
     [p, varargout] = colamd (G, varargin) ;
     C = complex (A, B) ;
@@ -843,70 +842,73 @@ end
 
 methods (Static)
 
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
     % Static Methods:
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
 
-    % All of these are used as GrB.method (...), with the "GrB." prefix.  The
-    % input matrices (A, B, C, M, ...) are of any kind (GraphBLAS, built-in
-    % sparse, or built-in full).  The output matrix C is a GrB matrix by
-    % default.  It is a builtin MATLAB/Octave matrix if desc.kind = 'builtin'.
+    % All of these are used as GrB.method (...) with the GrB prefix.  The input
+    % matrices (Cin, A, B, M, ...) are of any kind (GraphBLAS, built-in sparse,
+    % or built-in full).  The outputs are GrB matrices except where noted.
 
+    % the 14 foundational methods:
     C = apply (Cin, M, accum, op, A, desc) ;
     C = apply2 (Cin, M, accum, op, A, B, desc) ;
-    [x,p] = argmax (A, dim) ;
-    [x,p] = argmin (A, dim) ;
-    [C,P] = argsort (A, dim, direction) ;
     C = assign (Cin, M, accum, A, I, J, desc) ;
+    C = eadd (Cin, M, accum, op, A, B, desc) ;
+    C = emult (Cin, M, accum, op, A, B, desc) ;
+    C = eunion (Cin, M, accum, op, A, a, B, b, desc) ;
+    C = extract (Cin, M, accum, A, I, J, desc) ;
+    C = kronecker (Cin, M, accum, op, A, B, desc) ;
+    C = mxm (Cin, M, accum, semiring, A, B, desc) ;
+    C = reduce (cin, accum, monoid, A, desc) ;
+    C = select (Cin, M, accum, selectop, A, b, desc) ;
+    C = subassign (Cin, M, accum, A, I, J, desc) ;
+    C = trans (Cin, M, accum, A, desc) ;
+    C = vreduce (Cin, M, accum, monoid, A, desc) ;
+
+    [x, p] = argmax (A, dim) ;
+    [x, p] = argmin (A, dim) ;
+    [C, P] = argsort (A, dim, direction) ;
     [v, parent] = bfs (A, s, varargin) ;
     C = build (I, J, X, m, n, dup, type, desc) ;
-    mem = bytes (A)
     C = cell2mat (A) ;
     [C, I, J] = compact (A, id, symmetric) ;
     C = deserialize (blob) ;
     Y = dnn (W, bias, Y0) ;
-    C = eadd (Cin, M, accum, op, A, B, desc) ;
     C = empty (arg1, arg2) ;
-    C = emult (Cin, M, accum, op, A, B, desc) ;
-    x = entries (A, arg2, arg3) ;
-    C = eunion (Cin, M, accum, op, A, a, B, b, desc) ;
+    x = entries (A, arg2, arg3) ;           % returns a built-in x
     C = expand (scalar, A, type) ;
-    C = extract (Cin, M, accum, A, I, J, desc) ;
     C = eye (m, n, type) ;
     C = false (varargin) ;
     C = incidence (A, varargin) ;
-    C = kronecker (Cin, M, accum, op, A, B, desc) ;
     C = ktruss (A, k, check) ;
     L = laplacian (A, type, check) ;
     C = load (filename) ;
-    G = loadobj (S) ;
+    C = loadobj (S) ;
     iset = mis (A, check) ;
-    C = mxm (Cin, M, accum, semiring, A, B, desc) ;
-    result = nonz (A, varargin) ;
+    result = nonz (A, varargin) ;           % returns a built-in or GhB result
     C = offdiag (A) ;
     C = ones (varargin) ;
     [r, stats] = pagerank (A, opts) ;
     C = prune (A, identity) ;
     C = random (varargin) ;
-    C = reduce (cin, accum, monoid, A, desc) ;
-    C = select (Cin, M, accum, selectop, A, b, desc) ;
-    blob = serialize (A, method, level) ;
+    blob = serialize (A, method, level) ;   % returns a built-in blob
     C = speye (m, n, type) ;
-    C = subassign (Cin, M, accum, A, I, J, desc) ;
-    C = trans (Cin, M, accum, A, desc) ;
-    s = tricount (A, check, d) ;
+    s = tricount (A, check, d) ;            % returns a built-in scalar
     C = true (varargin) ;
-    C = vreduce (Cin, M, accum, monoid, A, desc) ;
     C = zeros (varargin) ;
 
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
     % static GrB.methods and GhB.methods that are identical
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
+
+    % The methods in this list return builtin matrices or strings.
 
     MATLAB_vs_GrB ;
     binopinfo (op, type) ;
     list = binops ;
     b = burble (b) ;
+    mem = bytes (A)
     c = chunk (c) ;
     clear ;
     descriptorinfo (d) ;
@@ -918,10 +920,10 @@ methods (Static)
     s = isbyrow (A) ;
     s = isfull (A) ;
     s = issigned (arg) ;
-    [s,path] = jit (s,path) ;
+    [s, path] = jit (s, path) ;
     monoidinfo (monoid, type) ;
     list = monoids ;
-    n = nmalloc ;  % for testing/development only
+    n = nmalloc ;
     s = normdiff (A, B, kind) ;
     e = nvals (A) ;
     ctype = optype (a, b) ;
@@ -937,7 +939,7 @@ methods (Static)
     list = unops ;
     v = version ;
     v = ver ;
-    wait (C) ; % for GhB; does nothing for GrB matrices
+    wait (C) ;
 
 end
 end

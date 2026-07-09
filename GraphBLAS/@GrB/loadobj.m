@@ -1,4 +1,4 @@
-function G = loadobj (S)
+function C = loadobj (S)
 %LOADOBJ loads a GrB matrix from a file.
 % The built-in MATLAB load method first reads in the struct S that saveobj
 % created, and then passes it to this method.  Octave does not use this method
@@ -15,10 +15,10 @@ if (isobject (S))
     if (gb_is_grb (S))
         S = struct (S) ;
     end
-    G = gzb_loadhistorical (0, S) ;
+    C = gzb_loadhistorical (0, S) ;
 else
     % S is a struct created by GrB/saveobj with a single
     % S.blob field containing the serialized matrix.
-    G = gzb_deserialize (0, S.blob) ;
+    C = gzb_deserialize (0, S.blob) ;
 end
 

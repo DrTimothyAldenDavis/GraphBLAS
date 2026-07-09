@@ -8,7 +8,9 @@ FIXME, version 10.4.0
         found without finalizing pending tuples
     * GxB_atfork_(prepare,parent,child): added to support an application
         needing to fork, while still using GraphBLAS.
-    * static headers: removed, except for GB_Scalar_wrap, and unary/binary ops
+    * static GrB_Matrix headers: used internally; removed, except for
+        GB_Scalar_wrap, and unary/binary ops, to simplify memory arena feature
+        and future CUDA kernels
     * MATLAB/Octave (68) bug fix:  v10.0 to v10.3 do not properly load @GrB
         hypersparse matrices from *.mat files saved by v9 and earlier, when
         using the built-in load/save methods in MATLAB.  The load/save of a

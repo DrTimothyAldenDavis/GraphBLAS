@@ -81,9 +81,9 @@ classdef (InferiorClasses = {?GrB}) GhB < handle & GrB
 
 methods
 
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
     % GhB: GraphBLAS matrix constructor
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
 
     function C = GhB (arg1, arg2, arg3, arg4)
     %GHB GraphBLAS constructor: create a GraphBLAS GhB handle matrix.
@@ -126,18 +126,18 @@ methods
         end
     end
 
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
     % GraphBLAS GhB destructor
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
 
     function delete (C)
     %DELETE delete a GhB matrix
     gbmex_delete (C) ;
     end
 
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
     % operator overloading
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
 
     C = and (A, B) ;            % C = (A & B)
     C = ctranspose (A) ;        % C = A'
@@ -167,9 +167,9 @@ methods
     C = uplus (G) ;             % C = +A
     C = vertcat (varargin) ;    % C = [A ; B]
 
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
     % Methods that overload built-in functions:
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
 
     C = abs (G) ;
     C = acos (G) ;
@@ -246,69 +246,76 @@ methods
     C = sparse (G) ;
     C = spfun (fun, G) ;
     C = spones (G, type) ;
-    C = sprand (arg1, arg2, arg3) ;
-    C = sprandn (arg1, arg2, arg3) ;
-    C = sprandsym (arg1, arg2) ;
+    C = sprand (varargin) ;
+    C = sprandn (varargin) ;
+    C = sprandsym (varargin) ;
     C = sqrt (G) ;
     C = sum (G, option) ;
     C = tan (G) ;
     C = tanh (G) ;
-    L = tril (G, k) ;
-    U = triu (G, k) ;
+    C = tril (G, k) ;
+    C = triu (G, k) ;
     C = xor (A, B) ;
 
 end
 
 methods (Static)
 
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
     % Static Methods:
-    %---------------------------------------------------------------------
+    %---------------------------------------------------------------------------
 
+    % All of these are used as GhB.method (...) with the GhB prefix.  The input
+    % matrices (Cin, M, A, B, M, ...) are of any kind, except for the 14
+    % foundational methods when used with in-place syntax (where Cin must be
+    % GhB).  The outputs are GhB matrices except where noted.
+
+    % the 14 foundational methods:
     C = apply (Cin, M, accum, op, A, desc) ;
     C = apply2 (Cin, M, accum, op, A, B, desc) ;
-    [x,p] = argmax (A, dim) ;
-    [x,p] = argmin (A, dim) ;
-    [C,P] = argsort (A, dim, direction) ;
     C = assign (Cin, M, accum, A, I, J, desc) ;
+    C = eadd (Cin, M, accum, op, A, B, desc) ;
+    C = emult (Cin, M, accum, op, A, B, desc) ;
+    C = eunion (Cin, M, accum, op, A, a, B, b, desc) ;
+    C = extract (Cin, M, accum, A, I, J, desc) ;
+    C = kronecker (Cin, M, accum, op, A, B, desc) ;
+    C = mxm (Cin, M, accum, semiring, A, B, desc) ;
+    C = reduce (cin, accum, monoid, A, desc) ;
+    C = select (Cin, M, accum, selectop, A, b, desc) ;
+    C = subassign (Cin, M, accum, A, I, J, desc) ;
+    C = trans (Cin, M, accum, A, desc) ;
+    C = vreduce (Cin, M, accum, monoid, A, desc) ;
+
+    [x, p] = argmax (A, dim) ;
+    [x, p] = argmin (A, dim) ;
+    [C, P] = argsort (A, dim, direction) ;
     [v, parent] = bfs (A, s, varargin) ;
     C = build (I, J, X, m, n, dup, type, desc) ;
     C = cell2mat (A) ;
     [C, I, J] = compact (A, id, symmetric) ;
     C = deserialize (blob) ;
     Y = dnn (W, bias, Y0) ;
-    C = eadd (Cin, M, accum, op, A, B, desc) ;
     C = empty (arg1, arg2) ;
-    C = emult (Cin, M, accum, op, A, B, desc) ;
-    x = entries (A, arg2, arg3) ;
-    C = eunion (Cin, M, accum, op, A, a, B, b, desc) ;
+    x = entries (A, arg2, arg3) ;           % returns a built-in x
     C = expand (scalar, A, type) ;
-    C = extract (Cin, M, accum, A, I, J, desc) ;
     C = eye (m, n, type) ;
     C = false (varargin) ;
     C = incidence (A, varargin) ;
-    C = kronecker (Cin, M, accum, op, A, B, desc) ;
     C = ktruss (A, k, check) ;
     L = laplacian (A, type, check) ;
     C = load (filename) ;
-    G = loadobj (S) ;
+    C = loadobj (S) ;
     iset = mis (A, check) ;
-    C = mxm (Cin, M, accum, semiring, A, B, desc) ;
-    result = nonz (A, varargin) ;
+    result = nonz (A, varargin) ;           % returns a built-in or GhB result
     C = offdiag (A) ;
     C = ones (varargin) ;
     [r, stats] = pagerank (A, opts) ;
     C = prune (A, identity) ;
     C = random (varargin) ;
-    C = reduce (cin, accum, monoid, A, desc) ;
-    C = select (Cin, M, accum, selectop, A, b, desc) ;
-    blob = serialize (A, method, level) ;
+    blob = serialize (A, method, level) ;   % returns a built-in blob
     C = speye (m, n, type) ;
-    C = subassign (Cin, M, accum, A, I, J, desc) ;
-    C = trans (Cin, M, accum, A, desc) ;
-    s = tricount (A, check, d) ;
+    s = tricount (A, check, d) ;            % returns a built-in scalar
     C = true (varargin) ;
-    C = vreduce (Cin, M, accum, monoid, A, desc) ;
     C = zeros (varargin) ;
 
 end
