@@ -67,6 +67,13 @@ G = gtb (ghb, A, 'by row') ;
 G (M) = gtb (ghb, H (M), 'bitmap') ;
 assert (isequal (A, G)) ;
 
+row_matlab = rand (1, 10) ;
+row_gb = gtb (ghb, row_matlab) ;
+J = [1 3 4] ;
+row_matlab (J) = pi ;
+row_gb ({J}) = pi ;
+assert (isequal (row_matlab, row_gb)) ;
+
 try
     G (M) = rand (2) ;
     ok = false ;
