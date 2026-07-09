@@ -318,6 +318,10 @@ methods (Static)
     C = true (varargin) ;
     C = zeros (varargin) ;
 
+    % these appear in GhB only, not GrB.  The methods work only in-place.
+    value = get (G, state) ;
+    set (G, state, value) ;
+
 end
 end
 

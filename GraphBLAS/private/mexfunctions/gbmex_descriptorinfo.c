@@ -96,7 +96,7 @@ void mexFunction
             printf ("sparse ") ;
             break ;
         case GxB_HYPERSPARSE + GxB_SPARSE :                 // 3
-            printf ("hypersparse/sparse ") ;
+            printf ("sparse/hypersparse") ;
             break ;
         case GxB_BITMAP :                                   // 4
             printf ("bitmap ") ;
@@ -108,7 +108,7 @@ void mexFunction
             printf ("sparse/bitmap ") ;
             break ;
         case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP :    // 7
-            printf ("hypersparse/sparse/bitmap ") ;
+            printf ("sparse/hypersparse/bitmap ") ;
             break ;
         case GxB_FULL :                                     // 8
             printf ("full ") ;
@@ -120,7 +120,7 @@ void mexFunction
             printf ("sparse/full ") ;
             break ;
         case GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL :      // 11
-            printf ("hypersparse/sparse/full ") ;
+            printf ("sparse/hypersparse/full ") ;
             break ;
         case GxB_BITMAP + GxB_FULL :                        // 12
             printf ("bitmap/full ") ;
@@ -133,7 +133,7 @@ void mexFunction
             break ;
         default :
         case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP + GxB_FULL : // 15
-            printf ("hypersparse/sparse/bitmap/full ") ;
+            printf ("sparse/hypersparse/bitmap/full ") ;
             break ;
     }
 

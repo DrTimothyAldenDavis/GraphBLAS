@@ -84,15 +84,17 @@ void mexFunction
         { 
 
             //------------------------------------------------------------------
-            // GrB.format (format)
+            // GrB.format (format): set the global format ('by row' or 'by col')
             //------------------------------------------------------------------
 
-            // parse the format string
+            // parse the format string: 'by row' or 'by col' only
             int ignore ;
+            bool fmt_present = false ;
             char format_string [LEN+2] ;
             gbmx_mxstring_to_string (format_string, LEN, pargin [0], "format") ;
-            bool ok = gb_string_to_format (format_string, &fmt, &ignore) ;
-            CHECK_ERROR (!ok, "invalid format") ;
+            gb_string_to_format (format_string, &fmt, &fmt_present,
+                /* ignore any sparsity setting: */ &ignore, NULL) ;
+            CHECK_ERROR (!fmt_present, "invalid format") ;
             // set the global format
             OK (GrB_Global_set_INT32 (GrB_GLOBAL, fmt, GxB_FORMAT)) ;
 

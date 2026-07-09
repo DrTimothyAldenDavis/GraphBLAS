@@ -40,7 +40,9 @@ bool gb_string_to_format        // true if a valid format is found
     char *format_string,
     // output
     int *fmt,
-    int *sparsity
+    bool *fmt_present,          // true if 'by row' or 'by col' is explicit
+    int *sparsity,
+    bool *sparsity_present      // true if sparse/hyper/bitmap/full is explicit
 )
 {
 
@@ -51,6 +53,14 @@ bool gb_string_to_format        // true if a valid format is found
     bool valid = false ;
     (*fmt) = GxB_BY_COL ;
     (*sparsity) = 0 ;
+    if (sparsity_present != NULL)
+    { 
+        (*sparsity_present) = false ;
+    }
+    if (fmt_present != NULL)
+    { 
+        (*fmt_present) = false ;
+    }
 
     //--------------------------------------------------------------------------
     // look for trailing "by row" or "by col", and set format if found
@@ -63,6 +73,10 @@ bool gb_string_to_format        // true if a valid format is found
         { 
             valid = true ;
             (*fmt) = GxB_BY_ROW ;
+            if (fmt_present != NULL)
+            { 
+                (*fmt_present) = true ;
+            }
             len = len - 6 ;
             format_string [MAX (0, len-1)] = '\0' ;
         }
@@ -70,6 +84,10 @@ bool gb_string_to_format        // true if a valid format is found
         { 
             valid = true ;
             (*fmt) = GxB_BY_COL ;
+            if (fmt_present != NULL)
+            { 
+                (*fmt_present) = true ;
+            }
             len = len - 6 ;
             format_string [MAX (0, len-1)] = '\0' ;
         }
@@ -116,6 +134,10 @@ bool gb_string_to_format        // true if a valid format is found
     { 
         valid = true ;
         (*sparsity) = s ;
+        if (sparsity_present != NULL)
+        { 
+            (*sparsity_present) = true ;
+        }
     }
 
     return (valid) ;

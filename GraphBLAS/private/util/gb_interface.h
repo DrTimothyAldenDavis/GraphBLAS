@@ -726,11 +726,13 @@ GrB_Info gb_string_to_binop_or_idxunop
 
 bool gb_string_to_format        // true if a valid format is found
 (
-    // input/output:
+    // input
     char *format_string,
-    // output:
+    // output
     int *fmt,
-    int *sparsity
+    bool *fmt_present,          // true if 'by row' or 'by col' is explicit
+    int *sparsity,
+    bool *sparsity_present      // true if sparse/hyper/bitmap/full is explicit
 ) ;
 
 GrB_Info gb_string_to_idxunop

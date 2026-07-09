@@ -154,8 +154,9 @@ bool gbmx_mxarray_to_descriptor // true if descriptor present in pargin [...]
     {
         char mxfmt_string [LEN+2] ;
         gbmx_mxstring_to_string (mxfmt_string, LEN, mxfmt, "format") ;
-        bool ok = gb_string_to_format (mxfmt_string, &(gbdesc->fmt),
-            &(gbdesc->sparsity)) ;
+        bool ok = gb_string_to_format (mxfmt_string,
+            &(gbdesc->fmt), NULL,
+            &(gbdesc->sparsity), NULL) ;
         CHECK_ERROR (!ok, "unknown format") ;
     }
 

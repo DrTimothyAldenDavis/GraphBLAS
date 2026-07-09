@@ -224,7 +224,8 @@ void mexFunction
             //------------------------------------------------------------------
 
             GrB_Type type = gb_string_to_type (string_1) ;
-            bool ok = gb_string_to_format (string_1, &fmt, &sparsity) ;
+            bool ok = gb_string_to_format (string_1, &fmt, NULL,
+                &sparsity, NULL) ;
 
             if (type != NULL)
             { 
@@ -308,7 +309,8 @@ void mexFunction
 
             // create an m-by-n matrix with no entries
             GrB_Type type = gb_string_to_type (string_1) ;
-            bool ok = gb_string_to_format (string_1, &fmt, &sparsity) ;
+            bool ok = gb_string_to_format (string_1, &fmt, NULL,
+                &sparsity, NULL) ;
 
             if (type != NULL)
             { 
@@ -339,7 +341,8 @@ void mexFunction
             //------------------------------------------------------------------
 
             GrB_Type type = gb_string_to_type (string_1) ;
-            bool ok = gb_string_to_format (string_2, &fmt, &sparsity) ;
+            bool ok = gb_string_to_format (string_2, &fmt, NULL,
+                &sparsity, NULL) ;
 
             if (ok)
             { 
@@ -348,7 +351,8 @@ void mexFunction
             else
             { 
                 // C = GrB (A, format, type)
-                ok = gb_string_to_format (string_1, &fmt, &sparsity) ;
+                ok = gb_string_to_format (string_1, &fmt, NULL,
+                    &sparsity, NULL) ;
                 type = gb_string_to_type (string_2) ;
             }
 
@@ -382,7 +386,7 @@ void mexFunction
         // type and format
 
         GrB_Type type = gb_string_to_type (string_1) ;
-        bool ok = gb_string_to_format (string_2, &fmt, &sparsity) ;
+        bool ok = gb_string_to_format (string_2, &fmt, NULL, &sparsity, NULL) ;
 
         if (ok)
         { 
@@ -391,7 +395,7 @@ void mexFunction
         else
         { 
             // C = GrB (m, n, format, type)
-            ok = gb_string_to_format (string_1, &fmt, &sparsity) ;
+            ok = gb_string_to_format (string_1, &fmt, NULL, &sparsity, NULL) ;
             type = gb_string_to_type (string_2) ;
         }
 

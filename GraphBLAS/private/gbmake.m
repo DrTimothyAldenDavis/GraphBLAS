@@ -156,6 +156,7 @@ inc = '-Iutil -I../../Include -I../../Source ' ;
     inc = [inc '-I../../Source/binaryop ' ] ;
     inc = [inc '-I../../Source/transpose ' ] ;
     inc = [inc '-I../../Source/helper ' ] ;
+    inc = [inc '-I../../Source/memory ' ] ;
     inc = [inc '-I../../Source/builtin ' ] ;
     inc = [inc '-I../../Source/builtin/include ' ] ;
     inc = [inc '-I../../Source/hyper ' ] ;
