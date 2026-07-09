@@ -61,12 +61,12 @@ for k1 = 1:2
     [v, pi] = gtb_bfs (ghb, H, source) ;
     assert (isequal (v, v1)) ;
 
-    vok = [1 2 3 2 3 4 3 0] ;
+    vok = [1 2 3 2 3 4 3 0]' ;
     assert (isequal (full (double (v)), vok)) ;
 
     % there are 2 valid trees, and [GrB,GhB].bfs can return either one
-    piok1 = [1 1 4 1 2 3 2 0] ;
-    piok2 = [1 1 4 1 2 5 2 0] ;
+    piok1 = [1 1 4 1 2 3 2 0]' ;
+    piok2 = [1 1 4 1 2 5 2 0]' ;
     ok1 = isequal (full (double (pi)), piok1) ;
     ok2 = isequal (full (double (pi)), piok2) ;
     if (ok1)
@@ -114,6 +114,34 @@ for k1 = 1:2
     end
     assert (ok1 || ok2) ;
 
+    [pi] = gtb_bfs (ghb, H, source, 'minparent') ;
+    assert (isequal (full (double (pi)), piok1)) ;
+
+    if (gtb_isbycol (ghb, H))
+        desc.format = 'by col' ;
+        desc_bad.format = 'by row' ;
+    else
+        desc.format = 'by row' ;
+        desc_bad.format = 'by col' ;
+    end
+    HT = gtb_trans (ghb, H, desc) ;
+    deg = gtb_entries (ghb, H, 'row', 'degree') ;
+
+    [v,pi] = gtb_bfs (ghb, H, HT, deg, source, 'minparent') ;
+    assert (isequal (full (double (v)), vok)) ;
+    assert (isequal (full (double (pi)), piok1)) ;
+    
+    HTbad = gtb_trans (ghb, H, desc_bad) ;
+    try
+        [v,pi] = gtb_bfs (ghb, H, HTbad, deg, source, 'minparent') ;
+        ok = false ;
+    catch me
+        msg = me.message ;
+        ok = true ;
+    end
+    assert (ok) ;
+    assert (gb_contains (msg, 'must have the same format')) ;
+
 end
 
 A = A+A' ;
@@ -122,22 +150,22 @@ if (doplots)
     subplot (1,2,2) ;
     plot (graph (A))
 end
-vok = [2 1 3 3 2 3 2 0] ;
+vok = [2 1 3 3 2 3 2 0]' ;
 assert (isequal (full (double (v)), vok)) ;
 % two valid trees:
-piok1 = [2 2 7 1 2 5 2 0] ;
-piok2 = [2 2 7 7 2 5 2 0] ;
+piok1 = [2 2 7 1 2 5 2 0]' ;
+piok2 = [2 2 7 7 2 5 2 0]' ;
 
-    ok1 = isequal (full (double (pi)), piok1) ;
-    ok2 = isequal (full (double (pi)), piok2) ;
-    if (ok1)
-        % this tree is more commonly found
-        % fprintf ('@') ;
-    end
-    if (ok2)
-        % fprintf ('_') ;
-    end
-    assert (ok1 || ok2) ;
+ok1 = isequal (full (double (pi)), piok1) ;
+ok2 = isequal (full (double (pi)), piok2) ;
+if (ok1)
+    % this tree is more commonly found
+    % fprintf ('@') ;
+end
+if (ok2)
+    % fprintf ('_') ;
+end
+assert (ok1 || ok2) ;
 
 gtb_threads (ghb, save_threads) ;
 gtb_chunk (ghb, save_chunk) ;

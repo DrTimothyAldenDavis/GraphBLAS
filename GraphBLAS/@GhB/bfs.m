@@ -1,55 +1,81 @@
-function [out1, out2] = bfs (A, AT, degree, s, varargin)
+function [out1, out2] = bfs (A, varargin)
 %GHB.BFS breadth-first search of a graph, using its adjacency matrix.
-% v = GhB.bfs (A, s) performs the breadth-first search of the directed
-% graph represented by the square adjacency matrix A.  The breadth-first
-% search starts at node s.  The output v is a sparse vector of size n-by-1,
-% with the level of each node, where v(s)=1, and v(i)=k if the path with
-% the fewest edges from from s to i has k-1 edges.  If i is not reachable
-% from s, then v(i) is implicitly zero and does not appear in the pattern
-% of v.
 %
-% [v, parent] = GhB.bfs (A, s) also computes the parent vector,
-% representing the breadth-first search tree.  parent(s)=s denotes the root
-% of the tree, and parent(c)=p if node p is the parent of c in the tree.
-% The parent vector is sparse, and parent (i) is not present if i is not
-% found in the breadth-first search.
+% Usage, where opts are a list of optional strings:
+%
+%   [v, parent] = GhB.bfs (A, s, opts) ;
+%   [v, parent] = GhB.bfs (A, AT, degree, s, opts)  % preferred
+%
+% v = GhB.bfs (A, AT, degree, s) performs the breadth-first search of the
+% directed graph represented by the square adjacency matrix A.  The
+% breadth-first search starts at node s.  The output v is a sparse vector of
+% size n-by-1, with the level of each node, where v(s)=1, and v(i)=k if the
+% path with the fewest edges from from s to i has k-1 edges.  If i is not
+% reachable from s, then v(i) is implicitly zero and does not appear in the
+% pattern of v.
+%
+% A is the adjacency matrix of the graph where A(i,j) is the edge (i,j).  AT is
+% its transpose, AT=A'.  Only the pattern of A and AT are needed so AT can be a
+% sparse logical matrix.  degree = GhB.entries (A, 'row', 'degree'), where
+% degree (i) = the # of entries in A (i,:).  AT must have the same row/col
+% format as A.
+%
+% The GhB.bfs(A,s) usage is included for backward compatibility with prior
+% versions of GraphBLAS, but should not be used.  It is much slower than the
+% GhB.bfs (A,AT,degree,s) usage, since computing AT=A' takes much more time
+% than the BFS itself.
+%
+% [v, parent] = GhB.bfs (...) also computes the parent vector, representing the
+% breadth-first search tree.  parent(s)=s denotes the root of the tree, and
+% parent(c)=p if node p is the parent of c in the tree.  The parent vector is
+% sparse, and parent (i) is not present if i is not found in the breadth-first
+% search.
+%
+% To compute just the parent vector, use [parent] = GhB.bfs (..., 'parent') ;
 %
 % Optional string arguments can be provided, after A and s:
 %
-%   'undirected' or 'symmetric':  A is assumed to be symmetric, and
-%       represents an undirected graph.  Results are undefined if A is
-%       unsymmetric, and 'check' is not specified.
+%   'undirected' or 'symmetric':  A is assumed to be symmetric, and represents
+%       an undirected graph.  Results are undefined if A is unsymmetric, and
+%       'check' is not specified.
 %
-%   'directed' or 'unsymmetric':  A is assumed to be unsymmetric, and
-%       presents a directed graph.  This is the default.
+%   'directed' or 'unsymmetric':  A is assumed to be unsymmetric, and presents
+%       a directed graph.  This is the default.
 %
-%   'check': with the 'undirected' or 'symmetric' option, A is checked to
-%       ensure that it is symmetric.  The default is not to check.
+%   'check': extensive and costly error checks are performed on the inputs.  If
+%       AT is not A' or spones(A'), or if the degree vector is wrong, and these
+%   conditions are not checked, then results are undefined.
 %
 % A must be square.  Only the pattern, spones (A), is considered; the values of
-% its entries (the edge weights of the graph) are ignored.  A and AT (if
-% provided) must be held by row; that is, GhB.format (A) must report 'by row'.
+% its entries (the edge weights of the graph) are ignored.
+%
+% A and AT (if provided) must be held by row; that is, GhB.format (A) must
+% report 'by row'.
 %
 %   [v, parent] = GhB.bfs (A, s, AT, degree, ...)
 %
 % Example:
 %
 %   A = bucky ;
+%   % AT = logical (spones (A')), just faster:
+%   AT = GhB.apply (A, '1.logical', struct ('in0', 'transpose')) ;
+%   deg = GhB.entries (A, 'row', 'degree') ;
 %   s = 1 ;
-%   [v pi] = GhB.bfs (A, s)
+%   [v pi] = GhB.bfs (A, AT, deg, s)
 %   figure (1) ;
-%   subplot (1,2,1) ; plot (graph (A)) ;
+%   subplot (1,2,1) ;
+%   plot (graph (A)) ;
 %   pi2 = full (double (pi)) ;
-%   pi2 (s) = 0 ;
-%   subplot (1,2,2) ; treeplot (pi2) ; title ('BFS tree') ;
+%   pi2 (s) = 0 ;               % required for treeplot
+%   subplot (1,2,2) ;
+%   treeplot (pi2) ;
+%   title ('BFS tree') ;
 %   n = size (A,1) ;
 %   for level = 1:n
 %       level
 %       inlevel = find (v == level)
 %       parents = full (double (pi (inlevel)))
-%       if (isempty (inlevel))
-%           break ;
-%       end
+%       if (isempty (inlevel)) break ; end
 %   end
 %
 % See also graph/bfsearch, graph/shortestpathtree, treeplot.
@@ -61,12 +87,51 @@ function [out1, out2] = bfs (A, AT, degree, s, varargin)
 % get inputs
 %-------------------------------------------------------------------------------
 
-narginchk (2, 6) ;
+narginchk (2, 7) ;
 
+% find the first string argument
+first_string = nargin ;
+for k = 1:nargin-1
+    if (ischar (varargin {k}))
+        first_string = k ;
+        break ;
+    end
+end
+
+bycol = GhB.isbycol (A) ;
+if (first_string == 2)
+    % usage: [v, parent] = bfs (A, s, opts), for backward compatibilty.
+    % compute AT and degree.  This is very slow.
+    if (bycol)
+        desc.format = 'by col' ;
+    else
+        desc.format = 'by row' ;
+    end
+    desc.in0 = 'transpose' ;
+    % AT = spones (A'), in the same format (by row/col) as A.  computing AT is
+    % very costly, usually taking more much time than the bfs itself.
+    AT = GhB.apply (A, '1.logical', desc) ;
+    % get the row degree of A
+    if (bycol)
+        % column degree of AT is the same, and is faster to compute
+        degree = GhB.entries (AT, 'col', 'degree') ;
+    else
+        degree = GhB.entries (A, 'row', 'degree') ;
+    end
+    s = varargin {1} ;
+elseif (first_string == 4)
+    % usage: [v, parent] = bfs (A, AT, degree, s, opts)
+    AT = varargin {1} ;
+    degree = varargin {2} ;
+    s = varargin {3} ;
+else
+    error ('GrB:error', 'usage: GhB.bfs (A,s) or bfs (A,AT,degree,s)') ;
+end
+
+% quick error checks
 if (~isscalar (s) || GhB.nvals (s) ~= 1)
     error ('GrB:error', 'source node s must be a scalar') ;
 end
-
 [m, n] = size (A) ;
 if (m ~= n)
     error ('GrB:error', 'A must be square') ;
@@ -75,18 +140,20 @@ end
 if (n ~= n2 || n ~= m2)
     error ('GrB:error', 'AT has the wrong size') ;
 end
-bycol = GhB.isbycol (A) ;
 if (bycol ~= GhB.isbycol (AT))
-    error ('GrB:error', 'A and AT must the same format (by row or by col)') ;
+    error ('GrB:error', 'A and AT must have the same format (by row, by col)') ;
 end
 
-% get the string arguments
+% get the string arguments: up to 3 of them
+%   1: (undirected, symmetric, directed, or unsymmetric)
+%   2: parent, anyparent, minparent, maxparent
+%   3: check
 kind = 'directed' ;
 check = false ;
 nvar = length (varargin) ;
 compute_parent = (nargout == 2) ;
 monoid = 'any' ;
-for k = 1:nvar
+for k = first_string:nargin-1
     arg = varargin {k} ;
     if (ischar (arg))
         arg = lower (arg) ;
@@ -114,7 +181,7 @@ end
 
 compute_level = (nargout == 1 && ~compute_parent) || (nargout == 2) ;
 
-% extensive checks, if requested
+% extensive checks of inputs, if requested
 if (check)
     if (~isequal (A, AT'))
         error ('GrB:error', 'A must equal AT''') ;
