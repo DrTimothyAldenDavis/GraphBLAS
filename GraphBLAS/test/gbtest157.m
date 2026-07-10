@@ -87,12 +87,12 @@ for j = 1:nfiles
 
 end
 
-files = { './matrix/GD00_c', './matrix/GD96_a' } ;
+files = { './matrix/GD00_c.mat', './matrix/GD96_a.mat' } ;
 
 for j = 1:length (files)
     file = files {j} ;
     fprintf ('file: %s\n', file) ;
-    load ('-ascii', fullfile (fullpath, files {j})) ;
+    load (fullfile (filepath, files {j})) ;
     A = Problem.A ;
     AT = A' ;
     deg = GhB.entries (A, 'row', 'degree') ;

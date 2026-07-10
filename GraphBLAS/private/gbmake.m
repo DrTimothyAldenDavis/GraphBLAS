@@ -57,9 +57,10 @@ make_all = (isequal (what, 'all')) ;
 
 % use -R2018a for the interleaved complex API
   flags = '-O -R2018a -DGBNCPUFEAT' ;
-% the debug build is required to enable the GrB.nmalloc checks in gbtest.m:
+% the debug build or tracking build are required to enable the GrB.nmalloc
+% checks in gbtest.m:
 % flags = '-g -R2018a -DGBNCPUFEAT -DMALLOC_TRACKING' ;   % debug build
-  flags = '-O -R2018a -DGBNCPUFEAT -DMALLOC_TRACKING' ;   % tracking build
+% flags = '-O -R2018a -DGBNCPUFEAT -DMALLOC_TRACKING' ;   % tracking build
 
 if ispc
     % First do the following in GraphBLAS/build, in the Windows console:
