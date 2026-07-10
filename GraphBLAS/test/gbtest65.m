@@ -9,10 +9,10 @@ if (nargin == 0)
 end
 gtb_name = gtb_prep (ghb) ;
 
-load ./matrix/west0479_correct.txt
-west0479 = spconvert (west0479_correct) ;
+[filepath, name, ext] = fileparts (mfilename ('fullpath')) ;
+load (fullfile (filepath, './matrix/west0479_correct.mat')) ;
 
-A = gtb_offdiag (ghb, spones (west0479)) ;
+A = gtb_offdiag (ghb, spones (Problem.A)) ;
 A = A+A' ;
 
 maxisize = 0 ;

@@ -4,7 +4,9 @@ function gbtest154
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-load ./matrix/west0479_correct.mat
+[filepath, name, ext] = fileparts (mfilename ('fullpath')) ;
+load (fullfile (filepath, './matrix/west0479_correct.mat')) ;
+
 A = Problem.A ;
 
 GrB.print (A) ;

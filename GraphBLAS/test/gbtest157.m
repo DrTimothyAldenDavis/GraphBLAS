@@ -6,7 +6,9 @@ function gbtest157
 
 rng ('default') ;
 
-load ./matrix/west0479_correct ;
+[filepath, name, ext] = fileparts (mfilename ('fullpath')) ;
+load (fullfile (filepath, './matrix/west0479_correct.mat')) ;
+
 A = Problem.A ;
 deg = GhB.entries (A, 'row', 'degree') ;
 AT = logical (spones (A))' ;
@@ -28,8 +30,6 @@ for k = 1:n
     assert (isequal (found1, found2)) ;
 
 end
-
-[filepath, name, ext] = fileparts (mfilename ('fullpath')) ;
 
 files = {
     './matrix/bcsstk16',    [ 4734] ,
@@ -92,7 +92,7 @@ files = { './matrix/GD00_c', './matrix/GD96_a' } ;
 for j = 1:length (files)
     file = files {j} ;
     fprintf ('file: %s\n', file) ;
-    load (files {j}) ;
+    load ('-ascii', fullfile (fullpath, files {j})) ;
     A = Problem.A ;
     AT = A' ;
     deg = GhB.entries (A, 'row', 'degree') ;

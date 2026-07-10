@@ -6,7 +6,9 @@ function gbtest156
 
 rng ('default') ;
 
-load ./matrix/west0479_correct ;
+[filepath, name, ext] = fileparts (mfilename ('fullpath')) ;
+load (fullfile (filepath, './matrix/west0479_correct.mat')) ;
+
 A = Problem.A ;
 deg = GhB.entries (A, 'row', 'degree') ;
 AT = logical (spones (A))' ;

@@ -10,7 +10,9 @@ if (nargin == 0)
 end
 gtb_name = gtb_prep (ghb) ;
 
-load ./matrix/west0479_correct.mat
+[filepath, name, ext] = fileparts (mfilename ('fullpath')) ;
+load (fullfile (filepath, './matrix/west0479_correct.mat')) ;
+
 A = Problem.A ;
 G = gtb (ghb, A) ;
  

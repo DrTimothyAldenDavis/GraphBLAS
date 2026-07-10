@@ -14,10 +14,9 @@ if (nargin == 0)
 end
 gtb_name = gtb_prep (ghb) ;
 
-[filepath, name, ext] = fileparts (mfilename ('fullpath')) ;
-
 % each prior version of GraphBLAS was used to create these matrices and files:
-load ./matrix/west0479_correct.mat
+[filepath, name, ext] = fileparts (mfilename ('fullpath')) ;
+load (fullfile (filepath, './matrix/west0479_correct.mat')) ;
 A = Problem.A ;
 Sparse = gtb (ghb, A) ;
 S = delsq (numgrid ('B', 100)) ;    % does not appear in octave

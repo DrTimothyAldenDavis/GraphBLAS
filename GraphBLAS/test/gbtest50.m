@@ -13,10 +13,10 @@ gtb_name = gtb_prep (ghb) ;
 % by reducing the precision of its entries, and dropping one entry.
 % The correct version is in the HB/west0479 matrix at sparse.tamu.edu.
 
-load ./matrix/west0479_correct.txt
-west0479 = spconvert (west0479_correct) ;
+[filepath, name, ext] = fileparts (mfilename ('fullpath')) ;
+load (fullfile (filepath, './matrix/west0479_correct.mat')) ;
 
-A = gtb_offdiag (ghb, west0479) ;
+A = gtb_offdiag (ghb, Problem.A) ;
 A = A+A' ;
 C3a  = gtb_ktruss (ghb, A) ;
 C3  = gtb_ktruss (ghb, A, 3) ;

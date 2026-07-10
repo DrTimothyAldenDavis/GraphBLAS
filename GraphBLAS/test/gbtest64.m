@@ -9,10 +9,10 @@ if (nargin == 0)
 end
 gtb_name = gtb_prep (ghb) ;
 
-load ./matrix/west0479_correct.txt
-west0479 = spconvert (west0479_correct) ;
+[filepath, name, ext] = fileparts (mfilename ('fullpath')) ;
+load (fullfile (filepath, './matrix/west0479_correct.mat')) ;
 
-W = abs (west0479) ;
+W = abs (Problem.A) ;
 W (1,:) = 0 ;
 
 A = digraph (W) ;

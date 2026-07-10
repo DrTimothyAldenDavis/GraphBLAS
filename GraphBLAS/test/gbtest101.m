@@ -90,7 +90,9 @@ clear H H2 H3
 load ([filepath '/gbtest101_matfiles/gbtestv10_3_1.mat']) ; %#ok<LOAD>
 
 % Now construct H again
-load ./matrix/west0479_correct ;
+% [filepath, name, ext] = fileparts (mfilename ('fullpath')) ;
+load (fullfile (filepath, './matrix/west0479_correct.mat')) ;
+
 A = gtb (ghb, Problem.A) ;
 n = 2^60 ;
 H2 = gtb (ghb, n,n) ;

@@ -27,8 +27,9 @@ for trial = 1:2
         2 7 ] ;
         W = sparse (ij (:,1), ij (:,2), ones (12,1), 8, 8) ;
     else
-        load ./matrix/west0479_correct.txt
-        W = spconvert (west0479_correct) ;
+        [filepath, name, ext] = fileparts (mfilename ('fullpath')) ;
+        load (fullfile (filepath, './matrix/west0479_correct.mat')) ;
+        W = Problem.A ;
     end
 
     W = spones (gtb_offdiag (ghb, W)) ;
