@@ -174,13 +174,11 @@ for k = first_string:nargin-1
                 kind = 'directed' ;
             case { 'parent', 'anyparent' }
                 % use the 'any' monoid which is fast but non-deterministic
-error ('gotcha4!') ;
                 compute_parent = true ;
             case { 'minparent' }
                 monoid = 'min' ;
                 compute_parent = true ;
             case { 'maxparent' }
-error ('gotcha5!') ;
                 monoid = 'max' ;
                 compute_parent = true ;
             case { 'check' }
@@ -281,12 +279,10 @@ for level = 2:n
         switch_to_pull = false ;
         if (unexplored < n)
             % very little of the graph is left; disable the pull
-error ('gotcha9!') ;
             push_pull = false ;
         elseif (any_pull)
             % at least one pull has been done already; no longer keeping track
             % of the # unexplored nodes
-error ('gotcha10!') ;
             switch_to_pull = (growing && nq > (n/beta1)) ;
         else
             % count the # of outgoing edges from the current frontier, q.
@@ -308,7 +304,6 @@ error ('gotcha10!') ;
         shrinking = (nq < last_nq) ;
         if (shrinking && (nq <= (n / beta2)))
             % switch from pull to push
-error ('gotcha11!') ;
             do_push = true ;
         end
     end
@@ -324,17 +319,11 @@ error ('gotcha11!') ;
 
     [~,sparsity,~] = GhB.format (q) ;
     if (do_push && (~isequal (sparsity, 'sparse')))
-error ('gotcha12!') ;
         % q = GhB (q, 'sparse') ;
         GhB.set (q, 'format', 'sparse') ;
-        [~,sparsity,~] = GhB.format (q) ;
-        assert (isequal (sparsity, 'sparse'))
     elseif (~do_push && (~isequal (sparsity, 'bitmap')))
-error ('gotcha13!') ;
         % q = GhB (q, 'bitmap') ;
         GhB.set (q, 'format', 'bitmap') ;
-        [~,sparsity,~] = GhB.format (q) ;
-        assert (isequal (sparsity, 'bitmap'))
     end
 
     %---------------------------------------------------------------------------
@@ -377,7 +366,6 @@ error ('gotcha13!') ;
     %---------------------------------------------------------------------------
 
     if (done)
-error ('gotcha14!') ;
         break ;
     end
 

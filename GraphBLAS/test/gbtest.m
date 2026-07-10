@@ -799,6 +799,8 @@ assert (GrB.nmalloc == 0) ;
 
 gbtest154       % test GrB.bytes
 gbtest155       % test GhB.get and GhB.set
+gbtest156       % test GhB.bfs, error handling
+gbtest156       % test GhB.bfs
 
 if (~have_octave)
     % the Graph and DiGraph methods do not appear in octave
