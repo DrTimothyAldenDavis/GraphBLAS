@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// Fixme for CUDA:  this method is a draft.  It will be used for CUDA.  It is
+// not yet used by any methods, even when CUDA is enabled.
+
 // GB_put_arena_alias restores the (possibly revised) content of the header
 // of an alias C of the matrix A, and frees the header for C.
 
@@ -20,7 +23,7 @@ void GB_put_arena_alias
     GrB_Matrix *Chandle,    // alias of A to be freed; NULL on output
     const GrB_Matrix A      // updated with any revisions in the alias header C
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

@@ -7,7 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// GB_get_arena_alias creates a new matrix C than is an alias for the input
+// Fixme for CUDA:  this method is a draft.  It will be used for CUDA.  It is
+// not yet used by any methods, even when CUDA is enabled.
+
+// GB_get_arena_alias creates a new matrix C that is an alias for the input
 // matrix A, where all the pointers to data in the C matrix point to the
 // identical content in A.  Only C->header_mem and A->header_mem can differ.
 
@@ -45,7 +48,7 @@ GrB_Info GB_get_arena_alias
     const int new_header_arena, // arena for C header
     const GrB_Matrix A      // input matrix
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
