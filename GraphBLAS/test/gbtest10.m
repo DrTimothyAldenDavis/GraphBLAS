@@ -92,5 +92,12 @@ C1 = pi * spones (A) ;
 C2 = gtb_expand (ghb, pi, A) ;
 assert (isequal (C1, C2)) ;
 
+A = gtb (ghb, A) ;
+C2 = gtb_expand (ghb, pi, A) ;
+assert (isequal (C1, C2)) ;
+
+C2 = gtb_expand (ghb, gtb (ghb, pi), A) ;
+assert (isequal (C1, C2)) ;
+
 fprintf ('gbtest10 (%d): all tests passed\n', ghb) ;
 

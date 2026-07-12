@@ -8,6 +8,7 @@ if (nargin == 0)
     ghb = 0 ;
 end
 gtb_name = gtb_prep (ghb) ;
+desc = struct ;
 
 for trials = 1:10
     fprintf ('.') ;
@@ -27,7 +28,7 @@ for trials = 1:10
                 assert (gbtest_eq (B, C)) ;
                 B = triu (A, k) ;
                 C = triu (G, k) ;
-                C2 = gzb_select (ghb, 'triu', G, GrB (k)) ;
+                C2 = gzb_select (ghb, 'triu', G, GrB (k), desc) ;
                 assert (gbtest_eq (B, C)) ;
                 assert (gbtest_eq (B, C2)) ;
             end

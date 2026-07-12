@@ -18,8 +18,6 @@ function iset = mis (A_arg, check)
 % independent set problem. In Proceedings of the seventeenth annual ACM
 % symposium on Theory of computing (STOC '85). ACM, New York, NY, USA, 1-10.
 % DOI: https://doi.org/10.1145/22145.22146
-%
-% See also GhB.offdiag.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

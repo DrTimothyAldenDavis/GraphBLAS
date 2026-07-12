@@ -402,7 +402,7 @@ classdef (HandleCompatible) GrB
 %   L = GrB.laplacian (A, type, check) ;    Laplacian graph
 %   iset = GrB.mis (A, check) ;             maximal independent set
 %   r = GrB.pagerank (A, opts) ;            PageRank of a matrix
-%   s = GrB.tricount (A, check) ;           triangle count
+%   s = GrB.tricount (A, ...) ;             triangle count
 %
 %-----------------------------------
 % Foundational GraphBLAS operations:
@@ -894,7 +894,7 @@ methods (Static)
     C = random (varargin) ;
     blob = serialize (A, method, level) ;   % returns a built-in blob
     C = speye (m, n, type) ;
-    s = tricount (A, check, d) ;            % returns a built-in scalar
+    s = tricount (varargin) ;               % returns a built-in scalar
     C = true (varargin) ;
     C = zeros (varargin) ;
 
