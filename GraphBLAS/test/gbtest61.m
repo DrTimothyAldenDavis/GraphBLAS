@@ -22,6 +22,7 @@ L0 = laplacian (graph (S, 'OmitSelfLoops')) ;
 L1 = gtb_laplacian (ghb, S) ;
 L2 = gtb_laplacian (ghb, G) ;
 L3 = gtb_laplacian (ghb, G, 'double', 'check') ;
+L4 = gtb_laplacian (ghb, gtb (ghb, G, 'by row')) ;
 
 assert (norm (L0-L1,1) == 0) ;
 assert (isequal (gtb_offdiag (ghb, L0), gtb_offdiag (ghb, L1))) ;
@@ -29,6 +30,7 @@ assert (isequal (L0, double (L1))) ;
 
 assert (isequal (L1, L2)) ;
 assert (isequal (L1, L3)) ;
+assert (isequal (L1, L4)) ;
 
 G = gtb (ghb, G, 'by row') ;
 

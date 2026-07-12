@@ -49,9 +49,8 @@ else
                 C = gzb_apply2 (1, 'cmplx.double', 0, B, desc) ;
             else
                 % expand A and B to full double matrices; C is full
-                bfmt = gb_fmt (B) ;
                 desc.kind = 'full' ;
-                a = gb_scalar_to_full (1, bm, bn, 'double', bfmt, A) ;
+                a = gb_scalar_to_full (1, bm, bn, 'double', gb_fmt (B), A) ;
                 b = gzb_full (1, B, 'double') ;
                 C = gzb_emult (1, 'cmplx.double', a, b, desc) ;
             end
@@ -64,10 +63,9 @@ else
                 C = gzb_cast (A, 'double.complex') ;
             else
                 % expand A and B to full double matrices; C is full
-                afmt = gb_fmt (A) ;
                 desc.kind = 'full' ;
                 a = gzb_full (1, A, 'double') ;
-                b = gb_scalar_to_full (1, am, an, 'double', afmt, B) ;
+                b = gb_scalar_to_full (1, am, an, 'double', gb_fmt (A), B) ;
                 C = gzb_emult (1, 'cmplx.double', a, b, desc) ;
             end
         else

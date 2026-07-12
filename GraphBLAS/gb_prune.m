@@ -14,13 +14,11 @@ else
     id = gb_get_scalar (id) ;
 end
 
-desc.format = gbmex_format (G) ;
-
 if (id == 0)
     % prune zeros
-    C = gzb_select (ghb, G, 'nonzero', desc) ;
+    C = gzb_select (ghb, G, 'nonzero') ;
 else
     % prune entries equal to id
-    C = gzb_select (ghb, G, '~=', id, desc) ;
+    C = gzb_select (ghb, G, '~=', id) ;
 end
 

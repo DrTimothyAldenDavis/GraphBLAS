@@ -36,21 +36,17 @@ if (gb_is_grb (G_arg))
     G_arg = struct (G_arg) ;
 end
 
-% prune explicit zeros
-gbmex_wait (G_arg) ;
-desc.format = gbmex_format (G_arg) ;
-G = gzb_select (1, G_arg, 'nonzero', desc) ;
-
 if (nargin > 1)
     k = ceil (double (gb_get_scalar (k))) ;
     if (k < 1)
         error ('GrB:error', 'k must be positive') ;
     end
-    if (~isequal (gbmex_format (G), 'by col'))
-        % find (G, k) assumes the matrix is stored by column, so reformat G
-        % if it is stored by row.
-        G = gzb (1, G, 'by col') ;
-    end
+    % prune explicit zeros and ensure G is held by col
+    desc.format = 'by col' ;
+    G = gzb_select (1, G_arg, 'nonzero', desc) ;
+else
+    % prune explicit zeros and leave G in the same format
+    G = gzb_select (1, G_arg, 'nonzero') ;
 end
 
 [m, n] = gbmex_size (G) ;

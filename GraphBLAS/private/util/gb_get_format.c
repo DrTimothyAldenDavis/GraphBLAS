@@ -64,12 +64,12 @@ GrB_Info gb_get_format      // get the format (by row or by col)
         bool A_is_vector, B_is_vector ;
         OK (gb_is_vector (&A_is_vector, A, err)) ;
         OK (gb_is_vector (&B_is_vector, B, err)) ;
-        if (A != NULL && A_is_vector)
+        if (A != NULL && !A_is_vector)
         { 
             // (4) get the format of A
             OK (GrB_Matrix_get_INT32 (A, fmt, GxB_FORMAT)) ;
         }
-        else if (B != NULL && B_is_vector)
+        else if (B != NULL && !B_is_vector)
         { 
             // (5) get the format of B
             OK (GrB_Matrix_get_INT32 (B, fmt, GxB_FORMAT)) ;

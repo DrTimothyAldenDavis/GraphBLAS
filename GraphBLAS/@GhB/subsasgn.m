@@ -80,7 +80,7 @@ if (ndims == 1)
                 if (am == 1 && an == 1)
                     % C (:) = scalar, the same as C (:,:) = scalar.
                     % C becomes an iso full matrix
-                    C = GhB (cm, cn, gbmex_type (C)) ;
+                    C = GhB (cm, cn, gbmex_type (C), gbmex_format (C)) ;
                     gbmex_subassign (1, C, { }, { }, A) ;
                 else
                     % C (:) = A for a matrix C and vector A

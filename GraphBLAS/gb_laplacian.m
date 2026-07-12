@@ -22,9 +22,7 @@ elseif (~gb_issigned (type))
 end
 
 % S = spones (A)
-fmt = gbmex_format (A) ;
-desc.format = fmt ;
-S = gzb_apply (1, ['1.' type], A, desc) ;
+S = gzb_apply (1, ['1.' type], A) ;
 
 % check the input matrix, if requested
 if (nargin > 3 && isequal (check, 'check'))
@@ -35,7 +33,7 @@ if (nargin > 3 && isequal (check, 'check'))
 end
 
 % D = diagonal matrix with d(i,i) = row/column degree of node i
-if (isequal (fmt, 'by row'))
+if (gb_contains (gb_fmt (S), 'by row'))
     dim = 'row' ;
 else
     dim = 'col' ;

@@ -84,7 +84,7 @@ if (ndims == 1)
                 if (am == 1 && an == 1)
                     % C (:) = scalar, the same as C (:,:) = scalar.
                     % C becomes an iso full matrix
-                    Cin = gzb (1, cm, cn, gb_type (C)) ;
+                    Cin = gzb (1, cm, cn, gbmex_type (C), gbmex_format (C)) ;
                     C = GrB (gbmex_subassign (0, Cin, { }, { }, A)) ;
                 else
                     % C (:) = A for a matrix C and vector A

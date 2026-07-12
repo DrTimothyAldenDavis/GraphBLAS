@@ -1,4 +1,4 @@
-function [varargout] = gtb_tricount (ghb, varargin)
+function s = gtb_tricount (ghb, varargin)
 %GTB_TRICOUNT wrapper for GrB.tricount and GhB.tricount
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -8,8 +8,8 @@ if (~(ghb == 0 || ghb == 1))
     ghb = rand (1) > 0.5 ; % choose ghb at random
 end
 if (ghb)
-    [varargout{1:nargout}] = GhB.tricount (varargin {:}) ;
+    s = GhB.tricount (varargin {:}) ;
 else
-    [varargout{1:nargout}] = GrB.tricount (varargin {:}) ;
+    s = GrB.tricount (varargin {:}) ;
 end
 
