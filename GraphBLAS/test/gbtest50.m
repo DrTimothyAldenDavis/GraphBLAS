@@ -18,8 +18,8 @@ load (fullfile (filepath, './matrix/west0479_correct.mat')) ;
 
 A = gtb_offdiag (ghb, Problem.A) ;
 A = A+A' ;
-C3a  = gtb_ktruss (ghb, A) ;
-C3  = gtb_ktruss (ghb, A, 3) ;
+C3a = gtb_ktruss (ghb, A) ;
+C3 = gtb_ktruss (ghb, A, 3) ;
 assert (isequal (C3a, C3)) ;
 
 C3  = gtb_ktruss (ghb, A, 3, 'symmetric') ;
@@ -27,6 +27,8 @@ assert (isequal (C3a, C3)) ;
 
 % A is unsymmetric; ktruss will symmetrize it:
 C5 = gtb_ktruss (ghb, Problem.A, 3) ;
+assert (isequal (C5, C3)) ;
+C5 = gtb_ktruss (ghb, GhB (Problem.A, 'by row'), 3) ;
 assert (isequal (C5, C3)) ;
 
 ntriangles = sum (C3, 'all') / 6 ;

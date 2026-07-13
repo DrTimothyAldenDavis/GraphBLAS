@@ -1,10 +1,10 @@
 % MATLAB/Octave interface for SuiteSparse:GraphBLAS
 %
 % GraphBLAS is a library for creating graph algorithms based on sparse linear
-% algebraic operations over semirings.  Its GrB / GhB interface provides
-% faster sparse matrix operations than the built-in methods, as well as sparse
-% integer and single-precision matrices, and operations with arbitrary
-% semirings.  See 'help GrB' and 'help GhB' for details.
+% algebraic operations over semirings.  Its GrB / GhB interface provides faster
+% sparse matrix operations than the built-in methods in MATLAB and Octave, as
+% well as sparse integer and single-precision matrices, and operations with
+% arbitrary semirings.  See 'help GrB' and 'help GhB' for details.
 %
 % The constructor methods are GrB and GhB.  If A is any matrix (GraphBLAS, or
 % built-in sparse or full), then:
@@ -31,7 +31,7 @@
 %   C = GhB (A) ;           C is its own copy
 %
 % All GhB methods work the same as the GrB methods, except that the core GhB
-% methods can modify C in-place.  See 'help GrB' for details.
+% methods can modify C in-place.  See 'help GhB' for details.
 %
 % To install the GraphBLAS library and its MATLAB interface:
 %
