@@ -33,6 +33,8 @@ function Y = dnn (W, bias, Y0)
 %
 % See also dnn_builtin, dnn_builtin2gb.
 
+% FIXME: call GhB.dnn instead
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 

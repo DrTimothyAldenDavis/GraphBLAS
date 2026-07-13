@@ -301,7 +301,7 @@ methods (Static)
     C = eye (m, n, type) ;
     C = false (varargin) ;
     C = incidence (A, varargin) ;
-    C = ktruss (A, k, check) ;
+    C = ktruss (A, k, symmetric) ;
     L = laplacian (A, type, check) ;
     C = load (filename) ;
     C = loadobj (S) ;

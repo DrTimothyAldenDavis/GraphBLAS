@@ -502,24 +502,6 @@ catch expected_error
 end
 assert (ok) ;
 
-A = sprand (10, 10, 0.5) ;
-try
-    C = gtb_ktruss (ghb, A, 3, 'check') ;
-    ok = false ;
-catch expected_error
-    fprintf ('    expected error: %s\n', expected_error.message) ;
-end
-assert (ok) ;
-
-A = A+A' ;
-try
-    C = gtb_ktruss (ghb, A, 3, 'check') ;
-    ok = false ;
-catch expected_error
-    fprintf ('    expected error: %s\n', expected_error.message) ;
-end
-assert (ok) ;
-
 G = gtb (ghb, magic (2)) ;
 try
     G = G (2:end)

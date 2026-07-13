@@ -398,9 +398,9 @@ classdef (HandleCompatible) GrB
 %   [v, parent] = GrB.bfs (A, s, ...) ;     breadth-first search
 %   Y = GrB.dnn (W, bias, Y0) ;             deep neural network
 %   C = GrB.incidence (A, ...) ;            incidence matrix
-%   C = GrB.ktruss (A, k, check) ;          k-truss
-%   L = GrB.laplacian (A, type, check) ;    Laplacian graph
-%   iset = GrB.mis (A, check) ;             maximal independent set
+%   C = GrB.ktruss (A, k, ...) ;            k-truss
+%   L = GrB.laplacian (A, type, ...) ;      Laplacian graph
+%   iset = GrB.mis (A, ...) ;               maximal independent set
 %   r = GrB.pagerank (A, opts) ;            PageRank of a matrix
 %   s = GrB.tricount (A, ...) ;             triangle count
 %
@@ -881,7 +881,7 @@ methods (Static)
     C = eye (m, n, type) ;
     C = false (varargin) ;
     C = incidence (A, varargin) ;
-    C = ktruss (A, k, check) ;
+    C = ktruss (varargin) ;
     L = laplacian (A, type, check) ;
     C = load (filename) ;
     C = loadobj (S) ;
