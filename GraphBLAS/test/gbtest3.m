@@ -32,7 +32,23 @@ toc
 err = norm (Y1-Y2,1) ;
 assert (err < 1e-5) ;
 
-if (ghb)
+% test again with all matrices held by colum
+
+[W, bias, Y0] = dnn_builtin2gb (ghb, W, bias, Y0) ;
+for level = 1:levels
+    W {level} = gtb (ghb, W {level}, 'by col') ;
+    bias {level} = gtb (ghb, bias {level}, 'by col') ;
+end
+Y0 = gtb (ghb, Y0, 'by col') ;
+
+tic
+Y2 = gtb_dnn (ghb, W, bias, Y0) ;
+toc
+
+err = norm (Y1-Y2,1) ;
+assert (err < 1e-5) ;
+
+if (ghb == 1)
     help GhB.dnn
 else
     help GrB.dnn

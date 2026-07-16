@@ -268,7 +268,7 @@ methods (Static)
     % All of these are used as GhB.method (...) with the GhB prefix.  The input
     % matrices (Cin, M, A, B, M, ...) are of any kind, except for the 14
     % foundational methods when used with in-place syntax (where Cin must be
-    % GhB).  The outputs are GhB matrices except where noted.
+    % GhB), and GhB.set.  The outputs are GhB matrices except where noted.
 
     % the 14 foundational methods:
     C = apply (Cin, M, accum, op, A, desc) ;
@@ -318,9 +318,9 @@ methods (Static)
     C = true (varargin) ;
     C = zeros (varargin) ;
 
-    % these appear in GhB only, not GrB.  The methods work only in-place.
-    value = get (G, state) ;
-    set (G, state, value) ;
+    % these appear in GhB only, not GrB.
+    value = get (G, state) ;                % G can be GhB, GrB, or built-in
+    set (G, state, value) ;                 % modifies G in place; G must be GhB
 
 end
 end

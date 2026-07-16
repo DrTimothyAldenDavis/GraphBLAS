@@ -4,7 +4,7 @@ function s = isbycol (A)
 % be a GraphBLAS matrix or built-in matrix (sparse or full).  Built-in matrices
 % are always stored by column.
 %
-% See also GrB.isbyrow, GrB.format.
+% See also GrB.isbyrow, GrB.format, GhB.set, GhB.get.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

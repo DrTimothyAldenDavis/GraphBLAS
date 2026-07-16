@@ -112,7 +112,7 @@ function [f,s,iso] = format (arg)
 %   C = GrB.ones (2^60)          % now that's a big matrix (2^120 entries!)
 %   [f,s,iso] = GrB.format (C)
 %
-% See also GrB.
+% See also GrB.isbycol, GrB.isbyrow, GhB.set, GhB.get.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
