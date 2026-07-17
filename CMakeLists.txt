@@ -41,8 +41,8 @@ if ( NOT BUILD_SHARED_LIBS )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-  set ( GRAPHBLAS_USE_CUDA OFF )    # turn CUDA off in production
-# set ( GRAPHBLAS_USE_CUDA ON )     # use this for CUDA development only
+# set ( GRAPHBLAS_USE_CUDA OFF )    # turn CUDA off in production
+  set ( GRAPHBLAS_USE_CUDA ON )     # use this for CUDA development only
 
 include ( SuiteSparsePolicy )
 
@@ -83,7 +83,7 @@ include ( GraphBLAS_JIT_paths )
 
 if ( GRAPHBLAS_HAS_CUDA )
 
-    # with CUDA, and supporting libraries: Rapids Memory Manager (rmm), and spdlog
+    # with CUDA, Rapids Memory Manager (rmm), and its dependencies
     cmake_policy ( SET CMP0135 NEW )    # URL download timestamp policy
 
     find_package ( CUDAToolkit REQUIRED )
@@ -96,16 +96,26 @@ if ( GRAPHBLAS_HAS_CUDA )
     include_directories ( "rmm_wrap" )
 
     message ( STATUS "------------------------------ Fetching rmm:" )
-    include ( FetchContent )
-    FetchContent_Declare ( rmm
-        GIT_REPOSITORY "https://github.com/rapidsai/rmm"
-          GIT_TAG branch-21.10
-        # GIT_TAG v26.06.00
-        # GIT_TAG release/26.06
-        OVERRIDE_FIND_PACKAGE )
-    FetchContent_MakeAvailable ( rmm )
 
-    find_package ( rmm REQUIRED )
+    include ( CPM )
+
+    CPMAddPackage (
+        NAME rmm
+        GITHUB_REPOSITORY rapidsai/rmm
+        VERSION 26.06.00
+        SYSTEM Off
+        SOURCE_SUBDIR cpp )
+
+#   include ( FetchContent )
+#   FetchContent_Declare ( rmm
+#       GIT_REPOSITORY "https://github.com/rapidsai/rmm"
+#         GIT_TAG branch-21.10
+#       # GIT_TAG v26.06.00
+#       # GIT_TAG release/26.06
+#       OVERRIDE_FIND_PACKAGE )
+#   FetchContent_MakeAvailable ( rmm )
+
+#   find_package ( rmm REQUIRED )
 
     # set ( RMM_SOURCE_DIR "${PROJECT_BINARY_DIR}/_deps/rmm-src/cpp" )
 
@@ -116,12 +126,12 @@ if ( GRAPHBLAS_HAS_CUDA )
 
     # find_package ( thrust REQUIRED )
 
-  set ( RMM_WRAP_INCLUDES ${PROJECT_BINARY_DIR}
-      ${RMM_SOURCE_DIR}/include
-      ${spdlog_SOURCE_DIR}/include
-      ${CUDAToolkit_INCLUDE_DIRS}
-      ${CUDAToolkit_INCLUDE_DIRS}/cccl
-      "${PROJECT_BINARY_DIR}/_deps/thrust-src" )
+# set ( RMM_WRAP_INCLUDES ${PROJECT_BINARY_DIR}
+#     ${RMM_SOURCE_DIR}/include
+#     ${spdlog_SOURCE_DIR}/include
+#     ${CUDAToolkit_INCLUDE_DIRS}
+#     ${CUDAToolkit_INCLUDE_DIRS}/cccl
+#     "${PROJECT_BINARY_DIR}/_deps/thrust-src" )
 
 else ( )
 
@@ -411,7 +421,7 @@ if ( BUILD_SHARED_LIBS )
 
     if ( GRAPHBLAS_HAS_CUDA )
         target_compile_definitions ( GraphBLAS PRIVATE "GRAPHBLAS_HAS_CUDA" )
-        target_include_directories ( GraphBLAS PRIVATE "${RMM_WRAP_INCLUDES}" )
+#       target_include_directories ( GraphBLAS PRIVATE "${RMM_WRAP_INCLUDES}" )
 # required for rmm 25.10:
 #       target_compile_definitions ( GraphBLAS PRIVATE "LIBCUDACXX_ENABLE_EXPERIMENTAL_MEMORY_RESOURCE" )
     endif ( )
@@ -469,7 +479,7 @@ if ( BUILD_STATIC_LIBS )
         target_compile_definitions ( GraphBLAS_static PRIVATE "GRAPHBLAS_HAS_CUDA" )
 # required for rmm 25.10:
 #       target_compile_definitions ( GraphBLAS_static PRIVATE "LIBCUDACXX_ENABLE_EXPERIMENTAL_MEMORY_RESOURCE" )
-        target_include_directories ( GraphBLAS_static PRIVATE "${RMM_WRAP_INCLUDES}" )
+#       target_include_directories ( GraphBLAS_static PRIVATE "${RMM_WRAP_INCLUDES}" )
     endif ( )
 
     if ( WIN32 )
@@ -643,6 +653,7 @@ if ( GRAPHBLAS_HAS_CUDA )
             target_link_libraries ( GraphBLAS PRIVATE CUDA::nvtx3 )
             target_compile_definitions ( GraphBLAS PRIVATE GBNVTX )
         endif ( )
+        target_link_libraries ( GraphBLAS PRIVATE rmm::rmm )
     endif ( )
     if ( BUILD_STATIC_LIBS )
         target_link_libraries ( GraphBLAS_static PUBLIC ${GB_CUDA} )
@@ -654,6 +665,7 @@ if ( GRAPHBLAS_HAS_CUDA )
             target_link_libraries ( GraphBLAS_static PRIVATE CUDA::nvtx3 )
             target_compile_definitions ( GraphBLAS_static PRIVATE GBNVTX )
         endif ( )
+        target_link_libraries ( GraphBLAS_static PRIVATE rmm::rmm )
     endif ( )
 endif ( )
 

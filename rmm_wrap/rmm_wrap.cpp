@@ -41,13 +41,17 @@
 // (one per GPU) that all methods in this file can access.  The array of
 // objects cannot be accessed outside this file.
 
-typedef struct
+typedef struct RMM_Wrap_Handle_struct
 {
     uint32_t device_id;
     RMM_MODE mode;
-    std::shared_ptr<rmm::mr::pool_memory_resource>     resource;
+//  std::shared_ptr<rmm::mr::pool_memory_resource>     resource;
+    rmm::mr::pool_memory_resource                      resource ;
 //  std::shared_ptr<std::pmr::memory_resource>         host_resource;
     std::shared_ptr<alloc_map>                         size_map ;
+
+// I tried adding this but it didn't work:
+//  RMM_Wrap_Handle_struct() : resource() { } ;
 }
 RMM_Wrap_Handle ;
 
@@ -99,16 +103,31 @@ inline auto make_and_set_managed_pool
 )
 {
 
-//  auto resource = rmm::mr::make_owning_wrapper<rmm::mr::pool_memory_resource>
-//                      ( make_managed(), initial_size, maximum_size ) ;
+// RMM 24.x:
+//  rmm::mr::pool_memory_resource resource {
+//      rmm::mr::managed_memory_resource{},
+//      initial_size } ;
+//  rmm::mr::set_current_device_resource ( resource.get() ) ;
 
+#if 1
+//  rmm::mr::cuda_memory_resource cuda_mr;
+    rmm::mr::managed_memory_resource cuda_mr ;
+    // Construct a resource that uses a coalescing best-fit pool allocator
+    // With the pool initially half of available device memory
+//  auto initial_size = rmm::percent_of_free_device_memory(50);
+    rmm::mr::pool_memory_resource pool_mr{cuda_mr, initial_size};
+    auto previous = rmm::mr::set_current_device_resource (pool_mr);
+//  rmm::mr::set_current_device_resource (cuda::mr::any_resource<cuda::mr::device_accessible>) ;
+//  auto mr = rmm::mr::get_current_device_resource_ref();
+    return pool_mr ;
+#else
 
-    rmm::mr::pool_memory_resource resource {
-        rmm::mr::managed_memory_resource{},
-        initial_size } ;
-
-    rmm::mr::set_current_device_resource( resource.get()) ;
+// RMM 26.06.00:
+    rmm::mr::managed_memory_resource cuda_mr ;
+    rmm::mr::pool_memory_resource resource {cuda_mr, initial_size} ;
+    rmm::mr::set_current_device_resource ( resource ) ;
     return resource;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -223,8 +242,7 @@ int rmm_wrap_initialize     // returns -1 on error, 0 on success
         else if ( mode == rmm_wrap_managed )
         {
             // std::cout << "Seting managed pool" << std::endl;
-            rmm_wrap_context[device_id]->resource = 
-                make_and_set_managed_pool( init_pool_memsize, max_pool_memsize);
+            rmm_wrap_context[device_id]->resource = make_and_set_managed_pool( init_pool_memsize, max_pool_memsize);
         }
         else
         {
