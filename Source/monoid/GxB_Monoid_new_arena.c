@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GrB_Monoid_new:  create a new monoid
+// GxB_Monoid_new_arena:  create a new monoid in a given arena
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

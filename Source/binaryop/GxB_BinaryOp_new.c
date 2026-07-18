@@ -13,6 +13,8 @@
 
 // If the function pointer is NULL, the function is compiled with the JIT.
 
+// The op is allocated in the header arena determined by the current Context.
+
 #include "GB.h"
 #include "binaryop/GB_binop.h"
 #include "jitifyer/GB_stringify.h"
@@ -28,7 +30,7 @@ GrB_Info GxB_BinaryOp_new
     const char *binop_defn          // definition of the user function
 )
 {
-    int header_arena = GrB_DEFAULT ;
+    int header_arena = GB_Context_header_arena ( ) ;
     return (GxB_BinaryOp_new_arena (op_handle, function, ztype, xtype, ytype,
         binop_name, binop_defn, header_arena)) ;
 }

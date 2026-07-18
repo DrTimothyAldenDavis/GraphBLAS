@@ -9,6 +9,8 @@
 
 // deserialize: create a GrB_Vector from a blob of bytes
 
+// The vector is allocated in arenas determined by the current Context.
+
 #include "GB.h"
 #include "serialize/GB_serialize.h"
 
@@ -16,7 +18,7 @@ GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
 (
     // output:
     GrB_Vector *w,      // output vector created from the blob, created in the
-                        // default header and data arena
+                        // header and data arena of the current Context
     // input:
     GrB_Type type,      // type of the vector w.  Required if the blob holds a
                         // vector of user-defined type.  May be NULL if blob
@@ -27,8 +29,8 @@ GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
     const GrB_Descriptor desc       // to control # of threads used
 )
 { 
-    int header_arena = GrB_DEFAULT ;
-    int data_arena = GrB_DEFAULT ;
+    int header_arena = GB_Context_header_arena ( ) ;
+    int data_arena = GB_Context_data_arena ( ) ;
     return (GxB_Vector_deserialize_arena (w, type, blob, blob_memsize,
         header_arena, data_arena, desc)) ;
 }

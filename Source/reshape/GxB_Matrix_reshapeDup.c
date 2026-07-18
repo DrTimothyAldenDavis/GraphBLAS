@@ -15,6 +15,8 @@
 // determines the format of the output matrix C, which need not match the
 // by_col input parameter.
 
+// The matrix is allocated in arenas determined by the current Context.
+
 #include "GB.h"
 #include "reshape/GB_reshape.h"
 
@@ -30,8 +32,8 @@ GrB_Info GxB_Matrix_reshapeDup  // reshape a GrB_Matrix into another GrB_Matrix
     const GrB_Descriptor desc   // to control # of threads used
 )
 { 
-    int header_arena = GrB_DEFAULT ;
-    int data_arena = GrB_DEFAULT ;
+    int header_arena = GB_Context_header_arena ( ) ;
+    int data_arena = GB_Context_data_arena ( ) ;
     return (GxB_Matrix_reshapeDup_arena (C, A, by_col, nrows_new, ncols_new,
         header_arena, data_arena, desc)) ;
 }

@@ -159,8 +159,10 @@ GrB_Info GB_entry_check     // print a single value
                     { 
                         // allocate the string buffer with its initial size;
                         // it is not freed here but in the caller.
-                        // Uses the default arena.
-                        uint64_t mem = GB_mem (GrB_DEFAULT, 0) ;
+                        // Uses the default arena. FIXME ok?
+                        int data_arena = GrB_DEFAULT ; // FIXME is this OK?
+//                      int data_arena = GB_Context_data_arena ( ) ; FIXME this?
+                        uint64_t mem = GB_mem (data_arena, 0) ;
                         (*string_mem) = mem ;
                         (*string_handle) = GB_MALLOC_MEMORY (1024,
                             sizeof (char), string_mem) ;

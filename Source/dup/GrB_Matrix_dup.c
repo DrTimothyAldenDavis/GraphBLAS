@@ -9,7 +9,7 @@
 
 // C = A, making a deep copy
 
-// The arenas for C are the same as A.
+// The matrix is allocated in arenas determined by the current Context.
 
 #include "GB.h"
 
@@ -29,8 +29,8 @@ GrB_Info GrB_Matrix_dup     // make an exact copy of a matrix
     GB_WHERE_1 (A, "GrB_Matrix_dup (&C, A)") ;
     GB_BURBLE_START ("GrB_Matrix_dup") ;
 
-    int header_arena = GB_arena (A->header_mem) ;
-    int data_arena = A->data_arena ;
+    int header_arena = GB_Context_header_arena ( ) ;
+    int data_arena = GB_Context_data_arena ( ) ;
 
     //--------------------------------------------------------------------------
     // duplicate the matrix

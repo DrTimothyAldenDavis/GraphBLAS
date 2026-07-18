@@ -162,7 +162,7 @@
 //------------------------------------------------------------------------------
 
 #ifndef GRAPHBLAS_HAS_CUDA
-#define GRAPHBLAS_HAS_CUDA
+/* #undef GRAPHBLAS_HAS_CUDA */
 #endif
 
 //------------------------------------------------------------------------------
@@ -560,9 +560,7 @@ typedef struct GB_Scalar_opaque *GxB_Scalar ;       // use GrB_Scalar
 // arena control
 #define GxB_ARENA_DATA   7105
 #define GxB_ARENA_HEADER 7106
-#endif
 
-#ifndef GRAPHBLAS_VANILLA
 // pre-defined arenas
 // #define GrB_DEFAULT (0): default arena for header and data: 0
 #define GxB_ARENA_RMM     1     /* arena 1 reserved for CUDA Rapids */

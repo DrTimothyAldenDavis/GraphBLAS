@@ -12,6 +12,8 @@
 // Identical to GxB_Matrix_deserialize, except that this method does not take
 // a descriptor as the last parameter.
 
+// The matrix is allocated in arenas determined by the current Context.
+
 #include "GB.h"
 #include "serialize/GB_serialize.h"
 
@@ -19,7 +21,7 @@ GrB_Info GrB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
 (
     // output:
     GrB_Matrix *C,      // output matrix created from the blob, created in the
-                        // default header and data arena
+                        // header and data arena of the current Context
     // input:
     GrB_Type type,      // type of the matrix C.  Required if the blob holds a
                         // matrix of user-defined type.  May be NULL if blob
@@ -43,8 +45,8 @@ GrB_Info GrB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     // deserialize the blob into a matrix
     //--------------------------------------------------------------------------
 
-    int header_arena = GrB_DEFAULT ;
-    int data_arena = GrB_DEFAULT ;
+    int header_arena = GB_Context_header_arena ( ) ;
+    int data_arena = GB_Context_data_arena ( ) ;
 
     GrB_Info info = GB_deserialize (C, type, (const GB_void *) blob,
         blob_memsize, header_arena, data_arena) ;

@@ -394,3 +394,133 @@ void GB_Context_disable (void)
     GB_Context_disabled = true ;
 }
 
+//------------------------------------------------------------------------------
+// Context->data_arena: data arena to use
+//------------------------------------------------------------------------------
+
+// GB_Context_data_arena_get : get data_arena from a Context
+int GB_Context_data_arena_get (GxB_Context Context)
+{
+    if (GB_Context_disabled)
+    {
+        // no thread-local-storage can be used; use data_arena 0
+        return (0) ;
+    }
+    int data_arena ;
+    if (Context == NULL || Context == GxB_CONTEXT_WORLD)
+    { 
+        GB_ATOMIC_READ
+        data_arena = GxB_CONTEXT_WORLD->data_arena ;
+    }
+    else
+    { 
+        data_arena = Context->data_arena ;
+    }
+    return (data_arena) ;
+}
+
+// GB_Context_data_arena: get data_arena from the current Context
+int GB_Context_data_arena (void)
+{ 
+    // This method is used by most GraphBLAS functions to determine the
+    // data_arena to use.  If a Context is engaged, it uses the engaged
+    // context.  Otherwise, it uses the default GxB_CONTEXT_WORLD.
+    if (GB_Context_disabled)
+    {
+        // no thread-local-storage can be used; use data_arena 0
+        return (0) ;
+    }
+    return (GB_Context_data_arena_get (GB_CONTEXT_THREAD)) ;
+}
+
+// GB_Context_data_arena_set: set data_arena in a Context
+void GB_Context_data_arena_set
+(
+    GxB_Context Context,
+    int data_arena
+)
+{
+    if (GB_Context_disabled)
+    {
+        // no thread-local-storage can be used; use data_arena 0
+        return ;
+    }
+    // ensure data_arena is in range
+    data_arena = GB_IMAX (data_arena, 0) ;
+    data_arena = GB_IMIN (data_arena, GB_NARENAS - 1) ;
+    if (Context == NULL || Context == GxB_CONTEXT_WORLD)
+    { 
+        GB_ATOMIC_WRITE
+        GxB_CONTEXT_WORLD->data_arena = data_arena ;
+    }
+    else
+    { 
+        Context->data_arena = data_arena ;
+    }
+}
+
+//------------------------------------------------------------------------------
+// Context->header_arena: header arena to use
+//------------------------------------------------------------------------------
+
+// GB_Context_header_arena_get : get header_arena from a Context
+int GB_Context_header_arena_get (GxB_Context Context)
+{
+    if (GB_Context_disabled)
+    {
+        // no thread-local-storage can be used; use header_arena 0
+        return (0) ;
+    }
+    int header_arena ;
+    if (Context == NULL || Context == GxB_CONTEXT_WORLD)
+    { 
+        GB_ATOMIC_READ
+        header_arena = GxB_CONTEXT_WORLD->header_arena ;
+    }
+    else
+    { 
+        header_arena = Context->header_arena ;
+    }
+    return (header_arena) ;
+}
+
+// GB_Context_header_arena: get header_arena from the current Context
+int GB_Context_header_arena (void)
+{ 
+    // This method is used by most GraphBLAS functions to determine the
+    // header_arena to use.  If a Context is engaged, it uses the engaged
+    // context.  Otherwise, it uses the default GxB_CONTEXT_WORLD.
+    if (GB_Context_disabled)
+    {
+        // no thread-local-storage can be used; use header_arena 0
+        return (0) ;
+    }
+    return (GB_Context_header_arena_get (GB_CONTEXT_THREAD)) ;
+}
+
+// GB_Context_header_arena_set: set header_arena in a Context
+void GB_Context_header_arena_set
+(
+    GxB_Context Context,
+    int header_arena
+)
+{
+    if (GB_Context_disabled)
+    {
+        // no thread-local-storage can be used; use header_arena 0
+        return ;
+    }
+    // ensure header_arena is in range
+    header_arena = GB_IMAX (header_arena, 0) ;
+    header_arena = GB_IMIN (header_arena, GB_NARENAS - 1) ;
+    if (Context == NULL || Context == GxB_CONTEXT_WORLD)
+    { 
+        GB_ATOMIC_WRITE
+        GxB_CONTEXT_WORLD->header_arena = header_arena ;
+    }
+    else
+    { 
+        Context->header_arena = header_arena ;
+    }
+}
+

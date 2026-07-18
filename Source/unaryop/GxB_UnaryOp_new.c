@@ -11,6 +11,8 @@
 // void f (void *z, const void *x), and then it must recast its input and
 // output arguments internally as needed.
 
+// The op is allocated in header arena determined by the current Context.
+
 #include "GB.h"
 #include "unaryop/GB_unop.h"
 #include "jitifyer/GB_stringify.h"
@@ -25,7 +27,7 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     const char *unop_defn           // definition of the user function
 )
 {
-    int header_arena = GrB_DEFAULT ;
+    int header_arena = GB_Context_header_arena ( ) ;
     return (GxB_UnaryOp_new_arena (op_handle, function, ztype, xtype,
         unop_name, unop_defn, header_arena)) ;
 }

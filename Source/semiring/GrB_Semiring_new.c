@@ -30,6 +30,8 @@
 // The multiply operator can be any GrB_BinaryOp, including ones created from a
 // GxB_IndexBinaryOp.
 
+// The semiring is allocated in header arena determined by the current Context.
+
 #include "GB.h"
 #include "semiring/GB_Semiring_new.h"
 
@@ -45,7 +47,7 @@ GrB_Info GrB_Semiring_new           // create a semiring
     GrB_BinaryOp multiply           // multiply operator of the semiring
 )
 {
-    int header_arena = GrB_DEFAULT ;
+    int header_arena = GB_Context_header_arena ( ) ;
     return (GxB_Semiring_new_arena (semiring, add, multiply, header_arena));
 }
 

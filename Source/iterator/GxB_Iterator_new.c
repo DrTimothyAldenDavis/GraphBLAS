@@ -7,11 +7,13 @@
 
 //------------------------------------------------------------------------------
 
+// The iterator is allocated in header arena determined by the current Context.
+
 #include "GB.h"
 
 GrB_Info GxB_Iterator_new (GxB_Iterator *iterator)
 {
-    int header_arena = GrB_DEFAULT ;
+    int header_arena = GB_Context_header_arena ( ) ;
     return (GxB_Iterator_new_arena (iterator, header_arena)) ;
 }
 

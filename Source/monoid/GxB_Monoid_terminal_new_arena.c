@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Monoid_terminal_new:  create a new monoid with a terminal value
+// GxB_Monoid_terminal_new_arena:  create a new monoid with a terminal value
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

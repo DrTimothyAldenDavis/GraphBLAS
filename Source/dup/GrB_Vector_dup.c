@@ -9,7 +9,7 @@
 
 // w = u, making a deep copy
 
-// The arenas for w are the same as u.
+// The vector is allocated in arenas determined by the current Context.
 
 #include "GB.h"
 
@@ -29,8 +29,8 @@ GrB_Info GrB_Vector_dup     // make an exact copy of a vector
     GB_WHERE_1 (u, "GrB_Vector_dup (&w, u)") ;
     GB_BURBLE_START ("GrB_Vector_dup") ;
 
-    int header_arena = GB_arena (u->header_mem) ;
-    int data_arena = u->data_arena ;
+    int header_arena = GB_Context_header_arena ( ) ;
+    int data_arena = GB_Context_data_arena ( ) ;
 
     ASSERT (GB_VECTOR_OK (u)) ;
 

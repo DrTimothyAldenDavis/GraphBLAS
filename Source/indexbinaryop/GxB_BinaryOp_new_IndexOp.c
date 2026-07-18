@@ -9,6 +9,8 @@
 
 #include "GB.h"
 
+// The op is allocated in header arena determined by the current Context.
+
 // GxB_BinaryOp_new_IndexOp: create a new binary op from an index binary op
 GrB_Info GxB_BinaryOp_new_IndexOp
 (
@@ -17,7 +19,7 @@ GrB_Info GxB_BinaryOp_new_IndexOp
     GrB_Scalar theta                // theta value to bind to the new binary op
 )
 {
-    int header_arena = GrB_DEFAULT ;
+    int header_arena = GB_Context_header_arena ( ) ;
     return (GxB_BinaryOp_new_IndexOp_arena (binop_handle, idxbinop, theta,
         header_arena)) ;
 }

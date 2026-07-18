@@ -30,7 +30,7 @@
     free (blob) ;                                   // user frees the blob
 */
 
-// The blob is created in the default data arena.
+// The blob is created in the current data arena, as defined by the Context.
 
 #include "GB.h"
 #include "serialize/GB_serialize.h"
@@ -46,7 +46,7 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
                                     // and to control # of threads used
 )
 { 
-    int data_arena = GrB_DEFAULT ;
+    int data_arena = GB_Context_data_arena ( ) ;
     return (GxB_Vector_serialize_arena (blob_handle, blob_memsize_handle, u,
         data_arena, desc)) ;
 }

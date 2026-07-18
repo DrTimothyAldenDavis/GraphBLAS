@@ -33,6 +33,8 @@
 // If the type size is zero but the JIT is disabled, of the two strings are not
 // provided, then an error is returned (GrB_INVALID_VALUE). 
 
+// The type is allocated in header arena determined by the current Context.
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -44,7 +46,7 @@ GrB_Info GxB_Type_new
     const char *type_defn       // typedef of the C type (any length)
 )
 {
-    int header_arena = GrB_DEFAULT ;
+    int header_arena = GB_Context_header_arena ( ) ;
     return (GxB_Type_new_arena (type, sizeof_type, type_name, type_defn,
         header_arena)) ;
 }

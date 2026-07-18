@@ -243,6 +243,9 @@
 #define GB_Context_chunk_get GM_Context_chunk_get
 #define GB_Context_chunk GM_Context_chunk
 #define GB_Context_chunk_set GM_Context_chunk_set
+#define GB_Context_data_arena_get GM_Context_data_arena_get
+#define GB_Context_data_arena GM_Context_data_arena
+#define GB_Context_data_arena_set GM_Context_data_arena_set
 #define GB_Context_disabled GM_Context_disabled
 #define GB_Context_disable GM_Context_disable
 #define GB_Context_disengage GM_Context_disengage
@@ -250,6 +253,9 @@
 #define GB_Context_gpu_ids_get GM_Context_gpu_ids_get
 #define GB_Context_gpu_ids GM_Context_gpu_ids
 #define GB_Context_gpu_ids_set GM_Context_gpu_ids_set
+#define GB_Context_header_arena_get GM_Context_header_arena_get
+#define GB_Context_header_arena GM_Context_header_arena
+#define GB_Context_header_arena_set GM_Context_header_arena_set
 #define GB_Context_nthreads_max_get GM_Context_nthreads_max_get
 #define GB_Context_nthreads_max GM_Context_nthreads_max
 #define GB_Context_nthreads_max_set GM_Context_nthreads_max_set

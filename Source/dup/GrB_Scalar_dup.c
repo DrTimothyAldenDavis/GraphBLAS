@@ -9,7 +9,7 @@
 
 // s = t, making a deep copy
 
-// The arenas for s are the same as t.
+// The scalar is allocated in arenas determined by the current Context.
 
 #include "GB.h"
 
@@ -29,8 +29,8 @@ GrB_Info GrB_Scalar_dup     // make an exact copy of a GrB_Scalar
 
     ASSERT (GB_SCALAR_OK (t)) ;
 
-    int header_arena = GB_arena (t->header_mem) ;
-    int data_arena = t->data_arena ;
+    int header_arena = GB_Context_header_arena ( ) ;
+    int data_arena = GB_Context_data_arena ( ) ;
 
     //--------------------------------------------------------------------------
     // duplicate the GrB_Scalar

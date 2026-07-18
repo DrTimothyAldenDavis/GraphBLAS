@@ -37,8 +37,7 @@ GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
     // no descriptor, so assume the default method
     int method = GxB_DEFAULT ;
 
-    // use the default arena
-    int data_arena = GrB_DEFAULT ;
+    int data_arena = A->data_arena ;    // for temporary workspace
 
     //--------------------------------------------------------------------------
     // serialize the matrix
