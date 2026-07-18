@@ -30,7 +30,8 @@ if (m ~= n)
 end
 
 % convert A to logical
-A = GrB.apply ('1.logical', A_arg) ;
+% A = GhB.apply ('1.logical', A_arg) ;
+A = A_arg ;
 
 if (nargin < 2)
     check = false ;
@@ -51,12 +52,12 @@ if (check)
     end
 end
 
-neighbor_max = GrB (n, 1) ;
-new_neighbors = GrB (n, 1, 'logical') ;
-candidates = GrB (n, 1, 'logical') ;
+neighbor_max = GhB (n, 1) ;
+new_neighbors = GhB (n, 1, 'logical') ;
+candidates = GhB (n, 1, 'logical') ;
 
 % Initialize independent set vector
-iset = GrB (n, 1, 'logical') ;
+iset = GhB (n, 1, 'logical') ;
 
 % descriptor: C_replace
 r_desc.out = 'replace' ;
@@ -66,7 +67,16 @@ sr_desc.mask = 'complement' ;
 sr_desc.out  = 'replace' ;
 
 % compute the degree of each nodes
-degrees = GrB.vreduce ('+.double',  A) ;
+desc1 = r_desc  ;
+desc2 = struct ;
+if (GhB.isbyrow (A))
+    % degrees = GhB.vreduce ('+.double',  A) ;
+    degrees = GhB.entries (A, 'row', 'degree') ;
+else
+    degrees = GhB.entries (A, 'col', 'degree') ;
+    desc1.in0 = 'transpose' ;
+    desc2.in0 = 'transpose' ;
+end
 
 % Singletons require special treatment.  Since they have no neighbors, their
 % prob is never greater than the max of their neighbors, so they never get
@@ -74,14 +84,14 @@ degrees = GrB.vreduce ('+.double',  A) ;
 % from the candidate set at the begining, and added to the iset.
 
 % candidates (degree != 0) = true
-candidates = GrB.assign (candidates, degrees, true) ;
+GhB.assign (candidates, degrees, true) ;
 
 % add all singletons to iset
 % iset (degree == 0) = 1
-iset = GrB.assign (iset, degrees, true, sr_desc) ;
+GhB.assign (iset, degrees, true, sr_desc) ;
 
 % Iterate while there are candidates to check.
-ncand = GrB.entries (candidates) ;
+ncand = GhB.entries (candidates) ;
 last_ncand = ncand ;
 
 while (ncand > 0)
@@ -89,35 +99,30 @@ while (ncand > 0)
     % compute a random probability scaled by inverse of degree
     % FUTURE: this is slower than it should be; rand may not be parallel,
     prob = 0.0001 + rand (n,1) ./ (1 + 2 * degrees) ;
-    prob = GrB.assign (prob, candidates, prob, r_desc) ;
+    prob = GhB.assign (prob, candidates, prob, r_desc) ;
 
     % compute the max probability of all neighbors
-    neighbor_max = GrB.mxm (neighbor_max, candidates, ...
-        'max.second.double', A, prob, r_desc) ;
+    GhB.mxm (neighbor_max, candidates, 'max.second.double', A, prob, desc1) ;
 
     % select node if its probability is > than all its active neighbors
-    new_members = GrB.eadd (prob, '>', neighbor_max) ;
+    new_members = GhB.eadd (prob, '>', neighbor_max) ;
 
     % add new members to independent set.
-    iset = GrB.eadd (iset, '|', new_members) ;
+    GhB.eadd (iset, iset, '|', new_members) ;
 
     % remove new members from set of candidates
-    candidates = GrB.apply (candidates, new_members, 'identity', ...
-        candidates, sr_desc) ;
+    GhB.apply (candidates, new_members, 'identity', candidates, sr_desc) ;
 
-    ncand = GrB.entries (candidates) ;
+    ncand = GhB.entries (candidates) ;
     if (ncand == 0)
         break ;                    % early exit condition
     end
 
     % Neighbors of new members can also be removed from candidates
-    new_neighbors = GrB.mxm (new_neighbors, candidates, ...
-        '|.&.logical', A, new_members) ;
-
-    candidates = GrB.apply (candidates, new_neighbors, 'identity', ...
-        candidates, sr_desc) ;
-
-    ncand = GrB.entries (candidates) ;
+    GhB.mxm (new_neighbors, candidates, '|.second.logical', A, new_members, ...
+        desc2) ;
+    GhB.apply (candidates, new_neighbors, 'identity', candidates, sr_desc) ;
+    ncand = GhB.entries (candidates) ;
 
     % this will not occur, unless the input is corrupted somehow
     if (last_ncand == ncand)
@@ -127,6 +132,5 @@ while (ncand > 0)
 end
 
 % drop explicit false values
-iset = GrB.prune (iset) ;
+iset = GhB.prune (iset) ;
 
-iset = GhB (iset) ; % FIXME
