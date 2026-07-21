@@ -4,7 +4,7 @@ using namespace cooperative_groups ;
 
 #include "template/GB_cuda_ek_slice.cuh"
 
-// FIXME: use GB_geometry.hpp for these parameters:
+// fixme: use GB_geometry.hpp for these parameters:
 #define log2_chunk_size 10
 #define chunk_size 1024
 

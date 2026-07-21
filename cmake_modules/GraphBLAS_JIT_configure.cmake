@@ -125,7 +125,7 @@ if ( GRAPHBLAS_HAS_CUDA )
     set ( GB_CUDA_COMPILER  "${CMAKE_CUDA_COMPILER}" )
     set ( GB_CUDA_FLAGS     "${CMAKE_CUDA_FLAGS} " )
     string ( REPLACE "\"" "\\\"" GB_CUDA_FLAGS ${GB_CUDA_FLAGS} )
-    # FIXME: do I need the CUDA Toolkit Version in the JIT?
+    # fixme for CUDA: do I need the CUDA Toolkit Version in the JIT?
     # message ( STATUS "CUDA toolkit ver: " ${CUDAToolkit_VERSION} )
     set ( GB_CUDA_INC_DIRS ${CUDAToolkit_INCLUDE_DIRS} )
     set ( GB_CUDA_INC ${CUDAToolkit_INCLUDE_DIRS} )

@@ -2585,12 +2585,12 @@ void GB_jitifyer_nvcc_compile
     " --gpu-architecture=compute_%d%d"  // major,minor
     " --gpu-code=sm_%d%d "              // major,minor
 #if 0
-    // HACK FIXME for CUDA:
+    // HACK fixme for CUDA:
     " -g "
-    " --device-debug "          // HACK FIXME
-    " --generate-line-info "            // HACK FIXME
-    " --source-in-ptx "         // HACK FIXME
-    " --ptxas-options=-v "          // HACK FIXME
+    " --device-debug "          // HACK fixme for CUDA
+    " --generate-line-info "            // HACK fixme for CUDA
+    " --source-in-ptx "         // HACK fixme for CUDA
+    " --ptxas-options=-v "          // HACK fixme for CUDA
 #endif
     "-I'%s/src' "                       // include source directory
     "-I'%s/src/template' "
@@ -2617,9 +2617,9 @@ void GB_jitifyer_nvcc_compile
     "%s %s%s%s\"",                      // error log file
 
     // compile:
-    GB_CUDA_COMPILER,                   // nvcc compiler FIXME use get/set
-    GB_CUDA_INC,                        // nvcc compiler -I FIXME use get/set
-    GB_CUDA_FLAGS,                      // nvcc compiler flags FIXME use get/set
+    GB_CUDA_COMPILER,                   // nvcc compiler fixme use get/set
+    GB_CUDA_INC,                        // nvcc compiler -I fixme use get/set
+    GB_CUDA_FLAGS,                      // nvcc compiler flags fixme use get/set
     (int) major, (int) minor,           // CUDA compute_xy architecture
     (int) major, (int) minor,           // CUDA sm_xy code
     GB_jit_cache_path,                  // include cache/src
@@ -2632,9 +2632,9 @@ void GB_jitifyer_nvcc_compile
     err_redirect, log_quote, GB_jit_error_log, log_quote,   // error log file
 
     // link:
-    GB_CUDA_COMPILER,                   // nvcc compiler FIXME use get/set
-    GB_CUDA_INC,                        // nvcc compiler -I FIXME use get/set
-    GB_CUDA_FLAGS,                      // nvcc compiler flags FIXME use get/set
+    GB_CUDA_COMPILER,                   // nvcc compiler fixme use get/set
+    GB_CUDA_INC,                        // nvcc compiler -I fixme use get/set
+    GB_CUDA_FLAGS,                      // nvcc compiler flags fixme use get/set
     (int) major, (int) minor,           // CUDA compute_xy architecture
     (int) major, (int) minor,           // CUDA sm_xy code
     GB_jit_cache_path, bucket,  

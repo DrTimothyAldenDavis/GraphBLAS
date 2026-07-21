@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Fixme for CUDA:  this method is a draft.  It will be used for CUDA.  It is
+// fixme for CUDA:  this method is a draft.  It will be used for CUDA.  It is
 // not yet used by any methods, even when CUDA is enabled.
 
 // GB_get_arena_alias creates a new matrix C that is an alias for the input

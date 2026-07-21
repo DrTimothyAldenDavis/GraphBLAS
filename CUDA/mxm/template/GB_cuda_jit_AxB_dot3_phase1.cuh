@@ -97,7 +97,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     // for zombies, or bucket assignment:
     GB_Ci_SIGNED_TYPE *__restrict__ Ci = (GB_Ci_SIGNED_TYPE *) C->i ;
 
-    // FIXME: use (k << 2) not (k << 4)
+    // fixme: use (k << 2) not (k << 4)
 
     // Ci [p] for an entry C(i,j) contains either GB_ZOMBIE (i) if C(i,j) is a
     // zombie, or (k << 4) + bucket otherwise, where C(:,j) is the kth vector
@@ -121,7 +121,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     // assign buckets to all entries in C(i,j), one chunk at a time
     //--------------------------------------------------------------------------
 
-    // FIXME: tune this loop (and all others) for GPU architectures, where # of
+    // fixme: tune this loop (and all others) for GPU architectures, where # of
     // threadblocks can differ on different GPUs.
 
     // grid-stride loop for each threadblock:

@@ -35,13 +35,13 @@ bool GB_cuda_type_branch            // return true if the type is OK on GPU
 
     if (type == GxB_FC32 || type == GxB_FC64)
     {
-        // FIXME: complex types not yet supported in CUDA
+        // fixme: complex types not yet supported in CUDA
         return (false) ;
     }
 
     size_t size = type->size ;
 
-    if (size > 128) // FIXME: max type size should depend on major/minor device
+    if (size > 128) // fixme: max type size should depend on major/minor device
     {
         // the type is too big for the GPU (the builder will fail at 192 bytes
         // on the sm70 architecture, at least; see the wildtype_demo, which

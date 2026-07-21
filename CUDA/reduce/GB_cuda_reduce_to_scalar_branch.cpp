@@ -32,7 +32,7 @@ bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
 
     if (A->header_mem == 0)
     {
-        // FIXME arena: check all of A
+        // fixme arena: check all of A
         return (false) ;
     }
 
@@ -58,7 +58,7 @@ bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
     // see if there is enough work to do on the GPU
     double work = GB_nnz_held (A) ;
     int gpu_count = GB_ngpus_to_use (work) ;
-    int ngpus_max = GB_Context_gpu_ids (NULL) ;     // FIXME: get gpu_ids
+    int ngpus_max = GB_Context_gpu_ids (NULL) ;     // fixme: get gpu_ids
     gpu_count = std::min (gpu_count, ngpus_max) ;
     GBURBLE (" work:%g gpus:%d ", work, gpu_count) ;
     if (gpu_count > 0)

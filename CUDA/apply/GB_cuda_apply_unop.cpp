@@ -39,7 +39,7 @@ GrB_Info GB_cuda_apply_unop
     // get a stream on the current device
     GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
 
-    // FIXME: make this a CUDA helper function
+    // fixme: make this a CUDA helper function
     if (ythunk != NULL && op != NULL && op->ytype != NULL)
     {
         // make a copy of ythunk, since ythunk might be allocated on

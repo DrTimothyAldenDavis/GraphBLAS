@@ -11,7 +11,7 @@
 // If no devices are found or cudaGetDeviceCount returns an error, then
 // the GPU count is returned as zero.
 
-// FIXME: remove printf
+// fixme: remove printf
 
 #include "GB_cuda.hpp"
 

@@ -81,7 +81,7 @@ GrB_Info GB_cuda_reduce_to_scalar
     raw_gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     int gridsz = (int) raw_gridsz ;
 
-    // FIXME: GB_enumify_reduce is called twice: here (to get has_cheeseburger)
+    // fixme: GB_enumify_reduce is called twice: here (to get has_cheeseburger)
     // and in GB_cuda_reduce_to_scalar_jit.  Can we just call it once?
 
     uint64_t rcode ;

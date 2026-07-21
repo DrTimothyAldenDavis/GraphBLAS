@@ -1129,7 +1129,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         (*unsorted) = 0 ;
         (*dupls) = 0 ;
 
-        // FIXME: if I or J cannot be read by the GPU, do phase1 on the CPU
+        // fixme: if I or J cannot be read by the GPU, do phase1 on the CPU
         // with OpenMP
 
         GB_cuda_builder_phase1 <<<grid, block1, 0, stream>>>
@@ -1197,7 +1197,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // dupl:             ^ *         ^ *   *             <--1st entry in dupls
     // leading:        @         @           @   @       <--1st of vectors in C
 
-    // FIXME: if X cannot be read by the GPU, then copy it from X into
+    // fixme: if X cannot be read by the GPU, then copy it from X into
     // another workspace allocated on the GPU using OpenMP, before doing
     // phase2.
 

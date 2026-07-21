@@ -80,7 +80,7 @@ __global__ void GB_cuda_AxB_dot3_phase2end_kernel
     // The slice for task blockIdx.x contains entries pfirst:plast-1 of M and
     // C, which is the part of C operated on by this threadblock.
 
-    // FIXME: why is bucket_idx needed?
+    // fixme: why is bucket_idx needed?
     __shared__ int64_t bucket_idx [CHUNKSIZE] ;
 
     for (int64_t pfirst = blockIdx.x << LOG2_CHUNKSIZE ;
@@ -123,7 +123,7 @@ __global__ void GB_cuda_AxB_dot3_phase2end_kernel
             //}
         }
 
-        // FIXME: can't this be merged with the loop above?  Or is it a
+        // fixme: can't this be merged with the loop above?  Or is it a
         // partial implementation of a coalesced write to the global bucket
         // array?
 

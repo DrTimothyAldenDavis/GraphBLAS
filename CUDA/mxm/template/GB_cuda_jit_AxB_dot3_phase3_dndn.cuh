@@ -167,7 +167,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
         // reduce per-thread sums to a single scalar
         //----------------------------------------------------------------------
 
-        // FIXME: no need to do this if C(i,j) is a zombie (cij_exists is
+        // fixme: no need to do this if C(i,j) is a zombie (cij_exists is
         // always false), or if A and B are both full and C(i,j) is not a
         // zombie (cij_exists is always true).
 
@@ -178,19 +178,19 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
         thread_block_tile<GB_CUDA_TILE_SIZE> tile =
             tiled_partition<GB_CUDA_TILE_SIZE> (this_thread_block()) ;
 
-        // FIXME: tile.any takes an int predicate, not bool. How does this work?
+        // fixme: tile.any takes an int predicate, not bool. How does this work?
         cij_exists = tile.any (cij_exists) ;
         tile.sync();
 
         #if !GB_C_ISO
-        // FIXME: the ANY monoid needs the cij_exists for each thread
+        // fixme: the ANY monoid needs the cij_exists for each thread
         cij = GB_cuda_tile_reduce_ztype (tile, cij) ;
         #endif
 
-        // FIXME: if A and B are full, and GB_MASK_STRUCT is true, cij_exists
+        // fixme: if A and B are full, and GB_MASK_STRUCT is true, cij_exists
         // is always true because vlen > 0 always holds for this kernel.
 
-        // FIXME: if kth < 0, C(i,j) is a prezombie, and Ci [pM] already holds
+        // fixme: if kth < 0, C(i,j) is a prezombie, and Ci [pM] already holds
         // GB_ZOMBIE (i).
 
         // write result for this block to global mem

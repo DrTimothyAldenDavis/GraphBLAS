@@ -11,7 +11,7 @@
 
 //#include <cuda_runtime.h>
 
-// FIXME: consider another way to report the error (not std::cout)
+// fixme for CUDA: consider another way to report the error (not std::cout)
 #define cudaSucess 0 
 #define RMM_WRAP_CHECK_CUDA(call)                                         \
   do {                                                                    \
@@ -43,7 +43,7 @@ typedef enum
 RMM_MODE ;
 
 // get id of currently selected device
-// FIXME: wrong name.  call it rmm_wrap_get_current_device
+// fixme for CUDA: wrong name.  call it rmm_wrap_get_current_device
 int get_current_device();
 
 // determine if RMM has been initialized

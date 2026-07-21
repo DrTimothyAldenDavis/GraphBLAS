@@ -22,8 +22,6 @@ function iset = mis (A_arg, check)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% FIXME: GhB will be different
-
 [m, n] = size (A_arg) ;
 if (m ~= n)
     error ('GrB:error', 'A must be square') ;

@@ -43,7 +43,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     // create the stream
     //--------------------------------------------------------------------------
 
-    GpuTimer kernel_timer;  // FIXME: delete this?
+    GpuTimer kernel_timer;  // fixme: delete this?
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -83,7 +83,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     int device = -1;
     cudaStream_t stream = nullptr ;
 
-    CUDA_OK (cudaGetDevice (&device)) ;     // FIXME: use the Context
+    CUDA_OK (cudaGetDevice (&device)) ;     // fixme: use the Context
     printf ("dot3 using cuda device %d\n", device) ;
     int number_of_sms = GB_Global_gpu_sm_get (0) ;
 
@@ -127,8 +127,8 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
 
     int M_sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
     int C_sparsity = M_sparsity ;
-    bool C_iso = false ;    // FIXME: pass in C_iso and cscalar
-    bool C_in_iso = false ;    // FIXME: pass in C_in_iso and cscalar
+    bool C_iso = false ;    // fixme: pass in C_iso and cscalar
+    bool C_in_iso = false ;    // fixme: pass in C_in_iso and cscalar
 
     if (C_iso)
     {
@@ -154,9 +154,9 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     size_t jsize = C->j_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t isize = C->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
-// FIXME: API changes for CUDA 13.2
+// fixme: API changes for CUDA 13.2
 #if 0
-    // FIXME: make this a helper function, something like:
+    // fixme: make this a helper function, something like:
     // GB_cuda_matrix_memadvise (C, GB_MEMADVISE_PHIX, device, stream) ;
     CUDA_OK (cudaMemAdvise (C->p, (cnvec+1) * psize,
         cudaMemAdviseSetPreferredLocation, (cudaMemLocation) device)) ;
@@ -181,7 +181,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     // copy Mp and Mh into C
     //--------------------------------------------------------------------------
 
-    // FIXME: use shallow?
+    // fixme: use shallow?
     CUDA_OK (cudaMemcpyAsync (C->p, M->p, (cnvec+1) * psize,
         cudaMemcpyDefault, stream)) ;
     if (M_is_hyper)
@@ -192,7 +192,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
 
     C->nvals = cnz ;
     C->magic = GB_MAGIC ;
-    C->nvec_nonempty = M->nvec_nonempty ;   // FIXME
+    C->nvec_nonempty = M->nvec_nonempty ;   // fixme
     C->nvec = cnvec ;
     C->jumbled = GB_JUMBLED (M) ;   // C is jumbled if M is jumbled
 

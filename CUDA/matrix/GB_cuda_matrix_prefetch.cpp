@@ -29,7 +29,7 @@ GrB_Info GB_cuda_matrix_prefetch
     size_t jsize = A->j_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t isize = A->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
-// FIXME: API changes for CUDA 13.2:
+// fixme: API changes for CUDA 13.2:
 #if 0
     if (A->p != NULL && (which & GB_PREFETCH_P))
     {

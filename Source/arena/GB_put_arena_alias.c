@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Fixme for CUDA:  this method is a draft.  It will be used for CUDA.  It is
+// fixme for CUDA:  this method is a draft.  It will be used for CUDA.  It is
 // not yet used by any methods, even when CUDA is enabled.
 
 // GB_put_arena_alias restores the (possibly revised) content of the header

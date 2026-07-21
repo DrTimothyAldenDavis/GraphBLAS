@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#define TIMING /* FIXME:remove */
+#define TIMING /* fixme:remove */
 #define Ak_SAVE 0
 
 // C = select (A) kernel on the GPU.  The input matrix A may be jumbled; if
@@ -49,7 +49,7 @@ using namespace cooperative_groups ;
 
 #include "template/GB_cuda_ek_slice.cuh"
 
-// FIXME: put the following elsewhere, say GB_cuda_kernel.cuh:
+// fixme: put the following elsewhere, say GB_cuda_kernel.cuh:
 #include <cub/cub.cuh>
 #ifdef TIMING
 #include "omp.h"

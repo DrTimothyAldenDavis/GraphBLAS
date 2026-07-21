@@ -28,7 +28,7 @@ set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 
 include ( GraphBLAS_version )
 
-set ( PROJECT_VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
+set ( PROJECT_VERSION "${GraphBLAS_VER_MAJOR}.${GraphBLAS_VER_MINOR}.${GraphBLAS_VER_SUB}" )
 
 #-------------------------------------------------------------------------------
 # SuiteSparse policies
@@ -396,9 +396,9 @@ if ( BUILD_SHARED_LIBS )
     add_library ( GraphBLAS SHARED ${GRAPHBLAS_SOURCES} )
 
     set_target_properties ( GraphBLAS PROPERTIES
-        VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
+        VERSION ${GraphBLAS_VER_MAJOR}.${GraphBLAS_VER_MINOR}.${GraphBLAS_VER_SUB}
         OUTPUT_NAME graphblas
-        SOVERSION ${GraphBLAS_VERSION_MAJOR}
+        SOVERSION ${GraphBLAS_VER_MAJOR}
         C_STANDARD 11
         C_STANDARD_REQUIRED ON
         PUBLIC_HEADER "Include/GraphBLAS.h"

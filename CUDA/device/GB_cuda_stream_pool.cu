@@ -2,7 +2,7 @@
 
 #define STREAMS_PER_DEVICE 32
 
-// FIXME: avoid std::
+// fixme: avoid std::
 struct GB_cuda_stream_pool
 {
     std::vector<std::array<cudaStream_t, STREAMS_PER_DEVICE>> streams ;
@@ -35,7 +35,7 @@ GrB_Info GB_cuda_stream_pool_release (cudaStream_t *stream)
     CUDA_OK (cudaGetDevice (&device)) ;
     CUDA_OK (cudaStreamSynchronize (*stream)) ;
 
-    // FIXME:  assert that device == return value from
+    // fixme:  assert that device == return value from
     // cudaStreamGetDevice.
 
     ASSERT (device < pool.streams.size()) ;

@@ -14,7 +14,7 @@
 // BlockPrefixCallbackOp
 //------------------------------------------------------------------------------
 
-// FIXME: do we really need our own operator here?
+// fixme: do we really need our own operator here?
 
 // A stateful callback functor that maintains a running prefix to be applied
 // during consecutive scan operations.
@@ -67,7 +67,7 @@ __inline__ __device__ void blockBucketExclusiveSum
 
         // Load a segment of consecutive items that are blocked across threads
 
-        // FIXME: use BlockLoad and BlockScan, and make Blockbucket size a
+        // fixme: use BlockLoad and BlockScan, and make Blockbucket size a
         // multiple of GB_CUDA_TILE_SIZE with zero-padding, so the if(..) below
         // is not needed.
 
@@ -78,7 +78,7 @@ __inline__ __device__ void blockBucketExclusiveSum
         }
         this_thread_block().sync() ;
 
-        // FIXME: why is prefix_op needed?  builder and select-sparse
+        // fixme: why is prefix_op needed?  builder and select-sparse
         // don't need it.
 
         // Collectively compute the block-wide exclusive prefix sum

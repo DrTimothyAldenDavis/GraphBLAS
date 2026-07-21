@@ -14,7 +14,7 @@
 // system has.  Unified Memory support is assumed.  Then each GPU is "warmed
 // up" by allocating a small amount of memory.
 
-// FIXME: remove printfs
+// fixme: remove printfs
 
 #include "GB.h"
 
@@ -45,7 +45,7 @@ GrB_Info GB_cuda_init (void)
     if (!rmm_wrap_is_initialized ())
     {
         rmm_wrap_initialize_all_same (rmm_wrap_managed,
-            // FIXME ask the GPU(s) for good default values.  This might be
+            // fixme: ask the GPU(s) for good default values.  This might be
             // found by GB_cuda_init.  Perhaps GB_cuda_init needs to be split
             // into 2 methods: one to query the sizes(s) of the GPU(s) then
             // call rmm_wrap_initialize_all_same, and the other for the rest
@@ -54,10 +54,10 @@ GrB_Info GB_cuda_init (void)
             // below).
             // 256 MB and ~100 GB:
 
-            // FIXME: init size: 4GB
+            // fixme: init size: 4GB
             // max size:  .80 * CPU mem
 
-            256 * 1000000L, 1024 * 100000000L /*, 1 */) ; // FIXME: ask GPU(s)
+            256 * 1000000L, 1024 * 100000000L /*, 1 */) ; // fixme: ask GPU(s)
     }
 
     // warm up the GPUs

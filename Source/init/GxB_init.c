@@ -82,9 +82,8 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     // initialize GraphBLAS
     //--------------------------------------------------------------------------
 
-    // FIXME arena: CUDA will have GB_rmm_malloc etc in arena 1 (GxB_ARENA_RMM)
-
 #if defined ( GRAPHBLAS_HAS_CUDA )
+    // fixme for CUDA arena: CUDA will have GB_rmm_malloc etc in GxB_ARENA_RMM
     if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
     {
         return (GB_init (mode,              // blocking or non-blocking mode

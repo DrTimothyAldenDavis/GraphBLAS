@@ -13,11 +13,11 @@
 #define GB_FREE_ALL ;
 
 #if GB_C_ISO
-// FIXME
+// fixme
 #error "kernel undefined for C iso"
 #endif
 
-// FIXME: Figure out how to use graphblas-specific INFINITY macro
+// fixme: Figure out how to use graphblas-specific INFINITY macro
 #ifndef INFINITY
 #define INFINITY std::numeric_limits<double>::max()
 #endif
@@ -26,8 +26,8 @@
 // dot3 kernel launch geometry
 //------------------------------------------------------------------------------
 
-// FIXME: some duplicates here; move to GB_cuda_geomtry.hpp
-// FIXME: tune these values.  Bigger CHUNKSIZE leads to fewer binary searches
+// fixme: some duplicates here; move to GB_cuda_geomtry.hpp
+// fixme: tune these values.  Bigger CHUNKSIZE leads to fewer binary searches
 // with GB_cuda_ek_slice_setup, for example.
 #define CHUNKSIZE      GB_CUDA_DOT3_CHUNKSIZE
 #define LOG2_CHUNKSIZE GB_CUDA_DOT3_CHUNKSIZE_LOG2
@@ -110,7 +110,7 @@ typedef enum
     GB_BUCKET_SPDN = 2,         // spdn: sparse vector has lots of entries;
                                 // use a whole warp for each dot product
 }
-GB_bucket_code ;    // FIXME: rename GB_dot3_bucket_code
+GB_bucket_code ;    // fixme: rename GB_dot3_bucket_code
 
 // These may use another bucket enum:
 
@@ -267,7 +267,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         // printf ("(GPU phase1 %12.6g ms )\n", kernel_timer.Elapsed()) ;
 
         //----------------------------------------------------------------------
-        // dense case, phase "3" (FIXME: rename to dense_phase2)
+        // dense case, phase "3" (fixme: rename to dense_phase2)
         //----------------------------------------------------------------------
 
         // this kernel requires a blockDim.x of GB_CUDA_TILE_SIZE
@@ -322,8 +322,8 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
             return (GrB_OUT_OF_MEMORY) ;
         }
 
-        // FIXME: do async with streams
-        // FIXME: do we need any of these?
+        // fixme: do async with streams
+        // fixme: do we need any of these?
         // YES! We need at least Blockbucket [(0:4)*(nblocks+1)] = 0
         CUDA_OK (cudaMemsetAsync(Nanobuckets, 0, nanobuckets_size * sizeof(int64_t), stream));
         CUDA_OK (cudaMemsetAsync(Blockbucket, 0, Blockbucket_size * sizeof(int64_t), stream));
@@ -334,7 +334,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         // phase1 and phase2: place each C(i,j) in a bucket
         //----------------------------------------------------------------------
 
-// FIXME: API for CUDA 13.2
+// fixme: API for CUDA 13.2
 #if 0
         CUDA_OK (cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
         CUDA_OK (cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, (cudaMemLocation) device));
@@ -480,7 +480,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
                         case GB_BUCKET_VSVS :
                         {
-                            // FIXME: should be a function of cuda architecture
+                            // fixme: should be a function of cuda architecture
                             blocksz = 256 ;
                             work_per_thread = 4 ;
                             if (cnz_in_bucket > (2<<12))
@@ -506,7 +506,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
                         case GB_BUCKET_MERGEPATH :
                         {
-                            // FIXME: should be a function of cuda architecture
+                            // fixme: should be a function of cuda architecture
                             work_per_thread = 256 ;
                             if (cnz_in_bucket > (2<<20))
                             {
@@ -537,7 +537,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
                         case GB_BUCKET_VSSP :
                         {
-                            // FIXME: should be a function of cuda architecture
+                            // fixme: should be a function of cuda architecture
                             work_per_thread = 256 ;
                             if (cnz_in_bucket > (2<<20))
                             {
@@ -572,7 +572,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
                         case GB_BUCKET_VSDN :
                         {
-                            // FIXME: should be a function of cuda architecture
+                            // fixme: should be a function of cuda architecture
                             blocksz = 256 ;
                             work_per_thread = 4 ;
                             if (cnz_in_bucket > (2<<12))
@@ -602,7 +602,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                             // CUDA tile size:
                             blocksz = GB_CUDA_TILE_SIZE ;
 
-                            // FIXME: should be a function of cuda architecture
+                            // fixme: should be a function of cuda architecture
                             work_per_thread = 256 ;
                             if (cnz_in_bucket > (2<<20))
                             {

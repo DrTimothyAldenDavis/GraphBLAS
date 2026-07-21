@@ -36,7 +36,7 @@ bool GB_cuda_AxB_dot3_branch
 
     if (A->header_mem == 0 || B->header_mem == 0 || M->header_mem == 0)
     {
-        // FIXME arena: check all of A, B, and M
+        // fixme arena: check all of A, B, and M
         return (false) ;
     }
 
@@ -62,12 +62,12 @@ bool GB_cuda_AxB_dot3_branch
     double work = GB_nnz (M) * GB_IMIN (adeg, bdeg) ;
 
     int gpu_count = GB_ngpus_to_use (work) ;
-    int ngpus_max = GB_Context_gpu_ids (NULL) ;     // FIXME: get gpu_ids
+    int ngpus_max = GB_Context_gpu_ids (NULL) ;     // fixme: get gpu_ids
     gpu_count = std::min (gpu_count, ngpus_max) ;
     GBURBLE (" work:%g GPUs:%d ", work, gpu_count) ;
     if (gpu_count > 0)
     {
-        // FIXME: determine which GPU from the context object
+        // fixme: determine which GPU from the context object
         return true ;
     }
     else

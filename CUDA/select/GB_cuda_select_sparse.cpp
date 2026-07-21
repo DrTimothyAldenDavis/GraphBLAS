@@ -68,11 +68,11 @@ GrB_Info GB_cuda_select_sparse
 
     C->iso = C_iso ;
 
-    CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
-    CUDA_OK (cudaStreamSynchronize (stream)) ;  //FIXME: remove
-    CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
-    CUDA_OK (cudaStreamSynchronize (stream)) ;  //FIXME: remove
-    CUDA_OK (cudaGetLastError ( )) ;    //FIXME: remove
+    CUDA_OK (cudaGetLastError ( )) ;    //fixme: remove
+    CUDA_OK (cudaStreamSynchronize (stream)) ;  //fixme: remove
+    CUDA_OK (cudaGetLastError ( )) ;    //fixme: remove
+    CUDA_OK (cudaStreamSynchronize (stream)) ;  //fixme: remove
+    CUDA_OK (cudaGetLastError ( )) ;    //fixme: remove
 
     GB_OK (GB_cuda_select_sparse_jit (C, A,
         flipij, ythunk, op, stream, gridsz)) ;

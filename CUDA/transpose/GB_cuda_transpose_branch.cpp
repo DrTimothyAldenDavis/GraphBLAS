@@ -27,7 +27,7 @@ bool GB_cuda_transpose_branch
 
     if (A->header_mem == 0)
     {
-        // FIXME arena: check all of A
+        // fixme arena: check all of A
         return (false) ;
     }
 
@@ -53,7 +53,7 @@ bool GB_cuda_transpose_branch
 
     double work = GB_nnz_held (A) ;
     int gpu_count = GB_ngpus_to_use (work) ;
-    int ngpus_max = GB_Context_gpu_ids (NULL) ;     // FIXME: get gpu_ids
+    int ngpus_max = GB_Context_gpu_ids (NULL) ;     // fixme: get gpu_ids
     gpu_count = std::min (gpu_count, ngpus_max) ;
     ok = ok && (gpu_count > 0);
     return (ok) ;

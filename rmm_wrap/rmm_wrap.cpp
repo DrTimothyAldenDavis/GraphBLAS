@@ -147,7 +147,7 @@ bool rmm_wrap_is_initialized (void)
 // the rmm_wrap_context:  the memory resource (host or device) and the
 // alloc_map.
 
-// FIXME: GraphBLAS currently does not call this method ...
+// fixme for CUDA: GraphBLAS currently does not call this method ...
 
 void rmm_wrap_finalize (void)
 {
@@ -176,7 +176,7 @@ void rmm_wrap_finalize (void)
 
 int get_current_device(void)
 {
-    // FIXME: return an error code if this method fails
+    // fixme for CUDA: return an error code if this method fails
     int device_id;
     cudaGetDevice(&device_id);
     return device_id;
@@ -211,7 +211,7 @@ int rmm_wrap_initialize     // returns -1 on error, 0 on success
 
         // create the RMM wrap handle and save it as a global pointer.
         rmm_wrap_context [device_id] = new RMM_Wrap_Handle() ;
-        // FIXME: check for error?
+        // fixme for CUDA: check for error?
 
         //  std::cout<< " init called with mode "<<mode<<" init_size "
         // <<init_pool_memsize<<" max_size "<<max_pool_memsize<<"\n";
@@ -406,7 +406,7 @@ void *rmm_wrap_allocate( std::size_t *size)
             return (NULL) ;
         }
 
-        // FIXME: check for failure of get_current_device
+        // fixme for CUDA: check for failure of get_current_device
         uint32_t device_id = get_current_device();
 
         alloc_map *am = rmm_wrap_context[device_id]->size_map.get() ;

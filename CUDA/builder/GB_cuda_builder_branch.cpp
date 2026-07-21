@@ -40,14 +40,14 @@ bool GB_cuda_builder_branch
         !GB_cuda_pointer_ok (J, "J") ||
         !GB_cuda_pointer_ok (X, "X"))
     {
-        // FIXME: better yet, memcpy to GPU-accessible memory
+        // fixme: better yet, memcpy to GPU-accessible memory
         printf ("%s: (I,J,X) pointers not accessible by the GPU\n", __FILE__) ;
         return (false) ;
     }
 
     if (C->header_mem == 0)
     {
-        // FIXME arena: check all of C
+        // fixme arena: check all of C
         return (false) ;
     }
 
@@ -71,7 +71,7 @@ bool GB_cuda_builder_branch
 
     double work = nvals ;
     int gpu_count = GB_ngpus_to_use (work) ;
-    int ngpus_max = GB_Context_gpu_ids (NULL) ;     // FIXME: get gpu_ids
+    int ngpus_max = GB_Context_gpu_ids (NULL) ;     // fixme: get gpu_ids
     gpu_count = std::min (gpu_count, ngpus_max) ;
     ok = ok && (gpu_count > 0);
     return (ok) ;
