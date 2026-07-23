@@ -802,10 +802,9 @@ void * GB_Global_malloc_function (uint64_t memsize, int arena)
 
 void * GB_Global_malloc_default (uint64_t memsize)
 { 
-// FIXME arena: use the default malloc
+    // this method is used only by the JIT
     // malloc space in the default arena, with no memory tracking
-//  return (GB_Global.malloc_function [GrB_DEFAULT] (memsize)) ;
-    return (malloc (memsize)) ;
+    return (GB_Global.malloc_function [GrB_DEFAULT] (memsize)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -922,12 +921,11 @@ void GB_Global_free_function (void *p, int arena)
 
 void GB_Global_free_default (void **p)
 { 
+    // this method is used only by the JIT
     // free memory in the default arena, with no memory tracking
     if (p != NULL && (*p) != NULL)
     { 
-        free (*p) ;
-// FIXME arena: use the default malloc
-        // GB_Global.free_function [GrB_DEFAULT] (*p) ;
+        GB_Global.free_function [GrB_DEFAULT] (*p) ;
         (*p) = NULL ;
     }
 }
