@@ -98,7 +98,8 @@ GrB_Info import_export ( )
                 nrows, nvals) ;
             OK (GB_Type_check (type, "type", GxB_SUMMARY, stdout)) ;
             char *string = NULL ;
-            uint64_t string_mem = 0 ;   // set by GB_entry_check
+            // use default arena string_mem (malloc/free) just as a variation
+            uint64_t string_mem = GB_mem (GrB_DEFAULT, 0) ;
             for (int64_t p = 0 ; p < nvals ; p++)
             {
                 printf ("  row %llu value ", Ai [p]) ;
@@ -140,7 +141,8 @@ GrB_Info import_export ( )
                     "%llu:\n", nrows, ncols, Ax_memsize) ;
                 OK (GB_Type_check (type, "type", GxB_SUMMARY, stdout));
                 char *string = NULL ;
-                uint64_t string_mem = 0 ;   // set by GB_entry_check
+                // use MX arena string_mem (mxMalloc/mxFree) just as a variation
+                uint64_t string_mem = GB_mem (GB_ARENA_TEST, 0) ;
                 for (int64_t i = 0 ; i < nrows ; i++)
                 {
                     printf ("Row %lld\n", i) ;
@@ -180,7 +182,7 @@ GrB_Info import_export ( )
                     "%llu:\n", nrows, ncols, Ax_memsize) ;
                 OK (GB_Type_check (type, "type", GxB_SUMMARY, stdout));
                 char *string = NULL ;
-                uint64_t string_mem = 0 ;   // set by GB_entry_check
+                uint64_t string_mem = GB_mem (GrB_DEFAULT, 0) ;
                 for (int64_t j = 0 ; j < ncols ; j++)
                 {
                     printf ("Col %lld\n", j) ;
@@ -220,7 +222,7 @@ GrB_Info import_export ( )
                     "nvec %llu:\n", nrows, ncols, Ax_memsize, nvec) ;
                 OK (GB_Type_check (type, "type", GxB_SUMMARY, stdout));
                 char *string = NULL ;
-                uint64_t string_mem = 0 ;   // set by GB_entry_check
+                uint64_t string_mem = GB_mem (GrB_DEFAULT, 0) ;
                 for (int64_t k = 0 ; k < nvec ; k++)
                 {
                     int64_t i = Ah [k] ;
@@ -262,7 +264,7 @@ GrB_Info import_export ( )
                     "c %llu:\n", nrows, ncols, Ax_memsize, nvec) ;
                 OK (GB_Type_check (type, "type", GxB_SUMMARY, stdout));
                 char *string = NULL ;
-                uint64_t string_mem = 0 ;   // set by GB_entry_check
+                uint64_t string_mem = GB_mem (GrB_DEFAULT, 0) ;
                 for (int64_t k = 0 ; k < nvec ; k++)
                 {
                     int64_t j = Ah [k] ;

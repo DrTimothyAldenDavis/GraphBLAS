@@ -9,6 +9,7 @@
 
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
+#include "helper/GB_helper.h"
 
 #undef  FREE_ALL
 #define FREE_ALL                        \
@@ -118,15 +119,21 @@ void mexFunction
     OK (GrB_Scalar_new (&t, type)) ;
     OK (GrB_Scalar_setElement_UDT (t, (void *) &stuff)) ;
     METHOD (GxB_Scalar_fprint (t, "t", GxB_COMPLETE_VERBOSE, stdout)) ;
+    double nzmax = GB_helper11 ((GrB_Matrix) t) ;
+    CHECK (nzmax == 1) ;
 
     // create A as an iso-valued matrix
     OK (GrB_Matrix_new (&A, type, 4, 3)) ;
     OK (GrB_Matrix_assign_Scalar (A, NULL, NULL, t, GrB_ALL, 4, GrB_ALL, 3,
         NULL)) ;
     METHOD (GxB_Matrix_fprint (A, "A iso", GxB_COMPLETE_VERBOSE, stdout)) ;
+    nzmax = GB_helper11 (A) ;
+    CHECK (nzmax == 12) ;
 
     OK (GrB_Matrix_setElement_UDT (A, (void *) &good, 2, 2)) ;
     METHOD (GxB_Matrix_fprint (A, "A good", GxB_COMPLETE_VERBOSE, stdout)) ;
+    nzmax = GB_helper11 (A) ;
+    CHECK (nzmax == 12) ;
 
     OK (GrB_Matrix_setElement_UDT (A, (void *) &bad, 2, 2)) ;
     info = (GxB_Matrix_fprint (A, "A bad", GxB_COMPLETE_VERBOSE, stdout)) ;
@@ -138,6 +145,12 @@ void mexFunction
     OK (GrB_Matrix_setElement_UDT (A, (void *) &stuff, 1, 1)) ;
     OK (GrB_Matrix_setElement_UDT (A, (void *) &stuff, 1, 2)) ;
     METHOD (GxB_Matrix_fprint (A, "A pending", GxB_COMPLETE_VERBOSE, stdout)) ;
+    nzmax = GB_helper11 (A) ;
+    printf ("nzmax: %g\n", nzmax) ;
+    CHECK (nzmax > 3) ;
+
+    nzmax = GB_helper11 ((GrB_Matrix) NULL) ;
+    CHECK (nzmax == 0) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS

@@ -12,17 +12,17 @@
 
 #include "GB.h"
 
-// FIXME: make these macros functions instead
-// ensure a Container->component exists and is valid
-#define GB_CHECK_COMPONENT(Container,component,type,header_arena,data_arena)\
-    if (Container->component == NULL)                                       \
-    {                                                                       \
-        GB_OK (GB_container_component_new (&(Container->component), type,   \
-            header_arena, data_arena)) ;                                    \
-    }                                                                       \
-    GB_RETURN_IF_INVALID (Container->component) ;                           \
+// ensure a Container->component exists and is valid:
+#define GB_CHECK_COMPONENT(Container,component,type,header_arena,data_arena)  \
+    if (Container->component == NULL)                                         \
+    {                                                                         \
+        GB_OK (GB_container_component_new (&(Container->component), type,     \
+            header_arena, data_arena)) ;                                      \
+    }                                                                         \
+    GB_RETURN_IF_INVALID (Container->component) ;                             \
     ASSERT_VECTOR_OK (Container->component, "Container component", GB0) ;
 
+// ensure all Container->[phbix] exist and are valid:
 #define GB_CHECK_CONTAINER(Container,header_arena,data_arena)                 \
     GB_CHECK_COMPONENT (Container, p, GrB_UINT32, header_arena, data_arena) ; \
     GB_CHECK_COMPONENT (Container, h, GrB_UINT32, header_arena, data_arena) ; \

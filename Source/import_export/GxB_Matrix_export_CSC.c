@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Matrix_export_CSC: export a matrix in CSC format
+// GxB_Matrix_export_CSC: export a matrix in CSC format (HISTORICAL)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

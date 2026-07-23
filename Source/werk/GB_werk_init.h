@@ -22,7 +22,7 @@ static inline GB_Werk GB_Werk_init (GB_Werk Werk, const char *where_string)
     // get the pointer to where any error will be logged
     Werk->logger_handle = NULL ;
     Werk->logger_mem_handle = NULL ;
-    Werk->logger_arena = GrB_DEFAULT ;
+    Werk->logger_arena = GB_Context_data_arena ( ) ;    // revised below
 
     // initialize the Werk stack
     Werk->pwerk = 0 ;

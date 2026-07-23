@@ -70,15 +70,14 @@ GrB_Info GxB_Vector_load
     int data_arena ;
     bool readonly ;
 
-    // FIXME arena: need a max # of arenas in GraphBLAS.h
     if (handling >= ((int) GrB_DEFAULT) &&
-        handling <  ((int) GrB_DEFAULT) + GB_NARENAS)
+        handling <  ((int) GrB_DEFAULT) + GxB_NARENAS)
     { 
         data_arena = handling - ((int) GrB_DEFAULT) ;
         readonly = false ;
     }
     else if (handling >= ((int) GxB_IS_READONLY) &&
-             handling <  ((int) GxB_IS_READONLY) + GB_NARENAS)
+             handling <  ((int) GxB_IS_READONLY) + GxB_NARENAS)
     { 
         data_arena = handling - ((int) GxB_IS_READONLY) ;
         readonly = true ;
@@ -89,8 +88,11 @@ GrB_Info GxB_Vector_load
         return (GrB_INVALID_VALUE) ;
     }
 
-    // FIXME arena: need to return an error if the data arena has not
-    // been established yet.
+    if (GB_Global_malloc_function_get (data_arena) == NULL)
+    { 
+        // arena out of range or not initialized
+        return (GrB_INVALID_VALUE) ;
+    }
 
     uint64_t X_mem = GB_mem (data_arena, X_memsize) ;
 

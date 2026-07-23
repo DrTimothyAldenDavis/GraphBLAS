@@ -10,7 +10,7 @@
 #include "get_set/GB_get_set.h"
 
 GrB_Info GB_matvec_namesize_get (GrB_Matrix A, size_t *value, int field)
-{
+{ 
     const char *name = NULL ;
 
     switch (field)

@@ -19,7 +19,7 @@
 // GrB_Matrix or the size of a type.  SuiteSparse:GraphBLAS provides
 // GxB_Matrix_type_name to query the type of a matrix (returning a string),
 // which can be converted into a GrB_Type with GxB_Type_from_name.  The size of
-// a type can be queried with GrB_get  Using these methods, a user application
+// a type can be queried with GrB_get. Using these methods, a user application
 // can ensure that its Ax array has the correct size for any given GrB_Matrix
 // it wishes to export, regardless of its type.
 

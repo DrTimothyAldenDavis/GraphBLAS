@@ -119,6 +119,8 @@ F100 = {4,4,0,0} ;
 %===============================================================================
 
 % < 1 second: debug_on
+logstat ('test306'    ,t, J0   , F0   ) ; % arenas
+logstat ('test305'    ,t, J0   , F0   ) ; % arenas
 logstat ('test304'    ,t, J0   , F0   ) ; % extractElement
 logstat ('test302'    ,t, J0   , F0   ) ; % GPU controls
 logstat ('test277'    ,t, J0   , F1   ) ; % context get/set
@@ -303,7 +305,7 @@ logstat ('test240'    ,t, J40  , F10  ) ; % dot4, saxpy4, and saxpy5
 logstat ('test237'    ,t, J40  , F10  ) ; % GrB_mxm (saxpy4)
 logstat ('test237'    ,s, J40  , F10  ) ; % GrB_mxm (saxpy4) (1 task)
 logstat ('test184'    ,t, J4   , F1   ) ; % mxm, transp, build
-logstat ('test236'    ,t, J4   , F1   ) ; % GxB_*_sort
+logstat ('test236'    ,t, J4   , F1   , [0 1 2]) ; % GxB_*_sort
 hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 
 %===============================================================================

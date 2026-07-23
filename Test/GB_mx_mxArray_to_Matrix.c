@@ -274,6 +274,10 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     bool j_is_32 = false ;
     bool i_is_32 = false ;
 
+    int p_control = 32 ; bool has_p_control = false ;
+    int j_control = 32 ; bool has_j_control = false ;
+    int i_control = 32 ; bool has_i_control = false ;
+
     if (mxIsStruct (A_matlab))
     {
 
@@ -298,6 +302,33 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         if (fieldnumber >= 0)
         {
             i_is_32 = mxGetScalar (mxGetFieldByNumber (A_matlab,
+                0, fieldnumber)) ;
+        }
+
+        // look for A.p_control
+        fieldnumber = mxGetFieldNumber (A_matlab, "p_control") ;
+        if (fieldnumber >= 0)
+        {
+            has_p_control = true ;
+            p_control = mxGetScalar (mxGetFieldByNumber (A_matlab,
+                0, fieldnumber)) ;
+        }
+
+        // look for A.j_control
+        fieldnumber = mxGetFieldNumber (A_matlab, "j_control") ;
+        if (fieldnumber >= 0)
+        {
+            has_j_control = true ;
+            j_control = mxGetScalar (mxGetFieldByNumber (A_matlab,
+                0, fieldnumber)) ;
+        }
+
+        // look for A.i_control
+        fieldnumber = mxGetFieldNumber (A_matlab, "i_control") ;
+        if (fieldnumber >= 0)
+        {
+            has_i_control = true ;
+            i_control = mxGetScalar (mxGetFieldByNumber (A_matlab,
                 0, fieldnumber)) ;
         }
     }
@@ -455,7 +486,6 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             GxB_Matrix_import_FullC (&T, ttype, nrows, ncols, &Tx, Tx_memsize,
                 false, NULL) ;
             GB_cast_array (A->x, code1, T, 1) ;
-            // GB_cast_array (A->x, code1, MatlabX, code2, NULL, anz, 1) ;
             bool iso ;
             GxB_Matrix_export_FullC (&T, &ttype, &nrows, &ncols, &Tx,
                 &Tx_memsize, &iso, NULL) ;
@@ -560,7 +590,6 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             has_sparsity_control = true ;
             sparsity_control = mxGetScalar (mxGetFieldByNumber (A_matlab,
                 0, fieldnumber)) ;
-//          printf ("sparsity control is %d\n", sparsity_control) ;
         }
     }
 
@@ -640,6 +669,23 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     ASSERT (A->is_csc == is_csc) ;
     ASSERT (nrows_old == GB_NROWS (A)) ;
     ASSERT (ncols_old == GB_NCOLS (A)) ;
+
+    if (has_p_control)
+    { 
+        GrB_Matrix_set_INT32 (A, p_control, GxB_OFFSET_INTEGER_HINT) ;
+    }
+
+    if (has_j_control)
+    { 
+        GrB_Matrix_set_INT32 (A, j_control,
+            A->is_csc ? GxB_COLINDEX_INTEGER_HINT : GxB_ROWINDEX_INTEGER_HINT) ;
+    }
+
+    if (has_i_control)
+    { 
+        GrB_Matrix_set_INT32 (A, i_control,
+            A->is_csc ? GxB_ROWINDEX_INTEGER_HINT : GxB_COLINDEX_INTEGER_HINT) ;
+    }
 
     //--------------------------------------------------------------------------
     // return the GraphBLAS matrix

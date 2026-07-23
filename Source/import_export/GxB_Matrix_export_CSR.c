@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Matrix_export_CSR: export a matrix in CSR format
+// GxB_Matrix_export_CSR: export a matrix in CSR format (HISTORICAL)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

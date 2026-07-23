@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Matrix_export_HyperCSR: export a matrix in hypersparse CSR format
+// GxB_Matrix_export_HyperCSR: export a matrix in hypersparse CSR (HISTORICAL)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

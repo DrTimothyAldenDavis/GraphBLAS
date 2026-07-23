@@ -29,7 +29,8 @@ void mexFunction
     GB_mx_at_exit ( ) ;
 
     // initialize GraphBLAS
-    GxB_init (GrB_NONBLOCKING, mxMalloc, NULL, NULL, mxFree) ;
+//  GxB_init (GrB_NONBLOCKING, mxMalloc, NULL, NULL, mxFree) ;
+    GB_mx_init ( ) ;
 
     // abort
     GB_Global_abort_set (GB_mx_abort) ;

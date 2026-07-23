@@ -89,14 +89,12 @@ static GrB_Info GB_global_enum_set (int32_t value, int field)
 
         case GxB_ARENA_DATA : 
 
-            // FIXME arena: ensure arena is initialized
-            GB_Context_data_arena_set (NULL, value) ;
+            return (GB_Context_data_arena_set (NULL, value)) ;
             break ;
 
         case GxB_ARENA_HEADER : 
 
-            // FIXME arena: ensure arena is initialized
-            GB_Context_header_arena_set (NULL, value) ;
+            return (GB_Context_header_arena_set (NULL, value)) ;
             break ;
 
         case GxB_BURBLE : 

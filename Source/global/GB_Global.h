@@ -53,6 +53,7 @@ void     GB_Global_abort (void) ;
 void     GB_Global_malloc_function_set (GB_malloc_function_t malloc_function, int arena) ;
 void  *  GB_Global_malloc_function_get (int arena) ;
 void  *  GB_Global_malloc_function (uint64_t memsize, int arena) ;
+void  *  GB_Global_malloc_default (uint64_t memsize) ;
 
 void     GB_Global_calloc_function_set (GB_calloc_function_t calloc_function, int arena) ;
 void  *  GB_Global_calloc_function_get (int arena) ;
@@ -65,6 +66,7 @@ bool     GB_Global_realloc_function_have (int arena) ;
 void     GB_Global_free_function_set (GB_free_function_t free_function, int arena) ;
 void  *  GB_Global_free_function_get (int arena) ;
 void     GB_Global_free_function (void *p, int arena) ;
+void     GB_Global_free_default (void **p) ;
 
 void     GB_Global_malloc_tracking_set (bool malloc_tracking) ;
 bool     GB_Global_malloc_tracking_get (void) ;
@@ -77,11 +79,6 @@ bool     GB_Global_malloc_debug_get (void) ;
 
 void     GB_Global_malloc_debug_count_set (int64_t malloc_debug_count) ;
 bool     GB_Global_malloc_debug_count_decrement (void) ;
-
-void *   GB_Global_persistent_malloc (uint64_t memsize) ;
-void     GB_Global_persistent_make (void *p) ;
-void     GB_Global_persistent_set (void (* persistent_function) (void *)) ;
-void     GB_Global_persistent_free (void **p) ;
 
 void     GB_Global_hack_set (int k, int64_t hack) ;
 int64_t  GB_Global_hack_get (int k) ;

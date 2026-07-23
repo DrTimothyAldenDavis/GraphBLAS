@@ -29,7 +29,7 @@ typedef GB_JIT_KERNEL_USER_TYPE_PROTO ((*GB_user_type_f)) ;
 // The strings are also global variables, and are used for filenames,
 // directories, and JIT compilation commands, flags, and settings.
 
-// All objects are allocated in arena 0 using persistent memory.
+// All objects are allocated in arena 0, with no memory tracking.
 
 #ifdef GBCOVER
 // use a smaller JIT table size during test coverage
@@ -131,12 +131,7 @@ static void check_table (void)
 // malloc/free macros
 //------------------------------------------------------------------------------
 
-// The JIT must use persistent malloc/free methods when GraphBLAS is used in
-// MATLAB.  Outside of MATLAB, these are the same as malloc/free passed to
-// GxB_init (or ANSI C malloc/free if using GrB_init).  Inside MATLAB,
-// GB_Global_persistent_malloc uses the same malloc/free given to GxB_init, but
-// then calls mexMakeMemoryPersistent to ensure the memory is not freed when a
-// mexFunction returns to the MATLAB m-file caller.
+// The JIT always uses the default arena.
 
 #define OK(method)                      \
 {                                       \
@@ -149,46 +144,46 @@ static void check_table (void)
 
 #ifdef GB_MEMDUMP
 
-    #define GB_MALLOC_PERSISTENT(X,memsize)                 \
+    #define GB_MALLOC_DEFAULT(X,memsize)                    \
     {                                                       \
-        X = GB_Global_persistent_malloc (memsize) ;         \
-        GBMDUMP ("persistent malloc (%4d): %p size %g\n",   \
+        X = GB_Global_malloc_default (memsize) ;            \
+        GBMDUMP ("JIT malloc (%4d): %p size %g\n",          \
             __LINE__, (void *) X, (double) memsize) ;       \
     }
 
-    #define GB_FREE_PERSISTENT(X)                           \
+    #define GB_FREE_DEFAULT(X)                              \
     {                                                       \
         if (X != NULL)                                      \
         {                                                   \
-            GBMDUMP ("persistent free   (%4d): %p\n",       \
+            GBMDUMP ("JIT free   (%4d): %p\n",              \
             __LINE__, (void *) X) ;                         \
         }                                                   \
-        GB_Global_persistent_free ((void **) &(X)) ;        \
+        GB_Global_free_default ((void **) &(X)) ;           \
     }
 
 #else
 
-    #define GB_MALLOC_PERSISTENT(X,memsize)                 \
+    #define GB_MALLOC_DEFAULT(X,memsize)                    \
     {                                                       \
-        X = GB_Global_persistent_malloc (memsize) ;         \
+        X = GB_Global_malloc_default (memsize) ;            \
     }
 
-    #define GB_FREE_PERSISTENT(X)                           \
+    #define GB_FREE_DEFAULT(X)                              \
     {                                                       \
-        GB_Global_persistent_free ((void **) &(X)) ;        \
+        GB_Global_free_default ((void **) &(X)) ;           \
     }
 
 #endif
 
 #define GB_FREE_STUFF(X)                                \
 {                                                       \
-    GB_FREE_PERSISTENT (X) ;                            \
+    GB_FREE_DEFAULT (X) ;                               \
     X ## _allocated = 0 ;                               \
 }
 
 #define GB_MALLOC_STUFF(X,memsize)                      \
 {                                                       \
-    GB_MALLOC_PERSISTENT (X, (memsize) + 2) ;           \
+    GB_MALLOC_DEFAULT (X, (memsize) + 2) ;              \
     if (X == NULL)                                      \
     {                                                   \
         return (GrB_OUT_OF_MEMORY) ;                    \
@@ -199,8 +194,8 @@ static void check_table (void)
 #define GB_COPY_STUFF(X,src)                            \
 {                                                       \
     ASSERT (src != NULL) ;                              \
-    uint64_t mem = GB_mem (0, strlen (src)) ;           \
-    GB_MALLOC_STUFF (X, mem) ;                          \
+    uint64_t memsize = strlen (src) ;                   \
+    GB_MALLOC_STUFF (X, memsize) ;                      \
     GB_string_copy (X, src, X ## _allocated) ;          \
 }
 
@@ -757,7 +752,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     }
 
     uint8_t *dst ;
-    GB_MALLOC_PERSISTENT (dst, (dst_memsize+2) * sizeof(uint8_t)) ;
+    GB_MALLOC_DEFAULT (dst, (dst_memsize+2) * sizeof(uint8_t)) ;
     if (dst == NULL)
     {
         // JITPackage error: out of memory; disable the JIT
@@ -808,7 +803,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     // free workspace
     //--------------------------------------------------------------------------
 
-    GB_FREE_PERSISTENT (dst) ;
+    GB_FREE_DEFAULT (dst) ;
     if (!ok)
     {
         // JITPackage error: disable the JIT
@@ -2200,7 +2195,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 
         memsize = GB_JITIFIER_INITIAL_NENTRIES *
             sizeof (struct GB_jit_entry_struct) ;
-        GB_MALLOC_PERSISTENT (GB_jit_table, memsize) ;
+        GB_MALLOC_DEFAULT (GB_jit_table, memsize) ;
         if (GB_jit_table == NULL)
         {
             // JIT error: out of memory
@@ -2225,7 +2220,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         int64_t new_bits = new_nentries - 1 ;
         memsize = new_nentries * sizeof (struct GB_jit_entry_struct) ;
         GB_jit_entry *new_table ;
-        GB_MALLOC_PERSISTENT (new_table, memsize) ;
+        GB_MALLOC_DEFAULT (new_table, memsize) ;
         if (new_table == NULL)
         {
             // JIT error: out of memory; leave the existing table as-is
@@ -2284,7 +2279,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
             if (!builtin)
             { 
                 // allocate the suffix if the kernel is not builtin
-                GB_MALLOC_PERSISTENT (e->suffix, suffix_len+2) ;
+                GB_MALLOC_DEFAULT (e->suffix, suffix_len+2) ;
                 if (e->suffix == NULL)
                 {
                     // JIT error: out of memory
@@ -2313,7 +2308,7 @@ void GB_jitifyer_entry_free (GB_jit_entry *e)
 {
     e->dl_function = NULL ;
     GB_jit_table_populated-- ;
-    GB_FREE_PERSISTENT (e->suffix) ;
+    GB_FREE_DEFAULT (e->suffix) ;
     // unload the dl library
     if (e->dl_handle != NULL)
     { 

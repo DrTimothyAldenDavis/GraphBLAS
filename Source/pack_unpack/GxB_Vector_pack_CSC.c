@@ -7,6 +7,13 @@
 
 //------------------------------------------------------------------------------
 
+// The input arrays vi and vx are assumed to be in the data arena
+// defined by the current Context, or the global context if no Context is
+// engaged.  Results are undefined if these arrays are in a different arena.
+
+// The output vector v is created in the same data arena.
+// The header for v remains unchanged and it stays in its same arena.
+
 #include "import_export/GB_export.h"
 
 GrB_Info GxB_Vector_pack_CSC  // pack a vector in CSC format

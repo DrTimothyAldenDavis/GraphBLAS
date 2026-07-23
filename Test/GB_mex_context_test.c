@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_context_text: based on Demo/Programcontext_demo
+// GB_mex_context_text: based on Demo/Program/context_demo
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -96,6 +96,9 @@ void mexFunction
 
     ERR (GxB_Context_get (Context, 999, &nth)) ;
     ERR (GxB_Context_set (Context, 999, nth)) ;
+
+    OK (GxB_Context_get (Context, GxB_NTHREADS, &nth)) ;
+    OK (GxB_Context_get (Context, GxB_NTHREADS, &nth)) ;
 
     OK (GxB_Context_disengage (NULL)) ;
     GrB_free (&Context) ;

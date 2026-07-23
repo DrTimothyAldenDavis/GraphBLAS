@@ -16,7 +16,6 @@ void GB_mx_at_exit ( void )
 {
     // Finalize GraphBLAS, clearing all JIT kernels and freeing the hash table.
     // MATLAB can only use GraphBLAS if GrB_init / GxB_init is called again.
-    GB_Global_persistent_set (mexMakeMemoryPersistent) ;
     GrB_finalize ( ) ;
 }
 

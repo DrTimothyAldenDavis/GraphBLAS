@@ -148,8 +148,11 @@ GrB_Info ewise
     // get the current free function
     //--------------------------------------------------------------------------
 
-    // GxB_unpack returns its arrays in the default arena
-    free_function = GB_Global_free_function_get (GrB_DEFAULT) ;
+    // GxB_unpack returns its arrays in the arena for the global context
+    int data_arena = GB_Context_data_arena_get (NULL) ;
+    CHECK (data_arena == GB_ARENA_TEST) ;
+    free_function = GB_Global_free_function_get (data_arena) ;
+    CHECK (free_function == mxFree) ;
 
     //--------------------------------------------------------------------------
     // create bitmap format of A, A', and T
@@ -384,6 +387,8 @@ void mexFunction
         (GxB_index_binary_function) gb_test37_idxbinop,
         GrB_FP64, GrB_FP64, GrB_FP64, GrB_FP64,
         "gb_test37_idxbinop", TEST37_IDXBINOP_DEFN)) ;
+
+    OK (GB_Operator_check (Iop, "Iop for test37", 5, NULL)) ;
 
     OK (GxB_IndexBinaryOp_set_String (Iop, "test37 idx binop", GrB_NAME)) ;
     OK (GxB_print (Iop, 5)) ;

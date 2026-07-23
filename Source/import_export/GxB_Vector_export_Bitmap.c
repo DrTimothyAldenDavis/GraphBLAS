@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Vector_export_Bitmap: export a bitmap vector
+// GxB_Vector_export_Bitmap: export a bitmap vector (HISTORICAL)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

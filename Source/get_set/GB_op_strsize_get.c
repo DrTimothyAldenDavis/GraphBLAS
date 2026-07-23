@@ -15,7 +15,7 @@ GrB_Info GB_op_strsize_get
     size_t * value,
     int field
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // get the field

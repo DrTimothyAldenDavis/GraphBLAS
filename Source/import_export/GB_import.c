@@ -10,7 +10,14 @@
 // This method takes O(1) time and memory, unless secure is true (used
 // when the input data is not trusted).
 
-// The input arrays are assumed to be in GrB_DEFAULT (0)
+// The input arrays Ap, Ah, Ab, Ai, and Ax are assumed to be in the data arena
+// defined by the current Context, or the global context if no Context is
+// engaged.  Results are undefined if these arrays are in a different arena.
+
+// The output matrix A is created in the same data arena.  If packing is true,
+// the header for A remains unchanged and it stays in its same arena.
+// Otherwise, the new header for A is created in the header arena defined by
+// the current Context, or the global context if no Context is enganged.
 
 #include "import_export/GB_export.h"
 
@@ -19,6 +26,8 @@
 GrB_Info GB_import      // import/pack a matrix in any format
 (
     bool packing,       // pack if true, create and import false
+                        // packing == true is historical.
+                        // packing == false is used by GrB_Matrix_import
 
     GrB_Matrix *A,      // handle of matrix to create, or pack
     GrB_Type type,      // type of matrix to create
@@ -28,19 +37,19 @@ GrB_Info GB_import      // import/pack a matrix in any format
 
     // the 5 arrays:
     uint64_t **Ap,      // pointers, for sparse and hypersparse formats.
-    uint64_t Ap_memsize,   // size of Ap in bytes (arena: GrB_DEFAULT)
+    uint64_t Ap_memsize,   // size of Ap in bytes
 
     uint64_t **Ah,      // vector indices for hypersparse matrices
-    uint64_t Ah_memsize,   // size of Ah in bytes (arena: GrB_DEFAULT)
+    uint64_t Ah_memsize,   // size of Ah in bytes
 
     int8_t **Ab,        // bitmap, for bitmap format only.
-    uint64_t Ab_memsize,   // size of Ab in bytes (arena: GrB_DEFAULT)
+    uint64_t Ab_memsize,   // size of Ab in bytes
 
     uint64_t **Ai,      // indices for hyper and sparse formats
-    uint64_t Ai_memsize,   // size of Ai in bytes (arena: GrB_DEFAULT)
+    uint64_t Ai_memsize,   // size of Ai in bytes
 
     void **Ax,          // values
-    uint64_t Ax_memsize,   // size of Ax in bytes (arena: GrB_DEFAULT)
+    uint64_t Ax_memsize,   // size of Ax in bytes
 
     // additional information for specific formats:
     uint64_t nvals,     // # of entries for bitmap format, or for a vector
@@ -67,12 +76,23 @@ GrB_Info GB_import      // import/pack a matrix in any format
 
     GB_RETURN_IF_NULL (A) ;
 
-    if (!packing)
+    int header_arena ;
+
+    if (packing)
+    { 
+        // *A must be non-NULL for GxB_*_pack_* methods
+        GB_RETURN_IF_NULL (*A) ;
+        header_arena = GB_arena ((*A)->header_mem) ;
+    }
+    else
     { 
         // GxB*import and GrB*import: A is created by this method, including
-        // the header.  The GxB methods for packing == false are deprecated.
+        // the header.
         (*A) = NULL ;
+        header_arena = GB_Context_header_arena ( ) ;
     }
+
+    int data_arena = GB_Context_data_arena ( ) ;
 
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
     if (vlen > GB_NMAX || vdim > GB_NMAX || nvals > GB_NMAX || nvec > GB_NMAX
@@ -213,7 +233,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
         type, vlen, vdim, is_sparse_vector ? GB_ph_calloc : GB_ph_null,
         is_csc, sparsity, GB_Global_hyper_switch_get ( ), nvec,
         /* OK, import as all-64-bit: */ false, false, false,
-        GrB_DEFAULT, GrB_DEFAULT) ;
+        header_arena, data_arena) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -235,7 +255,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
 
             // import A->h, then fall through to sparse case
             (*A)->h = (*Ah) ; (*Ah) = NULL ;
-            (*A)->h_mem = GB_mem (GrB_DEFAULT, Ah_memsize) ;
+            (*A)->h_mem = GB_mem (data_arena, Ah_memsize) ;
             if (add_to_memtable)
             { 
                 // for debugging only
@@ -261,7 +281,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
             { 
                 // import A->p, unless already created for a sparse CSC vector
                 (*A)->p = (*Ap) ; (*Ap) = NULL ;        // OK; 64-bit only
-                (*A)->p_mem = GB_mem (GrB_DEFAULT, Ap_memsize) ;
+                (*A)->p_mem = GB_mem (data_arena, Ap_memsize) ;
                 if (add_to_memtable)
                 { 
                     // for debugging only
@@ -272,7 +292,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
 
             // import A->i
             (*A)->i = (*Ai) ; (*Ai) = NULL ;    // OK; 64-bit only
-            (*A)->i_mem = GB_mem (GrB_DEFAULT, Ai_memsize) ;
+            (*A)->i_mem = GB_mem (data_arena, Ai_memsize) ;
             if (add_to_memtable)
             { 
                 // for debugging only
@@ -286,7 +306,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
 
             // import A->b
             (*A)->b = (*Ab) ; (*Ab) = NULL ;
-            (*A)->b_mem = GB_mem (GrB_DEFAULT, Ab_memsize) ;
+            (*A)->b_mem = GB_mem (data_arena, Ab_memsize) ;
             if (add_to_memtable)
             { 
                 // for debugging only
@@ -305,7 +325,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     { 
         // import A->x
         (*A)->x = (*Ax) ; (*Ax) = NULL ;
-        (*A)->x_mem = GB_mem (GrB_DEFAULT, Ax_memsize) ;
+        (*A)->x_mem = GB_mem (data_arena, Ax_memsize) ;
         if (add_to_memtable)
         { 
             // for debugging only

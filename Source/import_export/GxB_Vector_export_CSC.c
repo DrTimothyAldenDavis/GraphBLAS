@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Vector_export_CSC: export a vector in CSC format
+// GxB_Vector_export_CSC: export a vector in CSC format (HISTORICAL)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

@@ -35,17 +35,18 @@
     //      case 11 :   // hypersparse CSC, not jumbled
 
 #include "GB_mex.h"
+#include "GB_mex_errors.h"
 
 #define USAGE "C = GB_mex_unpack_pack (A, format_matrix, format_export)"
 
-#define FREE_WORK                                   \
-{                                                   \
-    if (Cp != NULL) { mxFree (Cp) ; Cp = NULL ; }   \
-    if (Ch != NULL) { mxFree (Ch) ; Ch = NULL ; }   \
-    if (Cb != NULL) { mxFree (Cb) ; Cb = NULL ; }   \
-    if (Ci != NULL) { mxFree (Ci) ; Ci = NULL ; }   \
-    if (Cx != NULL) { mxFree (Cx) ; Cx = NULL ; }   \
-    GrB_Matrix_free_(&C) ;                          \
+#define FREE_WORK                                       \
+{                                                       \
+    if (Cp != NULL) { free_func (Cp) ; Cp = NULL ; }    \
+    if (Ch != NULL) { free_func (Ch) ; Ch = NULL ; }    \
+    if (Cb != NULL) { free_func (Cb) ; Cb = NULL ; }    \
+    if (Ci != NULL) { free_func (Ci) ; Ci = NULL ; }    \
+    if (Cx != NULL) { free_func (Cx) ; Cx = NULL ; }    \
+    GrB_Matrix_free_(&C) ;                              \
 }
 
 #define FREE_ALL                        \
@@ -55,6 +56,7 @@
     GB_mx_put_global (true) ;           \
 }
 
+#undef  OK
 #define OK(method)                              \
 {                                               \
     info = method ;                             \
@@ -106,7 +108,26 @@ void mexFunction
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
 
+    //--------------------------------------------------------------------------
+    // get the free function for the current arena
+    //--------------------------------------------------------------------------
+
+    int data_arena = -1 ;
+    GB_free_function_t free_func = NULL ;
+    GrB_Global_get_INT32 (GrB_GLOBAL, &data_arena, GxB_ARENA_DATA) ;
+    CHECK (data_arena == GB_ARENA_TEST) ;
+    GrB_Global_get_VOID (GrB_GLOBAL, (void *) &free_func,
+        GxB_ARENA_FREE + GB_ARENA_TEST) ;
+    CHECK (free_func == mxFree) ;
+
+    int header_arena = -1 ;
+    GrB_Global_get_INT32 (GrB_GLOBAL, &header_arena, GxB_ARENA_HEADER) ;
+    CHECK (header_arena == GB_ARENA_TEST) ;
+
+    //--------------------------------------------------------------------------
     // get A (shallow copy)
+    //--------------------------------------------------------------------------
+
     {
         A = GB_mx_mxArray_to_Matrix (pargin [0], "A input", false, true) ;
         if (A == NULL)
@@ -116,7 +137,10 @@ void mexFunction
         }
     }
 
+    //--------------------------------------------------------------------------
     // get matrix format (1 to 8, and -1 to -8)
+    //--------------------------------------------------------------------------
+
     int GET_SCALAR (1, int, format_matrix, 0) ;
     bool do_matrix = (format_matrix > 0) ;
     if (format_matrix < 0)
@@ -124,7 +148,10 @@ void mexFunction
         format_matrix = -format_matrix ;
     }
 
+    //--------------------------------------------------------------------------
     // get export/import format (0 to 11)
+    //--------------------------------------------------------------------------
+
     int GET_SCALAR (2, int, format_export, 0) ;
 
     #define GET_DEEP_COPY           \
@@ -133,10 +160,16 @@ void mexFunction
 
     #define FREE_DEEP_COPY  GrB_Matrix_free (&C) ;
 
+    //--------------------------------------------------------------------------
     // C = deep copy of A
+    //--------------------------------------------------------------------------
+
     GET_DEEP_COPY ;
 
+    //--------------------------------------------------------------------------
     // convert matrix, unpack, then import
+    //--------------------------------------------------------------------------
+
     if (do_matrix)
     {
         METHOD (unpack_pack (format_matrix, format_export)) ;
@@ -145,13 +178,19 @@ void mexFunction
     FREE_DEEP_COPY ;
     GET_DEEP_COPY ;
 
+    //--------------------------------------------------------------------------
     // convert vector, unpack, then import, if C can be cast as a GrB_Vector
+    //--------------------------------------------------------------------------
+
     if (GB_VECTOR_OK (C))
     {
         METHOD (vector_unpack_pack (format_matrix, format_export)) ;
     }
 
+    //--------------------------------------------------------------------------
     // return C as a struct and free the GraphBLAS C
+    //--------------------------------------------------------------------------
+
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;
     FREE_ALL ;
 }
@@ -166,6 +205,18 @@ GrB_Info unpack_pack
     int format_export
 )
 {
+
+    //--------------------------------------------------------------------------
+    // get the free function for the current arena
+    //--------------------------------------------------------------------------
+
+    int data_arena = -1 ;
+    GB_free_function_t free_func = NULL ;
+    GrB_Global_get_INT32 (GrB_GLOBAL, &data_arena, GxB_ARENA_DATA) ;
+    CHECK (data_arena == GB_ARENA_TEST) ;
+    GrB_Global_get_VOID (GrB_GLOBAL, (void *) &free_func,
+        GxB_ARENA_FREE + GB_ARENA_TEST) ;
+    CHECK (free_func == mxFree) ;
 
     //--------------------------------------------------------------------------
     // convert C to the requested format
@@ -456,6 +507,18 @@ GrB_Info vector_unpack_pack
     int format_export
 )
 {
+
+    //--------------------------------------------------------------------------
+    // get the free function for the current arena
+    //--------------------------------------------------------------------------
+
+    int data_arena = -1 ;
+    GB_free_function_t free_func = NULL ;
+    GrB_Global_get_INT32 (GrB_GLOBAL, &data_arena, GxB_ARENA_DATA) ;
+    CHECK (data_arena == GB_ARENA_TEST) ;
+    GrB_Global_get_VOID (GrB_GLOBAL, (void *) &free_func,
+        GxB_ARENA_FREE + GB_ARENA_TEST) ;
+    CHECK (free_func == mxFree) ;
 
     //--------------------------------------------------------------------------
     // convert C as a vector to the requested format, if available

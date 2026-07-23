@@ -556,7 +556,7 @@ bool i_is_32 ;  // true if A->i is 32-bit, false if 64
 // the header requires a malloc/copy/free, and thus changes the pointer *A.
 
 // GrB_get can return the header_area = GB_area (A->header_mem) and the
-// A->data_arena.  GrB_set can only modify A->data_arena.  GxB_*_arena_set can
+// A->data_arena.  GrB_set can only modify A->data_arena.  GxB_*_set_arenas can
 // modify both.
 
 uint8_t data_arena ;

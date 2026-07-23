@@ -15,6 +15,7 @@
 #include "include/GB_include.h"
 
 // These are not needed by JIT kernels and do not appear in GB_jit_kernel.h:
+#include "context/GB_Context.h"
 #include "global/GB_Global.h"
 #include "pji_control/GB_determine_pji_is_32.h"
 #include "print/GB_printf.h"
@@ -52,7 +53,6 @@
 #include "arena/GB_arena.h"
 #include "wait/GB_wait.h"
 #include "convert/GB_convert.h"
-#include "context/GB_Context.h"
 #include "gateway/GB_cuda_gateway.h"
 #include "callback/GB_callbacks.h"
 #include "helper/GB_factory.h"

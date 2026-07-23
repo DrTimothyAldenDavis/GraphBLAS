@@ -43,6 +43,9 @@ GrB_Info GxB_Context_set_Scalar
 
         case GxB_CONTEXT_NGPUS : 
         case GxB_CONTEXT_NTHREADS : 
+        case GxB_ARENA_DATA : 
+        case GxB_ARENA_HEADER : 
+
             info = GrB_Scalar_extractElement_INT32 (&ivalue, scalar) ;
             break ;
 
@@ -73,11 +76,23 @@ GrB_Info GxB_Context_set_Scalar
 
             // set # of gpus to the given ivalue, and GPU ids to 0:ivalue-1
             return (GB_Context_gpu_ids_set (Context, NULL, ivalue)) ;
+            break ;
 
         case GxB_CONTEXT_CHUNK :            // same as GxB_CHUNK
 
             GB_Context_chunk_set (Context, dvalue) ;
             break ;
+
+        case GxB_ARENA_DATA : 
+
+            return (GB_Context_data_arena_set (Context, ivalue)) ;
+            break ;
+
+        case GxB_ARENA_HEADER : 
+
+            return (GB_Context_header_arena_set (Context, ivalue)) ;
+            break ;
+
     }
 
     return (GrB_SUCCESS) ;
@@ -160,12 +175,12 @@ GrB_Info GxB_Context_set_INT
 
         case GxB_ARENA_DATA : 
 
-            GB_Context_data_arena_set (Context, value) ;
+            return (GB_Context_data_arena_set (Context, value)) ;
             break ;
 
         case GxB_ARENA_HEADER : 
 
-            GB_Context_header_arena_set (Context, value) ;
+            return (GB_Context_header_arena_set (Context, value)) ;
             break ;
 
         default : 

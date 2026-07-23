@@ -93,6 +93,12 @@ static GrB_Info GB_desc_get
                 GrB_DEFAULT : desc->val_list) ;
             break ;
 
+        case GxB_ARENA_HEADER : 
+
+            (*value) = (int32_t) ((desc == NULL) ?
+                GrB_DEFAULT : GB_arena (desc->header_mem)) ;
+            break ;
+
         default : 
 
             return (GrB_INVALID_VALUE) ;

@@ -8,8 +8,10 @@
 //------------------------------------------------------------------------------
 
 // No typecasting is done.  The type of entries in the Ax array must match
-// the GrB_Type type parameter.  All input arrays must be in the default
-// data arena, GrB_DEFAULT.
+// the GrB_Type type parameter.
+
+// The output matrix A is created in the data arena and header arena defined by
+// the current Context, or the global context if no Context is enganged.
 
 #include "import_export/GB_export.h"
 #include "builder/GB_build.h"
@@ -53,9 +55,13 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     ASSERT_TYPE_OK (type, "type for GrB_Matrix_import", GB0) ;
     GrB_Info info ;
 
-    uint64_t mem = GB_mem (GrB_DEFAULT, 0) ;
+    // the matrix A is created in the Context header/data arenas
+    int header_arena = GB_Context_header_arena ( ) ;
+    int data_arena = GB_Context_data_arena ( ) ;
 
-    // GrB_Matrix_import has no descritptor so it only supports a secure import
+    uint64_t mem = GB_mem (data_arena, 0) ;
+
+    // GrB_Matrix_import has no descriptor so it only supports a secure import
     bool fast_import = false ;
 
     if (nrows > GB_NMAX || ncols > GB_NMAX || Ap_len > GB_NMAX
@@ -273,7 +279,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
                     type, vlen, vdim, GB_ph_null, is_csc, GxB_AUTO_SPARSITY,
                     GB_Global_hyper_switch_get ( ), 0,
                     /* OK; 64-bit only: */ false, false, false,
-                    GrB_DEFAULT, GrB_DEFAULT)) ;
+                    header_arena, data_arena)) ;
 
                 // build A from the input triplets
                 GB_OK (GB_builder (

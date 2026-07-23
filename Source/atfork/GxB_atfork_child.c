@@ -20,14 +20,14 @@
 //      disables the use of all omp_lock variables and forces OpenMP to use a
 //      single thread in all of the parallel regions in GraphBLAS..
 
-//          FIXME: OpenMP is always used in GraphBLAS via a num_threads clause:
+//      OpenMP is always used in GraphBLAS via a num_threads clause:
 //
 //              #pragma omp parallel ... num_threads(nthreads)
 //
-//          where this method ensures nthreads=1.  This seems to work, but it
-//          is still not fully safe.  A complete fix would return GrB_PANIC or
-//          some other error if any OpenMP parallel regions are attempted.
-//          This will require many tests in many source files.
+//      where this method ensures nthreads=1.  This seems to work, but it is
+//      still not fully safe.  A complete fix would return GrB_PANIC or some
+//      other error if any OpenMP parallel regions are attempted.  This will
+//      require many tests in many source files.
 
 // malloc/calloc/realloc/free: these are not safe.  This method forces the
 //      child to use GB_child_malloc and GB_child_free instead of the existing

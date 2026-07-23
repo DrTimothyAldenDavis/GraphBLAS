@@ -1,11 +1,19 @@
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_HyperCSR: import a matrix in hypersparse CSR format
+// GxB_Matrix_import_HyperCSR: import a matrix in hypersparse CSR (HISTORICAL)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// The input arrays Ap, Ah, Aj, and Ax are assumed to be in the data arena
+// defined by the current Context, or the global context if no Context is
+// engaged.  Results are undefined if these arrays are in a different arena.
+
+// The output matrix A is created in the same data arena.
+// The new header for A is created in the header arena defined by
+// the current Context, or the global context if no Context is enganged.
 
 #include "import_export/GB_export.h"
 

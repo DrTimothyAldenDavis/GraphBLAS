@@ -339,8 +339,7 @@ thread-safe.  The following usage is identical to \verb'GrB_init(mode)':
     \begin{verbatim}
     GxB_init (mode, malloc, calloc, realloc, free) ; \end{verbatim}}
 
-If a GPU mode is used, the memory manager functions are ignored, and
-the Rapids Memory Manager (RMM) versions are used instead.
+FIXME: discuss arenas and See Section~\ref{sec:arenas}.
 
 GraphBLAS itself does not use the system \verb'calloc' nor the
 \verb'user_calloc_func', except the function pointer is returned by the

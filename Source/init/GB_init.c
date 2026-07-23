@@ -92,7 +92,7 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    // FIXME arena: use GB_rmm_malloc etc for GxB_ARENA_RMM (arena: 1),
+    // fixme arena for CUDA: use GB_rmm_malloc etc for GxB_ARENA_RMM,
     // which is reserved and cannot be modified by the user.
     GB_Global_gpu_count_set (true) ;
     int gpu_count = GB_Global_gpu_count_get ( ) ;

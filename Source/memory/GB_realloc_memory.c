@@ -114,7 +114,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     uint64_t pnew_mem = GB_mem (arena, 0) ;
 
     if (!GB_Global_realloc_function_have (arena))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // no realloc function: use malloc/memcpy/free

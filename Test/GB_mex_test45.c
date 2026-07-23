@@ -74,7 +74,7 @@ void mexFunction
 
     GxB_print (A, 2) ;
     GxB_print (X, 2) ;
-    OK (GrB_set (GrB_GLOBAL, true, GxB_BURBLE)) ;
+    OK (GrB_set (GrB_GLOBAL, false, GxB_BURBLE)) ;
 
     //--------------------------------------------------------------------------
     // C = A*A and Y = C*X
@@ -127,6 +127,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     FREE_ALL ;
+    OK (GrB_set (GrB_GLOBAL, false, GxB_BURBLE)) ;
     printf ("\nGB_mex_test45:  all tests passed\n\n") ;
 }
 

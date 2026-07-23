@@ -7,6 +7,13 @@
 
 //------------------------------------------------------------------------------
 
+// The input arrays Ab and Ax are assumed to be in the data arena
+// defined by the current Context, or the global context if no Context is
+// engaged.  Results are undefined if these arrays are in a different arena.
+
+// The output matrix A is created in the same data arena.
+// The header for A remains unchanged and it stays in its same arena.
+
 #include "import_export/GB_export.h"
 
 GrB_Info GxB_Matrix_pack_BitmapC  // pack a bitmap matrix, held by column

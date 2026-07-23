@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Matrix_export_FullC: export a full matrix, held by column
+// GxB_Matrix_export_FullC: export a full matrix, held by column (HISTORICAL)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

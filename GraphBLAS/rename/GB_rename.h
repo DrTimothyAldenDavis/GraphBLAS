@@ -405,6 +405,7 @@
 #define GB_Global_cpu_features_rvv_1_0 GM_Global_cpu_features_rvv_1_0
 #define GB_Global_flush_get GM_Global_flush_get
 #define GB_Global_flush_set GM_Global_flush_set
+#define GB_Global_free_default GM_Global_free_default
 #define GB_Global_free_function_get GM_Global_free_function_get
 #define GB_Global_free_function GM_Global_free_function
 #define GB_Global_free_function_set GM_Global_free_function_set
@@ -442,6 +443,7 @@
 #define GB_Global_malloc_debug_count_set GM_Global_malloc_debug_count_set
 #define GB_Global_malloc_debug_get GM_Global_malloc_debug_get
 #define GB_Global_malloc_debug_set GM_Global_malloc_debug_set
+#define GB_Global_malloc_default GM_Global_malloc_default
 #define GB_Global_malloc_function_get GM_Global_malloc_function_get
 #define GB_Global_malloc_function GM_Global_malloc_function
 #define GB_Global_malloc_function_set GM_Global_malloc_function_set
@@ -461,10 +463,6 @@
 #define GB_Global_nmalloc_get GM_Global_nmalloc_get
 #define GB_Global_p_control_get GM_Global_p_control_get
 #define GB_Global_p_control_set GM_Global_p_control_set
-#define GB_Global_persistent_free GM_Global_persistent_free
-#define GB_Global_persistent_make GM_Global_persistent_make
-#define GB_Global_persistent_malloc GM_Global_persistent_malloc
-#define GB_Global_persistent_set GM_Global_persistent_set
 #define GB_Global_printf_get GM_Global_printf_get
 #define GB_Global_printf_set GM_Global_printf_set
 #define GB_Global_print_one_based_get GM_Global_print_one_based_get

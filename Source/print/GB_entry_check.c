@@ -46,11 +46,12 @@
 
 GrB_Info GB_entry_check     // print a single value
 (
+    // input:
     const GrB_Type type,    // type of value to print
     const void *x,          // value to print
     int pr,                 // print level
     FILE *f,                // file to print to
-    // for user-defined types only:
+    // input/output, for user-defined types only:
     char **string_handle,   // string buffer for printing
     uint64_t *string_mem    // memsize and arena of the string buffer
 )
@@ -158,14 +159,11 @@ GrB_Info GB_entry_check     // print a single value
                     if ((*string_handle) == NULL)
                     { 
                         // allocate the string buffer with its initial size;
-                        // it is not freed here but in the caller.
-                        // Uses the default arena. FIXME ok?
-                        int data_arena = GrB_DEFAULT ; // FIXME is this OK?
-//                      int data_arena = GB_Context_data_arena ( ) ; FIXME this?
-                        uint64_t mem = GB_mem (data_arena, 0) ;
-                        (*string_mem) = mem ;
+                        // it is not freed here but in the caller.  The
+                        // string buffer is allocated in the arena defined by
+                        // the input value of (*string_mem).
                         (*string_handle) = GB_MALLOC_MEMORY (1024,
-                            sizeof (char), string_mem) ;
+                            sizeof (char), /* input/output: */ string_mem) ;
                         if ((*string_handle) == NULL)
                         { 
                             return (GrB_OUT_OF_MEMORY) ;
@@ -193,7 +191,6 @@ GrB_Info GB_entry_check     // print a single value
                                 // out of memory
                                 return (GrB_OUT_OF_MEMORY) ;
                             }
-                            (*string_mem) = GB_mem (0, newsize) ;
                         }
                         else
                         { 

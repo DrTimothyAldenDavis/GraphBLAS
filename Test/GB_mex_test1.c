@@ -973,7 +973,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     uint64_t nvals = 42 ;
-    GrB_Scalar scalar = NULL, scalar2 = NULL ;
+    GrB_Scalar scalar = NULL, scalar2 = NULL, scalar3 = NULL ;
     OK (GrB_Scalar_new (&scalar, GrB_FP64)) ;
     OK (GrB_Scalar_nvals (&nvals, scalar)) ;
     OK (GrB_Scalar_wait_(scalar, GrB_MATERIALIZE)) ;
@@ -1033,14 +1033,26 @@ void mexFunction
     OK (GrB_Scalar_wait_(scalar2, GrB_MATERIALIZE)) ;
     CHECK (nvals == 1) ;
 
+    u_64 = 0 ;
+    OK (GxB_Scalar_dup (&scalar3, scalar2)) ;
+    OK (GxB_Scalar_fprint (scalar3, "scalar3", GxB_COMPLETE, NULL)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u_64, scalar3)) ; CHECK (u_64 == 1) ;
+
     expected = GrB_INVALID_OBJECT ;
     scalar2->vlen = 2 ;
     ERR (GxB_Scalar_fprint (scalar2, "scalar2", GxB_COMPLETE, NULL)) ;
     scalar2->vlen = 1 ;
     OK (GxB_Scalar_fprint (scalar2, "scalar2", GxB_COMPLETE, NULL)) ;
 
+    GrB_Scalar_free_(&scalar3) ;
+    u_64 = 0 ;
+    OK (GxB_Scalar_dup_arena (&scalar3, scalar2, 0, 0)) ;
+    OK (GxB_Scalar_fprint (scalar3, "scalar3 (arena 0)", GxB_COMPLETE, NULL)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u_64, scalar3)) ; CHECK (u_64 == 1) ;
+
     GrB_Scalar_free_(&scalar) ;
     GrB_Scalar_free_(&scalar2) ;
+    GrB_Scalar_free_(&scalar3) ;
 
     //--------------------------------------------------------------------------
     // predefined descriptors

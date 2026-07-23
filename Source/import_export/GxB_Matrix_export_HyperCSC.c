@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Matrix_export_HyperCSC: export a matrix in hypersparse CSC format
+// GxB_Matrix_export_HyperCSC: export a matrix in hypersparse CSC (HISTORICAL)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

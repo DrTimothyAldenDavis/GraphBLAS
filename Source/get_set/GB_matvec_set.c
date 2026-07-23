@@ -230,11 +230,11 @@ GrB_Info GB_matvec_set
         case GxB_ARENA_DATA : 
 
             // change the data arena of the matrix (not lazy)
-            if (ivalue < 0 || ivalue >= GB_NARENAS)
+            if (GB_Global_malloc_function_get (ivalue) == NULL)
             { 
+                // arena out of range or not initialized
                 return (GrB_INVALID_VALUE) ;
             }
-            // FIXME arena: check if the data arena has been initialized or not
             A->data_arena = ivalue ;
             GB_OK (GB_wait_arenas (A)) ;
             break ;

@@ -61,16 +61,10 @@ typedef struct
     // All threads must use the same malloc/realloc/free functions.
     // They default to the C11 functions, but can be defined by GxB_init.
 
-    GB_malloc_function_t malloc_function [GB_NARENAS] ;   // required
-    GB_calloc_function_t calloc_function [GB_NARENAS] ;   // may be NULL; unused
-    GB_realloc_function_t realloc_function [GB_NARENAS] ; // may be NULL
-    GB_free_function_t free_function [GB_NARENAS] ;       // required
-
-    //--------------------------------------------------------------------------
-    // tell MATLAB to make memory persistent
-    //--------------------------------------------------------------------------
-
-    void (* persistent_function ) (void *) ;    // FIXME arena: remove
+    GB_malloc_function_t malloc_function [GxB_NARENAS] ;   // required
+    GB_calloc_function_t calloc_function [GxB_NARENAS] ;   // unused
+    GB_realloc_function_t realloc_function [GxB_NARENAS] ; // may be NULL
+    GB_free_function_t free_function [GxB_NARENAS] ;       // required
 
     //--------------------------------------------------------------------------
     // memory usage tracking: for testing and debugging only
@@ -217,22 +211,22 @@ static GB_Global_struct GB_Global =
     // malloc/realloc/free functions: default to C11 functions in arena 0.
     // The user application can change arena 0 only using GxB_init.
     // Arena 1 cannot be changed (GxB_ARENA_RMM, reserved for Rapids).
+    // MATLAB/Octave uses arena 2 for mxMalloc/mxCalloc/mxRealloc/mxFree.
     #ifdef GRAPHBLAS_HAS_CUDA
     // CUDA available: use GB_rmm_malloc/GB_rmm_free for arena 1
-    .malloc_function  = { malloc , GB_rmm_malloc, NULL, NULL },
-    .calloc_function  = { calloc , NULL         , NULL, NULL },
-    .realloc_function = { realloc, NULL         , NULL, NULL },
-    .free_function    = { free   , GB_rmm_free  , NULL, NULL },
+    .malloc_function  = { malloc , GB_rmm_malloc,
+                          NULL, NULL, NULL, NULL, NULL, NULL },
+    .calloc_function  = { calloc , NULL, NULL, NULL, NULL, NULL, NULL, NULL },
+    .realloc_function = { realloc, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
+    .free_function    = { free   , GB_rmm_free  ,
+                          NULL, NULL, NULL, NULL, NULL, NULL },
     #else
     // CUDA not available: use malloc/free for arena 1
-    .malloc_function  = { malloc , malloc, NULL, NULL },
-    .calloc_function  = { calloc , NULL  , NULL, NULL },
-    .realloc_function = { realloc, NULL  , NULL, NULL },
-    .free_function    = { free   , free  , NULL, NULL },
+    .malloc_function  = { malloc , malloc, NULL, NULL, NULL, NULL, NULL, NULL },
+    .calloc_function  = { calloc , NULL  , NULL, NULL, NULL, NULL, NULL, NULL },
+    .realloc_function = { realloc, NULL  , NULL, NULL, NULL, NULL, NULL, NULL },
+    .free_function    = { free   , free  , NULL, NULL, NULL, NULL, NULL, NULL },
     #endif
-
-    // tell MATLAB to make memory persistent  FIXME arena: remove
-    .persistent_function = NULL,
 
     // malloc tracking, for testing, statistics, and debugging only
     .malloc_tracking = false,
@@ -776,7 +770,7 @@ void GB_Global_malloc_function_set
     int arena
 )
 { 
-    if (arena >= 0 && arena < GB_NARENAS)
+    if (arena >= 0 && arena < GxB_NARENAS)
     { 
         GB_Global.malloc_function [arena] = malloc_function ;
     }
@@ -784,17 +778,17 @@ void GB_Global_malloc_function_set
 
 void * GB_Global_malloc_function_get (int arena)
 { 
-    if (arena < 0 || arena >= GB_NARENAS)
+    if (arena < 0 || arena >= GxB_NARENAS)
     { 
         // arena out of range
         return (NULL) ;
     }
-    return ((void *) GB_Global.malloc_function [arena] ) ;
+    return ((void *) GB_Global.malloc_function [arena]) ;
 }
 
 void * GB_Global_malloc_function (uint64_t memsize, int arena)
 { 
-    if (arena < 0 || arena >= GB_NARENAS ||
+    if (arena < 0 || arena >= GxB_NARENAS ||
         GB_Global.malloc_function [arena] == NULL)
     { 
         // arena not initialized or out of range
@@ -804,6 +798,14 @@ void * GB_Global_malloc_function (uint64_t memsize, int arena)
     p = GB_Global.malloc_function [arena] (memsize) ;
     GB_Global_memtable_add (p, GB_mem (arena, memsize)) ;
     return (p) ;
+}
+
+void * GB_Global_malloc_default (uint64_t memsize)
+{ 
+// FIXME arena: use the default malloc
+    // malloc space in the default arena, with no memory tracking
+//  return (GB_Global.malloc_function [GrB_DEFAULT] (memsize)) ;
+    return (malloc (memsize)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -820,7 +822,7 @@ void GB_Global_calloc_function_set
     int arena
 )
 { 
-    if (arena >= 0 && arena < GB_NARENAS)
+    if (arena >= 0 && arena < GxB_NARENAS)
     { 
         GB_Global.calloc_function [arena] = calloc_function ;
     }
@@ -828,7 +830,7 @@ void GB_Global_calloc_function_set
 
 void * GB_Global_calloc_function_get (int arena)
 { 
-    if (arena < 0 || arena >= GB_NARENAS)
+    if (arena < 0 || arena >= GxB_NARENAS)
     { 
         // arena out of range
         return (NULL) ;
@@ -846,7 +848,7 @@ void GB_Global_realloc_function_set
     int arena
 )
 { 
-    if (arena >= 0 && arena < GB_NARENAS)
+    if (arena >= 0 && arena < GxB_NARENAS)
     { 
         GB_Global.realloc_function [arena] = realloc_function ;
     }
@@ -859,7 +861,7 @@ void * GB_Global_realloc_function_get (int arena)
 
 bool GB_Global_realloc_function_have (int arena)
 { 
-    if (arena < 0 || arena >= GB_NARENAS)
+    if (arena < 0 || arena >= GxB_NARENAS)
     { 
         // arena out of range
         return (false) ;
@@ -890,7 +892,7 @@ void * GB_Global_realloc_function (void *p, uint64_t memsize, int arena)
 
 void GB_Global_free_function_set (GB_free_function_t free_function, int arena)
 { 
-    if (arena >= 0 && arena < GB_NARENAS)
+    if (arena >= 0 && arena < GxB_NARENAS)
     { 
         GB_Global.free_function [arena] = free_function ;
     }
@@ -898,7 +900,7 @@ void GB_Global_free_function_set (GB_free_function_t free_function, int arena)
 
 void * GB_Global_free_function_get (int arena)
 { 
-    if (arena < 0 || arena >= GB_NARENAS)
+    if (arena < 0 || arena >= GxB_NARENAS)
     { 
         // arena out of range
         return (NULL) ;
@@ -908,7 +910,7 @@ void * GB_Global_free_function_get (int arena)
 
 void GB_Global_free_function (void *p, int arena)
 { 
-    if (arena < 0 || arena >= GB_NARENAS ||
+    if (arena < 0 || arena >= GxB_NARENAS ||
         GB_Global.free_function [arena] == NULL)
     { 
         // invalid arena
@@ -918,46 +920,16 @@ void GB_Global_free_function (void *p, int arena)
     GB_Global_memtable_remove (p) ;
 }
 
-//------------------------------------------------------------------------------
-// malloc/free persistent memory: malloc and make the memory persistent
-//------------------------------------------------------------------------------
-
-// FIXME arena: persistent malloc/make will be removed; just use malloc/free
-// from arena 0
-
-// By default, MATLAB frees any memory allocated by mxMalloc when a mexFunction
-// returns, except for any memory passed back to the MATLAB caller.  This is
-// fine for all of GraphBLAS, except for the JIT hash table.
-
-void * GB_Global_persistent_malloc (uint64_t memsize)
-{
-    // malloc persistent memory
-    /* FIXME HACK: */ void *p = malloc (memsize) ;
-    return (p) ;
-}
-
-void GB_Global_persistent_make (void *p)
-{
-    if (p != NULL && GB_Global.persistent_function != NULL)
-    { 
-        // tell MATLAB to make this memory persistent: REMOVED
-    }
-}
-
-void GB_Global_persistent_set (void (* persistent_function) (void *))
+void GB_Global_free_default (void **p)
 { 
-    // set the persistent function for MATLAB
-    GB_Global.persistent_function = persistent_function ;
-}
-
-void GB_Global_persistent_free (void **p)
-{
-    // free persistent memory
-    if (p != NULL && *p != NULL)
+    // free memory in the default arena, with no memory tracking
+    if (p != NULL && (*p) != NULL)
     { 
-    /* FIXME HACK: */ free (*p) ;
+        free (*p) ;
+// FIXME arena: use the default malloc
+        // GB_Global.free_function [GrB_DEFAULT] (*p) ;
+        (*p) = NULL ;
     }
-    (*p) = NULL ;
 }
 
 //------------------------------------------------------------------------------

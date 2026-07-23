@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Vector_export_Full: export a full vector
+// GxB_Vector_export_Full: export a full vector (HISTORICAL)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

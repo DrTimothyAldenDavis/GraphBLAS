@@ -44,9 +44,9 @@ GrB_Info GrB_finalize ( )
 
     GB_Global_lock_destroy ( ) ;
 
-    // restore all arenas to their default allocators
-    for (int arena = 0 ; arena < GB_NARENAS ; arena++)
-    {
+    // clear all arenas
+    for (int arena = 0 ; arena < GxB_NARENAS ; arena++)
+    { 
         GB_Global_malloc_function_set (NULL, arena) ;
         GB_Global_calloc_function_set (NULL, arena) ;
         GB_Global_realloc_function_set (NULL, arena) ;

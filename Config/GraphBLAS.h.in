@@ -2836,11 +2836,10 @@ GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
 
 #ifndef GRAPHBLAS_VANILLA
 
-// FIXME arena: GxB_init sets malloc/calloc/realloc/free for arena 0;
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 (
     int mode,               // blocking or non-blocking mode (GrB_Mode)
-    // pointers to memory management functions
+    // pointers to memory management functions for the default memory arena
     void * (* user_malloc_function  ) (size_t),
     void * (* user_calloc_function  ) (size_t, size_t),
     void * (* user_realloc_function ) (void *, size_t),
@@ -2878,30 +2877,62 @@ GrB_Info GxB_finalized      // determine if GraphBLAS is finalized
 // arena methods
 //==============================================================================
 
-/*  FIXME arena: add this to user guide:
+// GraphBLAS supports multiple memory allocators, and matrices or other objects
+// allocated with different memory alloctors can be mixed.  A set of memory
+// routines for malloc/calloc/realloc/free is called a GraphBLAS arena.
 
-    changes the data arena only: (not lazy; always moves data if needed)
-    but could be done as a lazy, leaving it as pending work:
+// GrB_init or GxB_init initializes the default arena, GrB_DEFAULT, or arena 0.
+// GrB_init simply initializes the default arena to the builtin C
+// malloc/calloc/realloc/free methods.  GxB_init allows the user application to
+// use different allocator functions for the default arena.
+
+// Once an arena is initialized, it cannot be changed except by GrB_finalize,
+// which clears all arenas.  A new arena can be created with
+
+//      GxB_arena_init (arena, malloc, calloc, realloc, free) ;
+
+// where the arena is an integer in the range 2 to GxB_NARENAS-1.
+// Arena 1 is reserved for future use by the CUDA kernels in GraphBLAS.
+
+// Matrices, vectors, and scalars can use two different arenas: one for their
+// header and one for their data.  The header is the value of A for the
+// GrB_Matrix A, which is a pointer to an struct containing opaque content.
+// Other objects (types, operators, monoids, semirings, descriptors, etc)
+// use a single arena (the header arena).
+
+// The arena(s) of an object can be queried by GrB_get.  The data arenas of a
+// matrix, vector, or scalar can be set by GrB_set.  To set the header and
+// data arena of a matrix, vector, or scalar, use
+
+//      GxB_Matrix_set_arenas (&A, header_arena, data_arena) ;
+//      GxB_Vector_set_arenas (&V, header_arena, data_arena) ;
+//      GxB_Scalar_set_arenas (&s, header_arena, data_arena) ;
+
+// These methods modify the pointer to the header, and thus the first input
+// parameter is a pointer to a matrix, vector, or scalar.
+
+// By default, constructors such as GrB_Matrix_new use the default arena,
+// or arena 0.  This can be changed with GrB_set (GrB_GLOBAL, ...) or
+// GrB_set (Context, ...).  See the list of get/set methods below.
+
+/*
+    int arena ;
+
+    changes the data arena only:
     GrB_Matrix_set_INT32 (A, arena, GxB_ARENA_DATA) ;
     GrB_Vector_set_INT32 (V, arena, GxB_ARENA_DATA) ;
     GrB_Scalar_set_INT32 (S, arena, GxB_ARENA_DATA) ;
 
-    get the data or header arena of a matrix:
+    get the data arena or header arena of a matrix:
     GrB_Matrix_get_INT32 (A, &arena, GxB_ARENA_DATA) ;
     GrB_Vector_get_INT32 (V, &arena, GxB_ARENA_DATA) ;
     GrB_Scalar_get_INT32 (S, &arena, GxB_ARENA_DATA) ;
-
     GrB_Matrix_get_INT32 (A, &arena, GxB_ARENA_HEADER) ;
     GrB_Vector_get_INT32 (V, &arena, GxB_ARENA_HEADER) ;
     GrB_Scalar_get_INT32 (S, &arena, GxB_ARENA_HEADER) ;
 
-    to change both header & data arena: (not lazy; always moves data if needed)
-    GxB_Matrix_set_arenas (&A, header_arena, data_arena) ;
-    GxB_Vector_set_arenas (&V, header_arena, data_arena) ;
-    GxB_Scalar_set_arenas (&S, header_arena, data_arena) ;
-
-    create a new arena; can only be done once, for arena 2 or more:
-    GxB_arena_init (arena, malloc, calloc, realloc, free) ;
+    get the header arena for all other objects:
+    GrB_*_get_INT32 (object, &arena, GxB_ARENA_HEADER) ;
 
     get the malloc, calloc, realloc, and free functions of an arena:
     GrB_Global_get_VOID (GrB_GLOBAL, &malloc_func,  GxB_ARENA_MALLOC  + arena) ;
@@ -2909,14 +2940,62 @@ GrB_Info GxB_finalized      // determine if GraphBLAS is finalized
     GrB_Global_get_VOID (GrB_GLOBAL, &realloc_func, GxB_ARENA_REALLOC + arena) ;
     GrB_Global_get_VOID (GrB_GLOBAL, &free_func,    GxB_ARENA_FREE    + arena) ;
 
+    get the global default arena:
+    GrB_Global_get_INT32 (GrB_GLOBAL, &arena, GxB_ARENA_DATA) ;
+    GrB_Global_get_INT32 (GrB_GLOBAL, &arena, GxB_ARENA_HEADER) ;
+
+    set the global default arena:
+    GrB_Global_set_INT32 (GrB_GLOBAL, arena, GxB_ARENA_DATA) ;
+    GrB_Global_set_INT32 (GrB_GLOBAL, arena, GxB_ARENA_HEADER) ;
+
+    get the arena of a Context:
+    GxB_Context_get_INT (Context, &arena, GxB_ARENA_DATA) ;
+    GxB_Context_get_INT (Context, &arena, GxB_ARENA_HEADER) ;
+
+    set the arena of a Context:
+    GxB_Context_set_INT (Context, arena, GxB_ARENA_DATA) ;
+    GxB_Context_set_INT (Context, arena, GxB_ARENA_HEADER) ;
 */
 
+// The following methods create new objects but do not use the header/data
+// arenas defined by the global state (GrB_GLOBAL) or a Context.  Instead, they
+// take one or two arena parameters that define which arena(s) to use:
+
+//      GxB_Descriptor_new_arena
+//      GxB_Type_new_arena
+//      GxB_UnaryOp_new_arena
+//      GxB_BinaryOp_new_arena
+//      GxB_IndexBinaryOp_new_arena
+//      GxB_IndexUnaryOp_new_arena
+//      GxB_Monoid_new_arena*
+//      GxB_Monoid_terminal_new_arena*
+//      GxB_Semiring_new_arena
+//      GxB_Scalar_new_arena
+//      GxB_Vector_new_arena
+//      GxB_Matrix_new_arena
+//      GxB_Context_new_arena
+//      GxB_Container_new_arena
+//      GxB_Iterator_new_arena
+
+//      GxB_Scalar_dup_arena
+//      GxB_Vector_dup_arena
+//      GxB_Matrix_dup_arena
+//      GxB_Matrix_split_arena
+//      GxB_Matrix_diag_arena
+//      GxB_Matrix_serialize_arena
+//      GxB_Vector_serialize_arena
+//      GxB_Matrix_deserialize_arena
+//      GxB_Vector_deserialize_arena
+//      GxB_Matrix_reshapeDup_arena
+
 #ifndef GRAPHBLAS_VANILLA
+
+#define GxB_NARENAS 8       /* max number of arenas */
 
 GrB_Info GxB_arena_init     // create a new arena
 (
     // input
-    int arena,              // 0 to GB_NARENAS-1    FIXME arena: GxB_NARENAS
+    int arena,              // 0 to GxB_NARENAS-1
     // pointers to memory management functions
     void * (* user_malloc_function  ) (size_t),         // required
     void * (* user_calloc_function  ) (size_t, size_t), // not used
@@ -3368,7 +3447,7 @@ GB_DECLARE_14 (GrB_, void *)
 #ifndef GRAPHBLAS_VANILLA
 #undef  GB_DECLARE
 #define GB_DECLARE(prefix,suffix,type)                                        \
-GrB_Info prefix ## Monoid_new_arena ## suffix   /* create a new monoid */     \
+GrB_Info GxB_Monoid_new_arena ## suffix   /* create a new monoid */           \
 (                                                                             \
     GrB_Monoid *monoid,             /* handle of monoid to create */          \
     GrB_BinaryOp op,                /* binary operator of the monoid */       \
@@ -3378,7 +3457,7 @@ GrB_Info prefix ## Monoid_new_arena ## suffix   /* create a new monoid */     \
 GB_DECLARE_14 (GxB_, void *)
 
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_Monoid_new_arena(monoid,op,identity)                              \
+#define GxB_Monoid_new_arena(monoid,op,identity,header_arena)                 \
     _Generic ((identity), GB_CASES (GxB, Monoid_new_arena))                   \
         (monoid, op, identity, header_arena)
 #endif
@@ -6856,7 +6935,7 @@ typedef struct GxB_Container_struct *GxB_Container ;
 GrB_Info GxB_Container_new (GxB_Container *Container) ;
 
 GrB_Info GxB_Container_new_arena
-(   
+(
     GxB_Container *Container,
     const int header_arena,
     const int data_arena
@@ -8671,7 +8750,7 @@ GrB_Info GxB_kron (GrB_Matrix, const GrB_Matrix, const GrB_BinaryOp,
 GrB_Info GxB_Matrix_resize (GrB_Matrix, uint64_t, uint64_t) ;
 GrB_Info GxB_Vector_resize (GrB_Vector, uint64_t) ;
 
-// GxB_*_import/export_[FORMAT]: use GxB_*_pack/unpack_[FORMAT] instead
+// GxB_*_import/export_[FORMAT]: use Container methods instead
 GrB_Info GxB_Matrix_import_CSR (GrB_Matrix *, GrB_Type, uint64_t, uint64_t,
     uint64_t **, uint64_t **, void **, uint64_t, uint64_t, uint64_t, bool,
     bool, const GrB_Descriptor) ;

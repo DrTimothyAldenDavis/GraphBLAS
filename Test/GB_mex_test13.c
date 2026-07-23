@@ -65,6 +65,15 @@ void mexFunction
     // finalize GraphBLAS
     //--------------------------------------------------------------------------
 
+    int flag = true ;
+    ERR (GxB_finalized (NULL)) ;
+    OK (GxB_finalized (&flag)) ;
+    CHECK (flag == false) ;
+
+    ERR (GxB_initialized (NULL)) ;
+    OK (GxB_initialized (&flag)) ;
+    CHECK (flag == true) ;
+
     if (no_cache)
     {
         unsetenv ("GRAPHBLAS_CACHE_PATH") ;

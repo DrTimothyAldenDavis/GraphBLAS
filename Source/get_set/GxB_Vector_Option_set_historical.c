@@ -19,7 +19,7 @@ GrB_Info GxB_Vector_Option_set_INT32    // set an option in a vector
     int field,                      // option to change
     int32_t value                   // value to change it to
 )
-{
+{ 
     return (GrB_Vector_set_INT32 (v, value, field)) ;
 }
 
@@ -35,7 +35,7 @@ GrB_Info GxB_Vector_Option_set_FP64    // set an option in a vector
     int field,                      // option to change
     double value                    // value to change it to
 )
-{
+{ 
     GrB_Info info ;
     GrB_Scalar scalar = NULL ;
     GB_OK (GrB_Scalar_new (&scalar, GrB_FP64)) ;

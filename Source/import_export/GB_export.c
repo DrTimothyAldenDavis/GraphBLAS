@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_export: export a matrix or vector
+// GB_export: export a matrix or vector (HISTORICAL)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -7,10 +7,16 @@
 
 //------------------------------------------------------------------------------
 
-// No conversion is done, except: the matrix A is moved to the default data if
-// not already there, A is convert to non-iso if requested, and all integers
-// are converted to 64-bits.  The matrix is exported in its current sparsity
+// No conversion is done, except: the matrix A is moved to the data arena
+// determined by the Context or global context if no Context is engaged (if not
+// already there), A is convert to non-iso if requested, and all integers are
+// converted to 64-bits.  The matrix is exported in its current sparsity
 // structure and by-row/by-col format.
+
+// If unpacking is true, the header arena of A remains unchanged.
+// Otherwise, A is freed so it is no longer in any arena.
+
+// All uses of this method are historical.
 
 #include "import_export/GB_export.h"
 
@@ -23,9 +29,6 @@
 GrB_Info GB_export      // export/unpack a matrix in any format
 (
     bool unpacking,     // unpack if true, export and free if false.
-                        // The false case is historical; GxB*unpack sets this
-                        // flag to true, and GrB*export does not use this
-                        // method.
 
     GrB_Matrix *A,      // handle of matrix to export and free, or unpack
     GrB_Type *type,     // type of matrix to export
@@ -35,19 +38,19 @@ GrB_Info GB_export      // export/unpack a matrix in any format
 
     // the 5 arrays:
     uint64_t **Ap,      // pointers
-    uint64_t *Ap_memsize,  // size of Ap in bytes (arena = 0)
+    uint64_t *Ap_memsize,  // size of Ap in bytes
 
     uint64_t **Ah,      // vector indices
-    uint64_t *Ah_memsize,  // size of Ah in bytes (arena = 0)
+    uint64_t *Ah_memsize,  // size of Ah in bytes
 
     int8_t **Ab,        // bitmap
-    uint64_t *Ab_memsize,  // size of Ab in bytes (arena = 0)
+    uint64_t *Ab_memsize,  // size of Ab in bytes
 
     uint64_t **Ai,      // indices
-    uint64_t *Ai_memsize,  // size of Ai in bytes (arena = 0)
+    uint64_t *Ai_memsize,  // size of Ai in bytes
 
     void **Ax,          // values
-    uint64_t *Ax_memsize,  // size of Ax in bytes (arena = 0)
+    uint64_t *Ax_memsize,  // size of Ax in bytes
 
     // additional information for specific formats:
     uint64_t *nvals,    // # of entries for bitmap format.
@@ -68,7 +71,8 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    int data_arena = GrB_DEFAULT ;
+
+    int data_arena = GB_Context_data_arena ( ) ;
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     int64_t *Ap_new = NULL ; uint64_t Ap_new_mem = mem ;
@@ -77,10 +81,10 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     GB_RETURN_IF_NULL (*A) ;
 
     //--------------------------------------------------------------------------
-    // ensure A->data_arena is GrB_DEFAULT
+    // ensure the data_arena of A matches the Context data arena
     //--------------------------------------------------------------------------
 
-    (*A)->data_arena = GrB_DEFAULT ;
+    (*A)->data_arena = data_arena ;
     GB_OK (GB_wait_arenas (*A)) ;
 
     //--------------------------------------------------------------------------
@@ -287,7 +291,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     else
     { 
         // GxB_export: free the header of A, and A->p if A is a sparse
-        // GrB_Vector.  This method is historical.
+        // GrB_Vector.
         GB_Matrix_free (A) ;
         ASSERT ((*A) == NULL) ;
     }

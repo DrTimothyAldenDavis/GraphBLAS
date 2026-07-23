@@ -38,7 +38,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     bool is_bitmap = GB_IS_BITMAP (A) ;
     bool is_sparse = GB_IS_SPARSE (A) ;
     char *string = NULL ;
-    uint64_t string_mem = 0 ;   // set by GB_entry_check
+    uint64_t string_mem = 0 ;
 
     bool skip_zombie_checks = false ;
     if (pr > 5)
@@ -157,7 +157,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
     GBPR0 (" %s", A->is_csc ? "by col" : "by row") ;
     if (is_sparse || is_hyper || GB_DEVELOPER)
-    {
+    { 
         GBPR0 (", ints: %s/%s/%s",
             A->p_is_32 ? "32" : "64",
             A->j_is_32 ? "32" : "64",
@@ -370,9 +370,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
     #endif
 
-    if (A_header_arena < 0 || A_header_arena >= GB_NARENAS ||
-        A_data_arena < 0 || A_data_arena >= GB_NARENAS)
-    {
+    if ((GB_Global_malloc_function_get (A_data_arena) == NULL) ||
+        (GB_Global_malloc_function_get (A_header_arena) == NULL))
+    { 
+        // arenas out or range or not initialized
         GBPR0 ("  invalid arenas: (%d,%d)\n", A_header_arena, A_data_arena) ;
         return (GrB_INVALID_OBJECT) ;
     }
@@ -544,6 +545,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // print the iso value
     //--------------------------------------------------------------------------
 
+    string_mem = GB_mem (A_data_arena, 0) ;
+
     if (A->iso)
     {
         if (A->x == NULL || GB_memsize (A->x_mem) < A->type->size)
@@ -599,7 +602,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     GB_Pending Pending = A->Pending ;
 
     if (A->nzombies != 0)
-    {
+    { 
         GBPR0 ("  zombies: " GBd "\n", A->nzombies) ;
     }
 

@@ -66,8 +66,6 @@ GB_CALLBACK_WERK_PUSH_PROTO (GB_werk_push)
     // allocate the werkspace
     //--------------------------------------------------------------------------
 
-    // FIXME arena: use 255 for the stack arena and static space
-
     if (*on_stack)
     { 
         // allocate the werkspace from the Werk stack

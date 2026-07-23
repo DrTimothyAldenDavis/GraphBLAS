@@ -270,12 +270,12 @@ int32_t GB_Context_gpu_ids_get          // return # of GPUs to use
         return (0) ;
     }
     if (Context == NULL)
-    {
+    { 
         Context = GxB_CONTEXT_WORLD ;
     }
 
     if (Context == GxB_CONTEXT_WORLD)
-    {
+    { 
         GB_OPENMP_LOCK_SET (5) ;        // global get (gpu ids array)
     }
 
@@ -291,7 +291,7 @@ int32_t GB_Context_gpu_ids_get          // return # of GPUs to use
     }
 
     if (Context == GxB_CONTEXT_WORLD)
-    {
+    { 
         GB_OPENMP_LOCK_UNSET (5) ;      // global get (gpu ids array)
     }
     return (ngpus) ;
@@ -302,7 +302,7 @@ int32_t GB_Context_gpu_ids              // return # of GPUs to use
 (
     int32_t gpu_ids [GB_MAX_NGPUS]      // list of GPU ids to use
 )
-{ 
+{
     // FUTURE: use this in all CUDA kernels
     // This method is used by most GraphBLAS functions to determine the
     // gpu(s) to use.  If a Context is engaged, it uses the engaged context.
@@ -329,7 +329,7 @@ GrB_Info GB_Context_gpu_ids_set
         return (GrB_SUCCESS) ;
     }
     if (Context == NULL)
-    {
+    { 
         Context = GxB_CONTEXT_WORLD ;
     }
     int32_t ngpus_max = GB_Global_gpu_count_get ( ) ;
@@ -357,12 +357,12 @@ GrB_Info GB_Context_gpu_ids_set
 
     // default: use GPUs with ids 0 to ngpus-1
     for (int32_t id = 0 ; id < ngpus ; id++)
-    {
+    { 
         Context->gpu_ids [id] = (uint16_t) id ;
     }
 
     if (Context == GxB_CONTEXT_WORLD)
-    {
+    { 
         GB_OPENMP_LOCK_SET (5) ;        // global set (gpu ids array)
     }
 
@@ -370,7 +370,7 @@ GrB_Info GB_Context_gpu_ids_set
     if (gpu_ids != NULL)
     {
         for (int32_t k = 0 ; k < ngpus ; k++)
-        {
+        { 
             // get the GPU id and save it in the Context list
             int32_t id = gpu_ids [k] ;
             Context->gpu_ids [k] = (uint16_t) id ;
@@ -378,7 +378,7 @@ GrB_Info GB_Context_gpu_ids_set
     }
 
     if (Context == GxB_CONTEXT_WORLD)
-    {
+    { 
         GB_OPENMP_LOCK_UNSET (5) ;      // global set (gpu ids array)
     }
 
@@ -434,7 +434,7 @@ int GB_Context_data_arena (void)
 }
 
 // GB_Context_data_arena_set: set data_arena in a Context
-void GB_Context_data_arena_set
+GrB_Info GB_Context_data_arena_set
 (
     GxB_Context Context,
     int data_arena
@@ -443,11 +443,13 @@ void GB_Context_data_arena_set
     if (GB_Context_disabled)
     {
         // no thread-local-storage can be used; use data_arena 0
-        return ;
+        return (GrB_SUCCESS) ;
     }
-    // ensure data_arena is in range
-    data_arena = GB_IMAX (data_arena, 0) ;
-    data_arena = GB_IMIN (data_arena, GB_NARENAS - 1) ;
+    if (GB_Global_malloc_function_get (data_arena) == NULL)
+    { 
+        // data_arena is out of range or not initialized
+        return (GrB_INVALID_VALUE) ;
+    }
     if (Context == NULL || Context == GxB_CONTEXT_WORLD)
     { 
         GB_ATOMIC_WRITE
@@ -457,6 +459,7 @@ void GB_Context_data_arena_set
     { 
         Context->data_arena = data_arena ;
     }
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------
@@ -499,7 +502,7 @@ int GB_Context_header_arena (void)
 }
 
 // GB_Context_header_arena_set: set header_arena in a Context
-void GB_Context_header_arena_set
+GrB_Info GB_Context_header_arena_set
 (
     GxB_Context Context,
     int header_arena
@@ -508,11 +511,13 @@ void GB_Context_header_arena_set
     if (GB_Context_disabled)
     {
         // no thread-local-storage can be used; use header_arena 0
-        return ;
+        return (GrB_SUCCESS) ;
     }
-    // ensure header_arena is in range
-    header_arena = GB_IMAX (header_arena, 0) ;
-    header_arena = GB_IMIN (header_arena, GB_NARENAS - 1) ;
+    if (GB_Global_malloc_function_get (header_arena) == NULL)
+    { 
+        // header_arena is out of range or not initialized
+        return (GrB_INVALID_VALUE) ;
+    }
     if (Context == NULL || Context == GxB_CONTEXT_WORLD)
     { 
         GB_ATOMIC_WRITE
@@ -522,5 +527,6 @@ void GB_Context_header_arena_set
     { 
         Context->header_arena = header_arena ;
     }
+    return (GrB_SUCCESS) ;
 }
 

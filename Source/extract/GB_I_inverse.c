@@ -76,8 +76,12 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
         return (GrB_OUT_OF_MEMORY) ;
     }
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+    int nthreads = GB_nthreads (nI, chunk, nthreads_max) ;
+
     GB_IPTR (W, W_is_32) ;
-    // FIXME: do this in parallel:
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (int64_t k = 0 ; k < nI ; k++)
     { 
         // W [k] = k

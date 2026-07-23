@@ -18,9 +18,7 @@
 // contains the arena in the high order byte, and the memsize in the lower 7
 // bytes.
 
-#define GB_NARENAS 4            /* total # of arenas */
-#define GB_ARENA_RMM 0          /* FIXME arena: Rapids will be on arena 1 */
-#define GB_ARENA_STACK (255)    /* FIXME arena: for static space, not malloc'd*/
+#define GB_ARENA_RMM 0          /* fixme for CUDA: Rapids will be on arena 1 */
 
 GB_STATIC_INLINE_BOTH int GB_arena (uint64_t mem)
 {

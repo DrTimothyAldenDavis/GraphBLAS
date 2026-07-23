@@ -32,8 +32,12 @@ GrB_Info GB_set_arenas          // modify all arenas of a matrix
         return (GrB_SUCCESS) ;
     }
 
-    // FIXME: return an error if either new_header_arena or new_data_arena
-    // are not initialized, or out of range.
+    if ((GB_Global_malloc_function_get (new_data_arena) == NULL) ||
+        (GB_Global_malloc_function_get (new_header_arena) == NULL))
+    { 
+        // arenas are out of range or not initialized
+        return (GrB_INVALID_VALUE) ;
+    }
 
     //--------------------------------------------------------------------------
     // get the input matrix

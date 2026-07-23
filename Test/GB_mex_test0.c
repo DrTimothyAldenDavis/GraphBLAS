@@ -117,10 +117,25 @@ void mexFunction
     GB_mx_at_exit ( ) ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
 
+    bool flag = false ;
+    OK (GxB_initialized (&flag)) ;
+    CHECK (flag == true) ;
+    OK (GxB_finalized (&flag)) ;
+    CHECK (flag == false) ;
+    expected = GrB_NULL_POINTER ;
+    ERR (GxB_initialized (NULL)) ;
+    ERR (GxB_finalized (NULL)) ;
+
     // finalize, but tell GraphBLAS that GrB_init can be called again:
     GB_mx_at_exit ( ) ;
 
-    OK (GxB_init (GrB_NONBLOCKING, mxMalloc, NULL, NULL, mxFree)) ;
+    OK (GxB_finalized (&flag)) ;
+    CHECK (flag == true) ;
+    OK (GxB_initialized (&flag)) ;
+    CHECK (flag == false) ;
+
+//  OK (GxB_init (GrB_NONBLOCKING, mxMalloc, NULL, NULL, mxFree)) ;
+    OK (GB_mx_init ( )) ;
 
     GB_Global_abort_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;
@@ -229,7 +244,8 @@ void mexFunction
     ERR (GxB_init (GrB_NONBLOCKING, NULL    , NULL, NULL, mxFree)) ;
     ERR (GxB_init (GrB_NONBLOCKING, mxMalloc, NULL, NULL, NULL  )) ;
 
-    OK (GxB_init (GrB_NONBLOCKING, mxMalloc, NULL, NULL, mxFree)) ;
+//  OK (GxB_init (GrB_NONBLOCKING, mxMalloc, NULL, NULL, mxFree)) ;
+    OK (GB_mx_init ( )) ;
 
     nmalloc = GB_Global_nmalloc_get ( ) ;
     bool complex_is_builtin = (Complex == GxB_FC64) ;
@@ -4968,6 +4984,30 @@ void mexFunction
     z = u ;
     GrB_Vector_dup (&u, u) ;
     CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) z, 0)) ;
+    GrB_Vector_free_(&z) ;
+
+    GxB_Vector_dup_arena (&z, u, GrB_DEFAULT, GrB_DEFAULT) ;
+    CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) z, 0)) ;
+
+    int arena = 42 ;
+    OK (GrB_Vector_get_INT32 (z, &arena, GxB_ARENA_HEADER)) ;
+    CHECK (arena == GrB_DEFAULT) ;
+    arena = 42 ;
+    OK (GrB_Vector_get_INT32 (z, &arena, GxB_ARENA_DATA)) ;
+    CHECK (arena == GrB_DEFAULT) ;
+    OK (GrB_Vector_get_INT32 (u, &arena, GxB_ARENA_HEADER)) ;
+    CHECK (arena == GB_ARENA_TEST) ;
+    arena = 42 ;
+    OK (GrB_Vector_get_INT32 (u, &arena, GxB_ARENA_DATA)) ;
+    CHECK (arena == GB_ARENA_TEST) ;
+
+    OK (GrB_Vector_set_INT32 (u, 0, GxB_ARENA_DATA)) ;
+    OK (GrB_Vector_get_INT32 (u, &arena, GxB_ARENA_DATA)) ;
+    CHECK (arena == 0) ;
+
+    expected = GrB_INVALID_VALUE ;
+    ERR (GrB_Vector_set_INT32 (u, 99, GxB_ARENA_DATA)) ;
+
     GrB_Vector_free_(&z) ;
 
     for (int what = 0 ; what <= 2 ; what++)
