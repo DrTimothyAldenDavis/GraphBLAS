@@ -13,7 +13,7 @@
 # get the version
 #-------------------------------------------------------------------------------
 
-cmake_minimum_required ( VERSION 3.20 ) # GraphBLAS can be built stand-alone
+cmake_minimum_required ( VERSION 3.23 )
 
 set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
     ${CMAKE_SOURCE_DIR}/../cmake_modules )

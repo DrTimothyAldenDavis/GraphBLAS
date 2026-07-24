@@ -162,7 +162,7 @@
 //------------------------------------------------------------------------------
 
 #ifndef GRAPHBLAS_HAS_CUDA
-/* #undef GRAPHBLAS_HAS_CUDA */
+#define GRAPHBLAS_HAS_CUDA
 #endif
 
 //------------------------------------------------------------------------------
@@ -2995,8 +2995,7 @@ GrB_Info GxB_finalized      // determine if GraphBLAS is finalized
 GrB_Info GxB_arena_init     // create a new arena
 (
     // input
-    int arena,              // 0 to GxB_NARENAS-1
-    // pointers to memory management functions
+    int arena,              // 2 to GxB_NARENAS-1
     void * (* user_malloc_function  ) (size_t),         // required
     void * (* user_calloc_function  ) (size_t, size_t), // not used
     void * (* user_realloc_function ) (void *, size_t), // optional, can be NULL

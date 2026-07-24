@@ -44,7 +44,7 @@ RMM_MODE ;
 
 // get id of currently selected device
 // fixme for CUDA: wrong name.  call it rmm_wrap_get_current_device
-int get_current_device();
+int get_current_device (void) ;
 
 // determine if RMM has been initialized
 bool rmm_wrap_is_initialized (void) ;

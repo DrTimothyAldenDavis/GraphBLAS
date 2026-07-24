@@ -1,8 +1,182 @@
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Memory arenas} %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Memory arenas} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:arenas}
+
+Many user applications require a different memory allocator than the basic C
+\verb'malloc' and \verb'free', and some applications require multiple allocators
+to be used at the same time.
+
+GraphBLAS 10.4.0 introduces a new feature to the library to support the use of
+multiple allocators: {\em memory arenas}.  An arena is simply a set memory
+allocator routines with the same API as the C \verb'malloc' and \verb'free', plus
+optional \verb'realloc' and \verb'calloc' methods.
+
+Each object in GraphBLAS lives in one or two memory arenas, depending on the
+object.  The \verb'GrB_Matrix', \verb'GrB_Vector', and \verb'GrB_Scalar' can
+use two arenas: a {\em header arena} and a {\em data arena}.  Each
+object in GraphBLAS is a pointer to a struct with opaque content, typically at
+most a few hundred bytes in size, regardless of the size of the matrix.  The
+\verb'GrB_Matrix A' is simply a pointer to this struct, which is the header of
+the object \verb'A'.  Changing the header of a matrix, vector, or scalar will
+change the pointer to the object itself.
+
+The entries in a matrix, vector, or scalar are held in a set of integer arrays
+for row/column indices and offsets, plus a numerical array for the data type.
+These arrays are all in the data arena of the matrix, vector, or scalar.
+
+All other objects have only a single arena, the header arena.
+
+By default, only a single memory arena is used, and this arena defaults to the
+standard C \verb'malloc'/\verb'calloc'/\verb'realloc'/\verb'free' methods.  All
+arena features are backward compatible with prior versions of GraphBLAS, so if
+no additional arenas are needed, nothing needs to change in applications that
+used GraphBLAS versions prior to 10.4.0 (including the MATLAB/Octave
+interface).
+
+Objects in different arenas can be mixed arbitrarily, so for any given
+GraphBLAS method, not all of its parameters need to refer to objects that are
+all in the same arena.
+
+%-------------------------------------------------------------------------------
+\subsection{Creating arenas}
+%-------------------------------------------------------------------------------
+
+The default arena is initialized when \verb'GrB_init' or \verb'GxB_init' is
+called.  \verb'GxB_init' takes in the four pointers to the \verb'malloc',
+\verb'calloc', \verb'realloc', and \verb'free' functions.  This becomes arena
+0, the default arena (\verb'GrB_DEFAULT', which is defined as zero).
+
+Once an arena is initialized, it cannot be deleted except by a call to
+\verb'GrB_finalize', which resets all arenas (including the default arena).
+The macro \verb'GxB_NARENAS' is set in \verb'GraphBLAS.h' and defines the
+maximum number of arenas (8 in GraphBLAS version 10.4.0).
+
+New arenas can be initialized after \verb'GrB_init' with the
+\verb'GxB_arena_init' method.
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_arena_init     // create a new arena
+(
+    // input
+    int arena,              // 2 to GxB_NARENAS-1
+    void * (* user_malloc_function  ) (size_t),         // required
+    void * (* user_calloc_function  ) (size_t, size_t), // not used
+    void * (* user_realloc_function ) (void *, size_t), // optional, can be NULL
+    void   (* user_free_function    ) (void *)          // required
+) ;
+\end{verbatim}
+}\end{mdframed}
+
+Arena 1 is reserved for future use, and arena 0 is only initialized by
+\verb'GrB_init' or \verb'GxB_init', so the \verb'arena' parameter in
+\verb'GxB_arena_init' can be in the range 2 to \verb'GxB_NARENAS-1'.
+
+Just as in \verb'GxB_init', the \verb'calloc' and \verb'realloc' methods are
+optional.  GraphBLAS currently makes no use of the \verb'calloc' method itself,
+but it can be returned by \verb'GrB_get'.  It uses the \verb'realloc' method if
+avaliable; otherwise if this function is NULL, it uses \verb'malloc' and
+\verb'memcpy' in its place.
+
+To retrieve these function pointers after the arena is initialized, use the following:
+
+    {\footnotesize
+    \begin{verbatim}
+    GrB_Global_get_VOID (GrB_GLOBAL, &malloc_func,  GxB_ARENA_MALLOC  + arena) ;
+    GrB_Global_get_VOID (GrB_GLOBAL, &calloc_func,  GxB_ARENA_CALLOC  + arena) ;
+    GrB_Global_get_VOID (GrB_GLOBAL, &realloc_func, GxB_ARENA_REALLOC + arena) ;
+    GrB_Global_get_VOID (GrB_GLOBAL, &free_func,    GxB_ARENA_FREE    + arena) ; \end{verbatim}}
+
+%-------------------------------------------------------------------------------
+\subsection{Using arenas via the global or per-thread context}
+%-------------------------------------------------------------------------------
+
+Once an arena is initialized, it can be used to create new GraphBLAS objects
+using one of two methods:  (1) per-object with methods such as
+\verb'GxB_Matrix_new_arena' (see the the next section) or (2) for all objects
+using the global context or a specific \verb'Context' object for any given
+thread in the user application (described below). 
+
+For method (2), the get/set options are used.  To set the global default
+arenas, use:
+
+    {\footnotesize
+    \begin{verbatim}
+    GrB_set (GrB_GLOBAL, arena, GxB_ARENA_DATA) ;
+    GrB_set (GrB_GLOBAL, arena, GxB_ARENA_HEADER) ; \end{verbatim}}
+
+To set the arenas via a \verb'Context' object, use:
+
+    {\footnotesize
+    \begin{verbatim}
+    GxB_set (Context, arena, GxB_ARENA_DATA) ;
+    GxB_set (Context, arena, GxB_ARENA_HEADER) ; \end{verbatim}}
+
+Once either of the above settings are used, all subsequent newly-created
+objects will be in the new arenas.  For the \verb'Context' object, the
+\verb'Context' must also be engaged.  See
+Sections~\ref{context}, \ref{get_set_context}, and \ref{get_set_global}
+for details.
+
+These settings can be queried via \verb'GrB_get':
+
+    {\footnotesize
+    \begin{verbatim}
+    int32_t arena ;
+    GrB_get (GrB_GLOBAL, &arena, GxB_ARENA_DATA) ;
+    GrB_get (GrB_GLOBAL, &arena, GxB_ARENA_HEADER) ;
+    GxB_get (Context, &arena, GxB_ARENA_DATA) ;
+    GxB_get (Context, &arena, GxB_ARENA_HEADER) ; \end{verbatim}}
+
+This is the simplest method to use different arenas, but it does not allow
+control on a per-object basis.
+
+%-------------------------------------------------------------------------------
+\subsection{Using arenas via per-object methods}
+%-------------------------------------------------------------------------------
+
+{\footnotesize
+\begin{verbatim}
+
+//      GxB_Descriptor_new_arena
+//      GxB_Type_new_arena
+//      GxB_UnaryOp_new_arena
+//      GxB_BinaryOp_new_arena
+//      GxB_IndexBinaryOp_new_arena
+//      GxB_IndexUnaryOp_new_arena
+//      GxB_Monoid_new_arena*
+//      GxB_Monoid_terminal_new_arena*
+//      GxB_Semiring_new_arena
+//      GxB_Context_new_arena
+//      GxB_Container_new_arena
+//      GxB_Iterator_new_arena
+
+//      GxB_Scalar_new_arena
+//      GxB_Vector_new_arena
+//      GxB_Matrix_new_arena
+
+//      GxB_Scalar_dup_arena
+//      GxB_Vector_dup_arena
+//      GxB_Matrix_dup_arena
+//      GxB_Matrix_split_arena
+//      GxB_Matrix_diag_arena
+//      GxB_Matrix_serialize_arena
+//      GxB_Vector_serialize_arena
+//      GxB_Matrix_deserialize_arena
+//      GxB_Vector_deserialize_arena
+//      GxB_Matrix_reshapeDup_arena
+
+    to change both header & data arena: (not lazy; always moves data if needed)
+    GxB_Matrix_set_arenas (&A, header_arena, data_arena) ;
+    GxB_Vector_set_arenas (&V, header_arena, data_arena) ;
+    GxB_Scalar_set_arenas (&S, header_arena, data_arena) ;
+
+\end{verbatim}}
+
+%-------------------------------------------------------------------------------
 
 {\footnotesize
 \begin{verbatim}
@@ -26,36 +200,6 @@ FIXME arena: add this to user guide:
 
     get the arena for all other objects:
     GrB_*_get_INT32 (object, &arena, GxB_ARENA_HEADER) ;
-
-    to change both header & data arena: (not lazy; always moves data if needed)
-    GxB_Matrix_set_arenas (&A, header_arena, data_arena) ;
-    GxB_Vector_set_arenas (&V, header_arena, data_arena) ;
-    GxB_Scalar_set_arenas (&S, header_arena, data_arena) ;
-
-    create a new arena; can only be done once, for arena 2 or more:
-    GxB_arena_init (arena, malloc, calloc, realloc, free) ;
-
-    get the malloc, calloc, realloc, and free functions of an arena:
-    GrB_Global_get_VOID (GrB_GLOBAL, &malloc_func,  GxB_ARENA_MALLOC  + arena) ;
-    GrB_Global_get_VOID (GrB_GLOBAL, &calloc_func,  GxB_ARENA_CALLOC  + arena) ;
-    GrB_Global_get_VOID (GrB_GLOBAL, &realloc_func, GxB_ARENA_REALLOC + arena) ;
-    GrB_Global_get_VOID (GrB_GLOBAL, &free_func,    GxB_ARENA_FREE    + arena) ;
-
-    get the global default arena
-    GrB_Global_get_INT32 (GrB_GLOBAL, &arena, GxB_ARENA_DATA) ;
-    GrB_Global_get_INT32 (GrB_GLOBAL, &arena, GxB_ARENA_HEADER) ;
-
-    set the global default arena
-    GrB_Global_set_INT32 (GrB_GLOBAL, arena, GxB_ARENA_DATA) ;
-    GrB_Global_set_INT32 (GrB_GLOBAL, arena, GxB_ARENA_HEADER) ;
-
-    get the arena of a Context
-    GxB_Context_get_INT (Context, &arena, GxB_ARENA_DATA) ;
-    GxB_Context_get_INT (Context, &arena, GxB_ARENA_HEADER) ;
-
-    set the arena of a Context
-    GxB_Context_set_INT (Context, arena, GxB_ARENA_DATA) ;
-    GxB_Context_set_INT (Context, arena, GxB_ARENA_HEADER) ;
 
 \end{verbatim}}
 

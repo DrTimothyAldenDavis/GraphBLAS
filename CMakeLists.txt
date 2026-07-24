@@ -7,7 +7,7 @@
 
 # See the User Guide for details on how to compile SuiteSparse:GraphBLAS.
 
-cmake_minimum_required ( VERSION 3.20 ) # GraphBLAS can be built stand-alone
+cmake_minimum_required ( VERSION 3.23 )
 
 #-------------------------------------------------------------------------------
 # define the project
@@ -41,8 +41,8 @@ if ( NOT BUILD_SHARED_LIBS )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-  set ( GRAPHBLAS_USE_CUDA OFF )    # turn CUDA off in production
-# set ( GRAPHBLAS_USE_CUDA ON )     # use this for CUDA development only
+# set ( GRAPHBLAS_USE_CUDA OFF )    # turn CUDA off in production
+  set ( GRAPHBLAS_USE_CUDA ON )     # use this for CUDA development only FIXME
 
 include ( SuiteSparsePolicy )
 
@@ -86,7 +86,7 @@ if ( GRAPHBLAS_HAS_CUDA )
     # with CUDA, Rapids Memory Manager (rmm), and its dependencies
     cmake_policy ( SET CMP0135 NEW )    # URL download timestamp policy
 
-    find_package ( CUDAToolkit REQUIRED )
+#   find_package ( CUDAToolkit REQUIRED )
 
     set ( CMAKE_CUDA_FLAGS "-forward-unknown-to-host-compiler -cudart=shared -Wno-deprecated-gpu-targets --std=c++17 -fPIC" )
     set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fPIC" )

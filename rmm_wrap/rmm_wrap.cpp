@@ -41,6 +41,10 @@
 // (one per GPU) that all methods in this file can access.  The array of
 // objects cannot be accessed outside this file.
 
+cudaStream_t rmm_wrap_global_stream = nullptr ;
+
+rmm::mr::managed_memory_resource cuda_mr_default ;
+
 typedef struct RMM_Wrap_Handle_struct
 {
     uint32_t device_id;
@@ -50,10 +54,24 @@ typedef struct RMM_Wrap_Handle_struct
 //  std::shared_ptr<std::pmr::memory_resource>         host_resource;
     std::shared_ptr<alloc_map>                         size_map ;
 
-// I tried adding this but it didn't work:
-//  RMM_Wrap_Handle_struct() : resource() { } ;
+#if 1
+//  RMM_Wrap_Handle_struct() : resource() { } ; // FAILS
+
+    RMM_Wrap_Handle_struct ( )
+        : device_id (0)
+        , mode (rmm_wrap_managed)
+//      , resource (nullptr)        // FAILS
+        , resource (cuda_mr_default, 0)     // OK
+        , size_map (nullptr)        // FAILS
+//      , size_map ()               // FAILS
+    {
+        // any additional setup code here
+    }
+#endif
 }
 RMM_Wrap_Handle ;
+
+
 
 // rmm_wrap_context: global pointer to the single array of RMM_Wrap_Handle
 // objects, one per GPU
@@ -162,6 +180,7 @@ void rmm_wrap_finalize (void)
             delete rmm_wrap_context ;
             rmm_wrap_context = NULL ;
         }
+        cudaStreamDestroy (rmm_wrap_global_stream) ;
     }
     catch (...)
     {
@@ -296,6 +315,8 @@ int rmm_wrap_initialize_all_same
 
         devices.clear();
 
+        cudaStreamCreate (&rmm_wrap_global_stream) ;
+
         const char* cuda_visible_devices = std::getenv("CUDA_VISIBLE_DEVICES");
         if (cuda_visible_devices != nullptr)
         {
@@ -427,9 +448,18 @@ void *rmm_wrap_allocate( std::size_t *size)
             *size += (256 - aligned) ;
         }
 
-        rmm::mr::pool_memory_resource *memoryresource =
-            rmm::mr::get_current_device_resource() ;
+        #if 0
+        rmm::mr::pool_memory_resource memoryresource =
+            rmm::mr::get_current_device_resource_ref() ;
         p = memoryresource->allocate( *size ) ;
+        #endif
+
+    
+// segfault:
+//      p = (rmm_wrap_context [device_id]->resource).allocate( rmm_wrap_global_stream, *size , 256) ;
+
+        p = cuda_mr_default.allocate( rmm_wrap_global_stream, *size , 256) ;
+
         if (p == NULL)
         {
             // out of memory
@@ -521,9 +551,12 @@ void rmm_wrap_deallocate( void *p, std::size_t size)
         am->erase ( (std::size_t)(p) ) ;
 
         // deallocate the block of memory
-        rmm::mr::pool_memory_resource *memoryresource =
-            rmm::mr::get_current_device_resource() ;
-        memoryresource->deallocate( p, actual_size ) ;
+//      rmm::mr::pool_memory_resource memoryresource =
+//          rmm::mr::get_current_device_resource_ref() ;
+//      memoryresource->deallocate( p, actual_size ) ;
+        cuda_mr_default.deallocate( rmm_wrap_global_stream, p, actual_size , 256 ) ;
+
+
     }
     catch (...)
     {
