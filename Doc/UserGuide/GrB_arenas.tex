@@ -15,25 +15,28 @@ optional \verb'realloc' and \verb'calloc' methods.
 
 Each object in GraphBLAS lives in one or two memory arenas, depending on the
 object.  The \verb'GrB_Matrix', \verb'GrB_Vector', and \verb'GrB_Scalar' can
-use two arenas: a {\em header arena} and a {\em data arena}.  Each
-object in GraphBLAS is a pointer to a struct with opaque content, typically at
-most a few hundred bytes in size, regardless of the size of the matrix.  The
+use two arenas: a {\em header arena} and a {\em data arena}.  Each object in
+GraphBLAS is a pointer to a struct with opaque content, typically at most a few
+hundred bytes in size, regardless of the size of the object.  The
 \verb'GrB_Matrix A' is simply a pointer to this struct, which is the header of
 the object \verb'A'.  Changing the header of a matrix, vector, or scalar will
-change the pointer to the object itself.
+change the pointer to the object itself (the \verb'GxB_Matrix_set_arenas'
+method does this, for example).
 
 The entries in a matrix, vector, or scalar are held in a set of integer arrays
 for row/column indices and offsets, plus a numerical array for the data type.
 These arrays are all in the data arena of the matrix, vector, or scalar.
 
-All other objects have only a single arena, the header arena.
+All other objects have only a single arena, the header arena.  The serialized
+blob is not a GraphBLAS object; it is created in the default data arena.
 
-By default, only a single memory arena is used, and this arena defaults to the
-standard C \verb'malloc'/\verb'calloc'/\verb'realloc'/\verb'free' methods.  All
-arena features are backward compatible with prior versions of GraphBLAS, so if
-no additional arenas are needed, nothing needs to change in applications that
-used GraphBLAS versions prior to 10.4.0 (including the MATLAB/Octave
-interface).
+By default, only a single memory arena is used for all objects, and this arena
+defaults to the standard C
+\verb'malloc'/\verb'calloc'/\verb'realloc'/\verb'free' methods.  All arena
+features described in this section are backward compatible with prior versions
+of GraphBLAS, so if no additional arenas are needed, nothing needs to change in
+applications that used GraphBLAS versions prior to 10.4.0 (including the
+MATLAB/Octave interface).
 
 Objects in different arenas can be mixed arbitrarily, so for any given
 GraphBLAS method, not all of its parameters need to refer to objects that are
@@ -93,6 +96,7 @@ To retrieve these function pointers after the arena is initialized, use the foll
 %-------------------------------------------------------------------------------
 \subsection{Using arenas via the global or per-thread context}
 %-------------------------------------------------------------------------------
+\label{arena_global}
 
 Once an arena is initialized, it can be used to create new GraphBLAS objects
 using one of two methods:  (1) per-object with methods such as
@@ -115,11 +119,14 @@ To set the arenas via a \verb'Context' object, use:
     GxB_set (Context, arena, GxB_ARENA_DATA) ;
     GxB_set (Context, arena, GxB_ARENA_HEADER) ; \end{verbatim}}
 
+For the \verb'Context' object, the \verb'Context' must also be engaged for
+these settings to be used.  See Sections~\ref{context}, \ref{get_set_context},
+and \ref{get_set_global} for details.
+
 Once either of the above settings are used, all subsequent newly-created
-objects will be in the new arenas.  For the \verb'Context' object, the
-\verb'Context' must also be engaged.  See
-Sections~\ref{context}, \ref{get_set_context}, and \ref{get_set_global}
-for details.
+objects will be in the new arenas.  For example,
+\verb'GrB_Matrix_new (&A, ...)' creates \verb'A' in the header and
+data arenas determined by these two arena settings.
 
 These settings can be queried via \verb'GrB_get':
 
@@ -132,48 +139,104 @@ These settings can be queried via \verb'GrB_get':
     GxB_get (Context, &arena, GxB_ARENA_HEADER) ; \end{verbatim}}
 
 This is the simplest method to use different arenas, but it does not allow
-control on a per-object basis.
+control on a per-object basis.  That control is presented in the next section.
 
 %-------------------------------------------------------------------------------
 \subsection{Using arenas via per-object methods}
 %-------------------------------------------------------------------------------
 
+GraphBLAS 10.4.0 introduces a suite of constructor methods that take in
+specific header and data arena parameters.  Instead of using the default header
+and data arenas defined by methods discussed in Section~\ref{arena_global},
+they use these parameters to create their output objects in the given arenas.
+Objects with a single arena (the header or data) include one extra parameter,
+while objects with two arenas (matrices, vectors, and scalars) take two extra
+parameters.  The leading input/output parameters are the same.  For methods
+that have a descriptor, the descriptor remains as the last parameter.
+
+In the table below, \verb'h' is an integer in range 0 to \verb'GxB_NARENAS'
+that defines the header arena for the new object.  The methods in the right
+column have identical parameters as the methods in the left column,
+with the addition of the single \verb'h' parameter.
+
+\vspace{0.1in}
+\noindent
+{\footnotesize
+\begin{tabular}{|ll|}
+\hline
+original method & arena-specific method and parameters \\
+(default arena) & (header arena \verb'h') \\
+\hline
+\verb'GrB_Descriptor'           & \verb'GxB_Descriptor_new_arena (&d, h)' \\
+\verb'GxB_Type_new'             & \verb'GxB_Type_new_arena (&type, siz, name, defn, h)' \\
+\verb'GrB_UnaryOp_new'          & \verb'GxB_UnaryOp_new_arena (&op, f, z, x, name, defn, h)' \\
+\verb'GrB_BinaryOp_new'         & \verb'GxB_BinaryOp_new_arena (&op, f, z, x, y, name, defn, h)' \\
+\verb'GxB_IndexBinaryOp_new'    & \verb'GxB_IndexBinaryOp_new_arena (&op, f, z, x, y, t, name, defn, h)' \\
+\verb'GrB_IndexUnaryOp_new'     & \verb'GxB_IndexUnaryOp_new_arena (&op, f, z, x, y, name, defn, h)' \\
+\verb'GrB_Monoid_new'           & \verb'GxB_Monoid_new_arena (&mon, op, id, h)' \\
+\verb'GxB_Monoid_terminal_new'  & \verb'GxB_Monoid_terminal_new_arena (&mon, op, id, term, h)' \\
+\verb'GrB_Semiring_new'         & \verb'GxB_Semiring_new_arena (&semi, add, mult, h)' \\
+\verb'GxB_Context_new'          & \verb'GxB_Context_new_arena (&context, h)' \\
+\verb'GxB_Iterator_new'         & \verb'GxB_Iterator_new_arena (&iter, h)' \\
+\hline
+\end{tabular}}
+\vspace{0.1in}
+
+The following table lists constructor methods in the left column that create
+their output objects in the default header and data arenas.  In the right
+column are the new methods with \verb'h' and \verb'd' input parameters that
+specify the two arenas to use (both being integers in the range 0 to
+\verb'GxB_NARENAS'-1).
+
+\vspace{0.1in}
+\noindent
+{\footnotesize
+\begin{tabular}{|ll|}
+\hline
+original method & arena-specific method and parameters  \\
+(default arenas) & (header arena \verb'h' and data arena \verb'd') \\
+\hline
+\verb'GxB_Container_new'        & \verb'GxB_Container_new_arena (&container, h, d)' \\
+\verb'GrB_Scalar_new'           & \verb'GxB_Scalar_new_arena (&s, t, h, d)' \\
+\verb'GrB_Vector_new'           & \verb'GxB_Vector_new_arena (&v, t, n, h, d)' \\
+\verb'GrB_Matrix_new'           & \verb'GxB_Matrix_new_arena (&A, t, nrows, ncols, h, d)' \\
+\hline
+\verb'GrB_Scalar_dup'           & \verb'GxB_Scalar_dup_arena (&s, t, h, d)' \\
+\verb'GrB_Vector_dup'           & \verb'GxB_Vector_dup_arena (&w, u, h, d)' \\
+\verb'GrB_Matrix_dup'           & \verb'GxB_Matrix_dup_arena (&C, A, h, d)' \\
+\verb'GxB_Matrix_split'         & \verb'GxB_Matrix_split_arena (&T, m, n, trows, tcols, A, h, d, desc)' \\
+\verb'GrB_Matrix_diag'          & \verb'GxB_Matrix_diag_arena (&C, v, k, h, d)' \\
+\verb'GxB_Matrix_reshapeDup'    & \verb'GxB_Matrix_reshapeDup_arena (&C, A, by, nrows, ncols, h, d, desc)' \\
+\verb'GxB_Matrix_deserialize'   & \verb'GxB_Matrix_deserialize_arena (&C, t, blob, siz, h, d, desc)' \\
+\verb'GxB_Vector_deserialize'   & \verb'GxB_Vector_deserialize_arena (&w, t, blob, siz, h, d, desc)' \\
+\hline
+\end{tabular}}
+\vspace{0.1in}
+
+Finally, two new methods are introduced with a single data arena parameter,
+\verb'd', listed in the following table.  These methods create the new
+\verb'blob' in the data arena \verb'd'.
+
+\vspace{0.1in}
+\noindent
+{\footnotesize
+\begin{tabular}{|ll|}
+\hline
+original method & arena-specific method and parameters  \\
+(default arena) & (data arena \verb'd') \\
+\hline
+\verb'GxB_Matrix_serialize'     & \verb'GxB_Matrix_serialize_arena (&blob, &siz, A, d, desc)' \\
+\verb'GxB_Vector_serialize'     & \verb'GxB_Vector_serialize_arena (&blob, &siz, A, d, desc)' \\
+\hline
+\end{tabular}}
+\vspace{0.1in}
+
 {\footnotesize
 \begin{verbatim}
-
-//      GxB_Descriptor_new_arena
-//      GxB_Type_new_arena
-//      GxB_UnaryOp_new_arena
-//      GxB_BinaryOp_new_arena
-//      GxB_IndexBinaryOp_new_arena
-//      GxB_IndexUnaryOp_new_arena
-//      GxB_Monoid_new_arena*
-//      GxB_Monoid_terminal_new_arena*
-//      GxB_Semiring_new_arena
-//      GxB_Context_new_arena
-//      GxB_Container_new_arena
-//      GxB_Iterator_new_arena
-
-//      GxB_Scalar_new_arena
-//      GxB_Vector_new_arena
-//      GxB_Matrix_new_arena
-
-//      GxB_Scalar_dup_arena
-//      GxB_Vector_dup_arena
-//      GxB_Matrix_dup_arena
-//      GxB_Matrix_split_arena
-//      GxB_Matrix_diag_arena
-//      GxB_Matrix_serialize_arena
-//      GxB_Vector_serialize_arena
-//      GxB_Matrix_deserialize_arena
-//      GxB_Vector_deserialize_arena
-//      GxB_Matrix_reshapeDup_arena
-
     to change both header & data arena: (not lazy; always moves data if needed)
     GxB_Matrix_set_arenas (&A, header_arena, data_arena) ;
     GxB_Vector_set_arenas (&V, header_arena, data_arena) ;
     GxB_Scalar_set_arenas (&S, header_arena, data_arena) ;
-
 \end{verbatim}}
 
 %-------------------------------------------------------------------------------
