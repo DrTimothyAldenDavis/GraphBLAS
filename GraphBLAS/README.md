@@ -164,6 +164,7 @@ MATLAB/Octave on Linux, Mac, or Windows.
 
         methods GrB
         help GrB
+        help GhB
 
     To run the demos, go to the GraphBLAS/GraphBLAS/demo folder and type:
 

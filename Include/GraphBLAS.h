@@ -162,7 +162,7 @@
 //------------------------------------------------------------------------------
 
 #ifndef GRAPHBLAS_HAS_CUDA
-#define GRAPHBLAS_HAS_CUDA
+/* #undef GRAPHBLAS_HAS_CUDA */
 #endif
 
 //------------------------------------------------------------------------------
@@ -286,7 +286,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "FIXME, 2026"
+#define GxB_IMPLEMENTATION_DATE "July 31, 2026"
 #define GxB_IMPLEMENTATION_MAJOR 10
 #define GxB_IMPLEMENTATION_MINOR 4
 #define GxB_IMPLEMENTATION_SUB   0
@@ -3363,7 +3363,7 @@ GrB_Info GxB_BinaryOp_new_IndexOp
     GrB_Scalar theta                // theta value to bind to the new binary op
 ) ;
 
-// GxB_BinaryOp_new_IndexOp: create a new binary op from an index binary op
+// GxB_BinaryOp_new_IndexOp_arena: create new binary op from an index binary op
 GrB_Info GxB_BinaryOp_new_IndexOp_arena
 (
     GrB_BinaryOp *binop_handle,     // handle of binary op to create

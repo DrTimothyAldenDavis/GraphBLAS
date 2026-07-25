@@ -3363,7 +3363,7 @@ GrB_Info GxB_BinaryOp_new_IndexOp
     GrB_Scalar theta                // theta value to bind to the new binary op
 ) ;
 
-// GxB_BinaryOp_new_IndexOp: create a new binary op from an index binary op
+// GxB_BinaryOp_new_IndexOp_arena: create new binary op from an index binary op
 GrB_Info GxB_BinaryOp_new_IndexOp_arena
 (
     GrB_BinaryOp *binop_handle,     // handle of binary op to create

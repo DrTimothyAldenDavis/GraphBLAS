@@ -339,12 +339,14 @@ thread-safe.  The following usage is identical to \verb'GrB_init(mode)':
     \begin{verbatim}
     GxB_init (mode, malloc, calloc, realloc, free) ; \end{verbatim}}
 
-FIXME: discuss arenas and See Section~\ref{sec:arenas}.
+The \verb'GrB_init' and \verb'GxB_init' methods establish the default arena 0
+(or \verb'GrB_DEFAULT', defined as zero).  See Section~\ref{sec:arenas} for
+details.
 
 GraphBLAS itself does not use the system \verb'calloc' nor the
 \verb'user_calloc_func', except the function pointer is returned by the
-\verb'GrB_get' method via the \verb'GxB_CALLOC_FUNCTION' enum;
-see Sections~\ref{get_set_enums} and \ref{get_set_global}.
+\verb'GrB_get' method via the \verb'GxB_CALLOC_FUNCTION' enum; see
+Sections~\ref{get_set_enums} and \ref{get_set_global}.
 
 %===============================================================================
 \subsection{{\sf GrB\_Info:} status code returned by GraphBLAS} %===============

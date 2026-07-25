@@ -5,6 +5,34 @@
 
 \begin{itemize}
 
+\item July 31, 2026: version 10.4.0
+
+    \begin{itemize}
+    \item Memory arenas: allows the use of multiple memory allocators.
+        See Section~\ref{sec:arenas}.
+    \item MATLAB/Octave interface: GhB is a new handle object, so that m-files
+        and mexFunctions can modify their inputs.  This allows pending work to
+        be left in a GhB matrix, speeding up algorithms that use GraphBLAS.
+    \item \verb'GrB_Matrix_extractElement': no longer waits if the entry can be
+        found without finalizing pending tuples
+    \item \verb'GxB_atfork_(prepare,parent,child)': added to support an
+        application needing to fork, while still using GraphBLAS.
+    \item static \verb'GrB_Matrix' headers: used internally; removed, except for
+        \verb'GB_Scalar_wrap', and unary/binary ops, to simplify memory arena
+        feature and future CUDA kernels.
+    \item MATLAB/Octave (68) bug fix:  v10.0 to v10.3 do not properly load GrB
+        hypersparse matrices from \verb'*.mat' files saved by v9 and earlier,
+        when using the built-in load/save methods in MATLAB.  The load/save of
+        a serialized blob is not affected by this bug.
+    \end{itemize}
+
+\item July 21, 2026: version 10.3.2
+
+    \begin{itemize}
+    \item compiler port: changes required for recent clang compilers
+    \item cmake: 3.23 now required; SuiteSparsePolicy.cmake revised.
+    \end{itemize}
+
 \item Jan 21, 2026: version 10.3.1
 
     \begin{itemize}

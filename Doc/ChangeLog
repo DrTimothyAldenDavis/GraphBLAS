@@ -1,9 +1,9 @@
-FIXME, version 10.4.0
+July 31, 2026, version 10.4.0
 
-    * Memory arenas: new feature (FIXME: discuss)
-    * MATLAB/Octave interface: @GrB is now a handle object, so that m-files and
-        mexFunctions and modify their inputs.  This allows pending work to be
-        left in a @GrB matrix, speeding up algorithms that use GraphBLAS.
+    * Memory arenas: allows the use of multiple memory allocators.
+    * MATLAB/Octave interface: GhB is a new handle object, so that m-files and
+        mexFunctions can modify their inputs.  This allows pending work to be
+        left in a GhB matrix, speeding up algorithms that use GraphBLAS.
     * GrB_Matrix_extractElement: no longer waits if the entry can be
         found without finalizing pending tuples
     * GxB_atfork_(prepare,parent,child): added to support an application
@@ -11,10 +11,15 @@ FIXME, version 10.4.0
     * static GrB_Matrix headers: used internally; removed, except for
         GB_Scalar_wrap, and unary/binary ops, to simplify memory arena feature
         and future CUDA kernels
-    * MATLAB/Octave (68) bug fix:  v10.0 to v10.3 do not properly load @GrB
+    * MATLAB/Octave (68) bug fix:  v10.0 to v10.3 do not properly load GrB
         hypersparse matrices from *.mat files saved by v9 and earlier, when
         using the built-in load/save methods in MATLAB.  The load/save of a
         serialized blob is not affected by this bug.
+
+July 21, 2026, version 10.3.2
+
+    * compiler port: changes required for recent clang compilers
+    * cmake: 3.23 now required; SuiteSparsePolicy.cmake revised.
 
 Jan 21, 2026, version 10.3.1
 

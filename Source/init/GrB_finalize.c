@@ -12,22 +12,14 @@
 // Results are undefined if more than one thread calls this function at the
 // same time.
 
+// This method always succeeds and returns GrB_SUCCESS.
+
 #define GB_FREE_ALL ;
 #include "GB.h"
 #include "jitifyer/GB_jitifyer.h"
 
 GrB_Info GrB_finalize ( )
 { 
-
-    //--------------------------------------------------------------------------
-    // ensure GraphBLAS has been initialized (and thus not yet finalized)
-    //--------------------------------------------------------------------------
-
-    if (!GB_Global_GrB_init_called_get ( ))
-    { 
-        // GrB_finalized can only be if GraphBLAS has been initialized
-        return (GrB_INVALID_VALUE) ;
-    }
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS

@@ -161,6 +161,7 @@ with the addition of the single \verb'h' parameter.
 
 \vspace{0.1in}
 \noindent
+\hspace{-0.5in}
 {\footnotesize
 \begin{tabular}{|ll|}
 \hline
@@ -171,6 +172,7 @@ original method & arena-specific method and parameters \\
 \verb'GxB_Type_new'             & \verb'GxB_Type_new_arena (&type, siz, name, defn, h)' \\
 \verb'GrB_UnaryOp_new'          & \verb'GxB_UnaryOp_new_arena (&op, f, z, x, name, defn, h)' \\
 \verb'GrB_BinaryOp_new'         & \verb'GxB_BinaryOp_new_arena (&op, f, z, x, y, name, defn, h)' \\
+\verb'GxB_BinaryOp_new_IndexOp_arena' & \verb'GxB_BinaryOp_new_IndexOp_arena (&op, idxop, theta, h)' \\
 \verb'GxB_IndexBinaryOp_new'    & \verb'GxB_IndexBinaryOp_new_arena (&op, f, z, x, y, t, name, defn, h)' \\
 \verb'GrB_IndexUnaryOp_new'     & \verb'GxB_IndexUnaryOp_new_arena (&op, f, z, x, y, name, defn, h)' \\
 \verb'GrB_Monoid_new'           & \verb'GxB_Monoid_new_arena (&mon, op, id, h)' \\
@@ -231,38 +233,66 @@ original method & arena-specific method and parameters  \\
 \end{tabular}}
 \vspace{0.1in}
 
+%-------------------------------------------------------------------------------
+\subsection{Changing the arenas of matrices, vectors, and scalars}
+%-------------------------------------------------------------------------------
+
+The header and data arenas of a \verb'GrB_Matrix A', \verb'GrB_Vector V', and
+\verb'GrB_Scalar S' can change after they are created, with the following
+methods.  To change just the data arenas:
+
 {\footnotesize
 \begin{verbatim}
-    to change both header & data arena: (not lazy; always moves data if needed)
+    GrB_Matrix_set_INT32 (A, arena, GxB_ARENA_DATA) ;
+    GrB_Vector_set_INT32 (V, arena, GxB_ARENA_DATA) ;
+    GrB_Scalar_set_INT32 (S, arena, GxB_ARENA_DATA) ;
+\end{verbatim}}
+
+\noindent
+or more simply, using the polymorphic \verb'GrB_get' and \verb'Grb_set'
+methods:
+
+{\footnotesize
+\begin{verbatim}
+    GrB_set (A, arena, GxB_ARENA_DATA) ;
+    GrB_set (V, arena, GxB_ARENA_DATA) ;
+    GrB_set (S, arena, GxB_ARENA_DATA) ;
+\end{verbatim}}
+
+The \verb'GrB_set' method cannot change the header arena, since that must
+change the pointers to the opaque structs.  This changes the pointers \verb'A',
+\verb'V', and \verb'S', respectively, so their handles must be passed into the
+following methods:
+
+{\footnotesize
+\begin{verbatim}
     GxB_Matrix_set_arenas (&A, header_arena, data_arena) ;
     GxB_Vector_set_arenas (&V, header_arena, data_arena) ;
     GxB_Scalar_set_arenas (&S, header_arena, data_arena) ;
 \end{verbatim}}
 
 %-------------------------------------------------------------------------------
+\subsection{Querying the arenas of any object}
+%-------------------------------------------------------------------------------
+
+The header and data arenas of any object can be queried with \verb'GrB_get';
+using the non-polymorphic methods:
 
 {\footnotesize
 \begin{verbatim}
-FIXME arena: add this to user guide:
-
-    int arena ;
-
-    changes the data arena only: (not lazy; always moves data if needed)
-    but could be done as a lazy, leaving it as pending work:
-    GrB_Matrix_set_INT32 (A, arena, GxB_ARENA_DATA) ;
-    GrB_Vector_set_INT32 (V, arena, GxB_ARENA_DATA) ;
-    GrB_Scalar_set_INT32 (S, arena, GxB_ARENA_DATA) ;
-
-    get the data or header arena of a matrix:
     GrB_Matrix_get_INT32 (A, &arena, GxB_ARENA_DATA) ;
     GrB_Vector_get_INT32 (V, &arena, GxB_ARENA_DATA) ;
     GrB_Scalar_get_INT32 (S, &arena, GxB_ARENA_DATA) ;
     GrB_Matrix_get_INT32 (A, &arena, GxB_ARENA_HEADER) ;
     GrB_Vector_get_INT32 (V, &arena, GxB_ARENA_HEADER) ;
     GrB_Scalar_get_INT32 (S, &arena, GxB_ARENA_HEADER) ;
+\end{verbatim}}
 
-    get the arena for all other objects:
-    GrB_*_get_INT32 (object, &arena, GxB_ARENA_HEADER) ;
+Or simply use \verb'GrB_get'.  For all other objects (descriptors, operators,
+types, monoids, semirings, contexts, only the header arena can be queried:
 
+{\footnotesize
+\begin{verbatim}
+    GrB_get (object, &arena, GxB_ARENA_HEADER) ;
 \end{verbatim}}
 

@@ -35,7 +35,9 @@
 // If the mode is GxB_BLOCKING_GPU or GxB_NONBLOCKING_GPU, the 4 function
 // pointers are ignored, and GB_rmm_malloc/GB_rmm_free are used instead.
 
-#define GB_FREE_ALL ;
+#define GB_FREE_ALL                                         \
+    GrB_finalize ( ) ;
+
 #include "GB.h"
 #include "init/GB_init.h"
 #include "jitifyer/GB_stringify.h"

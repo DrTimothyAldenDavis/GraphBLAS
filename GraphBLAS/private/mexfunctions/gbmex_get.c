@@ -18,6 +18,32 @@
 
 #define USAGE "usage: value = gbmex_get (C, state)"
 
+//------------------------------------------------------------------------------
+// safe_strlen:  compute the length of a string
+//------------------------------------------------------------------------------
+
+// This is the same as the POSIX strnlen, but just using my own method.
+// Non-POSIX systems do not have strnlen.
+
+// This method returns the # of bytes in the string s, excluding the null
+// terminating byte.  If s has no null terminating byte, it returns maxlen.
+
+size_t safe_strlen (const char *s, size_t maxlen) ;
+
+size_t safe_strlen (const char *s, size_t maxlen)
+{
+    if (s == NULL) return (0) ;
+    for (size_t k = 0 ; k < maxlen ; k++)
+    {
+        if (s [k] == '\0') return (k) ;
+    }
+    return (maxlen) ;
+}
+
+//------------------------------------------------------------------------------
+// gbmex_get mexFunction
+//------------------------------------------------------------------------------
+
 void mexFunction
 (
     int nargout,
@@ -125,7 +151,7 @@ void mexFunction
         }
 
         // append the format ('by row' or 'by col')
-        int len = strnlen (str, LEN) ;
+        int len = safe_strlen (str, LEN) ;
         char *str2 = str + len ;
         len = LEN - len ;
         switch (fmt)
