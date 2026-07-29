@@ -233,6 +233,10 @@ original method & arena-specific method and parameters  \\
 \end{tabular}}
 \vspace{0.1in}
 
+If either the header arena \verb'h' or data arena \verb'd' have not been
+initialized yet with \verb'GxB_arena_init', then these constructors return
+\verb'GrB_OUT_OF_MEMORY'.
+
 %-------------------------------------------------------------------------------
 \subsection{Changing the arenas of matrices, vectors, and scalars}
 %-------------------------------------------------------------------------------
