@@ -3834,6 +3834,7 @@
 #define GxB_Matrix_concat GxM_Matrix_concat
 #define GxB_Matrix_deserialize_arena GxM_Matrix_deserialize_arena
 #define GxB_Matrix_deserialize GxM_Matrix_deserialize
+#define GxB_Matrix_diag_arena GxM_Matrix_diag_arena
 #define GxB_Matrix_diag GxM_Matrix_diag
 #define GxB_Matrix_dup_arena GxM_Matrix_dup_arena
 #define GxB_Matrix_eWiseUnion GxM_Matrix_eWiseUnion
