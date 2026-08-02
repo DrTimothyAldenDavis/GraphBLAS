@@ -31,6 +31,7 @@ GrB_Info GxB_arena_init
     GB_CHECK_INIT ;
     if (user_malloc_function == NULL || user_free_function == NULL)
     { 
+        // malloc and free are required; realloc and calloc are optional
         return (GrB_NULL_POINTER) ;
     }
 

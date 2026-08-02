@@ -3064,6 +3064,7 @@
 #define GxB_ANY_UINT8 GxM_ANY_UINT8
 #define GxB_ANY_UINT8_MONOID GxM_ANY_UINT8_MONOID
 #define GxB_arena_init GxM_arena_init
+#define GxB_arena_initialized GxM_arena_initialized
 #define GxB_ASIN_FC32 GxM_ASIN_FC32
 #define GxB_ASIN_FC64 GxM_ASIN_FC64
 #define GxB_ASIN_FP32 GxM_ASIN_FP32

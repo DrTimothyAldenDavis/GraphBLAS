@@ -10,6 +10,8 @@
 // Similar to GrB_Matrix_diag (&C, v, k), except that C is constructed
 // in the given header and data arenas.  C has the same type as v.
 
+// The arenas are checked in GxB_Matrix_new_arena.
+
 #include "diag/GB_diag.h"
 
 #define GB_FREE_ALL ;

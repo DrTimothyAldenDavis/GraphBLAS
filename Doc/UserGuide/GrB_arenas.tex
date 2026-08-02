@@ -93,6 +93,22 @@ To retrieve these function pointers after the arena is initialized, use the foll
     GrB_Global_get_VOID (GrB_GLOBAL, &realloc_func, GxB_ARENA_REALLOC + arena) ;
     GrB_Global_get_VOID (GrB_GLOBAL, &free_func,    GxB_ARENA_FREE    + arena) ; \end{verbatim}}
 
+The \verb'GxB_arena_initialized' method can be used to determine if an
+arena has been initialized or not.
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_arena_initialized  // determine if arena has been initialized
+(
+    // output
+    int *flag,              // returns true if the arena has been initialized
+    // input
+    int arena               // 0 to GxB_NARENAS-1
+) ;
+\end{verbatim}
+}\end{mdframed}
+
 %-------------------------------------------------------------------------------
 \subsection{Using arenas via the global or per-thread context}
 %-------------------------------------------------------------------------------
@@ -232,10 +248,6 @@ original method & arena-specific method and parameters  \\
 \hline
 \end{tabular}}
 \vspace{0.05in}
-
-If either the header arena \verb'h' or data arena \verb'd' have not been
-initialized yet with \verb'GxB_arena_init', then these constructors return
-\verb'GrB_OUT_OF_MEMORY'.
 
 %-------------------------------------------------------------------------------
 \subsection{Changing the arenas of matrices, vectors, and scalars}
