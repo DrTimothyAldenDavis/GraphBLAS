@@ -5,6 +5,14 @@
 
 \begin{itemize}
 
+\item Aug 12, 2026, version 10.5.0
+
+    \begin{itemize}
+    \item \verb'GrB_Matrix_resize', \verb'GrB_Vector_resize': no longer call
+        \verb'GrB_wait' if the matrix/vector is sparse/hypersparse, and both
+        dimensions are not decreasing.
+    \end{itemize}
+
 \item Aug 8, 2026, version 10.4.1
 
     \begin{itemize}
