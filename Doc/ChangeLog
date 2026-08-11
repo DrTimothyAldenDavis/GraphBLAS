@@ -3,6 +3,8 @@ Aug 12, 2026, version 10.5.0
     * GrB_Matrix_resize, GrB_Vector_resize: no longer call GrB_wait if the
         matrix/vector is sparse/hypersparse, and both dimensions are not
         decreasing.
+    * GrB_Matrix_build and GrB_Vector_build: no longer do a post-iso check; they
+        leave the matrix in non-iso format even if all the entries are the same.
 
 Aug 8, 2026, version 10.4.1
 
