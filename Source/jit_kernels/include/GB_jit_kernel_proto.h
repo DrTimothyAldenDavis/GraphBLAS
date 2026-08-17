@@ -765,7 +765,6 @@ GrB_Info GB_jit_kernel_rowscale                                         \
     GrB_Matrix B,                                                       \
     cudaStream_t stream,                                                \
     int32_t gridsz,                                                     \
-    int32_t blocksz,                                                    \
     const GB_callback_struct *restrict my_callback                      \
 )
 
@@ -777,7 +776,6 @@ GrB_Info GB_jit_kernel_colscale                                         \
     GrB_Matrix D,                                                       \
     cudaStream_t stream,                                                \
     int32_t gridsz,                                                     \
-    int32_t blocksz,                                                    \
     const GB_callback_struct *restrict my_callback                      \
 )
 

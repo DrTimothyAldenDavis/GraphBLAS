@@ -1,3 +1,12 @@
+//------------------------------------------------------------------------------
+// GB_cuda_colscale: C = A*D
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 #include "mxm/GB_cuda_ewise.hpp"
 
 #undef  GB_FREE_ALL
@@ -5,9 +14,6 @@
 {                                                           \
     GB_cuda_stream_pool_release (&stream) ;                 \
 }
-
-#define BLOCK_SIZE 128
-#define LOG2_BLOCK_SIZE 7
 
 GrB_Info GB_cuda_colscale
 (
@@ -22,13 +28,16 @@ GrB_Info GB_cuda_colscale
     cudaStream_t stream = nullptr ;
     GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
 
-    // compute gridsz, blocksz, call GB_cuda_rowscale_jit
     GrB_Index anz = GB_nnz_held (A) ;
-    
-    int32_t gridsz = 1 + (anz >> LOG2_BLOCK_SIZE) ;
 
-    GB_OK (GB_cuda_colscale_jit ( C, A, D, 
-        semiring->multiply, flipxy, stream, gridsz, BLOCK_SIZE)) ;
+    // determine the geometry of the CUDA kernel launches
+    int32_t number_of_sms = GB_Global_gpu_sm_get (0) ;
+    int64_t raw_gridsz = GB_ICEIL (anz, GB_CUDA_SCALE_CHUNKSIZE_LOG2) ;
+    int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
+    gridsz = std::max (gridsz, 1) ;
+
+    GB_OK (GB_cuda_colscale_jit (C, A, D, 
+        semiring->multiply, flipxy, stream, gridsz)) ;
     
     GB_OK (GB_cuda_stream_pool_release (&stream)) ;
     return GrB_SUCCESS ; 

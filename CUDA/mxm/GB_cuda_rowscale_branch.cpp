@@ -1,3 +1,12 @@
+//------------------------------------------------------------------------------
+// GB_cuda_rowscale_branch
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 #include "GB_cuda.hpp"
 
 bool GB_cuda_rowscale_branch

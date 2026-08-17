@@ -1,3 +1,12 @@
+//------------------------------------------------------------------------------
+// GB_cuda_colscale_jit: JIT kernel for C=A*D
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 #include "mxm/GB_cuda_ewise.hpp"
 
 extern "C"
@@ -16,8 +25,7 @@ GrB_Info GB_cuda_colscale_jit
     bool flipxy,
     // CUDA stream and launch parameters:
     cudaStream_t stream,
-    int32_t gridsz,
-    int32_t blocksz
+    int32_t gridsz
 )
 { 
 
@@ -50,5 +58,6 @@ GrB_Info GB_cuda_colscale_jit
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, A, D, stream, gridsz, blocksz, &GB_callback)) ;
+    return (GB_jit_kernel (C, A, D, stream, gridsz, &GB_callback)) ;
 }
+

@@ -1,12 +1,21 @@
+//------------------------------------------------------------------------------
+// CUDA/mxm/template/GB_jit_kernel_cuda_colscale.cu
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 #define GB_FREE_ALL ;
 
 using namespace cooperative_groups ;
 
 #include "template/GB_cuda_ek_slice.cuh"
 
-// fixme: add these to GB_cuda_geometry:
-#define CHUNKSIZE 1024
-#define LOG2_CHUNKSIZE 10
+//------------------------------------------------------------------------------
+// GB_cuda_colscale_kernel: device kernel for C=A*D
+//------------------------------------------------------------------------------
 
 __global__ void GB_cuda_colscale_kernel
 (
@@ -55,33 +64,37 @@ __global__ void GB_cuda_colscale_kernel
     #else
         const int64_t anvec = A->nvec ;
         // sparse/hypersparse case (cuda_ek_slice only works for sparse/hypersparse)
-        for (int64_t pfirst = blockIdx.x << LOG2_CHUNKSIZE ;
+        for (int64_t pfirst = blockIdx.x << GB_CUDA_SCALE_CHUNKSIZE_LOG2 ;
                      pfirst < anz ;
-                     pfirst += gridDim.x << LOG2_CHUNKSIZE )
+                     pfirst += gridDim.x << GB_CUDA_SCALE_CHUNKSIZE_LOG2 )
+        {
+            int64_t my_chunk_size, anvec_sub1, kfirst, klast ;
+            float slope ;
+            GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst, GB_CUDA_SCALE_CHUNKSIZE,
+                &kfirst, &klast, &my_chunk_size, &anvec_sub1, &slope) ;
+
+            for (int64_t pdelta = threadIdx.x ; pdelta < my_chunk_size ; pdelta += blockDim.x)
             {
-                int64_t my_chunk_size, anvec_sub1, kfirst, klast ;
-                float slope ;
-                GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst, CHUNKSIZE,
-                    &kfirst, &klast, &my_chunk_size, &anvec_sub1, &slope) ;
+                int64_t p = pfirst + pdelta ;
+                int64_t k = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (p, pdelta, Ap, anvec_sub1, kfirst, slope) ;
+                int64_t j = GBh_A (Ah, k) ;
 
-                for (int64_t pdelta = threadIdx.x ; pdelta < my_chunk_size ; pdelta += blockDim.x)
-                {
-                    int64_t p = pfirst + pdelta ;
-                    int64_t k = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (p, pdelta, Ap, anvec_sub1, kfirst, slope) ;
-                    int64_t j = GBh_A (Ah, k) ;
-
-                    GB_DECLAREB (djj) ;
-                    GB_GETB (djj, Dx, j, ) ;
-                    GB_DECLAREA (aij) ;
-                    GB_GETA (aij, Ax, p, ) ;
-                    GB_EWISEOP (Cx, p, aij, djj, 0, 0) ;
-                }
+                GB_DECLAREB (djj) ;
+                GB_GETB (djj, Dx, j, ) ;
+                GB_DECLAREA (aij) ;
+                GB_GETA (aij, Ax, p, ) ;
+                GB_EWISEOP (Cx, p, aij, djj, 0, 0) ;
             }
+        }
     #endif
 
     // not needed because threads do entirely independent work:
     // this_thread_block ( ).sync( ) ;
 }
+
+//------------------------------------------------------------------------------
+// host JIT kernel for colscale, C=A*D
+//------------------------------------------------------------------------------
 
 extern "C" {
     GB_JIT_CUDA_KERNEL_COLSCALE_PROTO (GB_jit_kernel) ;
@@ -98,7 +111,7 @@ GB_JIT_CUDA_KERNEL_COLSCALE_PROTO (GB_jit_kernel)
     ASSERT (!C->iso) ;
 
     dim3 grid (gridsz) ;
-    dim3 block (blocksz) ;
+    dim3 block (GB_CUDA_SCALE_BLOCKDIM) ;
 
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
@@ -108,3 +121,4 @@ GB_JIT_CUDA_KERNEL_COLSCALE_PROTO (GB_jit_kernel)
 
     return (GrB_SUCCESS) ;
 }
+

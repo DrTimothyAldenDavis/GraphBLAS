@@ -1,3 +1,12 @@
+//------------------------------------------------------------------------------
+// CUDA/mxm/template/GB_jit_kernel_cuda_rowscale.cu
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 #define GB_FREE_ALL ;
 
 using namespace cooperative_groups ;
@@ -47,6 +56,10 @@ __global__ void GB_cuda_rowscale_kernel
     }
 }
 
+//------------------------------------------------------------------------------
+// host JIT kernel for rowscale, C=D*B
+//------------------------------------------------------------------------------
+
 extern "C" {
     GB_JIT_CUDA_KERNEL_ROWSCALE_PROTO (GB_jit_kernel) ;
 }
@@ -62,7 +75,7 @@ GB_JIT_CUDA_KERNEL_ROWSCALE_PROTO (GB_jit_kernel)
     ASSERT (!C->iso) ;
 
     dim3 grid (gridsz) ;
-    dim3 block (blocksz) ;
+    dim3 block (GB_CUDA_SCALE_BLOCKDIM) ;
     
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
@@ -72,3 +85,4 @@ GB_JIT_CUDA_KERNEL_ROWSCALE_PROTO (GB_jit_kernel)
 
     return (GrB_SUCCESS) ;
 }
+
