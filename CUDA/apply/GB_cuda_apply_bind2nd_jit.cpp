@@ -1,3 +1,12 @@
+//------------------------------------------------------------------------------
+// GB_cuda_apply_bind2nd_jit: JIT kernel for apply, bind2nd case
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 #include "apply/GB_cuda_apply.hpp"
 
 extern "C"
@@ -17,8 +26,7 @@ GrB_Info GB_cuda_apply_bind2nd_jit
     const GB_void *scalarx,
     // CUDA stream and launch parameters:
     cudaStream_t stream,
-    int32_t gridsz,
-    int32_t blocksz
+    int32_t gridsz
 )
 {
     //--------------------------------------------------------------------------
@@ -50,6 +58,6 @@ GrB_Info GB_cuda_apply_bind2nd_jit
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (Cx, A, scalarx, stream, gridsz, blocksz,
-        &GB_callback)) ;
+    return (GB_jit_kernel (Cx, A, scalarx, stream, gridsz, &GB_callback)) ;
 }
+

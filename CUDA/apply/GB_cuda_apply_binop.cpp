@@ -1,5 +1,10 @@
 //------------------------------------------------------------------------------
-// ...
+// GB_cuda_apply_binop: apply a binary op
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 //------------------------------------------------------------------------------
 
 #include "apply/GB_cuda_apply.hpp"
@@ -16,9 +21,6 @@
     GB_FREE_WORKSPACE ;                                     \
     GB_cuda_stream_pool_release (&stream) ;                 \
 }
-
-#define BLOCK_SIZE 512
-#define LOG2_BLOCK_SIZE 9
 
 GrB_Info GB_cuda_apply_binop
 (
@@ -63,22 +65,23 @@ GrB_Info GB_cuda_apply_binop
     GrB_Index anz = GB_nnz_held (A) ;
 
     int32_t number_of_sms = GB_Global_gpu_sm_get (0) ;
-    int64_t raw_gridsz = GB_ICEIL (anz, BLOCK_SIZE) ;
+    int64_t raw_gridsz = GB_ICEIL (anz, GB_CUDA_APPLY_BLOCKDIM) ;
     // cap #of blocks to 256 * #of sms
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
 
     if (bind1st)
     {
         GB_OK (GB_cuda_apply_bind1st_jit (Cx, ctype, op, A, 
-            scalarx_cuda, stream, gridsz, BLOCK_SIZE)) ;
+            scalarx_cuda, stream, gridsz)) ;
     }
     else
     {
         GB_OK (GB_cuda_apply_bind2nd_jit (Cx, ctype, op, A,
-            scalarx_cuda, stream, gridsz, BLOCK_SIZE)) ;
+            scalarx_cuda, stream, gridsz)) ;
     }
 
     GB_FREE_WORKSPACE ;
     GB_OK (GB_cuda_stream_pool_release (&stream)) ;
     return GrB_SUCCESS ; 
 }
+

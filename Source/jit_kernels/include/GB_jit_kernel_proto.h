@@ -789,7 +789,6 @@ GrB_Info GB_jit_kernel_apply_bind1st                                        \
     GrB_Matrix B,                                                           \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
-    int32_t blocksz,                                                        \
     const GB_callback_struct *restrict my_callback                          \
 )                                                                           \
 
@@ -801,7 +800,6 @@ GrB_Info GB_jit_kernel_apply_bind2nd                                        \
     const GB_void *scalarx,                                                 \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
-    int32_t blocksz,                                                        \
     const GB_callback_struct *restrict my_callback                          \
 )                                                                           \
 
@@ -813,7 +811,6 @@ GrB_Info GB_jit_kernel_apply_unop                                           \
     const GB_void *ythunk,                                                  \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
-    int32_t blocksz,                                                        \
     const GB_callback_struct *restrict my_callback                          \
 )                                                                           \
 

@@ -2,6 +2,7 @@
 // GB_cuda_apply.hpp: CPU definitions for CUDA apply operations
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -23,8 +24,7 @@ GrB_Info GB_cuda_apply_unop_jit
     const GB_void *ythunk,
     // CUDA stream and launch parameters:
     cudaStream_t stream,
-    int32_t gridsz,
-    int32_t blocksz
+    int32_t gridsz
 ) ;
 
 GrB_Info GB_cuda_apply_bind1st_jit
@@ -38,8 +38,7 @@ GrB_Info GB_cuda_apply_bind1st_jit
     const GB_void *xscalar,
     // CUDA stream and launch parameters:
     cudaStream_t stream,
-    int32_t gridsz,
-    int32_t blocksz
+    int32_t gridsz
 ) ;
 
 GrB_Info GB_cuda_apply_bind2nd_jit
@@ -53,8 +52,7 @@ GrB_Info GB_cuda_apply_bind2nd_jit
     const GB_void *xscalar,
     // CUDA stream and launch parameters:
     cudaStream_t stream,
-    int32_t gridsz,
-    int32_t blocksz
+    int32_t gridsz
 ) ;
 
 #endif

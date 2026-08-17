@@ -1,6 +1,19 @@
+//------------------------------------------------------------------------------
+// CUDA/apply/template/GB_jit_kernel_cuda_apply_bind2nd.cu
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 #define GB_FREE_ALL ;
 
 using namespace cooperative_groups ;
+
+//------------------------------------------------------------------------------
+// GB_cuda_apply_bind2nd_kernel: device kernel for binary apply (bind2nd case)
+//------------------------------------------------------------------------------
 
 __global__ void GB_cuda_apply_bind2nd_kernel
 (
@@ -31,6 +44,10 @@ __global__ void GB_cuda_apply_bind2nd_kernel
     }
 }
 
+//------------------------------------------------------------------------------
+// host CUDA JIT kernel for binary op apply (bind2nd case)
+//------------------------------------------------------------------------------
+
 extern "C" {
     GB_JIT_CUDA_KERNEL_APPLY_BIND2ND_PROTO (GB_jit_kernel) ;
 }
@@ -41,7 +58,7 @@ GB_JIT_CUDA_KERNEL_APPLY_BIND2ND_PROTO (GB_jit_kernel)
     ASSERT (Cx != NULL) ;
 
     dim3 grid (gridsz) ;
-    dim3 block (blocksz) ;
+    dim3 block (GB_CUDA_APPLY_BLOCKDIM) ;
     GB_A_NHELD (nvals) ;
     if (nvals == 0) return (GrB_SUCCESS) ;
 

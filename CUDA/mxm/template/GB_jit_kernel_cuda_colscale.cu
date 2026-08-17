@@ -42,10 +42,10 @@ __global__ void GB_cuda_colscale_kernel
         {
             if (!GBb_A (Ab, p)) continue ;
             // the pth entry in A is A(i,j) where i = p%avlen and j = p/avlen
-            int64_t col_idx = p / avlen ;
-    //      int64_t row_idx = p % avlen ;
+            int64_t j = p / avlen ;
+    //      int64_t i = p % avlen ;
             GB_DECLAREB (djj) ;
-            GB_GETB (djj, Dx, col_idx, ) ;
+            GB_GETB (djj, Dx, j, ) ;
             GB_DECLAREA (aij) ;
             GB_GETA (aij, Ax, p, ) ;
             // C has same sparsity as A; ewise op code does not change
