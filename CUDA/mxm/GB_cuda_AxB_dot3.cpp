@@ -44,7 +44,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     GpuTimer kernel_timer;  // fixme: delete this?
-    int data_arena = GrB_DEFAULT ;  // FIXME: will depend on device id
+    int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
 
     //--------------------------------------------------------------------------
     // check inputs

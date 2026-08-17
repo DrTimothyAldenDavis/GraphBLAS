@@ -206,7 +206,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
     // dense-dense case requires no workspace
     #else
     // sparse-sparse, sparse-dense, and dense-sparse requires workspace
-    int data_arena = GrB_DEFAULT ;  // FIXME: will depend on device id
+    int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
     uint64_t mem = GB_mem (data_arena, 0) ;
     int64_t *Nanobuckets = NULL ; uint64_t Nb_mem  = mem ;
     int64_t *Blockbucket = NULL ; uint64_t Bb_mem  = mem ;

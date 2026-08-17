@@ -1048,7 +1048,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     GrB_Matrix T = NULL ;
     GrB_Info info = GrB_SUCCESS ;
 
-    int data_arena = GrB_DEFAULT ;  // FIXME: will depend on device id
+    int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     // workspace needed for CUB radix sort of (Key_in,X):

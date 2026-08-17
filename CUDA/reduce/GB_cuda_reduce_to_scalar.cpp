@@ -47,7 +47,7 @@ GrB_Info GB_cuda_reduce_to_scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    int data_arena = GrB_DEFAULT ;  // FIXME: will depend on device id
+    int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     GB_void *zscalar = NULL ;
@@ -67,7 +67,6 @@ GrB_Info GB_cuda_reduce_to_scalar
     // determine problem characteristics and allocate worksbace
     //--------------------------------------------------------------------------
 
-    int blocksz = 320 ;             // # threads in each block
     int work_per_thread = 256 ;     // work each thread does in a single block
     int number_of_sms = GB_Global_gpu_sm_get (0) ;
 
@@ -76,8 +75,8 @@ GrB_Info GB_cuda_reduce_to_scalar
 
     // determine kernel launch geometry
     int64_t anvals = GB_nnz_held (A) ;
-    int64_t work_per_block = work_per_thread*blocksz ;
-    // gridsz = ceil (anvals / work_per_block)
+    int64_t work_per_block = work_per_thread * GB_CUDA_REDUCE_BLOCKDIM ;
+    // gridsz = min (ceil (anvals / work_per_block), number_of_sms * 256)
     int64_t raw_gridsz = GB_ICEIL (anvals, work_per_block) ;
     raw_gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     int gridsz = (int) raw_gridsz ;
@@ -88,6 +87,7 @@ GrB_Info GB_cuda_reduce_to_scalar
     uint64_t rcode ;
     GB_enumify_reduce (&rcode, monoid, A) ;
     bool has_cheeseburger = GB_RSHIFT (rcode, 16, 1) ;
+    // fixme: remove this burble:
     GBURBLE ("has_cheeseburger %d\n", has_cheeseburger) ;
 
     // determine the kind of reduction: partial (to &V), or complete
@@ -120,15 +120,15 @@ GrB_Info GB_cuda_reduce_to_scalar
             data_arena, data_arena)) ;
     }
 
-    GBURBLE ("(cuda reduce launch %d threads in %d blocks)",
-        blocksz, gridsz ) ;
+    GBURBLE ("(cuda reduce launch: %d threads per block; %d blocks)",
+        GB_CUDA_REDUCE_BLOCKDIM, gridsz ) ;
 
     //--------------------------------------------------------------------------
     // reduce C to a scalar via the CUDA JIT
     //--------------------------------------------------------------------------
 
     GB_OK (GB_cuda_reduce_to_scalar_jit (zscalar, V, monoid, A,
-        stream, gridsz, blocksz)) ;
+        stream, gridsz)) ;
 
     //--------------------------------------------------------------------------
     // return result and release the stream

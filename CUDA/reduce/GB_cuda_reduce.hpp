@@ -22,8 +22,7 @@ GrB_Info GB_cuda_reduce_to_scalar_jit   // z = reduce_to_scalar (A) via CUDA JIT
     const GrB_Matrix A,         // matrix to reduce
     // CUDA stream and launch parameters:
     cudaStream_t stream,
-    int32_t gridsz,
-    int32_t blocksz
+    int32_t gridsz
 ) ;
 
 #endif

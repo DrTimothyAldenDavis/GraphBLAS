@@ -34,7 +34,7 @@ GrB_Info GB_cuda_select_sparse
     ASSERT (C != NULL) ;
     ASSERT (A != NULL) ;
 
-    int data_arena = GrB_DEFAULT ;  // FIXME: will depend on device id
+    int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
 
     GBURBLE ("(select sparse on cuda) ") ;
     printf ("\nblockdim1: %d chunksize1: %d\n",

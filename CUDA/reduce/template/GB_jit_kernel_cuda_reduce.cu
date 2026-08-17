@@ -221,7 +221,7 @@ GB_JIT_CUDA_KERNEL_REDUCE_PROTO (GB_jit_kernel)
 {
     GB_GET_CALLBACKS ;
     dim3 grid (gridsz) ;    // gridsz: # of threadblocks
-    dim3 block (blocksz) ;  // blocksz: # of threads in each threadblock
+    dim3 block (GB_CUDA_REDUCE_BLOCKDIM) ;  // # of threads in each threadblock
     GB_A_NHELD (anz) ;      // anz = # of entries held in A
 
     CUDA_OK (cudaGetLastError ( )) ;

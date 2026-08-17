@@ -65,7 +65,7 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     GrB_Matrix T = (*Thandle) ;     // just the header of T is given on input
     ASSERT (T != NULL) ;
 
-    int data_arena = GrB_DEFAULT ;  // FIXME: will depend on device id
+    int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     cudaStream_t stream = nullptr ;

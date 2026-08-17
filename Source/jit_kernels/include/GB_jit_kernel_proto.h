@@ -754,7 +754,6 @@ GrB_Info GB_jit_kernel_reduce                                           \
     const GrB_Matrix A,                                                 \
     cudaStream_t stream,                                                \
     int32_t gridsz,                                                     \
-    int32_t blocksz,                                                    \
     const GB_callback_struct *restrict my_callback                      \
 )
 

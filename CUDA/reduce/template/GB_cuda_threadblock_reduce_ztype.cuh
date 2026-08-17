@@ -19,7 +19,7 @@ __inline__ __device__ GB_Z_TYPE GB_cuda_threadblock_reduce_ztype
 )
 {
     // The thread_block g that calls this method has a number of threads
-    // defined by the kernel launch geometry (dim3 block (blocksz)).
+    // defined by the kernel launch geometry (dim3 block (...)).
     thread_block g = this_thread_block ( ) ;
     // here, g.sync() is not needed
 
@@ -52,7 +52,7 @@ __inline__ __device__ GB_Z_TYPE GB_cuda_threadblock_reduce_ztype
     g.sync() ;                      // Wait for all partial reductions
 
     // This method requires blockDim.x <= GB_CUDA_TILE_SIZE^2 = 1024, but this
-    // is always enforced in the CUDA standard since the our geometry is 1D.
+    // is always enforced in the CUDA standard since our geometry is 1D.
 
     // Final reduce within first tile
     if (tile_id == 0)
