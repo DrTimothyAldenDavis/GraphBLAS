@@ -60,7 +60,7 @@ endif ( )
 
 if ( SUITESPARSE_HAS_CUDA AND GRAPHBLAS_USE_CUDA )
     # FOR NOW: do not compile FactoryKernels when developing the CUDA kernels
-    set ( GRAPHBLAS_COMPACT ON )
+    # set ( GRAPHBLAS_COMPACT ON )  # FIXME for CUDA
     message ( STATUS "GraphBLAS CUDA JIT: enabled")
     set ( CMAKE_CXX_STANDARD 17 )
     enable_language ( CXX CUDA )

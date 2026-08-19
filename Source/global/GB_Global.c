@@ -548,13 +548,17 @@ void GB_Global_memtable_dump (void)
     #if defined ( GB_MEMTABLE_DEBUG ) && defined ( GB_MEMDUMP )
     GBMDUMP ("\nmemtable dump: %d nmalloc " GBd "\n",
         GB_Global.nmemtable, GB_Global.nmalloc) ;
+    double total_mem = 0 ;
     for (int k = 0 ; k < GB_Global.nmemtable ; k++)
     {
         GBMDUMP ("  %4d: %12p : %ld arena: %d\n", k,
             GB_Global.memtable_p [k],
             GB_Global.memtable_memsize [k],
             GB_Global.memtable_arena   [k]) ;
+        total_mem += GB_Global.memtable_memsize [k] ;
     }
+    total_mem = total_mem / (1024.0 * 1024.0 * 1024.0) ;
+    GBMDUMP ("memtable_dump: total %g GB in use\n", total_mem) ;
     #endif
 }
 

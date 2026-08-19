@@ -51,8 +51,8 @@ __global__ void GB_cuda_colscale_kernel
         {
             if (!GBb_A (Ab, p)) continue ;
             // the pth entry in A is A(i,j) where i = p%avlen and j = p/avlen
-            int64_t j = p / avlen ;
-    //      int64_t i = p % avlen ;
+            int64_t j = p / avlen ;     // not accessed if D is iso
+//          int64_t i = p % avlen ;
             GB_DECLAREB (djj) ;
             GB_GETB (djj, Dx, j, ) ;
             GB_DECLAREA (aij) ;
@@ -77,8 +77,7 @@ __global__ void GB_cuda_colscale_kernel
             {
                 int64_t p = pfirst + pdelta ;
                 int64_t k = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (p, pdelta, Ap, anvec_sub1, kfirst, slope) ;
-                int64_t j = GBh_A (Ah, k) ;
-
+                int64_t j = GBh_A (Ah, k) ;     // not accessed if D is iso
                 GB_DECLAREB (djj) ;
                 GB_GETB (djj, Dx, j, ) ;
                 GB_DECLAREA (aij) ;

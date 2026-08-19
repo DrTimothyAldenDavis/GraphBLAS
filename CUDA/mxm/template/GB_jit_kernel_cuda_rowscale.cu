@@ -46,7 +46,6 @@ __global__ void GB_cuda_rowscale_kernel
     for (int64_t p = tid ; p < bnz ; p += ntasks)
     {
         if (!GBb_B (Bb, p)) { continue ; }
-
         int64_t i = GBi_B (Bi, p, bvlen) ;      // get row index of B(i,j)
         GB_DECLAREA (dii) ;
         GB_GETA (dii, Dx, i, D_iso) ;           // dii = D(i,i)

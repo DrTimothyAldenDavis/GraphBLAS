@@ -319,6 +319,11 @@ int rmm_wrap_initialize_all_same
 
         devices.clear();
 
+        printf ("rmm_wrap_init_all_same:\n"
+            "init_pool_memsize: %zu\n"
+            "max_pool_memsize:  %zu\n"
+            , init_pool_memsize, max_pool_memsize) ;
+
         cudaStreamCreate (&rmm_wrap_global_stream) ;
 
         const char* cuda_visible_devices = std::getenv("CUDA_VISIBLE_DEVICES");

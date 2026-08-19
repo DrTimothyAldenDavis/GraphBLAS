@@ -56,8 +56,11 @@ GrB_Info GB_cuda_init (void)
 
             // fixme: init size: 4GB
             // max size:  .80 * CPU mem
+            #define GBYTE ((1024L)*(1024L)*(1024L))
 
-            256 * 1000000L, 1024 * 100000000L /*, 1 */) ; // fixme: ask GPU(s)
+//          256 * 1000000L, 1024 * 100000000L /*, 1 */) ; // fixme: ask GPU(s)
+//          256 * 1000000L, 512 * 100000000L /*, 1 */) ; // fixme: ask GPU(s)
+            80*GBYTE, 80*GBYTE) ;
     }
 
     // warm up the GPUs
