@@ -22,10 +22,10 @@
 // #define GB_DEBUG
 
 // to turn on a very verbose memory trace:
-   #define GB_MEMDUMP
+// #define GB_MEMDUMP
 
 // to enable the debug-only global memtable:
-   #define GB_MEMTABLE_DEBUG
+// #define GB_MEMTABLE_DEBUG
 
 #endif
 

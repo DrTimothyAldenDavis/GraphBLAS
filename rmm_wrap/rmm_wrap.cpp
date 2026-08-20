@@ -178,7 +178,7 @@ void rmm_wrap_finalize (void)
             {
                 delete rmm_wrap_context[device_id];
             }
-            delete rmm_wrap_context ;
+            free (rmm_wrap_context) ;
             rmm_wrap_context = NULL ;
         }
         cudaStreamDestroy (rmm_wrap_global_stream) ;
@@ -282,6 +282,7 @@ int rmm_wrap_initialize     // returns -1 on error, 0 on success
         //----------------------------------------------------------------------
 
         // std::cout << "Setting size_map for rmm_wrap context" << std::endl;
+        // FIXME: rmm_wrap_finalize needs to destroy the size_map
         rmm_wrap_context[device_id]->size_map = std::make_shared<alloc_map> () ;
         if (rmm_wrap_context[device_id]->size_map.get() == NULL)
         {
@@ -377,6 +378,8 @@ int rmm_wrap_initialize_all_same
         // Allocate rmm_wrap_contexts
 //      printf ("\ndevices.size %ld\n", devices.size()) ;
         std::cout << "devices.size is " << devices.size() << std::endl ;
+        // FIXME: is malloc the right thing to use here?
+        // alternative: can use a fixed size array of size GB_MAX_NGPUS
         rmm_wrap_context = (RMM_Wrap_Handle**)malloc(devices.size() * sizeof(RMM_Wrap_Handle*));
         for(int i = 0; i < devices.size(); ++i) {
             rmm_wrap_context[i] = NULL;
@@ -481,6 +484,7 @@ void *rmm_wrap_allocate( std::size_t *size)
         am->emplace ((std::size_t)p, (std::size_t)(*size)) ;
 
         // return the allocated block
+//      printf ("rmm_wrap_allocate: %zu (device %d)\n", *size, device_id) ;
         return (p) ;
 
     }
@@ -560,11 +564,16 @@ void rmm_wrap_deallocate( void *p, std::size_t size)
         // remove p from the hashmap
         am->erase ( (std::size_t)(p) ) ;
 
+//      printf ("rmm_wrap_deallocate: %zu (device %d)\n", actual_size,
+//          device_id) ;
+
         // deallocate the block of memory
 //      rmm::mr::pool_memory_resource memoryresource =
 //          rmm::mr::get_current_device_resource_ref() ;
 //      memoryresource->deallocate( p, actual_size ) ;
-        cuda_pool_default.deallocate( rmm_wrap_global_stream, p, actual_size , 256 ) ;
+
+        (rmm_wrap_context [device_id]->resource).deallocate( rmm_wrap_global_stream, p, actual_size , 256) ;
+//      cuda_pool_default.deallocate(rmm_wrap_global_stream, p, actual_size , 256 ) ;
 
 
     }

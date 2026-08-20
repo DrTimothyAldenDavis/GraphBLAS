@@ -32,7 +32,7 @@ GrB_Info GB_cuda_stream_pool_release (cudaStream_t *stream)
     }
 
     int device = 0 ;
-    CUDA_OK (cudaGetDevice (&device)) ;
+    CUDA_OK (cudaGetDevice (&device)) ; // fixme: pass in a parameter?
     CUDA_OK (cudaStreamSynchronize (*stream)) ;
 
     // fixme:  assert that device == return value from

@@ -60,11 +60,13 @@ GrB_Info GB_cuda_init (void)
 
 //          256 * 1000000L, 1024 * 100000000L /*, 1 */) ; // fixme: ask GPU(s)
 //          256 * 1000000L, 512 * 100000000L /*, 1 */) ; // fixme: ask GPU(s)
-            80*GBYTE, 80*GBYTE) ;
+            8*GBYTE, 80*GBYTE) ;
     }
 
     // warm up the GPUs
-    for (int device = 0 ; device < gpu_count ; device++)
+//  for (int device = 0 ; device < gpu_count ; device++)
+
+    int device = 0 ;    // HACK: just warmup device 0
     {
         if (!GB_cuda_warmup (device))
         {

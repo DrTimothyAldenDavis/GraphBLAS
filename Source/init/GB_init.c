@@ -212,8 +212,8 @@ GrB_Info GB_init            // start up GraphBLAS
     #if defined ( GRAPHBLAS_HAS_CUDA )
 //  this hack_get setting is used by GB_ngpus_to_use:
 //  GB_Global_hack_set (2,0) ;  // HACK fixme for CUDA: default: GPU for big enough probs
-//  GB_Global_hack_set (2,1) ;  // HACK fixme for CUDA: force the GPU always to be used
-    GB_Global_hack_set (2,2) ;  // HACK fixme for CUDA: force the GPU never to be used
+    GB_Global_hack_set (2,1) ;  // HACK fixme for CUDA: force the GPU always to be used
+//  GB_Global_hack_set (2,2) ;  // HACK fixme for CUDA: force the GPU never to be used
     #endif
 
     //--------------------------------------------------------------------------
