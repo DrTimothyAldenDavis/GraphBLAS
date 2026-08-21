@@ -60,7 +60,7 @@ bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
     int gpu_count = GB_ngpus_to_use (work) ;
     int ngpus_max = GB_Context_gpu_ids (NULL) ;     // fixme: get gpu_ids
     gpu_count = std::min (gpu_count, ngpus_max) ;
-    GBURBLE (" work:%g gpus:%d ", work, gpu_count) ;
+    GBURBLE ("(work:%g gpus:%d) ", work, gpu_count) ;
     if (gpu_count > 0)
     {
         return (true) ;

@@ -26,7 +26,7 @@ GrB_Info GB_cuda_select_bitmap
 {
     GrB_Info info ;
 
-    GBURBLE (" (select bitmap on cuda)") ;
+    GBURBLE ("(select bitmap on cuda) ") ;
 
     int device = 0 ;    // fixme
     cudaStream_t stream = nullptr ;

@@ -64,7 +64,7 @@ bool GB_cuda_AxB_dot3_branch
     int gpu_count = GB_ngpus_to_use (work) ;
     int ngpus_max = GB_Context_gpu_ids (NULL) ;     // fixme: get gpu_ids
     gpu_count = std::min (gpu_count, ngpus_max) ;
-    GBURBLE (" work:%g GPUs:%d ", work, gpu_count) ;
+    GBURBLE ("(work:%g GPUs:%d) ", work, gpu_count) ;
     if (gpu_count > 0)
     {
         // fixme: determine which GPU from the context object

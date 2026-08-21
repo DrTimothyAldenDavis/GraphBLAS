@@ -121,9 +121,8 @@ GrB_Info GB_cuda_reduce_to_scalar
             data_arena, data_arena)) ;
     }
 
-    GBURBLE (" (cuda reduce: %d threads per block; %d blocks; CUDA has"
-        " atomic op for monoid: %d)", GB_CUDA_REDUCE_BLOCKDIM, gridsz,
-        has_cheeseburger) ;
+    GBURBLE ("(cuda reduce: %d threads per block; %d blocks; CUDA has"
+        " atomic op: %d) ", GB_CUDA_REDUCE_BLOCKDIM, gridsz, has_cheeseburger) ;
 
     //--------------------------------------------------------------------------
     // reduce C to a scalar via the CUDA JIT
