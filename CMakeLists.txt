@@ -421,9 +421,6 @@ if ( BUILD_SHARED_LIBS )
 
     if ( GRAPHBLAS_HAS_CUDA )
         target_compile_definitions ( GraphBLAS PRIVATE "GRAPHBLAS_HAS_CUDA" )
-#       target_include_directories ( GraphBLAS PRIVATE "${RMM_WRAP_INCLUDES}" )
-# required for rmm 25.10:
-#       target_compile_definitions ( GraphBLAS PRIVATE "LIBCUDACXX_ENABLE_EXPERIMENTAL_MEMORY_RESOURCE" )
     endif ( )
 
     if ( WIN32 )
@@ -477,9 +474,6 @@ if ( BUILD_STATIC_LIBS )
 
     if ( GRAPHBLAS_HAS_CUDA )
         target_compile_definitions ( GraphBLAS_static PRIVATE "GRAPHBLAS_HAS_CUDA" )
-# required for rmm 25.10:
-#       target_compile_definitions ( GraphBLAS_static PRIVATE "LIBCUDACXX_ENABLE_EXPERIMENTAL_MEMORY_RESOURCE" )
-#       target_include_directories ( GraphBLAS_static PRIVATE "${RMM_WRAP_INCLUDES}" )
     endif ( )
 
     if ( WIN32 )

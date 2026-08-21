@@ -47,6 +47,7 @@ GrB_Info GB_cuda_reduce_to_scalar
     // check inputs
     //--------------------------------------------------------------------------
 
+    int device = 0 ;    // fixme
     int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
     uint64_t mem = GB_mem (data_arena, 0) ;
 
@@ -68,7 +69,7 @@ GrB_Info GB_cuda_reduce_to_scalar
     //--------------------------------------------------------------------------
 
     int work_per_thread = 256 ;     // work each thread does in a single block
-    int number_of_sms = GB_Global_gpu_sm_get (0) ;
+    int number_of_sms = GB_Global_gpu_sm_get (device) ;
 
     GrB_Type ztype = monoid->op->ztype ;
     size_t zsize = ztype->size ;

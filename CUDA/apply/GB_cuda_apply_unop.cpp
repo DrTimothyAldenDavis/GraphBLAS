@@ -35,6 +35,7 @@ GrB_Info GB_cuda_apply_unop
 
     GrB_Info info ;
     GB_void *ythunk_cuda = nullptr ;
+    int device = 0 ;    // fixme
     int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
     uint64_t ythunk_cuda_mem = GB_mem (data_arena, 0) ;
 
@@ -61,7 +62,7 @@ GrB_Info GB_cuda_apply_unop
         memcpy (ythunk_cuda, ythunk, op->ytype->size) ;
     }
 
-    int32_t number_of_sms = GB_Global_gpu_sm_get (0) ;
+    int32_t number_of_sms = GB_Global_gpu_sm_get (device) ;
     int64_t raw_gridsz = GB_ICEIL (anz, GB_CUDA_APPLY_BLOCKDIM) ;
     // cap #of blocks to 256 * #of sms
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;

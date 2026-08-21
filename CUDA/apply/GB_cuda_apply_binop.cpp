@@ -34,6 +34,7 @@ GrB_Info GB_cuda_apply_binop
 {
     GrB_Info info ;
     GB_void *scalarx_cuda = NULL ;
+    int device = 0 ;    // fixme
     int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
     uint64_t scalarx_cuda_mem = GB_mem (data_arena, 0) ;
 
@@ -64,7 +65,7 @@ GrB_Info GB_cuda_apply_binop
 
     GrB_Index anz = GB_nnz_held (A) ;
 
-    int32_t number_of_sms = GB_Global_gpu_sm_get (0) ;
+    int32_t number_of_sms = GB_Global_gpu_sm_get (device) ;
     int64_t raw_gridsz = GB_ICEIL (anz, GB_CUDA_APPLY_BLOCKDIM) ;
     // cap #of blocks to 256 * #of sms
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;

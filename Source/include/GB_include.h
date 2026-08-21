@@ -67,6 +67,7 @@
 #include "include/GB_defaults.h"
 #include "include/GB_rand.h"
 #include "include/GB_ph_code.h"
+#include "include/GB_system.h"
 
 #ifdef GB_JIT_KERNEL
 

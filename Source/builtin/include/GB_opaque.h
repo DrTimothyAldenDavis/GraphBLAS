@@ -480,8 +480,6 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     int val_list ;          // how to use the value list, X
 } ;
 
-#define GB_MAX_NGPUS 64
-
 struct GB_Context_opaque    // content of GxB_Context
 {
     int64_t magic ;         // for detecting uninitialized objects

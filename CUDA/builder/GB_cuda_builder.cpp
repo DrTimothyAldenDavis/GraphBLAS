@@ -139,6 +139,7 @@ GrB_Info GB_cuda_builder            // build a matrix from tuples
     ASSERT (X != NULL) ;
     ASSERT (ttype != NULL) ;
     ASSERT (xtype != NULL) ;
+    int device = 0 ;    // fixme
 
     //--------------------------------------------------------------------------
     // construct the SECOND operator if dup is NULL
@@ -162,7 +163,7 @@ GrB_Info GB_cuda_builder            // build a matrix from tuples
     GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
 
     // determine the geometry of the CUDA kernel launches
-    int32_t number_of_sms = GB_Global_gpu_sm_get (0) ;
+    int32_t number_of_sms = GB_Global_gpu_sm_get (device) ;
     int64_t raw_gridsz = GB_ICEIL (nvals, GB_CUDA_BUILDER_CHUNKSIZE) ;
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     gridsz = std::max (gridsz, 1) ;

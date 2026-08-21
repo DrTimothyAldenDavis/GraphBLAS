@@ -9,18 +9,8 @@
 #ifndef RMM_WRAP_H
 #define RMM_WRAP_H
 
-//#include <cuda_runtime.h>
-
-// fixme for CUDA: consider another way to report the error (not std::cout)
-#define cudaSucess 0 
-#define RMM_WRAP_CHECK_CUDA(call)                                         \
-  do {                                                                    \
-    int err = call;                                               \
-    if (err != cudaSucess) {                                             \
-      printf( "(CUDA runtime) returned %d\n", err);                       \
-      printf( " ( %s: %d : %s\n", __FILE__,  __LINE__ ,__func__); \
-    }                                                                     \
-  } while (0)
+// get the definition of GB_MAX_NGPUS
+#include "Source/include/GB_system.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,7 +20,6 @@ extern "C" {
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
-
 
 // TODO describe the modes
 typedef enum
@@ -43,8 +32,7 @@ typedef enum
 RMM_MODE ;
 
 // get id of currently selected device
-// fixme for CUDA: wrong name.  call it rmm_wrap_get_current_device
-int get_current_device (void) ;
+int rmm_wrap_get_current_device (void) ;
 
 // determine if RMM has been initialized
 bool rmm_wrap_is_initialized (void) ;
@@ -79,11 +67,6 @@ void *rmm_wrap_malloc (size_t size) ;
 // void *rmm_wrap_calloc (size_t n, size_t size) ;      // not used
 // void *rmm_wrap_realloc (void *p, size_t newsize) ;   // not used
 void  rmm_wrap_free (void *p) ;
-
-// Get streams from context (based on current device_id):
-// void* rmm_wrap_get_next_stream_from_pool(void);
-// void* rmm_wrap_get_stream_from_pool(size_t stream_id);
-// void* rmm_wrap_get_main_stream(void);
 
 #ifdef __cplusplus
 }

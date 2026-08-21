@@ -65,6 +65,7 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     GrB_Matrix T = (*Thandle) ;     // just the header of T is given on input
     ASSERT (T != NULL) ;
 
+    int device = 0 ;    // fixme
     int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
     uint64_t mem = GB_mem (data_arena, 0) ;
 
@@ -111,7 +112,7 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
 
     // determine the geometry of the CUDA kernel launches
-    int32_t number_of_sms = GB_Global_gpu_sm_get (0) ;
+    int32_t number_of_sms = GB_Global_gpu_sm_get (device) ;
     int64_t raw_gridsz = GB_ICEIL (anz, GB_CUDA_TRANSPOSE_PREP_CHUNKSIZE) ;
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     gridsz = std::max (gridsz, 1) ;

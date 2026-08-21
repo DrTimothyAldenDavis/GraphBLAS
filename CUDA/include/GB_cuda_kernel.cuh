@@ -53,6 +53,7 @@ using namespace cooperative_groups ;
 
 extern "C"
 {
+    #include "include/GB_system.h"
     #include "include/GB_opaque.h"
     #include "include/GB_index.h"
     #include "include/GB_math_macros.h"
