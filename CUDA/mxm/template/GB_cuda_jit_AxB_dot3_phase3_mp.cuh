@@ -19,7 +19,7 @@
 // N.  Handles arbitrary sparsity patterns with guaranteed load balance.
 
 // Both the grid and block are 1D, so blockDim.x is the # threads in a
-// threadblock, and the # of threadblocks is grid.x
+// threadblock, and the # of threadblocks is gridDim.x
 
 // This method requires blockDim.x to be equal to GB_CUDA_TILE_SIZE.
 

@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// GB_cuda_reduce.hpp: CPU definitions for CUDA reductions
+// CUDA/reduce/GB_cuda_reduce.hpp: CPU definitions for CUDA reductions
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------

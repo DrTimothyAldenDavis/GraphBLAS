@@ -1,9 +1,8 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/reduce/template/GB_jit_kernel_cuda_reduce.cu
+// CUDA/reduce/template/GB_jit_kernel_cuda_reduce.cu
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
-// This file: Copyright (c) 2024-2025, NVIDIA CORPORATION. All rights reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -14,7 +13,7 @@
 // across the threadblocks.
 
 // Both the grid and block are 1D, so blockDim.x is the # threads in a
-// threadblock, and the # of threadblocks is grid.x
+// threadblock, and the # of threadblocks is gridDim.x
 
 // Let b = blockIdx.x, and let s be blockDim.x.
 // Each threadblock owns s*8 contiguous items in the input data.

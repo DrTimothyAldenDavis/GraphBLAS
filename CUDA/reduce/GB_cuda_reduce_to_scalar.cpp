@@ -1,14 +1,13 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/GB_cuda_reduce_to_scalar: reduce on the GPU with semiring 
+// CUDA/reduce/GB_cuda_reduce_to_scalar: reduce on the GPU with semiring
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
-// This file: Copyright (c) 2024-2025, NVIDIA CORPORATION. All rights reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// Reduce a matrix A to a scalar s, or to a smaller matrix V if the GPU was
+// Reduce a matrix A to a scalar s, or to a smaller vector V if the GPU was
 // only able to do a partial reduction.  This case occurs if the GPU does not
 // cannot do an atomic update for the monoid.  To handle this case, the GPU
 // returns a full GrB_Matrix V, of size gridsize-by-1, with one entry per
@@ -63,7 +62,7 @@ GrB_Info GB_cuda_reduce_to_scalar
 
     cudaStream_t stream = nullptr ;
     GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
-    
+
     //--------------------------------------------------------------------------
     // determine problem characteristics and allocate worksbace
     //--------------------------------------------------------------------------
@@ -82,21 +81,19 @@ GrB_Info GB_cuda_reduce_to_scalar
     raw_gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     int gridsz = (int) raw_gridsz ;
 
-    // fixme: GB_enumify_reduce is called twice: here (to get has_cheeseburger)
-    // and in GB_cuda_reduce_to_scalar_jit.  Can we just call it once?
-
     uint64_t rcode ;
     GB_enumify_reduce (&rcode, monoid, A) ;
     bool has_cheeseburger = GB_RSHIFT (rcode, 16, 1) ;
-    // fixme: remove this burble:
-    GBURBLE ("has_cheeseburger %d\n", has_cheeseburger) ;
+
 
     // determine the kind of reduction: partial (to &V), or complete
     // (to the scalar output)
     if (has_cheeseburger)
     {
-        // the kernel launch can reduce A to zscalar all by itself
-        // allocate and initialize zscalar (upscaling it to at least 32 bits)
+        // has_cheeseburger is true if CUDA has an atomic operation that can be
+        // used for the monoid.  If so, the kernel launch can reduce A to
+        // zscalar all by itself allocate and initialize zscalar (upscaling it
+        // to at least 32 bits)
         size_t zscalar_space = GB_IMAX (zsize, sizeof (uint32_t)) ;
         zscalar = (GB_void *) GB_MALLOC_MEMORY (1, zscalar_space,
             &zscalar_mem) ;
@@ -110,9 +107,12 @@ GrB_Info GB_cuda_reduce_to_scalar
     }
     else
     {
-        // allocate a full GrB_Matrix V for the partial result, of size
-        // gridsz-by-1, and of type ztype.  V is allocated but not
-        // initialized.
+        // has_cheeseburger is false, which means there is no CUDA atomic
+        // operator that matches the monoid.  If has_cheeseburger is false, the
+        // threadblocks reduce their part of the matrix or vector to a single
+        // scalar, placing their result in the vector V.  The vector V is full,
+        // with the ztype, of length gridsz-by-1 (the number of threadblocks in
+        // the kernel launch).  V is allocated but not initialized.
         GB_OK (GB_new_bix (&V, ztype, gridsz, 1, GB_ph_null,
             /* is_csc: */ true, /* sparsity: */ GxB_FULL,
             /* bitmap_calloc: */ false, /* hyper_switch: */ 0,
@@ -121,8 +121,9 @@ GrB_Info GB_cuda_reduce_to_scalar
             data_arena, data_arena)) ;
     }
 
-    GBURBLE ("(cuda reduce launch: %d threads per block; %d blocks)",
-        GB_CUDA_REDUCE_BLOCKDIM, gridsz ) ;
+    GBURBLE (" (cuda reduce: %d threads per block; %d blocks; CUDA has"
+        " atomic op for monoid: %d)", GB_CUDA_REDUCE_BLOCKDIM, gridsz,
+        has_cheeseburger) ;
 
     //--------------------------------------------------------------------------
     // reduce C to a scalar via the CUDA JIT
@@ -145,8 +146,16 @@ GrB_Info GB_cuda_reduce_to_scalar
     }
     else
     {
-        // return the partial reduction
+        // return the partial reduction; the caller must continue the
+        // reduction to reduce V to a single scalar.
         (*V_handle) = V ;
+
+        // FUTURE: If the monoid is terminal, V will contain uninitialized
+        // values.  It should be initialized first, by the JIT kernel
+        // or above, after creating it.  Alternatively, if the reduction
+        // triggers the early-termination flag, this could be returned to
+        // the caller, and V would not be used.  Instead, the final scalar
+        // result would be the terminal value of the monoid.
     }
 
     GB_FREE_WORKSPACE ;

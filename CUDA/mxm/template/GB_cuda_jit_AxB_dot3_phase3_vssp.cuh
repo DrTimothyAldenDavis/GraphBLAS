@@ -6,7 +6,7 @@
 // are far apart in size, neither is very spare nor dense, for any size of N.
 
 // Both the grid and block are 1D, so blockDim.x is the # threads in a
-// threadblock, and the # of threadblocks is grid.x
+// threadblock, and the # of threadblocks is gridDim.x
 
 //  int64_t start          <- start of vector pairs for this kernel
 //  int64_t end            <- end of vector pairs for this kernel

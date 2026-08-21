@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/GB_cuda_reduce_to_scalar_branch: decide to use GPU for reduce
+// CUDA/reduce/GB_cuda_reduce_to_scalar_branch: decide to use GPU for reduce
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
 
     int jit_control = GB_jitifyer_get_control ( ) ;
     if (jit_control <= GxB_JIT_PAUSE)
-    { 
+    {
         // JIT is off or paused
         return (false) ;
     }

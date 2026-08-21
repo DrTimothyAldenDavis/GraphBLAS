@@ -17,7 +17,7 @@
 // This version uses an entire threadblock to compute each C(i,j) dot product.
 
 // Both the grid and block are 1D, so blockDim.x is the # threads in a
-// threadblock, and the # of threadblocks is grid.x
+// threadblock, and the # of threadblocks is gridDim.x
 
 //------------------------------------------------------------------------------
 // GB_cuda_AxB_dot3_phase3_spdn_kernel
