@@ -54,12 +54,6 @@ using namespace cooperative_groups ;
 
 #include "template/GB_cuda_ek_slice.cuh"
 
-// fixme: put the following elsewhere, say GB_cuda_kernel.cuh:
-#include <cub/cub.cuh>
-#ifdef TIMING
-#include "omp.h"
-#endif
-
 #define GB_FREE_WORKSPACE               \
 {                                       \
     GB_FREE_MEMORY (&W_0, W_0_mem) ;    \
@@ -609,9 +603,9 @@ extern "C"
 
 GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 {
-//  #ifdef TIMING
-//  double t = GB_OPENMP_GET_WTIME ;
-//  #endif
+    #ifdef TIMING
+    double t = GB_OPENMP_GET_WTIME ;
+    #endif
 
     //--------------------------------------------------------------------------
     // get callback functions
