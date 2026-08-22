@@ -50,8 +50,6 @@
 // is recomputed when needed in phase 3.
 #define Ak_SAVE 0
 
-using namespace cooperative_groups ;
-
 #include "template/GB_cuda_ek_slice.cuh"
 
 #define GB_FREE_WORKSPACE               \

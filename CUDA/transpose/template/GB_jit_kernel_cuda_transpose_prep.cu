@@ -14,9 +14,6 @@
 // declarations
 //------------------------------------------------------------------------------
 
-// fixme: place this "using ..." in GB_cuda_kernel.cuh
-using namespace cooperative_groups ;
-
 #include "template/GB_cuda_ek_slice.cuh"
 
 #undef  GB_FREE_ALL

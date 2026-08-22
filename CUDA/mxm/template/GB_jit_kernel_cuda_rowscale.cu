@@ -7,9 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_FREE_ALL ;
+// C = D*B, where D is diagonal.
 
-using namespace cooperative_groups ;
+//------------------------------------------------------------------------------
+// GB_cuda_rowscale_kernel
+//------------------------------------------------------------------------------
+
+#define GB_FREE_ALL ;
 
 __global__ void GB_cuda_rowscale_kernel
 (

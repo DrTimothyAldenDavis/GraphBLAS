@@ -1007,8 +1007,7 @@ extern "C"
     GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel) ;
 }
 
-// #undef GB_TIMING
-#define GB_TIMING
+// #define TIMING   /* uncomment this to print timing */
 
 GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 {
@@ -1017,7 +1016,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // get callback functions
     //--------------------------------------------------------------------------
 
-    #ifdef GB_TIMING
+    #ifdef TIMING
     double t1 = GB_OPENMP_GET_WTIME ;
     #endif
     #ifdef GB_JIT_RUNTIME
@@ -1172,7 +1171,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     #endif
 
-    #ifdef GB_TIMING
+    #ifdef TIMING
     t1 = GB_OPENMP_GET_WTIME - t1 ;
     printf ("builder phase 1: %g sec,", t1) ;
     printf (" known_sorted: %d, known_no_duplicates: %d\n",
@@ -1383,7 +1382,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     }
     #endif
 
-    #ifdef GB_TIMING
+    #ifdef TIMING
     t2 = GB_OPENMP_GET_WTIME - t2 ;
     printf ("builder phase 2: %g sec\n", t2) ;
     double t3 = GB_OPENMP_GET_WTIME ;
@@ -1576,7 +1575,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     }
     #endif
 
-    #ifdef GB_TIMING
+    #ifdef TIMING
     t3 = GB_OPENMP_GET_WTIME - t3 ;
     printf ("builder phase 3: %g sec\n", t3) ;
     double t4 = GB_OPENMP_GET_WTIME ;
@@ -1663,7 +1662,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     tnvec = 1 ;
     #endif
 
-    #ifdef GB_TIMING
+    #ifdef TIMING
     t4 = GB_OPENMP_GET_WTIME - t4 ;
     printf ("builder phase 4: %g sec\n", t4) ;
     double t5 = GB_OPENMP_GET_WTIME ;

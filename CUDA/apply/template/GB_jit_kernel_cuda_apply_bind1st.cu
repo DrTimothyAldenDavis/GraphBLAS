@@ -9,8 +9,6 @@
 
 #define GB_FREE_ALL ;
 
-using namespace cooperative_groups ;
-
 //------------------------------------------------------------------------------
 // GB_cuda_apply_bind1st_kernel: device kernel for binary apply (bind1st case)
 //------------------------------------------------------------------------------

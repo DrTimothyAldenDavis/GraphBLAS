@@ -9,8 +9,6 @@
 
 #define GB_FREE_ALL ;
 
-using namespace cooperative_groups ;
-
 #include "template/GB_cuda_ek_slice.cuh"
 
 //------------------------------------------------------------------------------

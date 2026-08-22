@@ -9,8 +9,6 @@
 
 #define GB_FREE_ALL ;
 
-using namespace cooperative_groups ;
-
 #include "template/GB_cuda_tile_sum_uint64.cuh"
 #include "template/GB_cuda_threadblock_sum_uint64.cuh"
 

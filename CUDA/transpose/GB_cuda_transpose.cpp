@@ -117,7 +117,9 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     gridsz = std::max (gridsz, 1) ;
 
-    double t = GB_OPENMP_GET_WTIME ;        // fixme
+    #ifdef TIMING
+    double t = GB_OPENMP_GET_WTIME ;
+    #endif
 
     GB_OK (GB_cuda_transpose_prep_jit (
         /* output: */ Key_input,
@@ -125,8 +127,10 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
 
     GB_OK (GB_cuda_stream_pool_release (&stream)) ;
 
+    #ifdef TIMING
     t = GB_OPENMP_GET_WTIME - t ;
-    printf ("CUDA transpose prep time: %g\n", t) ;  // fixme
+    printf ("CUDA transpose prep time: %g\n", t) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // allocate the output matrix
