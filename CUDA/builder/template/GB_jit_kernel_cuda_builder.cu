@@ -304,7 +304,7 @@ __global__ void GB_cuda_builder_phase3_with_dupl
     {
 
         //----------------------------------------------------------------------
-        // determine the chunk
+        // determine the properties of this chunk
         //----------------------------------------------------------------------
 
         int64_t pfirst = chunk << LOG2_CHUNKSIZE ;
@@ -508,7 +508,7 @@ __global__ void GB_cuda_builder_phase3_no_dupl
     {
 
         //----------------------------------------------------------------------
-        // determine the chunk
+        // determine the properties of this chunk
         //----------------------------------------------------------------------
 
         int64_t pfirst = chunk << LOG2_CHUNKSIZE ;
@@ -665,7 +665,7 @@ __global__ void GB_cuda_builder_phase5_with_dupl
     {
 
         //----------------------------------------------------------------------
-        // determine the chunk
+        // determine the properties of this chunk
         //----------------------------------------------------------------------
 
         int64_t pfirst = chunk << LOG2_CHUNKSIZE ;
@@ -815,7 +815,7 @@ __global__ void GB_cuda_builder_phase5_transplant
     {
 
         //----------------------------------------------------------------------
-        // determine the chunk
+        // determine the properties of this chunk
         //----------------------------------------------------------------------
 
         int64_t pfirst = chunk << LOG2_CHUNKSIZE ;
@@ -929,7 +929,7 @@ __global__ void GB_cuda_builder_phase5_no_dupl
     {
 
         //----------------------------------------------------------------------
-        // determine the chunk
+        // determine the properties of this chunk
         //----------------------------------------------------------------------
 
         int64_t pfirst = chunk << LOG2_CHUNKSIZE ;
@@ -1403,7 +1403,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     // LJDelta is 1 if the entry is first in its vector (a leading entry), held
     // in a temporary shared array in each threadblock.  It is computed from
     // Key_out.j only and is not affected by the presence of duplicates.
-    // JDelta is the cumsum of chunk of LJDelta.
+    // JDelta is the cumsum of each chunk of LJDelta.
 
     // inputs:
     // Key_out.j:inf [ 0 0 0 0 | 1 1 1 1 | 1 2 2 4 | 4 4     ]
@@ -1696,8 +1696,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     // The position where the p-th entry in (I,J,X) appears in T is given by
     // pT = Map [p] + ChunkSum [chunk], where pT is a 1-based index.  If this
-    // position differs from the position of the (p-1)st entry in (I,J,X),
-    // then the entry is the first unique tuple in its set of duplicates.
+    // position differs from the position of the (p-1)st entry in (I,J,X), then
+    // the entry is the first unique tuple in its set of duplicates.
 
     // output with "|" denoting the chunks:
     // Ti:           [ 0 1 2 | 3 4 5 | 3 4 0 | 1 3 ]

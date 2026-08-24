@@ -33,7 +33,7 @@ GrB_Info GB_cuda_init (void)
 
     for (int device = 0 ; device < gpu_count ; device++)
     {
-        // query the GPU and then warm it up
+        // query the GPU
         if (!GB_Global_gpu_device_properties_get (device))
         {
             printf ("GB_cuda_init line %d\n", __LINE__) ;
@@ -64,9 +64,8 @@ GrB_Info GB_cuda_init (void)
     }
 
     // warm up the GPUs
-//  for (int device = 0 ; device < gpu_count ; device++)
-
-    int device = 0 ;    // HACK: just warmup device 0
+    for (int device = 0 ; device < gpu_count ; device++)
+//  int device = 0 ;    // HACK: just warmup device 0
     {
         if (!GB_cuda_warmup (device))
         {

@@ -50,6 +50,11 @@
 // is recomputed when needed in phase 3.
 #define Ak_SAVE 0
 
+// fixme: try an intermediate to Ak_SAVE 0/1:  call GB_cuda_ek_slice_setup just
+// in phase1, and reuse its result in phase3.  Do not save all of Ak.  Phase3
+// would lookup the GB_cuda_ek_slice_setup result from phase1 (kfirst and
+// slope) and then call GB_ucda_ek_slice_entry per entry.
+
 #include "template/GB_cuda_ek_slice.cuh"
 
 #define GB_FREE_WORKSPACE               \
@@ -109,6 +114,7 @@ __global__ void GB_cuda_select_sparse_phase1
 
     #if ( Ak_SAVE ) || ( GB_DEPENDS_ON_J )
     const int64_t anvec = A->nvec ;
+    const int64_t anvec1 = anvec - 1 ;
     const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;
     #endif
     #if ( GB_DEPENDS_ON_I )
@@ -143,17 +149,17 @@ __global__ void GB_cuda_select_sparse_phase1
     {
 
         //----------------------------------------------------------------------
-        // determine the chunk
+        // determine the properties of this chunk
         //----------------------------------------------------------------------
 
         int64_t pfirst = chunk << LOG2_CHUNKSIZE1 ;
         int64_t my_chunk_size ;
         #if ( Ak_SAVE ) || ( GB_DEPENDS_ON_J )
         // detemine the slope, for computing Ak and j
-        int64_t anvec1, kfirst, klast ;
+        int64_t kfirst ;
         float slope ;
-        GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst,
-            CHUNKSIZE1, &kfirst, &klast, &my_chunk_size, &anvec1, &slope) ;
+        GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst, CHUNKSIZE1,
+            &kfirst, &my_chunk_size, &slope) ;
         #else
         int64_t plast = pfirst + CHUNKSIZE1 ;
         plast = GB_IMIN (plast, anz) ;
@@ -314,6 +320,7 @@ __global__ void GB_cuda_select_sparse_phase3
 
     #if ( !Ak_SAVE )
     const int64_t anvec = A->nvec ;
+    const int64_t anvec1 = anvec - 1 ;
     const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;
     #endif
     const GB_Ai_SIGNED_TYPE *__restrict__ Ai = (GB_Ai_SIGNED_TYPE *) A->i ;
@@ -338,10 +345,10 @@ __global__ void GB_cuda_select_sparse_phase3
         int64_t my_chunk_size ;
         #if !Ak_SAVE
         // Ak workspace not in use; recompute it below as needed
-        int64_t anvec1, kfirst, klast ;
+        int64_t kfirst ;
         float slope ;
-        GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst,
-            CHUNKSIZE1, &kfirst, &klast, &my_chunk_size, &anvec1, &slope) ;
+        GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst, CHUNKSIZE1,
+            &kfirst, &my_chunk_size, &slope) ;
         #else
         int64_t plast = pfirst + CHUNKSIZE1 ;
         plast = GB_IMIN (plast, anz) ;

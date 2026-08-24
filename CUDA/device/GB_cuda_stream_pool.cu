@@ -1,8 +1,17 @@
+//------------------------------------------------------------------------------
+// CUDA/device/GB_cuda_stream_pool.cu:  stream pools for each CUDA device
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 #include "GB_cuda.hpp"
 
 #define STREAMS_PER_DEVICE 32
 
-// fixme: avoid std::
+// fixme: avoid std::, no need for it here
 struct GB_cuda_stream_pool
 {
     std::vector<std::array<cudaStream_t, STREAMS_PER_DEVICE>> streams ;
@@ -139,6 +148,8 @@ GrB_Info GB_cuda_stream_pool_init (void)
     int ngpus = GB_Global_gpu_count_get ( ) ;
     for (int device = 0 ; device < ngpus ; device++)
     {
+        printf ("CUDA stream pool, device: %d, # streams %d\n",
+            device, STREAMS_PER_DEVICE) ;
         pool.nstreams_avail.push_back (0) ;
         pool.streams.push_back (std::array<cudaStream_t, STREAMS_PER_DEVICE>()) ;
         CUDA_OK (cudaSetDevice (device)) ;

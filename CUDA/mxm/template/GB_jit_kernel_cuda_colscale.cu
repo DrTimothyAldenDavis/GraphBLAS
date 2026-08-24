@@ -23,6 +23,10 @@ __global__ void GB_cuda_colscale_kernel
 )
 {
 
+    //--------------------------------------------------------------------------
+    // get A and C
+    //--------------------------------------------------------------------------
+
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
     const GB_B_TYPE *__restrict__ Dx = (GB_B_TYPE *) D->x ;
     GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) C->x ;
@@ -41,6 +45,11 @@ __global__ void GB_cuda_colscale_kernel
     GB_A_NHELD (anz) ;
 
     #if (GB_A_IS_BITMAP || GB_A_IS_FULL)
+
+        //----------------------------------------------------------------------
+        // A is bitmap or full
+        //----------------------------------------------------------------------
+
         const int64_t avlen = A->vlen ;
         // bitmap/full case
         int nthreads_in_entire_grid = blockDim.x * gridDim.x ;
@@ -60,21 +69,29 @@ __global__ void GB_cuda_colscale_kernel
         }
 
     #else
+
+        //----------------------------------------------------------------------
+        // A is sparse or hypersparse
+        //----------------------------------------------------------------------
+
         const int64_t anvec = A->nvec ;
-        // sparse/hypersparse case (cuda_ek_slice only works for sparse/hypersparse)
+        const int64_t anvec1 = anvec - 1 ;
         for (int64_t pfirst = blockIdx.x << GB_CUDA_SCALE_CHUNKSIZE_LOG2 ;
                      pfirst < anz ;
                      pfirst += gridDim.x << GB_CUDA_SCALE_CHUNKSIZE_LOG2 )
         {
-            int64_t my_chunk_size, anvec_sub1, kfirst, klast ;
+            int64_t my_chunk_size, kfirst ;
             float slope ;
-            GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst, GB_CUDA_SCALE_CHUNKSIZE,
-                &kfirst, &klast, &my_chunk_size, &anvec_sub1, &slope) ;
+            GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst,
+                GB_CUDA_SCALE_CHUNKSIZE, &kfirst, &my_chunk_size, &slope) ;
 
-            for (int64_t pdelta = threadIdx.x ; pdelta < my_chunk_size ; pdelta += blockDim.x)
+            for (int64_t pdelta = threadIdx.x ;
+                         pdelta < my_chunk_size ;
+                         pdelta += blockDim.x)
             {
                 int64_t p = pfirst + pdelta ;
-                int64_t k = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (p, pdelta, Ap, anvec_sub1, kfirst, slope) ;
+                int64_t k = GB_cuda_ek_slice_entry<GB_Ap_TYPE> (p, pdelta, Ap,
+                    anvec1, kfirst, slope) ;
                 int64_t j = GBh_A (Ah, k) ;     // not accessed if D is iso
                 GB_DECLAREB (djj) ;
                 GB_GETB (djj, Dx, j, ) ;
