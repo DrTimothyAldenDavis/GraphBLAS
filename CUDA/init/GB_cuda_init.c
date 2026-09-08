@@ -9,10 +9,8 @@
 //------------------------------------------------------------------------------
 
 // GB_cuda_init queries the system for properties of the GPUs: their memory
-// sizes, SM counts, and other capabilities.  Prior to calling this method,
-// GB_Global_cpu_count_set has been called to determine how many GPUs the
-// system has.  Unified Memory support is assumed.  Then each GPU is "warmed
-// up" by allocating a small amount of memory.
+// sizes, SM counts, and other capabilities.  Then each GPU is "warmed up" by
+// allocating a small amount of memory.
 
 #include "GB.h"
 #include <cuda.h>
@@ -21,22 +19,27 @@ GrB_Info GB_cuda_init (void)
 {
     GrB_Info info ;
     // get the GPU properties
-    printf ("cuInit:\n") ;
-    CUresult cu = cuInit (0) ;
-    char *cu_string = NULL ;
-    cuGetErrorString (cu, &cu_string) ;
-    printf ("cuInit result: %d [%s]\n", cu, cu_string) ;
+//  printf ("cuInit:\n") ;
+//  CUresult cu = cuInit (0) ;
+//  char *cu_string = NULL ;
+//  cuGetErrorString (cu, &cu_string) ;
+//  printf ("cuInit result: %d [%s]\n", cu, cu_string) ;
 
-    printf ("GB_cuda_init, getting gpu count:\n") ;
+//  printf ("GB_cuda_init, getting gpu count:\n") ;
     GB_Global_gpu_count_set ( ) ;
     int gpu_count = GB_Global_gpu_count_get ( ) ;
 
-    int result = system ("/usr/bin/nvidia-smi") ;
-    printf ("system ('/usr/bin/nvidia-smi') result: %d\n", result) ;
+//  int result = system ("/usr/bin/nvidia-smi") ;
+//  printf ("system ('/usr/bin/nvidia-smi') result: %d\n", result) ;
 
     if (gpu_count == 0)
     { 
+        // abort for now; remove this test in production
         printf ("NO GPUS!\n") ;
+        fprintf (stderr, "NO GPUS!\n") ;
+        fflush (stdout) ;
+        fflush (stderr) ;
+        abort ( ) ;
         return (GrB_SUCCESS) ;
     }
     printf ("GPU count: %d\n", gpu_count) ;
@@ -82,6 +85,7 @@ GrB_Info GB_cuda_init (void)
     }
 
     GB_cuda_set_device (0) ;            // make GPU 0 the default device
+
 //  GB_cuda_set_device (1) ;            // make GPU 1 the default device
     GB_Context_gpu_ids_set (NULL, NULL, -1) ; // set global default to GPU 0
 
