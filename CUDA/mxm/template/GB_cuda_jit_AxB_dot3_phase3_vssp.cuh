@@ -42,11 +42,11 @@ __global__ void GB_cuda_AxB_dot3_phase3_vssp_kernel
     const GB_Mj_TYPE *__restrict__ Mh = (GB_Mj_TYPE *) M->h ;
     #endif
 
-    ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
+    // ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
     const GB_Ai_TYPE *__restrict__ Ai = (GB_Ai_TYPE *) A->i ;
     const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;
 
-    ASSERT (GB_B_IS_HYPER || GB_B_IS_SPARSE) ;
+    // ASSERT (GB_B_IS_HYPER || GB_B_IS_SPARSE) ;
     const GB_Bi_TYPE *__restrict__ Bi = (GB_Bi_TYPE *) B->i ;
     const GB_Bp_TYPE *__restrict__ Bp = (GB_Bp_TYPE *) B->p ;
 
@@ -149,7 +149,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vssp_kernel
                     int64_t pright = pB_end - 1 ;
                     GB_trim_binary_search (ia, Bi, GB_Bi_IS_32,
                         &pleft, &pright) ;
-                    //ASSERT (pleft > pB) ;
+                    // ASSERT (pleft > pB) ;
                     pB = pleft ;
                 }
                 else if (ia == ib) // ia == ib == k
@@ -183,7 +183,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vssp_kernel
                     int64_t pright = pA_end - 1 ;
                     GB_trim_binary_search (ib, Ai, GB_Ai_IS_32,
                         &pleft, &pright) ;
-                    //ASSERT (pleft > pA) ;
+                    // ASSERT (pleft > pA) ;
                     pA = pleft ;
                 }
                 /*

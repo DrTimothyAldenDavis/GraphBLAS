@@ -746,37 +746,40 @@ GrB_Info GB_jit_kernel_sort                                             \
 // CUDA JIT prototypes
 //------------------------------------------------------------------------------
 
-#define GB_JIT_CUDA_KERNEL_REDUCE_PROTO(GB_jit_kernel_reduce)           \
-GrB_Info GB_jit_kernel_reduce                                           \
-(                                                                       \
-    GB_void *zscalar,                                                   \
-    GrB_Matrix V,                                                       \
-    const GrB_Matrix A,                                                 \
-    cudaStream_t stream,                                                \
-    int32_t gridsz,                                                     \
-    const GB_callback_struct *restrict my_callback                      \
+#define GB_JIT_CUDA_KERNEL_REDUCE_PROTO(GB_jit_kernel_reduce)               \
+GrB_Info GB_jit_kernel_reduce                                               \
+(                                                                           \
+    GB_void *zscalar,                                                       \
+    GrB_Matrix V,                                                           \
+    const GrB_Matrix A,                                                     \
+    int device,                                                             \
+    cudaStream_t stream,                                                    \
+    int32_t gridsz,                                                         \
+    const GB_callback_struct *restrict my_callback                          \
 )
 
-#define GB_JIT_CUDA_KERNEL_ROWSCALE_PROTO(GB_jit_kernel_rowscale)       \
-GrB_Info GB_jit_kernel_rowscale                                         \
-(                                                                       \
-    GrB_Matrix C,                                                       \
-    GrB_Matrix D,                                                       \
-    GrB_Matrix B,                                                       \
-    cudaStream_t stream,                                                \
-    int32_t gridsz,                                                     \
-    const GB_callback_struct *restrict my_callback                      \
+#define GB_JIT_CUDA_KERNEL_ROWSCALE_PROTO(GB_jit_kernel_rowscale)           \
+GrB_Info GB_jit_kernel_rowscale                                             \
+(                                                                           \
+    GrB_Matrix C,                                                           \
+    GrB_Matrix D,                                                           \
+    GrB_Matrix B,                                                           \
+    int device,                                                             \
+    cudaStream_t stream,                                                    \
+    int32_t gridsz,                                                         \
+    const GB_callback_struct *restrict my_callback                          \
 )
 
-#define GB_JIT_CUDA_KERNEL_COLSCALE_PROTO(GB_jit_kernel_colscale)       \
-GrB_Info GB_jit_kernel_colscale                                         \
-(                                                                       \
-    GrB_Matrix C,                                                       \
-    GrB_Matrix A,                                                       \
-    GrB_Matrix D,                                                       \
-    cudaStream_t stream,                                                \
-    int32_t gridsz,                                                     \
-    const GB_callback_struct *restrict my_callback                      \
+#define GB_JIT_CUDA_KERNEL_COLSCALE_PROTO(GB_jit_kernel_colscale)           \
+GrB_Info GB_jit_kernel_colscale                                             \
+(                                                                           \
+    GrB_Matrix C,                                                           \
+    GrB_Matrix A,                                                           \
+    GrB_Matrix D,                                                           \
+    int device,                                                             \
+    cudaStream_t stream,                                                    \
+    int32_t gridsz,                                                         \
+    const GB_callback_struct *restrict my_callback                          \
 )
 
 #define GB_JIT_CUDA_KERNEL_APPLY_BIND1ST_PROTO(GB_jit_kernel_apply_bind1st) \
@@ -785,6 +788,7 @@ GrB_Info GB_jit_kernel_apply_bind1st                                        \
     GB_void *Cx,                                                            \
     const GB_void *scalarx,                                                 \
     GrB_Matrix B,                                                           \
+    int device,                                                             \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
     const GB_callback_struct *restrict my_callback                          \
@@ -796,6 +800,7 @@ GrB_Info GB_jit_kernel_apply_bind2nd                                        \
     GB_void *Cx,                                                            \
     GrB_Matrix A,                                                           \
     const GB_void *scalarx,                                                 \
+    int device,                                                             \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
     const GB_callback_struct *restrict my_callback                          \
@@ -807,6 +812,7 @@ GrB_Info GB_jit_kernel_apply_unop                                           \
     GB_void *Cx,                                                            \
     GrB_Matrix A,                                                           \
     const GB_void *ythunk,                                                  \
+    int device,                                                             \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
     const GB_callback_struct *restrict my_callback                          \
@@ -818,6 +824,7 @@ GrB_Info GB_jit_kernel_select_bitmap                                        \
     GrB_Matrix C,                                                           \
     GrB_Matrix A,                                                           \
     const GB_void *ythunk,                                                  \
+    int device,                                                             \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
     const GB_callback_struct *restrict my_callback                          \
@@ -829,6 +836,7 @@ GrB_Info GB_jit_kernel_select_sparse                                        \
     GrB_Matrix C,                                                           \
     GrB_Matrix A,                                                           \
     const GB_void *ythunk,                                                  \
+    int device,                                                             \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
     const GB_callback_struct *restrict my_callback                          \
@@ -841,8 +849,8 @@ GrB_Info GB_jit_kernel_AxB_dot3                                             \
     const GrB_Matrix M,                                                     \
     const GrB_Matrix A,                                                     \
     const GrB_Matrix B,                                                     \
-    cudaStream_t stream,                                                    \
     int device,                                                             \
+    cudaStream_t stream,                                                    \
     int number_of_sms,                                                      \
     const void *theta,                                                      \
     const GB_callback_struct *restrict my_callback                          \
@@ -861,6 +869,7 @@ GrB_Info GB_jit_kernel_builder                                              \
     const GB_void *J_input, /* column indices of type GB_J_TYPE */          \
     const GB_void *X_input, /* values of type GB_Sx_TYPE */                 \
     const int64_t nvals,    /* # of tuples in (I,J,X) */                    \
+    int device,                                                             \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
     const GB_callback_struct *restrict my_callback                          \
@@ -871,6 +880,7 @@ GrB_Info GB_jit_kernel_tran_prep                                            \
 (                                                                           \
     GB_void *Key_input,                                                     \
     GrB_Matrix A,                                                           \
+    int device,                                                             \
     cudaStream_t stream,                                                    \
     int32_t gridsz                                                          \
 )

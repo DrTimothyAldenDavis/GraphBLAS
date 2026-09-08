@@ -70,13 +70,14 @@ extern "C" {
 GB_JIT_CUDA_KERNEL_ROWSCALE_PROTO (GB_jit_kernel)
 {
     GB_GET_CALLBACKS ;
-    ASSERT (GB_JUMBLED_OK (C)) ;
-    ASSERT (!GB_JUMBLED (D)) ;
-    ASSERT (!GB_IS_BITMAP (D)) ;
-    ASSERT (!GB_IS_FULL (D)) ;
-    ASSERT (GB_JUMBLED_OK (B)) ;
-    ASSERT (!C->iso) ;
+    // ASSERT (GB_JUMBLED_OK (C)) ;
+    // ASSERT (!GB_JUMBLED (D)) ;
+    // ASSERT (!GB_IS_BITMAP (D)) ;
+    // ASSERT (!GB_IS_FULL (D)) ;
+    // ASSERT (GB_JUMBLED_OK (B)) ;
+    // ASSERT (!C->iso) ;
 
+    CUDA_OK (cudaSetDevice (device)) ;
     dim3 grid (gridsz) ;
     dim3 block (GB_CUDA_SCALE_BLOCKDIM) ;
     

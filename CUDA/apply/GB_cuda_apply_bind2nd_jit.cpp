@@ -25,6 +25,7 @@ GrB_Info GB_cuda_apply_bind2nd_jit
     const GrB_Matrix A,
     const GB_void *scalarx,
     // CUDA stream and launch parameters:
+    int device,
     cudaStream_t stream,
     int32_t gridsz
 )
@@ -58,6 +59,7 @@ GrB_Info GB_cuda_apply_bind2nd_jit
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (Cx, A, scalarx, stream, gridsz, &GB_callback)) ;
+    return (GB_jit_kernel (Cx, A, scalarx, device, stream, gridsz,
+        &GB_callback)) ;
 }
 

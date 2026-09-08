@@ -199,6 +199,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     int data_arena = T->data_arena ;
     uint64_t mem = GB_mem (data_arena, 0) ;
+    printf ("GB_builder.c: data_arena: %d\n", data_arena) ;
 
     //--------------------------------------------------------------------------
     // get Sx
@@ -367,6 +368,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // (4) Do nothing, letting I_is_32 be determined by the integer size
         // of the I_input array.
 
+        printf ("allocate I_work: mem %ld\n", mem) ;
         (*I_work_mem_handle) = mem ;
         I_work = GB_MALLOC_MEMORY (nvals,
             I_is_32 ? sizeof (uint32_t) : sizeof (uint64_t),

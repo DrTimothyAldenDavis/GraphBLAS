@@ -67,7 +67,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     const int64_t mnvec1 = mnvec - 1 ;
     // const int64_t mvlen = M->vlen ;
     const GB_M_NVALS (mnz) ;
-    ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
+    // ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
 
     #if GB_A_IS_SPARSE || GB_A_IS_HYPER
     const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;

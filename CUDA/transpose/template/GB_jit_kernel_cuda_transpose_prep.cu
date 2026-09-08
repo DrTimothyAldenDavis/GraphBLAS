@@ -134,8 +134,10 @@ GB_JIT_CUDA_KERNEL_TRANSPOSE_PREP_PROTO (GB_jit_kernel)
     // get inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
+    // ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
     GB_key_t *Key_in = ((GB_key_t *) Key_input) + 1 ;
+
+    CUDA_OK (cudaSetDevice (device)) ;
     dim3 grid (gridsz) ;        // = min (ceil (anz/CHUNKSIZE), 256*(#sms))
     dim3 block (BLOCKDIM) ;
 

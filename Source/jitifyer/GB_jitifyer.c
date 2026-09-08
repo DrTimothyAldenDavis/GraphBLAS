@@ -279,6 +279,7 @@ GrB_Info GB_jitifyer_init (void)
 { 
     #if defined ( GRAPHBLAS_HAS_CUDA )
     int device = -1 ;
+    printf ("calling GB_cuda_get_device from GB_jitifyer_init:\n") ;
     GB_cuda_get_device (&device) ;
     printf ("JIT init, device %d\n", device) ;  // for CUDA only
     #endif

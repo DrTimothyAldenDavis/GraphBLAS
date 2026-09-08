@@ -93,8 +93,6 @@ if ( GRAPHBLAS_HAS_CUDA )
     message ( STATUS "C++ flags for CUDA: ${CMAKE_CXX_FLAGS}" )
     message ( STATUS "CUDA toolkit inc: " ${CUDAToolkit_INCLUDE_DIRS} )
 
-    include_directories ( "rmm_wrap" )
-
     message ( STATUS "------------------------------ Fetching rmm:" )
 
     include ( CPM )
@@ -286,7 +284,7 @@ configure_file ( "Config/README.md.in"
 #-------------------------------------------------------------------------------
 
 include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
-    xxHash lz4 zstd zstd/zstd_subset JITpackage Demo/Include rmm_wrap
+    xxHash lz4 zstd zstd/zstd_subset JITpackage Demo/Include
     # include all Source/* folders that have include/ or template/ subfolders:
     Source/add
     Source/apply
@@ -334,6 +332,7 @@ include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     CUDA/monoid
     CUDA/mxm
     CUDA/reduce
+    CUDA/rmm
     CUDA/select
     CUDA/slice
     CUDA/type
@@ -352,7 +351,6 @@ include ( GraphBLAS_compiler_options )
 
 if ( GRAPHBLAS_HAS_CUDA )
     file ( GLOB GRAPHBLAS_SOURCES
-        "rmm_wrap/rmm_wrap.cpp"
         "CUDA/*/*.cu" "CUDA/*/*.c" "CUDA/*/*.cpp"
         "PreJIT/*.c" "Config/*.c" "Source/*/*.c" )
 else ( )

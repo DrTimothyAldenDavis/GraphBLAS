@@ -11,8 +11,8 @@
 #define GB_DEVELOPER 0
 
 // For development only:
-// #undef  GB_DEVELOPER
-// #define GB_DEVELOPER 1
+#undef  GB_DEVELOPER
+#define GB_DEVELOPER 1
 
 #include "GB.h"
 #include "pending/GB_Pending.h"

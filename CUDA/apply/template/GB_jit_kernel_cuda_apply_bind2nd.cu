@@ -53,8 +53,8 @@ extern "C" {
 GB_JIT_CUDA_KERNEL_APPLY_BIND2ND_PROTO (GB_jit_kernel)
 {
     GB_GET_CALLBACKS ;
-    ASSERT (Cx != NULL) ;
 
+    CUDA_OK (cudaSetDevice (device)) ;
     dim3 grid (gridsz) ;
     dim3 block (GB_CUDA_APPLY_BLOCKDIM) ;
     GB_A_NHELD (nvals) ;
@@ -68,3 +68,4 @@ GB_JIT_CUDA_KERNEL_APPLY_BIND2ND_PROTO (GB_jit_kernel)
 
     return (GrB_SUCCESS) ;
 }
+

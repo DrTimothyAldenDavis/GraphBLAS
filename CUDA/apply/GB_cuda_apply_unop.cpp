@@ -25,6 +25,7 @@
 GrB_Info GB_cuda_apply_unop
 (
     GB_void *Cx,
+    const int Cx_arena,
     const GrB_Type ctype,
     const GB_Operator op,
     const bool flipij,
@@ -35,17 +36,15 @@ GrB_Info GB_cuda_apply_unop
 
     GrB_Info info ;
     GB_void *ythunk_cuda = nullptr ;
-    int device = 0 ;    // fixme
-    int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
-    uint64_t ythunk_cuda_mem = GB_mem (data_arena, 0) ;
-
+    int device = Cx_arena - GxB_NARENAS ;
+    uint64_t ythunk_cuda_mem = GB_mem (Cx_arena, 0) ;
     cudaStream_t stream = nullptr ;
+
+    GB_OK (GB_cuda_stream_pool_acquire (device, &stream)) ;
+    GB_OK (GB_wait_arenas (A)) ;
 
     GrB_Index anz = GB_nnz_held (A) ;
     if (anz == 0) return (GrB_SUCCESS) ;
-
-    // get a stream on the current device
-    GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
 
     // fixme: make this a CUDA helper function
     if (ythunk != NULL && op != NULL && op->ytype != NULL)
@@ -67,8 +66,11 @@ GrB_Info GB_cuda_apply_unop
     // cap #of blocks to 256 * #of sms
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
 
+    GBURBLE ("(cuda apply unop, device %d, sms: %d, gridsz: %d) ",
+        device, number_of_sms, gridsz) ;
+
     GB_OK (GB_cuda_apply_unop_jit (Cx, ctype, op, flipij, A,
-        ythunk_cuda, stream, gridsz)) ;
+        ythunk_cuda, device, stream, gridsz)) ;
 
     GB_FREE_WORKSPACE ;
     GB_OK (GB_cuda_stream_pool_release (&stream)) ;

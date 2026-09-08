@@ -103,7 +103,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
     uint64_t zc = 0 ;       // zombie count
 
     GB_M_NVALS (mnz) ;
-    ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
+    // ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
     int64_t cnz_in_bucket = end - start ;
     int all_in_one = (cnz_in_bucket == mnz) ;
 

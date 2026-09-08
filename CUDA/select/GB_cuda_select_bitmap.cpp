@@ -25,12 +25,17 @@ GrB_Info GB_cuda_select_bitmap
 )
 {
     GrB_Info info ;
+    cudaStream_t stream = nullptr ;
 
     GBURBLE ("(select bitmap on cuda) ") ;
 
-    int device = 0 ;    // fixme
-    cudaStream_t stream = nullptr ;
-    GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
+    int data_arena = C->data_arena ;
+    int device = data_arena - GxB_NARENAS ;
+
+    GB_OK (GB_cuda_stream_pool_acquire (device, &stream)) ;
+
+    GB_OK (GB_wait_arenas (C)) ;
+    GB_OK (GB_wait_arenas (A)) ;
 
     int64_t anz = GB_nnz_held (A) ;
 
@@ -39,8 +44,11 @@ GrB_Info GB_cuda_select_bitmap
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     gridsz = std::max (gridsz, 1) ;
 
+    GBURBLE ("(cuda select bitmap, device %d, sms: %d, gridsz: %d) ",
+        device, number_of_sms, gridsz) ;
+
     GB_OK (GB_cuda_select_bitmap_jit (C, A,
-        flipij, ythunk, op, stream, gridsz)) ;
+        flipij, ythunk, op, device, stream, gridsz)) ;
 
     GB_OK (GB_cuda_stream_pool_release (&stream)) ;
     return GrB_SUCCESS ;

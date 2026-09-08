@@ -1047,7 +1047,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     GrB_Matrix T = NULL ;
     GrB_Info info = GrB_SUCCESS ;
 
-    int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
+    int data_arena = GxB_NARENAS + device ;
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     // workspace needed for CUB radix sort of (Key_in,X):
@@ -1071,6 +1071,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     int64_t tnvec = 0 ; // # of vectors of T
     int64_t nchunks = (nvals + CHUNKSIZE - 1) >> LOG2_CHUNKSIZE ;
 
+    CUDA_OK (cudaSetDevice (device)) ;
     dim3 grid (gridsz) ;        // = min (ceil (nvals/CHUNKSIZE), 256*(#sms))
     dim3 block1 (BLOCKDIM) ;
 

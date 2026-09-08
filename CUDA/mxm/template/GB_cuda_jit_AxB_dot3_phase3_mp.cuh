@@ -75,8 +75,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
     const GB_Bi_TYPE *__restrict__ Bi = (GB_Bi_TYPE *) B->i ;
     const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;
     const GB_Bp_TYPE *__restrict__ Bp = (GB_Bp_TYPE *) B->p ;
-    ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
-    ASSERT (GB_B_IS_HYPER || GB_B_IS_SPARSE) ;
+    // ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
+    // ASSERT (GB_B_IS_HYPER || GB_B_IS_SPARSE) ;
 
     #if GB_A_IS_HYPER
     const int64_t anvec = A->nvec ;

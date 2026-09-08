@@ -25,8 +25,8 @@ GrB_Info GB_cuda_AxB_dot3_jit
     const GrB_Semiring semiring,
     const bool flipxy,
     // CUDA stream, device, and # of ms
-    cudaStream_t stream,
     int device,
+    cudaStream_t stream,
     int number_of_sms
 )
 { 
@@ -60,7 +60,7 @@ GrB_Info GB_cuda_AxB_dot3_jit
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, M, A, B, stream, device, number_of_sms,
+    return (GB_jit_kernel (C, M, A, B, device, stream, number_of_sms,
         semiring->multiply->theta, &GB_callback)) ;
 }
 

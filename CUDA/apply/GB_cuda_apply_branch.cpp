@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_cuda_transpose_branch: determine if the GPU can transpose the matrix
+// GB_cuda_apply_branch
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -9,23 +9,25 @@
 
 #include "GB_cuda.hpp"
 
-bool GB_cuda_transpose_branch
+bool GB_cuda_apply_branch   // true if on the GPU
 (
-    const int C_arena,              // arena of header and data of C
-    const GrB_Type ctype,
-    const GrB_Matrix A,
-    const GB_Operator op,           // any type of operator
-    const GrB_Scalar scalar
+    // input
+    const int Cx_arena,     // arena of output array Cx
+    const GrB_Type ctype,   // type of output array Cx
+    const GB_Operator op,
+    const GrB_Matrix A
 )
 {
     if (GB_ngpus_to_use (1) == 0) return (false) ;
 
-    int dev = C_arena - GxB_NARENAS ;
+    int data_arena = A->data_arena ;
+    int header_arena = GB_arena (A->header_mem) ;
+    int dev = data_arena - GxB_NARENAS ;
 
     bool use_cuda =
            (dev >= 0 && dev <= GB_Global_gpu_count_get ( )) // data on GPU
-        && (C_arena == A->data_arena)                   // A on same GPU
-        && (C_arena == GB_arena (A->header_mem))
+        && (data_arena == header_arena)                 // header on same GPU
+        && (data_arena == Cx_arena)                     // Cx on same GPU
         && (GB_jitifyer_get_control ( ) >= GxB_JIT_RUN) // JIT is running
         && GB_cuda_type_branch (ctype)                  // types OK for CUDA
         && GB_cuda_type_branch (A->type)
@@ -38,11 +40,6 @@ bool GB_cuda_transpose_branch
             && GB_cuda_type_branch (op->xtype)
             && GB_cuda_type_branch (op->ytype)
             && GB_cuda_type_branch (op->ztype)  ;
-    }
-
-    if (scalar != NULL)
-    {
-        use_cuda = use_cuda && GB_cuda_type_branch (scalar->type) ;
     }
 
     return (use_cuda) ;

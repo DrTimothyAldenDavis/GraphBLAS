@@ -46,22 +46,26 @@ GrB_Info GB_cuda_reduce_to_scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    int device = 0 ;    // fixme
-    int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
+    GrB_Info info = GrB_SUCCESS ;
+    cudaStream_t stream = nullptr ;
+
+    int data_arena = A->data_arena ;
+    int device = data_arena - GxB_NARENAS ;
+
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     GB_void *zscalar = NULL ;
     uint64_t zscalar_mem = mem ;
     GrB_Matrix V = NULL ;
     (*V_handle) = NULL ;
-    GrB_Info info = GrB_SUCCESS ;
 
     //--------------------------------------------------------------------------
-    // create the stream
+    // initializations
     //--------------------------------------------------------------------------
 
-    cudaStream_t stream = nullptr ;
-    GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
+    GB_OK (GB_cuda_stream_pool_acquire (device, &stream)) ;
+
+    GB_OK (GB_wait_arenas (A)) ;
 
     //--------------------------------------------------------------------------
     // determine problem characteristics and allocate worksbace
@@ -121,15 +125,15 @@ GrB_Info GB_cuda_reduce_to_scalar
             data_arena, data_arena)) ;
     }
 
-    GBURBLE ("(cuda reduce: %d threads per block; %d blocks; CUDA has"
-        " atomic op: %d) ", GB_CUDA_REDUCE_BLOCKDIM, gridsz, has_cheeseburger) ;
+    GBURBLE ("(cuda reduce, device %d, sms: %d, gridsz: %d, has atomic: %d) ",
+        device, number_of_sms, gridsz, has_cheeseburger) ;
 
     //--------------------------------------------------------------------------
     // reduce C to a scalar via the CUDA JIT
     //--------------------------------------------------------------------------
 
     GB_OK (GB_cuda_reduce_to_scalar_jit (zscalar, V, monoid, A,
-        stream, gridsz)) ;
+        device, stream, gridsz)) ;
 
     //--------------------------------------------------------------------------
     // return result and release the stream

@@ -17,7 +17,7 @@
 #define GB_FREE_ALL                                         \
 {                                                           \
     GB_phybix_free (C) ;                                    \
-    GB_cuda_stream_pool_release (&stream) ;                      \
+    GB_cuda_stream_pool_release (&stream) ;                 \
 }
 
 #include "mxm/GB_cuda_AxB.hpp"
@@ -40,17 +40,12 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
 
 
     //--------------------------------------------------------------------------
-    // create the stream
-    //--------------------------------------------------------------------------
-
-    GpuTimer kernel_timer;  // fixme: delete this?
-    int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
-
-    //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
 
+
     GrB_Info info ;
+    cudaStream_t stream = nullptr ;
     ASSERT (C != NULL) ;
     ASSERT (M != NULL) ;
     ASSERT (A != NULL) ;
@@ -75,20 +70,23 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     ASSERT_SEMIRING_OK (semiring, "semiring for dot3 numeric A'*B", GB0) ;
 
     ASSERT (A->vlen == B->vlen) ;
-    GBURBLE ("(GPU dot3) ") ;
 
     //--------------------------------------------------------------------------
     // initializations
     //--------------------------------------------------------------------------
 
-    int device = -1;
-    cudaStream_t stream = nullptr ;
+    int data_arena = C->data_arena ;
+    int device = data_arena - GxB_NARENAS ;
 
-    CUDA_OK (cudaGetDevice (&device)) ;     // fixme: use the Context
-    printf ("dot3 using cuda device %d\n", device) ;
+    GB_OK (GB_cuda_stream_pool_acquire (device, &stream)) ;
+
+//  printf ("dot3 using cuda device %d\n", device) ;
     int number_of_sms = GB_Global_gpu_sm_get (device) ;
 
-    GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
+    GB_OK (GB_wait_arenas (C)) ;
+    GB_OK (GB_wait_arenas (M)) ;
+    GB_OK (GB_wait_arenas (A)) ;
+    GB_OK (GB_wait_arenas (B)) ;
 
     //--------------------------------------------------------------------------
     // get M
@@ -193,11 +191,9 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
 
     C->nvals = cnz ;
     C->magic = GB_MAGIC ;
-    C->nvec_nonempty = M->nvec_nonempty ;   // fixme
+    C->nvec_nonempty = M->nvec_nonempty ;
     C->nvec = cnvec ;
     C->jumbled = GB_JUMBLED (M) ;   // C is jumbled if M is jumbled
-
-    GBURBLE ("(GPU C created and copied from M) ") ;
 
     //--------------------------------------------------------------------------
     // prefetch A and B
@@ -223,8 +219,10 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     // C<M>=A'*B on CUDA, in the JIT
     //--------------------------------------------------------------------------
 
+    GBURBLE ("(cuda dot3, device %d, sms: %d) ", device, number_of_sms) ;
+
     GB_OK (GB_cuda_AxB_dot3_jit (C, M, Mask_struct, A, B, semiring, flipxy,
-        stream, device, number_of_sms)) ;
+        device, stream, number_of_sms)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

@@ -34,20 +34,23 @@ GrB_Info GB_cuda_select_sparse
     //--------------------------------------------------------------------------
 
     GrB_Info info = GrB_NO_VALUE ;
+    cudaStream_t stream = nullptr ;
     ASSERT (C != NULL) ;
     ASSERT (A != NULL) ;
 
-    int device = 0 ;    // fixme
-    int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
+    int data_arena = C->data_arena ;
+    int device = data_arena - GxB_NARENAS ;
 
     GBURBLE ("(select sparse on cuda) ") ;
 
     //--------------------------------------------------------------------------
-    // acquire a stream and determine GPU launch parameters
+    // initializations
     //--------------------------------------------------------------------------
 
-    cudaStream_t stream = nullptr ;
-    GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
+    GB_OK (GB_cuda_stream_pool_acquire (device, &stream)) ;
+
+    GB_OK (GB_wait_arenas (C)) ;
+    GB_OK (GB_wait_arenas (A)) ;
 
     int64_t anz = GB_nnz_held (A) ;
 
@@ -55,6 +58,9 @@ GrB_Info GB_cuda_select_sparse
     int64_t raw_gridsz = GB_ICEIL (anz, GB_CUDA_SELECT_SPARSE_CHUNKSIZE1) ;
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     gridsz = std::max (gridsz, 1) ;
+
+    GBURBLE ("(cuda select sparse, device %d, sms: %d, gridsz: %d) ",
+        device, number_of_sms, gridsz) ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C
@@ -80,8 +86,8 @@ GrB_Info GB_cuda_select_sparse
     // C = select (A)
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_cuda_select_sparse_jit (C, A,
-        flipij, ythunk, op, stream, gridsz)) ;
+    GB_OK (GB_cuda_select_sparse_jit (C, A, flipij, ythunk, op,
+        device, stream, gridsz)) ;
 
     //--------------------------------------------------------------------------
     // release the stream and finalize C

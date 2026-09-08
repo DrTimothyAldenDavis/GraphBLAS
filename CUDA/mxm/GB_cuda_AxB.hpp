@@ -23,8 +23,8 @@ GrB_Info GB_cuda_AxB_dot3_jit
     const GrB_Semiring semiring,
     const bool flipxy,
     // CUDA stream, device, and # of ms
-    cudaStream_t stream,
     int device,
+    cudaStream_t stream,
     int number_of_sms
 ) ;
 

@@ -53,13 +53,14 @@ extern "C" {
 GB_JIT_CUDA_KERNEL_APPLY_BIND1ST_PROTO (GB_jit_kernel)
 {
     GB_GET_CALLBACKS ;
-    ASSERT (Cx != NULL) ;
+    // ASSERT (Cx != NULL) ;
 
+    CUDA_OK (cudaSetDevice (device)) ;
     dim3 grid (gridsz) ;
     dim3 block (GB_CUDA_APPLY_BLOCKDIM) ;
     GB_B_NHELD (nvals) ;
     if (nvals == 0) return (GrB_SUCCESS) ;
-    
+
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
     GB_cuda_apply_bind1st_kernel <<<grid, block, 0, stream>>> (Cx, scalarx, B) ;

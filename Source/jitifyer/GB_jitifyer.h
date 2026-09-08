@@ -254,6 +254,7 @@ static inline void GB_encodify_kcode
         int device = 0 ;
         // fixme for CUDA: this assumes device is set OK:
         GB_cuda_get_device (&device) ;
+        // printf ("GB_encodify_kcode: device %d\n", device) ;
         int major = GB_Global_gpu_compute_capability_major_get (device) ;
         int minor = GB_Global_gpu_compute_capability_minor_get (device) ;
         encoding->major = (uint8_t) major ;

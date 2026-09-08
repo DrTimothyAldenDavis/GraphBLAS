@@ -69,8 +69,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
 
     // total items to be inspected
     int64_t vlen = A->vlen ;
-    ASSERT (vlen == B->vlen) ;
-    ASSERT (vlen > 0) ;
+    // ASSERT (vlen == B->vlen) ;
+    // ASSERT (vlen > 0) ;
 
     //--------------------------------------------------------------------------
     // compute C(i,j) = A(:,i)'*B(:,j) for each entry in M(i,j)

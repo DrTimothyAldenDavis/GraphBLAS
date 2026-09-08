@@ -24,6 +24,7 @@ GrB_Info GB_cuda_colscale_jit
     GrB_BinaryOp binaryop,
     bool flipxy,
     // CUDA stream and launch parameters:
+    int device,
     cudaStream_t stream,
     int32_t gridsz
 )
@@ -58,6 +59,6 @@ GrB_Info GB_cuda_colscale_jit
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, A, D, stream, gridsz, &GB_callback)) ;
+    return (GB_jit_kernel (C, A, D, device, stream, gridsz, &GB_callback)) ;
 }
 

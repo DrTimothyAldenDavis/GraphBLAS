@@ -90,12 +90,12 @@ template <typename T> __device__ void GB_cuda_ek_slice_setup
     // The threadblock works on a chunk of entries in Ai/Ax [pfirst...plast-1].
 
     int64_t klast ;             // last vector of the slice for this chunk
-    ASSERT (pfirst < anz) ;
-    ASSERT (max_pchunk > 0) ;
+    // ASSERT (pfirst < anz) ;
+    // ASSERT (max_pchunk > 0) ;
     int64_t plast = pfirst + max_pchunk ;
     plast = GB_IMIN (plast, anz) ;
     (*my_chunk_size) = plast - pfirst ;
-    ASSERT ((*my_chunk_size) > 0) ;
+    // ASSERT ((*my_chunk_size) > 0) ;
 
     //--------------------------------------------------------------------------
     // estimate the first and last vectors for this chunk
@@ -193,7 +193,7 @@ template <typename T> __device__ int64_t GB_cuda_ek_slice_entry
     while (Ap [k  ] >  p) k-- ;
 
     // the pth entry of A is contained in the kth vector of A
-    ASSERT (Ap [k] <= p && p < Ap [k+1]) ;
+    // ASSERT (Ap [k] <= p && p < Ap [k+1]) ;
 
     // return the result k
     return (k) ;

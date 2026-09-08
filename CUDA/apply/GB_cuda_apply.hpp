@@ -23,6 +23,7 @@ GrB_Info GB_cuda_apply_unop_jit
     const GrB_Matrix A,
     const GB_void *ythunk,
     // CUDA stream and launch parameters:
+    int device,
     cudaStream_t stream,
     int32_t gridsz
 ) ;
@@ -37,6 +38,7 @@ GrB_Info GB_cuda_apply_bind1st_jit
     const GrB_Matrix A,
     const GB_void *xscalar,
     // CUDA stream and launch parameters:
+    int device,
     cudaStream_t stream,
     int32_t gridsz
 ) ;
@@ -51,6 +53,7 @@ GrB_Info GB_cuda_apply_bind2nd_jit
     const GrB_Matrix A,
     const GB_void *xscalar,
     // CUDA stream and launch parameters:
+    int device,
     cudaStream_t stream,
     int32_t gridsz
 ) ;

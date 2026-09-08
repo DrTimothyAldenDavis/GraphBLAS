@@ -25,9 +25,16 @@ GrB_Info GB_cuda_colscale
 )
 {
     GrB_Info info ;
-    int device = 0 ;    // fixme
     cudaStream_t stream = nullptr ;
-    GB_OK (GB_cuda_stream_pool_acquire (&stream)) ;
+
+    int data_arena = C->data_arena ;
+    int device = data_arena - GxB_NARENAS ;
+
+    GB_OK (GB_cuda_stream_pool_acquire (device, &stream)) ;
+
+    GB_OK (GB_wait_arenas (C)) ;
+    GB_OK (GB_wait_arenas (A)) ;
+    GB_OK (GB_wait_arenas (D)) ;
 
     GrB_Index anz = GB_nnz_held (A) ;
 
@@ -37,8 +44,11 @@ GrB_Info GB_cuda_colscale
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     gridsz = std::max (gridsz, 1) ;
 
-    GB_OK (GB_cuda_colscale_jit (C, A, D, 
-        semiring->multiply, flipxy, stream, gridsz)) ;
+    GBURBLE ("(cuda colscale, device %d, sms: %d, gridsz: %d) ",
+        device, number_of_sms, gridsz) ;
+
+    GB_OK (GB_cuda_colscale_jit (C, A, D, semiring->multiply,
+        flipxy, device, stream, gridsz)) ;
     
     GB_OK (GB_cuda_stream_pool_release (&stream)) ;
     return GrB_SUCCESS ; 

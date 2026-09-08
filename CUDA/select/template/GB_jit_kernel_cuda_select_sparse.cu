@@ -616,21 +616,17 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // get callback functions
     //--------------------------------------------------------------------------
 
-    #ifdef GB_JIT_RUNTIME
-    // get callback functions
     GB_GET_CALLBACKS ;
-    GB_free_memory_f GB_free_memory = my_callback->GB_free_memory_func ;
-    GB_malloc_memory_f GB_malloc_memory = my_callback->GB_malloc_memory_func ;
-    GB_bix_alloc_f GB_bix_alloc = my_callback->GB_bix_alloc_func ;
-    #endif
+    GB_GET_CALLBACK (GB_free_memory) ;
+    GB_GET_CALLBACK (GB_malloc_memory) ;
+    GB_GET_CALLBACK (GB_bix_alloc) ;
 
     //--------------------------------------------------------------------------
     // declare workspace
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-
-    int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
+    int data_arena = GxB_NARENAS + device ;
     uint64_t mem = GB_mem (data_arena, 0) ;
 
     // workspaces of size anz+2
@@ -649,8 +645,9 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     int64_t nchunks_in_C = (anz + CHUNKSIZE2 - 1) >> LOG2_CHUNKSIZE2 ;
     int64_t nchunks_max = GB_IMAX (nchunks_in_A, nchunks_in_C) ;
 
-    ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
+    // ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
 
+    CUDA_OK (cudaSetDevice (device)) ;
     dim3 grid (gridsz) ;        // = min (ceil (anz/CHUNKSIZE1), 256*(#sms))
     dim3 block1 (BLOCKDIM1) ;
     dim3 block2 (BLOCKDIM2) ;

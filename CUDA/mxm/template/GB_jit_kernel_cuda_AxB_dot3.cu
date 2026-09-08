@@ -13,7 +13,7 @@
 #define GB_FREE_ALL ;
 
 #if GB_C_ISO
-// fixme
+// fixme: handle C iso
 #error "kernel undefined for C iso"
 #endif
 
@@ -192,12 +192,9 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
     // get callback functions
     //--------------------------------------------------------------------------
 
-    #ifdef GB_JIT_RUNTIME
-    // get callback functions
     GB_GET_CALLBACKS ;
-    GB_free_memory_f GB_free_memory = my_callback->GB_free_memory_func ;
-    GB_malloc_memory_f GB_malloc_memory = my_callback->GB_malloc_memory_func ;
-    #endif
+    GB_GET_CALLBACK (GB_free_memory) ;
+    GB_GET_CALLBACK (GB_malloc_memory) ;
 
     //--------------------------------------------------------------------------
     // declare workspace
@@ -207,7 +204,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
     // dense-dense case requires no workspace
     #else
     // sparse-sparse, sparse-dense, and dense-sparse requires workspace
-    int data_arena = GrB_DEFAULT ;  // fixme: will depend on device id
+    int data_arena = GxB_NARENAS + device ;
     uint64_t mem = GB_mem (data_arena, 0) ;
     int64_t *Nanobuckets = NULL ; uint64_t Nb_mem  = mem ;
     int64_t *Blockbucket = NULL ; uint64_t Bb_mem  = mem ;

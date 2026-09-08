@@ -23,12 +23,6 @@
 #ifndef GB_CUDA_GATEWAY_H
 #define GB_CUDA_GATEWAY_H
 
-#define GB_CUDA_MAX_GPUS 32
-
-// The GPU is only used if the work is larger than the GxB_GPU_CHUNK.
-// The default value of this parameter is GB_GPU_CHUNK_DEFAULT:
-#define GB_GPU_CHUNK_DEFAULT (1024*1024)
-
 //------------------------------------------------------------------------------
 // GB_cuda_device: properties of each GPU in the system
 //------------------------------------------------------------------------------
@@ -44,7 +38,6 @@ typedef struct
     size_t  pool_memsize ;
     size_t  max_pool_memsize ;
     void *memory_resource ;
-    // TODO: add something about the streams for this device
 }
 GB_cuda_device ;
 
@@ -65,7 +58,9 @@ static inline int GB_ngpus_to_use
     int gpu_hack = (int) GB_Global_hack_get (2) ;
 
     // get # of GPUs avaiable
-    int gpu_count = GB_Global_gpu_count_get ( ) ;
+//  int gpu_count = GB_Global_gpu_count_get ( ) ;
+    int32_t gpu_ids [GxB_NARENAS_GPU] ;
+    int gpu_count = GB_Context_gpu_ids (gpu_ids) ;
 
     if (gpu_hack == 2 || gpu_count == 0 || work == 0)
     {
@@ -143,23 +138,19 @@ GrB_Info GB_cuda_reduce_to_scalar
 // CUDA apply
 //------------------------------------------------------------------------------
 
-bool GB_cuda_apply_binop_branch
+bool GB_cuda_apply_branch   // true if on the GPU
 (
-    const GrB_Type ctype,
-    const GrB_BinaryOp op,
+    // input
+    const int Cx_arena,     // arena of output array Cx
+    const GrB_Type ctype,   // type of output array Cx
+    const GB_Operator op,
     const GrB_Matrix A
-) ;
-
-bool GB_cuda_apply_unop_branch
-(
-    const GrB_Type ctype,
-    const GrB_Matrix A,
-    const GB_Operator op
 ) ;
 
 GrB_Info GB_cuda_apply_unop
 (
     GB_void *Cx,
+    const int Cx_arena,
     const GrB_Type ctype,
     const GB_Operator op,
     const bool flipij,
@@ -170,9 +161,10 @@ GrB_Info GB_cuda_apply_unop
 GrB_Info GB_cuda_apply_binop
 (
     GB_void *Cx,
+    const int Cx_arena,
     const GrB_Type ctype,
     const GrB_BinaryOp op,
-    const GrB_Matrix A, 
+    const GrB_Matrix A,
     const GB_void *scalarx,
     const bool bind1st
 ) ;
@@ -212,27 +204,11 @@ GrB_Info GB_cuda_select_sparse
 // CUDA matrix-matrix multiply
 //------------------------------------------------------------------------------
 
-bool GB_cuda_rowscale_branch
-(
-    const GrB_Matrix D,
-    const GrB_Matrix B,
-    const GrB_Semiring semiring,
-    const bool flipxy
-) ;
-
 GrB_Info GB_cuda_rowscale
 (
     GrB_Matrix C,
     const GrB_Matrix D,
     const GrB_Matrix B,
-    const GrB_Semiring semiring,
-    const bool flipxy
-) ;
-
-bool GB_cuda_colscale_branch
-(
-    const GrB_Matrix A,
-    const GrB_Matrix D,
     const GrB_Semiring semiring,
     const bool flipxy
 ) ;
@@ -257,14 +233,13 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     const bool flipxy               // if true, do z=fmult(b,a) vs fmult(a,b)
 ) ;
 
-bool GB_cuda_AxB_dot3_branch
+bool GB_cuda_mxm_branch 
 (
+    const GrB_Matrix C,             // output matrix
     const GrB_Matrix M,             // mask matrix
-    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix
     const GrB_Matrix B,             // input matrix
-    const GrB_Semiring semiring,    // semiring that defines C=A*B
-    const bool flipxy               // if true, do z=fmult(b,a) vs fmult(a,b)
+    const GrB_Semiring semiring     // semiring that defines C=A*B
 ) ;
 
 //------------------------------------------------------------------------------
@@ -297,6 +272,7 @@ GrB_Info GB_cuda_builder            // build a matrix from tuples
     // output, not defined on input:
     GrB_Matrix *Thandle,    // matrix to build, dynamic header
     // inputs, not modified:
+    const int data_arena,   // arena of T
     const GrB_Type ttype,   // type of output matrix T
     const int64_t vlen,     // length of each vector of T
     const int64_t vdim,     // number of vectors in T
@@ -340,6 +316,7 @@ static inline bool GB_cuda_builder_key_is_32
 
 bool GB_cuda_transpose_branch
 (
+    const int C_arena,              // arena of header and data of C
     const GrB_Type ctype,
     const GrB_Matrix A,
     const GB_Operator op,           // any type of operator
@@ -349,6 +326,7 @@ bool GB_cuda_transpose_branch
 GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
 (
     GrB_Matrix *Thandle,        // output matrix T, header allocated on input
+    int data_arena,             // data arena for T
     GrB_Type ctype,             // desired type of T
     const bool C_is_csc,        // desired CSR/CSC format of C and T
     const bool C_iso,           // true if C (and T) is iso
@@ -362,13 +340,6 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
         bool flipij,                // if true, flip i,j for user idxunop
     GB_Werk Werk
 ) ;
-
-//------------------------------------------------------------------------------
-// thread-safe wrappers for Rapids rmm_wrap_* memory allocators
-//------------------------------------------------------------------------------
-
-void *GB_rmm_malloc (size_t s) ;
-void  GB_rmm_free (void *) ;
 
 #endif
 

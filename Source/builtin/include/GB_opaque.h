@@ -495,8 +495,8 @@ struct GB_Context_opaque    // content of GxB_Context
     int32_t nthreads_max ;  // max # threads to use in this call to GraphBLAS
     // GPU(s):
     int32_t ngpus ;         // # of GPUs available to use in this context
-                            // (in range 0 to GB_MAX_NGPUS)
-    uint16_t gpu_ids [GB_MAX_NGPUS] ;   // using GPUs gpu_ids [0..ngpus-1],
+                            // (in range 0 to GxB_NARENAS_GPU)
+    uint16_t gpu_ids [GxB_NARENAS_GPU] ;   // using GPUs gpu_ids [0..ngpus-1],
                             // or no GPU if ngpus == 0.
     // arena:
     int32_t header_arena ;  // memory allocator to use for headers
