@@ -185,6 +185,9 @@ GrB_Info GB_init            // start up GraphBLAS
 //  this hack_get setting is used by GB_ngpus_to_use:
 //  GB_Global_hack_set (2,0) ;  // HACK : default: GPU for big enough probs
     GB_Global_hack_set (2,1) ;  // HACK : force the GPU always to be used
+    int device = 0 ;            // HACK : use arena 8 for everything
+    GB_Context_data_arena_set (NULL, GxB_NARENAS + device) ;
+    GB_Context_header_arena_set (NULL, GxB_NARENAS + device) ;
 //  GB_Global_hack_set (2,2) ;  // HACK : force the GPU never to be used
     #endif
 
