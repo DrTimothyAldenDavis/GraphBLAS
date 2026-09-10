@@ -183,7 +183,11 @@ endif ( )
 if ( NOT GBNCPUFEAT )
     # default: enable Google's cpu_features package
     message ( STATUS "cpu_features (by google.com): enabled " )
-    include_directories ( "cpu_features/include" "cpu_features" "cpu_features/src" "cpu_features/include/internal" )
+    include_directories (
+        "cpu_features/include"
+        "cpu_features"
+        "cpu_features/src"
+        "cpu_features/include/internal" )
 else ( )
     # disable Google's cpu_features package
     message ( STATUS "cpu_features (by google.com): disabled" )
@@ -320,8 +324,11 @@ include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     Source/transpose
     Source/type
     Source/wait
-    Source/werk
+    Source/werk )
+
+if ( GRAPHBLAS_HAS_CUDA )
     # include all CUDA/* folders that have include/ or template/ subfolders:
+    include_directories (
     CUDA
     CUDA/apply
     CUDA/cumsum
@@ -335,9 +342,8 @@ include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     CUDA/rmm
     CUDA/select
     CUDA/slice
-    CUDA/type
-    ${OpenMP}
-    )
+    CUDA/type )
+endif ( )
 
 #-------------------------------------------------------------------------------
 # compiler options

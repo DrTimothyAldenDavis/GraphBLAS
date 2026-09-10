@@ -49,6 +49,7 @@ __global__ void GB_cuda_reduce_kernel
 {
 
     #if 0
+    // Roi:: FUTURE
     if GB_MONOID_IS_TERMINAL
     (in progress)
 

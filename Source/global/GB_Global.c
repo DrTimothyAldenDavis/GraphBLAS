@@ -786,77 +786,78 @@ void GB_Global_default_arenas (void)
     GB_Global_realloc_function_set (realloc, GrB_DEFAULT) ;
     GB_Global_free_function_set (free, GrB_DEFAULT) ;
 
-    // set up the GPU arenas
-    #define GB_RMM_ARENA(id)                                                   \
+    // set up the GPU arenas, using Rapids if CUDA is available, or stubs that
+    // do nothing otherwise.
+
+    #define GB_CUDA_ARENA(id)                                                  \
         GB_Global_malloc_function_set (GB_rmm_malloc_ ## id, GxB_NARENAS+id) ; \
         GB_Global_free_function_set   (GB_rmm_free_   ## id, GxB_NARENAS+id) ;
 
-    GB_RMM_ARENA (0) ;
-    GB_RMM_ARENA (1) ;
-    GB_RMM_ARENA (2) ;
-    GB_RMM_ARENA (3) ;
-    GB_RMM_ARENA (4) ;
-    GB_RMM_ARENA (6) ;
-    GB_RMM_ARENA (7) ;
-    GB_RMM_ARENA (8) ;
-    GB_RMM_ARENA (9) ;
+    GB_CUDA_ARENA (0) ;
+    GB_CUDA_ARENA (1) ;
+    GB_CUDA_ARENA (2) ;
+    GB_CUDA_ARENA (3) ;
+    GB_CUDA_ARENA (4) ;
+    GB_CUDA_ARENA (6) ;
+    GB_CUDA_ARENA (7) ;
+    GB_CUDA_ARENA (8) ;
+    GB_CUDA_ARENA (9) ;
 
-    GB_RMM_ARENA (10) ;
-    GB_RMM_ARENA (11) ;
-    GB_RMM_ARENA (12) ;
-    GB_RMM_ARENA (13) ;
-    GB_RMM_ARENA (14) ;
-    GB_RMM_ARENA (16) ;
-    GB_RMM_ARENA (17) ;
-    GB_RMM_ARENA (18) ;
-    GB_RMM_ARENA (19) ;
+    GB_CUDA_ARENA (10) ;
+    GB_CUDA_ARENA (11) ;
+    GB_CUDA_ARENA (12) ;
+    GB_CUDA_ARENA (13) ;
+    GB_CUDA_ARENA (14) ;
+    GB_CUDA_ARENA (16) ;
+    GB_CUDA_ARENA (17) ;
+    GB_CUDA_ARENA (18) ;
+    GB_CUDA_ARENA (19) ;
 
-    GB_RMM_ARENA (20) ;
-    GB_RMM_ARENA (21) ;
-    GB_RMM_ARENA (22) ;
-    GB_RMM_ARENA (23) ;
-    GB_RMM_ARENA (24) ;
-    GB_RMM_ARENA (26) ;
-    GB_RMM_ARENA (27) ;
-    GB_RMM_ARENA (28) ;
-    GB_RMM_ARENA (29) ;
+    GB_CUDA_ARENA (20) ;
+    GB_CUDA_ARENA (21) ;
+    GB_CUDA_ARENA (22) ;
+    GB_CUDA_ARENA (23) ;
+    GB_CUDA_ARENA (24) ;
+    GB_CUDA_ARENA (26) ;
+    GB_CUDA_ARENA (27) ;
+    GB_CUDA_ARENA (28) ;
+    GB_CUDA_ARENA (29) ;
 
-    GB_RMM_ARENA (30) ;
-    GB_RMM_ARENA (31) ;
-    GB_RMM_ARENA (32) ;
-    GB_RMM_ARENA (33) ;
-    GB_RMM_ARENA (34) ;
-    GB_RMM_ARENA (36) ;
-    GB_RMM_ARENA (37) ;
-    GB_RMM_ARENA (38) ;
-    GB_RMM_ARENA (39) ;
+    GB_CUDA_ARENA (30) ;
+    GB_CUDA_ARENA (31) ;
+    GB_CUDA_ARENA (32) ;
+    GB_CUDA_ARENA (33) ;
+    GB_CUDA_ARENA (34) ;
+    GB_CUDA_ARENA (36) ;
+    GB_CUDA_ARENA (37) ;
+    GB_CUDA_ARENA (38) ;
+    GB_CUDA_ARENA (39) ;
 
-    GB_RMM_ARENA (40) ;
-    GB_RMM_ARENA (41) ;
-    GB_RMM_ARENA (42) ;
-    GB_RMM_ARENA (43) ;
-    GB_RMM_ARENA (44) ;
-    GB_RMM_ARENA (46) ;
-    GB_RMM_ARENA (47) ;
-    GB_RMM_ARENA (48) ;
-    GB_RMM_ARENA (49) ;
+    GB_CUDA_ARENA (40) ;
+    GB_CUDA_ARENA (41) ;
+    GB_CUDA_ARENA (42) ;
+    GB_CUDA_ARENA (43) ;
+    GB_CUDA_ARENA (44) ;
+    GB_CUDA_ARENA (46) ;
+    GB_CUDA_ARENA (47) ;
+    GB_CUDA_ARENA (48) ;
+    GB_CUDA_ARENA (49) ;
 
-    GB_RMM_ARENA (50) ;
-    GB_RMM_ARENA (51) ;
-    GB_RMM_ARENA (52) ;
-    GB_RMM_ARENA (53) ;
-    GB_RMM_ARENA (54) ;
-    GB_RMM_ARENA (56) ;
-    GB_RMM_ARENA (57) ;
-    GB_RMM_ARENA (58) ;
-    GB_RMM_ARENA (59) ;
+    GB_CUDA_ARENA (50) ;
+    GB_CUDA_ARENA (51) ;
+    GB_CUDA_ARENA (52) ;
+    GB_CUDA_ARENA (53) ;
+    GB_CUDA_ARENA (54) ;
+    GB_CUDA_ARENA (56) ;
+    GB_CUDA_ARENA (57) ;
+    GB_CUDA_ARENA (58) ;
+    GB_CUDA_ARENA (59) ;
 
-    GB_RMM_ARENA (60) ;
-    GB_RMM_ARENA (61) ;
-    GB_RMM_ARENA (62) ;
-    GB_RMM_ARENA (63) ;
+    GB_CUDA_ARENA (60) ;
+    GB_CUDA_ARENA (61) ;
+    GB_CUDA_ARENA (62) ;
+    GB_CUDA_ARENA (63) ;
 }
-
 
 //------------------------------------------------------------------------------
 // malloc_function

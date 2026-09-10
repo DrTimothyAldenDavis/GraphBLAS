@@ -10,7 +10,7 @@
 // Constructs the Key_in data structure to pass to GB_cuda_builder, as part of
 // the CUDA tranpose process in GB_cuda_transpose.
 
-// FUTURE: the extractTuples kernel will be nearly identical to this method,
+// Roi:: FUTURE: the extractTuples kernel will be nearly identical to this method,
 // when A is sparse or hypersparse.
 
 //------------------------------------------------------------------------------

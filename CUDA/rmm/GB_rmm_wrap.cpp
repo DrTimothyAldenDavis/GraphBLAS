@@ -25,8 +25,6 @@
 
 #include "GB_cuda.hpp"
 
-#ifdef GRAPHBLAS_HAS_CUDA
-
 #include "stddef.h"
 #include <cuda.h>
 //#include <rmm/cuda_stream.hpp>
@@ -110,8 +108,6 @@ RMM_Wrap_Handle ;
 // rmm_wrap_context: global array of RMM_Wrap_Handle objects, one per GPU
 static RMM_Wrap_Handle *rmm_wrap_context [GxB_NARENAS_GPU] ;
 
-#endif
-
 static bool rmm_wrap_initialized = false ;
 
 // devices that GraphBLAS can use:
@@ -121,8 +117,6 @@ static int ngpus = 0 ;
 //------------------------------------------------------------------------------
 // make a resource pool
 //------------------------------------------------------------------------------
-
-#ifdef GRAPHBLAS_HAS_CUDA
 
 #if 0
 inline auto make_cuda()
@@ -186,7 +180,6 @@ inline auto make_and_set_managed_pool
 #endif
 }
 #endif
-#endif
 
 //------------------------------------------------------------------------------
 // rmm_wrap_is_initialized: determine if this wrapper has been initialized
@@ -207,7 +200,6 @@ bool rmm_wrap_is_initialized (void)
 
 void rmm_wrap_finalize (void)
 {
-#if GRAPHBLAS_HAS_CUDA
     if (!rmm_wrap_initialized) return ;
     try
     {
@@ -225,7 +217,6 @@ void rmm_wrap_finalize (void)
         // something failed; just return
         return ;
     }
-#endif
     rmm_wrap_initialized = false ;
 }
 
@@ -242,8 +233,6 @@ int rmm_wrap_initialize     // returns -1 on error, 0 on success
 //  size_t max_pool_memsize    // TODO: describe. Should we default this?
 )
 {
-
-#ifdef GRAPHBLAS_HAS_CUDA
 
     if (rmm_wrap_initialized) return (-1) ;
 
@@ -299,7 +288,6 @@ int rmm_wrap_initialize     // returns -1 on error, 0 on success
 
     }
     catch (...)
-#endif
     {
         return (-1) ;
     }
@@ -316,8 +304,6 @@ int rmm_wrap_initialize_all_same
 //  size_t max_pool_memsize        // TODO: describe. Should we default this?
 )
 {
-
-#ifdef GRAPHBLAS_HAS_CUDA
 
     if (rmm_wrap_initialized) return (-1) ;
 
@@ -432,7 +418,6 @@ int rmm_wrap_initialize_all_same
         return (0) ;
     }
     catch (...)
-#endif
     {
         return (-1) ;
     }
@@ -441,6 +426,17 @@ int rmm_wrap_initialize_all_same
 //------------------------------------------------------------------------------
 // malloc/free methods for each GPU device (up to 64 devices)
 //------------------------------------------------------------------------------
+
+// create a pair of malloc/free methods for a given device id
+#define GB_RMM_MALLOC_FREE(id)                  \
+    void *GB_rmm_malloc_ ## id (size_t size)    \
+    {                                           \
+        return (rmm_allocate (id, size)) ;      \
+    }                                           \
+    void GB_rmm_free_ ## id (void *p)           \
+    {                                           \
+        rmm_deallocate (id, p) ;                \
+    }
 
 GB_RMM_MALLOC_FREE (0) ;
 GB_RMM_MALLOC_FREE (1) ;
@@ -521,8 +517,6 @@ void *rmm_allocate (int device_id, size_t size)
     void *p = NULL ;
     // printf ("rmm_allocate (%d, %zu)\n", device_id, size) ;
 
-#ifdef GRAPHBLAS_HAS_CUDA
-
     GB_OPENMP_LOCK_SET (2) ;    // Fixme: use a different lock for each arena
 
     if (rmm_wrap_initialized && device_id >= 0 && device_id < GxB_NARENAS_GPU
@@ -574,7 +568,6 @@ void *rmm_allocate (int device_id, size_t size)
     }
 
     GB_OPENMP_LOCK_UNSET (2) ;
-#endif
 
     //--------------------------------------------------------------------------
     // return pointer to allocated block of memory (or NULL on error)
@@ -593,8 +586,6 @@ void rmm_deallocate (int device_id, void *p)
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
-
-#ifdef GRAPHBLAS_HAS_CUDA
 
     GB_OPENMP_LOCK_SET (2) ;    // Fixme: use a different lock for each arena
 
@@ -637,6 +628,5 @@ void rmm_deallocate (int device_id, void *p)
     }
 
     GB_OPENMP_LOCK_UNSET (2) ;
-#endif
 }
 
