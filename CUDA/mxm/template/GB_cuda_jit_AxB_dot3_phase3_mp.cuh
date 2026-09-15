@@ -152,6 +152,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
         // compute cij
         //----------------------------------------------------------------------
     
+        // FIXME: Xi_s and Yi_s can be 32-bit if Ai and Bi are 32-bit
         __shared__ int64_t Xi_s[shared_vector_size];
         __shared__ int64_t Yi_s[shared_vector_size];
 

@@ -31,7 +31,7 @@
 // with GB_cuda_ek_slice_setup, for example.
 #define CHUNKSIZE      GB_CUDA_DOT3_CHUNKSIZE
 #define LOG2_CHUNKSIZE GB_CUDA_DOT3_CHUNKSIZE_LOG2
-// fixem: make this upper case, move to GB_cuda_geometry.hpp:
+// fixme: make this upper case, move to GB_cuda_geometry.hpp:
 #define shared_vector_size 256 
 
 //------------------------------------------------------------------------------
@@ -535,7 +535,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                             // each thread block creates Ai_s and Bj_s; each
                             // are int64_t arrays of size shared_vector_size
                             size_t shared_bytes = shared_vector_size *
-                                sizeof (int64_t) * 2 ;
+                                sizeof (int64_t) * 2 ; // FIXME: can be 32-bit
                             GB_cuda_AxB_dot3_phase3_mp_kernel
                                 <<<grid_3, block_1, shared_bytes, stream>>>
                                 (start, end, Bucket, C, M, A, B, theta) ;
