@@ -200,7 +200,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
                 if (Ab [pA+k])              // check if A(k,i) exists
                 {
                     // cij += A(k,i) * B(k,j)
-                    GB_DOT_MERGE (pA+k, p) ;
+                    GB_DOT_MERGE (pA+k, p, k) ;
                     GB_DOT_TERMINAL (cij) ;     // break if cij == terminal
                 }
             }
@@ -240,7 +240,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
                 if (Bb [pB+k])              // check if B(k,j) exists
                 {
                     // cij += A(k,i) * B(k,j)
-                    GB_DOT_MERGE (p, pB+k) ;
+                    GB_DOT_MERGE (p, pB+k, k) ;
                     GB_DOT_TERMINAL (cij) ;     // break if cij == terminal
                 }
             }

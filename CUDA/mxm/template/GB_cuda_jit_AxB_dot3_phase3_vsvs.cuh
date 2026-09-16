@@ -140,7 +140,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
                 if (ia == ib)
                 { 
                     // A(k,i) and B(k,j) are the next entries to merge
-                    GB_DOT_MERGE (pA, pB) ;
+                    // cij += A(ia,i) * B(ia,j)
+                    GB_DOT_MERGE (pA, pB, ia) ;
                     GB_DOT_TERMINAL (cij) ;   // break if cij == terminal
                 }
             #endif

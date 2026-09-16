@@ -99,19 +99,15 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
     // zombie count
     uint64_t zc = 0;
 
-    // set thread ID
-//  int tid_global = threadIdx.x+ blockDim.x* blockIdx.x;
-    int tid = threadIdx.x;
-
     thread_block_tile<GB_CUDA_TILE_SIZE> tile =
         tiled_partition<GB_CUDA_TILE_SIZE>( this_thread_block());
     int all_in_one = ( (end - start) == Mp [(M->nvec)] ) ;
 
     // Main loop over pairs 
     int64_t kk ;
-    for (kk = start+ blockIdx.x; // warp per C(i,j)=A(:,i)'*B(:,j) dot product
-         kk < end;  
-         kk += gridDim.x )
+    for (kk = start + blockIdx.x ; // warp per C(i,j)=A(:,i)'*B(:,j) dot product
+         kk < end ;
+         kk += gridDim.x)
     {
 
         //----------------------------------------------------------------------
@@ -151,39 +147,42 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
         //----------------------------------------------------------------------
         // compute cij
         //----------------------------------------------------------------------
-    
-        // FIXME: Xi_s and Yi_s can be 32-bit if Ai and Bi are 32-bit
-        __shared__ int64_t Xi_s[shared_vector_size];
-        __shared__ int64_t Yi_s[shared_vector_size];
 
         GB_DECLAREA (aki) ;
         GB_DECLAREB (bkj) ;
         GB_DECLARE_IDENTITY (cij) ;         // GB_Z_TYPE cij = identity
         int cij_exists = 0 ;
 
+        __shared__ GB_Ai_TYPE Ai_s [shared_vector_size] ;
+        __shared__ GB_Bi_TYPE Bi_s [shared_vector_size] ;
+
 //      int64_t total_ainz = pA_start - pA_end ;
 //      int64_t total_bjnz = pB_start - pB_end ;
-
 //      if (total_ainz < total_bjnz)
         {
-            // A(:,i) is sparser than B(:,j)
+
             #define MP_FLIP 0
+
 
             #define pX       pA
             #define pX_start pA_start
             #define pX_end   pA_end
             #define Xi       Ai
+            #define Xi_s     Ai_s
 
             #define pY       pB
             #define pY_start pB_start
             #define pY_end   pB_end
             #define Yi       Bi
+            #define Yi_s     Bi_s
 
             #include "template/GB_cuda_jit_AxB_dot3_phase3_mp_guts.cuh"
         }
 #if 0
         else
         {
+            // FIXME: remove this option
+
             // B(:,j) is sparser than A(:,i)
             // (this works but it has the same performance)
             #define MP_FLIP 1
@@ -192,11 +191,13 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
             #define pX_start pB_start
             #define pX_end   pB_end
             #define Xi       Bi
+            #define Xi_s     Bi_s
 
             #define pY       pA
             #define pY_start pA_start
             #define pY_end   pA_end
             #define Yi       Ai
+            #define Yi_s     Ai_s
 
             // flip the roles of A(:,i) and B(:,j)
             #include "template/GB_cuda_jit_AxB_dot3_phase3_mp_guts.cuh"
@@ -220,7 +221,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
         #endif
 
         // write result for this block to global mem
-        if (tid == 0)
+        if (threadIdx.x == 0)
         {
             if (cij_exists)
             {
@@ -241,7 +242,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
     // sum up the global zombie count
     //--------------------------------------------------------------------------
 
-    if( tid ==0 && zc > 0)
+    if( threadIdx.x ==0 && zc > 0)
     {
         GB_cuda_atomic_add <uint64_t>( &(C->nzombies), zc) ;
     }

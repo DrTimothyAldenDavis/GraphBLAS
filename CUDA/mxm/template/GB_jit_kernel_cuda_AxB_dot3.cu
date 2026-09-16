@@ -32,6 +32,7 @@
 #define CHUNKSIZE      GB_CUDA_DOT3_CHUNKSIZE
 #define LOG2_CHUNKSIZE GB_CUDA_DOT3_CHUNKSIZE_LOG2
 // fixme: make this upper case, move to GB_cuda_geometry.hpp:
+// (call it GB_CUDA_DOT3_MP_CHUNKSIZE or something)
 #define shared_vector_size 256 
 
 //------------------------------------------------------------------------------
@@ -41,9 +42,9 @@
 #if GB_C_ISO
 
     #define GB_DOT_TERMINAL( c ) break
-    #define GB_DOT_MERGE(pA,pB)                                         \
-    {                                                                   \
-        cij_exists = true ;                                             \
+    #define GB_DOT_MERGE(pA,pB,k)                                           \
+    {                                                                       \
+        cij_exists = true ;                                                 \
     }
     #define GB_CIJ_EXIST_POSTCHECK
 
@@ -56,11 +57,11 @@
         // cij += A(k,i) * B(k,j), for merge operation (plus_pair_real semiring)
         #if GB_Z_IGNORE_OVERFLOW
             // plus_pair for int64, uint64, float, or double
-            #define GB_DOT_MERGE(pA,pB) cij++ ;
+            #define GB_DOT_MERGE(pA,pB,k) cij++ ;
             #define GB_CIJ_EXIST_POSTCHECK cij_exists = (cij != 0) ;
         #else
             // plus_pair semiring for small integers
-            #define GB_DOT_MERGE(pA,pB)                                     \
+            #define GB_DOT_MERGE(pA,pB,k)                                   \
             {                                                               \
                 cij_exists = true ;                                         \
                 cij++ ;                                                     \
@@ -71,8 +72,9 @@
     #else
 
         // cij += A(k,i) * B(k,j), for merge operation (general case)
-        #define GB_DOT_MERGE(pA,pB)                                         \
+        #define GB_DOT_MERGE(pA,pB,k)                                       \
         {                                                                   \
+            /* Ax, Bx, i, and j must already be defined */                  \
             GB_GETA ( aki, Ax, pA, ) ;      /* aki = A(k,i) */              \
             GB_GETB ( bkj, Bx, pB, ) ;      /* bkj = B(k,j) */              \
             cij_exists = true ;                                             \
@@ -221,9 +223,6 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
     int number_of_blocks_1 = GB_IMIN (nblks_1,  CHUNKSIZE * number_of_sms) ;
 
     // most methods can use these launch geometries:
-//  printf ("\nmnz: %ld\n", mnz) ;
-//  printf ("number_of_blocks_1: %d\n", number_of_blocks_1) ;
-//  printf ("GB_CUDA_TILE_SIZE: %d\n", GB_CUDA_TILE_SIZE) ;
     dim3 grid_1 (number_of_blocks_1) ;
     dim3 block_1 (GB_CUDA_TILE_SIZE) ;
 
@@ -502,10 +501,10 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                             gridsz = GB_ICEIL (cnz_in_bucket,
                                 work_per_thread*blocksz) ;
                             gridsz = GB_IMIN (gridsz, 256*number_of_sms) ;
-                            dim3 grid_3 (gridsz) ;
+                            dim3 grid_vsvs (gridsz) ;
                             dim3 block_for_vsvs (blocksz) ;
                             GB_cuda_AxB_dot3_phase3_vsvs_kernel
-                                <<<grid_3, block_for_vsvs, 0, stream>>>
+                                <<<grid_vsvs, block_for_vsvs, 0, stream>>>
                                 (start, end, Bucket, C, M, A, B, theta) ;
                             CUDA_OK (cudaGetLastError ( )) ;
                             CUDA_OK (cudaStreamSynchronize (stream)) ;
@@ -531,13 +530,13 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                                 gridsz = number_of_sms ;
                             }
                             gridsz = GB_IMIN (gridsz, 256*number_of_sms) ;
-                            dim3 grid_3 (gridsz) ;
-                            // each thread block creates Ai_s and Bj_s; each
-                            // are int64_t arrays of size shared_vector_size
+                            dim3 grid_mp (gridsz) ;
+                            // each thread block creates Ai_s and Bi_s; each
+                            // are integer arrays of size shared_vector_size
                             size_t shared_bytes = shared_vector_size *
-                                sizeof (int64_t) * 2 ; // FIXME: can be 32-bit
+                                (sizeof (GB_Ai_TYPE) + sizeof (GB_Bi_TYPE)) ;
                             GB_cuda_AxB_dot3_phase3_mp_kernel
-                                <<<grid_3, block_1, shared_bytes, stream>>>
+                                <<<grid_mp, block_1, shared_bytes, stream>>>
                                 (start, end, Bucket, C, M, A, B, theta) ;
                             CUDA_OK (cudaGetLastError ( )) ;
                             CUDA_OK (cudaStreamSynchronize (stream)) ;

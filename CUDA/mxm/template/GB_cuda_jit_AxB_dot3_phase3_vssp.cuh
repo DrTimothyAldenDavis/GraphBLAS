@@ -152,10 +152,11 @@ __global__ void GB_cuda_AxB_dot3_phase3_vssp_kernel
                     // ASSERT (pleft > pB) ;
                     pB = pleft ;
                 }
-                else if (ia == ib) // ia == ib == k
+                else if (ia == ib)
                 { 
-                    // A(k,i) and B(k,j) are the next entries to merge
-                    GB_DOT_MERGE (pA, pB);
+                    // A(ia,i) and B(ia,j) are the next entries to merge
+                    // cij += A (ia,i) * B (ia,j)
+                    GB_DOT_MERGE (pA, pB, ia) ;
                     //GB_DOT_TERMINAL (cij) ;   // break if cij == terminal
                     pA+= blockDim.x ;
                     pB++ ;
@@ -193,10 +194,11 @@ __global__ void GB_cuda_AxB_dot3_phase3_vssp_kernel
                     pB++ ;
                 }
                 */
-                else if (ia == ib)// ia == ib == k
+                else if (ia == ib)
                 { 
-                    // A(k,i) and B(k,j) are the next entries to merge
-                    GB_DOT_MERGE (pA, pB) ;
+                    // A(ia,i) and B(ia,j) are the next entries to merge
+                    // cij += A (ia,i) * B (ia,j)
+                    GB_DOT_MERGE (pA, pB, ia) ;
                     //GB_DOT_TERMINAL (cij) ;   // break if cij == terminal
                     pA++ ;
                     pB+=blockDim.x ;
