@@ -15,6 +15,8 @@ bool GB_cuda_select_branch
     const GrB_IndexUnaryOp op
 )
 {
+//  printf ("HACK: turn off cuda select\n") ; return (false) ;
+
     if (GB_ngpus_to_use (1) == 0) return (false) ;
 
     int data_arena = A->data_arena ;

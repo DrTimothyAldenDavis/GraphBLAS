@@ -107,7 +107,7 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
 
     //--------------------------------------------------------------------------
     // allocate the output matrix and additional space (jwork and Swork)
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     // T is created using the requested integers of C.
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,

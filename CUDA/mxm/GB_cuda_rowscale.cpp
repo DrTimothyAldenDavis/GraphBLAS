@@ -40,7 +40,7 @@ GrB_Info GB_cuda_rowscale
 
     // determine the geometry of the CUDA kernel launches
     int32_t number_of_sms = GB_Global_gpu_sm_get (device) ;
-    int64_t raw_gridsz = GB_ICEIL (bnz, GB_CUDA_SCALE_CHUNKSIZE_LOG2) ;
+    int64_t raw_gridsz = GB_ICEIL (bnz, GB_CUDA_SCALE_CHUNKSIZE) ;
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     gridsz = std::max (gridsz, 1) ;
 

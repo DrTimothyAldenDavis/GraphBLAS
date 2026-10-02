@@ -331,8 +331,10 @@ if ( GRAPHBLAS_HAS_CUDA )
     include_directories (
     CUDA
     CUDA/apply
+    CUDA/builder
     CUDA/cumsum
     CUDA/device
+    CUDA/extractTuples
     CUDA/include
     CUDA/init
     CUDA/matrix

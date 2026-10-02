@@ -12,11 +12,12 @@
 // breaks down into 6 phases, 2 on the CPU and 4 on the GPU:
 //
 // phase1 (GPU): all entries in A are scanned, to determine if they are kept.
-//      This phase constructs Ak, so that (Ai,Ak,Ax) is a triplet form of the
-//      input matrix.  It also constructs a Map array, which tells each entry
-//      in A where it needs to appear in C (after a cumulative sum).  Time
-//      taken is O(nnz(A) + (nnz(A)/chunksize)*log2(nvec(A))), where the latter
-//      is due to GB_cuda_ek_slice_setup.
+//      This phase constructs Ak (implicitly or explicitly), so that (Ai,Ak,Ax)
+//      is a triplet form of the input matrix.  It also constructs a Map array,
+//      which tells each entry in A where it needs to appear in C (after a
+//      cumulative sum).  Time is O(nnz(A) + (nnz(A)/chunksize)*log2(nvec(A))),
+//      where the latter is due to GB_cuda_ek_slice_setup.  Ak is constructed
+//      explicitl if Ak_SAVE is true, otherwise it is computed and discarded.
 //
 // phase2 (CPU): a cumulative sum of the # of entries kept in each chunk of A.
 //      Time taken is O(nnz(A)/chunksize).  This work could also be done on
@@ -24,9 +25,9 @@
 //
 // phase3 (GPU): entries to keep are copied from A into C, and Ck1 is
 //      constructed, where Ck1 [pC] = kA if the pC-th entry of C comes from the
-//      kA-th vector of A.  This is the same as Ck0.  Time taken is O(nnz(A)).
-//      Phase 3 uses Ak from phase 1 (if Ak_SAVE is true), or recomputes it
-//      if Ak_SAVE is false.
+//      kA-th vector of A.  Ck1 is the same as Ck0+1; just a pointer offset.
+//      Time taken is O(nnz(A)).  Phase 3 uses Ak from phase 1 (if Ak_SAVE is
+//      true), or recomputes it if Ak_SAVE is false.
 //
 // phase4 (GPU): determine where each vector of C starts in Ci,Cx, by computing
 //      Ck_Delta and its cumulative sum (per chunk of C); also computes the
@@ -53,7 +54,7 @@
 // fixme: try an intermediate to Ak_SAVE 0/1:  call GB_cuda_ek_slice_setup just
 // in phase1, and reuse its result in phase3.  Do not save all of Ak.  Phase3
 // would lookup the GB_cuda_ek_slice_setup result from phase1 (kfirst and
-// slope) and then call GB_ucda_ek_slice_entry per entry.
+// slope) and then call GB_cuda_ek_slice_entry per entry.
 
 #include "template/GB_cuda_ek_slice.cuh"
 
@@ -69,8 +70,8 @@
 #define GB_FREE_ALL GB_FREE_WORKSPACE ;
 
 // The chunk size is assumed to be < UINT16_MAX (65535), so that the cumsums
-// can be done in an Int workspace array.  If the chunk size exceeds this
-// value, then the Int type below must be replaced with a larger type.
+// can be done in an uint16_t workspace array.  If the chunk size exceeds this
+// value, then the uint16_t type below must be replaced with a larger type.
 #define CHUNKSIZE1         GB_CUDA_SELECT_SPARSE_CHUNKSIZE1
 #define LOG2_CHUNKSIZE1    GB_CUDA_SELECT_SPARSE_CHUNKSIZE1_LOG2
 #define BLOCKDIM1          GB_CUDA_SELECT_SPARSE_BLOCKDIM1
@@ -84,8 +85,9 @@
 #define ITEMS_PER_THREAD1    (CHUNKSIZE1 / BLOCKDIM1)
 #define ITEMS_PER_THREAD2    (CHUNKSIZE2 / BLOCKDIM2)
 
-// Int can be uint16_t if CHUNKSIZE1 and CHUNKSIZE2 are both < 65,535:
-#define Int uint16_t
+#if ( CHUNKSIZE1 >= 65535 ) || ( CHUNKSIZE2 >= 65535 )
+#error "chunksize is too big for uint16_t"
+#endif
 
 //------------------------------------------------------------------------------
 // GB_cuda_select_sparse_phase1: determine which entries in A to keep
@@ -98,7 +100,7 @@ __global__ void GB_cuda_select_sparse_phase1
     GB_Aj_SIGNED_TYPE *Ak,  // size anz, in Ak [0..anz-1], and values in range
                             // 0 to the # of vectors in A
     #endif
-    Int *Map,               // size anz+1, in Map [-1..anz-1]
+    uint16_t *Map,          // size anz+1, in Map [-1..anz-1]
     GB_Ap_TYPE *ChunkSum,   // size nchunks_in_A+1, ChunkSum [-1..nchunks_in_A]
     // inputs, not modified:
     GrB_Matrix A,
@@ -134,10 +136,10 @@ __global__ void GB_cuda_select_sparse_phase1
     // workspace for each threadblock
     //--------------------------------------------------------------------------
 
-    __shared__ Int Local_Map [CHUNKSIZE1] ;
+    __shared__ uint16_t Local_Map [CHUNKSIZE1] ;
 
     // cub::Block* workspace:
-    GB_CUB_BLOCK_WORKSPACE (W, Int, BLOCKDIM1, ITEMS_PER_THREAD1) ;
+    GB_CUB_BLOCK_WORKSPACE (W, uint16_t, BLOCKDIM1, ITEMS_PER_THREAD1) ;
 
     //--------------------------------------------------------------------------
     // compute Ak, and each local chunk of Map
@@ -155,7 +157,7 @@ __global__ void GB_cuda_select_sparse_phase1
         int64_t pfirst = chunk << LOG2_CHUNKSIZE1 ;
         int64_t my_chunk_size ;
         #if ( Ak_SAVE ) || ( GB_DEPENDS_ON_J )
-        // detemine the slope, for computing Ak and j
+        // determine the slope, for computing Ak and j
         int64_t kfirst ;
         float slope ;
         GB_cuda_ek_slice_setup<GB_Ap_TYPE> (Ap, anvec, anz, pfirst, CHUNKSIZE1,
@@ -234,7 +236,7 @@ __global__ void GB_cuda_select_sparse_phase1
         */
 
         this_thread_block ( ).sync ( ) ;
-        Int t [ITEMS_PER_THREAD1] ;
+        uint16_t t [ITEMS_PER_THREAD1] ;
 
         // each thread loads its data from Local_Map (in shared memory):
         /*
@@ -248,7 +250,7 @@ __global__ void GB_cuda_select_sparse_phase1
 
         // inclusive sum of data from Local_Map,
         // where Local_Map [i] = sum (Local_Map [0:i])
-        Int block_aggregate ;
+        uint16_t block_aggregate ;
         BlockScan (W.scan).InclusiveSum (t, t, block_aggregate) ;
         this_thread_block ( ).sync ( ) ;
 
@@ -292,7 +294,7 @@ __global__ void GB_cuda_select_sparse_phase3
     // inputs, not modified:
     GrB_Matrix A,
     GB_Ap_TYPE *ChunkSum,   // size nchunks_in_A+1, ChunkSum [-1..nchunks_in_A]
-    Int *Map,               // size anz+1, in Map [-1..anz-1]
+    uint16_t *Map,          // size anz+1, in Map [-1..anz-1]
     #if Ak_SAVE
     GB_Aj_SIGNED_TYPE *Ak,  // size anz, in Ak [0..anz-1]
     #endif
@@ -410,7 +412,7 @@ __global__ void GB_cuda_select_sparse_phase3
 __global__ void GB_cuda_select_sparse_phase4
 (
     // outputs:
-    Int *Ck_Delta,          // size cnz+1, in Ck_Delta [-1..cnz-1]
+    uint16_t *Ck_Delta,     // size cnz+1, in Ck_Delta [-1..cnz-1]
     GB_Ap_TYPE *ChunkSum,   // in ChunkSum [-1..nchunks_in_C]
     // inputs, not modified:
     GB_Aj_SIGNED_TYPE *Ck0, // size cnz+1, in Ck0 [-1..cnz-1]
@@ -423,10 +425,10 @@ __global__ void GB_cuda_select_sparse_phase4
     // workspace for each threadblock
     //--------------------------------------------------------------------------
 
-    __shared__ Int Local_Ck_Delta [CHUNKSIZE2] ;
+    __shared__ uint16_t Local_Ck_Delta [CHUNKSIZE2] ;
 
     // cub::Block* workspace:
-    GB_CUB_BLOCK_WORKSPACE (W, Int, BLOCKDIM2, ITEMS_PER_THREAD2) ;
+    GB_CUB_BLOCK_WORKSPACE (W, uint16_t, BLOCKDIM2, ITEMS_PER_THREAD2) ;
 
     //--------------------------------------------------------------------------
     // construct Ck_Delta and then cumsum each block
@@ -474,7 +476,7 @@ __global__ void GB_cuda_select_sparse_phase4
         //----------------------------------------------------------------------
 
         this_thread_block ( ).sync ( ) ;
-        Int t [ITEMS_PER_THREAD2] ;
+        uint16_t t [ITEMS_PER_THREAD2] ;
 
         // each thread loads its data from Local_Ck_Delta (in shared memory):
         /*
@@ -488,7 +490,7 @@ __global__ void GB_cuda_select_sparse_phase4
 
         // inclusive sum of data from Local_Ck_Delta,
         // where Local_Ck_Delta [i] = sum (Local_Ck_Delta [0:i])
-        Int block_aggregate ;
+        uint16_t block_aggregate ;
         BlockScan (W.scan).InclusiveSum (t, t, block_aggregate) ;
         this_thread_block ( ).sync ( ) ;
 
@@ -520,7 +522,7 @@ __global__ void GB_cuda_select_sparse_phase6
     // outputs:
     GrB_Matrix C,           // Cp and Ch are constructed
     // inputs, not modified
-    Int *Ck_Delta,          // size cnz+1, in Ck_Delta [-1..cnz-1]
+    uint16_t *Ck_Delta,     // size cnz+1, in Ck_Delta [-1..cnz-1]
     GB_Ap_TYPE *ChunkSum,   // in ChunkSum [-1..nchunks_in_C]
     GB_Aj_SIGNED_TYPE *Ck0, // size cnz+1, in Ck0 [-1..cnz-1]
     #if ( GB_A_IS_HYPER )
@@ -714,7 +716,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // them appears to be faster, and it saves memory not having to keep them.
     W_0 = GB_MALLOC_MEMORY (anz+2, sizeof (GB_Aj_SIGNED_TYPE), &W_0_mem) ;
     #endif
-    W_1 = GB_MALLOC_MEMORY (anz+2 + CHUNKSIZE1, sizeof (Int), &W_1_mem) ;
+    W_1 = GB_MALLOC_MEMORY (anz+2 + CHUNKSIZE1, sizeof (uint16_t), &W_1_mem) ;
     W_2 = GB_MALLOC_MEMORY (nchunks_max+2, sizeof (GB_Ap_TYPE), &W_2_mem) ;
     if ((Ak_SAVE && W_0 == NULL) || W_1 == NULL || W_2 == NULL)
     {
@@ -730,7 +732,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 
     // use W_1 workspace for Map, and shift by one to define Map [-1] as 0
     // (which is set in the phase1 kernel launch below).
-    Int *Map = ((Int *) W_1) + 1 ;
+    uint16_t *Map = ((uint16_t *) W_1) + 1 ;
 
     // ChunkSum [-1 .. nchunks_in_*] of size nchunks_max+2, in workspace W_2
     GB_Ap_TYPE *ChunkSum = (GB_Ap_TYPE *) W_2 + 1 ;
@@ -896,7 +898,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // with 0-based indices, using Ck_Delta [-1..cnz-1] where cnz <= anz.
     // Note that W_1 [-1] is already set to zero in phase1 (Map [-1] = 0),
     // and thus Ck_Delta [-1] is already equal to 0, as required.
-    Int *Ck_Delta = ((Int *) W_1) + 1 ;
+    uint16_t *Ck_Delta = ((uint16_t *) W_1) + 1 ;
 
     // KERNEL LAUNCH 3: phase4
     GB_cuda_select_sparse_phase4 <<<grid, block2, 0, stream>>>

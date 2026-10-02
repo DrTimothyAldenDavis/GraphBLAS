@@ -71,11 +71,13 @@
             GB_ISET (Ci, pC + p, i) ;       // Ci [pC + p] = i ;
             ASSERT (GB_IGET (Ai, pA + p) == i) ;
             ASSERT (GB_IGET (Bi, pB + p) == i) ;
-            #ifndef GB_ISO_ADD
-            GB_LOAD_A (aij, Ax, pA + p, A_iso) ;
-            GB_LOAD_B (bij, Bx, pB + p, B_iso) ;
-            GB_EWISEOP (Cx, pC + p, aij, bij, i, j) ;
-            #endif
+            GB_ADD_AIJ_PLUS_BIJ (Cx, pC+p,
+                Ax, pA+p, A_iso, Bx, pB+p, B_iso, i, j) ;
+//          #ifndef GB_ISO_ADD
+//          GB_LOAD_A (aij, Ax, pA + p, A_iso) ;
+//          GB_LOAD_B (bij, Bx, pB + p, B_iso) ;
+//          GB_EWISEOP (Cx, pC + p, aij, bij, i, j) ;
+//          #endif
         }
         #endif
 
@@ -97,20 +99,23 @@
             int64_t i = p + iA_first ;
             GB_ISET (Ci, pC + p, i) ;       // Ci [pC + p] = i ;
             ASSERT (GB_IGET (Ai, pA + p) == i) ;
-            #ifndef GB_ISO_ADD
-            #if GB_IS_EWISEUNION
-            { 
-                // C (i,j) = A(i,j) + beta
-                GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
-                GB_EWISEOP (Cx, pC+p, aij, beta_scalar, i, j) ;
-            }
-            #else
-            { 
-                // C (i,j) = A (i,j)
-                GB_COPY_A_to_C (Cx, pC+p, Ax, pA+p, A_iso) ;
-            }
-            #endif
-            #endif
+            // C (i,j) = A (i,j), or A(i,j) + beta for eWiseUnion
+            GB_ADD_AIJ_PLUS_BETA (Cx, pC+p,
+                Ax, pA+p, A_iso, beta_scalar, i, j) ;
+//          #ifndef GB_ISO_ADD
+//          #if GB_IS_EWISEUNION
+//          { 
+//              // C (i,j) = A(i,j) + beta
+//              GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
+//              GB_EWISEOP (Cx, pC+p, aij, beta_scalar, i, j) ;
+//          }
+//          #else
+//          { 
+//              // C (i,j) = A (i,j)
+//              GB_COPY_A_to_C (Cx, pC+p, Ax, pA+p, A_iso) ;
+//          }
+//          #endif
+//          #endif
         }
         #ifndef GB_ISO_ADD
         GB_PRAGMA_SIMD_VECTORIZE
@@ -120,9 +125,11 @@
             int64_t i = GB_IGET (Bi, pB + p) ;
             int64_t ii = i - iA_first ;
             ASSERT (GB_IGET (Ai, pA + ii) == i) ;
-            GB_LOAD_A (aij, Ax, pA + ii, A_iso) ;
-            GB_LOAD_B (bij, Bx, pB + p, B_iso) ;
-            GB_EWISEOP (Cx, pC + ii, aij, bij, i, j) ;
+            GB_ADD_AIJ_PLUS_BIJ (Cx, pC+ii,
+                Ax, pA+ii, A_iso, Bx, pB+p, B_iso, i, j) ;
+//          GB_LOAD_A (aij, Ax, pA + ii, A_iso) ;
+//          GB_LOAD_B (bij, Bx, pB + p, B_iso) ;
+//          GB_EWISEOP (Cx, pC + ii, aij, bij, i, j) ;
         }
         #endif
         #endif
@@ -145,6 +152,9 @@
             int64_t i = p + iB_first ;
             GB_ISET (Ci, pC + p, i) ;       // Ci [pC + p] = i ;
             ASSERT (GB_IGET (Bi, pB + p) == i) ;
+            GB_ADD_ALPHA_PLUS_BIJ (Cx, pC+p,
+                alpha_scalar, Bx, pB+p, B_iso, i, j) ;
+#if 0
             #ifndef GB_ISO_ADD
             #if GB_IS_EWISEUNION
             { 
@@ -165,6 +175,8 @@
             }
             #endif
             #endif
+#endif
+
         }
         #ifndef GB_ISO_ADD
         GB_PRAGMA_SIMD_VECTORIZE
@@ -174,9 +186,11 @@
             int64_t i = GB_IGET (Ai, pA + p) ;
             int64_t ii = i - iB_first ;
             ASSERT (GB_IGET (Bi, pB + ii) == i) ;
-            GB_LOAD_A (aij, Ax, pA + p, A_iso) ;
-            GB_LOAD_B (bij, Bx, pB + ii, B_iso) ;
-            GB_EWISEOP (Cx, pC + ii, aij, bij, i, j) ;
+            GB_ADD_AIJ_PLUS_BIJ (Cx, pC+ii,
+                Ax, pA+p, A_iso, Bx, pB+ii, B_iso, i, j) ;
+//          GB_LOAD_A (aij, Ax, pA + p, A_iso) ;
+//          GB_LOAD_B (bij, Bx, pB + ii, B_iso) ;
+//          GB_EWISEOP (Cx, pC + ii, aij, bij, i, j) ;
         }
         #endif
         #endif
@@ -198,6 +212,9 @@
         { 
             int64_t i = GB_IGET (Bi, pB+p) ;    // i = Bi [pB+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
+            GB_ADD_ALPHA_PLUS_BIJ (Cx, pC+p,
+                alpha_scalar, Bx, pB+p, B_iso, i, j) ;
+#if 0
             #ifndef GB_ISO_ADD
             #if GB_IS_EWISEUNION
             { 
@@ -212,6 +229,7 @@
             }
             #endif
             #endif
+#endif
         }
         #endif
 
@@ -232,6 +250,10 @@
         { 
             int64_t i = GB_IGET (Ai, pA+p) ;    // i = Ai [pA+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
+            // C (i,j) = A (i,j), or A(i,j) + beta for eWiseUnion
+            GB_ADD_AIJ_PLUS_BETA (Cx, pC+p,
+                Ax, pA+p, A_iso, beta_scalar, i, j) ;
+#if 0
             #ifndef GB_ISO_ADD
             #if GB_IS_EWISEUNION
             { 
@@ -246,6 +268,7 @@
             }
             #endif
             #endif
+#endif
         }
         #endif
 
@@ -266,6 +289,10 @@
         { 
             int64_t i = GB_IGET (Ai, pA+p) ;    // i = Ai [pA+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
+            // C (i,j) = A (i,j), or A(i,j) + beta for eWiseUnion
+            GB_ADD_AIJ_PLUS_BETA (Cx, pC+p,
+                Ax, pA+p, A_iso, beta_scalar, i, j) ;
+#if 0
             #ifndef GB_ISO_ADD
             #if GB_IS_EWISEUNION
             { 
@@ -280,6 +307,7 @@
             }
             #endif
             #endif
+#endif
         }
         pC += ajnz ;
         GB_PRAGMA_SIMD_VECTORIZE
@@ -287,6 +315,9 @@
         { 
             int64_t i = GB_IGET (Bi, pB+p) ;    // i = Bi [pB+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
+            GB_ADD_ALPHA_PLUS_BIJ (Cx, pC+p,
+                alpha_scalar, Bx, pB+p, B_iso, i, j) ;
+#if 0
             #ifndef GB_ISO_ADD
             #if GB_IS_EWISEUNION
             { 
@@ -301,6 +332,7 @@
             }
             #endif
             #endif
+#endif
         }
         #endif
 
@@ -321,6 +353,9 @@
         { 
             int64_t i = GB_IGET (Bi, pB+p) ;    // i = Bi [pB+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
+            GB_ADD_ALPHA_PLUS_BIJ (Cx, pC+p,
+                alpha_scalar, Bx, pB+p, B_iso, i, j) ;
+#if 0
             #ifndef GB_ISO_ADD
             #if GB_IS_EWISEUNION
             { 
@@ -335,6 +370,9 @@
             }
             #endif
             #endif
+#endif
+
+
         }
         pC += bjnz ;
         GB_PRAGMA_SIMD_VECTORIZE
@@ -342,6 +380,10 @@
         { 
             int64_t i = GB_IGET (Ai, pA+p) ;    // i = Ai [pA+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
+            // C (i,j) = A (i,j), or A(i,j) + beta for eWiseUnion
+            GB_ADD_AIJ_PLUS_BETA (Cx, pC+p,
+                Ax, pA+p, A_iso, beta_scalar, i, j) ;
+#if 0
             #ifndef GB_ISO_ADD
             #if GB_IS_EWISEUNION
             { 
@@ -356,6 +398,7 @@
             }
             #endif
             #endif
+#endif
         }
         #endif
 
@@ -421,20 +464,9 @@
             { 
                 #if ( GB_ADD_PHASE == 2 )
                 GB_ISET (Ci, pC, iA) ;      // Ci [pC] = iA ;
-                #ifndef GB_ISO_ADD
-                #if GB_IS_EWISEUNION
-                { 
-                    // C (iA,j) = A(iA,j) + beta
-                    GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                    GB_EWISEOP (Cx, pC, aij, beta_scalar, iA, j) ;
-                }
-                #else
-                { 
-                    // C (iA,j) = A (iA,j)
-                    GB_COPY_A_to_C (Cx, pC, Ax, pA, A_iso) ;
-                }
-                #endif
-                #endif
+                // C (iA,j) = A(iA,j), or A(iA,j) + beta for ewiseUnion
+                GB_ADD_AIJ_PLUS_BETA (Cx, pC, Ax, pA, A_iso, beta_scalar,
+                    iA, j) ;
                 #endif
                 pA++ ;
             }
@@ -442,20 +474,9 @@
             { 
                 #if ( GB_ADD_PHASE == 2 )
                 GB_ISET (Ci, pC, iB) ;      // Ci [pC] = iB ;
-                #ifndef GB_ISO_ADD
-                #if GB_IS_EWISEUNION
-                { 
-                    // C (iB,j) = alpha + B(iB,j)
-                    GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                    GB_EWISEOP (Cx, pC, alpha_scalar, bij, iB, j) ;
-                }
-                #else
-                { 
-                    // C (iB,j) = B (iB,j)
-                    GB_COPY_B_to_C (Cx, pC, Bx, pB, B_iso) ;
-                }
-                #endif
-                #endif
+                // C (iB,j) = B (iB,j), or = alpha + B(iB,j) for eWiseUnion:
+                GB_ADD_ALPHA_PLUS_BIJ (Cx, pC, alpha_scalar, Bx, pB, B_iso,
+                    iB, j) ;
                 #endif
                 pB++ ;
             }
@@ -464,11 +485,8 @@
                 // C (i,j) = A (i,j) + B (i,j)
                 #if ( GB_ADD_PHASE == 2 )
                 GB_ISET (Ci, pC, iB) ;      // Ci [pC] = iB ;
-                #ifndef GB_ISO_ADD
-                GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                GB_EWISEOP (Cx, pC, aij, bij, iB, j) ;
-                #endif
+                GB_ADD_AIJ_PLUS_BIJ (Cx, pC, Ax, pA, A_iso, Bx, pB, B_iso,
+                    iB, j) ;
                 #endif
                 pA++ ;
                 pB++ ;
@@ -494,6 +512,10 @@
         { 
             int64_t i = GB_IGET (Ai, pA+p) ;    // i = Ai [pA+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
+            // C (i,j) = A (i,j), or A(i,j) + beta for eWiseUnion
+            GB_ADD_AIJ_PLUS_BETA (Cx, pC+p,
+                Ax, pA+p, A_iso, beta_scalar, i, j) ;
+#if 0
             #ifndef GB_ISO_ADD
             #if GB_IS_EWISEUNION
             { 
@@ -508,11 +530,16 @@
             }
             #endif
             #endif
+#endif
         }
         for (int64_t p = 0 ; p < bjnz ; p++)
         { 
             int64_t i = GB_IGET (Bi, pB+p) ;    // i = Bi [pB+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
+            // C (i,j) = B (i,j), or = alpha + B(i,j) for eWiseUnion:
+            GB_ADD_ALPHA_PLUS_BIJ (Cx, pC+p,
+                alpha_scalar, Bx, pB+p, B_iso, i, j) ;
+#if 0
             #ifndef GB_ISO_ADD
             #if GB_IS_EWISEUNION
             { 
@@ -527,6 +554,7 @@
             }
             #endif
             #endif
+#endif
         }
         ASSERT (pC + ajnz + bjnz == pC_end) ;
         #endif

@@ -89,11 +89,8 @@
 #define BLOCKDIM            GB_CUDA_BUILDER_BLOCKDIM
 #define ITEMS_PER_THREAD    (CHUNKSIZE / BLOCKDIM)
 
-// Int can be uint16_t if CHUNKSIZE is < 65,535
-#define Int uint16_t
-
-#if CHUNKSIZE > 65535
-#error "Int cannot be uint16_t"
+#if CHUNKSIZE >= 65535
+#error "chunksize is too big for uint16_t"
 #endif
 
 //------------------------------------------------------------------------------
@@ -251,10 +248,10 @@ __global__ void GB_cuda_builder_phase1
 __global__ void GB_cuda_builder_phase3_with_dupl
 (
     // outputs
-    Int *Map,               // size nvals+1, in Map [-1...nvals-1]
+    uint16_t *Map,          // size nvals+1, in Map [-1...nvals-1]
     GB_Tp_TYPE *ChunkSum,   // size nchunks+1, in ChunkSum [-1..nchunks]
     #if GB_MTX_BUILD
-    Int *JDelta,            // size nvals+1, in JDelta [-1..nvals-1]
+    uint16_t *JDelta,       // size nvals+1, in JDelta [-1..nvals-1]
     GB_Tp_TYPE *JDeltaSum,  // size nchunks+1
     #endif
     // inputs, not modified, except for the Key_out [-1] sentinel value:
@@ -268,13 +265,13 @@ __global__ void GB_cuda_builder_phase3_with_dupl
     // workspace for each threadblock
     //--------------------------------------------------------------------------
 
-    __shared__ Int Local_Map [CHUNKSIZE] ;
+    __shared__ uint16_t Local_Map [CHUNKSIZE] ;
     #if GB_MTX_BUILD
-    __shared__ Int Local_JDelta [CHUNKSIZE] ;
+    __shared__ uint16_t Local_JDelta [CHUNKSIZE] ;
     #endif
 
     // cub::Block* workspace:
-    GB_CUB_BLOCK_WORKSPACE (W, Int, BLOCKDIM, ITEMS_PER_THREAD) ;
+    GB_CUB_BLOCK_WORKSPACE (W, uint16_t, BLOCKDIM, ITEMS_PER_THREAD) ;
 
     //--------------------------------------------------------------------------
     // the first thread of the threadblock fills in the sentinal values
@@ -378,9 +375,9 @@ __global__ void GB_cuda_builder_phase3_with_dupl
         // is computed.
 
         this_thread_block ( ).sync ( ) ;
-        Int t_block_aggregate ;
+        uint16_t t_block_aggregate ;
         #if GB_MTX_BUILD
-        Int s_block_aggregate ;
+        uint16_t s_block_aggregate ;
         #endif
 
 #if 0
@@ -415,7 +412,7 @@ __global__ void GB_cuda_builder_phase3_with_dupl
         }
 
 #else
-        Int t [ITEMS_PER_THREAD] ;
+        uint16_t t [ITEMS_PER_THREAD] ;
 
         BlockLoad (W.load).Load (Local_Map, t) ;
         this_thread_block ( ).sync ( ) ;
@@ -463,154 +460,41 @@ __global__ void GB_cuda_builder_phase3_with_dupl
 // Compare with select/phase1
 
 #if GB_MTX_BUILD
+
+#include "template/GB_cuda_construct_JDelta.cuh"
+
 __global__ void GB_cuda_builder_phase3_no_dupl
 (
-    // outputs
-    Int *JDelta,            // size nvals+1, in JDelta [-1..nvals-1]
+    // outputs:
+    uint16_t *JDelta,       // size nvals+1, in JDelta [-1..nvals-1]
     GB_Tp_TYPE *JDeltaSum,  // size nchunks+1
     // inputs, not modified, except for the Key_out [-1] sentinel value:
     GB_key_t *Key_out,      // size nvals+1: Key_out [-1 ... nvals-1]
     int64_t nvals,          // # of tuples in (I,J,X)
-    int64_t nchunks
+    int64_t nchunks         // # of chunks of C
 )
 {
 
-    //--------------------------------------------------------------------------
-    // workspace for each threadblock
-    //--------------------------------------------------------------------------
-
-    __shared__ Int Local_JDelta [CHUNKSIZE] ;
-
-    // cub::Block* workspace:
-    GB_CUB_BLOCK_WORKSPACE (W, Int, BLOCKDIM, ITEMS_PER_THREAD) ;
-
-    //--------------------------------------------------------------------------
-    // the first thread of the threadblock fills in the sentinal values
-    //--------------------------------------------------------------------------
-
-    if (threadIdx.x == 0 && blockIdx.x == 0)
+    auto unload_Cj = [](GB_key_t *Key_out, int64_t p)
     {
-        memset (&(Key_out [-1]), 0xFF, sizeof (GB_key_t)) ;
-        JDelta [-1] = 0 ;
-        JDeltaSum [-1] = 0 ;
-    }
+        // j = Key_out [p].j for matrices
+        GB_KEY_UNLOAD_J (Key_out, p, j) ;
+        return (j) ;
+    } ;
 
-    // this_thread_block ( ).sync ( ) ; not needed since the thread that wrote
-    // the Key_out [-1] entry is the only thread that reads it.
-
-    //--------------------------------------------------------------------------
-    // compute each local chunk of Map
-    //--------------------------------------------------------------------------
-
-    for (int64_t chunk = blockIdx.x ;
-                 chunk < nchunks ;
-                 chunk += gridDim.x)        // grid-stride loop
-    {
-
-        //----------------------------------------------------------------------
-        // determine the properties of this chunk
-        //----------------------------------------------------------------------
-
-        int64_t pfirst = chunk << LOG2_CHUNKSIZE ;
-        int64_t my_chunk_size ;
-        // this computation is just the 2nd #if case of select/phase1:
-        int64_t plast = pfirst + CHUNKSIZE ;
-        plast = GB_IMIN (plast, nvals) ;
-        my_chunk_size = plast - pfirst ;
-
-        //----------------------------------------------------------------------
-        // determine the first unique tuple in each sequence of duplicates
-        //----------------------------------------------------------------------
-
-        int64_t pdelta = threadIdx.x ;
-        for ( ; pdelta < my_chunk_size ;
-                pdelta += blockDim.x)       // block-stride loop
-        {
-
-            //------------------------------------------------------------------
-            // this thread works on the p-th entry
-            //------------------------------------------------------------------
-
-            int64_t p = pfirst + pdelta ;
-
-            //------------------------------------------------------------------
-            // determine if the p-th entry is 1st of duplicates, or leading
-            //------------------------------------------------------------------
-
-            // get the indices
-            GB_KEY_UNLOAD_J (Key_out, p-1, jprev) ;
-            GB_KEY_UNLOAD_J (Key_out, p,   j) ;
-
-            // leading is true if this is the first entry in vector j
-            bool leading = (j != jprev) ;
-            Local_JDelta [pdelta] = leading ;   // 1 if leading entry of vector
-        }
-
-        //----------------------------------------------------------------------
-        // the remainder is similar to select/phase1:
-        //----------------------------------------------------------------------
-
-        // clear the unused part of the Local_Map and Local_JDelta
-        for ( ; pdelta < CHUNKSIZE ;
-                pdelta += blockDim.x)
-        {
-            Local_JDelta [pdelta] = 0 ;
-        }
-
-        //----------------------------------------------------------------------
-        // inclusive cumulative sum of Local_Map and Local_JDelta
-        //----------------------------------------------------------------------
-
-        // Map [pfirst..pfirst+CHUNKSIZE-1] = inclusive cumsum of Local_Map,
-        // where Local_Map [i] = sum (Local_Map [0:i]) is computed.
-
-        // Similarly, JDelta [pfirst..pfirst+CHUNKSIZE-1] = inclusive cumsum
-        // of Local_JDelta, where Local_JDelta [i] = sum (Local_JDelta [0:i])
-        // is computed.
-
-        this_thread_block ( ).sync ( ) ;
-        Int s_block_aggregate ;
-
-#if 0
-        // This entire phase computes the following:
-        if (threadIdx.x == blockDim.x - 1)
-        {
-
-            // construct JDelta and JDeltaSum
-            for (int i = 1 ; i < CHUNKSIZE ; i++)
-            {
-                Local_JDelta [i] += Local_JDelta [i-1] ;
-            }
-            for (int i = 0 ; i < CHUNKSIZE ; i++)
-            {
-                JDelta [pfirst + i] = Local_JDelta [i] ;
-            }
-            s_block_aggregate = Local_JDelta [CHUNKSIZE-1] ;
-            JDeltaSum [chunk] = s_block_aggregate ;
-        }
-
-#else
-        Int t [ITEMS_PER_THREAD] ;
-
-        BlockLoad (W.load).Load (Local_JDelta, t) ;
-        this_thread_block ( ).sync ( ) ;
-        BlockScan (W.scan).InclusiveSum (t, t, s_block_aggregate) ;
-        this_thread_block ( ).sync ( ) ;
-        BlockStore (W.store).Store (JDelta + pfirst, t) ;
-        this_thread_block ( ).sync ( ) ;
-
-        // finally, the aggregate sums are written to ChunkSum and JDeltaSum
-        if (threadIdx.x == blockDim.x - 1)
-        {
-            JDeltaSum [chunk] = s_block_aggregate ;
-        }
-
-#endif
-
-        this_thread_block ( ).sync ( ) ;
-    }
+    GB_cuda_construct_JDelta
+    <
+        GB_Tp_TYPE,             // type of JDeltasum
+        GB_key_t,               // type of Key_out
+        CHUNKSIZE,              // size of each chunk
+        LOG2_CHUNKSIZE,         // log2 (chunksize)
+        BLOCKDIM,               // blockdim of kernel launch
+        ITEMS_PER_THREAD,       // # of items per thread (chunksize/blockdim)
+        // template type need not appear here; including for clarity:
+        decltype (unload_Cj)    // type of the unload_Cj lambda function
+    >
+        (JDelta, JDeltaSum, Key_out, nvals, nchunks, unload_Cj) ;
 }
-
 #endif
 
 //------------------------------------------------------------------------------
@@ -629,10 +513,10 @@ __global__ void GB_cuda_builder_phase5_with_dupl
     // outputs
     GrB_Matrix T,
     // inputs, not modified:
-    Int *Map,               // size nvals+1, in Map [-1...nvals-1]
+    uint16_t *Map,          // size nvals+1, in Map [-1...nvals-1]
     GB_Tp_TYPE *ChunkSum,   // size nchunks+1, in ChunkSum [-1..nchunks]
     #if GB_MTX_BUILD
-    Int *JDelta,            // size nvals+1, in JDelta [-1..nvals-1]
+    uint16_t *JDelta,       // size nvals+1, in JDelta [-1..nvals-1]
     GB_Tp_TYPE *JDeltaSum,  // size nchunks+1
     #endif
     GB_key_t *Key_out,      // size nvals+1: Key_out [-1 ... nvals-1]
@@ -777,23 +661,63 @@ __global__ void GB_cuda_builder_phase5_with_dupl
 
 // Sx has already been transplanted into T->x
 
+#include "template/GB_cuda_construct_Cp_and_Ch.cuh"
+
 #define GB_TRANSPLANT_IS_POSSIBLE (GB_BLD_SXTYPE_IS_TXTYPE && !GB_ISO_BUILD)
 
 #if GB_TRANSPLANT_IS_POSSIBLE
+
 __global__ void GB_cuda_builder_phase5_transplant
 (
     // outputs
     GrB_Matrix T,
     // inputs, not modified:
-    #if GB_MTX_BUILD
-    Int *JDelta,            // size nvals+1, in JDelta [-1..nvals-1]
+    uint16_t *JDelta,       // size nvals+1, in JDelta [-1..nvals-1]
     GB_Tp_TYPE *JDeltaSum,  // size nchunks+1
-    #endif
     GB_key_t *Key_out,      // size nvals+1: Key_out [-1 ... nvals-1]
     int64_t nvals,          // # of tuples in (I,J,X)
-    int64_t nchunks
+    int64_t nchunks         // # of chunks to build T
 )
 {
+
+#if 1
+
+    auto unload_Ci = [](GB_key_t *Key_out, int64_t p)
+    {
+        // i = Key_out [p].i for matrices, i = Key_out [p] for vectors
+        GB_KEY_UNLOAD_I (Key_out, p, i) ;
+        return (i) ;
+    } ;
+
+    auto unload_Cj = [](GB_key_t *Key_out, int64_t p)
+    {
+        #if GB_MTX_BUILD
+        // j = Key_out [p].j if T is a matrix
+        GB_KEY_UNLOAD_J (Key_out, p, j) ;
+        return (j) ;
+        #else
+        // T is a vector; thus function is not used
+        return (0) ;
+        #endif
+    } ;
+
+    GB_cuda_construct_Cp_and_Ch
+    <   
+        GB_Tp_TYPE,             // type of T->p
+        GB_Tj_TYPE,             // type of T->h
+        GB_Ti_TYPE,             // type of T->i
+        GB_key_t,               // Key type for CUB radix sort
+        CHUNKSIZE,              // chunksize for work done by a threadblock
+        LOG2_CHUNKSIZE,         // log2 (chunksize)
+        GB_MTX_BUILD,           // if true, construct Cp and Ch for a matrix
+        true,                   // construct C->i from the Key_out workspace
+        // these two template types need not appear here; including for clarity:
+        decltype (unload_Ci),   // type of the unload_Ci lambda function
+        decltype (unload_Cj)    // type of the unload_Cj lambda function
+    >
+        (T, JDelta, JDeltaSum, Key_out, nvals, nchunks, unload_Ci, unload_Cj) ;
+
+#else
 
     //--------------------------------------------------------------------------
     // get T->p, T->h, and T->i. kT is 1-based but p is 0-based
@@ -820,7 +744,6 @@ __global__ void GB_cuda_builder_phase5_transplant
 
         int64_t pfirst = chunk << LOG2_CHUNKSIZE ;
         int64_t my_chunk_size ;
-        // this computation is just the 2nd #if case of select/phase3:
         int64_t plast = pfirst + CHUNKSIZE ;
         plast = GB_IMIN (plast, nvals) ;
         my_chunk_size = plast - pfirst ;
@@ -878,6 +801,7 @@ __global__ void GB_cuda_builder_phase5_transplant
         Tp [1] = T->nvals ;
         #endif
     }
+#endif
 }
 #endif
 
@@ -890,13 +814,16 @@ __global__ void GB_cuda_builder_phase5_transplant
 
 // compare with select/phase3 and select/phase6
 
+// FIXME: use the template above, adding option to copy Sx into Tx
+// with another lambda function
+
 __global__ void GB_cuda_builder_phase5_no_dupl
 (
     // outputs
     GrB_Matrix T,
     // inputs, not modified:
     #if GB_MTX_BUILD
-    Int *JDelta,            // size nvals+1, in JDelta [-1..nvals-1]
+    uint16_t *JDelta,            // size nvals+1, in JDelta [-1..nvals-1]
     GB_Tp_TYPE *JDeltaSum,  // size nchunks+1
     #endif
     GB_key_t *Key_out,      // size nvals+1: Key_out [-1 ... nvals-1]
@@ -934,7 +861,6 @@ __global__ void GB_cuda_builder_phase5_no_dupl
 
         int64_t pfirst = chunk << LOG2_CHUNKSIZE ;
         int64_t my_chunk_size ;
-        // this computation is just the 2nd #if case of select/phase3:
         int64_t plast = pfirst + CHUNKSIZE ;
         plast = GB_IMIN (plast, nvals) ;
         my_chunk_size = plast - pfirst ;
@@ -1431,7 +1357,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
     #if !GB_KNOWN_NO_DUPLICATES
     if (!known_no_duplicates)
     {
-        W_4 = GB_MALLOC_MEMORY (nvals+1 + CHUNKSIZE, sizeof (Int), &W_4_mem) ;
+        W_4 = GB_MALLOC_MEMORY (nvals+1 + CHUNKSIZE, sizeof (uint16_t),
+            &W_4_mem) ;
         W_5 = GB_MALLOC_MEMORY (nchunks+2, sizeof (GB_Tp_TYPE), &W_5_mem) ;
         if (W_4 == NULL || W_5 == NULL)
         {
@@ -1444,7 +1371,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     // allocate JDelta, JDeltaSum: for cumsum of leading entries of vectors of C
     #if GB_MTX_BUILD
-    W_6 = GB_MALLOC_MEMORY (nvals+1 + CHUNKSIZE, sizeof (Int), &W_6_mem) ;
+    W_6 = GB_MALLOC_MEMORY (nvals+1 + CHUNKSIZE, sizeof (uint16_t), &W_6_mem) ;
     W_7 = GB_MALLOC_MEMORY (nchunks+2, sizeof (GB_Tp_TYPE), &W_7_mem) ;
     if (W_6 == NULL || W_7 == NULL)
     {
@@ -1456,17 +1383,23 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
 
     #if !GB_KNOWN_NO_DUPLICATES
     // shift by one so Map [-1...nvals-1], etc can be used
-    Int *Map              = ((Int        *) W_4) + 1 ;
+    uint16_t *Map         = ((uint16_t   *) W_4) + 1 ;
     GB_Tp_TYPE *ChunkSum  = ((GB_Tp_TYPE *) W_5) + 1 ;
     #endif
 
     #if GB_MTX_BUILD
-    Int *JDelta           = ((Int        *) W_6) + 1 ;
+    uint16_t *JDelta      = ((uint16_t   *) W_6) + 1 ;
     GB_Tp_TYPE *JDeltaSum = ((GB_Tp_TYPE *) W_7) + 1 ;
+    #else
+    // JDelta and JDeltaSum are not used if C is a vector
+    uint16_t *JDelta      = NULL ;
+    GB_Tp_TYPE *JDeltaSum = NULL ;
     #endif
 
-    // phase 3 requires shared memory (1 or 2 Int arrays, each of size CHUNKSIZE)
-    size_t shared_bytes = CHUNKSIZE * sizeof (Int) ;
+    // phase 3 requires shared memory (1 or 2 uint16_t arrays, each of size
+    // CHUNKSIZE)
+
+    size_t shared_bytes = CHUNKSIZE * sizeof (uint16_t) ;
 
     #if GB_KNOWN_NO_DUPLICATES
     {
@@ -1486,7 +1419,8 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             // phase3 does not need to look for duplicates; this is known
             // only after checking for duplicates
             #if GB_MTX_BUILD
-            GB_cuda_builder_phase3_no_dupl <<<grid, block1, shared_bytes, stream>>>
+            GB_cuda_builder_phase3_no_dupl <<<grid, block1, shared_bytes,
+                stream>>>
                 ( /* outputs: */
                     JDelta, JDeltaSum,
                   /* inputs: */ Key_out, nvals, nchunks) ;
@@ -1495,10 +1429,11 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
         else
         {
             #if GB_MTX_BUILD
-            // for matrix build: needs two Int arrays of size CHUNKSIZE
+            // for matrix build: needs two uint16_t arrays of size CHUNKSIZE
             shared_bytes = 2 * shared_bytes ;
             #endif
-            GB_cuda_builder_phase3_with_dupl <<<grid, block1, shared_bytes, stream>>>
+            GB_cuda_builder_phase3_with_dupl <<<grid, block1, shared_bytes,
+                stream>>>
                 ( /* outputs: */ Map, ChunkSum,
                     #if GB_MTX_BUILD
                     JDelta, JDeltaSum,
@@ -1787,11 +1722,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             // Sx has been transplanted into T->x
             GB_cuda_builder_phase5_transplant <<<grid, block1, 0, stream>>>
                 (/* outputs: */ T,
-                 /* inputs: */
-                    #if GB_MTX_BUILD
-                    JDelta, JDeltaSum,
-                    #endif
-                    Key_out, nvals, nchunks) ;
+                 /* inputs:  */ JDelta, JDeltaSum, Key_out, nvals, nchunks) ;
         }
         else
         #endif
@@ -1824,11 +1755,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
                 // Sx has been transplanted into T->x
                 GB_cuda_builder_phase5_transplant <<<grid, block1, 0, stream>>>
                     (/* outputs: */ T,
-                     /* inputs: */
-                        #if GB_MTX_BUILD
-                        JDelta, JDeltaSum,
-                        #endif
-                        Key_out, nvals, nchunks) ;
+                     /* inputs: */ JDelta, JDeltaSum, Key_out, nvals, nchunks) ;
             }
             else
             #endif

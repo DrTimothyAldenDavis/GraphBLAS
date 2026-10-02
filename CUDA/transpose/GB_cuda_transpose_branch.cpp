@@ -18,6 +18,8 @@ bool GB_cuda_transpose_branch
     const GrB_Scalar scalar
 )
 {
+//  printf ("HACK: turn off cuda transpose\n") ; return (false) ;
+
     if (GB_ngpus_to_use (1) == 0) return (false) ;
 
     int dev = C_arena - GxB_NARENAS ;

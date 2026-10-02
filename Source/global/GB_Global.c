@@ -1189,13 +1189,13 @@ void GB_Global_gpu_count_set (void)
     #if defined ( GRAPHBLAS_HAS_CUDA )
     {
         GB_Global.gpu_count = GB_cuda_get_device_count ( ) ;
+        // FIXME: remove printf
         printf ("GB_Global_gpu_count_set : found %d gpus\n",
             GB_Global.gpu_count) ;
     }
     #else
     {
         // no GPUs available, or available but not requested
-        printf ("GB_Global_gpu_count_set : no gpus\n") ;
         GB_Global.gpu_count = 0 ;
     }
     #endif

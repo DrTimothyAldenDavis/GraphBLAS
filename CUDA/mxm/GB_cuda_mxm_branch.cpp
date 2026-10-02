@@ -18,6 +18,8 @@ bool GB_cuda_mxm_branch
     const GrB_Semiring semiring     // semiring that defines C=A*B
 )
 {
+//  printf ("HACK: turn off cuda mxm\n") ; return (false) ;
+
     if (GB_ngpus_to_use (1) == 0) return (false) ;
 
     int data_arena = C->data_arena ;

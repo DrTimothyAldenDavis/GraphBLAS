@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/template/GB_cuda_ek_slice.cuh
+// GraphBLAS/CUDA/slice/template/GB_cuda_ek_slice.cuh
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -56,11 +56,11 @@
 // fixme: discuss grid-stride loops, the pdelta loop, and the max chunk size
 // here
 
-// question: why chunks are necessary? why not just do ek_slice_setup across
-// all entries handled by a threadblock in one go?  answer: the slope method is
-// only useful for a small range of entries; non-uniform entry distributions
-// can distort the usefulness of the slope (will require an exhaustive linear
-// search) for a large range of entries
+// Chunks are necessary since the slope method is only useful for a small range
+// of entries; non-uniform entry distributions can distort the usefulness of
+// the slope (will require an exhaustive linear search) for a large range of
+// entries.  Smaller chunks lead to more binary searches required for the
+// setup, but faster linear-time searches in GB_cuda_ek_slice_entry.
 
 //------------------------------------------------------------------------------
 // GB_cuda_ek_slice_setup_search
@@ -105,7 +105,7 @@ template <typename T> __device__ void GB_cuda_ek_slice_setup
     const int64_t anvec,        // # of vectors in the matrix A
     const int64_t anz,          // # of entries in the sparse/hyper matrix A
     const int64_t pfirst,       // first entry in A to find k
-    const int64_t chunksize,   // max # of entries in A to find k (always a
+    const int64_t chunksize,    // max # of entries in A to find k (always a
                                 // #define'd constant)
     // output:
     int64_t *kfirst,            // first vector of the slice for this chunk
@@ -284,73 +284,5 @@ template <typename T>__device__ int64_t GB_cuda_ek_slice
 
     this_thread_block().sync() ;
     return (my_chunk_size) ;
-}
-
-//------------------------------------------------------------------------------
-// GB_cuda_ek_slice_coo: construct all column indices of a sparse matrix A
-//------------------------------------------------------------------------------
-
-template <typename T_Ap, typename T_Aj> void GB_cuda_ek_slice_coo
-(
-    // outputs:
-    T_Aj *Aj,       // size anz; j = Aj [p] = col index of pth entry of A
-    // inputs:
-    GrB_Matrix A,
-    const int64_t anz,          // # entries in A
-    const int64_t chunksize     // chunksize to use to construct Aj
-    const int log2_chunksize    // log2 (chunksize)
-)
-{
-
-    //--------------------------------------------------------------------------
-    // get inputs
-    //--------------------------------------------------------------------------
-
-    const int64_t anvec = A->nvec ;
-    const int64_t anvec1 = anvec - 1 ;
-    const T_Ap *__restrict__ Ap = (T_Ap *) A->p ;
-
-    //--------------------------------------------------------------------------
-    // each threadblock operates on a single chunk of A
-    //--------------------------------------------------------------------------
-
-    for (int64_t pfirst = blockIdx.x << log2_chunksize ;
-                 pfirst < anz ;
-                 pfirst += gridDim.x << log2_chunksize )
-    {
-
-        //----------------------------------------------------------------------
-        // determine the chunk for this threadblock and its slope
-        //----------------------------------------------------------------------
-
-        int64_t my_chunk_size, kfirst ;
-        float slope ;
-        GB_cuda_ek_slice_setup<T_Ap> (Ap, anvec, anz, pfirst, chunksize,
-            &kfirst, &my_chunk_size, &slope) ;
-
-        //----------------------------------------------------------------------
-        // for each thread in the threadblock
-        //----------------------------------------------------------------------
-
-        for (int64_t pdelta = threadIdx.x ;
-                     pdelta < my_chunk_size ;
-                     pdelta += blockDim.x)
-        {
-
-            //------------------------------------------------------------------
-            // determine the kth vector that contains the pth entry
-            //------------------------------------------------------------------
-
-            int64_t p = pfirst + pdelta ;
-            int64_t k = GB_cuda_ek_slice_entry<T_Ap> (p, pdelta, Ap, anvec1,
-                kfirst, slope) ;
-
-            //------------------------------------------------------------------
-            // save the column index in Aj [p]
-            //------------------------------------------------------------------
-
-            Aj [p] = GBh_A (Ah, k) ;
-        }
-    }
 }
 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_cuda_apply_binop: apply a binary op
+// CUDA/apply/GB_cuda_apply_binop: apply a binary op
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -68,7 +68,7 @@ GrB_Info GB_cuda_apply_binop
     GrB_Index anz = GB_nnz_held (A) ;
 
     int32_t number_of_sms = GB_Global_gpu_sm_get (device) ;
-    int64_t raw_gridsz = GB_ICEIL (anz, GB_CUDA_APPLY_BLOCKDIM) ;
+    int64_t raw_gridsz = GB_ICEIL (anz, GB_CUDA_APPLY_CHUNKSIZE) ;
     // cap #of blocks to 256 * #of sms
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
 

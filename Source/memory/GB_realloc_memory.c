@@ -74,7 +74,6 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     uint64_t old_p_mem = (*p_mem) ;
     uint64_t oldsize_allocated = GB_memsize (old_p_mem) ;
     int arena = GB_arena (old_p_mem) ;
-    printf ("realloc old arena: %d\n", arena) ;
     MEMTABLE_ASSERT (oldsize_allocated == GB_Global_memtable_memsize (p)) ;
 
     // make sure at least one item is allocated

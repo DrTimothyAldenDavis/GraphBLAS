@@ -22,6 +22,8 @@ bool GB_cuda_builder_branch
     const uint64_t nvals
 )
 {
+//  printf ("HACK: turn off cuda builder\n") ; return (false) ;
+
     if (GB_ngpus_to_use (1) == 0) return (false) ;
 
     int data_arena = C->data_arena ;

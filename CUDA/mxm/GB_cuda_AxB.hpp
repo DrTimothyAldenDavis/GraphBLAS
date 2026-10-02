@@ -21,6 +21,7 @@ GrB_Info GB_cuda_AxB_dot3_jit
     const GrB_Matrix A,
     const GrB_Matrix B,
     const GrB_Semiring semiring,
+    const void *theta,          // semiring->multiply->theta in the GPU arena
     const bool flipxy,
     // CUDA stream, device, and # of ms
     int device,

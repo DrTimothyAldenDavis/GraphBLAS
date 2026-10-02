@@ -144,24 +144,16 @@
         int xcoord = x_min;
         int ycoord = diag -x_min -1;
 
-        /*
-        //predictor-corrector search independent on each thread
-        int xcoord = GB_IMAX(diag-1, 0); //predicted to be uniform distribution
-        while ( Xi_s[xcoord] < Yi_s[diag-xcoord-1] && (xcoord<x_max) ) xcoord++;
-        while ( Xi_s[xcoord] > Yi_s[diag-xcoord-1] && (xcoord>x_min) ) xcoord--;
-        int ycoord = diag -xcoord -1;
-        */
-
-        // Question: what does this do??
+        // FIXME: this is necessary for correct operation of the mergepath
+        // method, but this revision is NOT done for tx_end and ty_end. Why?
         int64_t Xtest = Xi_s [xcoord] ;
-        int64_t Ytest = Yi_s [ycoord] ;
+        int64_t Ytest = Yi_s [ycoord] ; // FIXME: out of bounds if ycoord < 0
         if ( (diag > 0) && (diag < nxy ) && (ycoord >= 0 ) && (Xtest == Ytest))
         {
             diag--; //adjust for intersection incrementing both pointers
         }
 
         // two start points are known now
-        // Question: why isn't ty_start the same as ycoord??
         int tx_start = xcoord; // +pX_start;
         int ty_start = diag -xcoord; // +pY_start;
 
@@ -189,13 +181,7 @@
         xcoord = x_min;
         ycoord = diag_end -x_min -1;
 
-//      //predictor-corrector search independent on each thread
-//      xcoord = diag_end-1; //predicted to be uniform distribution
-//      while ( Xi_s[xcoord] < Yi_s[diag_end-xcoord-1] && (xcoord<x_max))
-//          xcoord++;
-//      while ( Xi_s[xcoord] > Yi_s[diag_end-xcoord-1] && (xcoord>x_min))
-//          xcoord--;
-//      ycoord = diag_end -xcoord -1;
+        // FIXME doesn't diag_end need revision just like (diag--) above?
 
         // two end points are known now
         int tx_end = xcoord; // +pX_start;

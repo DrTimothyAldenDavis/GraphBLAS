@@ -341,5 +341,39 @@ GrB_Info GB_cuda_transpose      // T=A', T=(ctype)A' or T=op(A')
     GB_Werk Werk
 ) ;
 
+//------------------------------------------------------------------------------
+// CUDA add
+//------------------------------------------------------------------------------
+
+bool GB_cuda_add_branch 
+(
+    const GrB_Matrix C,     // output matrix, empty header with just data arena
+    const GrB_Type ctype,   // type of C
+    const int C_sparsity,   // desired sparsity format of C
+    const bool apply_mask,  // if true, GB_add must apply the mask
+    const GrB_Matrix A,     // input matrix
+    const GrB_Matrix B,     // input matrix
+    const GrB_BinaryOp op   // op that defines C=A+B
+) ;
+
+GrB_Info GB_cuda_add
+(
+    // output:
+    GrB_Matrix C,               // existing header with no content
+    // inputs:
+    const GrB_Type ctype,       // type of C
+    const bool C_is_csc,        // true if C is held by column, false if by row
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool is_eWiseUnion,   // true if eWiseUnion, false if eWiseAdd
+    const GrB_Scalar alpha,     // alpha for eWiseUnion
+    const GrB_Scalar beta,      // beta for eWiseUnion
+    const GrB_BinaryOp op,      // operator that defines C=A+B
+    const bool flipij,          // true if i and j are reversed in the op
+    const bool A_and_B_are_disjoint,    // true if A and B are known to be
+                                        // disjoint (for GrB_wait only)
+    GB_Werk Werk
+) ;
+
 #endif
 

@@ -557,8 +557,6 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             // binary op (bind 1st) via the CUDA kernel
             //------------------------------------------------------------------
 
-            printf ("swork is %p, scalarx is %p\n", swork, scalarx) ;
-
             #if defined ( GRAPHBLAS_HAS_CUDA )
             if (GB_cuda_apply_branch (Cx_arena, ctype, op, A))
             {

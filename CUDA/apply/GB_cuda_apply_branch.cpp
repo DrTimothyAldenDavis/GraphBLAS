@@ -18,6 +18,8 @@ bool GB_cuda_apply_branch   // true if on the GPU
     const GrB_Matrix A
 )
 {
+//  printf ("HACK: turn off cuda apply\n") ; return (false) ;
+
     if (GB_ngpus_to_use (1) == 0) return (false) ;
 
     int data_arena = A->data_arena ;

@@ -17,6 +17,8 @@ bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
     const GrB_Matrix A              // input matrix
 )
 {
+//  printf ("HACK: turn off cuda reduce\n") ; return (false) ;
+
     if (GB_ngpus_to_use (1) == 0) return (false) ;
 
     int data_arena = A->data_arena ;

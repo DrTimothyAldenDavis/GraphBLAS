@@ -71,17 +71,15 @@ GrB_Info GB_cuda_reduce_to_scalar
     // determine problem characteristics and allocate worksbace
     //--------------------------------------------------------------------------
 
-    int work_per_thread = 256 ;     // work each thread does in a single block
-    int number_of_sms = GB_Global_gpu_sm_get (device) ;
-
     GrB_Type ztype = monoid->op->ztype ;
     size_t zsize = ztype->size ;
 
     // determine kernel launch geometry
     int64_t anvals = GB_nnz_held (A) ;
-    int64_t work_per_block = work_per_thread * GB_CUDA_REDUCE_BLOCKDIM ;
-    // gridsz = min (ceil (anvals / work_per_block), number_of_sms * 256)
-    int64_t raw_gridsz = GB_ICEIL (anvals, work_per_block) ;
+
+    int number_of_sms = GB_Global_gpu_sm_get (device) ;
+    // gridsz = min (ceil (anvals / chunksize), number_of_sms * 256)
+    int64_t raw_gridsz = GB_ICEIL (anvals, GB_CUDA_REDUCE_CHUNKSIZE) ;
     raw_gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     int gridsz = (int) raw_gridsz ;
 

@@ -13,11 +13,18 @@
 // and B can have any sparsity format.  C is computed as sparse or hypersparse,
 // with the same format as M.
 
+#undef  GB_FREE_WORKSPACE
+#define GB_FREE_WORKSPACE                                   \
+{                                                           \
+    GB_FREE_MEMORY (&theta, theta_mem) ;                    \
+    GB_cuda_stream_pool_release (&stream) ;                 \
+}
+
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                                         \
 {                                                           \
+    GB_FREE_WORKSPACE ;                                     \
     GB_phybix_free (C) ;                                    \
-    GB_cuda_stream_pool_release (&stream) ;                 \
 }
 
 #include "mxm/GB_cuda_AxB.hpp"
@@ -42,7 +49,6 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
-
 
     GrB_Info info ;
     cudaStream_t stream = nullptr ;
@@ -77,10 +83,12 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
 
     int data_arena = C->data_arena ;
     int device = data_arena - GxB_NARENAS ;
+    uint64_t mem = GB_mem (data_arena, 0) ;
+
+    void *theta = NULL ; uint64_t theta_mem = mem ;
 
     GB_OK (GB_cuda_stream_pool_acquire (device, &stream)) ;
 
-//  printf ("dot3 using cuda device %d\n", device) ;
     int number_of_sms = GB_Global_gpu_sm_get (device) ;
 
     GB_OK (GB_wait_arenas (C)) ;
@@ -216,20 +224,37 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
         (B_is_pattern ? 0 : prefetch_x), device, stream)) ;
 
     //--------------------------------------------------------------------------
+    // copy theta for the GPU
+    //--------------------------------------------------------------------------
+
+    if (semiring->multiply->theta != NULL)
+    {
+        uint64_t siz = semiring->multiply->theta_type->size ;
+        theta = GB_MALLOC_MEMORY (1, siz, &theta_mem) ;
+        if (theta == NULL)
+        {
+            // out of memory
+            GB_FREE_ALL ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+        memcpy (theta, semiring->multiply->theta, siz) ;
+    }
+
+    //--------------------------------------------------------------------------
     // C<M>=A'*B on CUDA, in the JIT
     //--------------------------------------------------------------------------
 
     GBURBLE ("(cuda dot3, device %d, sms: %d) ", device, number_of_sms) ;
 
-    GB_OK (GB_cuda_AxB_dot3_jit (C, M, Mask_struct, A, B, semiring, flipxy,
-        device, stream, number_of_sms)) ;
+    GB_OK (GB_cuda_AxB_dot3_jit (C, M, Mask_struct, A, B, semiring, theta,
+        flipxy, device, stream, number_of_sms)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C result from dot3 cuda A'*B", GB0) ;
-    GB_OK (GB_cuda_stream_pool_release (&stream)) ;
-    return GrB_SUCCESS;
+    GB_FREE_WORKSPACE ;
+    return (GrB_SUCCESS) ;
 }
 

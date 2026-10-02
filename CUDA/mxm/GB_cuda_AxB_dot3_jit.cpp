@@ -23,6 +23,7 @@ GrB_Info GB_cuda_AxB_dot3_jit
     const GrB_Matrix A,
     const GrB_Matrix B,
     const GrB_Semiring semiring,
+    const void *theta,          // semiring->multiply->theta in the GPU arena
     const bool flipxy,
     // CUDA stream, device, and # of ms
     int device,
@@ -53,7 +54,7 @@ GrB_Info GB_cuda_AxB_dot3_jit
         GB_jit_mxm_family, "cuda_AxB_dot3",
         hash, &encoding, suffix, semiring, NULL,
         NULL, C->type, A->type, B->type) ;
-    if (info != GrB_SUCCESS) { printf ("cuda_AxB_dot3 failed %d\n", info) ; return (info) ; }
+    if (info != GrB_SUCCESS) return (info) ;
 
     //--------------------------------------------------------------------------
     // call the jit kernel and return result
@@ -61,6 +62,6 @@ GrB_Info GB_cuda_AxB_dot3_jit
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, M, A, B, device, stream, number_of_sms,
-        semiring->multiply->theta, &GB_callback)) ;
+        theta, &GB_callback)) ;
 }
 

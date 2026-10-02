@@ -62,8 +62,6 @@ GrB_Info GB_init            // start up GraphBLAS
     // ensure GraphBLAS has not been initialized
     //--------------------------------------------------------------------------
 
-    printf ("\n------------- GB_init, mode: %d\n", mode) ;
-
     GrB_Info info ;
     if (GB_Global_GrB_init_called_get ( ))
     { 

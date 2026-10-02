@@ -67,7 +67,8 @@
 
 GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 (
-    GrB_Matrix C,           // output matrix, existing header
+    GrB_Matrix C,           // output matrix, existing header with no content;
+                            // on input created by GB_matrix_header_new
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_Matrix M,     // optional mask for C, unused if NULL
@@ -90,7 +91,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
+    GrB_Info info = GrB_NO_VALUE ;
 
     ASSERT (C != NULL) ;
     int data_arena = C->data_arena ;
@@ -137,6 +138,33 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     bool apply_mask ;
     int C_sparsity = GB_add_sparsity (&apply_mask, M, Mask_struct, Mask_comp,
         A, B) ;
+
+    //--------------------------------------------------------------------------
+    // use CUDA if possible
+    //--------------------------------------------------------------------------
+
+    #if defined ( GRAPHBLAS_HAS_CUDA )
+    if (GB_cuda_add_branch (C, ctype, C_sparsity, apply_mask, A, B, op))
+    {
+        // CUDA cannot yet apply the mask, so if GB_add_sparsity decides the
+        // mask should be applied in GB_add, then do not use CUDA.
+        info = GB_cuda_add (C, ctype, C_is_csc, A, B, is_eWiseUnion,
+            alpha, beta, op, flipij, A_and_B_are_disjoint, Werk) ;
+        if (info == GrB_SUCCESS)
+        {
+            // CUDA handled the add
+            GB_FREE_WORKSPACE ;
+            ASSERT_MATRIX_OK (C, "C output for add using CUDA", GB0) ;
+            return (info) ;
+        }
+        if (info != GrB_NO_VALUE)
+        {
+            // out-of-memory, JIT error, or other error occured
+            GB_FREE_ALL ;
+            return (info) ;
+        }
+    }
+    #endif
 
     //--------------------------------------------------------------------------
     // phase0: finalize the sparsity C and find the vectors in C

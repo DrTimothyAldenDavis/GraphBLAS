@@ -80,8 +80,24 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // get the method
     //--------------------------------------------------------------------------
 
-    bool is_eadd = (kcode == GB_JIT_KERNEL_ADD) ;
-    bool is_kron = (kcode == GB_JIT_KERNEL_KRONER) ;
+    bool is_eadd = (
+        kcode == GB_JIT_KERNEL_ADD ||
+        kcode == GB_JIT_CUDA_KERNEL_ADD_SPARSE
+        // add all eWiseAdd kernels here
+    ) ;
+    bool is_kron = (
+        kcode == GB_JIT_KERNEL_KRONER
+        // add all Kronecker kerners here
+        ) ;
+    bool is_eWiseUnion = (
+        kcode == GB_JIT_KERNEL_UNION
+        // add all eWiseUnion kernels here
+        ) ;
+
+    if (is_eWiseUnion)
+    { 
+        fprintf (fp, "#define GB_IS_EWISEUNION 1\n\n") ;
+    }
 
     //--------------------------------------------------------------------------
     // describe the operator
@@ -187,11 +203,16 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         fprintf (fp, "#define GB_OP_IS_SECOND 1\n") ;
     }
 
-    GB_macrofy_cast_copy (fp, "C", "A", (C_iso || !is_eadd) ? NULL : ctype,
-            (acode == 0 || acode == 15) ? NULL : atype, A_iso) ;
-
-    GB_macrofy_cast_copy (fp, "C", "B", (C_iso || !is_eadd) ? NULL : ctype,
-            (bcode == 0 || bcode == 15) ? NULL : btype, B_iso) ;
+    // GB_COPY_A_to_C and GB_COPY_B_to_C macros are created for eWiseAdd
+    // kernels, which are the only ewise kernels that can skip the operator and
+    // typecast entries directly from B or A into C:
+    if (is_eadd)
+    {
+        GB_macrofy_cast_copy (fp, "C", "A", (C_iso) ? NULL : ctype,
+                (acode == 0 || acode == 15) ? NULL : atype, A_iso) ;
+        GB_macrofy_cast_copy (fp, "C", "B", (C_iso) ? NULL : ctype,
+                (bcode == 0 || bcode == 15) ? NULL : btype, B_iso) ;
+    }
 
     //--------------------------------------------------------------------------
     // macros for the C matrix

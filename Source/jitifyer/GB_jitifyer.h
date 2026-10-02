@@ -73,8 +73,8 @@ typedef enum
     // ewise methods:
     GB_JIT_KERNEL_COLSCALE      = 10, // GB_colscale
     GB_JIT_KERNEL_ROWSCALE      = 11, // GB_rowscale
-    GB_JIT_KERNEL_ADD           = 12, // GB_add_phase2
-    GB_JIT_KERNEL_UNION         = 13, // GB_add_phase2
+    GB_JIT_KERNEL_ADD           = 12, // GB_add_phase2 for eWiseAdd
+    GB_JIT_KERNEL_UNION         = 13, // GB_add_phase2 for eWiseUnion
     GB_JIT_KERNEL_EMULT2        = 14, // GB_emult_02
     GB_JIT_KERNEL_EMULT3        = 15, // GB_emult_03
     GB_JIT_KERNEL_EMULT4        = 16, // GB_emult_04
@@ -197,7 +197,11 @@ typedef enum
     GB_JIT_CUDA_KERNEL_SELECT_SPARSE = 1036,
 
     // build:
-    GB_JIT_CUDA_KERNEL_BUILD = 1037
+    GB_JIT_CUDA_KERNEL_BUILD = 1037,
+
+    // add:
+    GB_JIT_CUDA_KERNEL_ADD_SPARSE = 1038,
+    GB_JIT_CUDA_KERNEL_ADD_BITMAP = 1039,
 
 }
 GB_jit_kcode ;
@@ -254,7 +258,6 @@ static inline void GB_encodify_kcode
         int device = 0 ;
         // fixme for CUDA: this assumes device is set OK:
         GB_cuda_get_device (&device) ;
-        // printf ("GB_encodify_kcode: device %d\n", device) ;
         int major = GB_Global_gpu_compute_capability_major_get (device) ;
         int minor = GB_Global_gpu_compute_capability_minor_get (device) ;
         encoding->major = (uint8_t) major ;
