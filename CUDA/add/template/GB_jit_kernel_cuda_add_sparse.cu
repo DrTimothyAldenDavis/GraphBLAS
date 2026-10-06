@@ -42,7 +42,7 @@
 #include "template/GB_cuda_threadblock_sum_uint64.cuh"
 #include "include/GB_add_shared_definitions.h"
 
-// FIXME: move these to CUDA/include/GB_cuda_geometry.hpp:
+// FIXME: move these to CUDA/include/GB_cuda_geometry.hpp, and tune them:
 
 // for phase1 (create Aj, Bj)
 #define CHUNKSIZE1 256
@@ -68,31 +68,6 @@
 #define CHUNKSIZE6 256
 #define LOG2_CHUNKSIZE6 8
 
-#if 0
-#define GB_FREE_WORKSPACE                               \
-{                                                       \
-    printf ("freeing memory: at line %d\n", __LINE__) ; \
-    printf ("free Task_Astart:\n") ; fflush (stdout) ; \
-    GB_FREE_MEMORY (&Task_Astart, Task_Astart_mem) ;    \
-    printf ("free Task_Bstart:\n") ; fflush (stdout) ; \
-    GB_FREE_MEMORY (&Task_Bstart, Task_Bstart_mem) ;    \
-    printf ("free Task_Cstart:\n") ; fflush (stdout) ; \
-    GB_FREE_MEMORY (&Task_Cstart, Task_Cstart_mem) ;    \
-    printf ("free Aj:\n") ; fflush (stdout) ; \
-    GB_FREE_MEMORY (&Aj , Aj_mem ) ;                    \
-    printf ("free Bj:\n") ; fflush (stdout) ; \
-    GB_FREE_MEMORY (&Bj , Bj_mem ) ;                    \
-    printf ("free W0:\n") ; fflush (stdout) ; \
-    GB_FREE_MEMORY (&W_0, W_0_mem) ;                    \
-    printf ("free W6:\n") ; fflush (stdout) ; \
-    GB_FREE_MEMORY (&W_6, W_6_mem) ;                    \
-    printf ("free W7:\n") ; fflush (stdout) ; \
-    GB_FREE_MEMORY (&W_7, W_7_mem) ;                    \
-    printf ("free done!:\n") ; \
-}
-#endif
-
-#if 1
 #define GB_FREE_WORKSPACE                               \
 {                                                       \
     GB_FREE_MEMORY (&Task_Astart, Task_Astart_mem) ;    \
@@ -104,18 +79,23 @@
     GB_FREE_MEMORY (&W_6, W_6_mem) ;                    \
     GB_FREE_MEMORY (&W_7, W_7_mem) ;                    \
 }
-#endif
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL         \
-{                           \
-    /* GB_phbix_free (C) is not called; it is done in the caller if needed */ \
-    GB_FREE_WORKSPACE ;     \
+#define GB_FREE_ALL                             \
+{                                               \
+    /* GB_phbix_free (C) is not called; */      \
+    /* it is done in the caller if needed */    \
+    GB_FREE_WORKSPACE ;                         \
 }
 
 //------------------------------------------------------------------------------
 // GB_cuda_add_sparse_phase1: construct Aj and Bj
 //------------------------------------------------------------------------------
+
+// FIXME: instead of global Aj and Bj arrays, use GB_cuda_ek_slice_search to
+// compute kfirst for each chunk (see shared_version), which is 1/256 smaller.
+// Then use GB_cuda_ek_slice_entry to lookup Aj [p] and Bj [p] as needed.
+// (see getk in shared_version).
 
 #include "template/GB_cuda_extractTuples_template.cuh"
 
@@ -164,9 +144,9 @@ __global__ void GB_cuda_add_sparse_phase1
 // computes astart and bstart as the first positions in A [astart] and B
 // [bstart] to start the merge.
 
-// FUTURE: other uses of mergepath will need a single pair of arrays, Ai and Bi,
-// not Aj and Bj.  This template could extend to those cases using a template
-// parameter and "if constexpr (...)" to control access to Aj and Bj.
+// FUTURE: other uses of mergepath will need a single pair of arrays, Ai and
+// Bi, not Aj and Bj.  This template could extend to those cases using a
+// template parameter and "if constexpr (...)" to control access to Aj and Bj.
 // Then place this method in its own template file, in CUDA/slice/template.
 
 template
@@ -593,14 +573,6 @@ __global__ void GB_cuda_add_sparse_phase5
         int64_t pC     = Task_Cstart [t] ;
 //      int64_t pC_end = Task_Cstart [t+1] ;        // not needed
 
-//      if (threadIdx.x == 0)
-//      {
-//          printf ("\npA: %ld, pA_end: %ld\n", pA, pA_end) ;
-//          printf ("\npB: %ld, pB_end: %ld\n", pB, pB_end) ;
-//          printf ("\npC: %ld, pC_end: %ld\n", pC, pC_end) ;
-//      }
-//      this_thread_block ( ).sync ( ) ;
-
         //----------------------------------------------------------------------
         // compute C = A+B for this task, while entries in A and B appear
         //----------------------------------------------------------------------
@@ -678,64 +650,6 @@ __global__ void GB_cuda_add_sparse_phase5
             // cumulative sum across all threads of the set union
             //------------------------------------------------------------------
 
-#if 0
-            this_thread_block ( ).sync ( ) ;
-            __shared__ int pa_stuff [BLOCKDIM1] ;
-            __shared__ int pb_stuff [BLOCKDIM1] ;
-            __shared__ int pa_end_stuff [BLOCKDIM1] ;
-            __shared__ int pb_end_stuff [BLOCKDIM1] ;
-            __shared__ int pc_stuff [BLOCKDIM1] ;
-            __shared__ int intersect [BLOCKDIM1] ;
-
-            pa_stuff [threadIdx.x] = pa ;
-            pa_end_stuff [threadIdx.x] = pa_end ;
-
-            pb_stuff [threadIdx.x] = pb ;
-            pb_end_stuff [threadIdx.x] = pb_end ;
-
-            intersect [threadIdx.x] = my_intersection ;
-
-            uint16_t my_pc = (pa_end - pa) + (pb_end - pb) - my_intersection ;
-            pc_stuff [threadIdx.x] = my_pc ;
-
-            this_thread_block ( ).sync ( ) ;
-
-            if (threadIdx.x == 0)
-            {
-                for (int thread = 0 ; thread < blockDim.x ; thread++)
-                {
-                    printf ("\nthread %3d: pa %d pa_end %d, pb %d pb_end %d"
-                        " intersection: %d pc: %d\n",
-                        thread,
-                        pa_stuff [thread], pa_end_stuff [thread],
-                        pb_stuff [thread], pb_end_stuff [thread],
-                        intersect [thread],
-                        pc_stuff [thread]) ;
-
-                    printf ("   A:\n") ;
-                    int my_pa = pa_stuff [thread] ; 
-                    int my_pa_end = pa_end_stuff [thread] ; 
-                    for (int pp = my_pa ; pp < my_pa_end ; pp++)
-                    { 
-                        printf ("   (%d, %d)\n",
-                            Ai_chunk [pp],
-                            Aj_chunk [pp]
-                            );
-                    }
-
-                    printf ("   B:\n") ;
-                    int my_pb = pb_stuff [thread] ; 
-                    int my_pb_end = pb_end_stuff [thread] ; 
-                    for (int pp = my_pb ; pp < my_pb_end ; pp++)
-                    { 
-                        printf ("   (%d, %d)\n", Bi_chunk [pp], Bj_chunk [pp]);
-                    }
-                }
-            }
-
-            this_thread_block ( ).sync ( ) ;
-#endif
-
             // This thread's set union is pc = |A| + |B| - |intersection(A,B)|,
             // which is the size of the set union found by each thread.
             uint16_t pc = (pa_end - pa) + (pb_end - pb) - my_intersection ;
@@ -770,10 +684,6 @@ __global__ void GB_cuda_add_sparse_phase5
                     Cj_chunk [pc] = jA ;
                     GB_ADD_AIJ_PLUS_BETA (Cx_chunk, pc,
                         Ax_chunk, pa, GB_A_ISO, beta_scalar, iA, jA) ;
-//                  printf ("thread %d: (%d,%d) Cx [%d] (%g) = Ax [%d] (%g) \n",
-//                      threadIdx.x,
-//                      (int) iA, (int) jA,
-//                      pc, Cx_chunk [pc], pa, Ax_chunk [pa]) ;
                     pa++ ;
                 }
                 else if (!amatch)
@@ -783,10 +693,6 @@ __global__ void GB_cuda_add_sparse_phase5
                     Cj_chunk [pc] = jB ;
                     GB_ADD_ALPHA_PLUS_BIJ (Cx_chunk, pc,
                         alpha_scalar, Bx_chunk, pb, GB_B_ISO, iB, jB) ;
-//                  printf ("thread %d: (%d,%d) Cx [%d] (%g) = Bx [%d] (%g) \n",
-//                      threadIdx.x,
-//                      (int) iB, (int) jB,
-//                      pc, Cx_chunk [pc], pb, Bx_chunk [pb]) ;
                     pb++ ;
                 }
                 else
@@ -797,21 +703,11 @@ __global__ void GB_cuda_add_sparse_phase5
                     GB_ADD_AIJ_PLUS_BIJ (Cx_chunk, pc,
                         Ax_chunk, pa, GB_A_ISO,
                         Bx_chunk, pb, GB_B_ISO, iA, jA) ;
-//                  printf ("thread %d: (%d,%d) Cx [%d] (%g) = "
-//                      "Ax [%d] (%g) + Bx [%d] (%g) \n",
-//                      threadIdx.x,
-//                      (int) iA, (int) jA,
-//                      pc, Cx_chunk [pc],
-//                      pa, Ax_chunk [pa], pb, Bx_chunk [pb]) ;
                     pa++ ;
                     pb++ ;
                 }
                 pc++ ;
             }
-
-//          this_thread_block ( ).sync ( ) ;
-//          if (threadIdx.x == 0) printf ("\n--------------------\n") ;
-//          this_thread_block ( ).sync ( ) ;
 
             for ( ; pa < pa_end ; pa++, pc++)
             {
@@ -823,10 +719,6 @@ __global__ void GB_cuda_add_sparse_phase5
                 Cj_chunk [pc] = jA ;
                 GB_ADD_AIJ_PLUS_BETA (Cx_chunk, pc,
                     Ax_chunk, pa, GB_A_ISO, beta_scalar, iA, jA) ;
-//              printf ("thread %d: (%d,%d) Cx [%d] (%g) = Ax [%d] (%g) \n",
-//                      threadIdx.x,
-//                      (int) iA, (int) jA,
-//                      pc, Cx_chunk [pc], pa, Ax_chunk [pa]) ;
             }
 
             for ( ; pb < pb_end ; pb++, pc++)
@@ -839,10 +731,6 @@ __global__ void GB_cuda_add_sparse_phase5
                 Cj_chunk [pc] = jB ;
                 GB_ADD_ALPHA_PLUS_BIJ (Cx_chunk, pc,
                     alpha_scalar, Bx_chunk, pb, GB_B_ISO, iB, jB) ;
-//              printf ("thread %d: (%d,%d) Cx [%d] (%g) = Bx [%d] (%g) \n",
-//                      threadIdx.x,
-//                      (int) iB, (int) jB,
-//                      pc, Cx_chunk [pc], pb, Bx_chunk [pb]) ;
             }
 
             //------------------------------------------------------------------
@@ -867,10 +755,6 @@ __global__ void GB_cuda_add_sparse_phase5
         // C = A or C = A+beta for entries remaining in A
         //----------------------------------------------------------------------
 
-//          this_thread_block ( ).sync ( ) ;
-//          if (threadIdx.x == 0) printf ("\n=========================\n") ;
-//          this_thread_block ( ).sync ( ) ;
-
         for (pA = pA + threadIdx.x ;
              pA < pA_end ;
              pA += blockDim.x, pC += blockDim.x)
@@ -883,10 +767,6 @@ __global__ void GB_cuda_add_sparse_phase5
             Cj [pC] = jA ;
             GB_ADD_AIJ_PLUS_BETA (Cx, pC, Ax, pA, GB_A_ISO,
                 beta_scalar, iA, jA) ;
-//              printf ("thread %d: (%d,%d) Cx [%d] (%g) = Ax [%d] (%g) \n",
-//                      threadIdx.x,
-//                      (int) iA, (int) jA,
-//                      (int) pC, Cx [pC], (int) pA, Ax [pA]) ;
         }
 
         //----------------------------------------------------------------------
@@ -905,10 +785,6 @@ __global__ void GB_cuda_add_sparse_phase5
             Cj [pC] = jB ;
             GB_ADD_ALPHA_PLUS_BIJ (Cx, pC, alpha_scalar,
                 Bx, pB, GB_B_ISO, iB, jB) ;
-//              printf ("thread %d: (%d,%d) Cx [%d] (%g) = Bx [%d] (%g) \n",
-//                      threadIdx.x,
-//                      (int) iB, (int) jB,
-//                      (int) pC, Cx [pC], (int) pB, Bx [pB]) ;
         }
     }
 }
@@ -945,9 +821,7 @@ __global__ void GB_cuda_add_sparse_phase6
         CHUNKSIZE6,         // size of each chunk
         LOG2_CHUNKSIZE6,    // log2 (chunksize)
         BLOCKDIM6,          // blockdim of kernel launch
-        ITEMS_PER_THREAD6,  // # of items per thread (chunksize/blockdim)
-        // template type need not appear here; including for clarity:
-        decltype (unload_Cj)    // type of the unload_Cj lambda function
+        ITEMS_PER_THREAD6   // # of items per thread (chunksize/blockdim)
     >
         (JDelta, JDeltaSum, Cj, cnz, nchunks_in_C, unload_Cj) ;
 }
@@ -958,7 +832,7 @@ __global__ void GB_cuda_add_sparse_phase6
 
 // This phase is skipped if C->vdim is 1.
 
-#include "template/GB_cuda_construct_Cp_and_Ch.cuh"
+#include "template/GB_cuda_construct_Cphix.cuh"
 
 __global__ void GB_cuda_add_sparse_phase7
 (
@@ -985,20 +859,28 @@ __global__ void GB_cuda_add_sparse_phase7
         return (Cj [p]) ;
     } ;
 
-//  if (threadIdx.x == 0) printf ("in phase7\n") ;
+    auto unload_Cx = [](void *Sx, int64_t p)
+    {
+        // unused
+        return (0) ;
+    } ;
 
-    GB_cuda_construct_Cp_and_Ch
+    GB_cuda_construct_Cphix
     <   
         GB_Cp_TYPE,             // type of C->p
         GB_Cj_TYPE,             // type of C->h
         GB_Ci_TYPE,             // type of C->i
         GB_Cj_TYPE,             // type of Cj workspace
+        void,                   // type of Cx, not used
+        void,                   // type of Sx, not used
         CHUNKSIZE6,             // chunksize for work done by a threadblock
         LOG2_CHUNKSIZE6,        // log2 (chunksize)
         true,                   // C is a matrix; construct C->h
-        false                   // C->i is not constructed
+        false,                  // C->i is not constructed
+        false                   // C->x is not constructed
     >
-        (C, JDelta, JDeltaSum, Cj, nvals, nchunks, unload_Ci, unload_Cj) ;
+        (C, JDelta, JDeltaSum, Cj, NULL, nvals, nchunks,
+            unload_Ci, unload_Cj, unload_Cx) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1108,14 +990,6 @@ GB_JIT_CUDA_KERNEL_ADD_SPARSE_PROTO (GB_jit_kernel)
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-//  printf ("anz: %ld, bnz: %ld\n", anz, bnz) ;
-//  for (int t = 0 ; t <= ntasks ; t++)
-//  {
-//      printf ("Task %d: astart %ld bstart %ld\n", t,
-//          Task_Astart [t],
-//          Task_Bstart [t]) ;
-//  }
-
     //--------------------------------------------------------------------------
     // phase3: compute the size of C for each task
     //--------------------------------------------------------------------------
@@ -1129,11 +1003,6 @@ GB_JIT_CUDA_KERNEL_ADD_SPARSE_PROTO (GB_jit_kernel)
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-//  for (int t = 0 ; t < ntasks ; t++)
-//  {
-//      printf ("Task %d: before cumsum cstart %ld\n", t, Task_Cstart [t]) ;
-//  }
-
     //--------------------------------------------------------------------------
     // phase4: exclusive cumulative sum of size C on CPU, and allocate C
     //--------------------------------------------------------------------------
@@ -1146,12 +1015,6 @@ GB_JIT_CUDA_KERNEL_ADD_SPARSE_PROTO (GB_jit_kernel)
         cnz += s ;
     }
     Task_Cstart [ntasks] = cnz ;
-//  printf ("cnz: %ld\n", cnz) ;
-
-//  for (int t = 0 ; t <= ntasks ; t++)
-//  {
-//      printf ("Task %d: after cumsum cstart %ld\n", t, Task_Cstart [t]) ;
-//  }
 
     // allocate C->[phix]
     GB_OK (GB_bix_alloc (C, cnz, (C->vdim == 1) ? GxB_SPARSE : GxB_HYPERSPARSE,
@@ -1186,25 +1049,6 @@ GB_JIT_CUDA_KERNEL_ADD_SPARSE_PROTO (GB_jit_kernel)
     CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-#if 0
-    GB_Ci_TYPE *__restrict__ Ci = (GB_Ci_TYPE *) C->i ;
-    printf ("phase5 done\n") ;
-    bool ok = true ;
-    for (int p = 0 ; p < cnz ; p++)
-    {
-        int64_t i = Ci [p] ;
-        int64_t j = Cj [p] ;
-        printf ("C [%d]: (%ld, %ld) ", p, i, j) ;
-        if (i < 0 || i >= C->vlen || j < 0 || j >= C->vdim)
-        {
-            ok = false ;
-            printf ("out of range!\n") ;
-        }
-        printf ("\n") ;
-    }
-    if (!ok) return (GrB_PANIC) ;
-#endif
-
     //--------------------------------------------------------------------------
     // phase6: find leading entries of each column of C
     //--------------------------------------------------------------------------
@@ -1233,21 +1077,6 @@ GB_JIT_CUDA_KERNEL_ADD_SPARSE_PROTO (GB_jit_kernel)
              /* inputs:  */ Cj, cnz, nchunks_in_C) ;
         CUDA_OK (cudaGetLastError ( )) ;
         CUDA_OK (cudaStreamSynchronize (stream)) ;
-
-#if 0
-        printf ("nchunks_in_C: %ld\n", nchunks_in_C) ;
-        for (int p = 0; p < cnz ; p++)
-        {
-            printf ("C [%d] (%ld, %ld) JDelta: %d\n",
-                p, (int64_t) Ci [p], (int64_t) Cj [p], (int) JDelta [p]) ;
-        }
-        printf ("Here!\n") ;
-        for (int k = -1; k <= nchunks_in_C ; k++)
-        {
-            printf ("JDeltaSum [%d] = %ld\n", k, (int64_t) JDeltaSum [k]) ;
-        }
-#endif
-
     }
 
     //--------------------------------------------------------------------------
@@ -1297,14 +1126,6 @@ GB_JIT_CUDA_KERNEL_ADD_SPARSE_PROTO (GB_jit_kernel)
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-#if 0
-    printf ("\ncumsum of JDeltaSum:\n") ;
-    for (int k = -1; k <= nchunks_in_C ; k++)
-    {
-        printf ("JDeltaSum [%d] = %ld\n", k, (int64_t) JDeltaSum [k]) ;
-    }
-#endif
-
     C->nvec = cnvec ;
     C->nvec_nonempty = cnvec ;
 
@@ -1318,22 +1139,10 @@ GB_JIT_CUDA_KERNEL_ADD_SPARSE_PROTO (GB_jit_kernel)
     else
     {
         // C is a hypersparse matrix
-
         // KERNEL LAUNCH 6: phase7
-        #if 0
-        printf ("\nLaunching phase7\n") ;
-        printf ("Cp: %p\n", C->p) ;
-        printf ("Ch: %p\n", C->h) ;
-        printf ("Ci: %p\n", C->i) ;
-        printf ("Cx: %p\n", C->x) ;
-        printf ("Cj: %p\n", Cj) ;
-        #endif
-
         GB_cuda_add_sparse_phase7 <<<grid, block6, 0, stream>>>
             (C, JDelta, JDeltaSum, Cj, cnz, nchunks_in_C) ;
-        cudaError_t this_error = cudaGetLastError ( ) ;
-//      printf ("\ndid phase7: %d\n", (int) this_error) ;
-        CUDA_OK (this_error) ;
+        CUDA_OK (cudaGetLastError ( )) ;
         CUDA_OK (cudaStreamSynchronize (stream)) ;
     }
 
@@ -1342,7 +1151,6 @@ GB_JIT_CUDA_KERNEL_ADD_SPARSE_PROTO (GB_jit_kernel)
     //--------------------------------------------------------------------------
 
     C->magic = GB_MAGIC ;
-//  printf ("Bye\n") ;
     GB_FREE_WORKSPACE ;
     return (GrB_SUCCESS) ;
 }

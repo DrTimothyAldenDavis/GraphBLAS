@@ -489,9 +489,9 @@ __global__ void GB_cuda_builder_phase3_no_dupl
         CHUNKSIZE,              // size of each chunk
         LOG2_CHUNKSIZE,         // log2 (chunksize)
         BLOCKDIM,               // blockdim of kernel launch
-        ITEMS_PER_THREAD,       // # of items per thread (chunksize/blockdim)
-        // template type need not appear here; including for clarity:
-        decltype (unload_Cj)    // type of the unload_Cj lambda function
+        ITEMS_PER_THREAD        // # of items per thread (chunksize/blockdim)
+//      // template type need not appear here; including for clarity:
+//      decltype (unload_Cj)    // type of the unload_Cj lambda function
     >
         (JDelta, JDeltaSum, Key_out, nvals, nchunks, unload_Cj) ;
 }
@@ -661,7 +661,7 @@ __global__ void GB_cuda_builder_phase5_with_dupl
 
 // Sx has already been transplanted into T->x
 
-#include "template/GB_cuda_construct_Cp_and_Ch.cuh"
+#include "template/GB_cuda_construct_Cphix.cuh"
 
 #define GB_TRANSPLANT_IS_POSSIBLE (GB_BLD_SXTYPE_IS_TXTYPE && !GB_ISO_BUILD)
 
@@ -701,21 +701,32 @@ __global__ void GB_cuda_builder_phase5_transplant
         #endif
     } ;
 
-    GB_cuda_construct_Cp_and_Ch
+    auto unload_Cx = [](void *Sx, int64_t p)
+    {
+        // unused
+        return (0) ;
+    } ;
+
+    GB_cuda_construct_Cphix
     <   
         GB_Tp_TYPE,             // type of T->p
         GB_Tj_TYPE,             // type of T->h
         GB_Ti_TYPE,             // type of T->i
         GB_key_t,               // Key type for CUB radix sort
+        GB_Tx_TYPE,             // type of T->x
+        void,                   // type of Sx, not used
         CHUNKSIZE,              // chunksize for work done by a threadblock
         LOG2_CHUNKSIZE,         // log2 (chunksize)
         GB_MTX_BUILD,           // if true, construct Cp and Ch for a matrix
         true,                   // construct C->i from the Key_out workspace
-        // these two template types need not appear here; including for clarity:
-        decltype (unload_Ci),   // type of the unload_Ci lambda function
-        decltype (unload_Cj)    // type of the unload_Cj lambda function
+        false                   // do not construct T->x; already transplanted
+//      // these two template types need not appear here; including for clarity:
+//      decltype (unload_Ci),   // type of the unload_Ci lambda function
+//      decltype (unload_Cj)    // type of the unload_Cj lambda function
+//      decltype (unload_Cx)    // type of the unload_Cx lambda function
     >
-        (T, JDelta, JDeltaSum, Key_out, nvals, nchunks, unload_Ci, unload_Cj) ;
+        (T, JDelta, JDeltaSum, Key_out, NULL, nvals, nchunks,
+            unload_Ci, unload_Cj, unload_Cx) ;
 
 #else
 
@@ -814,24 +825,75 @@ __global__ void GB_cuda_builder_phase5_transplant
 
 // compare with select/phase3 and select/phase6
 
-// FIXME: use the template above, adding option to copy Sx into Tx
-// with another lambda function
-
 __global__ void GB_cuda_builder_phase5_no_dupl
 (
     // outputs
     GrB_Matrix T,
     // inputs, not modified:
-    #if GB_MTX_BUILD
     uint16_t *JDelta,            // size nvals+1, in JDelta [-1..nvals-1]
     GB_Tp_TYPE *JDeltaSum,  // size nchunks+1
-    #endif
     GB_key_t *Key_out,      // size nvals+1: Key_out [-1 ... nvals-1]
     GB_Sx_TYPE *Sx,         // size nvals+1: Sx  [-1 ... nvals-1]
     int64_t nvals,          // # of tuples in (I,J,X)
     int64_t nchunks
 )
 {
+
+#if 1
+
+    auto unload_Ci = [](GB_key_t *Key_out, int64_t p)
+    {
+        // i = Key_out [p].i for matrices, i = Key_out [p] for vectors
+        GB_KEY_UNLOAD_I (Key_out, p, i) ;
+        return (i) ;
+    } ;
+
+    auto unload_Cj = [](GB_key_t *Key_out, int64_t p)
+    {
+        #if GB_MTX_BUILD
+        // j = Key_out [p].j if T is a matrix
+        GB_KEY_UNLOAD_J (Key_out, p, j) ;
+        return (j) ;
+        #else
+        // T is a vector; thus function is not used
+        return (0) ;
+        #endif
+    } ;
+
+    auto unload_Cx = [](GB_Sx_TYPE *Sx, int64_t p)
+    {
+        #if !GB_ISO_BUILD
+        GB_Tx_TYPE t [1] ;
+        GB_BLD_COPY (t, 0, Sx, p) ;         // t [0] = Sx [p]
+        return (t [0]) ;
+        #else
+        // unused
+        return (0) ;
+        #endif
+    } ;
+
+    GB_cuda_construct_Cphix
+    <   
+        GB_Tp_TYPE,             // type of T->p
+        GB_Tj_TYPE,             // type of T->h
+        GB_Ti_TYPE,             // type of T->i
+        GB_key_t,               // Key type for CUB radix sort
+        GB_Tx_TYPE,             // type of T->x
+        GB_Sx_TYPE,             // type of Sx
+        CHUNKSIZE,              // chunksize for work done by a threadblock
+        LOG2_CHUNKSIZE,         // log2 (chunksize)
+        GB_MTX_BUILD,           // if true, construct Cp and Ch for a matrix
+        true,                   // construct C->i from the Key_out workspace
+        (!GB_ISO_BUILD)         // construct T->x from Sx
+//      // these two template types need not appear here; including for clarity:
+//      decltype (unload_Ci),   // type of the unload_Ci lambda function
+//      decltype (unload_Cj),   // type of the unload_Cj lambda function
+//      decltype (unload_Cx)    // type of the unload_Cx lambda function
+    >
+        (T, JDelta, JDeltaSum, Key_out, Sx, nvals, nchunks,
+            unload_Ci, unload_Cj, unload_Cx) ;
+
+#else
 
     //--------------------------------------------------------------------------
     // get T->p, T->h, T->i, and T->x. kT is 1-based but p is 0-based
@@ -922,6 +984,7 @@ __global__ void GB_cuda_builder_phase5_no_dupl
         Tp [1] = T->nvals ;
         #endif
     }
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -1730,11 +1793,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
             // copy/cast Sx into T->x
             GB_cuda_builder_phase5_no_dupl <<<grid, block1, 0, stream>>>
                 (/* outputs: */ T,
-                 /* inputs: */
-                    #if GB_MTX_BUILD
-                    JDelta, JDeltaSum,
-                    #endif
-                    Key_out, Sx, nvals, nchunks) ;
+                 /* inputs: */ JDelta, JDeltaSum, Key_out, Sx, nvals, nchunks) ;
         }
 
     }
@@ -1764,10 +1823,7 @@ GB_JIT_CUDA_KERNEL_BUILDER_PROTO (GB_jit_kernel)
                 GB_cuda_builder_phase5_no_dupl <<<grid, block1, 0, stream>>>
                     (/* outputs: */ T,
                      /* inputs: */
-                        #if GB_MTX_BUILD
-                        JDelta, JDeltaSum,
-                        #endif
-                        Key_out, Sx, nvals, nchunks) ;
+                     JDelta, JDeltaSum, Key_out, Sx, nvals, nchunks) ;
             }
         }
         else

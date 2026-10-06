@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// CUDA/builder/template/GB_cuda_construct_Cp_and_Ch.cuh
+// CUDA/builder/template/GB_cuda_construct_Cphix.cuh
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
@@ -7,10 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Constructs the output matrix C (Cp, Ch, Ci) from its coordinate form.
-// Cx is not accessed.
-
-// FIXME: rename to GB_construct_Cphix
+// Constructs the output matrix C (Cp, Ch, Ci, Cx) from its coordinate form.
 
 template
 <
@@ -18,14 +15,19 @@ template
     typename T_Cj,          // type of Cj
     typename T_Ci,          // type of Ci
     typename T_Cij,         // type of Cij (Key_out for builder)
+    typename T_Cx,          // type of Cx
+    typename T_Sx,          // type of Sx
     int chunksize,          // must match GB_cuda_construct_JDelta
     int log2_chunksize,     // log2 (chunksize)
     bool mtx_build,         // if true, construct Cp and Ch for a matrix
     bool construct_Ci,      // if true, construct Ci
+    bool construct_Cx,      // if true, construct Cx
+    // lambda function types; the caller need not declare these types
     typename T_F1,          // type of unload_Ci function
-    typename T_F2           // type of unload_Cj function
+    typename T_F2,          // type of unload_Cj function
+    typename T_F3           // type of unload_Cx function
 >
-__device__ void GB_cuda_construct_Cp_and_Ch
+__device__ void GB_cuda_construct_Cphix
 (
     // outputs
     GrB_Matrix C,
@@ -33,10 +35,12 @@ __device__ void GB_cuda_construct_Cp_and_Ch
     uint16_t *JDelta,       // size nvals+1, in JDelta [-1..nvals-1]
     T_Cp *JDeltaSum,        // size nchunks+1
     T_Cij *Cij,             // size nvals+1: Cj [-1 ... nvals-1]
+    T_Sx *Sx,               // size nvals+1: Sx [-1 ... nvals-1]
     int64_t nvals,          // # of entries in the matrix
     int64_t nchunks,
     T_F1 unload_Ci,         // lambda function to get i from Cij [p]
-    T_F2 unload_Cj          // lambda function to get j from Cij [p]
+    T_F2 unload_Cj,         // lambda function to get j from Cij [p]
+    T_F3 unload_Cx          // lambda function to get cij from Sx [p]
 )
 {
 
@@ -54,8 +58,13 @@ __device__ void GB_cuda_construct_Cp_and_Ch
     T_Ci *__restrict__ Ci = NULL ;
     if constexpr (construct_Ci)
     {
-        // eWiseAdd has already constructed C->i
+        // eWiseAdd has already constructed C->i, so it skips this step
         Ci = (T_Ci *) C->i ;                        // index with p, as 0-based
+    }
+    T_Cx *__restrict__ Cx = NULL ;
+    if constexpr (construct_Cx)
+    {
+        Cx = (T_Cx *) C->x ;                        // index with p, as 0-based
     }
 
     //--------------------------------------------------------------------------
@@ -76,11 +85,6 @@ __device__ void GB_cuda_construct_Cp_and_Ch
         int64_t plast = pfirst + chunksize ;
         plast = GB_IMIN (plast, nvals) ;
         my_chunk_size = plast - pfirst ;
-
-//      if (threadIdx.x == 0)
-//      {
-//          printf ("chunk %ld, my_chunk_size %ld\n", chunk, my_chunk_size) ;
-//      }
 
         //----------------------------------------------------------------------
         // copy the entries, sum duplicates, and construct Cp and Ch
@@ -103,6 +107,11 @@ __device__ void GB_cuda_construct_Cp_and_Ch
                 // for that case
                 // Ci [p] = Cij [p].i ;
                 Ci [p] = unload_Ci (Cij, p) ;
+            }
+
+            if constexpr (construct_Cx)
+            {
+                Cx [p] = unload_Cx (Sx, p) ;    // Tx [p] = (cast) Sx [p]
             }
 
             //------------------------------------------------------------------
@@ -130,19 +139,16 @@ __device__ void GB_cuda_construct_Cp_and_Ch
 
     if (threadIdx.x == 0 && blockIdx.x == 0)
     {
-//      printf ("%s done\n", __FILE__) ;
         // C->nvec is 0-based, so increment Cp to undo the Cp-- done above
         Cp++ ;
         if constexpr (mtx_build)
         {
             // C is a matrix; log the end of its last vector
-//          printf ("C is a matrix\n") ;
             Cp [C->nvec] = C->nvals ;
         }
         else
         {
             // C is a vector; assign all of Cp
-//          printf ("C is a vector\n") ;
             Cp [0] = 0 ;
             Cp [1] = C->nvals ;
         }

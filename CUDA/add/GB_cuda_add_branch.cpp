@@ -28,15 +28,16 @@ bool GB_cuda_add_branch
     int dev = data_arena - GxB_NARENAS ;
 
     // The CUDA kernel cannot yet apply the mask, and currently only handles
-    // the case when C, A, and B are all sparse/hypersparse.  FUTURE:
-    // CUDA needs to handle all of these cases
+    // the case when C, A, and B are all sparse/hypersparse.
+    // FIXME: CUDA needs to handle all of these cases below
     int A_sparsity = GB_sparsity (A) ;
     int B_sparsity = GB_sparsity (B) ;
 
-    bool use_cuda = (!apply_mask)
-        && (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
-        && (A_sparsity == GxB_SPARSE || A_sparsity == GxB_HYPERSPARSE)
-        && (B_sparsity == GxB_SPARSE || B_sparsity == GxB_HYPERSPARSE)
+    bool use_cuda =
+           (!apply_mask) // FIXME
+        && (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE) // FIXME
+        && (A_sparsity == GxB_SPARSE || A_sparsity == GxB_HYPERSPARSE) // FIXME
+        && (B_sparsity == GxB_SPARSE || B_sparsity == GxB_HYPERSPARSE) // FIXME
         && (dev >= 0 && dev <= GB_Global_gpu_count_get ( )) // data on GPU
         && (data_arena == header_arena)                 // header on same GPU
         && (data_arena == A->data_arena)                // A on same GPU
