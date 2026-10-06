@@ -375,5 +375,23 @@ GrB_Info GB_cuda_add
     GB_Werk Werk
 ) ;
 
+//------------------------------------------------------------------------------
+// CUDA emult
+//------------------------------------------------------------------------------
+
+GrB_Info GB_cuda_emult
+(
+    // output:
+    GrB_Matrix C,               // existing header with no content
+    // inputs:
+    const GrB_Type ctype,       // type of C
+    const bool C_is_csc,        // true if C is held by column, false if by row
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const GrB_BinaryOp op,      // operator that defines C=A+B
+    const bool flipij,          // true if i and j are reversed in the op
+    GB_Werk Werk
+) ;
+
 #endif
 

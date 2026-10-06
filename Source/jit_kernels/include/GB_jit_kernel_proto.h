@@ -900,6 +900,21 @@ GrB_Info GB_jit_kernel_add_sparse                                           \
     const GB_callback_struct *restrict my_callback                          \
 )
 
+#define GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO(GB_jit_kernel_ewise_sparse)   \
+GrB_Info GB_jit_kernel_ewise_sparse                                         \
+(                                                                           \
+    GrB_Matrix C,                                                           \
+    const GrB_Matrix A,                                                     \
+    const GrB_Matrix B,                                                     \
+    const GB_void *alpha_scalar_in,                                         \
+    const GB_void *beta_scalar_in,                                          \
+    const void *theta,                                                      \
+    int device,                                                             \
+    cudaStream_t stream,                                                    \
+    int32_t gridsz,                                                         \
+    const GB_callback_struct *restrict my_callback                          \
+)
+
 //------------------------------------------------------------------------------
 // shorthand macros for GB_prejit.c:
 //------------------------------------------------------------------------------

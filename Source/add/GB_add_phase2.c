@@ -369,6 +369,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         // pattern of C = set union of pattern of A and B.
         // eWiseAdd and eWiseUnion are identical since no numerical values
         // are used, and the operator is not used.
+        #undef  GB_C_ISO
         #define GB_C_ISO 1
         #define GB_ISO_ADD
         #define GB_IS_EWISEUNION 0

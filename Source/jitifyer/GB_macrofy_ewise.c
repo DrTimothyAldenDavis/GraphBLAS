@@ -93,10 +93,41 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         kcode == GB_JIT_KERNEL_UNION
         // add all eWiseUnion kernels here
         ) ;
+    bool is_masker = (kcode == GB_JIT_CUDA_KERNEL_MASKER_SPARSE) ;
+    bool is_masker_comp = (kcode == GB_JIT_CUDA_KERNEL_MASKER_COMP_SPARSE) ;
+
+    bool is_emult = (
+        kcode == GB_JIT_KERNEL_EMULT2 ||
+        kcode == GB_JIT_KERNEL_EMULT3 ||
+        kcode == GB_JIT_KERNEL_EMULT4 ||
+        kcode == GB_JIT_KERNEL_EMULT_BITMAP ||
+        kcode == GB_JIT_KERNEL_EMULT8 ||
+        kcode == GB_JIT_CUDA_KERNEL_EMULT_SPARSE
+        ) ;
 
     if (is_eWiseUnion)
     { 
         fprintf (fp, "#define GB_IS_EWISEUNION 1\n\n") ;
+    }
+
+    if (is_masker || is_masker_comp)
+    { 
+        fprintf (fp, "#define GB_IS_MASKER 1\n\n") ;
+    }
+
+    if (is_eadd || is_eWiseUnion)
+    { 
+        fprintf (fp, "#define GB_SET_UNION 1\n\n") ;
+    }
+
+    if (is_emult || is_masker)
+    { 
+        fprintf (fp, "#define GB_SET_INTERSECTION 1\n\n") ;
+    }
+
+    if (is_masker_comp)
+    { 
+        fprintf (fp, "#define GB_SET_DIFFERENCE 1\n\n") ;
     }
 
     //--------------------------------------------------------------------------
@@ -203,13 +234,17 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         fprintf (fp, "#define GB_OP_IS_SECOND 1\n") ;
     }
 
-    // GB_COPY_A_to_C and GB_COPY_B_to_C macros are created for eWiseAdd
-    // kernels, which are the only ewise kernels that can skip the operator and
-    // typecast entries directly from B or A into C:
-    if (is_eadd)
+    if (is_eadd || is_masker || is_masker_comp)
     {
+        // GB_COPY_A_to_C macro is created for eWiseAdd and masker kernels,
+        // which are the only ewise kernels that can skip the operator and
+        // typecast entries directly from into C:
         GB_macrofy_cast_copy (fp, "C", "A", (C_iso) ? NULL : ctype,
                 (acode == 0 || acode == 15) ? NULL : atype, A_iso) ;
+    }
+    if (is_eadd)
+    {
+        // GB_COPY_B_to_C macro is created for eWiseAdd only
         GB_macrofy_cast_copy (fp, "C", "B", (C_iso) ? NULL : ctype,
                 (bcode == 0 || bcode == 15) ? NULL : btype, B_iso) ;
     }
