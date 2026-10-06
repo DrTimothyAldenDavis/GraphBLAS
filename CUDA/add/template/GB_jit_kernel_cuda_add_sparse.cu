@@ -502,6 +502,7 @@ __global__ void GB_cuda_add_sparse_phase3
         if (threadIdx.x == 0)
         {
             // |C_t| = |A_t union B_t| = |A_t| + |B_t| - |A_t intersection B_t|
+            // FIXME: for eWiseMult, |C_t| = AB_intersection
             Task_Cstart [t] = AB_size - AB_intersection ;
         }
     }
@@ -652,6 +653,7 @@ __global__ void GB_cuda_add_sparse_phase5
 
             // This thread's set union is pc = |A| + |B| - |intersection(A,B)|,
             // which is the size of the set union found by each thread.
+            // FIXME: eWiseMult: pc = my_intersection
             uint16_t pc = (pa_end - pa) + (pb_end - pb) - my_intersection ;
             uint16_t pc_end ;   // the block aggregate for all threads
             this_thread_block ( ).sync ( ) ;
@@ -680,6 +682,7 @@ __global__ void GB_cuda_add_sparse_phase5
                 if (afirst)
                 {
                     // cij = aij + beta for eWiseUnion; cij = aij for eWiseAdd
+                    // FIXME: for eWiseMult: do nothing except pa++
                     Ci_chunk [pc] = iA ;
                     Cj_chunk [pc] = jA ;
                     GB_ADD_AIJ_PLUS_BETA (Cx_chunk, pc,
@@ -689,6 +692,7 @@ __global__ void GB_cuda_add_sparse_phase5
                 else if (!amatch)
                 {
                     // cij = alpha + bij for eWiseUnion; cij = bij for eWiseAdd
+                    // FIXME: for eWiseMult: do nothing except pb++
                     Ci_chunk [pc] = iB ;
                     Cj_chunk [pc] = jB ;
                     GB_ADD_ALPHA_PLUS_BIJ (Cx_chunk, pc,
@@ -698,6 +702,7 @@ __global__ void GB_cuda_add_sparse_phase5
                 else
                 {
                     // cij = aij + bij
+                    // FIXME: for eWiseMult: same
                     Ci_chunk [pc] = iA ;
                     Cj_chunk [pc] = jA ;
                     GB_ADD_AIJ_PLUS_BIJ (Cx_chunk, pc,
@@ -709,6 +714,7 @@ __global__ void GB_cuda_add_sparse_phase5
                 pc++ ;
             }
 
+            // FIXME: for eWiseMult: skip
             for ( ; pa < pa_end ; pa++, pc++)
             {
                 // get the indices of A (i,j)
@@ -721,6 +727,7 @@ __global__ void GB_cuda_add_sparse_phase5
                     Ax_chunk, pa, GB_A_ISO, beta_scalar, iA, jA) ;
             }
 
+            // FIXME: for eWiseMult: skip
             for ( ; pb < pb_end ; pb++, pc++)
             {
                 // get the indices of B (i,j)
@@ -755,6 +762,7 @@ __global__ void GB_cuda_add_sparse_phase5
         // C = A or C = A+beta for entries remaining in A
         //----------------------------------------------------------------------
 
+        // FIXME: for eWiseMult: skip
         for (pA = pA + threadIdx.x ;
              pA < pA_end ;
              pA += blockDim.x, pC += blockDim.x)
@@ -773,6 +781,7 @@ __global__ void GB_cuda_add_sparse_phase5
         // C = B or C = alpha+B for entries remaining in B
         //----------------------------------------------------------------------
 
+        // FIXME: for eWiseMult: skip
         for (pB = pB + threadIdx.x ;
              pB < pB_end ;
              pB += blockDim.x, pC += blockDim.x)
