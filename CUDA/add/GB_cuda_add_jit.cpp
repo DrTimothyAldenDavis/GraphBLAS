@@ -11,7 +11,7 @@
 
 extern "C"
 {
-    typedef GB_JIT_CUDA_KERNEL_ADD_SPARSE_PROTO ((*GB_jit_dl_function)) ;
+    typedef GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO ((*GB_jit_dl_function)) ;
 }
 
 GrB_Info GB_cuda_add_jit
@@ -56,7 +56,7 @@ GrB_Info GB_cuda_add_jit
 
     void *dl_function ;
     GrB_Info info = GB_jitifyer_load (&dl_function,
-        GB_jit_ewise_family, "cuda_add_sparse",
+        GB_jit_ewise_family, "cuda_ewise_sparse",
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) binaryop, C->type, A->type, B->type) ;
     if (info != GrB_SUCCESS) return (info) ;
