@@ -122,6 +122,7 @@ set_malloc_debug (mdebug, 1) ;
 
 % < 1 second: debug_on
 logstat ('test01'     ,t, J40  , F10  ) ; % error handling
+logstat ('test309'    ,t, J40  , F11  ) ; % select with VALUE* typecast
 logstat ('test307'    ,t, J4   , F1   ) ; % arenas
 logstat ('test306'    ,t, J0   , F0   ) ; % arenas
 logstat ('test305'    ,t, J0   , F0   ) ; % arenas
