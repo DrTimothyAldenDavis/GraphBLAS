@@ -1,8 +1,13 @@
 FIXME 2026, version 10.6.0
 
-FIXME 2026, version 10.5.1
+    * (72) bug fix: GrB_select fails when using built-in VALUE*
+        operators whose type differs from A.  See PR 463.
+        Found and fixed by Erik Welch, NVIDIA.
 
-    * (71) bug fix: TODO
+Sept 12, 2026, version 10.5.1
+
+    * (71) bug fix: GrB_Matrix_resize in 10.5.0 fails if an n-by-1 matrix is
+        resized to an n-by-k matrix with k>1 when pending tuples appear.
 
 Aug 12, 2026, version 10.5.0
 

@@ -121,6 +121,7 @@ F100 = {4,4,0,0} ;
 set_malloc_debug (mdebug, 1) ;
 
 % < 1 second: debug_on
+logstat ('test308'    ,t, J4   , F1   ) ; % resize, special case
 logstat ('test01'     ,t, J40  , F10  ) ; % error handling
 logstat ('test309'    ,t, J40  , F11  ) ; % select with VALUE* typecast
 logstat ('test307'    ,t, J4   , F1   ) ; % arenas
