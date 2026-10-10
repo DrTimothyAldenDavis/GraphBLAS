@@ -93,6 +93,8 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         kcode == GB_JIT_KERNEL_UNION
         // add all eWiseUnion kernels here
         ) ;
+
+    // only used for CUDA kernels (in development):
     bool is_masker = (kcode == GB_JIT_CUDA_KERNEL_MASKER_SPARSE) ;
     bool is_masker_comp = (kcode == GB_JIT_CUDA_KERNEL_MASKER_COMP_SPARSE) ;
 
@@ -110,10 +112,12 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         fprintf (fp, "#define GB_IS_EWISEUNION 1\n\n") ;
     }
 
+    #if defined ( GRAPHBLAS_HAS_CUDA )
     if (is_masker || is_masker_comp)
-    { 
+    {
         fprintf (fp, "#define GB_IS_MASKER 1\n\n") ;
     }
+    #endif
 
     if (is_eadd || is_eWiseUnion)
     { 
@@ -125,10 +129,12 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         fprintf (fp, "#define GB_SET_INTERSECTION 1\n\n") ;
     }
 
+    #if defined ( GRAPHBLAS_HAS_CUDA )
     if (is_masker_comp)
-    { 
+    {
         fprintf (fp, "#define GB_SET_DIFFERENCE 1\n\n") ;
     }
+    #endif
 
     //--------------------------------------------------------------------------
     // describe the operator

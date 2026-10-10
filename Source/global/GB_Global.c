@@ -1181,7 +1181,7 @@ bool GB_Global_stats_mem_shallow_get (void)
 //------------------------------------------------------------------------------
 
 void GB_Global_gpu_count_set (void)
-{ 
+{
     // set the # of GPUs in the system;
     // this function is only called once, by GB_init.
     memset (GB_Global.gpu_properties, 0,
@@ -1189,9 +1189,6 @@ void GB_Global_gpu_count_set (void)
     #if defined ( GRAPHBLAS_HAS_CUDA )
     {
         GB_Global.gpu_count = GB_cuda_get_device_count ( ) ;
-        // FIXME: remove printf
-        printf ("GB_Global_gpu_count_set : found %d gpus\n",
-            GB_Global.gpu_count) ;
     }
     #else
     {
