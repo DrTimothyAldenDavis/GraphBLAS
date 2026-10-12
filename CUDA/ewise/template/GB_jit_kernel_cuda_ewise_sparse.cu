@@ -100,6 +100,11 @@
 
 // for phase2 only: using a single thread per threadblock
 #define BLOCKDIM2 32
+// wider blocks for phase3 (occupancy)
+#define BLOCKDIM3 256
+// phase5 uses the same width as phase3, but kept separate so it can be tuned
+// independently.  NOTE: phase5's cub::BlockScan MUST use this same width.
+#define BLOCKDIM5 BLOCKDIM3
 
 // for phase6 and phase7: (same geometry as the builder kernel)
 #define BLOCKDIM6 128
@@ -757,7 +762,7 @@ __global__ void GB_cuda_ewise_sparse_phase5
 	//--------------------------------------------------------------------------
 
 	// cub::Block* workspace for ExclusiveSum of pc of each thread
-	using BlockScan = cub::BlockScan <uint16_t, BLOCKDIM1,
+	using BlockScan = cub::BlockScan <uint16_t, BLOCKDIM5,
 		cub::BLOCK_SCAN_WARP_SCANS> ;
 	__shared__ typename BlockScan::TempStorage W ;
 
@@ -1211,6 +1216,8 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
 	dim3 block1 (BLOCKDIM1) ;
 	dim3 block2 (BLOCKDIM2) ;
 	dim3 block6 (BLOCKDIM6) ;
+	dim3 block3 (BLOCKDIM3) ;
+	dim3 block5 (BLOCKDIM5) ;
 
 	#if GB_IS_EWISEUNION
 	const GB_X_TYPE alpha_scalar = (*((GB_X_TYPE *) alpha_scalar_in)) ;
@@ -1270,7 +1277,7 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
 	//--------------------------------------------------------------------------
 
 	// KERNEL LAUNCH 3: phase3
-	GB_cuda_ewise_sparse_phase3 <<<grid, block1, 0, stream>>>
+	GB_cuda_ewise_sparse_phase3 <<<grid, block3, 0, stream>>>
 	(   // outputs:
 		Task_Cstart,
 		// inputs:
@@ -1313,7 +1320,7 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
 	}
 
 	// KERNEL LAUNCH 4: phase5
-	GB_cuda_ewise_sparse_phase5 <<<grid, block1, 0, stream>>>
+	GB_cuda_ewise_sparse_phase5 <<<grid, block5, 0, stream>>>
 	(
 		/* outputs: */ C, Cj,
 		/* inputs:  */ Task_Cstart, Task_Astart, Task_Bstart, ntasks,
