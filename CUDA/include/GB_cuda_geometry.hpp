@@ -82,6 +82,7 @@
 // reduce CUDA kernel
 #define GB_CUDA_REDUCE_BLOCKDIM 320
 #define GB_CUDA_REDUCE_CHUNKSIZE (256*320)
+#define GB_CUDA_REDUCE_CHECK 64
 
 // apply CUDA kernels (unop, bind1st, and bind2nd)
 #define GB_CUDA_APPLY_BLOCKDIM 512
