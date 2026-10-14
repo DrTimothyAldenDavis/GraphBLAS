@@ -132,29 +132,21 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     GB_MATRIX_WAIT (B) ;        // cannot be jumbled
 
     //--------------------------------------------------------------------------
-    // determine the sparsity of C
-    //--------------------------------------------------------------------------
-
-    bool apply_mask ;
-    int C_sparsity = GB_add_sparsity (&apply_mask, M, Mask_struct, Mask_comp,
-        A, B) ;
-
-    //--------------------------------------------------------------------------
     // use CUDA if possible
     //--------------------------------------------------------------------------
 
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    if (GB_cuda_add_branch (C, ctype, C_sparsity, apply_mask, A, B, op))
+    if (GB_cuda_add_branch (C, ctype, M, Mask_struct, Mask_comp, A, B, op))
     {
-        // CUDA cannot yet apply the mask, so if GB_add_sparsity decides the
-        // mask should be applied in GB_add, then do not use CUDA.
-        info = GB_cuda_add (C, ctype, C_is_csc, A, B, is_eWiseUnion,
-            alpha, beta, op, flipij, A_and_B_are_disjoint, Werk) ;
+        info = GB_cuda_add (C, ctype, C_is_csc, M, Mask_struct, Mask_comp,
+            A, B, is_eWiseUnion, alpha, beta, op, flipij,
+            A_and_B_are_disjoint, Werk) ;
         if (info == GrB_SUCCESS)
         {
             // CUDA handled the add
             GB_FREE_WORKSPACE ;
             ASSERT_MATRIX_OK (C, "C output for add using CUDA", GB0) ;
+            (*mask_applied) = (M != NULL) ;
             return (info) ;
         }
         if (info != GrB_NO_VALUE)
@@ -165,6 +157,14 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         }
     }
     #endif
+
+    //--------------------------------------------------------------------------
+    // determine the sparsity of C
+    //--------------------------------------------------------------------------
+
+    bool apply_mask ;
+    int C_sparsity = GB_add_sparsity (&apply_mask, M, Mask_struct, Mask_comp,
+        A, B) ;
 
     //--------------------------------------------------------------------------
     // phase0: finalize the sparsity C and find the vectors in C

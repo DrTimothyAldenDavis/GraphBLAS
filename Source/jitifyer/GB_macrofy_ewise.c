@@ -93,10 +93,8 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         kcode == GB_JIT_KERNEL_UNION
         // add all eWiseUnion kernels here
         ) ;
-
-    // only used for CUDA kernels (in development):
-    bool is_masker = (kcode == GB_JIT_CUDA_KERNEL_MASKER_SPARSE) ;
-    bool is_masker_comp = (kcode == GB_JIT_CUDA_KERNEL_MASKER_COMP_SPARSE) ;
+    // only used for CUDA kernels:
+    bool is_mask_assign = (kcode == GB_JIT_CUDA_KERNEL_MASK_ASSIGN_SPARSE) ;
 
     bool is_emult = (
         kcode == GB_JIT_KERNEL_EMULT2 ||
@@ -113,9 +111,9 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     }
 
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    if (is_masker || is_masker_comp)
+    if (is_mask_assign)
     {
-        fprintf (fp, "#define GB_IS_MASKER 1\n\n") ;
+        fprintf (fp, "#define GB_IS_MASK_ASSIGN 1\n\n") ;
     }
     #endif
 
@@ -124,13 +122,15 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         fprintf (fp, "#define GB_SET_UNION 1\n\n") ;
     }
 
-    if (is_emult || is_masker)
+    bool Mask_comp = (mask_ecode & 0x1) ;
+
+    if (is_emult || (is_mask_assign && !Mask_comp))
     { 
         fprintf (fp, "#define GB_SET_INTERSECTION 1\n\n") ;
     }
 
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    if (is_masker_comp)
+    if (is_mask_assign && Mask_comp)
     {
         fprintf (fp, "#define GB_SET_DIFFERENCE 1\n\n") ;
     }
@@ -240,11 +240,11 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         fprintf (fp, "#define GB_OP_IS_SECOND 1\n") ;
     }
 
-    if (is_eadd || is_masker || is_masker_comp)
+    if (is_eadd || is_mask_assign)
     {
-        // GB_COPY_A_to_C macro is created for eWiseAdd and masker kernels,
-        // which are the only ewise kernels that can skip the operator and
-        // typecast entries directly from into C:
+        // GB_COPY_A_to_C macro is created for eWiseAdd and CUDA mask_assign
+        // kernels, which are the only ewise kernels that can skip the operator
+        // and typecast entries directly from into C:
         GB_macrofy_cast_copy (fp, "C", "A", (C_iso) ? NULL : ctype,
                 (acode == 0 || acode == 15) ? NULL : atype, A_iso) ;
     }

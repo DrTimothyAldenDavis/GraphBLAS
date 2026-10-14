@@ -349,8 +349,9 @@ bool GB_cuda_add_branch
 (
     const GrB_Matrix C,     // output matrix, empty header with just data arena
     const GrB_Type ctype,   // type of C
-    const int C_sparsity,   // desired sparsity format of C
-    const bool apply_mask,  // if true, GB_add must apply the mask
+    const GrB_Matrix M,     // input mask matrix
+    const bool Mask_struct, // if true, mask is structural
+    const bool Mask_comp,   // if true, mask is complemented
     const GrB_Matrix A,     // input matrix
     const GrB_Matrix B,     // input matrix
     const GrB_BinaryOp op   // op that defines C=A+B
@@ -363,6 +364,9 @@ GrB_Info GB_cuda_add
     // inputs:
     const GrB_Type ctype,       // type of C
     const bool C_is_csc,        // true if C is held by column, false if by row
+    const GrB_Matrix M,         // input mask matrix
+    const bool Mask_struct,     // if true, mask is structural
+    const bool Mask_comp,       // if true, mask is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool is_eWiseUnion,   // true if eWiseUnion, false if eWiseAdd

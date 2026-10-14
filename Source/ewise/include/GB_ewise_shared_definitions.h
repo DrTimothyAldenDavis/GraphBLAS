@@ -78,8 +78,8 @@
 #endif
 
 // 1 for C<M>=A or C<!M>=A where M is structural and passed in as the B matrix
-#ifndef GB_IS_MASKER
-#define GB_IS_MASKER 0
+#ifndef GB_IS_MASK_ASSIGN
+#define GB_IS_MASK_ASSIGN 0
 #endif
 
 //------------------------------------------------------------------------------
@@ -90,7 +90,7 @@
     GB_DECLAREA (aij) ;             \
     GB_GETA (aij, Ax,pA,A_iso)
 
-#if GB_IS_MASKER
+#if GB_IS_MASK_ASSIGN
     // the values B are not used; it is the structural mask matrix M
     #define GB_LOAD_B(bij, Bx,pB,B_iso)
 #else

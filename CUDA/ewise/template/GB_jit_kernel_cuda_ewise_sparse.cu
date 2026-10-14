@@ -25,17 +25,17 @@
 //      sparser matrix and use binary search on the other.
 
 //  (4) C<M>=A where C is initially empty, and M is structural.  This uses
-//      GB_SET_INTERSECTION 1 and GB_IS_MASKER 1, and M is passed in as the B
-//      matrix (values are not used).  The operator is always 1st_ctype.
+//      GB_SET_INTERSECTION 1 and GB_IS_MASK_ASSIGN 1, and M is passed in as
+//      the B matrix (values are not used).  The operator is always 1st_ctype.
 //      As in eWiseMult, this method will be not be used when nnz(A) and nnz(B)
 //      differ greatly.  Another kernel will be used instead.
 
 //  (5) C<!M>=A, where C is initially empty, and M is structural.  This uses
-//      GB_SET_DIFFERENCE 1 and GB_IS_MASKER 1 (computing the set A minus M),
-//      and M is passed in as the B matrix (values are not used).  The operator
-//      is always 1st_ctype.  If nnz(A) << nnz(M), this method is not used;
-//      instead, another kernel will scan all of A and use binary search to
-//      look up entries in M.
+//      GB_SET_DIFFERENCE 1 and GB_IS_MASK_ASSIGN 1 (computing the set A minus
+//      M), and M is passed in as the B matrix (values are not used).  The
+//      operator is always 1st_ctype.  If nnz(A) << nnz(M), this method is not
+//      used; instead, another kernel will scan all of A and use binary search
+//      to look up entries in M.
 
 //------------------------------------------------------------------------------
 
@@ -572,8 +572,25 @@ __global__ void GB_cuda_ewise_sparse_phase3
         // compute the size of the set intersection for this task
         //----------------------------------------------------------------------
 
-        while (pA < pA_end && pB < pB_end)
+#if 0
+        if (threadIdx.x == 0 && t == 0)
         {
+            printf ("task %ld: pA %ld %ld, pB: %ld %ld\n",
+                t, pA, pA_end, pB, pB_end) ;
+        }
+#endif
+
+//      bool ok = true ;
+        while (pA < pA_end && pB < pB_end && ok)
+        {
+
+#if 0
+        if (threadIdx.x == 0 && t == 0)
+        {
+            printf ("\n==== continue task %ld: pA %ld %ld, pB: %ld %ld\n",
+                t, pA, pA_end, pB, pB_end) ;
+        }
+#endif
 
             //------------------------------------------------------------------
             // get the current chunk
@@ -631,6 +648,14 @@ __global__ void GB_cuda_ewise_sparse_phase3
             int diag_end  = GB_IMIN (diag + work_per_thread, nab) ;
             int diag_last = GB_IMIN (work_per_thread * blockDim.x, nab) ;
 
+#if 0
+            if (t == 0)
+            {
+                printf ("task 0, thread %d: na %d, nb: %d, nab: %d, diag %d diag_end %d diag_last %d\n",
+                    threadIdx.x, na, nb, nab, diag, diag_end, diag_last) ;
+            }
+#endif
+
             //------------------------------------------------------------------
             // each thread searches for its starting point
             //------------------------------------------------------------------
@@ -669,6 +694,19 @@ __global__ void GB_cuda_ewise_sparse_phase3
 
             pA += pa_end ;
             pB += pb_end ;
+
+#if 0
+            if (t == 0 && pa_end == 0 && pb_end == 0)
+            {
+                ok = false ;
+                if (threadIdx.x == 0)
+                {
+                printf ("task %ld: infinite loop! pA %ld %ld, pB: %ld %ld\n",
+                    t, pA, pA_end, pB, pB_end) ;
+                }
+            }
+#endif
+
         }
 
         //----------------------------------------------------------------------
@@ -697,6 +735,7 @@ __global__ void GB_cuda_ewise_sparse_phase3
                 Task_Cstart [t] = AB_intersection ;
             }
             #endif
+//          printf ("task %ld, size %ld\n", t, Task_Cstart [t]) ;
         }
     }
 }
@@ -750,7 +789,7 @@ __global__ void GB_cuda_ewise_sparse_phase5
 
     #if !GB_C_ISO
     const GB_A_TYPE  *__restrict__ Ax = (GB_A_TYPE  *) A->x ;
-    #if !GB_IS_MASKER
+    #if !GB_IS_MASK_ASSIGN
     const GB_B_TYPE  *__restrict__ Bx = (GB_B_TYPE  *) B->x ;
     #endif
           GB_C_TYPE  *__restrict__ Cx = (GB_C_TYPE  *) C->x ;
@@ -854,7 +893,7 @@ __global__ void GB_cuda_ewise_sparse_phase5
 
             #if !GB_C_ISO
             const GB_A_TYPE  *Ax_chunk = Ax + pA ;
-            #if !GB_IS_MASKER
+            #if !GB_IS_MASK_ASSIGN
             const GB_B_TYPE  *Bx_chunk = Bx + pB ;
             #endif
                   GB_C_TYPE  *Cx_chunk = Cx + pC ;
@@ -1203,6 +1242,7 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
 
     GB_A_NHELD (anz) ;          // # of entries in A
     GB_B_NHELD (bnz) ;          // # of entries in B
+//  printf ("anz: %ld, bnz: %ld\n", anz, bnz) ;
 
     int64_t A_slice_nchunks = GB_ICEIL (anz, CHUNKSIZE1) ;
     int64_t B_slice_nchunks = GB_ICEIL (bnz, CHUNKSIZE1) ;
@@ -1239,6 +1279,7 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     }
 
     // KERNEL LAUNCH 1: phase1
+    // printf ("\ncuda ewise start phase1:\n") ;
     GB_cuda_ewise_sparse_phase1 <<<grid, block1, 0, stream>>>
         (/* outputs: */ A_slice_kfirst, B_slice_kfirst,
          /* inputs:  */ A_slice_nchunks, B_slice_nchunks, A, B) ;
@@ -1264,6 +1305,7 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     }
 
     // KERNEL LAUNCH 2: phase2
+    // printf ("\ncuda ewise start phase2:\n") ;
     GB_cuda_ewise_sparse_phase2 <<<grid, block2, 0, stream>>>
         (   // outputs:
             Task_Astart, Task_Bstart,
@@ -1277,6 +1319,7 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     //--------------------------------------------------------------------------
 
     // KERNEL LAUNCH 3: phase3
+    // printf ("\ncuda ewise start phase3:\n") ;
     GB_cuda_ewise_sparse_phase3 <<<grid, block3, 0, stream>>>
     (   // outputs:
         Task_Cstart,
@@ -1290,6 +1333,7 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     // phase4: exclusive cumulative sum of size C on CPU, and allocate C
     //--------------------------------------------------------------------------
 
+    // printf ("\ncuda ewise start phase4:\n") ;
     int64_t cnz = 0 ;
     for (int64_t t = 0 ; t < ntasks ; t++)
     {
@@ -1320,6 +1364,7 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     }
 
     // KERNEL LAUNCH 4: phase5
+    // printf ("\ncuda ewise start phase5:\n") ;
     GB_cuda_ewise_sparse_phase5 <<<grid, block5, 0, stream>>>
     (
         /* outputs: */ C, Cj,
@@ -1336,6 +1381,7 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     // phase6: find leading entries of each column of C
     //--------------------------------------------------------------------------
 
+    // printf ("\ncuda ewise start phase6:\n") ;
     uint16_t *JDelta = NULL ;
     GB_Cp_TYPE *JDeltaSum = NULL ;
     int64_t nchunks_in_C = GB_ICEIL (cnz, CHUNKSIZE6) ;
@@ -1366,6 +1412,7 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     // phase7: construct Cp and Ch
     //--------------------------------------------------------------------------
 
+    // printf ("\ncuda ewise start phase7:\n") ;
     int64_t cnvec = 0 ;
     if (C->vdim == 1)
     {
@@ -1433,6 +1480,7 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     // free workspace and return result
     //--------------------------------------------------------------------------
 
+    // printf ("\ncuda ewise done\n") ;
     C->magic = GB_MAGIC ;
     GB_FREE_WORKSPACE ;
     return (GrB_SUCCESS) ;

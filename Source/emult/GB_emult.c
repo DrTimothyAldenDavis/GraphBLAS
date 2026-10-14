@@ -122,7 +122,8 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    if (GB_cuda_add_branch (C, ctype, C_sparsity, apply_mask, A, B, op))
+    if (M == NULL &&        // FIXME
+        GB_cuda_add_branch (C, ctype, NULL, false, false, A, B, op))
     {
         // Note: using GB_cuda_add_branch, for CUDA eWiseMult.
         // CUDA cannot yet apply the mask, so if GB_add_sparsity decides the

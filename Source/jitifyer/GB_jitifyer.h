@@ -206,11 +206,8 @@ typedef enum
     // emult
     GB_JIT_CUDA_KERNEL_EMULT_SPARSE = 1040,
 
-    // C<M>=A where M is structural and C is initially empty
-    GB_JIT_CUDA_KERNEL_MASKER_SPARSE = 1041,
-
-    // C<!M>=A where M is structural and C is initially empty
-    GB_JIT_CUDA_KERNEL_MASKER_COMP_SPARSE = 1042,
+    // C<M or !M>=A where M is structural and C is initially empty
+    GB_JIT_CUDA_KERNEL_MASK_ASSIGN_SPARSE = 1041,
 
 }
 GB_jit_kcode ;
