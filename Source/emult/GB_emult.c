@@ -122,7 +122,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    if (M == NULL &&        // FIXME
+    if (M == NULL &&        // fixme
         GB_cuda_add_branch (C, ctype, NULL, false, false, A, B, op))
     {
         // Note: using GB_cuda_add_branch, for CUDA eWiseMult.

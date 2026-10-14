@@ -4,30 +4,10 @@ function test310
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% This should be tested with 0:3 pji controls in testall.m, even though it
+% is no longer requried for test coverage.  The pji controls trigger a bug in
+% v10.5.1 which was fixed in v10.5.2.
+
 GB_mex_test52 ;
-
-%{
-rng ('default') ;
-n1 = 2^28 ;
-nz = 1000 ;
-d = nz / (n1*n1) ;
-A = sprand (n1, n1, d) ;
-
-m2 = 2^24 ;
-n2 = 2^32 ;
-GB_mex_burble (0) ;
-
-for inplace = 0:1
-    for bycol = 0:1
-        C = GB_mex_reshape (A, m2, n2, bycol, inplace) ;
-        fprintf ('bycol: %d, inplace: %d\n', bycol, inplace) ;
-        C2 = GB_mex_reshape (C, n1, n1, bycol, inplace) ;
-        fprintf ('bycol: %d, inplace: %d\n', bycol, inplace) ;
-        assert (isequal (A, C2.matrix)) ;
-        clear C C2
-    end
-end
-%}
-
 fprintf ('test310: reshape tests passed\n') ;
 

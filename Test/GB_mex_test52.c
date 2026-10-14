@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_test51: test reshape with large matrices
+// GB_mex_test52: test reshape with large matrices
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.

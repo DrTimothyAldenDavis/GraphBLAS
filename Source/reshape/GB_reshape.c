@@ -123,7 +123,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
                 type, A->vdim, A->vlen, GB_ph_null, by_col, GxB_AUTO_SPARSITY,
                 GB_Global_hyper_switch_get ( ), 0,
                 A->p_is_32,
-                // bug fix for v10.5.2, must swap j and i, see GB_mex_test51: */
+                // bug fix for v10.5.2, must swap j and i, see GB_mex_test52: */
                 A->i_is_32, A->j_is_32,
                 data_arena, data_arena)) ;
             GB_OK (GB_transpose_cast (T, type, by_col, A, false, Werk)) ;

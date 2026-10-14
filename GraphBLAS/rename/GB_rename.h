@@ -113,6 +113,7 @@
 #define GB_BinaryOp_check GM_BinaryOp_check
 #define GB_BinaryOp_compatible GM_BinaryOp_compatible
 #define GB_binop_builtin GM_binop_builtin
+#define GB_binop_first GM_binop_first
 #define GB_binop_new GM_binop_new
 #define GB_binop_pattern GM_binop_pattern
 #define GB_binop_rename GM_binop_rename

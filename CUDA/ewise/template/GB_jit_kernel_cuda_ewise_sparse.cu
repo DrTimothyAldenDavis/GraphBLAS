@@ -581,7 +581,7 @@ __global__ void GB_cuda_ewise_sparse_phase3
 #endif
 
 //      bool ok = true ;
-        while (pA < pA_end && pB < pB_end && ok)
+        while (pA < pA_end && pB < pB_end /* && ok */)
         {
 
 #if 0

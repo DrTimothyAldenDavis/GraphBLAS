@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // See issue #462, where the in-place reshape fails if the input matrix and
-// output matrix require different integer sizes.  Fixed in GraphBLAS 10.6.0.
+// output matrix require different integer sizes.  Fixed in GraphBLAS 10.5.2.
 
 #include "GB_mex.h"
 #include "GB_mex_errors.h"

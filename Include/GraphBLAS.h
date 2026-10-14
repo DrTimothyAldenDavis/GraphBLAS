@@ -162,7 +162,7 @@
 //------------------------------------------------------------------------------
 
 #ifndef GRAPHBLAS_HAS_CUDA
-#define GRAPHBLAS_HAS_CUDA
+/* #undef GRAPHBLAS_HAS_CUDA */
 #endif
 
 //------------------------------------------------------------------------------
@@ -286,7 +286,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Oct 12, 2026"
+#define GxB_IMPLEMENTATION_DATE "Oct 14, 2026"
 #define GxB_IMPLEMENTATION_MAJOR 10
 #define GxB_IMPLEMENTATION_MINOR 5
 #define GxB_IMPLEMENTATION_SUB   2
