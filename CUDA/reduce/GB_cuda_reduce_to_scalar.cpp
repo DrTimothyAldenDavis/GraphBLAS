@@ -18,6 +18,7 @@
 #define GB_FREE_WORKSPACE                                   \
 {                                                           \
     GB_FREE_MEMORY (&zscalar, zscalar_mem) ;                \
+    GB_FREE_MEMORY (&terminal_flag, terminal_flag_mem) ;    \
 }
 
 #define GB_FREE_ALL                                         \
@@ -58,6 +59,9 @@ GrB_Info GB_cuda_reduce_to_scalar
     uint64_t zscalar_mem = mem ;
     GrB_Matrix V = NULL ;
     (*V_handle) = NULL ;
+    int32_t *terminal_flag = NULL ;
+    uint64_t terminal_flag_mem = mem ;
+    bool monoid_is_terminal = (monoid->terminal != NULL) ;
 
     //--------------------------------------------------------------------------
     // initializations
@@ -87,6 +91,20 @@ GrB_Info GB_cuda_reduce_to_scalar
     GB_enumify_reduce (&rcode, monoid, A) ;
     bool has_cheeseburger = GB_RSHIFT (rcode, 16, 1) ;
 
+    // a terminal monoid gets a one-int early-exit flag, zeroed on the stream
+    // so the kernel sees 0 before it runs. Non-terminal monoids leave
+    // terminal_flag == NULL and pay nothing
+    if (monoid_is_terminal)
+    {
+        terminal_flag = (int32_t *) GB_MALLOC_MEMORY (1, sizeof (int32_t),
+            &terminal_flag_mem) ;
+        if (terminal_flag == NULL)
+        {
+            GB_FREE_ALL ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+        CUDA_OK (cudaMemsetAsync (terminal_flag, 0, sizeof (int32_t), stream)) ;
+    }
 
     // determine the kind of reduction: partial (to &V), or complete
     // (to the scalar output)
@@ -130,7 +148,7 @@ GrB_Info GB_cuda_reduce_to_scalar
     // reduce C to a scalar via the CUDA JIT
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_cuda_reduce_to_scalar_jit (zscalar, V, monoid, A,
+    GB_OK (GB_cuda_reduce_to_scalar_jit (zscalar, V, monoid, A, terminal_flag,
         device, stream, gridsz)) ;
 
     //--------------------------------------------------------------------------
@@ -144,6 +162,14 @@ GrB_Info GB_cuda_reduce_to_scalar
         // return the scalar result
         // s = zscalar (but only the first zsize bytes of it)
         memcpy (s, zscalar, zsize) ;
+    }
+    else if (monoid_is_terminal && *terminal_flag)
+    {
+        // a block hit the terminal: the answer is the terminal value.
+        // skip V and the CPU second pass entirely.
+        memcpy (s, monoid->terminal, zsize) ;
+        (*V_handle) = NULL ;
+        GB_Matrix_free (&V) ;
     }
     else
     {

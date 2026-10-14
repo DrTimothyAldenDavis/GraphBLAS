@@ -752,6 +752,7 @@ GrB_Info GB_jit_kernel_reduce                                               \
     GB_void *zscalar,                                                       \
     GrB_Matrix V,                                                           \
     const GrB_Matrix A,                                                     \
+    int32_t *terminal_flag,                                                 \
     int device,                                                             \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \

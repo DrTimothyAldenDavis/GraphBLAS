@@ -27,7 +27,7 @@ bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
 
     bool use_cuda =
            (!A->iso)                                    // A is not iso
-        && (monoid->op->opcode == GB_ANY_binop_code)    // monoid is not ANY
+        && (monoid->op->opcode != GB_ANY_binop_code)    // monoid is not ANY
         && (dev >= 0 && dev <= GB_Global_gpu_count_get ( )) // data on GPU
         && (data_arena == header_arena)                 // header on same GPU
         && (GB_jitifyer_get_control ( ) >= GxB_JIT_RUN) // JIT is running

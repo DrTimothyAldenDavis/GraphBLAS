@@ -20,6 +20,7 @@ GrB_Info GB_cuda_reduce_to_scalar_jit   // z = reduce_to_scalar (A) via CUDA JIT
     // input:
     const GrB_Monoid monoid,    // monoid to do the reduction
     const GrB_Matrix A,         // matrix to reduce
+    int32_t *terminal_flag,     // early-exit flag; NULL for non-terminal
     // CUDA stream and launch parameters:
     int device,
     cudaStream_t stream,
