@@ -318,6 +318,78 @@ __device__ void mergepath
 }
 
 //------------------------------------------------------------------------------
+// safe_chunk_diag: how far the merge of one loaded chunk may advance
+//------------------------------------------------------------------------------
+
+// The chunk holds na entries of A and nb of B in shared memory (na, nb >= 1).
+// Return nab = the number of merge-path diagonals this pass may consume: every
+// entry whose key (col,row) is <= the smaller of the two buffer's last keys.
+// That prefix is fully present on BOTH sides, so it merges correctly; anything
+// larger might pair with a not-yet-loaded entry and is deferred to the next
+// pass. nab is always >= 1 (the side with the smaller last key is consumed in
+// full), and a leading match is always included (so the old nab==1 stall is
+// impossible). Phase 3 and phase 5 call this identically, so their task
+// partitions are bit-identical by construction.
+
+template <typename T_Ai, typename T_Aj, typename T_Bi, typename T_Bj>
+__device__ int safe_chunk_diag
+(
+    const int na,
+    const int nb,
+    const T_Ai *__restrict__ Ai_s,
+    const T_Aj *__restrict__ Aj_s,
+    const T_Bi *__restrict__ Bi_s,
+    const T_Bj *__restrict__ Bj_s
+)
+{
+    // keys are column-major: (col j, row i); A-first on ties, as in mergepath
+    const T_Aj jA = Aj_s [na-1] ;
+    const T_Ai iA = Ai_s [na-1] ;
+    const T_Bj jB = Bj_s [nb-1] ;
+    const T_Bi iB = Bi_s [nb-1] ;
+    const bool A_ends_first = (jA < jB) || (jA == jB && iA <= iB) ;
+
+    if (A_ends_first)
+    {
+        // consume all na of A, plus every B whose key <= key(A[na-1])
+        int lo = 0 ;
+        int hi = nb ;  // upper_bound of (jA, iA) in B[0:nb-1]
+        while (lo < hi)
+        {
+            int mid  = (lo + hi) >> 1 ;
+            if ((Bj_s [mid] < jA) || (Bj_s [mid] == jA && Bi_s [mid] <= iA))
+            {
+                lo = mid + 1;
+            }
+            else
+            {
+                hi = mid ;
+            }
+        }
+        return (na + lo) ;
+    }
+    else
+    {
+        // compute all nb of B, plus every A whose key <= key(B[nb-1])
+        int lo = 0 ;
+        int hi = na ;  // upper_bound of (jB, iB) in A[0:na-1]
+        while (lo < hi)
+        {
+            int mid = (lo + hi) >> 1 ;
+            if ((Aj_s [mid] < jB) || (Aj_s [mid] == jB && Ai_s[mid] <= iB))
+            {
+                lo = mid + 1;
+            }
+            else
+            {
+                hi = mid ;
+            }
+        }
+        return (nb + lo) ;
+    }
+}
+
+//------------------------------------------------------------------------------
 // GB_cuda_ewise_sparse_phase2: construct tasks
 //------------------------------------------------------------------------------
 
@@ -630,18 +702,8 @@ __global__ void GB_cuda_ewise_sparse_phase3
             // wait: all writers must finish before the merge reads
             __syncthreads () ;
 
-            int nab ;
-            if (na < CHUNKSIZE3 && nb < CHUNKSIZE3)
-            {
-                // this is the very last chunk of the entire task; do it all
-                nab = na + nb ;
-            }
-            else
-            {
-                // this chunk is in the middle of the task; just do the first
-                // half of the diagonals of the na,nb chunk
-                nab = GB_IMIN (na, nb) ;
-            }
+            int nab  = safe_chunk_diag <GB_Ai_TYPE, GB_Aj_TYPE, GB_Bi_TYPE,
+                GB_Bj_TYPE> (na, nb, Ai_s, Aj_s, Bi_s, Bj_s) ;
 
             // work_per_thread = ceil (nab / blockdim)
             int work_per_thread = GB_ICEIL (nab, blockDim.x) ;
@@ -869,18 +931,8 @@ __global__ void GB_cuda_ewise_sparse_phase5
             // wait: all writers must finish before the merge reads
             __syncthreads () ;
 
-            int nab ;
-            if (na < CHUNKSIZE3 && nb < CHUNKSIZE3)
-            {
-                // this is the very last chunk of the entire task; do it all
-                nab = na + nb ;
-            }
-            else
-            {
-                // this chunk is in the middle of the task; just do the first
-                // half of the diagonals of the na,nb chunk
-                nab = GB_IMIN (na, nb) ;
-            }
+            int nab  = safe_chunk_diag <GB_Ai_TYPE, GB_Aj_TYPE, GB_Bi_TYPE,
+                GB_Bj_TYPE> (na, nb, Ai_s, Aj_s, Bi_s, Bj_s) ;
 
             // work_per_thread = ceil (nab / blockdim)
             int work_per_thread = GB_ICEIL (nab, blockDim.x) ;
