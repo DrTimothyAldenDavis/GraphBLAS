@@ -110,7 +110,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     }
 
     bool ok = true ;
-    int64_t full_memsize = 0, Ax_memsize_for_non_iso ;
+    int64_t full_memsize = 0, Ax_len_for_non_iso ;
     if (sparsity == GxB_BITMAP || sparsity == GxB_FULL)
     { 
         ok = GB_int64_multiply ((uint64_t *) (&full_memsize), vlen, vdim) ;
@@ -146,7 +146,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
             { 
                 return (GrB_INVALID_VALUE) ;
             }
-            Ax_memsize_for_non_iso = nvals ;
+            Ax_len_for_non_iso = nvals ;
             break ;
 
         case GxB_SPARSE : 
@@ -174,7 +174,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
             { 
                 return (GrB_INVALID_VALUE) ;
             }
-            Ax_memsize_for_non_iso = nvals ;
+            Ax_len_for_non_iso = nvals ;
             break ;
 
         case GxB_BITMAP : 
@@ -187,11 +187,11 @@ GrB_Info GB_import      // import/pack a matrix in any format
             }
             if (nvals > full_memsize) return (GrB_INVALID_VALUE) ;
             if (Ab_memsize < full_memsize) return (GrB_INVALID_VALUE) ;
-            Ax_memsize_for_non_iso = full_memsize ;
+            Ax_len_for_non_iso = full_memsize ;
             break ;
 
         case GxB_FULL : 
-            Ax_memsize_for_non_iso = full_memsize ;
+            Ax_len_for_non_iso = full_memsize ;
             break ;
 
         default: ;
@@ -210,9 +210,10 @@ GrB_Info GB_import      // import/pack a matrix in any format
     else
     {
         // A is non-iso: Ax_memsize must be zero (and Ax must then be NULL),
-        // or Ax_memsize must be at least as large as Ax_memsize_for_non_iso
+        // or Ax must be large enough to hold Ax_len_for_non_iso entries.
+        // Ax_memsize is in bytes, so compare the # of entries it can hold.
         if (!((Ax_memsize == 0 && *Ax == NULL) ||
-              (Ax_memsize >= Ax_memsize_for_non_iso && *Ax != NULL)))
+              (Ax_memsize / type->size >= Ax_len_for_non_iso && *Ax != NULL)))
         { 
             return (GrB_INVALID_VALUE) ;
         }
