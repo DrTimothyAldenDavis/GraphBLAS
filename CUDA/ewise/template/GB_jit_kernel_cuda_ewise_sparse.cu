@@ -318,6 +318,78 @@ __device__ void mergepath
 }
 
 //------------------------------------------------------------------------------
+// safe_chunk_diag: how far the merge of one loaded chunk may advance
+//------------------------------------------------------------------------------
+
+// The chunk holds na entries of A and nb of B in shared memory (na, nb >= 1).
+// Return nab = the number of merge-path diagonals this pass may consume: every
+// entry whose key (col,row) is <= the smaller of the two buffer's last keys.
+// That prefix is fully present on BOTH sides, so it merges correctly; anything
+// larger might pair with a not-yet-loaded entry and is deferred to the next
+// pass. nab is always >= 1 (the side with the smaller last key is consumed in
+// full), and a leading match is always included (so the old nab==1 stall is
+// impossible). Phase 3 and phase 5 call this identically, so their task
+// partitions are bit-identical by construction.
+
+template <typename T_Ai, typename T_Aj, typename T_Bi, typename T_Bj>
+__device__ int safe_chunk_diag
+(
+    const int na,
+    const int nb,
+    const T_Ai *__restrict__ Ai_s,
+    const T_Aj *__restrict__ Aj_s,
+    const T_Bi *__restrict__ Bi_s,
+    const T_Bj *__restrict__ Bj_s
+)
+{
+    // keys are column-major: (col j, row i); A-first on ties, as in mergepath
+    const T_Aj jA = Aj_s [na-1] ;
+    const T_Ai iA = Ai_s [na-1] ;
+    const T_Bj jB = Bj_s [nb-1] ;
+    const T_Bi iB = Bi_s [nb-1] ;
+    const bool A_ends_first = (jA < jB) || (jA == jB && iA <= iB) ;
+
+    if (A_ends_first)
+    {
+        // consume all na of A, plus every B whose key <= key(A[na-1])
+        int lo = 0 ;
+        int hi = nb ;  // upper_bound of (jA, iA) in B[0:nb-1]
+        while (lo < hi)
+        {
+            int mid  = (lo + hi) >> 1 ;
+            if ((Bj_s [mid] < jA) || (Bj_s [mid] == jA && Bi_s [mid] <= iA))
+            {
+                lo = mid + 1;
+            }
+            else
+            {
+                hi = mid ;
+            }
+        }
+        return (na + lo) ;
+    }
+    else
+    {
+        // compute all nb of B, plus every A whose key <= key(B[nb-1])
+        int lo = 0 ;
+        int hi = na ;  // upper_bound of (jB, iB) in A[0:na-1]
+        while (lo < hi)
+        {
+            int mid = (lo + hi) >> 1 ;
+            if ((Aj_s [mid] < jB) || (Aj_s [mid] == jB && Ai_s[mid] <= iB))
+            {
+                lo = mid + 1;
+            }
+            else
+            {
+                hi = mid ;
+            }
+        }
+        return (nb + lo) ;
+    }
+}
+
+//------------------------------------------------------------------------------
 // GB_cuda_ewise_sparse_phase2: construct tasks
 //------------------------------------------------------------------------------
 
@@ -572,27 +644,8 @@ __global__ void GB_cuda_ewise_sparse_phase3
         // compute the size of the set intersection for this task
         //----------------------------------------------------------------------
 
-#if 0
-        if (threadIdx.x == 0 && t == 0)
+        while (pA < pA_end && pB < pB_end)
         {
-            printf ("task %ld: pA %ld %ld, pB: %ld %ld\n",
-                t, pA, pA_end, pB, pB_end) ;
-        }
-#endif
-
-        bool ok = true ;
-
-        while (pA < pA_end && pB < pB_end && ok)
-        {
-
-#if 0
-        if (threadIdx.x == 0 && t == 0)
-        {
-            printf ("\n==== continue task %ld: pA %ld %ld, pB: %ld %ld\n",
-                t, pA, pA_end, pB, pB_end) ;
-        }
-#endif
-
             //------------------------------------------------------------------
             // get the current chunk
             //------------------------------------------------------------------
@@ -630,32 +683,14 @@ __global__ void GB_cuda_ewise_sparse_phase3
             // wait: all writers must finish before the merge reads
             __syncthreads () ;
 
-            int nab ;
-            if (na < CHUNKSIZE3 && nb < CHUNKSIZE3)
-            {
-                // this is the very last chunk of the entire task; do it all
-                nab = na + nb ;
-            }
-            else
-            {
-                // this chunk is in the middle of the task; just do the first
-                // half of the diagonals of the na,nb chunk
-                nab = GB_IMIN (na, nb) ;
-            }
+            int nab = safe_chunk_diag <GB_Ai_TYPE, GB_Aj_TYPE, GB_Bi_TYPE,
+                GB_Bj_TYPE> (na, nb, Ai_s, Aj_s, Bi_s, Bj_s) ;
 
             // work_per_thread = ceil (nab / blockdim)
             int work_per_thread = GB_ICEIL (nab, blockDim.x) ;
             int diag = GB_IMIN (work_per_thread * threadIdx.x, nab) ;
             int diag_end  = GB_IMIN (diag + work_per_thread, nab) ;
             int diag_last = GB_IMIN (work_per_thread * blockDim.x, nab) ;
-
-#if 0
-            if (t == 0)
-            {
-                printf ("task 0, thread %d: na %d, nb: %d, nab: %d, diag %d diag_end %d diag_last %d\n",
-                    threadIdx.x, na, nb, nab, diag, diag_end, diag_last) ;
-            }
-#endif
 
             //------------------------------------------------------------------
             // each thread searches for its starting point
@@ -695,19 +730,6 @@ __global__ void GB_cuda_ewise_sparse_phase3
 
             pA += pa_end ;
             pB += pb_end ;
-
-#if 1
-            if (t == 0 && pa_end == 0 && pb_end == 0)
-            {
-                ok = false ;
-                if (threadIdx.x == 0)
-                {
-                printf ("task %ld: infinite loop! pA %ld %ld, pB: %ld %ld\n",
-                    t, pA, pA_end, pB, pB_end) ;
-                }
-            }
-#endif
-
         }
 
         //----------------------------------------------------------------------
@@ -736,7 +758,6 @@ __global__ void GB_cuda_ewise_sparse_phase3
                 Task_Cstart [t] = AB_intersection ;
             }
             #endif
-//          printf ("task %ld, size %ld\n", t, Task_Cstart [t]) ;
         }
     }
 }
@@ -869,18 +890,8 @@ __global__ void GB_cuda_ewise_sparse_phase5
             // wait: all writers must finish before the merge reads
             __syncthreads () ;
 
-            int nab ;
-            if (na < CHUNKSIZE3 && nb < CHUNKSIZE3)
-            {
-                // this is the very last chunk of the entire task; do it all
-                nab = na + nb ;
-            }
-            else
-            {
-                // this chunk is in the middle of the task; just do the first
-                // half of the diagonals of the na,nb chunk
-                nab = GB_IMIN (na, nb) ;
-            }
+            int nab = safe_chunk_diag <GB_Ai_TYPE, GB_Aj_TYPE, GB_Bi_TYPE,
+                GB_Bj_TYPE> (na, nb, Ai_s, Aj_s, Bi_s, Bj_s) ;
 
             // work_per_thread = ceil (nab / blockdim)
             int work_per_thread = GB_ICEIL (nab, blockDim.x) ;
@@ -1243,7 +1254,6 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
 
     GB_A_NHELD (anz) ;          // # of entries in A
     GB_B_NHELD (bnz) ;          // # of entries in B
-//  printf ("anz: %ld, bnz: %ld\n", anz, bnz) ;
 
     int64_t A_slice_nchunks = GB_ICEIL (anz, CHUNKSIZE1) ;
     int64_t B_slice_nchunks = GB_ICEIL (bnz, CHUNKSIZE1) ;
@@ -1280,7 +1290,6 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     }
 
     // KERNEL LAUNCH 1: phase1
-    // printf ("\ncuda ewise start phase1:\n") ;
     GB_cuda_ewise_sparse_phase1 <<<grid, block1, 0, stream>>>
         (/* outputs: */ A_slice_kfirst, B_slice_kfirst,
          /* inputs:  */ A_slice_nchunks, B_slice_nchunks, A, B) ;
@@ -1306,7 +1315,6 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     }
 
     // KERNEL LAUNCH 2: phase2
-    // printf ("\ncuda ewise start phase2:\n") ;
     GB_cuda_ewise_sparse_phase2 <<<grid, block2, 0, stream>>>
         (   // outputs:
             Task_Astart, Task_Bstart,
@@ -1320,7 +1328,6 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     //--------------------------------------------------------------------------
 
     // KERNEL LAUNCH 3: phase3
-    // printf ("\ncuda ewise start phase3:\n") ;
     GB_cuda_ewise_sparse_phase3 <<<grid, block3, 0, stream>>>
     (   // outputs:
         Task_Cstart,
@@ -1334,7 +1341,6 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     // phase4: exclusive cumulative sum of size C on CPU, and allocate C
     //--------------------------------------------------------------------------
 
-    // printf ("\ncuda ewise start phase4:\n") ;
     int64_t cnz = 0 ;
     for (int64_t t = 0 ; t < ntasks ; t++)
     {
@@ -1365,7 +1371,6 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     }
 
     // KERNEL LAUNCH 4: phase5
-    // printf ("\ncuda ewise start phase5:\n") ;
     GB_cuda_ewise_sparse_phase5 <<<grid, block5, 0, stream>>>
     (
         /* outputs: */ C, Cj,
@@ -1382,7 +1387,6 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     // phase6: find leading entries of each column of C
     //--------------------------------------------------------------------------
 
-    // printf ("\ncuda ewise start phase6:\n") ;
     uint16_t *JDelta = NULL ;
     GB_Cp_TYPE *JDeltaSum = NULL ;
     int64_t nchunks_in_C = GB_ICEIL (cnz, CHUNKSIZE6) ;
@@ -1413,7 +1417,6 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     // phase7: construct Cp and Ch
     //--------------------------------------------------------------------------
 
-    // printf ("\ncuda ewise start phase7:\n") ;
     int64_t cnvec = 0 ;
     if (C->vdim == 1)
     {
@@ -1481,7 +1484,6 @@ GB_JIT_CUDA_KERNEL_EWISE_SPARSE_PROTO (GB_jit_kernel)
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    // printf ("\ncuda ewise done\n") ;
     C->magic = GB_MAGIC ;
     GB_FREE_WORKSPACE ;
     return (GrB_SUCCESS) ;
