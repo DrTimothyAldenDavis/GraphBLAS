@@ -146,7 +146,7 @@
 // in place of the old global Aj/Bj arrays: phase 2 calls getk directly, and
 // phases 3 and 5 call getk to fill shared memory.
 
-template <typename T> __device__ int64_t getk
+template <typename T> __device__ __inline__ int64_t getk
 (
     const int64_t p,              // position of the entry
     const int64_t *Slice_kfirst,  // the small array, size nchunks+1
@@ -244,7 +244,7 @@ template
     typename T_Bi,  // type of Bi
     typename T_Bj   // type of Bj
 >
-__device__ void mergepath
+__device__ __inline__ void mergepath
 (
     // outputs:
     T *astart,      // mergepath results: starting position in A
@@ -332,7 +332,7 @@ __device__ void mergepath
 // partitions are bit-identical by construction.
 
 template <typename T_Ai, typename T_Aj, typename T_Bi, typename T_Bj>
-__device__ int safe_chunk_diag
+__device__ __inline__ int safe_chunk_diag
 (
     const int na,
     const int nb,
@@ -342,6 +342,38 @@ __device__ int safe_chunk_diag
     const T_Bj *__restrict__ Bj_s
 )
 {
+
+    //--------------------------------------------------------------------------
+    // if this is the very last chunk of the entire task, do it all
+    //--------------------------------------------------------------------------
+
+    if (na < CHUNKSIZE3 && nb < CHUNKSIZE3)
+    {
+        return (na + nb) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // use the smaller of na and nb if it is big enough
+    //--------------------------------------------------------------------------
+
+#if 0
+    int nab = GB_IMIN (na, nb) ;
+    if (nab >= (CHUNKSIZE3 >> 1))
+    {
+        // This value of nab is safe to use and might give good enough
+        // performance if it is not too tiny.  It is smaller than it might be;
+        // the binary search below computes the largest valid value of nab.
+        // However, this value is a lot quicker to compute than the binary
+        // search below.  But in my limited tests, this option doesn't help so
+        // it's commented out.
+        return (nab) ;
+    }
+#endif
+
+    //--------------------------------------------------------------------------
+    // use a binary search to find the largest nab possible
+    //--------------------------------------------------------------------------
+
     // keys are column-major: (col j, row i); A-first on ties, as in mergepath
     const T_Aj jA = Aj_s [na-1] ;
     const T_Ai iA = Ai_s [na-1] ;
@@ -357,7 +389,8 @@ __device__ int safe_chunk_diag
         while (lo < hi)
         {
             int mid  = (lo + hi) >> 1 ;
-            if ((Bj_s [mid] < jA) || (Bj_s [mid] == jA && Bi_s [mid] <= iA))
+            #if 0
+            kf ((Bj_s [mid] < jA) || (Bj_s [mid] == jA && Bi_s [mid] <= iA))
             {
                 lo = mid + 1;
             }
@@ -365,6 +398,13 @@ __device__ int safe_chunk_diag
             {
                 hi = mid ;
             }
+            #else
+            // this is the same thing as above but slightly faster
+            const T_Bj jBmid = Bj_s [mid] ;
+            int bfirst = ((jBmid < jA) || (jBmid == jA && Bi_s [mid] <= iA)) ;
+            lo = (bfirst) * (mid + 1) + (1-bfirst) * (lo) ;
+            hi = (1-bfirst) * (mid)   + (bfirst  ) * (hi) ;
+            #endif
         }
         return (na + lo) ;
     }
@@ -376,7 +416,8 @@ __device__ int safe_chunk_diag
         while (lo < hi)
         {
             int mid = (lo + hi) >> 1 ;
-            if ((Aj_s [mid] < jB) || (Aj_s [mid] == jB && Ai_s[mid] <= iB))
+            #if 0
+            if ((Aj_s [mid] < jB) || (Aj_s [mid] == jB && Ai_s [mid] <= iB))
             {
                 lo = mid + 1;
             }
@@ -384,6 +425,12 @@ __device__ int safe_chunk_diag
             {
                 hi = mid ;
             }
+            #else
+            const T_Aj jAmid = Aj_s [mid] ;
+            int afirst = ((jAmid < jB) || (jAmid == jB && Ai_s [mid] <= iB)) ;
+            lo = (afirst) * (mid + 1) + (1-afirst) * (lo) ;
+            hi = (1-afirst) * (mid)   + (afirst  ) * (hi) ;
+            #endif
         }
         return (nb + lo) ;
     }
@@ -518,33 +565,33 @@ __global__ void GB_cuda_ewise_sparse_phase2
 // and Bi,Bj [pb:pb_end-1]
 
 template
-<   
-    typename T_Ai,      // type of Ai_chunk
-    typename T_Aj,      // type of Aj_chunk
-    typename T_Bi,      // type of Bi_chunk
-    typename T_Bj       // type of Bj_chunk
+<
+    typename T_Ai,      // type of Ai_s
+    typename T_Aj,      // type of Aj_s
+    typename T_Bi,      // type of Bi_s
+    typename T_Bj       // type of Bj_s
 >
-__device__ int set_intersection_size
+__device__ __inline__ int set_intersection_size
 (
     // inputs:
     int pa,
     int pb,
     const int pa_end,
     const int pb_end,
-    const T_Ai *__restrict__ Ai_chunk,
-    const T_Aj *__restrict__ Aj_chunk,
-    const T_Bi *__restrict__ Bi_chunk,
-    const T_Bj *__restrict__ Bj_chunk
+    const T_Ai *__restrict__ Ai_s,
+    const T_Aj *__restrict__ Aj_s,
+    const T_Bi *__restrict__ Bi_s,
+    const T_Bj *__restrict__ Bj_s
 )
 {
     int intersection = 0 ;
     while (pa < pa_end && pb < pb_end)
     {
         // get the two entries to compare: A [pa] and B [pb]
-        const GB_Ai_TYPE iA = Ai_chunk [pa] ;
-        const GB_Aj_TYPE jA = Aj_chunk [pa] ;
-        const GB_Bi_TYPE iB = Bi_chunk [pb] ;
-        const GB_Bj_TYPE jB = Bj_chunk [pb] ;
+        const GB_Ai_TYPE iA = Ai_s [pa] ;
+        const GB_Aj_TYPE jA = Aj_s [pa] ;
+        const GB_Bi_TYPE iB = Bi_s [pb] ;
+        const GB_Bj_TYPE jB = Bj_s [pb] ;
         // compare the two entries
         int afirst = ((jA < jB) || (jA == jB && iA < iB)) ;
         int amatch = (jA == jB && iA == iB) ;
@@ -896,7 +943,7 @@ __global__ void GB_cuda_ewise_sparse_phase5
             // work_per_thread = ceil (nab / blockdim)
             int work_per_thread = GB_ICEIL (nab, blockDim.x) ;
             int diag = GB_IMIN (work_per_thread * threadIdx.x, nab) ;
-            int diag_end = GB_IMIN (diag + work_per_thread, nab) ;
+            int diag_end  = GB_IMIN (diag + work_per_thread, nab) ;
             int diag_last = GB_IMIN (work_per_thread * blockDim.x, nab) ;
 
             // get pointers to the current chunk
