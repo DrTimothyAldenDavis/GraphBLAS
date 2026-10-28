@@ -102,6 +102,7 @@ GrB_Info GB (_AaddB__hypot_fp64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    #undef  GB_IS_EWISEUNION
     #define GB_IS_EWISEUNION 0
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
@@ -149,6 +150,7 @@ GrB_Info GB (_AunionB__hypot_fp64)
     #else
     GB_X_TYPE alpha_scalar = (*((GB_X_TYPE *) alpha_scalar_in)) ;
     GB_Y_TYPE beta_scalar  = (*((GB_Y_TYPE *) beta_scalar_in )) ;
+    #undef  GB_IS_EWISEUNION
     #define GB_IS_EWISEUNION 1
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
@@ -157,6 +159,12 @@ GrB_Info GB (_AunionB__hypot_fp64)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+// re-include GB_ewise_shared_definitions.h for the rest of this file, since
+// GB_add_template.c has modified them.
+#undef  GB_IS_EWISEUNION
+#define GB_IS_EWISEUNION 0
+#include "ewise/include/GB_ewise_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // eWiseMult: C=A.*B, C<M>=A.*B, or C<M!>=A.*B where C is sparse/hyper

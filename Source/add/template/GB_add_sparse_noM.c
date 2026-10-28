@@ -71,7 +71,7 @@
             GB_ISET (Ci, pC + p, i) ;       // Ci [pC + p] = i ;
             ASSERT (GB_IGET (Ai, pA + p) == i) ;
             ASSERT (GB_IGET (Bi, pB + p) == i) ;
-            GB_ADD_AIJ_PLUS_BIJ (Cx, pC+p,
+            GB_EWISE_AIJ_OP_BIJ (Cx, pC+p,
                 Ax, pA+p, A_iso, Bx, pB+p, B_iso, i, j) ;
         }
         #endif
@@ -95,7 +95,7 @@
             GB_ISET (Ci, pC + p, i) ;       // Ci [pC + p] = i ;
             ASSERT (GB_IGET (Ai, pA + p) == i) ;
             // C (i,j) = A (i,j), or A(i,j) + beta for eWiseUnion
-            GB_ADD_AIJ_PLUS_BETA (Cx, pC+p,
+            GB_EWISE_AIJ_OP_BETA (Cx, pC+p,
                 Ax, pA+p, A_iso, beta_scalar, i, j) ;
         }
         #ifndef GB_ISO_ADD
@@ -106,7 +106,7 @@
             int64_t i = GB_IGET (Bi, pB + p) ;
             int64_t ii = i - iA_first ;
             ASSERT (GB_IGET (Ai, pA + ii) == i) ;
-            GB_ADD_AIJ_PLUS_BIJ (Cx, pC+ii,
+            GB_EWISE_AIJ_OP_BIJ (Cx, pC+ii,
                 Ax, pA+ii, A_iso, Bx, pB+p, B_iso, i, j) ;
         }
         #endif
@@ -130,7 +130,7 @@
             int64_t i = p + iB_first ;
             GB_ISET (Ci, pC + p, i) ;       // Ci [pC + p] = i ;
             ASSERT (GB_IGET (Bi, pB + p) == i) ;
-            GB_ADD_ALPHA_PLUS_BIJ (Cx, pC+p,
+            GB_EWISE_ALPHA_OP_BIJ (Cx, pC+p,
                 alpha_scalar, Bx, pB+p, B_iso, i, j) ;
         }
         #ifndef GB_ISO_ADD
@@ -141,7 +141,7 @@
             int64_t i = GB_IGET (Ai, pA + p) ;
             int64_t ii = i - iB_first ;
             ASSERT (GB_IGET (Bi, pB + ii) == i) ;
-            GB_ADD_AIJ_PLUS_BIJ (Cx, pC+ii,
+            GB_EWISE_AIJ_OP_BIJ (Cx, pC+ii,
                 Ax, pA+p, A_iso, Bx, pB+ii, B_iso, i, j) ;
         }
         #endif
@@ -164,7 +164,7 @@
         { 
             int64_t i = GB_IGET (Bi, pB+p) ;    // i = Bi [pB+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
-            GB_ADD_ALPHA_PLUS_BIJ (Cx, pC+p,
+            GB_EWISE_ALPHA_OP_BIJ (Cx, pC+p,
                 alpha_scalar, Bx, pB+p, B_iso, i, j) ;
         }
         #endif
@@ -187,7 +187,7 @@
             int64_t i = GB_IGET (Ai, pA+p) ;    // i = Ai [pA+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
             // C (i,j) = A (i,j), or A(i,j) + beta for eWiseUnion
-            GB_ADD_AIJ_PLUS_BETA (Cx, pC+p,
+            GB_EWISE_AIJ_OP_BETA (Cx, pC+p,
                 Ax, pA+p, A_iso, beta_scalar, i, j) ;
         }
         #endif
@@ -210,7 +210,7 @@
             int64_t i = GB_IGET (Ai, pA+p) ;    // i = Ai [pA+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
             // C (i,j) = A (i,j), or A(i,j) + beta for eWiseUnion
-            GB_ADD_AIJ_PLUS_BETA (Cx, pC+p,
+            GB_EWISE_AIJ_OP_BETA (Cx, pC+p,
                 Ax, pA+p, A_iso, beta_scalar, i, j) ;
         }
         pC += ajnz ;
@@ -219,7 +219,7 @@
         { 
             int64_t i = GB_IGET (Bi, pB+p) ;    // i = Bi [pB+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
-            GB_ADD_ALPHA_PLUS_BIJ (Cx, pC+p,
+            GB_EWISE_ALPHA_OP_BIJ (Cx, pC+p,
                 alpha_scalar, Bx, pB+p, B_iso, i, j) ;
         }
         #endif
@@ -241,7 +241,7 @@
         { 
             int64_t i = GB_IGET (Bi, pB+p) ;    // i = Bi [pB+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
-            GB_ADD_ALPHA_PLUS_BIJ (Cx, pC+p,
+            GB_EWISE_ALPHA_OP_BIJ (Cx, pC+p,
                 alpha_scalar, Bx, pB+p, B_iso, i, j) ;
         }
         pC += bjnz ;
@@ -251,7 +251,7 @@
             int64_t i = GB_IGET (Ai, pA+p) ;    // i = Ai [pA+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
             // C (i,j) = A (i,j), or A(i,j) + beta for eWiseUnion
-            GB_ADD_AIJ_PLUS_BETA (Cx, pC+p,
+            GB_EWISE_AIJ_OP_BETA (Cx, pC+p,
                 Ax, pA+p, A_iso, beta_scalar, i, j) ;
         }
         #endif
@@ -319,7 +319,7 @@
                 #if ( GB_ADD_PHASE == 2 )
                 GB_ISET (Ci, pC, iA) ;      // Ci [pC] = iA ;
                 // C (iA,j) = A(iA,j), or A(iA,j) + beta for ewiseUnion
-                GB_ADD_AIJ_PLUS_BETA (Cx, pC, Ax, pA, A_iso, beta_scalar,
+                GB_EWISE_AIJ_OP_BETA (Cx, pC, Ax, pA, A_iso, beta_scalar,
                     iA, j) ;
                 #endif
                 pA++ ;
@@ -329,7 +329,7 @@
                 #if ( GB_ADD_PHASE == 2 )
                 GB_ISET (Ci, pC, iB) ;      // Ci [pC] = iB ;
                 // C (iB,j) = B (iB,j), or = alpha + B(iB,j) for eWiseUnion:
-                GB_ADD_ALPHA_PLUS_BIJ (Cx, pC, alpha_scalar, Bx, pB, B_iso,
+                GB_EWISE_ALPHA_OP_BIJ (Cx, pC, alpha_scalar, Bx, pB, B_iso,
                     iB, j) ;
                 #endif
                 pB++ ;
@@ -339,7 +339,7 @@
                 // C (i,j) = A (i,j) + B (i,j)
                 #if ( GB_ADD_PHASE == 2 )
                 GB_ISET (Ci, pC, iB) ;      // Ci [pC] = iB ;
-                GB_ADD_AIJ_PLUS_BIJ (Cx, pC, Ax, pA, A_iso, Bx, pB, B_iso,
+                GB_EWISE_AIJ_OP_BIJ (Cx, pC, Ax, pA, A_iso, Bx, pB, B_iso,
                     iB, j) ;
                 #endif
                 pA++ ;
@@ -367,7 +367,7 @@
             int64_t i = GB_IGET (Ai, pA+p) ;    // i = Ai [pA+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
             // C (i,j) = A (i,j), or A(i,j) + beta for eWiseUnion
-            GB_ADD_AIJ_PLUS_BETA (Cx, pC+p,
+            GB_EWISE_AIJ_OP_BETA (Cx, pC+p,
                 Ax, pA+p, A_iso, beta_scalar, i, j) ;
         }
         for (int64_t p = 0 ; p < bjnz ; p++)
@@ -375,7 +375,7 @@
             int64_t i = GB_IGET (Bi, pB+p) ;    // i = Bi [pB+p]
             GB_ISET (Ci, pC+p, i) ;             // Ci [pC+p] = i
             // C (i,j) = B (i,j), or = alpha + B(i,j) for eWiseUnion:
-            GB_ADD_ALPHA_PLUS_BIJ (Cx, pC+p,
+            GB_EWISE_ALPHA_OP_BIJ (Cx, pC+p,
                 alpha_scalar, Bx, pB+p, B_iso, i, j) ;
         }
         ASSERT (pC + ajnz + bjnz == pC_end) ;

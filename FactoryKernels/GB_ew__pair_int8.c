@@ -102,6 +102,7 @@ GrB_Info GB (_AaddB__pair_int8)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    #undef  GB_IS_EWISEUNION
     #define GB_IS_EWISEUNION 0
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;

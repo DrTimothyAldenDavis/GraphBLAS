@@ -31,20 +31,25 @@
                 int8_t b = GBb_B (Bb, p) ;
                 #ifndef GB_ISO_ADD
                 if (b)
-                {
-                    #if GB_IS_EWISEUNION
-                    { 
-                        // C (i,j) = alpha + B(i,j)
-                        GB_LOAD_B (bij, Bx, p, B_iso) ;
-                        GB_EWISEOP (Cx, p, alpha_scalar, bij,
-                            p % vlen, p / vlen) ;
-                    }
-                    #else
-                    { 
-                        // C (i,j) = B (i,j)
-                        GB_COPY_B_to_C (Cx, p, Bx, p, B_iso) ;
-                    }
-                    #endif
+                { 
+                    // C (i,j) = B (i,j), or alpha + B (i,j)
+                    GB_EWISE_ALPHA_OP_BIJ (Cx, p, alpha_scalar, Bx, p, B_iso,
+                        p % vlen, p / vlen) ;
+
+//                  #if GB_IS_EWISEUNION
+//                  {
+//                      // C (i,j) = alpha + B(i,j)
+//                      GB_LOAD_B (bij, Bx, p, B_iso) ;
+//                      GB_EWISEOP (Cx, p, alpha_scalar, bij,
+//                          p % vlen, p / vlen) ;
+//                  }
+//                  #else
+//                  {
+//                      // C (i,j) = B (i,j)
+//                      GB_COPY_B_to_C (Cx, p, Bx, p, B_iso) ;
+//                  }
+//                  #endif
+
                 }
                 #endif
                 Cb [p] = b ;
@@ -81,28 +86,37 @@
                 if (c == 1)
                 { 
                     // C (i,j) = A (i,j) + B (i,j)
-                    #ifndef GB_ISO_ADD
-                    GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                    GB_LOAD_B (bij, Bx, p , B_iso) ;
-                    GB_EWISEOP (Cx, p, aij, bij, i, j) ;
-                    #endif
+                    GB_EWISE_AIJ_OP_BIJ (Cx, p, Ax, pA, A_iso, Bx, p, B_iso,
+                        i, j) ;
+
+//                  #ifndef GB_ISO_ADD
+//                  GB_LOAD_A (aij, Ax, pA, A_iso) ;
+//                  GB_LOAD_B (bij, Bx, p , B_iso) ;
+//                  GB_EWISEOP (Cx, p, aij, bij, i, j) ;
+//                  #endif
+
                 }
                 else if (c == 0)
                 { 
-                    #ifndef GB_ISO_ADD
-                    #if GB_IS_EWISEUNION
-                    { 
-                        // C (i,j) = A(i,j) + beta
-                        GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                        GB_EWISEOP (Cx, p, aij, beta_scalar, i, j) ;
-                    }
-                    #else
-                    { 
-                        // C (i,j) = A (i,j)
-                        GB_COPY_A_to_C (Cx, p, Ax, pA, A_iso) ;
-                    }
-                    #endif
-                    #endif
+                    // C (i,j) = A (i,j), or A (i,j) + beta
+                    GB_EWISE_AIJ_OP_BETA (Cx, p, Ax, pA, A_iso, beta_scalar,
+                        i, j) ;
+
+//                  #ifndef GB_ISO_ADD
+//                  #if GB_IS_EWISEUNION
+//                  {
+//                      // C (i,j) = A(i,j) + beta
+//                      GB_LOAD_A (aij, Ax, pA, A_iso) ;
+//                      GB_EWISEOP (Cx, p, aij, beta_scalar, i, j) ;
+//                  }
+//                  #else
+//                  {
+//                      // C (i,j) = A (i,j)
+//                      GB_COPY_A_to_C (Cx, p, Ax, pA, A_iso) ;
+//                  }
+//                  #endif
+//                  #endif
+
                     Cb [p] = 1 ;
                     task_cnvals++ ;
                 }

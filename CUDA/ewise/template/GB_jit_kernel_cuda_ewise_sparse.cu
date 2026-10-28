@@ -390,9 +390,9 @@ __device__ __inline__ int safe_chunk_diag
         {
             int mid  = (lo + hi) >> 1 ;
             #if 0
-            kf ((Bj_s [mid] < jA) || (Bj_s [mid] == jA && Bi_s [mid] <= iA))
+            if ((Bj_s [mid] < jA) || (Bj_s [mid] == jA && Bi_s [mid] <= iA))
             {
-                lo = mid + 1;
+                lo = mid + 1 ;
             }
             else
             {
@@ -473,12 +473,16 @@ __global__ void GB_cuda_ewise_sparse_phase2
 
     // inputs derived from A and B
     const GB_Ap_TYPE *Ap = (GB_Ap_TYPE *) A->p ;
+    #if GB_A_IS_HYPER
     const GB_Aj_TYPE *Ah = (GB_Aj_TYPE *) A->h ;  // NULL if sparse
+    #endif
     const GB_Ai_TYPE *Ai = (GB_Ai_TYPE *) A->i ;
     const int64_t anvec1 = A->nvec - 1 ;
 
     const GB_Bp_TYPE *Bp = (GB_Bp_TYPE *) B->p ;
+    #if GB_B_IS_HYPER
     const GB_Bj_TYPE *Bh = (GB_Bj_TYPE *) B->h ;
+    #endif
     const GB_Bi_TYPE *Bi = (GB_Bi_TYPE *) B->i ;
     const int64_t bnvec1 = B->nvec - 1 ;
 
@@ -508,12 +512,13 @@ __global__ void GB_cuda_ewise_sparse_phase2
                 int64_t pB = diag - pivot - 1 ;
 
                 GB_Ai_TYPE iA = Ai [pivot] ;
-                int64_t kA = getk<GB_Ap_TYPE> (pivot, A_slice_kfirst, Ap, anvec1) ;
-                GB_Aj_TYPE jA = GB_A_IS_HYPER ? Ah [kA] : (GB_Aj_TYPE) kA ;
+                int64_t kA = getk<GB_Ap_TYPE> (pivot, A_slice_kfirst, Ap,
+                    anvec1) ;
+                GB_Aj_TYPE jA = GBh_A (Ah, kA) ;
 
                 GB_Bi_TYPE iB = Bi [pB] ;
                 int64_t kB = getk<GB_Bp_TYPE> (pB, B_slice_kfirst, Bp, bnvec1) ;
-                GB_Bj_TYPE jB = GB_B_IS_HYPER ? Bh [kB] : (GB_Bj_TYPE) kB ;
+                GB_Bj_TYPE jB = GBh_B (Bh, kB) ;
 
                 int64_t afirst = ((jA < jB) || (jA == jB && iA < iB)) ;
                 amin = (pivot + 1) * afirst + amin * (1 - afirst) ;
@@ -527,12 +532,14 @@ __global__ void GB_cuda_ewise_sparse_phase2
             if (astart < anz && bprior >= 0)
             {
                 GB_Ai_TYPE iA = Ai [astart] ;
-                int64_t kA = getk<GB_Ap_TYPE> (astart, A_slice_kfirst, Ap, anvec1) ;
-                GB_Aj_TYPE jA = GB_A_IS_HYPER ? Ah [kA] : (GB_Aj_TYPE) kA ;
+                int64_t kA = getk<GB_Ap_TYPE> (astart, A_slice_kfirst, Ap,
+                    anvec1) ;
+                GB_Aj_TYPE jA = GBh_A (Ah, kA) ;
 
                 GB_Bi_TYPE iB = Bi [bprior] ;
-                int64_t kB = getk<GB_Bp_TYPE> (bprior, B_slice_kfirst, Bp, bnvec1) ;
-                GB_Bj_TYPE jB = GB_B_IS_HYPER ? Bh [kB] : (GB_Bj_TYPE) kB ;
+                int64_t kB = getk<GB_Bp_TYPE> (bprior, B_slice_kfirst, Bp,
+                    bnvec1) ;
+                GB_Bj_TYPE jB = GBh_B (Bh, kB) ;
 
                 if (iA == iB && jA == jB) bstart-- ;
             }
@@ -655,12 +662,16 @@ __global__ void GB_cuda_ewise_sparse_phase3
 
     // inputs derived from A and B
     const GB_Ap_TYPE *Ap = (GB_Ap_TYPE *) A->p ;
+    #if GB_A_IS_HYPER
     const GB_Aj_TYPE *Ah = (GB_Aj_TYPE *) A->h ;  // NULL if sparse
+    #endif
     const GB_Ai_TYPE *Ai = (GB_Ai_TYPE *) A->i ;
     const int64_t anvec1 = A->nvec - 1 ;
 
     const GB_Bp_TYPE *Bp = (GB_Bp_TYPE *) B->p ;
+    #if GB_B_IS_HYPER
     const GB_Bj_TYPE *Bh = (GB_Bj_TYPE *) B->h ;
+    #endif
     const GB_Bi_TYPE *Bi = (GB_Bi_TYPE *) B->i ;
     const int64_t bnvec1 = B->nvec - 1 ;
 
@@ -714,7 +725,7 @@ __global__ void GB_cuda_ewise_sparse_phase3
                 Ai_s [kk] = Ai [p] ;
 
                 int64_t k = getk<GB_Ap_TYPE> (p, A_slice_kfirst, Ap, anvec1) ;
-                Aj_s [kk] = GB_A_IS_HYPER ? Ah [k] : (GB_Aj_TYPE) k ;
+                Aj_s [kk] = GBh_A (Ah, k) ;
             }
 
             // B: rows and columns
@@ -724,7 +735,7 @@ __global__ void GB_cuda_ewise_sparse_phase3
                 Bi_s [kk] = Bi [p] ;
 
                 int64_t k = getk<GB_Bp_TYPE> (p, B_slice_kfirst, Bp, bnvec1) ;
-                Bj_s [kk] = GB_B_IS_HYPER ? Bh [k] : (GB_Bj_TYPE) k ;
+                Bj_s [kk] = GBh_B (Bh, k) ;
             }
 
             // wait: all writers must finish before the merge reads
@@ -843,12 +854,16 @@ __global__ void GB_cuda_ewise_sparse_phase5
 
     // inputs derived from A and B
     const GB_Ap_TYPE *Ap = (GB_Ap_TYPE *) A->p ;
+    #if GB_A_IS_HYPER
     const GB_Aj_TYPE *Ah = (GB_Aj_TYPE *) A->h ;  // NULL if sparse
+    #endif
     const GB_Ai_TYPE *Ai = (GB_Ai_TYPE *) A->i ;
     const int64_t anvec1 = A->nvec - 1 ;
 
     const GB_Bp_TYPE *Bp = (GB_Bp_TYPE *) B->p ;
+    #if GB_B_IS_HYPER
     const GB_Bj_TYPE *Bh = (GB_Bj_TYPE *) B->h ;
+    #endif
     const GB_Bi_TYPE *Bi = (GB_Bi_TYPE *) B->i ;
     const int64_t bnvec1 = B->nvec - 1 ;
 
@@ -921,7 +936,7 @@ __global__ void GB_cuda_ewise_sparse_phase5
                 Ai_s [kk] = Ai [p] ;
 
                 int64_t k = getk<GB_Ap_TYPE> (p, A_slice_kfirst, Ap, anvec1) ;
-                Aj_s [kk] = GB_A_IS_HYPER ? Ah [k] : (GB_Aj_TYPE) k ;
+                Aj_s [kk] = GBh_A (Ah, k) ;
             }
 
             // B: rows and columns
@@ -931,7 +946,7 @@ __global__ void GB_cuda_ewise_sparse_phase5
                 Bi_s [kk] = Bi [p] ;
 
                 int64_t k = getk<GB_Bp_TYPE> (p, B_slice_kfirst, Bp, bnvec1) ;
-                Bj_s [kk] = GB_B_IS_HYPER ? Bh [k] : (GB_Bj_TYPE) k ;
+                Bj_s [kk] = GBh_B (Bh, k) ;
             }
 
             // wait: all writers must finish before the merge reads
@@ -1132,7 +1147,7 @@ __global__ void GB_cuda_ewise_sparse_phase5
             // get the indices of A (i,j)
             GB_Ai_TYPE iA = Ai [pA] ;
             int64_t k = getk<GB_Ap_TYPE> (pA, A_slice_kfirst, Ap, anvec1) ;
-            GB_Aj_TYPE jA = GB_A_IS_HYPER ? Ah [k] : (GB_Aj_TYPE) k ;
+            GB_Aj_TYPE jA = GBh_A (Ah, k) ;
             // cij = aij + beta for eWiseUnion; cij = aij for eWiseAdd
             // or C<!M>=A using the 1st_ctype operator
             Ci [pc] = iA ;
@@ -1154,7 +1169,7 @@ __global__ void GB_cuda_ewise_sparse_phase5
             // get the indices of B (i,j)
             GB_Bi_TYPE iB = Bi [pB] ;
             int64_t k = getk<GB_Bp_TYPE> (pB, B_slice_kfirst, Bp, bnvec1) ;
-            GB_Bj_TYPE jB = GB_B_IS_HYPER ? Bh [k] : (GB_Bj_TYPE) k ;
+            GB_Bj_TYPE jB = GBh_B (Bh, k) ;
             // cij = alpha + bij for eWiseUnion; cij = bij for eWiseAdd
             Ci [pc] = iB ;
             Cj [pc] = jB ;

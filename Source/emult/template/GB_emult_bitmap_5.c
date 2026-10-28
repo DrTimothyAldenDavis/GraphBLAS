@@ -33,7 +33,7 @@
         {
             if (GBb_A (Ab, p) && GBb_B (Bb,p))
             { 
-                // C (i,j) = A (i,j) + B (i,j)
+                // C (i,j) = A (i,j) .* B (i,j)
                 #ifndef GB_ISO_EMULT
                 GB_DECLAREA (aij) ;
                 GB_GETA (aij, Ax, p, A_iso) ;

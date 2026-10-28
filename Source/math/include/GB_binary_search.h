@@ -41,6 +41,7 @@ GB_STATIC_INLINE_BOTH void GB_trim_binary_search_32
             // binary search on the GPU
             int64_t pmiddle = (*pleft + *pright) >> 1 ;
             bool less = (X [pmiddle] < i) ;
+            // FIXME: remove ternary
             *pleft  = less ? (pmiddle+1) : *pleft ;
             *pright = less ? *pright : pmiddle ;
         #else

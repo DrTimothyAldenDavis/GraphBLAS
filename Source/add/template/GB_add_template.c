@@ -16,13 +16,14 @@
 // phase2: computes C, using the counts computed by phase1.
 
 // for eWiseUnion:
-//      #define GB_IS_EWISEUNION 1
-//      if A(i,j) is not present: C(i,j) = alpha + B(i,j)
-//      if B(i,j) is not present: C(i,j) = A(i,j) + beta
+// #define GB_IS_EWISEUNION 1
+// if A(i,j) is not present: C(i,j) = alpha + B(i,j)
+// if B(i,j) is not present: C(i,j) = A(i,j) + beta
+
 // for eWiseAdd:
-//      #define GB_IS_EWISEUNION 0
-//      if A(i,j) is not present: C(i,j) = B(i,j)
-//      if B(i,j) is not present: C(i,j) = A(i,j)
+// #define GB_IS_EWISEUNION 0
+// if A(i,j) is not present: C(i,j) = B(i,j)
+// if B(i,j) is not present: C(i,j) = A(i,j)
 
 {
 
@@ -140,16 +141,22 @@
     // C=A+B, C<M>=A+B, or C<!M>=A+B: 3 cases for the sparsity of C
     //--------------------------------------------------------------------------
 
+    #include "include/GB_ewise_shared_definitions.h"
+
     #if ( GB_ADD_PHASE == 1 )
 
+        //----------------------------------------------------------------------
         // phase1: symbolic phase
+        //----------------------------------------------------------------------
+
         // C is sparse or hypersparse (never bitmap or full)
         #include "template/GB_add_sparse_template.c"
 
     #else
 
+        //----------------------------------------------------------------------
         // phase2: numerical phase
-        #include "include/GB_add_shared_definitions.h"
+        //----------------------------------------------------------------------
 
         #ifdef GB_JIT_KERNEL
         {
@@ -190,13 +197,4 @@
 
     #endif
 }
-
-#undef GB_C_ISO
-#undef GB_ISO_ADD
-#undef GB_LOAD_A
-#undef GB_LOAD_B
-#undef GB_ADD_AIJ_PLUS_BETA
-#undef GB_ADD_ALPHA_PLUS_BIJ
-#undef GB_ADD_AIJ_PLUS_BIJ
-#undef GB_IS_EWISEUNION
 

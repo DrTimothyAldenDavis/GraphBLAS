@@ -2,7 +2,7 @@
 // GB_ewise_shared_definitions.h: common macros for ewise kernels
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -13,9 +13,6 @@
 // CUDA JIT kernels.
 
 #include "include/GB_kernel_shared_definitions.h"
-
-#ifndef GB_EWISE_SHARED_DEFINITIONS_H
-#define GB_EWISE_SHARED_DEFINITIONS_H
 
 // C(i,j) = op (aij,bij) ;
 #ifndef GB_EWISEOP
@@ -62,6 +59,10 @@
 #define GB_IS_EWISEUNION 0
 #endif
 
+//------------------------------------------------------------------------------
+// for CUDA kernels only
+//------------------------------------------------------------------------------
+
 // 1 if C=method(A,B) computes the set union (eWiseAdd, eWiseUnion)
 #ifndef GB_SET_UNION
 #define GB_SET_UNION 0
@@ -86,6 +87,9 @@
 // GB_LOAD_A and GB_LOAD_B: load a single entry of A(i,j) and B(i,j)
 //------------------------------------------------------------------------------
 
+#undef  GB_LOAD_A
+#undef  GB_LOAD_B
+
 #define GB_LOAD_A(aij, Ax,pA,A_iso) \
     GB_DECLAREA (aij) ;             \
     GB_GETA (aij, Ax,pA,A_iso)
@@ -102,6 +106,10 @@
 //------------------------------------------------------------------------------
 // GB_EWISE_*_OP_*: compute C(i,j) = A(i,j) + B(i,j), etc
 //------------------------------------------------------------------------------
+
+#undef GB_EWISE_AIJ_OP_BETA
+#undef GB_EWISE_ALPHA_OP_BIJ
+#undef GB_EWISE_AIJ_OP_BIJ
 
 #if GB_C_ISO
 
@@ -151,8 +159,6 @@
         }
 
     #endif
-
-#endif
 
 #endif
 

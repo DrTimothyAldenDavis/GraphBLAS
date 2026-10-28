@@ -195,8 +195,8 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // determine the OpenMP #pragma omp reduction(redop:z) for this monoid
     //--------------------------------------------------------------------------
 
-    // If not #define'd, omp/include/GB_monoid_shared_definitions.h defaults
-    // to no #pragma.  The pragma is empty if the monoid is terminal, since
+    // If not #define'd, monoid/include/GB_monoid_shared_definitions.h defaults
+    // GB_PRAGMA_SIMD_REDUCTION_MONOID as empty.  If the monoid is terminal,
     // the simd reduction does not work with a 'break' in the loop.
 
     bool is_complex = (zcode == GB_FC32_code || zcode == GB_FC64_code) ;

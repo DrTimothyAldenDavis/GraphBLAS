@@ -119,7 +119,7 @@
                 ASSERT (GBi_A (Ai, pA_offset + i, vlen) == i) ;
                 ASSERT (GBi_B (Bi, pM, vlen) == i) ;
                 // C (i,j) = A (i,j) + B (i,j)
-                GB_ADD_AIJ_PLUS_BIJ (Cx, pC, Ax, pA_offset+i, A_iso,
+                GB_EWISE_AIJ_OP_BIJ (Cx, pC, Ax, pA_offset+i, A_iso,
                     Bx, pM, B_iso, i, j) ;
             }
 
@@ -143,7 +143,7 @@
                 ASSERT (GBi_B (Bi, pB_offset + i, vlen) == i) ;
 
                 // C (i,j) = A (i,j) + B (i,j)
-                GB_ADD_AIJ_PLUS_BIJ (Cx, pC, Ax, pM, A_iso,
+                GB_EWISE_AIJ_OP_BIJ (Cx, pC, Ax, pM, A_iso,
                     Bx, pB_offset+i, B_iso, i, j) ;
             }
 
@@ -282,7 +282,7 @@
                 #else
                 GB_ISET (Ci, pC, i) ;       // Ci [pC] = i ;
                 // C (i,j) = A (i,j) + B (i,j)
-                GB_ADD_AIJ_PLUS_BIJ (Cx, pC, Ax, pA, A_iso, Bx, pB, B_iso,
+                GB_EWISE_AIJ_OP_BIJ (Cx, pC, Ax, pA, A_iso, Bx, pB, B_iso,
                     i, j) ;
                 pC++ ;
                 #endif
@@ -294,7 +294,7 @@
                 #else
                 GB_ISET (Ci, pC, i) ;       // Ci [pC] = i ;
                 // C (i,j) = A (i,j) or C (i,j) = A(i,j) + beta
-                GB_ADD_AIJ_PLUS_BETA (Cx, pC, Ax, pA, A_iso, beta_scalar,
+                GB_EWISE_AIJ_OP_BETA (Cx, pC, Ax, pA, A_iso, beta_scalar,
                     i, j) ;
                 pC++ ;
                 #endif
@@ -306,7 +306,7 @@
                 #else
                 GB_ISET (Ci, pC, i) ;       // Ci [pC] = i ;
                 // C (i,j) = B (i,j), or C (i,j) = alpha + B(i,j)
-                GB_ADD_ALPHA_PLUS_BIJ (Cx, pC, alpha_scalar, Bx, pB, B_iso,
+                GB_EWISE_ALPHA_OP_BIJ (Cx, pC, alpha_scalar, Bx, pB, B_iso,
                     i, j) ;
                 pC++ ;
                 #endif

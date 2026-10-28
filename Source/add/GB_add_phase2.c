@@ -372,8 +372,11 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         #undef  GB_C_ISO
         #define GB_C_ISO 1
         #define GB_ISO_ADD
+        #undef  GB_IS_EWISEUNION
         #define GB_IS_EWISEUNION 0
         #include "add/template/GB_add_template.c"
+        #undef  GB_C_ISO
+        #undef  GB_ISO_ADD
         info = GrB_SUCCESS ;
 
     }
@@ -559,11 +562,13 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                     fadd_idx (z, aij, i, j, bij, i, j, theta) ;
                 if (is_eWiseUnion)
                 { 
+                    #undef  GB_IS_EWISEUNION
                     #define GB_IS_EWISEUNION 1
                     #include "add/template/GB_add_template.c"
                 }
                 else
                 { 
+                    #undef  GB_IS_EWISEUNION
                     #define GB_IS_EWISEUNION 0
                     #include "add/template/GB_add_template.c"
                 }
@@ -575,11 +580,13 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                     fadd_idx (z, aij, i, j, bij, i, j, theta) ;
                 if (is_eWiseUnion)
                 { 
+                    #undef  GB_IS_EWISEUNION
                     #define GB_IS_EWISEUNION 1
                     #include "add/template/GB_add_template.c"
                 }
                 else
                 { 
+                    #undef  GB_IS_EWISEUNION
                     #define GB_IS_EWISEUNION 0
                     #include "add/template/GB_add_template.c"
                 }
@@ -615,11 +622,13 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
             if (is_eWiseUnion)
             { 
+                #undef  GB_IS_EWISEUNION
                 #define GB_IS_EWISEUNION 1
                 #include "add/template/GB_add_template.c"
             }
             else
             { 
+                #undef  GB_IS_EWISEUNION
                 #define GB_IS_EWISEUNION 0
                 #include "add/template/GB_add_template.c"
             }

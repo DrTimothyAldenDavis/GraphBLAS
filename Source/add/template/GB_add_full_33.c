@@ -19,24 +19,33 @@
         if (Ab [p])
         { 
             // C (i,j) = A (i,j) + B (i,j)
-            GB_LOAD_A (aij, Ax, p, A_iso) ;
-            GB_LOAD_B (bij, Bx, p, B_iso) ;
-            GB_EWISEOP (Cx, p, aij, bij, p % vlen, p / vlen) ;
+            GB_EWISE_AIJ_OP_BIJ (Cx, p, Ax, p, A_iso, Bx, p, B_iso,
+                p % vlen, p / vlen) ;
+
+//          GB_LOAD_A (aij, Ax, p, A_iso) ;
+//          GB_LOAD_B (bij, Bx, p, B_iso) ;
+//          GB_EWISEOP (Cx, p, aij, bij, p % vlen, p / vlen) ;
+
         }
         else
         {
-            #if GB_IS_EWISEUNION
-            { 
-                // C (i,j) = alpha + B(i,j)
-                GB_LOAD_B (bij, Bx, p, B_iso) ;
-                GB_EWISEOP (Cx, p, alpha_scalar, bij, p % vlen, p / vlen) ;
-            }
-            #else
-            { 
-                // C (i,j) = B (i,j)
-                GB_COPY_B_to_C (Cx, p, Bx, p, B_iso) ;
-            }
-            #endif
+            // C (i,j) = B (i,j), or alpha + B (i,j)
+            GB_EWISE_ALPHA_OP_BIJ (Cx, p, alpha_scalar, Bx, p, B_iso,
+                p % vlen, p / vlen) ;
+
+//          #if GB_IS_EWISEUNION
+//          { 
+//              // C (i,j) = alpha + B(i,j)
+//              GB_LOAD_B (bij, Bx, p, B_iso) ;
+//              GB_EWISEOP (Cx, p, alpha_scalar, bij, p % vlen, p / vlen) ;
+//          }
+//          #else
+//          { 
+//              // C (i,j) = B (i,j)
+//              GB_COPY_B_to_C (Cx, p, Bx, p, B_iso) ;
+//          }
+//          #endif
+
         }
     }
 }
