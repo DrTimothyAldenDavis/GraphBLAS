@@ -41,13 +41,6 @@
     { 
         // C (i,j) = A (i,j) + B (i,j)
         GB_EWISE_AIJ_OP_BIJ (Cx, p, Ax, p, false, Bx, p, false, 0, 0) ;
-
-//      GB_DECLAREA (aij) ;
-//      GB_GETA (aij, Ax, p, false) ;               // aij = Ax [p]
-//      GB_DECLAREB (bij) ;
-//      GB_GETB (bij, Bx, p, false) ;               // bij = Bx [p]
-//      GB_EWISEOP (Cx, p, aij, bij, 0, 0) ;        // Cx [p] = aij + bij
-
     }
 }
 

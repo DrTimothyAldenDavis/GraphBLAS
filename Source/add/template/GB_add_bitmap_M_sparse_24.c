@@ -40,9 +40,6 @@
                     // C (i,j) = A (i,j) + B (i,j)
                     GB_EWISE_AIJ_OP_BIJ (Cx, p, Ax, p, A_iso, Bx, p, B_iso,
                         p % vlen, p / vlen) ;
-//                  GB_LOAD_A (aij, Ax, p, A_iso) ;
-//                  GB_LOAD_B (bij, Bx, p, B_iso) ;
-//                  GB_EWISEOP (Cx, p, aij, bij, p % vlen, p / vlen) ;
                     c = 1 ;
                 }
                 else if (b)
@@ -50,21 +47,6 @@
                     // C (i,j) = B (i,j), or alpha + B(i,j)
                     GB_EWISE_ALPHA_OP_BIJ (Cx, p, alpha_scalar, Bx, p, B_iso,
                         p % vlen, p / vlen) ;
-
-//                  #if GB_IS_EWISEUNION
-//                  { 
-//                      // C (i,j) = alpha + B(i,j)
-//                      GB_LOAD_B (bij, Bx, p, B_iso) ;
-//                      GB_EWISEOP (Cx, p, alpha_scalar, bij,
-//                          p % vlen, p / vlen) ;
-//                  }
-//                  #else
-//                  { 
-//                      // C (i,j) = B (i,j)
-//                      GB_COPY_B_to_C (Cx, p, Bx, p, B_iso) ;
-//                  }
-//                  #endif
-
                     c = 1 ;
                 }
                 else if (a)
@@ -72,21 +54,6 @@
                     // C (i,j) = A (i,j), or A (i,j) + beta
                     GB_EWISE_AIJ_OP_BETA (Cx, p, Ax, p, A_iso, beta_scalar,
                         p % vlen, p / vlen) ;
-
-//                  #if GB_IS_EWISEUNION
-//                  { 
-//                      // C (i,j) = A(i,j) + beta
-//                      GB_LOAD_A (aij, Ax, p, A_iso) ;
-//                      GB_EWISEOP (Cx, p, aij, beta_scalar,
-//                          p % vlen, p / vlen) ;
-//                  }
-//                  #else
-//                  { 
-//                      // C (i,j) = A (i,j)
-//                      GB_COPY_A_to_C (Cx, p, Ax, p, A_iso) ;
-//                  }
-//                  #endif
-
                     c = 1 ;
                 }
                 #endif

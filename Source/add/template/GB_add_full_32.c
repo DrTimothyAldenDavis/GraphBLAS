@@ -19,20 +19,6 @@
         // C (i,j) = A (i,j) or A (i,j) + beta
         GB_EWISE_AIJ_OP_BETA (Cx, p, Ax, p, A_iso, beta_scalar,
             p % vlen, p / vlen) ;
-
-//      #if GB_IS_EWISEUNION
-//      {
-//          // C (i,j) = A(i,j) + beta
-//          GB_LOAD_A (aij, Ax, p, A_iso) ;
-//          GB_EWISEOP (Cx, p, aij, beta_scalar, p % vlen, p / vlen) ;
-//      }
-//      #else
-//      {
-//          // C (i,j) = A (i,j)
-//          GB_COPY_A_to_C (Cx, p, Ax, p, A_iso) ;
-//      }
-//      #endif
-
     }
 
     const int64_t *kfirst_Bslice = B_ek_slicing ;
@@ -58,9 +44,6 @@
                 int64_t i = GB_IGET (Bi, pB) ;
                 int64_t p = pC_start + i ;
                 GB_EWISE_AIJ_OP_BIJ (Cx, p, Ax, p, A_iso, Bx, pB, B_iso, i, j) ;
-//              GB_LOAD_A (aij, Ax, p , A_iso) ;
-//              GB_LOAD_B (bij, Bx, pB, B_iso) ;
-//              GB_EWISEOP (Cx, p, aij, bij, i, j) ;
             }
         }
     }

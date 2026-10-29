@@ -19,9 +19,6 @@
         // C (i,j) = A (i,j) + B (i,j)
         GB_EWISE_AIJ_OP_BIJ (Cx, p, Ax, p, A_iso, Bx, p, B_iso,
             p % vlen, p / vlen) ;
-//      GB_LOAD_A (aij, Ax, p, A_iso) ;
-//      GB_LOAD_B (bij, Bx, p, B_iso) ;
-//      GB_EWISEOP (Cx, p, aij, bij, p % vlen, p / vlen) ;
     }
 }
 

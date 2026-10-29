@@ -89,13 +89,6 @@
                     GB_ISET (Ci, pC, i) ;   // Ci [pC] = i
                     GB_EWISE_AIJ_OP_BIJ (Cx, pC, Ax, p, A_iso, Bx, p, B_iso,
                         i, j) ;
-//                  #ifndef GB_ISO_EMULT
-//                  GB_DECLAREA (aij) ;
-//                  GB_GETA (aij, Ax, p, A_iso) ;
-//                  GB_DECLAREB (bij) ;
-//                  GB_GETB (bij, Bx, p, B_iso) ;
-//                  GB_EWISEOP (Cx, pC, aij, bij, i, j) ;
-//                  #endif
                     pC++ ;
                 }
             }

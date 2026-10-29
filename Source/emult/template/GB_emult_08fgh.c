@@ -63,15 +63,6 @@
                     GB_ISET (Ci, pC, i) ;       // Ci [pC] = i ;
                     GB_EWISE_AIJ_OP_BIJ (Cx, pC, Ax, pA, A_iso, Bx, pB, B_iso,
                         i, j) ;
-
-//                  #ifndef GB_ISO_EMULT
-//                  GB_DECLAREA (aij) ;
-//                  GB_GETA (aij, Ax, pA, A_iso) ;
-//                  GB_DECLAREB (bij) ;
-//                  GB_GETB (bij, Bx, pB, B_iso) ;
-//                  GB_EWISEOP (Cx, pC, aij, bij, i, j) ;
-//                  #endif
-
                     pC++ ;
                     #endif
                 }
@@ -113,15 +104,6 @@
                     GB_ISET (Ci, pC, i) ;       // Ci [pC] = i ;
                     GB_EWISE_AIJ_OP_BIJ (Cx, pC, Ax, pA, A_iso, Bx, pB, B_iso,
                         i, j) ;
-
-//                  #ifndef GB_ISO_EMULT
-//                  GB_DECLAREA (aij) ;
-//                  GB_GETA (aij, Ax, pA, A_iso) ;
-//                  GB_DECLAREB (bij) ;
-//                  GB_GETB (bij, Bx, pB, B_iso) ;
-//                  GB_EWISEOP (Cx, pC, aij, bij, i, j) ;
-//                  #endif
-
                     pC++ ;
                     #endif
                 }
@@ -174,15 +156,6 @@
                     GB_ISET (Ci, pC, i) ;       // Ci [pC] = i ;
                     GB_EWISE_AIJ_OP_BIJ (Cx, pC, Ax, pA, A_iso, Bx, pB, B_iso,
                         iB, j) ;
-
-//                  #ifndef GB_ISO_EMULT
-//                  GB_DECLAREA (aij) ;
-//                  GB_GETA (aij, Ax, pA, A_iso) ;
-//                  GB_DECLAREB (bij) ;
-//                  GB_GETB (bij, Bx, pB, B_iso) ;
-//                  GB_EWISEOP (Cx, pC, aij, bij, iB, j) ;
-//                  #endif
-
                     pC++ ;
                     #endif
                 }
