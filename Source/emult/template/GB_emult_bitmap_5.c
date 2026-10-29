@@ -34,13 +34,17 @@
             if (GBb_A (Ab, p) && GBb_B (Bb,p))
             { 
                 // C (i,j) = A (i,j) .* B (i,j)
-                #ifndef GB_ISO_EMULT
-                GB_DECLAREA (aij) ;
-                GB_GETA (aij, Ax, p, A_iso) ;
-                GB_DECLAREB (bij) ;
-                GB_GETB (bij, Bx, p, B_iso) ;
-                GB_EWISEOP (Cx, p, aij, bij, p % vlen, p / vlen) ;
-                #endif
+                GB_EWISE_AIJ_OP_BIJ (Cx, p, Ax, p, A_iso, Bx, p, B_iso,
+                    p % vlen, p / vlen) ;
+
+//              #ifndef GB_ISO_EMULT
+//              GB_DECLAREA (aij) ;
+//              GB_GETA (aij, Ax, p, A_iso) ;
+//              GB_DECLAREB (bij) ;
+//              GB_GETB (bij, Bx, p, B_iso) ;
+//              GB_EWISEOP (Cx, p, aij, bij, p % vlen, p / vlen) ;
+//              #endif
+
                 Cb [p] = 1 ;
                 task_cnvals++ ;
             }

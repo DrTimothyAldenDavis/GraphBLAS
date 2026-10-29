@@ -81,15 +81,17 @@ GrB_Info GB_ewise_fulln      // C = A+B
     // clear prior content and create C as a full matrix.  Keep the same type
     // and CSR/CSC for C.  Allocate the values of C but do not initialize them.
 
-    if (!GB_as_if_full (C))
+    if (!GB_as_if_full (C) || C->iso)
     { 
         // free the content of C and reallocate it as a non-iso full matrix
         ASSERT (C != A && C != B) ;
         GB_phybix_free (C) ;
         GB_OK (GB_new_bix (&C,  // existing header
             C->type, C->vlen, C->vdim, GB_ph_null, C->is_csc, GxB_FULL, false,
-            C->hyper_switch, -1, GB_nnz_full (C), true, false,
-            /* OK: */ false, false, false, header_arena, data_arena)) ;
+            C->hyper_switch, -1, GB_nnz_full (C), /* numeric: */ true,
+            /* iso: */ false,
+            /* pji_is_32: */ false, false, false,
+            header_arena, data_arena)) ;
         C->magic = GB_MAGIC ;
     }
     else if (!GB_IS_FULL (C))
@@ -98,6 +100,7 @@ GrB_Info GB_ewise_fulln      // C = A+B
         GB_convert_any_to_full (C) ;
     }
     ASSERT (GB_IS_FULL (C)) ;
+    ASSERT (!C->iso) ;
 
     //--------------------------------------------------------------------------
     // via the factory kernel

@@ -7,7 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// No matrix is iso.  This template is not used for any generic kernels.
+// No matrix is iso.  This template is not used for any generic kernels, and
+// the operator is not an index binary op.
+
+#include "include/GB_ewise_shared_definitions.h"
 
 {
 

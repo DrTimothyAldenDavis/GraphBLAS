@@ -10,6 +10,8 @@
 // C is sparse, with the same sparsity structure as M.
 // A and B are both bitmap/full.
 
+#include "include/GB_ewise_shared_definitions.h"
+
 {
 
     //--------------------------------------------------------------------------
@@ -27,7 +29,7 @@
     const bool B_iso = B->iso ;
     #endif
 
-    #ifdef GB_ISO_EMULT
+    #if GB_C_ISO
     ASSERT (C->iso) ;
     #else
     ASSERT (!C->iso) ;
@@ -85,13 +87,15 @@
                     int64_t p = pstart + i ;
                     // C (i,j) = A (i,j) .* B (i,j)
                     GB_ISET (Ci, pC, i) ;   // Ci [pC] = i
-                    #ifndef GB_ISO_EMULT
-                    GB_DECLAREA (aij) ;
-                    GB_GETA (aij, Ax, p, A_iso) ;
-                    GB_DECLAREB (bij) ;
-                    GB_GETB (bij, Bx, p, B_iso) ;
-                    GB_EWISEOP (Cx, pC, aij, bij, i, j) ;
-                    #endif
+                    GB_EWISE_AIJ_OP_BIJ (Cx, pC, Ax, p, A_iso, Bx, p, B_iso,
+                        i, j) ;
+//                  #ifndef GB_ISO_EMULT
+//                  GB_DECLAREA (aij) ;
+//                  GB_GETA (aij, Ax, p, A_iso) ;
+//                  GB_DECLAREB (bij) ;
+//                  GB_GETB (bij, Bx, p, B_iso) ;
+//                  GB_EWISEOP (Cx, pC, aij, bij, i, j) ;
+//                  #endif
                     pC++ ;
                 }
             }

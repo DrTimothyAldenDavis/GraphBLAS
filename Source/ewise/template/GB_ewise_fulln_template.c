@@ -7,7 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-//  This template is not used for any generic kernels.
+// No matrix is iso.  This template is not used for any generic kernels, and
+// the operator is not an index binary op.
+
+#include "include/GB_ewise_shared_definitions.h"
 
 {
 
@@ -36,11 +39,15 @@
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (p = 0 ; p < cnz ; p++)
     { 
-        GB_DECLAREA (aij) ;
-        GB_GETA (aij, Ax, p, false) ;               // aij = Ax [p]
-        GB_DECLAREB (bij) ;
-        GB_GETB (bij, Bx, p, false) ;               // bij = Bx [p]
-        GB_EWISEOP (Cx, p, aij, bij, 0, 0) ;        // Cx [p] = aij + bij
+        // C (i,j) = A (i,j) + B (i,j)
+        GB_EWISE_AIJ_OP_BIJ (Cx, p, Ax, p, false, Bx, p, false, 0, 0) ;
+
+//      GB_DECLAREA (aij) ;
+//      GB_GETA (aij, Ax, p, false) ;               // aij = Ax [p]
+//      GB_DECLAREB (bij) ;
+//      GB_GETB (bij, Bx, p, false) ;               // bij = Bx [p]
+//      GB_EWISEOP (Cx, p, aij, bij, 0, 0) ;        // Cx [p] = aij + bij
+
     }
 }
 

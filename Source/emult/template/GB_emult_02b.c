@@ -34,13 +34,16 @@
                 int64_t i = GB_IGET (Ai, pA) ;
                 int64_t pB = pB_start + i ;
                 // Ci [pA] = i ; already defined
-                #ifndef GB_ISO_EMULT
-                GB_DECLAREA (aij) ;
-                GB_GETA (aij, Ax, pA, A_iso) ;
-                GB_DECLAREB (bij) ;
-                GB_GETB (bij, Bx, pB, B_iso) ;
-                GB_EWISEOP (Cx, pA, aij, bij, i, j) ;
-                #endif
+                GB_EWISE_AIJ_OP_BIJ (Cx, pA, Ax, pA, A_iso, Bx, pB, B_iso,
+                    i, j) ;
+
+//              #ifndef GB_ISO_EMULT
+//              GB_DECLAREA (aij) ;
+//              GB_GETA (aij, Ax, pA, A_iso) ;
+//              GB_DECLAREB (bij) ;
+//              GB_GETB (bij, Bx, pB, B_iso) ;
+//              GB_EWISEOP (Cx, pA, aij, bij, i, j) ;
+//              #endif
             }
         }
     }

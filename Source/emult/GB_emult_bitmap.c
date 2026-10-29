@@ -215,7 +215,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         memcpy (C->x, cscalar, csize) ;
 
         // pattern of C = set intersection of pattern of A and B
-        #define GB_ISO_EMULT
+        #define GB_C_ISO 1
         #include "emult/template/GB_emult_bitmap_template.c"
         info = GrB_SUCCESS ;
 

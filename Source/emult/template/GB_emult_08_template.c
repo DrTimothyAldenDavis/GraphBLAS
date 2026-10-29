@@ -50,6 +50,8 @@
 // "M later" means that C<!M>=A.*B is being computed, but the mask is not
 // handled here; insteadl T=A.*B is computed and C<!M>=T is done later.
 
+#include "include/GB_ewise_shared_definitions.h"
+
 {
 
     // iB_first is unused if the operator is FIRST or PAIR
@@ -141,7 +143,8 @@
     const bool A_iso = A->iso ;
     const bool B_iso = B->iso ;
     #endif
-    #ifdef GB_ISO_EMULT
+
+    #if GB_C_ISO
     ASSERT (C->iso) ;
     #else
     ASSERT (!C->iso) ;
@@ -150,6 +153,7 @@
     const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
+
     GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;
     GB_Ch_DECLARE (Ch, const) ; GB_Ch_PTR (Ch, C) ;
     GB_Ci_DECLARE (Ci,      ) ; GB_Ci_PTR (Ci, C) ;

@@ -90,6 +90,7 @@
 #undef  GB_LOAD_A
 #undef  GB_LOAD_B
 
+// aij = Ax [A_iso ? 0 : pA], with typecasting if needed
 #define GB_LOAD_A(aij, Ax,pA,A_iso) \
     GB_DECLAREA (aij) ;             \
     GB_GETA (aij, Ax,pA,A_iso)
@@ -98,6 +99,7 @@
     // the values B are not used; it is the structural mask matrix M
     #define GB_LOAD_B(bij, Bx,pB,B_iso)
 #else
+    // bij = Bx [B_iso ? 0 : pB], with typecasting if needed
     #define GB_LOAD_B(bij, Bx,pB,B_iso) \
         GB_DECLAREB (bij) ;             \
         GB_GETB (bij, Bx,pB,B_iso)
@@ -106,6 +108,13 @@
 //------------------------------------------------------------------------------
 // GB_EWISE_*_OP_*: compute C(i,j) = A(i,j) + B(i,j), etc
 //------------------------------------------------------------------------------
+
+// C(i,j) is Cx [pC].
+// A(i,j) is Ax [A_iso ? 0 : pA].
+// B(i,j) is Bx [B_iso ? 0 : pB].
+// alpha and beta are plain C scalars, or void * pointers for the generic
+// kernel for user-defined types.  The indices i and j are used for index
+// binary operators.
 
 #undef GB_EWISE_AIJ_OP_BETA
 #undef GB_EWISE_ALPHA_OP_BIJ
@@ -148,13 +157,13 @@
 
         #define GB_EWISE_AIJ_OP_BETA(Cx,pC,Ax,pA,A_iso,beta,i,j)    \
         {                                                           \
-            /* C (i,j) = A (i,j) */                                 \
+            /* C (i,j) = A (i,j), with typecasting as needed */     \
             GB_COPY_A_to_C (Cx, pC, Ax, pA, A_iso) ;                \
         }
 
         #define GB_EWISE_ALPHA_OP_BIJ(Cx,pC,alpha,Bx,pB,B_iso,i,j)  \
         {                                                           \
-            /* C (i,j) = B (i,j) */                                 \
+            /* C (i,j) = B (i,j), with typecasting as needed */     \
             GB_COPY_B_to_C (Cx, pC, Bx, pB, B_iso) ;                \
         }
 

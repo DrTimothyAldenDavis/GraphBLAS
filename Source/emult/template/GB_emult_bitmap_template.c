@@ -9,6 +9,8 @@
 
 // C is bitmap.  A and B are bitmap or full.  M depends on the method
 
+#include "include/GB_ewise_shared_definitions.h"
+
 {
 
     //--------------------------------------------------------------------------
@@ -33,7 +35,7 @@
     int8_t *restrict Cb = C->b ;
     GB_C_NHELD (cnz) ;      // const int64_t cnz = GB_nnz_held (C) ;
 
-    #ifdef GB_ISO_EMULT
+    #if GB_C_ISO
     ASSERT (C->iso) ;
     #else
     ASSERT (!C->iso) ;

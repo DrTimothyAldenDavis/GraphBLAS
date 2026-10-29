@@ -10,6 +10,8 @@
 // C is sparse, with the same sparsity structure as B.  No mask is present, or
 // M is bitmap/full.  A is bitmap/full, and B is sparse/hyper.
 
+#include "include/GB_ewise_shared_definitions.h"
+
 {
 
     //--------------------------------------------------------------------------
@@ -35,7 +37,7 @@
     const bool B_iso = B->iso ;
     #endif
 
-    #ifdef GB_ISO_EMULT
+    #if GB_C_ISO
     ASSERT (C->iso) ;
     #else
     ASSERT (!C->iso) ;

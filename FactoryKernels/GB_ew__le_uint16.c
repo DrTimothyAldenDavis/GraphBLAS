@@ -200,15 +200,10 @@ GrB_Info GB (_AunionB__le_uint16)
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
     #include "add/template/GB_add_template.c"
+    #undef  GB_IS_EWISEUNION
     return (GrB_SUCCESS) ;
     #endif
 }
-
-// re-include GB_ewise_shared_definitions.h for the rest of this file, since
-// GB_add_template.c has modified them.
-#undef  GB_IS_EWISEUNION
-#define GB_IS_EWISEUNION 0
-#include "ewise/include/GB_ewise_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // eWiseMult: C=A.*B, C<M>=A.*B, or C<M!>=A.*B where C is sparse/hyper

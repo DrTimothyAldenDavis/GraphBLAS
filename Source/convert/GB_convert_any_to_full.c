@@ -58,7 +58,6 @@ void GB_convert_any_to_full     // convert any matrix to full
 
     A->plen = -1 ;
     A->nvec = avdim ;
-//  A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;
     GB_nvec_nonempty_set (A, (avlen == 0) ? 0 : avdim) ;
 
     A->magic = GB_MAGIC ;
