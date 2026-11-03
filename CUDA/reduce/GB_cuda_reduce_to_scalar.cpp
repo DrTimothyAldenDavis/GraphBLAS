@@ -86,6 +86,7 @@ GrB_Info GB_cuda_reduce_to_scalar
     int64_t raw_gridsz = GB_ICEIL (anvals, GB_CUDA_REDUCE_CHUNKSIZE) ;
     raw_gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     int gridsz = (int) raw_gridsz ;
+    gridsz = std::max (gridsz, 1) ;
 
     uint64_t rcode ;
     GB_enumify_reduce (&rcode, monoid, A) ;

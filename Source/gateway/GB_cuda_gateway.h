@@ -390,6 +390,9 @@ GrB_Info GB_cuda_emult
     // inputs:
     const GrB_Type ctype,       // type of C
     const bool C_is_csc,        // true if C is held by column, false if by row
+    const GrB_Matrix M,         // input mask matrix
+    const bool Mask_struct,     // if true, mask is structural
+    const bool Mask_comp,       // if true, mask is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
     const GrB_BinaryOp op,      // operator that defines C=A+B

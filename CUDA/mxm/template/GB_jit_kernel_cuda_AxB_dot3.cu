@@ -278,6 +278,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
             work_per_thread = 64 ;
         }
         int gridsz = GB_ICEIL (mnz, work_per_thread*blocksz) ;
+        gridsz = std::max (gridsz, 1) ;
         dim3 grid_2dn (gridsz) ;
 
         // kernel_timer.Start();
@@ -501,6 +502,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                             gridsz = GB_ICEIL (cnz_in_bucket,
                                 work_per_thread*blocksz) ;
                             gridsz = GB_IMIN (gridsz, 256*number_of_sms) ;
+                            gridsz = std::max (gridsz, 1) ;
                             dim3 grid_vsvs (gridsz) ;
                             dim3 block_for_vsvs (blocksz) ;
                             GB_cuda_AxB_dot3_phase3_vsvs_kernel
@@ -530,6 +532,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                                 gridsz = number_of_sms ;
                             }
                             gridsz = GB_IMIN (gridsz, 256*number_of_sms) ;
+                            gridsz = std::max (gridsz, 1) ;
                             dim3 grid_mp (gridsz) ;
                             // each thread block creates Ai_s and Bi_s; each
                             // are integer arrays of size shared_vector_size
@@ -562,6 +565,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                                 gridsz = number_of_sms ;
                             }
                             gridsz = GB_IMIN (gridsz, 256*number_of_sms) ;
+                            gridsz = std::max (gridsz, 1) ;
                             dim3 grid_3 (gridsz) ;
                             GB_cuda_AxB_dot3_phase3_vssp_kernel
                                 <<<grid_3, block_1, 0, stream>>>
@@ -594,6 +598,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                             gridsz = GB_ICEIL (cnz_in_bucket,
                                 work_per_thread*blocksz) ;
                             gridsz = GB_IMIN (gridsz, 256*number_of_sms) ;
+                            gridsz = std::max (gridsz, 1) ;
                             dim3 grid_3 (gridsz) ;
                             dim3 block_for_vsdn (blocksz) ;
                             GB_cuda_AxB_dot3_phase3_vsdn_kernel
@@ -627,6 +632,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                                 gridsz = number_of_sms ;
                             }
                             gridsz = GB_IMIN (gridsz, 256*number_of_sms) ;
+                            gridsz = std::max (gridsz, 1) ;
                             dim3 grid_3 (gridsz) ;
                             GB_cuda_AxB_dot3_phase3_spdn_kernel
                                 <<<grid_3, block_1, 0, stream>>>

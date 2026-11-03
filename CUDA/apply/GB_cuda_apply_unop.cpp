@@ -65,6 +65,7 @@ GrB_Info GB_cuda_apply_unop
     int64_t raw_gridsz = GB_ICEIL (anz, GB_CUDA_APPLY_CHUNKSIZE) ;
     // cap #of blocks to 256 * #of sms
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
+    gridsz = std::max (gridsz, 1) ;
 
     GBURBLE ("(cuda apply unop, device %d, sms: %d, gridsz: %d) ",
         device, number_of_sms, gridsz) ;

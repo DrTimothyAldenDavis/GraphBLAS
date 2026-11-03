@@ -13,9 +13,9 @@
     GB_FREE_MEMORY (&alpha_scalar, alpha_scalar_mem) ;      \
     GB_FREE_MEMORY (&beta_scalar , beta_scalar_mem ) ;      \
     GB_FREE_MEMORY (&theta, theta_mem) ;                    \
-    GB_cuda_stream_pool_release (&stream) ;                 \
     GB_Matrix_free (&A2) ;                                  \
     GB_Matrix_free (&B2) ;                                  \
+    GB_cuda_stream_pool_release (&stream) ;                 \
 }
 
 #undef  GB_FREE_ALL
@@ -81,9 +81,9 @@ GrB_Info GB_cuda_add
     if (is_eWiseUnion)
     {
         alpha_scalar = (GB_void *) GB_MALLOC_MEMORY (1, op->xtype->size,
-            &alpha_scalar_mem);
+            &alpha_scalar_mem) ;
         beta_scalar  = (GB_void *) GB_MALLOC_MEMORY (1, op->ytype->size,
-            &beta_scalar_mem );
+            &beta_scalar_mem ) ;
         if (alpha_scalar == NULL || beta_scalar == NULL)
         {
             GB_FREE_ALL ;
@@ -114,7 +114,7 @@ GrB_Info GB_cuda_add
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        memcpy (theta, op->theta, op->theta_type->size ) ;
+        memcpy (theta, op->theta, op->theta_type->size) ;
     }
 
     //--------------------------------------------------------------------------
@@ -132,7 +132,7 @@ GrB_Info GB_cuda_add
 
     uint64_t anz = GB_nnz_held (A) ;
     uint64_t bnz = GB_nnz_held (B) ;
-    uint64_t cnz = anz+bnz ;            // upper bound
+    uint64_t cnz = GB_IMAX (anz+bnz, 1) ;       // upper bound of nvals (C)
 
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
@@ -154,6 +154,7 @@ GrB_Info GB_cuda_add
     int64_t raw_gridsz = GB_ICEIL (cnz, GB_CUDA_ADD_CHUNKSIZE0) ;
     // cap #of blocks to 256 * #of sms
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
+    gridsz = std::max (gridsz, 1) ;
 
     GBURBLE ("(cuda add, device %d, sms: %d, gridsz: %d) ",
         device, number_of_sms, gridsz) ;
@@ -177,6 +178,9 @@ GrB_Info GB_cuda_add
         // C<M> = A+B or C<!M> = A+B
         //----------------------------------------------------------------------
 
+        // FIXME: add an option for computing T = A+B ; C<M> = T, instead,
+        // depending on nvals of A, B and M
+
         GBURBLE ("(cuda masked add, Mask comp: %d) ", Mask_comp) ;
 
         GB_OK (GB_new (&A2, // hyper, new header
@@ -190,7 +194,7 @@ GrB_Info GB_cuda_add
             B->p_is_32, B->j_is_32, B->i_is_32, data_arena, data_arena)) ;
 
         // A2 <#M> = A
-        printf ("\nCUDA A2<%dM>=A:\n", Mask_comp) ;
+//      printf ("\nCUDA A2<%dM>=A:\n", Mask_comp) ;
         struct GB_BinaryOp_opaque op_header ;
         GrB_BinaryOp first = GB_binop_first (A->type, &op_header) ;
         ASSERT_BINARYOP_OK (first, "first_atype for A2<*M>=A", GB0) ;
@@ -202,7 +206,7 @@ GrB_Info GB_cuda_add
 //      ASSERT_MATRIX_OK (A2, "A2 output from masking", GB0) ;
 
         // B2 <#M> = A
-        printf ("\nCUDA B2<%dM>=B:\n", Mask_comp) ;
+//      printf ("\nCUDA B2<%dM>=B:\n", Mask_comp) ;
         first = GB_binop_first (B->type, &op_header) ;
         ASSERT_BINARYOP_OK (first, "first_btype for B2<*M>=B", GB0) ;
         GB_OK (GB_cuda_mask_assign_jit (B2, B, M, Mask_struct, Mask_comp,
@@ -213,11 +217,11 @@ GrB_Info GB_cuda_add
 //      ASSERT_MATRIX_OK (B2, "A2 output from masking", GB0) ;
 
         // C = A2 + B2
-        printf ("\nCUDA C=A2+B2\n") ;
+//      printf ("\nCUDA C=A2+B2\n") ;
         GB_OK (GB_cuda_add_jit (C, C_iso, A2, B2, is_eWiseUnion,
             alpha_scalar, beta_scalar, theta, op, flipij,
             A_and_B_are_disjoint, device, stream, gridsz)) ;
-        printf ("\nCUDA C=A2+B2 done\n") ;
+//      printf ("\nCUDA C=A2+B2 done\n") ;
     }
 
     //--------------------------------------------------------------------------
