@@ -78,9 +78,14 @@
 #define GB_SET_DIFFERENCE 0
 #endif
 
-// 1 for C<M>=A or C<!M>=A where M is structural and passed in as the B matrix
+// 1 for C<M>=A or C<!M>=A where M is passed in as the B matrix
 #ifndef GB_IS_MASK_ASSIGN
 #define GB_IS_MASK_ASSIGN 0
+#endif
+
+// 1 for C<M>=A or C<!M>=A where M is valued (passed in as the B matrix)
+#ifndef GB_IS_MASK_VALUED
+#define GB_IS_MASK_VALUED 0
 #endif
 
 //------------------------------------------------------------------------------
@@ -96,7 +101,7 @@
     GB_GETA (aij, Ax,pA,A_iso)
 
 #if GB_IS_MASK_ASSIGN
-    // the values B are not used; it is the structural mask matrix M
+    // the values B are not used in the binary op; it is the mask matrix M
     #define GB_LOAD_B(bij, Bx,pB,B_iso)
 #else
     // bij = Bx [B_iso ? 0 : pB], with typecasting if needed

@@ -114,6 +114,8 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     if (is_mask_assign)
     {
         fprintf (fp, "#define GB_IS_MASK_ASSIGN 1\n\n") ;
+        bool Mask_struct = (mask_ecode == 2 || mask_ecode == 3) ;
+        fprintf (fp, "#define GB_IS_MASK_VALUED %d\n", !Mask_struct) ;
     }
     #endif
 

@@ -26,16 +26,61 @@
 
 //  (4) C<M>=A where C is initially empty, and M is structural.  This uses
 //      GB_SET_INTERSECTION 1 and GB_IS_MASK_ASSIGN 1, and M is passed in as
-//      the B matrix (values are not used).  The operator is always 1st_ctype.
-//      As in eWiseMult, this method will be not be used when nnz(A) and nnz(B)
-//      differ greatly.  Another kernel will be used instead.
+//      the B matrix.  If the mask is valued, GB_IS_MASK_VALUED is 1 (0
+//      otherwise).  The operator is always 1st_ctype.  As in eWiseMult, this
+//      method will be not be used when nnz(A) and nnz(B) differ greatly.
+//      Another kernel will be used instead.
 
 //  (5) C<!M>=A, where C is initially empty, and M is structural.  This uses
 //      GB_SET_DIFFERENCE 1 and GB_IS_MASK_ASSIGN 1 (computing the set A minus
-//      M), and M is passed in as the B matrix (values are not used).  The
-//      operator is always 1st_ctype.  If nnz(A) << nnz(M), this method is not
-//      used; instead, another kernel will scan all of A and use binary search
-//      to look up entries in M.
+//      M), and M is passed in as the B matrix.  If the mask is valued,
+//      GB_IS_MASK_VALUED is 1 (0 otherwise).  The operator is always
+//      1st_ctype.  If nnz(A) << nnz(M), this method is not used; instead,
+//      another kernel will scan all of A and use binary search to look up
+//      entries in M.
+
+// FIXME: for CUPTI metrics only:
+#if ( GB_SET_UNION || GB_SET_EWISEUNION )
+
+    #define GB_cuda_ewise_sparse_phase1 GB_cuda_ewise_union_phase1
+    #define GB_cuda_ewise_sparse_phase2 GB_cuda_ewise_union_phase2
+    #define GB_cuda_ewise_sparse_phase3 GB_cuda_ewise_union_phase3
+    #define GB_cuda_ewise_sparse_phase4 GB_cuda_ewise_union_phase4
+    #define GB_cuda_ewise_sparse_phase5 GB_cuda_ewise_union_phase5
+    #define GB_cuda_ewise_sparse_phase6 GB_cuda_ewise_union_phase6
+    #define GB_cuda_ewise_sparse_phase7 GB_cuda_ewise_union_phase7
+
+#elif ( GB_SET_INTERSECTION  && !GB_IS_MASK_ASSIGN )
+
+    #define GB_cuda_ewise_sparse_phase1 GB_cuda_ewise_emult_phase1
+    #define GB_cuda_ewise_sparse_phase2 GB_cuda_ewise_emult_phase2
+    #define GB_cuda_ewise_sparse_phase3 GB_cuda_ewise_emult_phase3
+    #define GB_cuda_ewise_sparse_phase4 GB_cuda_ewise_emult_phase4
+    #define GB_cuda_ewise_sparse_phase5 GB_cuda_ewise_emult_phase5
+    #define GB_cuda_ewise_sparse_phase6 GB_cuda_ewise_emult_phase6
+    #define GB_cuda_ewise_sparse_phase7 GB_cuda_ewise_emult_phase7
+
+#elif ( GB_SET_INTERSECTION  && GB_IS_MASK_ASSIGN )
+
+    #define GB_cuda_ewise_sparse_phase1 GB_cuda_ewise_mask_phase1
+    #define GB_cuda_ewise_sparse_phase2 GB_cuda_ewise_mask_phase2
+    #define GB_cuda_ewise_sparse_phase3 GB_cuda_ewise_mask_phase3
+    #define GB_cuda_ewise_sparse_phase4 GB_cuda_ewise_mask_phase4
+    #define GB_cuda_ewise_sparse_phase5 GB_cuda_ewise_mask_phase5
+    #define GB_cuda_ewise_sparse_phase6 GB_cuda_ewise_mask_phase6
+    #define GB_cuda_ewise_sparse_phase7 GB_cuda_ewise_mask_phase7
+
+#else
+
+    #define GB_cuda_ewise_sparse_phase1 GB_cuda_ewise_notmask_phase1
+    #define GB_cuda_ewise_sparse_phase2 GB_cuda_ewise_notmask_phase2
+    #define GB_cuda_ewise_sparse_phase3 GB_cuda_ewise_notmask_phase3
+    #define GB_cuda_ewise_sparse_phase4 GB_cuda_ewise_notmask_phase4
+    #define GB_cuda_ewise_sparse_phase5 GB_cuda_ewise_notmask_phase5
+    #define GB_cuda_ewise_sparse_phase6 GB_cuda_ewise_notmask_phase6
+    #define GB_cuda_ewise_sparse_phase7 GB_cuda_ewise_notmask_phase7
+
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -471,10 +516,13 @@ __global__ void GB_cuda_ewise_sparse_phase2
 )
 {
 
-    // inputs derived from A and B
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
     const GB_Ap_TYPE *Ap = (GB_Ap_TYPE *) A->p ;
     #if GB_A_IS_HYPER
-    const GB_Aj_TYPE *Ah = (GB_Aj_TYPE *) A->h ;  // NULL if sparse
+    const GB_Aj_TYPE *Ah = (GB_Aj_TYPE *) A->h ;
     #endif
     const GB_Ai_TYPE *Ai = (GB_Ai_TYPE *) A->i ;
     const int64_t anvec1 = A->nvec - 1 ;
@@ -589,6 +637,9 @@ __device__ __inline__ int set_intersection_size
     const T_Aj *__restrict__ Aj_s,
     const T_Bi *__restrict__ Bi_s,
     const T_Bj *__restrict__ Bj_s
+    #if GB_IS_MASK_VALUED
+    , const bool *__restrict__ Mx_s
+    #endif
 )
 {
     int intersection = 0 ;
@@ -603,7 +654,19 @@ __device__ __inline__ int set_intersection_size
         int afirst = ((jA < jB) || (jA == jB && iA < iB)) ;
         int amatch = (jA == jB && iA == iB) ;
         // count the size of the intersection
-        intersection += amatch ;
+        #if GB_IS_MASK_VALUED
+            // The intersection is found where A(i,j) and B(i,j) are both
+            // present, and B(i,j) is true.  The same intersection is used
+            // for both C<M>=A and C<!M>=A assignments and the mask is valued.
+            // The later computations use this intersection differently for
+            // the complemented and non-complemented cases.
+            intersection += amatch && Mx_s [GB_B_ISO ? 0 : pb] ;
+        #else
+            // otherwise, simply compute the intersection of the pattern of
+            // A and B, for eWiseAdd, eWiseMult, and both masked assignments
+            // C<M>=A and C<!M>=A when the mask is structural.
+            intersection += amatch ;
+        #endif
         // advance pa and pb
         pa += ( afirst || amatch) ;
         pb += (!afirst || amatch) ;
@@ -654,16 +717,25 @@ __global__ void GB_cuda_ewise_sparse_phase3
 )
 {
 
-    // four shared arrays for one chunk
+    //--------------------------------------------------------------------------
+    // shared workspace
+    //--------------------------------------------------------------------------
+
     __shared__ GB_Ai_TYPE Ai_s [CHUNKSIZE3] ;
     __shared__ GB_Aj_TYPE Aj_s [CHUNKSIZE3] ;
     __shared__ GB_Bi_TYPE Bi_s [CHUNKSIZE3] ;
     __shared__ GB_Bj_TYPE Bj_s [CHUNKSIZE3] ;
+    #if GB_IS_MASK_VALUED
+    __shared__ bool Mx_s [GB_B_ISO ? 1 : CHUNKSIZE3] ;
+    #endif
 
-    // inputs derived from A and B
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
     const GB_Ap_TYPE *Ap = (GB_Ap_TYPE *) A->p ;
     #if GB_A_IS_HYPER
-    const GB_Aj_TYPE *Ah = (GB_Aj_TYPE *) A->h ;  // NULL if sparse
+    const GB_Aj_TYPE *Ah = (GB_Aj_TYPE *) A->h ;
     #endif
     const GB_Ai_TYPE *Ai = (GB_Ai_TYPE *) A->i ;
     const int64_t anvec1 = A->nvec - 1 ;
@@ -674,6 +746,19 @@ __global__ void GB_cuda_ewise_sparse_phase3
     #endif
     const GB_Bi_TYPE *Bi = (GB_Bi_TYPE *) B->i ;
     const int64_t bnvec1 = B->nvec - 1 ;
+
+    #if GB_IS_MASK_VALUED
+    // the Mask method passes B as both the B input matrix and the mask M, and
+    // its values are needed if the mask is valued (instead of structural).
+    // GB_M_TYPE must be used, since the FIRST_atype operator causes B to
+    // be treated as pattern-only, so GB_B_TYPE is set to void.
+    const GB_M_TYPE  *__restrict__ Mx = (GB_M_TYPE  *) B->x ;
+    #if GB_B_ISO
+    // get the iso value of the mask matrix, typecasting it to boolean.
+    // FIXME: this will fail if B is complex (GxB_FC32 or GxB_FC64).
+    Mx_s [0] = (bool) Mx [0] ;
+    #endif
+    #endif
 
     //--------------------------------------------------------------------------
     // iterate through all outer tasks: one threadblock per task
@@ -736,6 +821,10 @@ __global__ void GB_cuda_ewise_sparse_phase3
 
                 int64_t k = getk<GB_Bp_TYPE> (p, B_slice_kfirst, Bp, bnvec1) ;
                 Bj_s [kk] = GBh_B (Bh, k) ;
+
+                #if ( GB_IS_MASK_VALUED && !GB_B_ISO )
+                Mx_s [kk] = (bool) Mx [p] ;
+                #endif
             }
 
             // wait: all writers must finish before the merge reads
@@ -772,7 +861,11 @@ __global__ void GB_cuda_ewise_sparse_phase3
 
             int my_intersection = set_intersection_size
                 <GB_Ai_TYPE, GB_Aj_TYPE, GB_Bi_TYPE, GB_Bj_TYPE>
-                (pa, pb, pa_end, pb_end, Ai_s, Aj_s, Bi_s, Bj_s) ;
+                (pa, pb, pa_end, pb_end, Ai_s, Aj_s, Bi_s, Bj_s
+                #if GB_IS_MASK_VALUED
+                , Mx_s
+                #endif
+                ) ;
             AB_intersection += my_intersection ;
 
             //------------------------------------------------------------------
@@ -810,7 +903,7 @@ __global__ void GB_cuda_ewise_sparse_phase3
                 // |C_t| = |A_t - B_t| = |A_t| - |A_t intersection B_t|
                 Task_Cstart [t] = A_size - AB_intersection ;
             }
-            #else
+            #else /* set intersection */
             {
                 // |C_t| = |A_t intersection B_t|
                 Task_Cstart [t] = AB_intersection ;
@@ -821,7 +914,7 @@ __global__ void GB_cuda_ewise_sparse_phase3
 }
 
 //------------------------------------------------------------------------------
-// GB_cuda_ewise_sparse_phase5: compute pattern and values of C (coordinate form)
+// GB_cuda_ewise_sparse_phase5: compute pattern and values of C (coord form)
 //------------------------------------------------------------------------------
 
 __global__ void GB_cuda_ewise_sparse_phase5
@@ -846,16 +939,30 @@ __global__ void GB_cuda_ewise_sparse_phase5
 )
 {
 
-    // four shared arrays for one chunk
+    //--------------------------------------------------------------------------
+    // shared workspace
+    //--------------------------------------------------------------------------
+
     __shared__ GB_Ai_TYPE Ai_s [CHUNKSIZE3] ;
     __shared__ GB_Aj_TYPE Aj_s [CHUNKSIZE3] ;
     __shared__ GB_Bi_TYPE Bi_s [CHUNKSIZE3] ;
     __shared__ GB_Bj_TYPE Bj_s [CHUNKSIZE3] ;
+    #if GB_IS_MASK_VALUED
+    __shared__ bool Mx_s [GB_B_ISO ? 1 : CHUNKSIZE3] ;
+    #endif
 
-    // inputs derived from A and B
+    // cub::Block* workspace for ExclusiveSum of pc of each thread
+    using BlockScan = cub::BlockScan <uint16_t, BLOCKDIM5,
+        cub::BLOCK_SCAN_WARP_SCANS> ;
+    __shared__ typename BlockScan::TempStorage W ;
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
     const GB_Ap_TYPE *Ap = (GB_Ap_TYPE *) A->p ;
     #if GB_A_IS_HYPER
-    const GB_Aj_TYPE *Ah = (GB_Aj_TYPE *) A->h ;  // NULL if sparse
+    const GB_Aj_TYPE *Ah = (GB_Aj_TYPE *) A->h ;
     #endif
     const GB_Ai_TYPE *Ai = (GB_Ai_TYPE *) A->i ;
     const int64_t anvec1 = A->nvec - 1 ;
@@ -867,27 +974,24 @@ __global__ void GB_cuda_ewise_sparse_phase5
     const GB_Bi_TYPE *Bi = (GB_Bi_TYPE *) B->i ;
     const int64_t bnvec1 = B->nvec - 1 ;
 
-    //--------------------------------------------------------------------------
-    // get inputs
-    //--------------------------------------------------------------------------
-
     #if !GB_C_ISO
+    #if !GB_A_IS_PATTERN
     const GB_A_TYPE  *__restrict__ Ax = (GB_A_TYPE  *) A->x ;
-    #if !GB_IS_MASK_ASSIGN
+    #endif
+    #if !GB_B_IS_PATTERN
     const GB_B_TYPE  *__restrict__ Bx = (GB_B_TYPE  *) B->x ;
     #endif
-          GB_C_TYPE  *__restrict__ Cx = (GB_C_TYPE  *) C->x ;
+    GB_C_TYPE  *__restrict__ Cx = (GB_C_TYPE  *) C->x ;
     #endif
-          GB_Ci_TYPE *__restrict__ Ci = (GB_Ci_TYPE *) C->i ;
 
-    //--------------------------------------------------------------------------
-    // workspace for each threadblock
-    //--------------------------------------------------------------------------
+    GB_Ci_TYPE *__restrict__ Ci = (GB_Ci_TYPE *) C->i ;
 
-    // cub::Block* workspace for ExclusiveSum of pc of each thread
-    using BlockScan = cub::BlockScan <uint16_t, BLOCKDIM5,
-        cub::BLOCK_SCAN_WARP_SCANS> ;
-    __shared__ typename BlockScan::TempStorage W ;
+    #if GB_IS_MASK_VALUED
+    const GB_M_TYPE  *__restrict__ Mx = (GB_M_TYPE  *) B->x ;
+    #if ( GB_IS_MASK_VALUED && GB_B_ISO )
+    Mx_s [0] = (bool) Mx [0] ;
+    #endif
+    #endif
 
     //--------------------------------------------------------------------------
     // compute the pattern and values of C = A+B
@@ -947,6 +1051,10 @@ __global__ void GB_cuda_ewise_sparse_phase5
 
                 int64_t k = getk<GB_Bp_TYPE> (p, B_slice_kfirst, Bp, bnvec1) ;
                 Bj_s [kk] = GBh_B (Bh, k) ;
+
+                #if ( GB_IS_MASK_VALUED && !GB_B_ISO )
+                Mx_s [kk] = (bool) Mx [p] ;
+                #endif
             }
 
             // wait: all writers must finish before the merge reads
@@ -966,11 +1074,24 @@ __global__ void GB_cuda_ewise_sparse_phase5
             GB_Cj_TYPE *Cj_chunk = Cj + pC ;
 
             #if !GB_C_ISO
-            const GB_A_TYPE  *Ax_chunk = Ax + pA ;
-            #if !GB_IS_MASK_ASSIGN
-            const GB_B_TYPE  *Bx_chunk = Bx + pB ;
+            GB_C_TYPE *Cx_chunk = Cx + pC ;
+
+            #if !GB_A_IS_PATTERN
+            #if GB_A_ISO
+            const GB_A_TYPE *Ax_chunk = Ax ;
+            #else
+            const GB_A_TYPE *Ax_chunk = Ax + pA ;
             #endif
-                  GB_C_TYPE  *Cx_chunk = Cx + pC ;
+            #endif
+
+            #if !GB_B_IS_PATTERN
+            #if GB_B_ISO
+            const GB_B_TYPE *Bx_chunk = Bx ;
+            #else
+            const GB_B_TYPE *Bx_chunk = Bx + pB ;
+            #endif
+            #endif
+
             #endif
 
             //------------------------------------------------------------------
@@ -995,7 +1116,11 @@ __global__ void GB_cuda_ewise_sparse_phase5
 
             int my_intersection = set_intersection_size
                 <GB_Ai_TYPE, GB_Aj_TYPE, GB_Bi_TYPE, GB_Bj_TYPE>
-                (pa, pb, pa_end, pb_end, Ai_s, Aj_s, Bi_s, Bj_s) ;
+                (pa, pb, pa_end, pb_end, Ai_s, Aj_s, Bi_s, Bj_s
+                #if GB_IS_MASK_VALUED
+                , Mx_s
+                #endif
+                ) ;
 
             //------------------------------------------------------------------
             // cumulative sum across all threads of the set union
@@ -1030,6 +1155,26 @@ __global__ void GB_cuda_ewise_sparse_phase5
                 GB_Aj_TYPE jA = Aj_s [pa] ;
                 GB_Bi_TYPE iB = Bi_s [pb] ;
                 GB_Bj_TYPE jB = Bj_s [pb] ;
+
+                // get the mask entry, if needed
+                #if GB_IS_MASK_VALUED
+                    // mask is valued, get the value of the mask entry,
+                    // where the mask matrix M is passed in here as B.
+                    bool mij = Mx_s [GB_B_ISO ? 0 : pb] ;
+                    #if GB_SET_DIFFERENCE
+                    // mask is complemented
+                    mij = !mij ;
+                    #endif
+                #else
+                    // mask is structural (unused if not masked assignment)
+                    #if GB_SET_DIFFERENCE
+                    // mask is complemented
+                    #define mij false
+                    #else
+                    // mask is not complemented
+                    #define mij true
+                    #endif
+                #endif
 
                 // compare the two entries
                 int afirst = ((jA < jB) || (jA == jB && iA < iB)) ;
@@ -1066,15 +1211,18 @@ __global__ void GB_cuda_ewise_sparse_phase5
                 {
                     // The (i,j) entry is in both A and B
                     // cij = aij + bij for eWiseAdd, eWiseUnion, eWiseMult,
-                    // and C<M>=A using the 1st_ctype operator (where B is M)
-                    #if GB_SET_UNION || GB_SET_INTERSECTION
-                    Ci_chunk [pc] = iA ;
-                    Cj_chunk [pc] = jA ;
-                    GB_EWISE_AIJ_OP_BIJ (Cx_chunk, pc,
-                        Ax_chunk, pa, GB_A_ISO,
-                        Bx_chunk, pb, GB_B_ISO, iA, jA) ;
-                    pc++ ;
-                    #endif
+                    // and C<M>=A using the 1st_ctype operator (where B is M),
+                    // or C<!M>=A when the mask is valued.
+                    if (GB_IS_MASK_ASSIGN ? mij :
+                            (GB_SET_UNION || GB_SET_INTERSECTION))
+                    {
+                        Ci_chunk [pc] = iA ;
+                        Cj_chunk [pc] = jA ;
+                        GB_EWISE_AIJ_OP_BIJ (Cx_chunk, pc,
+                            Ax_chunk, pa, GB_A_ISO,
+                            Bx_chunk, pb, GB_B_ISO, iA, jA) ;
+                        pc++ ;
+                    }
                     pa++ ;
                     pb++ ;
                 }

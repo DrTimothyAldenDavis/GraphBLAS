@@ -59,7 +59,6 @@ bool GB_cuda_add_branch
     {
         int M_sparsity = GB_sparsity (M) ;
         use_cuda = use_cuda
-        && (Mask_struct)    // FIXME, also handle a valued mask
         && (M_sparsity == GxB_SPARSE || M_sparsity == GxB_HYPERSPARSE) // FIXME
         && (data_arena == M->data_arena)                // M on same GPU
         && (data_arena == GB_arena (M->header_mem))

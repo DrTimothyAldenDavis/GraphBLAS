@@ -42,8 +42,8 @@ GrB_Info GB_cuda_mask_assign_jit
         /* C_iso: */ A->iso, /* C_in_iso: */ false,
         /* C_sparsity: */ GxB_HYPERSPARSE,
         A->type, A->p_is_32, A->j_is_32, A->i_is_32,
-        /* M: */ B, /* Mask_struct: */ Mask_struct, /* Mask_comp: */ Mask_comp,
-        binaryop, /* flipij: */ false, /* flipxy: */ false, A, B) ;
+        /* M: */ B, Mask_struct, Mask_comp, binaryop,
+        /* flipij: */ false, /* flipxy: */ false, A, B) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

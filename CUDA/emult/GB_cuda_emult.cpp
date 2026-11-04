@@ -155,34 +155,50 @@ GrB_Info GB_cuda_emult
             B->p_is_32, B->j_is_32, B->i_is_32, data_arena, data_arena)) ;
 
         // A2 <#M> = A
-//      printf ("\nCUDA A2<%dM>=A:\n", Mask_comp) ;
+//      printf ("\nCUDA A2<%dM>=A:, structural: %d\n", Mask_comp, Mask_struct) ;
         struct GB_BinaryOp_opaque op_header ;
         GrB_BinaryOp first = GB_binop_first (A->type, &op_header) ;
         ASSERT_BINARYOP_OK (first, "first_atype for A2<*M>=A", GB0) ;
         GB_OK (GB_cuda_mask_assign_jit (A2, A, M, Mask_struct, Mask_comp,
             first, device, stream, gridsz)) ;
 
-//      ASSERT_MATRIX_OK (A, "A input for masking", GB0) ;
-//      ASSERT_MATRIX_OK (M, "M for masking", GB0) ;
-//      ASSERT_MATRIX_OK (A2, "A2 output from masking", GB0) ;
+        #ifdef GB_DEBUG
+        if (cnz < 1000)
+        {
+            ASSERT_MATRIX_OK (A, "A input for masking", GB0) ;
+            ASSERT_MATRIX_OK (M, "M for masking", GB0) ;
+            ASSERT_MATRIX_OK (A2, "A2 output from masking", GB0) ;
+        }
+        #endif
 
         // B2 <#M> = A
-//      printf ("\nCUDA B2<%dM>=B:\n", Mask_comp) ;
+//      printf ("\nCUDA B2<%dM>=B:, structural: %d\n", Mask_comp, Mask_struct) ;
         first = GB_binop_first (B->type, &op_header) ;
         ASSERT_BINARYOP_OK (first, "first_btype for B2<*M>=B", GB0) ;
         GB_OK (GB_cuda_mask_assign_jit (B2, B, M, Mask_struct, Mask_comp,
             first, device, stream, gridsz)) ;
 
-//      ASSERT_MATRIX_OK (B, "A input for masking", GB0) ;
-//      ASSERT_MATRIX_OK (M, "M for masking", GB0) ;
-//      ASSERT_MATRIX_OK (B2, "A2 output from masking", GB0) ;
+        #ifdef GB_DEBUG
+        if (cnz < 1000)
+        {
+            ASSERT_MATRIX_OK (B, "A input for masking", GB0) ;
+            ASSERT_MATRIX_OK (M, "M for masking", GB0) ;
+            ASSERT_MATRIX_OK (B2, "A2 output from masking", GB0) ;
+        }
+        #endif
 
         // C = A2 .* B2
 //      printf ("\nCUDA C=A2.*B2\n") ;
         GB_OK (GB_cuda_emult_jit (C, C_iso, A2, B2, theta, op, flipij,
             device, stream, gridsz)) ;
 //      printf ("\nCUDA C=A2.*B2 done\n") ;
-//      ASSERT_MATRIX_OK (C, "C output", GB0) ;
+
+        #ifdef GB_DEBUG
+        if (cnz < 1000)
+        {
+            ASSERT_MATRIX_OK (C, "C output", GB0) ;
+        }
+        #endif
     }
 
     //--------------------------------------------------------------------------
