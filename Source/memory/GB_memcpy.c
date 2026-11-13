@@ -10,9 +10,6 @@
 // This function uses its own hard-coded chunk size.
 // The work is always done on the CPU; CUDA requires its own memcpy method.
 
-// fixme for CUDA: pass in the arena of the source and destination.
-// use a CUDA method if any of the arenas are on a GPU.
-
 #include "GB.h"
 
 #define GB_MEM_CHUNK (1024*1024)
@@ -20,11 +17,36 @@
 void GB_memcpy                  // parallel memcpy
 (
     void *dest,                 // destination
+    const int dest_arena,       // destination arena, or -1 if not known
     const void *src,            // source
+    const int src_arena,        // src arena, or -1 if not known
     size_t n,                   // # of bytes to copy
-    int nthreads                // max # of threads to use
+    int nthreads                // max # of threads to use (for CPU)
 )
 {
+
+    //--------------------------------------------------------------------------
+    // cudaMemcpy for GPU arenas
+    //--------------------------------------------------------------------------
+
+    #if defined ( GRAPHBLAS_HAS_CUDA )
+    if (dest_arena >= GxB_NARENAS && src_arena > 0)
+    {
+        // The src arena is known, and the destination arena is a GPU;
+        // use GB_cuda_memcpy.  If it fails, fall back to the CPU memcpy below.
+        GrB_Info info = GB_cuda_memcpy (dest, dest_arena, src, src_arena, n,
+            (GB_Operator) GrB_IDENTITY_UINT8) ;
+        if (info == GrB_SUCCESS)
+        {
+            // GB_cuda_memcpy was successful
+            return ;
+        }
+    }
+    #endif
+
+    //--------------------------------------------------------------------------
+    // parallel memcpy on the CPU(s)
+    //--------------------------------------------------------------------------
 
     if (nthreads <= 1 || n <= GB_MEM_CHUNK)
     { 

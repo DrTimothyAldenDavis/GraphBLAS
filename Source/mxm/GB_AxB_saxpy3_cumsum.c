@@ -187,7 +187,9 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
             return (GrB_OUT_OF_MEMORY) ;
         }
         // Cp_new = (uint64_t) Cp, casting from 32-bit to 64-bit
-        GB_cast_int (Cp_new, GB_UINT64_code, Cp, GB_UINT32_code, cnvec+1, nth) ;
+        GB_cast_int (Cp_new, GB_UINT64_code, data_arena,
+                     Cp, GB_UINT32_code, GB_arena (C->p_mem),
+                     cnvec+1, nth) ;
         GB_FREE_MEMORY (&Cp, C->p_mem) ;
         C->p = Cp_new ;
         C->p_mem = Cp_new_mem ;

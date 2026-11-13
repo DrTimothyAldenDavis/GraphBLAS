@@ -186,8 +186,12 @@ static GrB_Info GB_export_worker  // export a matrix
                 GB_FREE_ALL ;
                 return (GrB_INSUFFICIENT_SPACE) ;
             }
-            GB_cast_int (Ap, GB_UINT64_code, A->p, apcode, plen, nthreads_max) ;
-            GB_cast_int (Ai, GB_UINT64_code, A->i, aicode, nvals, nthreads_max);
+            GB_cast_int (Ap, GB_UINT64_code, /* Ap data arena unknown: */ -1,
+                         A->p, apcode, GB_arena (A->p_mem),
+                         plen, nthreads_max) ;
+            GB_cast_int (Ai, GB_UINT64_code, /* Ai data arena unknown: */ -1,
+                         A->i, aicode, GB_arena (A->i_mem),
+                         nvals, nthreads_max);
             (*Ap_len) = plen ;
             (*Ai_len) = nvals ;
 
@@ -208,7 +212,8 @@ static GrB_Info GB_export_worker  // export a matrix
             }
             else
             { 
-                GB_memcpy (Ax, A->x, nvals * A->type->size, nthreads_max) ;
+                GB_memcpy (Ax, -1, A->x, GB_arena (A->x_mem),
+                    nvals * A->type->size, nthreads_max) ;
             }
             break ;
 

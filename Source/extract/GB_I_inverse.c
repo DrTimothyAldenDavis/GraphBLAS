@@ -133,6 +133,8 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
         I,                  // row indices are in I [0..nI-1]
         // S_input
         (const GB_void *) S_input,  // values of R (iso-valued)
+        // S_input_arena
+        -1,                 // S_input is on the stack, not in an arena
         // S_iso
         true,               // R is iso-valued
         // nvals

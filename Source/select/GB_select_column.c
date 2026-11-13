@@ -217,7 +217,9 @@ GrB_Info GB_select_column
             ASSERT (found) ;
 
             // Cp [0:k-1] = Ap [0:k-1]
-            GB_cast_int (Cp, Cp_code, Ap, Ap_code, k, nth) ;
+            GB_cast_int (Cp, Cp_code, GB_arena (C->p_mem),
+                         Ap, Ap_code, GB_arena (A->p_mem),
+                         k, nth) ;
 
             // Cp [k:cnvec] = Ap [k+1:anvec] - ajnz
             #pragma omp parallel for num_threads(nth2)
@@ -229,18 +231,23 @@ GrB_Info GB_select_column
             }
 
             // Ch [0:k-1] = Ah [0:k-1]
-            GB_cast_int (Ch, Ch_code, Ah, Ah_code, k, nth) ;
+            GB_cast_int (Ch, Ch_code, GB_arena (C->h_mem),
+                         Ah, Ah_code, GB_arena (A->h_mem),
+                         k, nth) ;
 
             // Ch [k:cnvec-1] = Ah [k+1:anvec-1]
-            GB_cast_int (GB_IADDR (Ch, k  ), Ch_code,
-                         GB_IADDR (Ah, k+1), Ah_code, cnvec - k, nth) ;
+            GB_cast_int (GB_IADDR (Ch, k  ), Ch_code, GB_arena (C->h_mem),
+                         GB_IADDR (Ah, k+1), Ah_code, GB_arena (A->h_mem),
+                         cnvec - k, nth) ;
 
         }
         else
         { 
 
             // Cp [0:k] = Ap [0:k]
-            GB_cast_int (Cp, Cp_code, Ap, Ap_code, k+1, nth) ;
+            GB_cast_int (Cp, Cp_code, GB_arena (C->p_mem),
+                         Ap, Ap_code, GB_arena (A->p_mem),
+                         k+1, nth) ;
 
             // Cp [k+1:anvec] = Ap [k+1:anvec] - ajnz
             #pragma omp parallel for num_threads(nth2)
@@ -253,20 +260,25 @@ GrB_Info GB_select_column
         }
 
         // Ci [0:pstart-1] = Ai [0:pstart-1]
-        GB_cast_int (Ci, Ci_code, Ai, Ai_code, pstart, nth) ;
+        GB_cast_int (Ci, Ci_code, GB_arena (C->i_mem),
+                     Ai, Ai_code, GB_arena (A->i_mem),
+                     pstart, nth) ;
 
         // Ci [pstart:cnz-1] = Ai [pend:anz-1]
-        GB_cast_int (GB_IADDR (Ci, pstart), Ci_code,
-                     GB_IADDR (Ai, pend  ), Ai_code, cnz - pstart, nth) ;
+        GB_cast_int (GB_IADDR (Ci, pstart), Ci_code, GB_arena (C->i_mem),
+                     GB_IADDR (Ai, pend  ), Ai_code, GB_arena (A->i_mem),
+                     cnz - pstart, nth) ;
 
         if (!A_iso)
         { 
             // Cx [0:pstart-1] = Ax [0:pstart-1]
-            GB_memcpy (Cx, Ax, pstart * asize, nth) ;
+            GB_memcpy (Cx, GB_arena (C->x_mem),
+                       Ax, GB_arena (A->x_mem), pstart * asize, nth) ;
 
             // Cx [pstart:cnz-1] = Ax [pend:anz-1]
-            GB_memcpy (Cx + pstart * asize, Ax + pend * asize,
-                (cnz - pstart) * asize, nth) ;
+            GB_memcpy (Cx + pstart * asize, GB_arena (C->x_mem),
+                       Ax + pend   * asize, GB_arena (A->x_mem),
+                       (cnz - pstart) * asize, nth) ;
         }
 
     }
@@ -280,16 +292,22 @@ GrB_Info GB_select_column
         if (A_is_hyper)
         { 
             // Cp [0:cnvec] = Ap [0:cnvec]
-            GB_cast_int (Cp, Cp_code, Ap, Ap_code, cnvec+1, nth) ;
+            GB_cast_int (Cp, Cp_code, GB_arena (C->p_mem),
+                         Ap, Ap_code, GB_arena (A->p_mem),
+                         cnvec+1, nth) ;
 
             // Ch [0:cnvec-1] = Ah [0:cnvec-1]
-            GB_cast_int (Ch, Ch_code, Ah, Ah_code, cnvec, nth) ;
+            GB_cast_int (Ch, Ch_code, GB_arena (C->h_mem),
+                         Ah, Ah_code, GB_arena (A->h_mem),
+                         cnvec, nth) ;
         }
         else
         {
             // Cp [0:k+1] = Ap [0:k+1]
             ASSERT (found) ;
-            GB_cast_int (Cp, Cp_code, Ap, Ap_code, k+2, nth) ;
+            GB_cast_int (Cp, Cp_code, GB_arena (C->p_mem),
+                         Ap, Ap_code, GB_arena (A->p_mem),
+                         k+2, nth) ;
 
             // Cp [k+2:cnvec] = cnz
             #pragma omp parallel for num_threads(nth2)
@@ -301,12 +319,14 @@ GrB_Info GB_select_column
         }
 
         // Ci [0:cnz-1] = Ai [0:cnz-1]
-        GB_cast_int (Ci, Ci_code, Ai, Ai_code, cnz, nth) ;
+        GB_cast_int (Ci, Ci_code, GB_arena (C->i_mem),
+                     Ai, Ai_code, GB_arena (A->i_mem), cnz, nth) ;
 
         if (!A_iso)
         { 
             // Cx [0:cnz-1] = Ax [0:cnz-1]
-            GB_memcpy (Cx, Ax, cnz * asize, nth) ;
+            GB_memcpy (Cx, GB_arena (C->x_mem),
+                       Ax, GB_arena (A->x_mem), cnz * asize, nth) ;
         }
 
     }
@@ -329,8 +349,9 @@ GrB_Info GB_select_column
             }
 
             // Ch [0:cnvec-1] = Ah [k+found:anvec-1]
-            GB_cast_int (Ch, Ch_code, GB_IADDR (Ah, k+found), Ah_code,
-                cnvec, nth) ;
+            GB_cast_int (Ch, Ch_code, GB_arena (C->h_mem),
+                         GB_IADDR (Ah, k+found), Ah_code, GB_arena (A->h_mem),
+                         cnvec, nth) ;
 
         }
         else
@@ -352,12 +373,16 @@ GrB_Info GB_select_column
         }
 
         // Ci [0:cnz-1] = Ai [pend:anz-1]
-        GB_cast_int (Ci, Ci_code, GB_IADDR (Ai, pend), Ai_code, cnz, nth) ;
+        GB_cast_int (Ci, Ci_code, GB_arena (C->i_mem),
+                     GB_IADDR (Ai, pend), Ai_code, GB_arena (A->i_mem),
+                     cnz, nth) ;
 
         if (!A_iso)
         { 
             // Cx [0:cnz-1] = Ax [pend:anz-1]
-            GB_memcpy (Cx, Ax + pend * asize, cnz * asize, nth) ;
+            GB_memcpy (Cx, GB_arena (C->x_mem),
+                       Ax + pend * asize, GB_arena (A->x_mem),
+                       cnz * asize, nth) ;
         }
     }
 

@@ -36,6 +36,7 @@
     GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
     GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
     const int8_t *restrict Ab = A->b ;
+    const int Ab_arena = GB_arena (A->b_mem) ;
     const int64_t vlen = A->vlen ;
 
     #ifdef GB_JIT_KERNEL
@@ -50,6 +51,7 @@
     GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
     GB_Bi_DECLARE (Bi, const) ; GB_Bi_PTR (Bi, B) ;
     const int8_t *restrict Bb = B->b ;
+    const int Bb_arena = GB_arena (B->b_mem) ;
 
     #ifdef GB_JIT_KERNEL
     #define B_is_bitmap GB_B_IS_BITMAP
@@ -132,10 +134,10 @@
         GB_Ch_DECLARE (Ch, const) ; GB_Ch_PTR (Ch, C) ;
         GB_Ci_DECLARE (Ci,      ) ; GB_Ci_PTR (Ci, C) ;
         int8_t *restrict Cb = C->b ;
+        const int Cb_arena = GB_arena (C->b_mem) ;
         GB_C_NHELD (cnz) ;      // const int64_t cnz = GB_nnz_held (C) ;
 
     #endif
-
 
     //--------------------------------------------------------------------------
     // C=A+B, C<M>=A+B, or C<!M>=A+B: 3 cases for the sparsity of C

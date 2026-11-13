@@ -47,15 +47,17 @@ void *GB_xalloc_memory      // return the newly-allocated space
 ) ;
 
 //------------------------------------------------------------------------------
-// parallel memcpy and memset
+// parallel memcpy
 //------------------------------------------------------------------------------
 
 void GB_memcpy                  // parallel memcpy
 (
     void *dest,                 // destination
+    const int dest_arena,       // destination arena, or -1 if not known
     const void *src,            // source
+    const int src_arena,        // src arena, or -1 if not known
     size_t n,                   // # of bytes to copy
-    int nthreads                // # of threads to use
+    int nthreads                // max # of threads to use (for CPU)
 ) ;
 
 //------------------------------------------------------------------------------

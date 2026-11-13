@@ -28,6 +28,8 @@
     GB_FREE_MEMORY (&Cp, Cp_mem) ;  \
 }
 
+// FIXME: some callers know the arenas for I, J, and X
+
 GrB_Info GB_extractTuples       // extract all tuples from a matrix
 (
     void *I_out,                // array for returning row indices of tuples
@@ -190,7 +192,9 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
                 // A is sparse or hypersparse; copy/cast A->i into I
                 GB_cast_int (
                     I,       I_is_32 ? GB_UINT32_code : GB_UINT64_code,
+                    -1, // I arena; FIXME: sometimes it is known
                     A->i, A->i_is_32 ? GB_UINT32_code : GB_UINT64_code,
+                    GB_arena (A->i_mem),
                     anz, nthreads_max) ;
             }
         }
@@ -222,7 +226,8 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
             else if (xcode == acode)
             { 
                 // copy the values from A into X, no typecast
-                GB_memcpy (X, A->x, anz * asize, nthreads) ;
+                GB_memcpy (X, -1, A->x, GB_arena (A->x_mem),
+                    anz * asize, nthreads) ;
             }
             else
             { 

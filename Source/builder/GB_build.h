@@ -49,6 +49,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     const void *restrict J_input,   // original indices, size nvals
     const GB_void *restrict S_input,// array of values of tuples, size nvals,
                                     // or size 1 if S_input or S_work are iso
+    const uint64_t S_input_arena,   // arena of S_input, (-1 if not known)
     const bool S_iso,               // true if S_input or S_work are iso
     const int64_t nvals,            // number of tuples, and size of K_work
     GrB_BinaryOp dup,               // binary function to assemble duplicates,

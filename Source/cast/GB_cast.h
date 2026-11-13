@@ -95,8 +95,10 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
 (
     void *dest,                 // destination
     GB_Type_code dest_code,     // destination type: int32/64, or uint32/64
+    const int dest_arena,       // destination arena
     const void *src,            // source
     GB_Type_code src_code,      // source type: int32/64, or uint32/64
+    const int src_arena,        // source arena
     size_t n,                   // # of entries to copy
     int nthreads_max            // max # of threads to use
 ) ;

@@ -245,7 +245,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // B and C are both hypersparse
         ASSERT (C_sparsity == GxB_HYPERSPARSE) ;
         int nth = GB_nthreads (cnvec, chunk, nthreads_max) ;
-        GB_cast_int (C->h, cjcode, B->h, bjcode, cnvec, nth) ;
+        GB_cast_int (C->h, cjcode, GB_arena (C->h_mem),
+                     B->h, bjcode, GB_arena (B->h_mem),
+                     cnvec, nth) ;
         C->nvec = B->nvec ;
     }
     else

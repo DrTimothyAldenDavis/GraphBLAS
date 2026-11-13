@@ -236,7 +236,8 @@ GrB_Info GB_resize              // change the size of a matrix
                     { 
                         GB_void *pdest = Ax_new + j * vlen_new * asize ;
                         GB_void *psrc  = Ax_old + j * vlen_old * asize ;
-                        GB_memcpy (pdest, psrc, vlen_new * asize, nthreads) ;
+                        GB_memcpy (pdest, data_arena, psrc, GB_arena (A->x_mem),
+                            vlen_new * asize, nthreads) ;
                     }
                 }
                 else

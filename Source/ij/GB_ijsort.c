@@ -127,7 +127,9 @@ GrB_Info GB_ijsort
     GB_Type_code i1code = (I1_is_32) ? GB_UINT32_code : GB_UINT64_code ;
     GB_Type_code icode  = (I_is_32 ) ? GB_UINT32_code : GB_UINT64_code ;
 
-    GB_cast_int (I1, i1code, I, icode, ni, nthreads_max) ;
+    GB_cast_int (I1, i1code, data_arena,
+                 I, icode, -1, // FIXME: I data arena is sometimes known
+                 ni, nthreads_max) ;
 
     int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)

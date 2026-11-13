@@ -850,11 +850,17 @@ GrB_Info GB_sort
             }
 
             // copy from C to P
-            GB_cast_int (P->x, pxcode, C->i, cicode, cnz, nthreads_max) ;
-            GB_cast_int (P->p, ppcode, C->p, cpcode, cnvec+1, nthreads_max) ;
+            GB_cast_int (P->x, pxcode, GB_arena (P->x_mem),
+                         C->i, cicode, GB_arena (C->i_mem),
+                         cnz, nthreads_max) ;
+            GB_cast_int (P->p, ppcode, GB_arena (P->p_mem),
+                         C->p, cpcode, GB_arena (C->p_mem),
+                         cnvec+1, nthreads_max) ;
             if (C_is_hyper)
             { 
-                GB_cast_int (P->h, pjcode, C->h, cjcode, cnvec, nthreads_max) ;
+                GB_cast_int (P->h, pjcode, GB_arena (P->h_mem),
+                             C->h, cjcode, GB_arena (C->h_mem),
+                             cnvec, nthreads_max) ;
             }
         }
 
@@ -869,7 +875,9 @@ GrB_Info GB_sort
     if (!C_is_NULL && P != NULL)
     { 
         // copy P->i into C->i
-        GB_cast_int (C->i, cicode, P->i, picode, cnz, nthreads_max) ;
+        GB_cast_int (C->i, cicode, GB_arena (C->i_mem),
+                     P->i, picode, GB_arena (P->i_mem),
+                     cnz, nthreads_max) ;
     }
 
     //--------------------------------------------------------------------------

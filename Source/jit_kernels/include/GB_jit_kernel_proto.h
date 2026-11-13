@@ -793,7 +793,7 @@ GrB_Info GB_jit_kernel_apply_bind1st                                        \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
     const GB_callback_struct *restrict my_callback                          \
-)                                                                           \
+)
 
 #define GB_JIT_CUDA_KERNEL_APPLY_BIND2ND_PROTO(GB_jit_kernel_apply_bind2nd) \
 GrB_Info GB_jit_kernel_apply_bind2nd                                        \
@@ -805,7 +805,7 @@ GrB_Info GB_jit_kernel_apply_bind2nd                                        \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
     const GB_callback_struct *restrict my_callback                          \
-)                                                                           \
+)
 
 #define GB_JIT_CUDA_KERNEL_APPLY_UNOP_PROTO(GB_jit_kernel_apply_unop)       \
 GrB_Info GB_jit_kernel_apply_unop                                           \
@@ -817,7 +817,18 @@ GrB_Info GB_jit_kernel_apply_unop                                           \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
     const GB_callback_struct *restrict my_callback                          \
-)                                                                           \
+)
+
+#define GB_JIT_CUDA_KERNEL_MEMCPY_PROTO(GB_jit_kernel_memcpy)               \
+GrB_Info GB_jit_kernel_memcpy                                               \
+(                                                                           \
+    GB_void *dest,                                                          \
+    const GB_void *src,                                                     \
+    const size_t n,                                                         \
+    int device,                                                             \
+    cudaStream_t stream,                                                    \
+    int32_t gridsz                                                          \
+)
 
 #define GB_JIT_CUDA_KERNEL_SELECT_BITMAP_PROTO(GB_jit_kernel_select_bitmap) \
 GrB_Info GB_jit_kernel_select_bitmap                                        \
@@ -829,7 +840,7 @@ GrB_Info GB_jit_kernel_select_bitmap                                        \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
     const GB_callback_struct *restrict my_callback                          \
-)                                                                           \
+)
 
 #define GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO(GB_jit_kernel_select_sparse) \
 GrB_Info GB_jit_kernel_select_sparse                                        \

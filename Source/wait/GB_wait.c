@@ -176,6 +176,7 @@ GrB_Info GB_wait                // finish all pending computations
         GB_BURBLE_MATRIX (A, "%s", "(wait: build pending tuples) ") ;
         GB_RETURN_IF_OUTPUT_IS_READONLY (A) ;
         GB_void *S_input = (A_iso) ? ((GB_void *) A->x) : NULL ;
+        int S_input_arena = (A_iso) ? GB_arena (A->x_mem) : -1 ;
         GrB_Type stype = (A_iso) ? A->type : A->Pending->type ;
 
         GB_OK (GB_matrix_header_new (&T, data_arena, data_arena)) ;
@@ -196,6 +197,7 @@ GrB_Info GB_wait                // finish all pending computations
             A->Pending->nmax,       // size of Pending->[ijx] arrays
             true,                   // is_matrix: unused
             NULL, NULL, S_input,    // original I,J,S_input tuples
+            S_input_arena,
             A_iso,                  // pending tuples are iso if A is iso
             npending,               // # of tuples
             A->Pending->op,         // dup operator for assembling duplicates,
@@ -346,7 +348,8 @@ GrB_Info GB_wait                // finish all pending computations
 
     GB_OK (GB_matrix_header_new (&S, data_arena, data_arena)) ;
     GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T,
-        false, NULL, NULL, op_2nd, false, true, Werk)) ;
+        false, NULL, NULL, op_2nd, false,
+        /* A_and_B_are_disjoint: */ true, Werk)) ;
     GB_Matrix_free (&T) ;
     ASSERT_MATRIX_OK (S, "S after GB_wait:add", GB0) ;
 

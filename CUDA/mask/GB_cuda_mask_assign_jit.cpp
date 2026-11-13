@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// C is initially empty.  The types of C and A can differ, in which case
+// this method does the typecasting.
+
 #include "mask/GB_cuda_mask.hpp"
 
 extern "C"
@@ -23,7 +26,7 @@ GrB_Info GB_cuda_mask_assign_jit
     const GrB_Matrix B,                     // B == M is the mask
     const bool Mask_struct,
     const bool Mask_comp,
-    const GrB_BinaryOp binaryop,            // FIRST_atype
+    const GrB_BinaryOp binaryop,            // always the FIRST_atype operator
     // CUDA stream and launch parameters:
     int device,
     cudaStream_t stream,
@@ -39,10 +42,10 @@ GrB_Info GB_cuda_mask_assign_jit
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_CUDA_KERNEL_MASK_ASSIGN_SPARSE,
-        /* C_iso: */ A->iso, /* C_in_iso: */ false,
-        /* C_sparsity: */ GxB_HYPERSPARSE,
-        A->type, A->p_is_32, A->j_is_32, A->i_is_32,
-        /* M: */ B, Mask_struct, Mask_comp, binaryop,
+        /* C_iso if A is iso: */ A->iso, /* C_in_iso: */ false,
+        /* C_sparsity: */ GxB_HYPERSPARSE, /* ctype: */ C->type,
+        /* C->pji_is_32, same as A: */ A->p_is_32, A->j_is_32, A->i_is_32,
+        /* M is the B matrix: */ B, Mask_struct, Mask_comp, binaryop,
         /* flipij: */ false, /* flipxy: */ false, A, B) ;
 
     //--------------------------------------------------------------------------

@@ -77,7 +77,9 @@
         // cumulative sum of the workspace, and copy back into C->p
         GB_cumsum (workspace, Cp_is_32, avlen, &nvec_nonempty, nth,
             data_arena, Werk) ;
-        GB_memcpy (Cp, workspace, (avlen + 1) * sizeof (GB_Cp_TYPE), nth) ;
+        GB_memcpy (Cp, GB_arena (C->p_mem),
+                   workspace, /* FIXME: */ -1,
+                   (avlen + 1) * sizeof (GB_Cp_TYPE), nth) ;
 
     }
     else

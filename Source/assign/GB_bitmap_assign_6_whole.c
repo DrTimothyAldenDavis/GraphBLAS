@@ -119,7 +119,8 @@ GrB_Info GB_bitmap_assign_6_whole   // C bitmap, no M, no accum
             if (GB_IS_BITMAP (A))
             { 
                 // copy the bitmap
-                GB_memcpy (C->b, A->b, GB_nnz_held (A), nthreads_max) ;
+                GB_memcpy (C->b, GB_arena (C->b_mem), A->b, GB_arena (A->b_mem),
+                    GB_nnz_held (A), nthreads_max) ;
                 C->nvals = GB_nnz (A) ;
             }
             else

@@ -128,7 +128,8 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         { 
             // copy from the old to new with a parallel memcpy
             int nthreads_max = GB_Context_nthreads_max ( ) ;
-            GB_memcpy (pnew, p, GB_IMIN (oldsize, newsize), nthreads_max) ;
+            GB_memcpy (pnew, arena, p, arena,
+                GB_IMIN (oldsize, newsize), nthreads_max) ;
             // free the old block
             GB_free_memory (&p, old_p_mem) ;
         }

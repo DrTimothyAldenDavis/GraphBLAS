@@ -238,7 +238,45 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT (GB_JUMBLED_OK (T)) ;
 
     //--------------------------------------------------------------------------
-    // decide on the method
+    // try the accum/mask with CUDA
+    //--------------------------------------------------------------------------
+
+    info = GrB_NO_VALUE ;
+
+#if 0
+    #if defined ( GRAPHBLAS_HAS_CUDA)
+    if (GB_cuda_accum_mask_branch (C, M, accum, T, C_replace, Mask_struct))
+    {
+
+        //----------------------------------------------------------------------
+        // C<M> = accum (C,T) or C<M>=T via CUDA
+        //----------------------------------------------------------------------
+
+        info = GB_cuda_accum_mask (C, M, accum, Thandle, C_replace,
+            Mask_comp, Mask_struct, Werk) ;
+        if (info == GrB_SUCCESS)
+        {
+            // CUDA was successful
+            GB_FREE_ALL ;
+            ASSERT_MATRIX_OK (C, "CUDA C<M>=accum(C,T)", GB0) ;
+            return (GB_block (C, Werk)) ;
+        }
+        else if (info == GrB_NO_VALUE)
+        {
+            // CUDA was not used; continue below on the CPU
+        }
+        else
+        {
+            // CUDA tried and failed
+            GB_FREE_ALL ;
+            return (info) ;
+        }
+    }
+    #endif
+#endif
+
+    //--------------------------------------------------------------------------
+    // accum/mask on the CPU: decide on the method
     //--------------------------------------------------------------------------
 
     int64_t cnz = GB_nnz (C) ;              // includes live entries and zombies
@@ -277,7 +315,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         else
         { 
             // C is sparse or hypersparse (at least for now, before any wait on
-            // C): use GB_subassign if the update is small (resuling in a small
+            // C): use GB_subassign if the update is small (resulting in a small
             // number of pending tuples), and if C is not aliased with M or T.
             use_subassign = (tnz + cnpending <= cnz)
                 && !GB_any_aliased (C, M) && !GB_any_aliased (C, T) ;
@@ -325,7 +363,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     }
 
     //--------------------------------------------------------------------------
-    // apply the accumulator and the mask
+    // try the accum/mask with GB_subassign (CUDA or CPU)
     //--------------------------------------------------------------------------
 
     if (use_subassign)
@@ -389,6 +427,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
             // GB_add_sparsity needs the final sparsity pattern of C and T,
             // so wait on C and T first.
+
             GB_MATRIX_WAIT (C) ;
             GB_MATRIX_WAIT (T) ;
 
@@ -402,7 +441,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             GB_OK (GB_matrix_header_new (&Z, data_arena, data_arena)) ;
             GB_OK (GB_add (Z, C->type, C->is_csc, (apply_mask) ? M : NULL,
                 Mask_struct, Mask_comp, &ignore, C, T, false, NULL, NULL,
-                accum, false, false, Werk)) ;
+                accum, false, /* A_and_B_are_disjoint: */ false, Werk)) ;
             GB_Matrix_free (Thandle) ;
         }
 

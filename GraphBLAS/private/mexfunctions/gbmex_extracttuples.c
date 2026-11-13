@@ -212,7 +212,7 @@ void mexFunction
         if (type == GrB_UINT64) type = GrB_INT64 ;
         ASSERT (type == I_type) ;
         ASSERT (nvals == nvals2) ;
-        GB_memcpy (I_out, x, nvals * I_typesize, nthreads) ;
+        GB_memcpy (I_out, MXARENA, x, xarena, nvals * I_typesize, nthreads) ;
         gb_free (&x, xarena) ;
         GrB_Vector_free (&I) ;
     }
@@ -247,7 +247,7 @@ void mexFunction
         if (type == GrB_UINT64) type = GrB_INT64 ;
         ASSERT (type == J_type) ;
         ASSERT (nvals == nvals2) ;
-        GB_memcpy (J_out, x, nvals * J_typesize, nthreads) ;
+        GB_memcpy (J_out, MXARENA, x, xarena, nvals * J_typesize, nthreads) ;
         gb_free (&x, xarena) ;
         GrB_Vector_free (&J) ;
     }
@@ -264,7 +264,7 @@ void mexFunction
             (handling - GxB_IS_READONLY) : handling ;
         ASSERT (type == X_type) ;
         ASSERT (nvals == nvals2) ;
-        GB_memcpy (X_out, x, nvals * X_typesize, nthreads) ;
+        GB_memcpy (X_out, MXARENA, x, xarena, nvals * X_typesize, nthreads) ;
         gb_free (&x, xarena) ;
         GrB_Vector_free (&X) ;
     }

@@ -228,11 +228,15 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     GB_Type_code mjcode = (Mj_is_32) ? GB_UINT32_code : GB_UINT64_code ; 
 
     // TODO: if integer types of Cp,Ch match Mp,Mh then they could be shallow
-    GB_cast_int (C->p, cpcode, Mp, mpcode, cnvec+1, nthreads) ;
+    GB_cast_int (C->p, cpcode, GB_arena (C->p_mem),
+                 Mp, mpcode, GB_arena (M->p_mem),
+                 cnvec+1, nthreads) ;
 
     if (M_is_hyper)
     { 
-        GB_cast_int (Ch, cjcode, M->h, mjcode, cnvec, nthreads) ;
+        GB_cast_int (Ch, cjcode, GB_arena (C->h_mem),
+                     M->h, mjcode, GB_arena (M->h_mem),
+                     cnvec, nthreads) ;
     }
 //  C->nvec_nonempty = M->nvec_nonempty ;
     GB_nvec_nonempty_set (C, GB_nvec_nonempty_get (M)) ;

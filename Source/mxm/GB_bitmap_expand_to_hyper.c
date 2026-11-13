@@ -104,8 +104,9 @@ GrB_Info GB_bitmap_expand_to_hyper
     { 
         // C becomes hypersparse
         ASSERT (cvdim == B->nvec) ;
-//      GB_memcpy (Ch, B->h, cvdim * sizeof (int64_t), nthreads) ;
-        GB_cast_int (Ch, cjcode, B->h, bjcode, cvdim, nthreads) ;
+        GB_cast_int (Ch, cjcode, data_arena,
+                     B->h, bjcode, GB_arena (B->h_mem),
+                     cvdim, nthreads) ;
     }
 
     //--------------------------------------------------------------------------

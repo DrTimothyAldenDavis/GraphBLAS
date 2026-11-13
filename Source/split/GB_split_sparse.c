@@ -99,7 +99,8 @@ GrB_Info GB_split_sparse            // split a sparse matrix
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_memcpy (Wp, Ap, anvec * apsize, nthreads_max) ;
+    GB_memcpy (Wp, data_arena, Ap, GB_arena (A->p_mem),
+        anvec * apsize, nthreads_max) ;
     GB_IPTR (Wp, Ap_is_32) ;
 
     //--------------------------------------------------------------------------

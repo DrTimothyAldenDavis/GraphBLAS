@@ -65,7 +65,8 @@ GrB_Info GB_cast_matrix     // copy or typecast the values from A into C
         else
         { 
             // copy all the values, no typecast
-            GB_memcpy (Cx, Ax, anz * C->type->size, nthreads) ;
+            GB_memcpy (Cx, GB_arena (C->x_mem), Ax, GB_arena (A->x_mem),
+                anz * C->type->size, nthreads) ;
         }
 
     }

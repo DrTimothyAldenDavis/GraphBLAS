@@ -369,8 +369,12 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
         if (sparsity != GxB_FULL)
         {
-            GB_cast_int (A->p, apcode, Mp, GB_UINT64_code, ncols+1, 1) ;
-            GB_cast_int (A->i, aicode, Mi, GB_UINT64_code, anz, 1) ;
+            GB_cast_int (A->p, apcode, GB_arena (A->p_mem),
+                         Mp, GB_UINT64_code, GB_ARENA_TEST,
+                         ncols+1, 1) ;
+            GB_cast_int (A->i, aicode, GB_arena (A->i_mem),
+                         Mi, GB_UINT64_code, GB_ARENA_TEST,
+                         anz, 1) ;
         }
 
     }

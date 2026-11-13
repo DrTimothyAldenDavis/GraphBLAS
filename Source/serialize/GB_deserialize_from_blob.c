@@ -120,7 +120,8 @@ GrB_Info GB_deserialize_from_blob
         { 
             // copy the blob into the array X.  This is now safe and secure.
             // The contents of X are not yet checked, however.
-            GB_memcpy (X, blob + s, X_len, nthreads_max) ;
+            GB_memcpy (X, data_arena, blob + s, /* blob arena unknown: */ -1,
+                X_len, nthreads_max) ;
         }
 
     }

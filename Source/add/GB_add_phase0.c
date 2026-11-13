@@ -299,7 +299,8 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
         GB_IPTR (Ch, Cj_is_32) ;
 
         // copy Mh into Ch.  Ch is Mh so C_to_M is not needed.
-        GB_cast_int (Ch, cjcode, Mh, mjcode, Mnvec, nthreads) ;
+        GB_cast_int (Ch, cjcode, data_arena, Mh, mjcode, GB_arena (M->h_mem),
+            Mnvec, nthreads) ;
 
         // construct the mapping from C to A and B, if they are hypersparse
         if (A_is_hyper || B_is_hyper)

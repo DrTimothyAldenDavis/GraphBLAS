@@ -245,7 +245,8 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     if (GB_IS_HYPERSPARSE (M))
     { 
         // copy M->h into C->h
-        GB_memcpy (C->h, Mh, nvec * cjsize, M_nthreads) ;
+        GB_memcpy (C->h, GB_arena (C->h_mem), Mh, GB_arena (M->h_mem),
+            nvec * cjsize, M_nthreads) ;
     }
 
     C->nvec = nvec ;

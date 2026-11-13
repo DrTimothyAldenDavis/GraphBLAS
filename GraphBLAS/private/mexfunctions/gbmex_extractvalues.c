@@ -107,7 +107,7 @@ void mexFunction
         (handling - GxB_IS_READONLY) : handling ;
     ASSERT (xtype == X_type) ;
     ASSERT (nvals == nvals2) ;
-    GB_memcpy (X_out, x, nvals * X_typesize, nthreads) ;
+    GB_memcpy (X_out, MXARENA, x, xarena, nvals * X_typesize, nthreads) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

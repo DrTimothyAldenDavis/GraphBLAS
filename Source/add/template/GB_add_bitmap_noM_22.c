@@ -17,7 +17,7 @@
     //--------------------------------------------------------------------------
 
     #ifdef GB_ISO_ADD
-        GB_memcpy (Cb, Ab, cnz, C_nthreads) ;
+        GB_memcpy (Cb, Cb_arena, Ab, Ab_arena, cnz, C_nthreads) ;
     #else
         int64_t p ;
         #pragma omp parallel for num_threads(C_nthreads) schedule(static)

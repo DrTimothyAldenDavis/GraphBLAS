@@ -206,6 +206,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
         NULL, NULL,             // original I,J tuples
         S_input,                // cscalar if C is iso, or NULL
         C_iso,                  // true if C is iso
+        -1,                     // S_input arena (FIXME: should be known)
         cnz,                    // # of tuples
         NULL,                   // no duplicates, so dup is NUL
         ctype,                  // the type of Wx (no typecasting)

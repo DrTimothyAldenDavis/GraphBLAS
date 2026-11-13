@@ -125,7 +125,9 @@ GrB_Info GB_select_sparse
     if (A_is_hyper)
     { 
         // C->h is a deep copy of A->h
-        GB_cast_int (C->h, cjcode, A->h, ajcode, A->nvec, nthreads_max) ;
+        GB_cast_int (C->h, cjcode, GB_arena (C->h_mem),
+                     A->h, ajcode, GB_arena (A->h_mem),
+                     A->nvec, nthreads_max) ;
     }
 
     C->nvec = A->nvec ;

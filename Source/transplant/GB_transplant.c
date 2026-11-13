@@ -18,6 +18,10 @@
 // C->user_name, C->user_name_mem, C->p_control, C->j_control, and
 // C->i_control are not modified by the transplant.
 
+// fixme for CUDA: this method uses O(1) transplant, or if a copy/cast is
+// needed, it calls GB_memcpy or GB_cast_matrix.  Let the CUDA case use this
+// method, and change GB_memcpy and GB_cast_matrix to exploit the GPU.
+
 #define GB_FREE_ALL                 \
 {                                   \
     GB_phybix_free (C) ;            \
@@ -139,6 +143,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
         else if (A->Y_shallow || GB_is_shallow (A->Y))
         { 
             // A->Y is shallow, so create a deep copy for C
+            // fixme for CUDA: need a CUDA GB_dup (bunch of memcpy's),
+            // and typecast of integers
             GB_OK (GB_dup (&(C->Y), A->Y, data_arena, data_arena, Werk)) ;
         }
         else
@@ -218,6 +224,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         if (A->x_shallow)
         { 
             // A is shallow so make a deep copy; no typecast needed
+            // fixme: need a CUDA GB_cast_matrix (can use CUDA apply kernels)
             GB_OK (GB_cast_matrix (C, A)) ;
             A->x = NULL ;
         }
@@ -231,6 +238,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     else
     {
         // types differ, must typecast from A to C.
+        // fixme: need a CUDA GB_cast_matrix (can use CUDA apply kernels)
         GB_OK (GB_cast_matrix (C, A)) ;
         if (!A->x_shallow)
         { 
@@ -287,8 +295,10 @@ GrB_Info GB_transplant          // transplant one matrix into another
             }
 
             // copy A->p and A->h into the newly created C->p and C->h
-            GB_memcpy (C->p, A->p, (anvec+1) * psize, nth) ;
-            GB_memcpy (C->h, A->h,  anvec    * jsize, nth) ;
+            GB_memcpy (C->p, GB_arena (C->p_mem),
+                       A->p, GB_arena (A->p_mem), (anvec+1) * psize, nth) ;
+            GB_memcpy (C->h, GB_arena (C->h_mem),
+                       A->h, GB_arena (A->h_mem), anvec * jsize, nth) ;
         }
         else
         {
@@ -305,7 +315,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
             }
 
             // copy A->p into the newly created C->p
-            GB_memcpy (C->p, A->p, (avdim+1) * psize, nth) ;
+            GB_memcpy (C->p, GB_arena (C->p_mem),
+                       A->p, GB_arena (A->p_mem), (avdim+1) * psize, nth) ;
         }
 
         // free any non-shallow A->p and A->h content of A
@@ -364,7 +375,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
         //----------------------------------------------------------------------
 
         // copy A->i into C->i
-        GB_memcpy (C->i, A->i, anz * isize, nthreads) ;
+        GB_memcpy (C->i, GB_arena (C->i_mem),
+                   A->i, GB_arena (A->i_mem), anz * isize, nthreads) ;
         A->i = NULL ;
         A->i_shallow = false ;
 
@@ -408,7 +420,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
         //----------------------------------------------------------------------
 
         // copy A->b into C->b
-        GB_memcpy (C->b, A->b, anz * sizeof (int8_t), nthreads) ;
+        GB_memcpy (C->b, GB_arena (C->b_mem),
+                   A->b, GB_arena (A->b_mem), anz * sizeof (int8_t), nthreads) ;
         A->b = NULL ;
         A->b_shallow = false ;
 

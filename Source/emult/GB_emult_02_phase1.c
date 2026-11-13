@@ -230,15 +230,18 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     if (GB_IS_HYPERSPARSE (A))
     { 
         // copy A->h into C->h
-        GB_memcpy (C->h, Ah, nvec * cjsize, A_nthreads) ;
+        GB_memcpy (C->h, GB_arena (C->h_mem), Ah, GB_arena (A->h_mem),
+            nvec * cjsize, A_nthreads) ;
     }
 
     if (C_has_pattern_of_A)
     { 
         // Method2/3(b): B is full and no mask present, so the pattern of C is
         // the same as the pattern of A
-        GB_memcpy (Cp, Ap, (nvec+1) * cpsize, A_nthreads) ;
-        GB_memcpy (C->i, Ai, cnz * cisize, A_nthreads) ;
+        GB_memcpy (Cp, GB_arena (C->p_mem), Ap, GB_arena (A->p_mem),
+            (nvec+1) * cpsize, A_nthreads) ;
+        GB_memcpy (C->i, GB_arena (C->i_mem), Ai, GB_arena (A->i_mem),
+            cnz * cisize, A_nthreads) ;
     }
 
     C->nvals = cnz ;

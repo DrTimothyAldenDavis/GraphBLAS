@@ -70,6 +70,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
     GB_MDECL (J_work, , u) ; uint64_t J_work_mem = mem ;
     GB_void *S_work = NULL ; uint64_t S_work_mem = mem ;
     GB_void *S_input = NULL ;
+    int S_input_arena = -1 ;
     bool I_work_is_32 = false ;
     bool J_work_is_32 = false ;
 
@@ -287,6 +288,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
 
             // use T->x as S_input to GB_builder, which is not modified
             S_input = T->x ;
+            S_input_arena = GB_arena (T->x_mem) ;
         }
 
         //----------------------------------------------------------------------
@@ -424,6 +426,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             NULL,           // I_input is not used
             NULL,           // J_input is not used
             S_input,        // S_input is used if not in-place; NULL if in-place
+            S_input_arena,
             T_iso,          // true if T and C are iso-valued
             nvals,          // number of entries in T and C
             NULL,           // no dup operator

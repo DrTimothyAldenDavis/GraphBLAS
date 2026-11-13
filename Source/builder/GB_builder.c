@@ -164,6 +164,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     const void *restrict J_input,   // original indices, size nvals
     const GB_void *restrict S_input,// array of values of tuples, size nvals,
                                     // or size 1 if S_input or S_work are iso
+    const uint64_t S_input_arena,   // arena of S_input, (-1 if not known)
     const bool S_iso,               // true if S_input or S_work are iso
     const int64_t nvals,            // number of tuples, and size of K_work
     GrB_BinaryOp dup,               // binary function to assemble duplicates,
@@ -206,6 +207,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     GB_void *restrict S_work = (*S_work_handle) ;
     const GB_void *restrict Sx = (S_work == NULL) ? S_input : S_work ;
+    const int Sx_arena = (S_work == NULL) ? S_input_arena :
+        GB_arena (*S_work_mem_handle) ;
     ASSERT (GB_IMPLIES (nvals > 0, Sx != NULL)) ;
     ASSERT (GB_IMPLIES (S_iso, ttype == stype)) ;
     ASSERT (GB_IMPLIES (S_iso, dup == NULL)) ;
@@ -518,7 +521,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 }
                 GB_cast_int (
                     J_work, J_is_32_new ? GB_UINT32_code : GB_UINT64_code,
+                    GB_arena (*J_work_mem_handle),
                     J_input,    J_is_32 ? GB_UINT32_code : GB_UINT64_code,
+                    -1, // J_input arena, FIXME: sometimes it is known
                     nvals, nthreads) ;
                 J_is_32 = J_is_32_new ;
             }
@@ -1098,7 +1103,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 }
                 GB_cast_int (
                     T->i,  Ti_is_32 ? GB_UINT32_code : GB_UINT64_code,
+                    GB_arena (T->i_mem),
                     I_work, I_is_32 ? GB_UINT32_code : GB_UINT64_code,
+                    GB_arena (*I_work_mem_handle),
                     tnz, nthreads) ;
             }
             // free I_work
@@ -1319,7 +1326,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             ASSERT (S_work == NULL) ;
             ASSERT (Sx == S_input) ;
-            GB_memcpy (Tx, Sx, (S_iso ? 1 : nvals) * tsize, nthreads) ;
+            GB_memcpy (Tx, GB_arena (T->x_mem), Sx, Sx_arena,
+                (S_iso ? 1 : nvals) * tsize, nthreads) ;
             info = GrB_SUCCESS ;
 
         }

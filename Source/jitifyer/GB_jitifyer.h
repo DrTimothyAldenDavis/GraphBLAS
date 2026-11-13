@@ -209,6 +209,9 @@ typedef enum
     // C<M or !M>=A where M is structural and C is initially empty
     GB_JIT_CUDA_KERNEL_MASK_ASSIGN_SPARSE = 1041,
 
+    // memcpy
+    GB_JIT_CUDA_KERNEL_MEMCPY = 1042,
+
 }
 GB_jit_kcode ;
 

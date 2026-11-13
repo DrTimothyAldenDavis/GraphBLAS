@@ -72,6 +72,9 @@ void mexFunction
     uint64_t *Ap = (uint64_t *) A->p ;
     uint64_t *Ai = (uint64_t *) A->i ;
     void *Ax = A->x ;
+    int Ap_arena = GB_arena (A->p_mem) ;
+    int Ai_arena = GB_arena (A->i_mem) ;
+    int Ax_arena = GB_arena (A->x_mem) ;
 
     int sparsity_status ;
     OK (GrB_Matrix_get_INT32 (A, &sparsity_status, GxB_SPARSITY_STATUS)) ;
@@ -138,8 +141,10 @@ void mexFunction
         }
         uint64_t *Cp = (uint64_t *) mxGetJc (pargout [0]) ;
         uint64_t *Ci = (uint64_t *) mxGetIr (pargout [0]) ;
-        GB_memcpy (Cp, Ap, (Matrix.ncols+1) * sizeof (uint64_t), nthreads) ;
-        GB_memcpy (Ci, Ai, Matrix.nvals * sizeof (uint64_t), nthreads) ;
+        GB_memcpy (Cp, MXARENA, Ap, Ap_arena,
+            (Matrix.ncols+1) * sizeof (uint64_t), nthreads) ;
+        GB_memcpy (Ci, MXARENA, Ai, Ax_arena,
+            Matrix.nvals * sizeof (uint64_t), nthreads) ;
     }
     else
     { 
@@ -148,7 +153,8 @@ void mexFunction
     }
 
     void *Cx = mxGetData (pargout [0]) ;
-    GB_memcpy (Cx, Ax, Matrix.nvals * Matrix.typesize, nthreads) ;
+    GB_memcpy (Cx, MXARENA, Ax, Ax_arena,
+        Matrix.nvals * Matrix.typesize, nthreads) ;
     FREE_ALL ;
     gb_wrapup ( ) ;
 }

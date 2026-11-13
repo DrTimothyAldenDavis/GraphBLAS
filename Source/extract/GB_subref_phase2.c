@@ -178,8 +178,9 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
             return (GrB_OUT_OF_MEMORY) ;
         }
         int nthreads_max = GB_Context_nthreads_max ( ) ;
-        GB_cast_int (Cp, GB_UINT32_code, Cwork, GB_UINT64_code, Cnvec+1,
-            nthreads_max) ;
+        GB_cast_int (Cp, GB_UINT32_code, data_arena,
+                     Cwork, GB_UINT64_code, GB_arena (Cwork_mem),
+                     Cnvec+1, nthreads_max) ;
     }
     else
     { 

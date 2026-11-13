@@ -216,7 +216,7 @@ GrB_Info GB_cuda_add
 //      ASSERT_MATRIX_OK (M, "M for masking", GB0) ;
 //      ASSERT_MATRIX_OK (B2, "A2 output from masking", GB0) ;
 
-        // C = A2 + B2
+        // C = (ctype) (A2 + B2)
 //      printf ("\nCUDA C=A2+B2\n") ;
         GB_OK (GB_cuda_add_jit (C, C_iso, A2, B2, is_eWiseUnion,
             alpha_scalar, beta_scalar, theta, op, flipij,

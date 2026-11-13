@@ -172,25 +172,33 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
 
     if (A->p != NULL)
     { 
-        GB_cast_int (C->p, cpcode, A->p, apcode, anvec+1, nthreads_max) ;
+        GB_cast_int (C->p, cpcode, GB_arena (C->p_mem),
+                     A->p, apcode, GB_arena (A->p_mem),
+                     anvec+1, nthreads_max) ;
     }
     if (A->h != NULL)
     { 
-        GB_cast_int (C->h, cjcode, A->h, ajcode, anvec, nthreads_max) ;
+        GB_cast_int (C->h, cjcode, GB_arena (C->h_mem),
+                     A->h, ajcode, GB_arena (A->h_mem),
+                     anvec, nthreads_max) ;
     }
     if (A->b != NULL)
     { 
-        GB_memcpy (C->b, A->b, anz * sizeof (int8_t), nthreads_max) ;
+        GB_memcpy (C->b, GB_arena (C->b_mem), A->b, GB_arena (A->b_mem),
+            anz * sizeof (int8_t), nthreads_max) ;
     }
     if (A->i != NULL)
     { 
-        GB_cast_int (C->i, cicode, A->i, aicode, anz, nthreads_max) ;
+        GB_cast_int (C->i, cicode, GB_arena (C->i_mem),
+                     A->i, aicode, GB_arena (A->i_mem),
+                     anz, nthreads_max) ;
     }
     if (numeric)
     { 
         ASSERT (C_iso == A->iso) ;
         ASSERT (C->type == A->type) ;
-        GB_memcpy (C->x, A->x, (A->iso ? 1:anz) * atype->size, nthreads_max) ;
+        GB_memcpy (C->x, GB_arena (C->x_mem), A->x, GB_arena (A->x_mem),
+            (A->iso ? 1:anz) * atype->size, nthreads_max) ;
     }
 
     //--------------------------------------------------------------------------
@@ -205,16 +213,20 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
         size_t jsize = (A->j_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
         size_t isize = (A->i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
         size_t xsize = A_Pending->size ;
-        GB_cast_int (C_Pending->i, cicode, A_Pending->i, aicode, n,
-            nthreads_max) ;
+        GB_cast_int (C_Pending->i, cicode, GB_arena (C_Pending->i_mem),
+                     A_Pending->i, aicode, GB_arena (A_Pending->i_mem),
+                     n, nthreads_max) ;
         if (is_matrix)
         { 
-            GB_cast_int (C_Pending->j, cjcode, A_Pending->j, ajcode, n,
-                nthreads_max) ;
+            GB_cast_int (C_Pending->j, cjcode, GB_arena (C_Pending->j_mem),
+                         A_Pending->j, ajcode, GB_arena (A_Pending->j_mem),
+                         n, nthreads_max) ;
         }
         if (!A->iso)
         { 
-            GB_memcpy (C_Pending->x, A_Pending->x, n * xsize, nthreads_max) ;
+            GB_memcpy (C_Pending->x, GB_arena (C_Pending->x_mem),
+                A_Pending->x, GB_arena (A_Pending->x_mem),
+                n * xsize, nthreads_max) ;
         }
         C_Pending->n = n ;
         C_Pending->sorted = A_Pending->sorted ;

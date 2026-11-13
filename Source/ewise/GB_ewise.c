@@ -389,7 +389,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
         GB_OK (GB_add (T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
             &mask_applied, A1, B1, is_eWiseUnion, alpha, beta, op, flipij,
-            false, Werk)) ;
+            /* A_and_B_are_disjoint: */ false, Werk)) ;
 
     }
     else

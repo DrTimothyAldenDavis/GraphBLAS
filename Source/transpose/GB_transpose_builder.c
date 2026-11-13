@@ -69,6 +69,7 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
 
     void *iwork = NULL ; uint64_t iwork_mem = mem ;
     void *jwork = NULL ; uint64_t jwork_mem = mem ;
+    int jwork_arena = data_arena ;
     GB_void *Swork = NULL ; uint64_t Swork_mem = mem ;
 
     GrB_Type atype = A->type ;
@@ -130,6 +131,7 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
     }
 
     GB_void *S_input = NULL ;
+    int S_input_arena = -1 ;
 
     // for the GB_builder method, if the transpose is done in-place and
     // A->i is not shallow, A->i can be used and then freed.
@@ -157,9 +159,9 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // construct jwork and Swork
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     // "row" indices of A become "column" indices of C
     if (recycle_Ai)
@@ -168,6 +170,7 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
         // jwork is A->i, and is freed by GB_builder.
         jwork = A->i ;
         jwork_mem = A->i_mem ;
+        jwork_arena = GB_arena (A->i_mem) ; ;
         A->i = NULL ;
         ASSERT (in_place) ;
     }
@@ -176,7 +179,9 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
         // copy A->i into jwork, making a deep copy.  jwork is freed by
         // GB_builder.  A->i is not modified, even if out of memory.
         int nthreads_max = GB_Context_nthreads_max ( ) ;
-        GB_memcpy (jwork, A->i, anz * aisize, nthreads_max) ;
+        GB_memcpy (jwork, jwork_arena,
+                   A->i,  GB_arena (A->i_mem),
+                   anz * aisize, nthreads_max) ;
     }
 
     // numerical values: apply the op, typecast, or make shallow copy
@@ -187,6 +192,7 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
         // apply the op to the iso scalar
         GB_unop_iso (sscalar, ctype, C_code_iso, op, A, scalar) ;
         S_input = sscalar ;     // S_input is used instead of Swork
+        S_input_arena = -1 ;    // S_input is on the stack, not in an arena
         Swork = NULL ;
         stype = ctype ;
     }
@@ -209,13 +215,14 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
         ASSERT (!C_iso) ;
         ASSERT (!A->iso) ;
         S_input = (GB_void *) A->x ; // S_input is used instead of Swork
+        S_input_arena = GB_arena (A->x_mem) ;
         Swork = NULL ;
         stype = atype ;
     }
 
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // build the matrix: T = (ctype) A' or op ((xtype) A')
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     // internally, jwork is freed and then T->x is allocated, so the
     // total memory usage is anz * max (csize, sizeof(aisize)).  T is
@@ -240,6 +247,7 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
         true,       // is_matrix: unused
         NULL, NULL, // original I,J indices: not used here
         S_input,    // array of values of type stype, not modified
+        S_input_arena,  // the arena that contains S_input
         C_iso,      // iso property of T is the same as C->iso
         anz,        // number of tuples
         NULL,       // no dup operator needed (input has no duplicates)
@@ -250,9 +258,9 @@ GrB_Info GB_transpose_builder       // T=A', T=(ctype)A' or T=op(A')
         Cp_is_32, Cj_is_32, Ci_is_32  // integer sizes for T 
     )) ;
 
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // return result
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     // GB_builder always frees jwork, and either frees iwork or
     // transplants it in to T->i and sets iwork to NULL.  So iwork and

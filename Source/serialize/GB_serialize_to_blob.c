@@ -52,7 +52,9 @@ void GB_serialize_to_blob
     if (nblocks == 1)
     { 
         // copy a single block into the blob in parallel
-        GB_memcpy (blob + s, Blocks [0].p, Sblocks [0], nthreads_max) ;
+        GB_memcpy (blob + s,     /* blob arena unknown:     */ -1,
+                   Blocks [0].p, /* Blocks.p arena unknown: */ -1,
+                   Sblocks [0], nthreads_max) ;
     }
     else
     {

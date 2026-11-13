@@ -253,6 +253,20 @@ bool GB_cuda_pointer_ok
 ) ;
 
 //------------------------------------------------------------------------------
+// memcpy with the CUDA JIT
+//------------------------------------------------------------------------------
+
+GrB_Info GB_cuda_memcpy
+(
+    void *dest,                 // destination
+    const int dest_arena,       // destination arena, or -1 if not known
+    const void *src,            // source
+    const int src_arena,        // src arena, or -1 if not known
+    size_t n,                   // # of bytes to copy
+    const GB_Operator op        // GrB_IDENTITY_UINT8
+) ;
+
+//------------------------------------------------------------------------------
 // builder
 //------------------------------------------------------------------------------
 
@@ -397,6 +411,32 @@ GrB_Info GB_cuda_emult
     const GrB_Matrix B,
     const GrB_BinaryOp op,      // operator that defines C=A+B
     const bool flipij,          // true if i and j are reversed in the op
+    GB_Werk Werk
+) ;
+
+//------------------------------------------------------------------------------
+// CUDA accum/mask
+//------------------------------------------------------------------------------
+
+bool GB_cuda_accum_mask_branch  // true if CUDA is to be used
+(
+    const GrB_Matrix C,         // input/output matrix for results
+    const GrB_Matrix M,         // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,   // optional accum for Z=accum(C,results)
+    const GrB_Matrix T,         // results of computation, freed when done
+    const bool C_replace,       // if true, clear C first
+    const bool Mask_struct      // if true, use the only structure of M
+) ;
+
+GrB_Info GB_cuda_accum_mask     // C<M> = accum (C,T) using CUDA
+(
+    GrB_Matrix C,               // input/output matrix for results
+    const GrB_Matrix M,         // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,   // optional accum for Z=accum(C,results)
+    GrB_Matrix *Thandle,        // results of computation, freed when done
+    const bool C_replace,       // if true, clear C first
+    const bool Mask_comp,       // if true, complement the mask
+    const bool Mask_struct,     // if true, use the only structure of M
     GB_Werk Werk
 ) ;
 

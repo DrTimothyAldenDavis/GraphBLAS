@@ -141,7 +141,8 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
         anvec,                  // size of I_work and J_work in # of tuples
         true,                   // is_matrix: unused
         NULL, NULL,             // original I,J tuples
-        NULL,                   // no scalar iso value
+        NULL,                   // S_input: no scalar iso value
+        -1,                     // no arena for S_input
         false,                  // Y is never iso
         anvec,                  // # of tuples
         NULL,                   // no duplicates, so dup is NUL

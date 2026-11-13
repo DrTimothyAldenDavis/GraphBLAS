@@ -80,7 +80,7 @@ GrB_Info GB_set_arena           // set arena of a block of memory
     // copy the data to the new block
     //--------------------------------------------------------------------------
 
-    GB_memcpy (p_new, p_old, n, nthreads) ;
+    GB_memcpy (p_new, new_arena, p_old, old_arena, n, nthreads) ;
 
     //--------------------------------------------------------------------------
     // free the old block

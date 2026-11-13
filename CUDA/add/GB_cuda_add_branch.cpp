@@ -1,11 +1,19 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/add/GB_cuda_add_branch: decide to use GPU for GB_add
+// GraphBLAS/CUDA/add/GB_cuda_add_branch: decide to use GPU for ewise methods
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2026, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// FIXME: rename this method GB_cuda_ewise_branch; it is used by eWiseAdd,
+// eWiseMult, and will also be used by GB_accum_mask (C<M>=accum(C,T)).
+
+// FIXME: all GB_cuda_*_branch methods should return the GPU device(s) to use,
+// and then pass that device (or list of devices in the future) to the
+// corresponding GB_cuda_* method that calls cudaSetDevice and then does the
+// work.
 
 #include "GB_cuda.hpp"
 
@@ -28,9 +36,15 @@ bool GB_cuda_add_branch
     int header_arena = GB_arena (C->header_mem) ;
     int dev = data_arena - GxB_NARENAS ;
 
-    // The CUDA kernel cannot yet apply a valued mask, and currently only
+    // The CUDA kernel currently only
     // handles the case when all matrices are sparse/hypersparse.
-    // FIXME: CUDA needs to handle all of these cases below
+    // FIXME: CUDA needs to handle all bitmap/full matrices.
+
+    // FIXME: in the future, the matrices can have header arenas that are not
+    // in the data_arena of this particular GPU device.  The headers just need
+    // to be copied over, and back again if they are modified on the GPU.  We
+    // do not yet do this, so the tests below currently require "data arena ==
+    // header arena" for C, A, B, and M.
 
     int A_sparsity = GB_sparsity (A) ;
     int B_sparsity = GB_sparsity (B) ;

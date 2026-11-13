@@ -13,8 +13,10 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
 (
     void *dest,                 // destination
     GB_Type_code dest_code,     // destination type: int32/64, or uint32/64
+    const int dest_arena,       // destination arena
     const void *src,            // source
     GB_Type_code src_code,      // source type: int32/64, or uint32/64
+    const int src_arena,        // source arena
     size_t n,                   // # of entries to copy
     int nthreads_max            // max # of threads to use
 )
@@ -44,7 +46,8 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
             {
                 case GB_INT32_code :
                 case GB_UINT32_code : 
-                    GB_memcpy (dest, src, n * sizeof (uint32_t), nthreads) ;
+                    GB_memcpy (dest, dest_arena, src, src_arena,
+                        n * sizeof (uint32_t), nthreads) ;
                     break ;
 
                 case GB_INT64_code :
@@ -77,7 +80,8 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
             {
                 case GB_INT32_code :
                 case GB_UINT32_code : 
-                    GB_memcpy (dest, src, n * sizeof (uint32_t), nthreads) ;
+                    GB_memcpy (dest, dest_arena, src, src_arena,
+                        n * sizeof (uint32_t), nthreads) ;
                     break ;
 
                 case GB_INT64_code :
@@ -126,7 +130,8 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
 
                 case GB_INT64_code :
                 case GB_UINT64_code :
-                    GB_memcpy (dest, src, n * sizeof (uint64_t), nthreads) ;
+                    GB_memcpy (dest, dest_arena, src, src_arena,
+                        n * sizeof (uint64_t), nthreads) ;
                     break ;
 
                 default: ;
@@ -159,7 +164,8 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
 
                 case GB_INT64_code :
                 case GB_UINT64_code :
-                    GB_memcpy (dest, src, n * sizeof (uint64_t), nthreads) ;
+                    GB_memcpy (dest, dest_arena, src, src_arena,
+                        n * sizeof (uint64_t), nthreads) ;
                     break ;
 
                 default: ;

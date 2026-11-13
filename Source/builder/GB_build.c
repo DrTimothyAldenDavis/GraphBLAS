@@ -290,6 +290,7 @@ GrB_Info GB_build               // build matrix
             C->is_csc ? I : J,      // size nvals
             C->is_csc ? J : I,      // size nvals, or NULL for vector
             (const GB_void *) X,    // values, size nvals or 1 if iso
+//          -1,         // X arena  FIXME
             X_iso,      // true if X is iso
             nvals,      // number of tuples
             dup2,       // op to assemble duplicates (may be NULL)
@@ -351,6 +352,7 @@ GrB_Info GB_build               // build matrix
             C->is_csc ? I : J,      // size nvals
             C->is_csc ? J : I,      // size nvals, or NULL for vector
             (const GB_void *) X,    // values, size nvals or 1 if iso
+            -1,                     // X arena (FIXME: sometimes known)
             X_iso,                  // true if X is iso
             nvals,                  // number of tuples
             dup2,                   // op to assemble duplicates (may be NULL)

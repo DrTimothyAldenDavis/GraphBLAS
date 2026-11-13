@@ -756,6 +756,9 @@ __global__ void GB_cuda_ewise_sparse_phase3
     #if GB_B_ISO
     // get the iso value of the mask matrix, typecasting it to boolean.
     // FIXME: this will fail if B is complex (GxB_FC32 or GxB_FC64).
+    // FIXME: this will treat a floating point -0.0 differently than the CPU.
+    // The code here is correct; the CPU kernels need to be fixed (see issue
+    // #465 on the GraphBLAS github repo).
     Mx_s [0] = (bool) Mx [0] ;
     #endif
     #endif

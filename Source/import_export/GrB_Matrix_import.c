@@ -179,11 +179,14 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     {
         case GrB_CSR_FORMAT : 
         case GrB_CSC_FORMAT : 
-            GB_memcpy (Ap_copy, Ap, plen  * sizeof (uint64_t), nthreads_max) ;
-            GB_memcpy (Ai_copy, Ai, nvals * sizeof (uint64_t), nthreads_max) ;
+            GB_memcpy (Ap_copy, data_arena, Ap, -1,
+                plen  * sizeof (uint64_t), nthreads_max) ;
+            GB_memcpy (Ai_copy, data_arena, Ai, -1,
+                nvals * sizeof (uint64_t), nthreads_max) ;
 //      case GrB_DENSE_ROW_FORMAT :
 //      case GrB_DENSE_COL_FORMAT :
-            GB_memcpy (Ax_copy, Ax, nvals * typesize          , nthreads_max) ;
+            GB_memcpy (Ax_copy, data_arena, Ax, -1,
+                nvals * typesize          , nthreads_max) ;
             break ;
         default : // GrB_COO_FORMAT, nothing to copy
             break ;
@@ -301,6 +304,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
                     is_csc ? Ap : Ai,     // row/col indices
                     is_csc ? Ai : Ap,     // col/row indices
                     (const GB_void *) Ax,               // values
+                    -1,             // Ax arena is not known
                     false,          // matrix is not iso
                     nvals,          // number of tuples
                     NULL,           // implicit SECOND operator for duplicates

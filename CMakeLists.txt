@@ -337,6 +337,7 @@ if ( GRAPHBLAS_HAS_CUDA )
     CUDA/extractTuples
     CUDA/include
     CUDA/init
+    CUDA/memory
     CUDA/matrix
     CUDA/monoid
     CUDA/mxm
