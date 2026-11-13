@@ -448,8 +448,9 @@ GrB_Info GB_ijxvector
             true) ;
         ASSERT_MATRIX_OK (T, "T for typecast to I", GB0) ;
 
-        // I2 = (uint64_t) T->x or (int64_t) T->x
-        I2 = GB_MALLOC_MEMORY (ni, sizeof (uint64_t), &I2_mem) ;
+        // I2 = (I_target_type) T->x
+        I2_mem = mem ;
+        I2 = GB_MALLOC_MEMORY (ni, I_target_type->size, &I2_mem) ;
         if (I2 == NULL)
         { 
             // out of memory
@@ -457,7 +458,8 @@ GrB_Info GB_ijxvector
             return (GrB_OUT_OF_MEMORY) ;
         }
         int nthreads_max = GB_Context_nthreads_max ( ) ;
-        GB_OK (GB_cast_array (I2, I_target_type->code, T, nthreads_max)) ;
+        GB_OK (GB_cast_array (I2, data_arena, I_target_type->code,
+            T, nthreads_max)) ;
         GB_Matrix_free (&T) ;
 
         // free the old I and replace it with I2

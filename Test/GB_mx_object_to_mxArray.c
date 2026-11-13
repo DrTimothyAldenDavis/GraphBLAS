@@ -320,7 +320,7 @@ mxArray *GB_mx_object_to_mxArray    // returns the MATLAB mxArray
         A = mxCreateSparse (C->vlen, C->vdim, cnz, mxCOMPLEX) ;
         GB_void *Ax = (GB_void *) mxGetComplexDoubles (A) ;
         if (Ax == NULL && cnz > 0) mexErrMsgTxt ("Ax is NULL!\n") ;
-        GB_cast_array (Ax, GB_FC64_code, C, 1) ;
+        GB_cast_array (Ax, GB_ARENA_TEST, GB_FC64_code, C, 1) ;
 
     }
     else
@@ -332,7 +332,7 @@ mxArray *GB_mx_object_to_mxArray    // returns the MATLAB mxArray
         double *Sx = (double *) GB_malloc_memory (cnz+1, sizeof (double),
             &Sx_mem) ;
         if (Sx == NULL && cnz > 0) mexErrMsgTxt ("Sx is NULL!\n") ;
-        GB_cast_array ((GB_void *) Sx, GB_FP64_code, C, 1) ;
+        GB_cast_array ((GB_void *) Sx, GB_ARENA_TEST, GB_FP64_code, C, 1) ;
         mexMakeMemoryPersistent (Sx) ;
         mxSetData (A, Sx) ;
 

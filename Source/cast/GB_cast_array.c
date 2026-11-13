@@ -9,8 +9,8 @@
 
 // Casts an input array A->x to an output array Cx with a different type.  The
 // two types are always different, so this does not need to handle user-defined
-// types.  The iso case is not handled; A->x and Cx must be the same size and no
-// iso expansion is done.
+// types.  The iso case is not handled.  A->x and Cx must be the same size and
+// no iso expansion is done.
 
 #include "GB.h"
 #include "apply/GB_apply.h"
@@ -19,9 +19,10 @@
 #include "FactoryKernels/GB_uop__include.h"
 #endif
 
-GrB_Info GB_cast_array              // typecast an array
+GrB_Info GB_cast_array          // typecast an array
 (
     GB_void *Cx,                // output array
+    const int Cx_arena,         // arena of output array
     const GB_Type_code ccode,   // type code for Cx
     GrB_Matrix A,
     const int A_nthreads        // number of threads to use
@@ -52,11 +53,31 @@ GrB_Info GB_cast_array              // typecast an array
     ASSERT (ccode != GB_UDT_code) ;
     ASSERT (!A->iso) ;
 
+    GrB_Info info = GrB_NO_VALUE ;
+
+    //--------------------------------------------------------------------------
+    // via the CUDA kernel
+    //--------------------------------------------------------------------------
+
+    #if defined ( GRAPHBLAS_HAS_CUDA )
+    GrB_Type ctype = GB_code_type (ccode, A->type) ;
+    if (GB_cuda_apply_branch (Cx_arena, ctype, NULL, A))
+    {
+        printf ("CUDA cast array here!\n") ;
+        GB_Operator op = GB_unop_identity (ctype, NULL) ;
+        info = GB_cuda_apply_unop (Cx, Cx_arena, ctype, op, false, A, NULL) ;
+        if (info != GrB_NO_VALUE)
+        {
+            // CUDA was successful, or tried and failed
+            printf ("CUDA cast array result: %d\n", info) ;
+            return (info) ;
+        }
+    }
+    #endif
+
     //--------------------------------------------------------------------------
     // via the factory kernel
     //--------------------------------------------------------------------------
-
-    GrB_Info info = GrB_NO_VALUE ;
 
     #ifndef GBCOMPACT
     GB_IF_FACTORY_KERNELS_ENABLED

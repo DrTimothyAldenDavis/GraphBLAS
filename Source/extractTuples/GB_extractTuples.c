@@ -226,7 +226,8 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
             else if (xcode == acode)
             { 
                 // copy the values from A into X, no typecast
-                GB_memcpy (X, -1, A->x, GB_arena (A->x_mem),
+                GB_memcpy (X, /* FIXME: X arena */ -1,
+                    A->x, GB_arena (A->x_mem),
                     anz * asize, nthreads) ;
             }
             else
@@ -234,7 +235,8 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
                 // typecast the values from A into X
                 ASSERT (X != NULL) ;
                 ASSERT_MATRIX_OK (A, "A to cast_array", GB0) ;
-                GB_OK (GB_cast_array ((GB_void *) X, xcode, A, nthreads)) ;
+                GB_OK (GB_cast_array ((GB_void *) X, /* FIXME: X arena: */ -1,
+                    xcode, A, nthreads)) ;
             }
         }
     }

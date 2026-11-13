@@ -19,6 +19,9 @@
 
 // The p/j/i integers can differ from A.
 
+// This method fully exploits CUDA, via the CUDA kernels for GB_memcpy,
+// GB_cast_int, and GB_cast_matrix.
+
 #define GB_FREE_ALL                                     \
     GB_FREE_MEMORY (&C_user_name, C_user_name_mem) ;    \
     GB_phybix_free (C) ;                                \

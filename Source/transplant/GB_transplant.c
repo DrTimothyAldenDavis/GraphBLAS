@@ -18,9 +18,7 @@
 // C->user_name, C->user_name_mem, C->p_control, C->j_control, and
 // C->i_control are not modified by the transplant.
 
-// fixme for CUDA: this method uses O(1) transplant, or if a copy/cast is
-// needed, it calls GB_memcpy or GB_cast_matrix.  Let the CUDA case use this
-// method, and change GB_memcpy and GB_cast_matrix to exploit the GPU.
+// This method fully exploits CUDA, via GB_memcpy and GB_cast_matrix.
 
 #define GB_FREE_ALL                 \
 {                                   \
@@ -224,7 +222,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
         if (A->x_shallow)
         { 
             // A is shallow so make a deep copy; no typecast needed
-            // fixme: need a CUDA GB_cast_matrix (can use CUDA apply kernels)
             GB_OK (GB_cast_matrix (C, A)) ;
             A->x = NULL ;
         }
@@ -238,7 +235,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
     else
     {
         // types differ, must typecast from A to C.
-        // fixme: need a CUDA GB_cast_matrix (can use CUDA apply kernels)
         GB_OK (GB_cast_matrix (C, A)) ;
         if (!A->x_shallow)
         { 

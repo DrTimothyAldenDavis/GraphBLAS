@@ -489,7 +489,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             Tx_memsize = anz * asize ;
             GxB_Matrix_import_FullC (&T, ttype, nrows, ncols, &Tx, Tx_memsize,
                 false, NULL) ;
-            GB_cast_array (A->x, code1, T, 1) ;
+            GB_cast_array (A->x, GB_arena (A->x_mem), code1, T, 1) ;
             bool iso ;
             GxB_Matrix_export_FullC (&T, &ttype, &nrows, &ncols, &Tx,
                 &Tx_memsize, &iso, NULL) ;

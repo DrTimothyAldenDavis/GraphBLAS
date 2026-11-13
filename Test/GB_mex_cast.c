@@ -78,8 +78,7 @@ void mexFunction
         uint64_t nrows = cnz, ncols = 1, Tx_memsize = cnz * xtype->size ;
         GxB_Matrix_import_FullC (&T, xtype, nrows, ncols, &Tx, Tx_memsize,
             false, NULL) ;
-        // GB_cast_array (C, ctype->code, X, xtype->code, NULL, cnz, 1) ;
-        GB_cast_array (C, ctype->code, T, 1) ;
+        GB_cast_array (C, GB_ARENA_TEST, ctype->code, T, 1) ;
         bool iso ;
         GxB_Matrix_export_FullC (&T, &xtype, &nrows, &ncols, &Tx, &Tx_memsize,
             &iso, NULL) ;

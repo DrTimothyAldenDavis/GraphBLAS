@@ -9,7 +9,7 @@
 
 // The values of C must already be allocated, of size large enough to hold
 // the values of A.  The pattern of C must match the pattern of A, but the
-// pattern is not accessed (except to compute GB_nnz_held (A)).
+// pattern is not accessed.
 
 // Note that A may contain zombies, or entries not in the bitmap pattern of A
 // if A is bitmap, and the values of these entries might be uninitialized
@@ -86,7 +86,8 @@ GrB_Info GB_cast_matrix     // copy or typecast the values from A into C
         { 
             // typecast all the values from A to Cx
             ASSERT (GB_IMPLIES (anz > 0, Cx != NULL)) ;
-            GB_OK (GB_cast_array (Cx, C->type->code, A, nthreads)) ;
+            GB_OK (GB_cast_array (Cx, GB_arena (C->x_mem), C->type->code,
+                A, nthreads)) ;
         }
     }
     return (GrB_SUCCESS) ;
