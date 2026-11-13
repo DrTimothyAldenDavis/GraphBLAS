@@ -12,6 +12,8 @@
 // types.  The iso case is not handled.  A->x and Cx must be the same size and
 // no iso expansion is done.
 
+// This method fully exploits CUDA.
+
 #include "GB.h"
 #include "apply/GB_apply.h"
 #include "jitifyer/GB_stringify.h"
@@ -63,13 +65,11 @@ GrB_Info GB_cast_array          // typecast an array
     GrB_Type ctype = GB_code_type (ccode, A->type) ;
     if (GB_cuda_apply_branch (Cx_arena, ctype, NULL, A))
     {
-        printf ("CUDA cast array here!\n") ;
         GB_Operator op = GB_unop_identity (ctype, NULL) ;
         info = GB_cuda_apply_unop (Cx, Cx_arena, ctype, op, false, A, NULL) ;
         if (info != GrB_NO_VALUE)
         {
             // CUDA was successful, or tried and failed
-            printf ("CUDA cast array result: %d\n", info) ;
             return (info) ;
         }
     }

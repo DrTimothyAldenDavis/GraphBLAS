@@ -18,6 +18,8 @@
 // complain about typecasting these uninitialized values, but these warnings
 // are false positives.
 
+// This method fully exploits CUDA, via GB_memcpy and GB_cast_array.
+
 #include "GB.h"
 #define GB_FREE_ALL ;
 
@@ -59,7 +61,7 @@ GrB_Info GB_cast_matrix     // copy or typecast the values from A into C
 
         if (A->iso)
         { 
-            // A iso, ctype == atype
+            // A iso, ctype == atype, for any pair of memory arenas
             memcpy (Cx, Ax, C->type->size) ;
         }
         else
@@ -79,7 +81,7 @@ GrB_Info GB_cast_matrix     // copy or typecast the values from A into C
 
         if (A->iso)
         { 
-            // Cx [0] = (ctype) Ax [0]
+            // Cx [0] = (ctype) Ax [0], for any pair of memory arenas
             GB_unop_iso (Cx, C->type, GB_ISO_A, NULL, A, NULL) ;
         }
         else
