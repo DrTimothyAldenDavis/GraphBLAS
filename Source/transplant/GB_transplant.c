@@ -18,7 +18,7 @@
 // C->user_name, C->user_name_mem, C->p_control, C->j_control, and
 // C->i_control are not modified by the transplant.
 
-// This method fully exploits CUDA, via GB_memcpy and GB_cast_matrix.
+// This method fully exploits CUDA, via GB_memcpy, GB_cast_matrix, and GB_dup.
 
 #define GB_FREE_ALL                 \
 {                                   \
@@ -141,8 +141,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
         else if (A->Y_shallow || GB_is_shallow (A->Y))
         { 
             // A->Y is shallow, so create a deep copy for C
-            // fixme for CUDA: need a CUDA GB_dup (bunch of memcpy's),
-            // and typecast of integers
             GB_OK (GB_dup (&(C->Y), A->Y, data_arena, data_arena, Werk)) ;
         }
         else
