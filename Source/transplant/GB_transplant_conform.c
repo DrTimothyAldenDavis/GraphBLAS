@@ -12,6 +12,9 @@
 // in C.  C and T can have any sparsity structure on input.  If T is iso, then
 // so is C.
 
+// FIXME: GB_tranplant uses CUDA (except GB_xalloc_memory); GB_conform
+// does not.
+
 #include "GB.h"
 
 GrB_Info GB_transplant_conform      // transplant and conform sparsity structure

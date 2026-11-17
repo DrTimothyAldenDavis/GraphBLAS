@@ -124,7 +124,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
 
-    GB_memset (Bflops, 0, (bnvec+1) * sizeof (int64_t), nthreads_max) ;
+    GB_memset (Bflops, /* FIXME: need Bflops arena: */ -1, 0,
+        (bnvec+1) * sizeof (int64_t), nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // get the mask, if present: any sparsity structure

@@ -253,7 +253,7 @@ bool GB_cuda_pointer_ok
 ) ;
 
 //------------------------------------------------------------------------------
-// memcpy with the CUDA JIT
+// memcpy with the CUDA JIT, and memset (a wrapper for cudaMemset)
 //------------------------------------------------------------------------------
 
 GrB_Info GB_cuda_memcpy
@@ -264,6 +264,14 @@ GrB_Info GB_cuda_memcpy
     const int src_arena,        // src arena, or -1 if not known
     size_t n,                   // # of bytes to copy
     const GB_Operator op        // GrB_IDENTITY_UINT8
+) ;
+
+GrB_Info GB_cuda_memset
+(
+    void *dest,                 // destination
+    const int dest_arena,       // destination arena, or -1 if not known
+    const int c,                // value to to set
+    size_t n                    // # of bytes to set
 ) ;
 
 //------------------------------------------------------------------------------

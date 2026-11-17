@@ -1791,6 +1791,7 @@
     ASSERT_MATRIX_OK (C, "C for bitmap assign", GB0) ;                      \
     ASSERT (GB_IS_BITMAP (C)) ;                                             \
     int8_t *Cb = C->b ;                                                     \
+    const int Cb_arena = GB_arena (C->b_mem) ;                              \
     const bool C_iso = C->iso ;                                             \
     GB_C_TYPE *Cx = (GB_C_ISO) ? NULL : (GB_C_TYPE *) C->x ;                \
     const size_t csize = C->type->size ;                                    \

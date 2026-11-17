@@ -193,7 +193,7 @@
         // The mask is not present yet complemented: C_replace phase only.  all
         // entries are deleted.  This is done by GB_clear in GB_assign_prep
         // and is thus not needed here.
-        GB_memset (Cb, 0, cnzmax, nthreads_max) ;
+        GB_memset (Cb, Cb_arena, 0, cnzmax, nthreads_max) ;
         cnvals = 0 ;
     }
 #endif

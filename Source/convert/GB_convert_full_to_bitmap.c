@@ -57,7 +57,7 @@ GrB_Info GB_convert_full_to_bitmap      // convert matrix from full to bitmap
     // fill the A->b bitmap in parallel
     //--------------------------------------------------------------------------
 
-    GB_memset (A->b, 1, anz, nthreads) ;
+    GB_memset (A->b, GB_arena (A->b_mem), 1, anz, nthreads) ;
     A->nvals = anz ;
 
     //--------------------------------------------------------------------------

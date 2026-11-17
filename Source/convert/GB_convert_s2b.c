@@ -49,6 +49,7 @@ GrB_Info GB_convert_s2b         // convert sparse/hypersparse to bitmap
     int8_t  *restrict Cb      = NULL ; uint64_t Cb_mem = mem ;
     GB_void *restrict Cx_new  = NULL ; uint64_t Cx_mem = mem ;
     GB_void *restrict Ax_keep = NULL ;
+    const int Cb_arena = data_arena ;
 
     ASSERT_MATRIX_OK (A, "A converting sparse/hypersparse to bitmap", GB0) ;
     ASSERT (!GB_IS_FULL (A)) ;
@@ -139,7 +140,7 @@ GrB_Info GB_convert_s2b         // convert sparse/hypersparse to bitmap
 
         ASSERT (nzombies == 0) ;
         // set all of Cb [0..anz-1] to 1, in parallel
-        GB_memset (Cb, 1, anz, nthreads_max) ;
+        GB_memset (Cb, Cb_arena, 1, anz, nthreads_max) ;
         info = GrB_SUCCESS ;
 
     }
@@ -150,7 +151,7 @@ GrB_Info GB_convert_s2b         // convert sparse/hypersparse to bitmap
         // set all of Cb to zero
         //----------------------------------------------------------------------
 
-        GB_memset (Cb, 0, anzmax, nthreads_max) ;
+        GB_memset (Cb, Cb_arena, 0, anzmax, nthreads_max) ;
 
         //----------------------------------------------------------------------
         // scatter the values and pattern of A into the bitmap

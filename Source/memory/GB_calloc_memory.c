@@ -58,9 +58,10 @@ static inline void *GB_calloc_helper
 
     if (p != NULL)
     { 
-        // clear the block of memory with a parallel memset on the CPU
+        // clear the block of memory with a parallel memset on the CPU,
+        // or GB_cuda_memset on the GPU
         int nthreads_max = GB_Context_nthreads_max ( ) ;
-        GB_memset (p, 0, (*memsize), nthreads_max) ;
+        GB_memset (p, arena, 0, (*memsize), nthreads_max) ;
     }
 
     return (p) ;

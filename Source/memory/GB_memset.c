@@ -18,6 +18,7 @@
     void GB_memset                  // parallel memset
     (
         void *dest,                 // destination
+        const int dest_arena,       // arena of destination (-1 if not known)
         const int c,                // value to to set
         size_t n,                   // # of bytes to set
         int nthreads                // max # of threads to use
@@ -26,6 +27,28 @@
 
 GB_CALLBACK_MEMSET_PROTO (GB_memset)
 {
+
+    //--------------------------------------------------------------------------
+    // CUDA memset
+    //--------------------------------------------------------------------------
+
+    #if defined ( GRAPHBLAS_HAS_CUDA )
+    if (dest_arena >= GxB_NARENAS)
+    {
+        GrB_Info info = GB_cuda_memset (dest, dest_arena, c, n) ;
+        if (info == GrB_SUCCESS)
+        {
+            // GB_cuda_memset was succesful; otherwise fall through to CPU
+            // memset, below
+            return ;
+        }
+    }
+    #endif
+
+    //--------------------------------------------------------------------------
+    // CPU memset
+    //--------------------------------------------------------------------------
+
     if (nthreads <= 1 || n <= GB_MEM_CHUNK)
     { 
 

@@ -39,6 +39,7 @@ GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO (GB_bitmap_M_scatter_whole)
 
     GB_GET_MASK
     int8_t *Cb = C->b ;
+    const int Cb_arena = GB_arena (C->b_mem) ;
     const int64_t Cvlen = C->vlen ;
     int64_t cnvals = 0 ;    // not needed
     ASSERT ((Mx == NULL) == Mask_struct) ;

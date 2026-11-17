@@ -201,7 +201,7 @@
 
                 // clear C of all entries
                 cnvals = 0 ;
-                GB_memset (Cb, 0, cnzmax, nthreads_max) ;
+                GB_memset (Cb, Cb_arena, 0, cnzmax, nthreads_max) ;
 
                 // C<M or !M> = A
                 #undef  GB_AIJ_WORK

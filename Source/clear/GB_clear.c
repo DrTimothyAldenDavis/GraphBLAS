@@ -61,7 +61,8 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
         && GB_IS_BITMAP (A))
     { 
         // A should remain bitmap
-        GB_memset (A->b, 0, GB_nnz_held (A), nthreads_max) ;
+        GB_memset (A->b, GB_arena (A->b_mem), 0, GB_nnz_held (A),
+            nthreads_max) ;
         A->nvals = 0 ;
         A->magic = GB_MAGIC ;
         return (GrB_SUCCESS) ;
@@ -118,7 +119,8 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
             GB_phybix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GB_memset (A->p, 0, (plen+1) * apsize, nthreads_max) ;
+        GB_memset (A->p, GB_arena (A->p_mem), 0, (plen+1) * apsize,
+            nthreads_max) ;
 
     }
     else

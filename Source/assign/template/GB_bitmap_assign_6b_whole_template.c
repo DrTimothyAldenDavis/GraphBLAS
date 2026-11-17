@@ -22,7 +22,7 @@
     // C = A, where C is bitmap and A is sparse/hyper
     //--------------------------------------------------------------------------
 
-    GB_memset (Cb, 0, cnzmax, nthreads_max) ;
+    GB_memset (Cb, Cb_arena, 0, cnzmax, nthreads_max) ;
     cnvals = 0 ;
     #define GB_AIJ_WORK(pC,pA)                              \
     {                                                       \

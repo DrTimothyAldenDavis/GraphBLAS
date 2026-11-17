@@ -35,7 +35,7 @@ GB_CALLBACK_BITMAP_ASSIGN_TO_FULL_PROTO (GB_bitmap_assign_to_full)
     { 
         // all entries in C are now present; C remains bitmap
         int64_t cnzmax = C->vlen * C->vdim ;
-        GB_memset (C->b, 1, cnzmax, nthreads_max) ;
+        GB_memset (C->b, GB_arena (C->b_mem), 1, cnzmax, nthreads_max) ;
         C->nvals = cnzmax ;
     }
 }

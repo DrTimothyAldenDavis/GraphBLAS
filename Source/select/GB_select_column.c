@@ -360,7 +360,7 @@ GrB_Info GB_select_column
             ASSERT (found) ;
 
             // Cp [0:k] = 0
-            GB_memset (Cp, 0, (k+1) * cpsize, nth) ;
+            GB_memset (Cp, GB_arena (C->p_mem), 0, (k+1) * cpsize, nth) ;
 
             // Cp [k+1:cnvec] = Ap [k+1:cnvec] - pend
             #pragma omp parallel for num_threads(nth2)

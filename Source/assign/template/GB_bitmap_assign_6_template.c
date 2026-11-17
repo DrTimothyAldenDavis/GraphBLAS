@@ -59,7 +59,7 @@
         {
             // for assign: set all Cb(:,:) to zero
             // (this is currently dead code; see note above)
-            GB_memset (Cb, 0, cnzmax, nthreads_max) ;
+            GB_memset (Cb, Cb_arena, 0, cnzmax, nthreads_max) ;
             cnvals = 0 ;
         }
         else

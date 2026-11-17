@@ -104,7 +104,8 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
 
     // clear Cwork [k] for fine tasks that compute vector k
     #ifdef GB_DEBUG
-    GB_memset (Cwork, 0xFF, (Cnvec+1) * sizeof (uint64_t), nthreads) ;
+    GB_memset (Cwork, GB_arena (Cwork_mem), 0xFF,
+        (Cnvec+1) * sizeof (uint64_t), nthreads) ;
     #endif
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {

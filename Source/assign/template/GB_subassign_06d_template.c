@@ -92,6 +92,7 @@
     ASSERT (GB_IMPLIES (GB_A_ISO, GB_MASK_STRUCT)) ;
 
     int8_t *restrict Cb = C->b ;
+    const int Cb_arena = GB_arena (C->b_mem) ;
     const int64_t Cvlen = C->vlen ;
     #ifndef GB_JIT_KERNEL
     bool C_iso = C->iso ;
@@ -153,7 +154,7 @@
 
             if (GB_C_IS_BITMAP)
             { 
-                GB_memset (Cb, 1, anz, A_nthreads) ;
+                GB_memset (Cb, Cb_arena, 1, anz, A_nthreads) ;
                 cnvals = anz ;
             }
 

@@ -60,7 +60,8 @@
 
         // compute the row counts of A.  No need to scan the A->p pointers
         GB_Cp_TYPE *restrict workspace = Workspaces [0] ;
-        GB_memset (workspace, 0, (avlen + 1) * sizeof (GB_Cp_TYPE), nth) ;
+        GB_memset (workspace, data_arena, 0, (avlen + 1) * sizeof (GB_Cp_TYPE),
+            nth) ;
 
         int64_t p ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)

@@ -94,6 +94,7 @@ void *GX_calloc_memory      /* pointer to allocated block of memory */      \
 void GX_memset                  /* parallel memset */                       \
 (                                                                           \
     void *dest,                 /* destination */                           \
+    const int dest_arena,       /* arena of destination */                  \
     const int c,                /* value to to set */                       \
     uint64_t n,                 /* # of bytes to set */                     \
     int nthreads                /* max # of threads to use */               \

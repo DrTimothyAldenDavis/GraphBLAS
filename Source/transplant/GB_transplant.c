@@ -19,6 +19,7 @@
 // C->i_control are not modified by the transplant.
 
 // This method fully exploits CUDA, via GB_memcpy, GB_cast_matrix, and GB_dup.
+// FIXME: GB_XALLOC_MEMORY can use the CPU on a GPU arena; need GB_memset
 
 #define GB_FREE_ALL                 \
 {                                   \
