@@ -48,6 +48,8 @@ GrB_Info GB_cuda_memcpy
         GBURBLE ("(cudaMemcpy: %.3f MB, dest device: %d, source device: %d) ",
             ((double) n) / (1024*1024), dest_device, src_device) ;
 
+        // FIXME: which GPU is being used here, if more than one?
+        // should I use cudaMemcpyAsync, and a stream on the given device?
         cudaError_t result = cudaMemcpy (dest, src, n, cudaMemcpyDefault) ;
         info = (result == cudaSuccess) ? GrB_SUCCESS : GxB_GPU_ERROR ;
         GB_OK (info) ;
