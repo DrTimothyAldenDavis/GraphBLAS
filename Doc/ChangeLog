@@ -1,4 +1,4 @@
-Nov FIXME, 2026, version 10.5.4
+Nov 20, 2026, version 10.5.4
 
     * (79) bug fix: JIT'ing the CPU kernel for GrB_select did not check
         if the matrix type can be JIT'd.
