@@ -121,7 +121,10 @@ F100 = {4,4,0,0} ;
 set_malloc_debug (mdebug, 1) ;
 
 % < 1 second: debug_on
+logstat ('test315'    ,t, J0   , F0   ) ; % per-matrix int hints persist
 logstat ('test01'     ,t, J40  , F10  ) ; % error handling
+logstat ('test314'    ,t, J0   , F0   ) ; % indexed op flip in generic saxpy
+logstat ('test313'    ,t, J0   , F0   ) ; % select with nonzombie UDT
 logstat ('test312'    ,t, J0   , F0   ) ; % int hints with zombies, pending
 logstat ('test311'    ,t, J4   , F1   ) ; % reshape, large matrices
 logstat ('test310'    ,t, J4   , F1   , [0:3]) ; % reshape, use 0:3 pji control

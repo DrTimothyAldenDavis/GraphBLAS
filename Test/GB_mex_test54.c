@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Regression test for a bug in versions 10.5.2 and earlier, when JIT-ing
+// Regression test for a bug in versions 10.5.3 and earlier, when JIT-ing
 // the NONZOMBIE operator for GrB_select, with a user-defined type.
 // See issue #480.
 

@@ -891,6 +891,7 @@
 #define GB_JITpackage_364 GM_JITpackage_364
 #define GB_JITpackage_365 GM_JITpackage_365
 #define GB_JITpackage_366 GM_JITpackage_366
+#define GB_JITpackage_367 GM_JITpackage_367
 #define GB_JITpackage_36 GM_JITpackage_36
 #define GB_JITpackage_37 GM_JITpackage_37
 #define GB_JITpackage_38 GM_JITpackage_38
