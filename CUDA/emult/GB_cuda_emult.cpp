@@ -104,14 +104,25 @@ GrB_Info GB_cuda_emult
     //--------------------------------------------------------------------------
 
     int32_t number_of_sms = GB_Global_gpu_sm_get (device) ;
-    int64_t raw_gridsz = GB_ICEIL (cnz, GB_CUDA_ADD_CHUNKSIZE0) ;
-    // cap #of blocks to 256 * #of sms
+
+    // choose the kernel based on the ratio of entries in A and B.  When B is
+    // far denser than A, the very-sparse (vssp) kernel scans A and binary-
+    // searches B, which is much faster than merging all of A and B.  The
+    // crossover ratio mirrors the CPU emult (GB_emult_08bcd uses 32).  The
+    // symmetric case (nnz(A) >> nnz(B)) stays on the merge kernel for now.
+    bool use_vssp = (bnz > 32 * anz) ;
+
+    // size the grid, then cap at 256 blocks per SM.  vssp is latency-bound, so
+    // size it by the work (anz); the merge kernel is sized by the output (cnz).
+    int64_t raw_gridsz = use_vssp
+        ? GB_ICEIL (anz, 64)
+        : GB_ICEIL (cnz, GB_CUDA_ADD_CHUNKSIZE0) ;
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
 
-    GBURBLE ("(cuda emult, device %d, sms: %d, gridsz: %d) ",
-        device, number_of_sms, gridsz) ;
+    GBURBLE ("(cuda emult, device %d, sms: %d, gridsz: %d, %s) ",
+        device, number_of_sms, gridsz, use_vssp ? "vssp" : "merge") ;
 
-    GB_OK (GB_cuda_emult_jit (C, C_iso, A, B, theta, op, flipij,
+    GB_OK (GB_cuda_emult_jit (C, C_iso, A, B, theta, op, flipij, use_vssp,
         device, stream, gridsz)) ;
 
     //--------------------------------------------------------------------------

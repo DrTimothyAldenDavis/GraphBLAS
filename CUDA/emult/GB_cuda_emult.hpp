@@ -27,6 +27,7 @@ GrB_Info GB_cuda_emult_jit
     const void *theta,
     const GrB_BinaryOp binaryop,
     const bool flipij,
+    const bool use_vssp,        // true: use binary-search (vssp) kernel
     // CUDA stream and launch parameters:
     int device,
     cudaStream_t stream,

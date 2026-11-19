@@ -25,6 +25,7 @@ GrB_Info GB_cuda_emult_jit
     const void *theta,
     const GrB_BinaryOp binaryop,
     const bool flipij,
+    const bool use_vssp,
     // CUDA stream and launch parameters:
     int device,
     cudaStream_t stream,
@@ -50,9 +51,12 @@ GrB_Info GB_cuda_emult_jit
     // get the kernel function pointer, loading or compiling it if needed
     //--------------------------------------------------------------------------
 
+    // use the binary-search (vssp) kernel when nnz(B) >> nnz(A), else merge
+    const char *kname = use_vssp ? "cuda_ewise_vssp" : "cuda_ewise_sparse" ;
+
     void *dl_function ;
     GrB_Info info = GB_jitifyer_load (&dl_function,
-        GB_jit_ewise_family, "cuda_ewise_sparse",
+        GB_jit_ewise_family, kname,
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) binaryop, C->type, A->type, B->type) ;
     if (info != GrB_SUCCESS) return (info) ;
